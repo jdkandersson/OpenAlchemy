@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: openapi-SQLAlchemy
+Version: 0.0.1
+Summary: Maps an openapi schema to SQLAlchemy models.
+Home-page: https://github.com/jdkandersson/openapi-SQLAlchemy
+Author: David Andersson
+Author-email: anderssonpublic@gmail.com
+License: UNKNOWN
+Description: # openapi-SQLAlchemy
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Development Status :: 1 - Planning
+Classifier: Natural Language :: English
+Classifier: Topic :: Database
+Description-Content-Type: text/markdown
