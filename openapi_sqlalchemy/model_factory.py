@@ -45,7 +45,10 @@ def model_factory(
             "__tablename__": schema.get("x-tablename"),
             **{
                 key: column_factory.column_factory(
-                    schema=value, required=key in schema.get("required", [])
+                    schema=value,
+                    required=key in schema.get("required", [])
+                    if "required" in schema
+                    else None,
                 )
                 for key, value in schema.get("properties", []).items()
             },

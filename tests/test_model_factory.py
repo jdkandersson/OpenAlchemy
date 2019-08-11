@@ -107,6 +107,31 @@ def test_single_property():
 
 
 @pytest.mark.model
+def test_single_property_required_missing(mocked_column_factory: mock.MagicMock):
+    """
+    GIVEN mocked column_factory and schemas with schema that has single item properties
+        key and does not have the required key
+    WHEN model_factory is called with the name of the schema
+    THEN column_factory is called with required as None.
+    """
+    model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+    )
+
+    mocked_column_factory.assert_called_once_with(
+        schema={"type": "integer"}, required=None
+    )
+
+
+@pytest.mark.model
 def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     """
     GIVEN mocked column_factory and schemas with schema that has single item properties
