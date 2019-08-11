@@ -116,6 +116,42 @@ def test_number():
 
 
 @pytest.mark.column
+def test_number_float():
+    """
+    GIVEN schema with number type and float format
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy Float column is returned.
+    """
+    column = column_factory.column_factory(schema={"type": "number", "format": "float"})
+
+    assert isinstance(column.type, sqlalchemy.Float)
+
+
+@pytest.mark.column
+def test_number_double():
+    """
+    GIVEN schema with number type and double format
+    WHEN column_factory is called with the schema
+    THEN NotImplementedError is raised.
+    """
+    with pytest.raises(NotImplementedError):
+        column_factory.column_factory(schema={"type": "number", "format": "double"})
+
+
+@pytest.mark.column
+def test_number_unsupported_format():
+    """
+    GIVEN schema with number type and format that has not been implemented
+    WHEN column_factory is called with the schema
+    THEN NotImplementedError is raised.
+    """
+    with pytest.raises(NotImplementedError):
+        column_factory.column_factory(
+            schema={"type": "number", "format": "unsupported"}
+        )
+
+
+@pytest.mark.column
 def test_integer():
     """
     GIVEN schema with integer type

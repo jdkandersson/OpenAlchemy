@@ -38,7 +38,7 @@ def column_factory(
         type_ = _handle_integer(schema=schema)
 
     if schema.get("type") == "number":
-        type_ = sqlalchemy.Float
+        type_ = _handle_number(schema=schema)
 
     if type_ is None:
         raise NotImplementedError(f"{schema['type']} has not been implemented")
@@ -82,6 +82,24 @@ def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) 
     if nullable:
         return True
     return False
+
+
+def _handle_number(*, schema: SchemaType) -> sqlalchemy.Float:
+    """
+    Determine the type of number to use for the schema.
+
+    Args:
+        schema: The schema for the number column.
+
+    Returns:
+        Float.
+
+    """
+    if schema.get("format", "float") == "float":
+        return sqlalchemy.Float
+    raise NotImplementedError(
+        f"{schema.get('format')} format for number is not supported."
+    )
 
 
 def _handle_integer(
