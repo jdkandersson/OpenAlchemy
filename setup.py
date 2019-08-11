@@ -23,4 +23,15 @@ setuptools.setup(
         "Natural Language :: English",
         "Topic :: Database",
     ],
+    python_requires=">=3.7",
+    install_requires=[
+        "SQLAlchemy>=1.3.6",
+    ],
+    extras_require={
+        "dev": [
+            "pytest",
+            "tox",
+            "pylint",
+        ],
+    },
 )
