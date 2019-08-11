@@ -1,5 +1,7 @@
 """Tests for the column factory."""
 
+import typing
+
 import pytest
 import sqlalchemy
 
@@ -55,16 +57,50 @@ def test_primary_key(primary_key: bool):
     assert column.primary_key == primary_key
 
 
+@pytest.mark.parametrize(
+    "required, nullable, expected",
+    [
+        (None, None, True),
+        (None, False, False),
+        (None, True, True),
+        (False, None, True),
+        (False, False, False),
+        (False, True, True),
+        (True, None, False),
+        (True, False, False),
+        (True, True, True),
+    ],
+    ids=[
+        "required not given nullable not given",
+        "required not given nullable reset",
+        "required not given nullable set",
+        "required reset nullable not given",
+        "required reset nullable reset",
+        "required reset nullable set",
+        "required set nullable not given",
+        "required set nullable reset",
+        "required set nullable set",
+    ],
+)
 @pytest.mark.column
-def test_required():
+def test_nullable(
+    required: typing.Optional[bool], nullable: typing.Optional[bool], expected: bool
+):
     """
-    GIVEN valid schema
-    WHEN column_factory is called with the schema and required set
-    THEN SQLAlchemy column is returned that is nullable reset.
+    GIVEN schema, the value for the nullable property and the required argument
+    WHEN column_factory is called with the schema and required argument
+    THEN SQLAlchemy column is returned where nullable property is equal to the
+        expected input.
     """
-    column = column_factory.column_factory(schema={"type": "number"}, required=True)
+    kwargs: typing.Dict[str, bool] = {}
+    if required is not None:
+        kwargs["required"] = required
+    schema: typing.Dict[str, typing.Union[str, bool]] = {"type": "number"}
+    if nullable is not None:
+        schema["nullable"] = nullable
+    column = column_factory.column_factory(schema=schema, **kwargs)
 
-    assert not column.nullable
+    assert column.nullable == expected
 
 
 @pytest.mark.column

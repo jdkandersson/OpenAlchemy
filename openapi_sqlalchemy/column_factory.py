@@ -4,9 +4,11 @@ import typing
 
 import sqlalchemy
 
+SchemaType = typing.Dict[str, typing.Any]
+
 
 def column_factory(
-    *, schema: typing.Dict[str, typing.Any], required: bool = False
+    *, schema: SchemaType, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
@@ -27,8 +29,7 @@ def column_factory(
     args: typing.Tuple[typing.Any, ...] = ()
     kwargs: typing.Dict[str, typing.Any] = {}
 
-    if required:
-        kwargs["nullable"] = False
+    kwargs["nullable"] = _calculate_nullable(schema=schema, required=required)
 
     if schema.get("x-primary-key"):
         kwargs["primary_key"] = True
@@ -45,8 +46,46 @@ def column_factory(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
+def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) -> bool:
+    """
+    Calculate the value of the nullable field.
+
+    The following is the truth table for the nullable property.
+    required  | schema nullable | returned nullable
+    --------------------------------------------------------
+    None      | not given       | True
+    None      | False           | False
+    None      | True            | True
+    False     | not given       | True
+    False     | False           | False
+    False     | True            | True
+    True      | not given       | False
+    True      | False           | False
+    True      | True            | True
+
+    To summarize, if nullable is the schema the value for it is used. Otherwise True
+    is returned unless required is True.
+
+    Args:
+        schema: The schema for the column.
+        required: Whether the property is required.
+
+    Returns:
+        The nullable value for the column.
+
+    """
+    nullable = schema.get("nullable")
+    if nullable is None:
+        if required:
+            return False
+        return True
+    if nullable:
+        return True
+    return False
+
+
 def _handle_integer(
-    *, schema: typing.Dict[str, typing.Any]
+    *, schema: SchemaType
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
     Determine the type of integer to use for the schema.
