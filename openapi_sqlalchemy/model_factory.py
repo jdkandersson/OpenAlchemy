@@ -6,7 +6,10 @@ from . import column_factory
 
 
 def model_factory(
-    *, name: str, base: typing.Type, schemas: typing.Dict[str, typing.Any]
+    *,
+    name: str,
+    base: typing.Type,
+    schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
 ) -> typing.Type:
     """
     Convert openapi schema to SQLAlchemy model.
@@ -24,7 +27,7 @@ def model_factory(
     # Checking that name is in schemas
     if name not in schemas:
         raise KeyError(f"{name} not found in schemas")
-    schema = schemas[name]
+    schema: typing.Dict[str, typing.Any] = schemas.get(name, {})
     # Checking for tablename key
     if "x-tablename" not in schema:
         raise TypeError('"x-tablename" is a required schema property.')
@@ -39,10 +42,12 @@ def model_factory(
         name,
         (base,),
         {
-            "__tablename__": schema["x-tablename"],
+            "__tablename__": schema.get("x-tablename"),
             **{
-                key: column_factory.column_factory(schema=value)
-                for key, value in schema["properties"].items()
+                key: column_factory.column_factory(
+                    schema=value, required=key in schema.get("required", [])
+                )
+                for key, value in schema.get("properties", []).items()
             },
         },
     )

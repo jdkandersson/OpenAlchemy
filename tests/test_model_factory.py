@@ -104,3 +104,55 @@ def test_single_property():
     )
 
     assert hasattr(model, "id")
+
+
+@pytest.mark.model
+def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
+    """
+    GIVEN mocked column_factory and schemas with schema that has single item properties
+        key and a required key without the key in properties
+    WHEN model_factory is called with the name of the schema
+    THEN column_factory is called with required reset.
+    """
+    model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+                "required": [],
+            }
+        },
+    )
+
+    mocked_column_factory.assert_called_once_with(
+        schema={"type": "integer"}, required=False
+    )
+
+
+@pytest.mark.model
+def test_single_property_required(mocked_column_factory: mock.MagicMock):
+    """
+    GIVEN mocked column_factory and schemas with schema that has single item properties
+        key and a required key with the key in properties
+    WHEN model_factory is called with the name of the schema
+    THEN column_factory is called with required reset.
+    """
+    model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+                "required": ["id"],
+            }
+        },
+    )
+
+    mocked_column_factory.assert_called_once_with(
+        schema={"type": "integer"}, required=True
+    )
