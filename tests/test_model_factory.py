@@ -2,6 +2,8 @@
 # Disable protected access for testing.
 # pylint: disable=protected-access
 
+from unittest import mock
+
 import pytest
 
 from openapi_sqlalchemy import model_factory
@@ -15,7 +17,7 @@ def test_missing_schema():
     THEN KeyError is raised.
     """
     with pytest.raises(KeyError):
-        model_factory.model_factory(name="Missing", schemas={})
+        model_factory.model_factory(name="Missing", base=None, schemas={})
 
 
 @pytest.mark.model
@@ -27,7 +29,7 @@ def test_missing_tablename():
     """
     with pytest.raises(TypeError):
         model_factory.model_factory(
-            name="MissingTablename", schemas={"MissingTablename": {}}
+            name="MissingTablename", base=None, schemas={"MissingTablename": {}}
         )
 
 
@@ -41,6 +43,7 @@ def test_not_object():
     with pytest.raises(NotImplementedError):
         model_factory.model_factory(
             name="NotObject",
+            base=None,
             schemas={"NotObject": {"x-tablename": "table 1", "type": "not_object"}},
         )
 
@@ -55,6 +58,7 @@ def test_properties_missing():
     with pytest.raises(TypeError):
         model_factory.model_factory(
             name="MissingProperty",
+            base=None,
             schemas={"MissingProperty": {"x-tablename": "table 1", "type": "object"}},
         )
 
@@ -69,11 +73,34 @@ def test_properties_empty():
     with pytest.raises(TypeError):
         model_factory.model_factory(
             name="EmptyProperty",
+            base=None,
             schemas={
                 "EmptyProperty": {
                     "x-tablename": "table 1",
                     "type": "object",
-                    "properties": [],
+                    "properties": {},
                 }
             },
         )
+
+
+@pytest.mark.model
+def test_single_property():
+    """
+    GIVEN schemas with schema that has single item properties key
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the property is returned.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+    )
+
+    assert hasattr(model, "id")

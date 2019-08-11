@@ -2,8 +2,12 @@
 
 import typing
 
+from . import column_factory
 
-def model_factory(*, name: str, schemas: typing.Dict[str, typing.Any]) -> None:
+
+def model_factory(
+    *, name: str, base: typing.Type, schemas: typing.Dict[str, typing.Any]
+) -> typing.Type:
     """
     Convert openapi schema to SQLAlchemy model.
 
@@ -29,3 +33,16 @@ def model_factory(*, name: str, schemas: typing.Dict[str, typing.Any]) -> None:
         raise NotImplementedError(f"{schema.get('type')} is not supported.")
     if not schema.get("properties"):
         raise TypeError("At least 1 property is required.")
+
+    # Assembling model
+    return type(
+        name,
+        (base,),
+        {
+            "__tablename__": schema["x-tablename"],
+            **{
+                key: column_factory.column_factory(schema=value)
+                for key, value in schema["properties"].items()
+            },
+        },
+    )
