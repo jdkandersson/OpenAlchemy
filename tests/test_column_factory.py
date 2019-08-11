@@ -226,3 +226,15 @@ def test_string_length():
     column = column_factory.column_factory(schema={"type": "string", "maxLength": 1})
 
     assert column.type.length == 1
+
+
+@pytest.mark.column
+def test_boolean():
+    """
+    GIVEN schema with boolean type
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy boolean column is returned.
+    """
+    column = column_factory.column_factory(schema={"type": "boolean"})
+
+    assert isinstance(column.type, sqlalchemy.Boolean)

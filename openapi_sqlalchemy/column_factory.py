@@ -34,14 +34,15 @@ def column_factory(
     if schema.get("x-primary-key"):
         kwargs["primary_key"] = True
 
+    # Calculating type of column
     if schema.get("type") == "integer":
         type_ = _handle_integer(schema=schema)
-
-    if schema.get("type") == "number":
+    elif schema.get("type") == "number":
         type_ = _handle_number(schema=schema)
-
-    if schema.get("type") == "string":
+    elif schema.get("type") == "string":
         type_ = _handle_string(schema=schema)
+    elif schema.get("type") == "boolean":
+        type_ = sqlalchemy.Boolean
 
     if type_ is None:
         raise NotImplementedError(f"{schema['type']} has not been implemented")
