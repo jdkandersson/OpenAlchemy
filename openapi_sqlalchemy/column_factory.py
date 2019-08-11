@@ -30,6 +30,9 @@ def column_factory(
     if required:
         kwargs["nullable"] = False
 
+    if schema.get("x-primary-key"):
+        kwargs["primary_key"] = True
+
     if schema["type"] == "number":
         type_ = sqlalchemy.Float
 

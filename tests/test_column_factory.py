@@ -40,6 +40,21 @@ def test_column_return():
     assert isinstance(column, sqlalchemy.Column)
 
 
+@pytest.mark.parametrize("primary_key", [True, False], ids=["set", "reset"])
+@pytest.mark.column
+def test_primary_key(primary_key: bool):
+    """
+    GIVEN valid schema and the value of the primary key property
+    WHEN column_factory is called with the schema
+    THEN the returned SQLAlchemy column primary_key property is set to the input.
+    """
+    column = column_factory.column_factory(
+        schema={"type": "number", "x-primary-key": primary_key}
+    )
+
+    assert column.primary_key == primary_key
+
+
 @pytest.mark.column
 def test_required():
     """
