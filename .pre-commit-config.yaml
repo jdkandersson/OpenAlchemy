@@ -1,0 +1,28 @@
+repos:
+- repo: https://github.com/ambv/black
+  rev: master
+  hooks:
+  - id: black
+    language_version: python3.7
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: master
+  hooks:
+  - id: isort
+- repo: git://github.com/chewse/pre-commit-mirrors-pydocstyle
+  rev: master
+  hooks:
+  - id: pydocstyle
+    args: ['--add-select=D213,D404', '--ignore=D202,D212,D406,D407,D203']
+    exclude: '^test'
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: master
+  hooks:
+  - id: mypy
+- repo: local
+  hooks:
+  - id: pylint
+    name: pylint
+    entry: python3 -m pylint.__main__
+    args: [-rn]
+    language: system
+    types: [python]

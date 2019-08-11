@@ -3,7 +3,7 @@
 import setuptools
 
 with open("README.md", "r") as fh:
-    long_description = fh.read()
+    LONG_DESCRIPTION = fh.read()
 
 setuptools.setup(
     name="openapi-SQLAlchemy",
@@ -11,7 +11,7 @@ setuptools.setup(
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
     description="Maps an openapi schema to SQLAlchemy models.",
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/jdkandersson/openapi-SQLAlchemy",
     packages=setuptools.find_packages(),
@@ -24,14 +24,19 @@ setuptools.setup(
         "Topic :: Database",
     ],
     python_requires=">=3.7",
-    install_requires=[
-        "SQLAlchemy>=1.3.6",
-    ],
+    install_requires=["SQLAlchemy>=1.3.6"],
     extras_require={
         "dev": [
             "pytest",
             "tox",
             "pylint",
-        ],
+            "pytest-cov",
+            "pytest-flakes",
+            "mypy",
+            "pydocstyle",
+            "black",
+            "pre-commit",
+            "isort",
+        ]
     },
 )
