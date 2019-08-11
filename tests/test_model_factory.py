@@ -34,7 +34,7 @@ def test_missing_tablename():
 @pytest.mark.model
 def test_not_object():
     """
-    GIVEN schemas  with schema that is not an object
+    GIVEN schemas with schema that is not an object
     WHEN model_factory is called with the name of the schema
     THEN NotImplementedError is raised.
     """
@@ -42,4 +42,38 @@ def test_not_object():
         model_factory.model_factory(
             name="NotObject",
             schemas={"NotObject": {"x-tablename": "table 1", "type": "not_object"}},
+        )
+
+
+@pytest.mark.model
+def test_properties_missing():
+    """
+    GIVEN schemas with schema that does not have the properties key
+    WHEN model_factory is called with the name of the schema
+    THEN TypeError is raised.
+    """
+    with pytest.raises(TypeError):
+        model_factory.model_factory(
+            name="MissingProperty",
+            schemas={"MissingProperty": {"x-tablename": "table 1", "type": "object"}},
+        )
+
+
+@pytest.mark.model
+def test_properties_empty():
+    """
+    GIVEN schemas with schema that has empty properties key
+    WHEN model_factory is called with the name of the schema
+    THEN TypeError is raised.
+    """
+    with pytest.raises(TypeError):
+        model_factory.model_factory(
+            name="EmptyProperty",
+            schemas={
+                "EmptyProperty": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": [],
+                }
+            },
         )

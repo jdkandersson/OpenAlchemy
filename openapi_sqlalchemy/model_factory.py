@@ -16,6 +16,7 @@ def model_factory(*, name: str, schemas: typing.Dict[str, typing.Any]) -> None:
         The model as a class.
 
     """
+    # Input validation
     # Checking that name is in schemas
     if name not in schemas:
         raise KeyError(f"{name} not found in schemas")
@@ -26,3 +27,5 @@ def model_factory(*, name: str, schemas: typing.Dict[str, typing.Any]) -> None:
     # Checking for object type
     if schema.get("type") != "object":
         raise NotImplementedError(f"{schema.get('type')} is not supported.")
+    if not schema.get("properties"):
+        raise TypeError("At least 1 property is required.")
