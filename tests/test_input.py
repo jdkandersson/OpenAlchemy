@@ -17,10 +17,24 @@ def test_missing_schema():
         openapi_sqlalchemy._model_factory(name="Missing", schemas={})
 
 
+def test_missing_tablename():
+    """
+    GIVEN schemas and name that refers to a schema without the x-tablename key
+    WHEN _model_factory is called
+    THEN TypeError is raised.
+    """
+    with pytest.raises(TypeError):
+        openapi_sqlalchemy._model_factory(
+            name="MissingTablename", schemas={"MissingTablename": {}}
+        )
+
+
 def test_valid():
     """
     GIVEN schemas and name that is in schemas
     WHEN _model_factory is called
     THEN no exception is raised.
     """
-    openapi_sqlalchemy._model_factory(name="Present", schemas={"Present": {}})
+    openapi_sqlalchemy._model_factory(
+        name="Valid", schemas={"Valid": {"x-tablename": "table 1"}}
+    )
