@@ -202,3 +202,27 @@ def test_integer_unsupported_format():
         column_factory.column_factory(
             schema={"type": "integer", "format": "unsupported"}
         )
+
+
+@pytest.mark.column
+def test_string():
+    """
+    GIVEN schema with string type
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy String column is returned.
+    """
+    column = column_factory.column_factory(schema={"type": "string"})
+
+    assert isinstance(column.type, sqlalchemy.String)
+
+
+@pytest.mark.column
+def test_string_length():
+    """
+    GIVEN schema with string type and maxLength property
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy String column is returned with the length set to the maxLength.
+    """
+    column = column_factory.column_factory(schema={"type": "string", "maxLength": 1})
+
+    assert column.type.length == 1

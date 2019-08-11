@@ -40,6 +40,9 @@ def column_factory(
     if schema.get("type") == "number":
         type_ = _handle_number(schema=schema)
 
+    if schema.get("type") == "string":
+        type_ = _handle_string(schema=schema)
+
     if type_ is None:
         raise NotImplementedError(f"{schema['type']} has not been implemented")
 
@@ -122,3 +125,17 @@ def _handle_integer(
     raise NotImplementedError(
         f"{schema.get('format')} format for integer is not supported."
     )
+
+
+def _handle_string(*, schema: SchemaType) -> sqlalchemy.String:
+    """
+    Determine the setup of the string to use for the schema.
+
+    Args:
+        schema: The schema for the string column.
+
+    Returns:
+        String.
+
+    """
+    return sqlalchemy.String(length=schema.get("maxLength"))
