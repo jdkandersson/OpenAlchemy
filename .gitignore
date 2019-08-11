@@ -1,2 +1,12 @@
-dist
-build
+.coverage
+.coverage.*
+.DS_Store
+.pytest_cache/
+.tox/
+.vscode/
+*.egg-info/
+*.pyc
+*.pyo
+build/
+dist/
+htmlcov/
