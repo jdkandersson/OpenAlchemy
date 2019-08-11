@@ -32,12 +32,14 @@ def test_missing_tablename():
 
 
 @pytest.mark.model
-def test_valid():
+def test_not_object():
     """
-    GIVEN schemas and name that is in schemas
-    WHEN model_factory is called
-    THEN no exception is raised.
+    GIVEN schemas  with schema that is not an object
+    WHEN model_factory is called with the name of the schema
+    THEN NotImplementedError is raised.
     """
-    model_factory.model_factory(
-        name="Valid", schemas={"Valid": {"x-tablename": "table 1"}}
-    )
+    with pytest.raises(NotImplementedError):
+        model_factory.model_factory(
+            name="NotObject",
+            schemas={"NotObject": {"x-tablename": "table 1", "type": "not_object"}},
+        )

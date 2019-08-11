@@ -20,7 +20,9 @@ def model_factory(*, name: str, schemas: typing.Dict[str, typing.Any]) -> None:
     if name not in schemas:
         raise KeyError(f"{name} not found in schemas")
     schema = schemas[name]
-
     # Checking for tablename key
     if "x-tablename" not in schema:
         raise TypeError('"x-tablename" is a required schema property.')
+    # Checking for object type
+    if schema.get("type") != "object":
+        raise NotImplementedError(f"{schema.get('type')} is not supported.")
