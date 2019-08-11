@@ -57,6 +57,34 @@ def test_primary_key(primary_key: bool):
     assert column.primary_key == primary_key
 
 
+@pytest.mark.parametrize("index", [True, None], ids=["set", "reset"])
+@pytest.mark.column
+def test_index(index: bool):
+    """
+    GIVEN valid schema and the value of the index property
+    WHEN column_factory is called with the schema
+    THEN the returned SQLAlchemy column index property is set to the input.
+    """
+    column = column_factory.column_factory(schema={"type": "number", "x-index": index})
+
+    assert column.index == index
+
+
+@pytest.mark.parametrize("unique", [True, None], ids=["set", "reset"])
+@pytest.mark.column
+def test_unique(unique: bool):
+    """
+    GIVEN valid schema and the value of the unique property
+    WHEN column_factory is called with the schema
+    THEN the returned SQLAlchemy column unique property is set to the input.
+    """
+    column = column_factory.column_factory(
+        schema={"type": "number", "x-unique": unique}
+    )
+
+    assert column.unique == unique
+
+
 @pytest.mark.parametrize(
     "required, nullable, expected",
     [

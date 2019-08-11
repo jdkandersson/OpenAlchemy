@@ -29,10 +29,14 @@ def column_factory(
     args: typing.Tuple[typing.Any, ...] = ()
     kwargs: typing.Dict[str, typing.Any] = {}
 
+    # Calculate column modifiers
     kwargs["nullable"] = _calculate_nullable(schema=schema, required=required)
-
     if schema.get("x-primary-key"):
         kwargs["primary_key"] = True
+    if schema.get("x-index"):
+        kwargs["index"] = True
+    if schema.get("x-unique"):
+        kwargs["unique"] = True
 
     # Calculating type of column
     if schema.get("type") == "integer":
