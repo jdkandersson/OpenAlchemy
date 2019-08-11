@@ -7,6 +7,7 @@ import pytest
 from openapi_sqlalchemy import model_factory
 
 
+@pytest.mark.model
 def test_missing_schema():
     """
     GIVEN schemas and name that is not in schemas
@@ -17,6 +18,7 @@ def test_missing_schema():
         model_factory.model_factory(name="Missing", schemas={})
 
 
+@pytest.mark.model
 def test_missing_tablename():
     """
     GIVEN schemas and name that refers to a schema without the x-tablename key
@@ -29,6 +31,7 @@ def test_missing_tablename():
         )
 
 
+@pytest.mark.model
 def test_valid():
     """
     GIVEN schemas and name that is in schemas
