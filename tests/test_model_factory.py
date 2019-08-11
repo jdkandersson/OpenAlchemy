@@ -98,12 +98,38 @@ def test_single_property():
             "SingleProperty": {
                 "x-tablename": "table 1",
                 "type": "object",
-                "properties": {"id": {"type": "integer"}},
+                "properties": {"property_1": {"type": "integer"}},
             }
         },
     )
 
-    assert hasattr(model, "id")
+    assert hasattr(model, "property_1")
+
+
+@pytest.mark.model
+def test_multiple_property():
+    """
+    GIVEN schemas with schema that has multiple item properties key
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the properties is returned.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {
+                    "property_1": {"type": "integer"},
+                    "property_2": {"type": "integer"},
+                },
+            }
+        },
+    )
+
+    assert hasattr(model, "property_1")
+    assert hasattr(model, "property_2")
 
 
 @pytest.mark.model
