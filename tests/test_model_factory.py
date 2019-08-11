@@ -133,6 +133,28 @@ def test_multiple_property():
 
 
 @pytest.mark.model
+def test_single_tablename():
+    """
+    GIVEN schemas with schema
+    WHEN model_factory is called with the name of the schema
+    THEN a model where __tablename__ has been set to the x-tablename value.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+            }
+        },
+    )
+
+    assert model.__tablename__ == "table 1"
+
+
+@pytest.mark.model
 def test_single_property_required_missing(mocked_column_factory: mock.MagicMock):
     """
     GIVEN mocked column_factory and schemas with schema that has single item properties
