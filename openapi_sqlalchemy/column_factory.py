@@ -5,7 +5,9 @@ import typing
 import sqlalchemy
 
 
-def column_factory(*, schema: typing.Dict[str, typing.Any]) -> sqlalchemy.Column:
+def column_factory(
+    *, schema: typing.Dict[str, typing.Any], required: bool = False
+) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
 
@@ -24,6 +26,9 @@ def column_factory(*, schema: typing.Dict[str, typing.Any]) -> sqlalchemy.Column
     type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
     args: typing.Tuple[typing.Any, ...] = ()
     kwargs: typing.Dict[str, typing.Any] = {}
+
+    if required:
+        kwargs["nullable"] = False
 
     if schema["type"] == "number":
         type_ = sqlalchemy.Float

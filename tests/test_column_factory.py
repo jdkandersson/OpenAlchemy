@@ -29,6 +29,30 @@ def test_type_not_implemented():
 
 
 @pytest.mark.column
+def test_column_return():
+    """
+    GIVEN valid schema
+    WHEN column_factory is called with the schema
+    THEN an instance of SQLAlchemy Column is returned.
+    """
+    column = column_factory.column_factory(schema={"type": "number"})
+
+    assert isinstance(column, sqlalchemy.Column)
+
+
+@pytest.mark.column
+def test_required():
+    """
+    GIVEN valid schema
+    WHEN column_factory is called with the schema and required set
+    THEN SQLAlchemy column is returned that is nullable reset.
+    """
+    column = column_factory.column_factory(schema={"type": "number"}, required=True)
+
+    assert not column.nullable
+
+
+@pytest.mark.column
 def test_number():
     """
     GIVEN schema with number type
