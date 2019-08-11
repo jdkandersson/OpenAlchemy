@@ -33,10 +33,35 @@ def column_factory(
     if schema.get("x-primary-key"):
         kwargs["primary_key"] = True
 
-    if schema["type"] == "number":
+    if schema.get("type") == "integer":
+        type_ = _handle_integer(schema=schema)
+
+    if schema.get("type") == "number":
         type_ = sqlalchemy.Float
 
     if type_ is None:
         raise NotImplementedError(f"{schema['type']} has not been implemented")
 
     return sqlalchemy.Column(type_, *args, **kwargs)
+
+
+def _handle_integer(
+    *, schema: typing.Dict[str, typing.Any]
+) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
+    """
+    Determine the type of integer to use for the schema.
+
+    Args:
+        schema: The schema for the integer column.
+
+    Returns:
+        Integer or BigInteger depending on the format.
+
+    """
+    if schema.get("format", "int32") == "int32":
+        return sqlalchemy.Integer
+    if schema.get("format") == "int64":
+        return sqlalchemy.BigInteger
+    raise NotImplementedError(
+        f"{schema.get('format')} format for integer is not supported."
+    )
