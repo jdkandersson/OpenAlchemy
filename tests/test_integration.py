@@ -3,6 +3,7 @@
 from unittest import mock
 
 import pytest
+import sqlalchemy
 
 import openapi_sqlalchemy
 
@@ -62,3 +63,33 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
     model_factory(name="table 1")
 
     assert mocked_model_factory.call_count == 1
+
+
+@pytest.mark.integration
+def test_schema():
+    """
+    GIVEN valid specification with single property
+    WHEN return value of init_model_factory is called with the name of the schema
+    THEN a SQLAlchemy model with a single property is returned.
+    """
+    model_factory = openapi_sqlalchemy.init_model_factory(
+        base=mock.MagicMock,
+        spec={
+            "components": {
+                "schemas": {
+                    "Table1": {
+                        "properties": {"column_1": {"type": "integer"}},
+                        "x-tablename": "table_1",
+                        "type": "object",
+                    }
+                }
+            }
+        },
+    )
+
+    model = model_factory(name="Table1")
+
+    # Checking model
+    assert model.__tablename__ == "table_1"
+    assert hasattr(model, "column_1")
+    assert isinstance(model.column_1.type, sqlalchemy.Integer)
