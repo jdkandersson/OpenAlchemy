@@ -4,6 +4,7 @@ from unittest import mock
 
 import pytest
 import sqlalchemy
+from sqlalchemy import orm
 
 from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import model_factory
@@ -39,3 +40,15 @@ def mocked_model_factory(monkeypatch):
     mock_model_factory = mock.MagicMock()
     monkeypatch.setattr(model_factory, "model_factory", mock_model_factory)
     return mock_model_factory
+
+
+@pytest.fixture(scope="function", params=["sqlite:///:memory:"])
+def engine(request):
+    """Creates a sqlite engine."""
+    return sqlalchemy.create_engine(request.param)
+
+
+@pytest.fixture(scope="function")
+def sessionmaker(engine):  # pylint: disable=redefined-outer-name
+    """Creates a sqlite session."""
+    return orm.sessionmaker(bind=engine)

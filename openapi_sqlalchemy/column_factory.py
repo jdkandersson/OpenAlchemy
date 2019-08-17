@@ -92,24 +92,6 @@ def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) 
     return False
 
 
-def _handle_number(*, schema: SchemaType) -> sqlalchemy.Float:
-    """
-    Determine the type of number to use for the schema.
-
-    Args:
-        schema: The schema for the number column.
-
-    Returns:
-        Float.
-
-    """
-    if schema.get("format", "float") == "float":
-        return sqlalchemy.Float
-    raise NotImplementedError(
-        f"{schema.get('format')} format for number is not supported."
-    )
-
-
 def _handle_integer(
     *, schema: SchemaType
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
@@ -129,6 +111,24 @@ def _handle_integer(
         return sqlalchemy.BigInteger
     raise NotImplementedError(
         f"{schema.get('format')} format for integer is not supported."
+    )
+
+
+def _handle_number(*, schema: SchemaType) -> sqlalchemy.Float:
+    """
+    Determine the type of number to use for the schema.
+
+    Args:
+        schema: The schema for the number column.
+
+    Returns:
+        Float.
+
+    """
+    if schema.get("format", "float") == "float":
+        return sqlalchemy.Float
+    raise NotImplementedError(
+        f"{schema.get('format')} format for number is not supported."
     )
 
 

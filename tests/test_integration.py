@@ -1,9 +1,11 @@
 """Integration tests."""
 
+import typing
 from unittest import mock
 
 import pytest
 import sqlalchemy
+from sqlalchemy.ext import declarative
 
 import openapi_sqlalchemy
 
@@ -77,9 +79,9 @@ def test_schema():
         spec={
             "components": {
                 "schemas": {
-                    "Table1": {
-                        "properties": {"column_1": {"type": "integer"}},
-                        "x-tablename": "table_1",
+                    "Table": {
+                        "properties": {"column": {"type": "integer"}},
+                        "x-tablename": "table",
                         "type": "object",
                     }
                 }
@@ -87,9 +89,62 @@ def test_schema():
         },
     )
 
-    model = model_factory(name="Table1")
+    model = model_factory(name="Table")
 
     # Checking model
-    assert model.__tablename__ == "table_1"
-    assert hasattr(model, "column_1")
-    assert isinstance(model.column_1.type, sqlalchemy.Integer)
+    assert model.__tablename__ == "table"
+    assert hasattr(model, "column")
+    assert isinstance(model.column.type, sqlalchemy.Integer)
+
+
+@pytest.mark.parametrize(
+    "type_, format_, value",
+    [
+        ("integer", None, 1),
+        ("integer", "int64", 1),
+        ("number", None, 1.0),
+        ("string", None, "some string"),
+        ("boolean", None, True),
+    ],
+)
+@pytest.mark.integration
+def test_database_integer(
+    engine, sessionmaker, type_: str, format_: typing.Optional[str], value: typing.Any
+):
+    """
+    GIVEN specification with a schema with a given type column and a value for that
+        column
+    WHEN schema is created and an instance is added to the session
+    THEN the instance is returned when the session is queried for it.
+    """
+    # Defining specification
+    column_schema = {"type": type_, "x-primary-key": True}
+    if format_ is not None:
+        column_schema["format"] = format_
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {"column": column_schema},
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
