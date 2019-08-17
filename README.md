@@ -1,5 +1,16 @@
 # openapi-SQLAlchemy
-Translates an openapi schema to SQLAlchemy models. For example, given the following openapi specification:
+Translates an openapi schema to SQLAlchemy models.
+
+## Installation
+```bash
+python3 -m pip install openapi-SQLAlchemy
+# To be able to load yaml file
+python3 -m pip install PyYAML
+```
+
+## Example
+
+For example, given the following openapi specification:
 
 ```yaml
 # example-spec.yml
@@ -94,8 +105,8 @@ The following features are on the backlog:
 ## Contributing
 Fork and checkout the repository. To install:
 ```bash
-python -m venv venv
-python -m pip install -e .
+python3 -m venv venv
+python3 -m pip install -e .
 ```
 To run tests:
 ```bash

@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="openapi-SQLAlchemy",
-    version="0.1.0",
+    version="0.1.1",
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
     description="Maps an openapi schema to SQLAlchemy models.",
@@ -24,7 +24,7 @@ setuptools.setup(
         "Topic :: Database",
     ],
     python_requires=">=3.7",
-    install_requires=["SQLAlchemy>=1.3.6"],
+    install_requires=["SQLAlchemy>=1.3.6", "typing-extensions>=3.7.4"],
     extras_require={
         "dev": [
             "pytest",
@@ -37,7 +37,6 @@ setuptools.setup(
             "black",
             "pre-commit",
             "isort",
-            "typing-extensions",
         ]
     },
 )
