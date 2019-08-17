@@ -1,8 +1,4 @@
-# openapi-SQLAlchemy
-Translates an openapi schema to SQLAlchemy models. For example, given the following openapi specification:
 
-```yaml
-# example-spec.yml
 openapi: "3.0.0"
 
 info:
@@ -55,50 +51,3 @@ components:
         - id
         - name
         - division
-```
-
-The SQLALchemy models file then becomes:
-```python
-# models.py
-from yaml import load, Loader
-from sqlalchemy.ext.declarative import declarative_base
-from openapi_sqlalchemy import init_model_factory
-
-
-Base = declarative_base()
-with open("example-spec.yml") as spec_file:
-    SPEC = load(spec_file, Loader=Loader)
-MODEL_FACTORY = init_model_factory(base=Base, spec=SPEC)
-
-
-Employee = MODEL_FACTORY(name="Employee")
-
-```
-
-## Features
-### Supported
-The following features are supported:
-- `integer ` (32 and 64 bit),
-- `number` (float only),
-- `boolean` and
-- `string`.
-
-### Not Supported
-The following features are on the backlog:
-- `allOf` inheritance,
-- `$ref` references for columns,
-- `$ref` references for models,
-- foreign keys and
-- relationships.
-
-## Contributing
-Fork and checkout the repository. To install:
-```bash
-python -m venv venv
-python -m pip install -e .
-```
-To run tests:
-```bash
-tox
-```
-Make your changes and raise a pull request.
