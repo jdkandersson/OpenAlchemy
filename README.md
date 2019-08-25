@@ -93,7 +93,7 @@ The following features are supported:
 - `number` (float only),
 - `boolean`,
 - `string` and
-- `$ref` references for columns,
+- `$ref` references for columns.
 
 ### Not Supported
 The following features are on the backlog:
@@ -106,6 +106,7 @@ The following features are on the backlog:
 Fork and checkout the repository. To install:
 ```bash
 python3 -m venv venv
+source ./venv/bin/activate
 python3 -m pip install -e .[dev]
 ```
 To run tests:
