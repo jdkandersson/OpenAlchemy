@@ -91,13 +91,13 @@ Employee = MODEL_FACTORY(name="Employee")
 The following features are supported:
 - `integer ` (32 and 64 bit),
 - `number` (float only),
-- `boolean` and
-- `string`.
+- `boolean`,
+- `string` and
+- `$ref` references for columns,
 
 ### Not Supported
 The following features are on the backlog:
 - `allOf` inheritance,
-- `$ref` references for columns,
 - `$ref` references for models,
 - foreign keys and
 - relationships.
@@ -106,7 +106,7 @@ The following features are on the backlog:
 Fork and checkout the repository. To install:
 ```bash
 python3 -m venv venv
-python3 -m pip install -e .
+python3 -m pip install -e .[dev]
 ```
 To run tests:
 ```bash
