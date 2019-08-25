@@ -44,8 +44,10 @@ def model_factory(
         {
             "__tablename__": schema.get("x-tablename"),
             **{
+                # pylint: disable=unexpected-keyword-arg
                 key: column_factory.column_factory(
                     schema=value,
+                    schemas=schemas,
                     required=key in schema.get("required", [])
                     if "required" in schema
                     else None,

@@ -2,6 +2,7 @@
 # Disable protected access for testing.
 # pylint: disable=protected-access
 
+import copy
 from unittest import mock
 
 import pytest
@@ -162,20 +163,19 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required as None.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
     model_factory.model_factory(
-        name="SingleProperty",
-        base=mock.MagicMock,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"id": {"type": "integer"}},
-            }
-        },
+        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, required=None
+        schema={"type": "integer"}, schemas=schemas, required=None
     )
 
 
@@ -187,21 +187,20 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required reset.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+            "required": [],
+        }
+    }
     model_factory.model_factory(
-        name="SingleProperty",
-        base=mock.MagicMock,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"id": {"type": "integer"}},
-                "required": [],
-            }
-        },
+        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, required=False
+        schema={"type": "integer"}, schemas=schemas, required=False
     )
 
 
@@ -213,19 +212,18 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required reset.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+            "required": ["id"],
+        }
+    }
     model_factory.model_factory(
-        name="SingleProperty",
-        base=mock.MagicMock,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"id": {"type": "integer"}},
-                "required": ["id"],
-            }
-        },
+        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, required=True
+        schema={"type": "integer"}, schemas=schemas, required=True
     )
