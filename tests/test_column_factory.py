@@ -275,9 +275,12 @@ def test_ref_not_schemas():
     WHEN column_factory is called with the schema and schemas
     THEN KeyError is raised.
     """
-    with pytest.raises(column_factory.MissingArgumentError):
+    with pytest.raises(KeyError):
         schema = {"$ref": "#/components/not/schema"}
-        column_factory.column_factory(schema=schema)
+        schemas = {}
+        column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+            schema=schema, schemas=schemas
+        )
 
 
 @pytest.mark.column
@@ -285,14 +288,11 @@ def test_ref_without_schemas():
     """
     GIVEN schema that references another a schema
     WHEN column_factory is called with the schema
-    THEN KeyError is raised.
+    THEN MissingArgumentError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(column_factory.MissingArgumentError):
         schema = {"$ref": "#/components/schemas/RefSchema"}
-        schemas = {}
-        column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-            schema=schema, schemas=schemas
-        )
+        column_factory.column_factory(schema=schema)
 
 
 @pytest.mark.column

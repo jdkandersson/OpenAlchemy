@@ -37,7 +37,9 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         # Checking value of $ref
         match = _REF_PATTER.match(ref)
         if not match:
-            raise KeyError(f"{ref} not found in schemas.")
+            raise KeyError(
+                f"{ref} format incorrect, expected #/components/schemas/<SchemaName>"
+            )
 
         # Retrieving new schema
         schema_name = match.group(1)
