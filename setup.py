@@ -37,6 +37,7 @@ setuptools.setup(
             "black",
             "pre-commit",
             "isort",
+            "PyYAML",
         ]
     },
 )
