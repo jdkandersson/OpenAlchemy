@@ -1,5 +1,6 @@
 """Generate columns based on openapi schema property."""
 
+import re
 import typing
 
 import sqlalchemy
@@ -7,6 +8,50 @@ import sqlalchemy
 SchemaType = typing.Dict[str, typing.Any]
 
 
+class MissingArgumentError(Exception):
+    """Raised when a required argument was not passed."""
+
+
+_REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
+
+
+def resolve_ref(func: typing.Callable) -> typing.Callable:
+    """Resolve $ref schemas."""
+
+    def inner(
+        *,
+        schema: SchemaType,
+        schemas: typing.Optional[typing.Dict[str, SchemaType]] = None,
+        **kwargs,
+    ) -> sqlalchemy.Column:
+        """Replace function."""
+        # Checking for $ref
+        ref = schema.get("$ref")
+        if ref is None:
+            return func(schema=schema, **kwargs)
+
+        # Checking for schemas
+        if schemas is None:
+            raise MissingArgumentError("schemas is required for $ref schemas.")
+
+        # Checking value of $ref
+        match = _REF_PATTER.match(ref)
+        if not match:
+            raise KeyError(f"{ref} not found in schemas.")
+
+        # Retrieving new schema
+        schema_name = match.group(1)
+        ref_schema = schemas.get(schema_name)
+        if ref_schema is None:
+            raise KeyError(f"{schema_name} was not found in schemas.")
+
+        # Recursively resolving any more $ref
+        return inner(schema=ref_schema, schemas=schemas, **kwargs)
+
+    return inner
+
+
+@resolve_ref
 def column_factory(
     *, schema: SchemaType, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
