@@ -6,3 +6,4 @@ Technical Details
    :caption: Contents:
 
    type_mapping
+   null
