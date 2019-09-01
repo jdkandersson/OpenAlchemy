@@ -7,3 +7,4 @@ Technical Details
 
    type_mapping
    null
+   references

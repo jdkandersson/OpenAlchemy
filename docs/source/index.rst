@@ -13,16 +13,9 @@ specification are compliant with the openapi standard.
 
    technical_details/index
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
 
 Getting Started
-===============
+---------------
 
 If you have the following openapi specification:
 
@@ -34,7 +27,7 @@ following *models.py* file:
 .. literalinclude:: ../../examples/simple_models.py
 
 How Does It Work?
-=================
+-----------------
 
 Given a name for a schema, *openapi-SQLAlchemy* looks for that schema in the
 schemas section of the specification. The schema must have the *x-tablename*

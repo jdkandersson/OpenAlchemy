@@ -23,7 +23,7 @@ the following mapping:
 +--------------+----------------+-----------------+
 
 string
-======
+------
 
 *openapi* optionally allows the *maxLength* property for *strings*. This is
 translated to the *length* argument for the *SQLAlchemy* *String*, which is set

@@ -38,7 +38,7 @@ defined for the *property*, *false* and *true* mean that *nullable* is set to
 *false* or *true*, respectively.
 
 Examples
-========
+--------
 
 *required* *undefined*
 ^^^^^^^^^^^^^^^^^^^^^^
