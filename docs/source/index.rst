@@ -11,7 +11,7 @@ specification are compliant with the openapi standard.
    :maxdepth: 3
    :caption: Contents:
 
-   technical_details
+   technical_details/index
 
 Indices and tables
 ==================
