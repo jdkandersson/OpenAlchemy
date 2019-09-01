@@ -86,6 +86,9 @@ Employee = MODEL_FACTORY(name="Employee")
 
 ```
 
+## Documentation
+[Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
+
 ## Features
 ### Supported
 The following features are supported:
