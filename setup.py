@@ -38,6 +38,8 @@ setuptools.setup(
             "pre-commit",
             "isort",
             "PyYAML",
+            "Sphinx",
+            "doc8",
         ]
     },
 )

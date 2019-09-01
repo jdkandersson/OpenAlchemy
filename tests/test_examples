@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd example
+cd examples
 python simple_models.py
 python ref_models.py
 cd -
