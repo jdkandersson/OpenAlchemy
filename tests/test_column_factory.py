@@ -13,9 +13,9 @@ def test_type_missing():
     """
     GIVEN column schema that does not have the type key
     WHEN column_factory is called with the schema
-    THEN TypeError is raised.
+    THEN TypeMissingError is raised.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(column_factory.TypeMissingError):
         column_factory.column_factory(schema={})
 
 
@@ -24,9 +24,9 @@ def test_type_unsupported():
     """
     GIVEN column schema with type that has not been implemented
     WHEN column_factory is called with the schema
-    THEN NotImplementedError is raised.
+    THEN FeatureNotImplementedError is raised.
     """
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(column_factory.FeatureNotImplementedError):
         column_factory.column_factory(schema={"type": "unsupported"})
 
 
@@ -160,9 +160,9 @@ def test_number_double():
     """
     GIVEN schema with number type and double format
     WHEN column_factory is called with the schema
-    THEN NotImplementedError is raised.
+    THEN FeatureNotImplementedError is raised.
     """
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(column_factory.FeatureNotImplementedError):
         column_factory.column_factory(schema={"type": "number", "format": "double"})
 
 
@@ -171,9 +171,9 @@ def test_number_unsupported_format():
     """
     GIVEN schema with number type and format that has not been implemented
     WHEN column_factory is called with the schema
-    THEN NotImplementedError is raised.
+    THEN FeatureNotImplementedError is raised.
     """
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(column_factory.FeatureNotImplementedError):
         column_factory.column_factory(
             schema={"type": "number", "format": "unsupported"}
         )
@@ -224,9 +224,9 @@ def test_integer_unsupported_format():
     """
     GIVEN schema with integer type and unsupported format
     WHEN column_factory is called with the schema
-    THEN NotImplementedError is raised.
+    THEN FeatureNotImplementedError is raised.
     """
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(column_factory.FeatureNotImplementedError):
         column_factory.column_factory(
             schema={"type": "integer", "format": "unsupported"}
         )
@@ -269,13 +269,27 @@ def test_boolean():
 
 
 @pytest.mark.column
+def test_ref_schemas_none():
+    """
+    GIVEN schema with reference but no schemas
+    WHEN column_factory is called with the schema
+    THEN MissingArgumentError is raised.
+    """
+    with pytest.raises(column_factory.MissingArgumentError):
+        schema = {"$ref": "#/components/not/schema"}
+        column_factory.column_factory(
+            schema=schema
+        )
+
+
+@pytest.mark.column
 def test_ref_not_schemas():
     """
     GIVEN schema that references something that is not a schema
     WHEN column_factory is called with the schema and schemas
-    THEN KeyError is raised.
+    THEN SchemaNotFoundError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(column_factory.SchemaNotFoundError):
         schema = {"$ref": "#/components/not/schema"}
         schemas = {}
         column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
@@ -300,9 +314,9 @@ def test_ref_not_defined():
     """
     GIVEN schema that references another a schema that is not in schemas
     WHEN column_factory is called with the schema and schemas
-    THEN KeyError is raised.
+    THEN SchemaNotFoundError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(column_factory.SchemaNotFoundError):
         schema = {"$ref": "#/components/schemas/RefSchema"}
         schemas = {}
         column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
@@ -344,3 +358,24 @@ def test_nested_ref():
     )
 
     assert isinstance(column.type, sqlalchemy.Boolean)
+
+
+@pytest.mark.column
+def test_handle_object():
+    """
+    GIVEN
+    WHEN _handle_object is called
+    THEN the function should exist.
+    """
+    assert hasattr(column_factory, "_handle_object")
+
+
+@pytest.mark.column
+def test_handle_object_no_properties():
+    """
+    GIVEN object schema without properties key
+    WHEN _handle_object is called
+    THEN a MalformedObjectSchemaError should be raised.
+    """
+    with pytest.raises(column_factory.MalformedObjectSchemaError):
+        column_factory._handle_object(schema={})
