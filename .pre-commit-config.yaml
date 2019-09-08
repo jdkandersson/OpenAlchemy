@@ -27,3 +27,7 @@ repos:
     language: system
     types: [python]
     exclude: '^example'
+- repo: https://github.com/Lucas-C/pre-commit-hooks-markup.git
+  rev: master
+  hooks:
+  - id: rst-linter
