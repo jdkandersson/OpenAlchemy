@@ -6,5 +6,6 @@ Technical Details
    :caption: Contents:
 
    type_mapping
+   column_modifiers
    null
    references
