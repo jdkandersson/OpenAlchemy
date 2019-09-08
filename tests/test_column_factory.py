@@ -9,19 +9,44 @@ import sqlalchemy
 
 from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import exceptions
+from openapi_sqlalchemy import types
 
 
 @pytest.mark.prod_env
 @pytest.mark.column
-def test_resolve_ref_call(kwargs):
+def test_resolve_ref_resolve_ref_call(mocked_resolve_ref: mock.MagicMock):
     """
-    GIVEN mock function, schema, schemas, logical name and kwargs
-    WHEN mock function is decorated with resolve_ref and called with schema, schemas,
-        logical name and kwargs
-    THEN mock function is called with kwargs.
+    GIVEN mock function, mocked resolve_ref helper, spec, schemas and logical name
+    WHEN mock function is decorated with resolve_ref and called with spec, schemas,
+        and logical name
+    THEN mocked resolve_ref helper is called with the schema based on spec and logical
+        name and schemas.
     """
     mock_func = mock.MagicMock()
-    spec = {"key": "value"}
+    spec = mock.MagicMock()
+    schemas = mock.MagicMock()
+    logical_name = mock.MagicMock()
+
+    decorated = column_factory.resolve_ref(mock_func)
+    decorated(spec=spec, schemas=schemas, logical_name=logical_name)
+
+    schema = types.Schema(spec=spec, logical_name=logical_name)
+    mocked_resolve_ref.assert_called_once_with(schema=schema, schemas=schemas)
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_call(mocked_resolve_ref: mock.MagicMock, kwargs):
+    """
+    GIVEN mock function, mocked resolve_ref helper, spec, schemas, logical name and
+        kwargs
+    WHEN mock function is decorated with resolve_ref and called with spec, schemas,
+        logical name and kwargs
+    THEN mock function is called with logical name and spec from resolve_ref helper
+        return value.
+    """
+    mock_func = mock.MagicMock()
+    spec = mock.MagicMock()
     schemas = mock.MagicMock()
     logical_name = mock.MagicMock()
 
@@ -29,21 +54,22 @@ def test_resolve_ref_call(kwargs):
     decorated(spec=spec, schemas=schemas, logical_name=logical_name, **kwargs)
 
     mock_func.assert_called_once_with(
-        spec={"key": "value"}, logical_name=logical_name, **kwargs
+        spec=mocked_resolve_ref.return_value.spec, logical_name=logical_name, **kwargs
     )
 
 
 @pytest.mark.prod_env
 @pytest.mark.column
-def test_resolve_ref_return():
+def test_resolve_ref_return(mocked_resolve_ref: mock.MagicMock):
     """
-    GIVEN mock function, schema, schemas and logical name
+    GIVEN mock function, spec, schemas and logical name
     WHEN mock function is decorated with resolve_ref and called with schema, schemas
         and logical name
     THEN mock function return value is returned.
     """
+    # pylint: disable=unused-argument
     mock_func = mock.MagicMock()
-    spec = {"key": "value"}
+    spec = mock.MagicMock()
     schemas = mock.MagicMock()
     logical_name = mock.MagicMock()
 

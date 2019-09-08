@@ -8,6 +8,7 @@ import sqlalchemy
 from sqlalchemy import orm
 
 from openapi_sqlalchemy import column_factory
+from openapi_sqlalchemy import helpers
 from openapi_sqlalchemy import model_factory
 
 
@@ -42,6 +43,14 @@ def mocked_model_factory(monkeypatch):
     mock_model_factory = mock.MagicMock()
     monkeypatch.setattr(model_factory, "model_factory", mock_model_factory)
     return mock_model_factory
+
+
+@pytest.fixture
+def mocked_resolve_ref(monkeypatch):
+    """Monkeypatches helpers.resolve_ref."""
+    mock_resolve_ref = mock.MagicMock()
+    monkeypatch.setattr(helpers, "resolve_ref", mock_resolve_ref)
+    return mock_resolve_ref
 
 
 @pytest.fixture(scope="function", params=["sqlite:///:memory:"])
