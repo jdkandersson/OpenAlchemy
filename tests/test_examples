@@ -3,4 +3,5 @@
 cd examples
 python simple_models.py
 python ref_models.py
+python relationship_models.py
 cd -
