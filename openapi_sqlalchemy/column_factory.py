@@ -16,8 +16,8 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
     def inner(
         *,
-        schema: types.Schema,
-        schemas: typing.Optional[typing.Dict[str, types.Schema]] = None,
+        schema: types.SchemaSpec,
+        schemas: typing.Optional[typing.Dict[str, types.SchemaSpec]] = None,
         **kwargs,
     ) -> sqlalchemy.Column:
         """Replace function."""
@@ -55,7 +55,7 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
 @resolve_ref
 def column_factory(
-    *, schema: types.Schema, required: typing.Optional[bool] = None
+    *, schema: types.SchemaSpec, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
@@ -103,7 +103,7 @@ def column_factory(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _handle_object(*, schema: types.Schema):
+def _handle_object(*, schema: types.SchemaSpec):
     """
     Determine the relationship and foreign key combination for an object reference.
 
@@ -128,7 +128,7 @@ def _handle_object(*, schema: types.Schema):
 
 
 def _calculate_nullable(
-    *, schema: types.Schema, required: typing.Optional[bool]
+    *, schema: types.SchemaSpec, required: typing.Optional[bool]
 ) -> bool:
     """
     Calculate the value of the nullable field.
@@ -168,7 +168,7 @@ def _calculate_nullable(
 
 
 def _handle_integer(
-    *, schema: types.Schema
+    *, schema: types.SchemaSpec
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
     Determine the type of integer to use for the schema.
@@ -189,7 +189,7 @@ def _handle_integer(
     )
 
 
-def _handle_number(*, schema: types.Schema) -> sqlalchemy.Float:
+def _handle_number(*, schema: types.SchemaSpec) -> sqlalchemy.Float:
     """
     Determine the type of number to use for the schema.
 
@@ -207,7 +207,7 @@ def _handle_number(*, schema: types.Schema) -> sqlalchemy.Float:
     )
 
 
-def _handle_string(*, schema: types.Schema) -> sqlalchemy.String:
+def _handle_string(*, schema: types.SchemaSpec) -> sqlalchemy.String:
     """
     Determine the setup of the string to use for the schema.
 

@@ -11,7 +11,7 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
     """Resolve $ref schemas to the underlying schema."""
     # Checking whether schema is a reference schema
-    ref = schema.get("$ref")
+    ref = schema.spec.get("$ref")
     if ref is None:
         return schema
 
@@ -28,5 +28,4 @@ def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
     if ref_schema is None:
         raise exceptions.SchemaNotFoundError(f"{schema_name} was not found in schemas.")
 
-    print(schemas)
-    return schema
+    return types.Schema(schema_name, ref_schema)
