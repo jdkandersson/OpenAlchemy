@@ -42,9 +42,13 @@ For example:
 
 .. note::
     SQLAlchemy turns *autoincrement* on by default on integer primary key
-    columns. You can read more here: _SQLAlchemyAutoincrement. If you wish to
+    columns. If you wish to
     disable autoincrement behavior, you must set *x-autoincrement* to *false*.
-.. _SQLAlchemyAutoincrement: https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__
+
+.. seealso::
+
+   `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__>`_
+      Documentation for SQLAlchemy autoincrement.
 
 Index
 -----
@@ -113,3 +117,7 @@ property to the <table name>.<column>. For example:
         division_id:
           type: integer
           x-foreign-key: division.id
+
+.. seealso::
+    :ref:`relationship` shows how to define object references that result in
+    relationships between tables.

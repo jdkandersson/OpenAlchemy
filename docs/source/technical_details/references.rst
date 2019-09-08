@@ -1,3 +1,5 @@
+.. _references:
+
 References
 ==========
 
@@ -8,3 +10,7 @@ schemas section. This means that a single definition for a *property* of an
 use of references:
 
 .. literalinclude:: ../../../examples/ref-example-spec.yml
+
+.. seealso::
+    :ref:`relationship` shows how to define object references that result in
+    relationships between tables.

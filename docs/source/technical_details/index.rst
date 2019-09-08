@@ -9,3 +9,4 @@ Technical Details
    column_modifiers
    null
    references
+   relationships
