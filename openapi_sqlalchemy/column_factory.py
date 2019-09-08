@@ -78,12 +78,15 @@ def column_factory(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _handle_object(*, spec: types.SchemaSpec):
+def _handle_object(*, spec: types.SchemaSpec) -> types.SchemaSpec:
     """
-    Determine the relationship and foreign key combination for an object reference.
+    Determine the foreign key schema for an object reference.
 
     Args:
         spec: The schema of the object reference.
+
+    Returns:
+        The foreign key schema.
 
     """
     tablename = spec.get("x-tablename")
@@ -96,10 +99,18 @@ def _handle_object(*, spec: types.SchemaSpec):
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have any properties."
         )
-    if "id" not in properties:
+    id_spec = properties.get("id")
+    if id_spec is None:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have id property."
         )
+    id_type = id_spec.get("type")
+    if id_type is None:
+        raise exceptions.MalformedObjectSchemaError(
+            "Referenced object id property does not have a type."
+        )
+
+    return {"type": id_type, "x-foreign-key": f"{tablename}.id"}
 
 
 def _calculate_nullable(

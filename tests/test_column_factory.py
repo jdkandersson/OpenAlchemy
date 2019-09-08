@@ -271,6 +271,17 @@ def test_handle_object():
 
 
 @pytest.mark.column
+def test_handle_object_no_tablename():
+    """
+    GIVEN object schema without x-tablename key
+    WHEN _handle_object is called with the schema
+    THEN a MalformedObjectSchemaError should be raised.
+    """
+    with pytest.raises(exceptions.MalformedObjectSchemaError):
+        column_factory._handle_object(spec={"properties": {"id": {}}})
+
+
+@pytest.mark.column
 def test_handle_object_no_properties():
     """
     GIVEN object schema without properties key
@@ -293,14 +304,30 @@ def test_handle_object_id_missing():
 
 
 @pytest.mark.column
-def test_handle_object_no_tablename():
+def test_handle_object_id_no_type():
     """
-    GIVEN object schema without x-tablename key
+    GIVEN object schema with id but no type for id
     WHEN _handle_object is called with the schema
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(spec={"properties": {"id": {}}})
+        column_factory._handle_object(
+            spec={"x-tablename": "table 1", "properties": {"id": {}}}
+        )
+
+
+@pytest.mark.column
+def test_handle_object_return():
+    """
+    GIVEN object schema with x-tablename and id property with a type
+    WHEN _handle_object is called with the schema
+    THEN a schema with the type of the id property and x-foreign-key property.
+    """
+    spec = {"x-tablename": "table 1", "properties": {"id": {"type": "idType"}}}
+
+    return_value = column_factory._handle_object(spec=spec)
+
+    assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 
 
 @pytest.mark.prod_env
