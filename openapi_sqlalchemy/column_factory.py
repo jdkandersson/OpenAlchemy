@@ -125,8 +125,13 @@ def _handle_object(*, schema: SchemaType):
         schema: The schema of the object reference.
 
     """
-    if "properties" not in schema:
-        raise MalformedObjectSchemaError("Referenced object does not have any properties.")
+    properties = schema.get("properties")
+    if properties is None:
+        raise MalformedObjectSchemaError(
+            "Referenced object does not have any properties."
+        )
+    if "id" not in properties:
+        raise MalformedObjectSchemaError("Referenced object does not have id property.")
 
 
 def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) -> bool:

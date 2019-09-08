@@ -1,4 +1,5 @@
 """Tests for the column factory."""
+# pylint: disable=protected-access
 
 import typing
 
@@ -277,9 +278,7 @@ def test_ref_schemas_none():
     """
     with pytest.raises(column_factory.MissingArgumentError):
         schema = {"$ref": "#/components/not/schema"}
-        column_factory.column_factory(
-            schema=schema
-        )
+        column_factory.column_factory(schema=schema)
 
 
 @pytest.mark.column
@@ -374,8 +373,19 @@ def test_handle_object():
 def test_handle_object_no_properties():
     """
     GIVEN object schema without properties key
-    WHEN _handle_object is called
+    WHEN _handle_object is called with the schema
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(column_factory.MalformedObjectSchemaError):
         column_factory._handle_object(schema={})
+
+
+@pytest.mark.column
+def test_handle_object_id_missing():
+    """
+    GIVEN object schema without id in properties
+    WHEN _handle_object is called with the schema
+    THEN a MalformedObjectSchemaError should be raised.
+    """
+    with pytest.raises(column_factory.MalformedObjectSchemaError):
+        column_factory._handle_object(schema={"properties": {}})
