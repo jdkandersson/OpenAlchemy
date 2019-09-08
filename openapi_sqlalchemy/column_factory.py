@@ -5,7 +5,7 @@ import typing
 
 import sqlalchemy
 
-SchemaType = typing.Dict[str, typing.Any]
+from .types import SchemaType
 
 
 class MissingArgumentError(ValueError):
