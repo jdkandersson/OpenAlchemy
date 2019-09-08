@@ -4,6 +4,7 @@ import itertools
 import typing
 
 from . import column_factory
+from . import exceptions
 
 
 def model_factory(
@@ -27,16 +28,20 @@ def model_factory(
     # Input validation
     # Checking that name is in schemas
     if name not in schemas:
-        raise KeyError(f"{name} not found in schemas")
+        raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
     schema: typing.Dict[str, typing.Any] = schemas.get(name, {})
     # Checking for tablename key
     if "x-tablename" not in schema:
-        raise TypeError('"x-tablename" is a required schema property.')
+        raise exceptions.MalformedSchemaError(
+            '"x-tablename" is a required schema property.'
+        )
     # Checking for object type
     if schema.get("type") != "object":
-        raise NotImplementedError(f"{schema.get('type')} is not supported.")
+        raise exceptions.FeatureNotImplementedError(
+            f"{schema.get('type')} is not supported."
+        )
     if not schema.get("properties"):
-        raise TypeError("At least 1 property is required.")
+        raise exceptions.MalformedSchemaError("At least 1 property is required.")
 
     # Assembling model
     return type(

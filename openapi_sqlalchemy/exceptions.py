@@ -17,5 +17,5 @@ class FeatureNotImplementedError(NotImplementedError):
     """Raised when a requested feature has not been implemented yet."""
 
 
-class MalformedObjectSchemaError(ValueError):
+class MalformedSchemaError(ValueError):
     """Raised when an object schema is missing required properties."""

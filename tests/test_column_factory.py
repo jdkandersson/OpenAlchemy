@@ -478,9 +478,9 @@ def test_handle_object_no_tablename():
     """
     GIVEN object schema without x-tablename key
     WHEN _handle_object is called with the schema
-    THEN a MalformedObjectSchemaError should be raised.
+    THEN a MalformedSchemaError should be raised.
     """
-    with pytest.raises(exceptions.MalformedObjectSchemaError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         column_factory._handle_object(spec={"properties": {"id": {}}}, schemas={})
 
 
@@ -489,9 +489,9 @@ def test_handle_object_no_properties():
     """
     GIVEN object schema without properties key
     WHEN _handle_object is called with the schema
-    THEN a MalformedObjectSchemaError should be raised.
+    THEN a MalformedSchemaError should be raised.
     """
-    with pytest.raises(exceptions.MalformedObjectSchemaError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         column_factory._handle_object(spec={"x-tablename": "table 1"}, schemas={})
 
 
@@ -500,9 +500,9 @@ def test_handle_object_id_missing():
     """
     GIVEN object schema without id in properties
     WHEN _handle_object is called with the schema
-    THEN a MalformedObjectSchemaError should be raised.
+    THEN a MalformedSchemaError should be raised.
     """
-    with pytest.raises(exceptions.MalformedObjectSchemaError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         column_factory._handle_object(
             spec={"x-tablename": "table 1", "properties": {}}, schemas={}
         )
@@ -513,9 +513,9 @@ def test_handle_object_id_no_type():
     """
     GIVEN object schema with id but no type for id
     WHEN _handle_object is called with the schema
-    THEN a MalformedObjectSchemaError should be raised.
+    THEN a MalformedSchemaError should be raised.
     """
-    with pytest.raises(exceptions.MalformedObjectSchemaError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         column_factory._handle_object(
             spec={"x-tablename": "table 1", "properties": {"id": {}}}, schemas={}
         )

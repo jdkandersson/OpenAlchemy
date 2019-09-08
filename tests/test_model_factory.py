@@ -7,6 +7,7 @@ from unittest import mock
 
 import pytest
 
+from openapi_sqlalchemy import exceptions
 from openapi_sqlalchemy import model_factory
 
 
@@ -16,9 +17,9 @@ def test_missing_schema():
     """
     GIVEN schemas and name that is not in schemas
     WHEN model_factory is called
-    THEN KeyError is raised.
+    THEN SchemaNotFoundError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(exceptions.SchemaNotFoundError):
         model_factory.model_factory(name="Missing", base=None, schemas={})
 
 
@@ -28,9 +29,9 @@ def test_missing_tablename():
     """
     GIVEN schemas and name that refers to a schema without the x-tablename key
     WHEN model_factory is called
-    THEN TypeError is raised.
+    THEN MalformedSchemaError is raised.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
             name="MissingTablename", base=None, schemas={"MissingTablename": {}}
         )
@@ -42,9 +43,9 @@ def test_not_object():
     """
     GIVEN schemas with schema that is not an object
     WHEN model_factory is called with the name of the schema
-    THEN NotImplementedError is raised.
+    THEN FeatureNotImplementedError is raised.
     """
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(exceptions.FeatureNotImplementedError):
         model_factory.model_factory(
             name="NotObject",
             base=None,
@@ -58,9 +59,9 @@ def test_properties_missing():
     """
     GIVEN schemas with schema that does not have the properties key
     WHEN model_factory is called with the name of the schema
-    THEN TypeError is raised.
+    THEN MalformedSchemaError is raised.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
             name="MissingProperty",
             base=None,
@@ -74,9 +75,9 @@ def test_properties_empty():
     """
     GIVEN schemas with schema that has empty properties key
     WHEN model_factory is called with the name of the schema
-    THEN TypeError is raised.
+    THEN MalformedSchemaError is raised.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
             name="EmptyProperty",
             base=None,

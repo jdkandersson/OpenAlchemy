@@ -112,18 +112,18 @@ def _handle_object(
     """
     tablename = spec.get("x-tablename")
     if not tablename:
-        raise exceptions.MalformedObjectSchemaError(
+        raise exceptions.MalformedSchemaError(
             "Referenced object is missing x-tablename property."
         )
     properties = spec.get("properties")
     if properties is None:
-        raise exceptions.MalformedObjectSchemaError(
+        raise exceptions.MalformedSchemaError(
             "Referenced object does not have any properties."
         )
     logical_name = "id"
     id_spec = properties.get(logical_name)
     if id_spec is None:
-        raise exceptions.MalformedObjectSchemaError(
+        raise exceptions.MalformedSchemaError(
             "Referenced object does not have id property."
         )
     # Resolving references
@@ -131,7 +131,7 @@ def _handle_object(
     ref_id_spec = helpers.resolve_ref(schema=id_schema, schemas=schemas).spec
     id_type = ref_id_spec.get("type")
     if id_type is None:
-        raise exceptions.MalformedObjectSchemaError(
+        raise exceptions.MalformedSchemaError(
             "Referenced object id property does not have a type."
         )
 
