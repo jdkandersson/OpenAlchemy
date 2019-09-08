@@ -22,12 +22,13 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         """Replace function."""
         schema = types.Schema(logical_name=logical_name, spec=spec)
         ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
-        return func(spec=ref_schema.spec, **kwargs)
+        return func(logical_name=logical_name, spec=ref_schema.spec, **kwargs)
 
     return inner
 
 
 @resolve_ref
+@helpers.add_logical_name
 def column_factory(
     *, spec: types.SchemaSpec, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:

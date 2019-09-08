@@ -43,9 +43,9 @@ def model_factory(
         (base,),
         {
             "__tablename__": schema.get("x-tablename"),
-            **{
+            **dict(
                 # pylint: disable=unexpected-keyword-arg
-                key: column_factory.column_factory(
+                column_factory.column_factory(
                     spec=value,
                     schemas=schemas,
                     logical_name=key,
@@ -54,6 +54,6 @@ def model_factory(
                     else None,
                 )
                 for key, value in schema.get("properties", []).items()
-            },
+            ),
         },
     )

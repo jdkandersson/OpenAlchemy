@@ -47,6 +47,7 @@ def test_add_logical_name_return():
     mock_func = mock.MagicMock()
 
     decorated = helpers.add_logical_name(mock_func)
-    return_value = decorated(logical_name="name 1")
+    (key, column) = decorated(logical_name="name 1")
 
-    assert return_value == {"name 1": mock_func.return_value}
+    assert key == "name 1"
+    assert column == mock_func.return_value

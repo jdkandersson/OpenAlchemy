@@ -260,23 +260,6 @@ def test_boolean():
     assert isinstance(column.type, sqlalchemy.Boolean)
 
 
-@pytest.mark.prod_env
-@pytest.mark.column
-def test_single_ref():
-    """
-    GIVEN schema that references another schema and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN SQLAlchemy boolean column is returned.
-    """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {"RefSchema": {"type": "boolean"}}
-    column = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-        spec=spec, schemas=schemas, logical_name="column_1"
-    )
-
-    assert isinstance(column.type, sqlalchemy.Boolean)
-
-
 @pytest.mark.column
 def test_handle_object():
     """
@@ -318,3 +301,24 @@ def test_handle_object_no_tablename():
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
         column_factory._handle_object(spec={"properties": {"id": {}}})
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration():
+    """
+    GIVEN schema that references another schema and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {"RefSchema": {"type": "boolean"}}
+    (
+        logical_name,
+        column,
+    ) = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert logical_name == "column_1"
+    assert isinstance(column.type, sqlalchemy.Boolean)
