@@ -117,3 +117,11 @@ To run tests:
 tox
 ```
 Make your changes and raise a pull request.
+
+## Compiling Docs
+```bash
+python3 -m venv venv
+cd docs
+make html
+```
+This creates the `index.html` file in `docs/build/html/index.html`.
