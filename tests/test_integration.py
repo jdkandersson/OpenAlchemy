@@ -114,7 +114,7 @@ def test_schema():
     ],
 )
 @pytest.mark.integration
-def test_database_integer(
+def test_database_types(
     engine, sessionmaker, type_: str, format_: typing.Optional[str], value: typing.Any
 ):
     """
@@ -154,3 +154,97 @@ def test_database_integer(
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == value
+
+
+@pytest.mark.prod_env
+@pytest.mark.parametrize("index", ["x-primary-key", "x-index", "x-unique"])
+@pytest.mark.integration
+def test_database_indexes(engine, index: str):
+    """
+    GIVEN specification with a schema with an integer and given index
+    WHEN schema is created
+    THEN no exceptions get raised.
+    """
+    # Defining specification
+    column_schema = {"type": "integer", index: True}
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "column": column_schema,
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+
+
+@pytest.mark.prod_env
+@pytest.mark.integration
+def test_database_relationship(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with an object relationship
+    WHEN schema is created, values inserted in both columns and queried
+    THEN the data is returned as it was inserted.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance = ref_model(id=11, name="ref table name 1")
+    model_instance = model(id=12, name="table name 1", ref_table=ref_model_instance)
+    session = sessionmaker()
+    session.add(ref_model_instance)
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.id == 12
+    assert queried_model.name == "table name 1"
+    assert queried_model.ref_table_id == 11
+    assert queried_model.ref_table.id == 11
+    assert queried_model.ref_table.name == "ref table name 1"
+    queried_ref_model = session.query(ref_model).first()
+    assert queried_ref_model.id == 11
+    assert queried_ref_model.name == "ref table name 1"
