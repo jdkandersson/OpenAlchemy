@@ -22,5 +22,11 @@ def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
             f"{ref} format incorrect, expected #/components/schemas/<SchemaName>"
         )
 
+    # Retrieving new schema
+    schema_name = match.group(1)
+    ref_schema = schemas.get(schema_name)
+    if ref_schema is None:
+        raise exceptions.SchemaNotFoundError(f"{schema_name} was not found in schemas.")
+
     print(schemas)
     return schema

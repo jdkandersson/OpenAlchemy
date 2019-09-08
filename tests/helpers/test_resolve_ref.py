@@ -38,3 +38,16 @@ def test_resolve_ref_not_schema():
 
     with pytest.raises(exceptions.SchemaNotFoundError):
         helpers.resolve_ref(schema=schema, schemas=schemas)
+
+
+def test_resolve_ref_not_defined():
+    """
+    GIVEN schema that references a schema that doesn't exist
+    WHEN resolve_ref is called with the schema
+    THEN SchemaNotFoundError is raised.
+    """
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {}
+
+    with pytest.raises(exceptions.SchemaNotFoundError):
+        helpers.resolve_ref(schema=schema, schemas=schemas)
