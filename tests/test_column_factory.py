@@ -246,6 +246,21 @@ def test_primary_key(primary_key: bool):
     assert column.primary_key == primary_key
 
 
+@pytest.mark.parametrize("autoincrement", [True, False], ids=["set", "reset"])
+@pytest.mark.column
+def test_autoincrement(autoincrement: bool):
+    """
+    GIVEN valid schema and the value of the autoincrement property
+    WHEN column_factory is called with the schema
+    THEN the returned SQLAlchemy column autoincrement property is set to the input.
+    """
+    column = column_factory.column_factory(
+        spec={"type": "number", "x-autoincrement": autoincrement}
+    )
+
+    assert column.autoincrement == autoincrement
+
+
 @pytest.mark.parametrize("index", [True, None], ids=["set", "reset"])
 @pytest.mark.column
 def test_index(index: bool):

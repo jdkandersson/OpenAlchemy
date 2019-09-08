@@ -71,6 +71,12 @@ def column_factory(
     kwargs["nullable"] = _calculate_nullable(spec=spec, required=required)
     if spec.get("x-primary-key"):
         kwargs["primary_key"] = True
+    autoincrement = spec.get("x-autoincrement")
+    if autoincrement is not None:
+        if autoincrement:
+            kwargs["autoincrement"] = True
+        else:
+            kwargs["autoincrement"] = False
     if spec.get("x-index"):
         kwargs["index"] = True
     if spec.get("x-unique"):
