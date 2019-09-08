@@ -95,15 +95,15 @@ The following features are supported:
 - `integer ` (32 and 64 bit),
 - `number` (float only),
 - `boolean`,
-- `string` and
-- `$ref` references for columns.
+- `string`,
+- `$ref` references for columns,
+- foreign keys and
+- relationships.
 
 ### Not Supported
 The following features are on the backlog:
-- `allOf` inheritance,
-- `$ref` references for models,
-- foreign keys and
-- relationships.
+- `allOf` inheritance and
+- `$ref` references for models.
 
 ## Contributing
 Fork and checkout the repository. To install:
