@@ -46,7 +46,7 @@ def model_factory(
             **{
                 # pylint: disable=unexpected-keyword-arg
                 key: column_factory.column_factory(
-                    schema=value,
+                    spec=value,
                     schemas=schemas,
                     logical_name=key,
                     required=key in schema.get("required", [])

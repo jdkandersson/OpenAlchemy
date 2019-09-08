@@ -17,33 +17,32 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
     """Resolve $ref schemas."""
 
     def inner(
-        *, schema: types.SchemaSpec, schemas: types.Schemas, logical_name: str, **kwargs
+        *, spec: types.SchemaSpec, schemas: types.Schemas, logical_name: str, **kwargs
     ) -> sqlalchemy.Column:
         """Replace function."""
-        ref_schema = helpers.resolve_ref(
-            schema=types.Schema(logical_name=logical_name, spec=schema), schemas=schemas
-        )
-        return func(schema=ref_schema.spec, **kwargs)
+        schema = types.Schema(logical_name=logical_name, spec=spec)
+        ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+        return func(spec=ref_schema.spec, **kwargs)
 
     return inner
 
 
 @resolve_ref
 def column_factory(
-    *, schema: types.SchemaSpec, required: typing.Optional[bool] = None
+    *, spec: types.SchemaSpec, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
 
     Args:
-        schema: The schema for the column.
+        spec: The schema for the column.
         required: Whether the object property is required.
 
     Returns:
         The SQLAlchemy column based on the schema.
 
     """
-    if "type" not in schema:
+    if "type" not in spec:
         raise exceptions.TypeMissingError("Every property requires a type.")
 
     # Keep track of column arguments
@@ -52,46 +51,46 @@ def column_factory(
     kwargs: typing.Dict[str, typing.Any] = {}
 
     # Calculate column modifiers
-    kwargs["nullable"] = _calculate_nullable(schema=schema, required=required)
-    if schema.get("x-primary-key"):
+    kwargs["nullable"] = _calculate_nullable(spec=spec, required=required)
+    if spec.get("x-primary-key"):
         kwargs["primary_key"] = True
-    if schema.get("x-index"):
+    if spec.get("x-index"):
         kwargs["index"] = True
-    if schema.get("x-unique"):
+    if spec.get("x-unique"):
         kwargs["unique"] = True
 
     # Calculating type of column
-    if schema.get("type") == "integer":
-        type_ = _handle_integer(schema=schema)
-    elif schema.get("type") == "number":
-        type_ = _handle_number(schema=schema)
-    elif schema.get("type") == "string":
-        type_ = _handle_string(schema=schema)
-    elif schema.get("type") == "boolean":
+    if spec.get("type") == "integer":
+        type_ = _handle_integer(spec=spec)
+    elif spec.get("type") == "number":
+        type_ = _handle_number(spec=spec)
+    elif spec.get("type") == "string":
+        type_ = _handle_string(spec=spec)
+    elif spec.get("type") == "boolean":
         type_ = sqlalchemy.Boolean
 
     if type_ is None:
         raise exceptions.FeatureNotImplementedError(
-            f"{schema['type']} has not been implemented"
+            f"{spec['type']} has not been implemented"
         )
 
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _handle_object(*, schema: types.SchemaSpec):
+def _handle_object(*, spec: types.SchemaSpec):
     """
     Determine the relationship and foreign key combination for an object reference.
 
     Args:
-        schema: The schema of the object reference.
+        spec: The schema of the object reference.
 
     """
-    tablename = schema.get("x-tablename")
+    tablename = spec.get("x-tablename")
     if not tablename:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object is missing x-tablename property."
         )
-    properties = schema.get("properties")
+    properties = spec.get("properties")
     if properties is None:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have any properties."
@@ -103,7 +102,7 @@ def _handle_object(*, schema: types.SchemaSpec):
 
 
 def _calculate_nullable(
-    *, schema: types.SchemaSpec, required: typing.Optional[bool]
+    *, spec: types.SchemaSpec, required: typing.Optional[bool]
 ) -> bool:
     """
     Calculate the value of the nullable field.
@@ -125,14 +124,14 @@ def _calculate_nullable(
     is returned unless required is True.
 
     Args:
-        schema: The schema for the column.
+        spec: The schema for the column.
         required: Whether the property is required.
 
     Returns:
         The nullable value for the column.
 
     """
-    nullable = schema.get("nullable")
+    nullable = spec.get("nullable")
     if nullable is None:
         if required:
             return False
@@ -143,54 +142,54 @@ def _calculate_nullable(
 
 
 def _handle_integer(
-    *, schema: types.SchemaSpec
+    *, spec: types.SchemaSpec
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
     Determine the type of integer to use for the schema.
 
     Args:
-        schema: The schema for the integer column.
+        spec: The schema for the integer column.
 
     Returns:
         Integer or BigInteger depending on the format.
 
     """
-    if schema.get("format", "int32") == "int32":
+    if spec.get("format", "int32") == "int32":
         return sqlalchemy.Integer
-    if schema.get("format") == "int64":
+    if spec.get("format") == "int64":
         return sqlalchemy.BigInteger
     raise exceptions.FeatureNotImplementedError(
-        f"{schema.get('format')} format for integer is not supported."
+        f"{spec.get('format')} format for integer is not supported."
     )
 
 
-def _handle_number(*, schema: types.SchemaSpec) -> sqlalchemy.Float:
+def _handle_number(*, spec: types.SchemaSpec) -> sqlalchemy.Float:
     """
     Determine the type of number to use for the schema.
 
     Args:
-        schema: The schema for the number column.
+        spec: The schema for the number column.
 
     Returns:
         Float.
 
     """
-    if schema.get("format", "float") == "float":
+    if spec.get("format", "float") == "float":
         return sqlalchemy.Float
     raise exceptions.FeatureNotImplementedError(
-        f"{schema.get('format')} format for number is not supported."
+        f"{spec.get('format')} format for number is not supported."
     )
 
 
-def _handle_string(*, schema: types.SchemaSpec) -> sqlalchemy.String:
+def _handle_string(*, spec: types.SchemaSpec) -> sqlalchemy.String:
     """
     Determine the setup of the string to use for the schema.
 
     Args:
-        schema: The schema for the string column.
+        spec: The schema for the string column.
 
     Returns:
         String.
 
     """
-    return sqlalchemy.String(length=schema.get("maxLength"))
+    return sqlalchemy.String(length=spec.get("maxLength"))

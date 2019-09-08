@@ -18,7 +18,7 @@ def test_type_missing():
     THEN TypeMissingError is raised.
     """
     with pytest.raises(exceptions.TypeMissingError):
-        column_factory.column_factory(schema={})
+        column_factory.column_factory(spec={})
 
 
 @pytest.mark.column
@@ -29,7 +29,7 @@ def test_type_unsupported():
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
-        column_factory.column_factory(schema={"type": "unsupported"})
+        column_factory.column_factory(spec={"type": "unsupported"})
 
 
 @pytest.mark.column
@@ -39,7 +39,7 @@ def test_column_return():
     WHEN column_factory is called with the schema
     THEN an instance of SQLAlchemy Column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "number"})
+    column = column_factory.column_factory(spec={"type": "number"})
 
     assert isinstance(column, sqlalchemy.Column)
 
@@ -53,7 +53,7 @@ def test_primary_key(primary_key: bool):
     THEN the returned SQLAlchemy column primary_key property is set to the input.
     """
     column = column_factory.column_factory(
-        schema={"type": "number", "x-primary-key": primary_key}
+        spec={"type": "number", "x-primary-key": primary_key}
     )
 
     assert column.primary_key == primary_key
@@ -67,7 +67,7 @@ def test_index(index: bool):
     WHEN column_factory is called with the schema
     THEN the returned SQLAlchemy column index property is set to the input.
     """
-    column = column_factory.column_factory(schema={"type": "number", "x-index": index})
+    column = column_factory.column_factory(spec={"type": "number", "x-index": index})
 
     assert column.index == index
 
@@ -80,9 +80,7 @@ def test_unique(unique: bool):
     WHEN column_factory is called with the schema
     THEN the returned SQLAlchemy column unique property is set to the input.
     """
-    column = column_factory.column_factory(
-        schema={"type": "number", "x-unique": unique}
-    )
+    column = column_factory.column_factory(spec={"type": "number", "x-unique": unique})
 
     assert column.unique == unique
 
@@ -128,7 +126,7 @@ def test_nullable(
     schema: typing.Dict[str, typing.Union[str, bool]] = {"type": "number"}
     if nullable is not None:
         schema["nullable"] = nullable
-    column = column_factory.column_factory(schema=schema, **kwargs)
+    column = column_factory.column_factory(spec=schema, **kwargs)
 
     assert column.nullable == expected
 
@@ -140,7 +138,7 @@ def test_number():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy Float column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "number"})
+    column = column_factory.column_factory(spec={"type": "number"})
 
     assert isinstance(column.type, sqlalchemy.Float)
 
@@ -152,7 +150,7 @@ def test_number_float():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy Float column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "number", "format": "float"})
+    column = column_factory.column_factory(spec={"type": "number", "format": "float"})
 
     assert isinstance(column.type, sqlalchemy.Float)
 
@@ -165,7 +163,7 @@ def test_number_double():
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
-        column_factory.column_factory(schema={"type": "number", "format": "double"})
+        column_factory.column_factory(spec={"type": "number", "format": "double"})
 
 
 @pytest.mark.column
@@ -176,9 +174,7 @@ def test_number_unsupported_format():
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
-        column_factory.column_factory(
-            schema={"type": "number", "format": "unsupported"}
-        )
+        column_factory.column_factory(spec={"type": "number", "format": "unsupported"})
 
 
 @pytest.mark.column
@@ -188,7 +184,7 @@ def test_integer():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy Integer column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "integer"})
+    column = column_factory.column_factory(spec={"type": "integer"})
 
     assert isinstance(column.type, sqlalchemy.Integer)
 
@@ -200,9 +196,7 @@ def test_integer_int32():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy Integer column is returned.
     """
-    column = column_factory.column_factory(
-        schema={"type": "integer", "format": "int32"}
-    )
+    column = column_factory.column_factory(spec={"type": "integer", "format": "int32"})
 
     assert isinstance(column.type, sqlalchemy.Integer)
 
@@ -214,9 +208,7 @@ def test_integer_int64():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy BigInteger column is returned.
     """
-    column = column_factory.column_factory(
-        schema={"type": "integer", "format": "int64"}
-    )
+    column = column_factory.column_factory(spec={"type": "integer", "format": "int64"})
 
     assert isinstance(column.type, sqlalchemy.BigInteger)
 
@@ -229,9 +221,7 @@ def test_integer_unsupported_format():
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
-        column_factory.column_factory(
-            schema={"type": "integer", "format": "unsupported"}
-        )
+        column_factory.column_factory(spec={"type": "integer", "format": "unsupported"})
 
 
 @pytest.mark.column
@@ -241,7 +231,7 @@ def test_string():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy String column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "string"})
+    column = column_factory.column_factory(spec={"type": "string"})
 
     assert isinstance(column.type, sqlalchemy.String)
 
@@ -253,7 +243,7 @@ def test_string_length():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy String column is returned with the length set to the maxLength.
     """
-    column = column_factory.column_factory(schema={"type": "string", "maxLength": 1})
+    column = column_factory.column_factory(spec={"type": "string", "maxLength": 1})
 
     assert column.type.length == 1
 
@@ -265,7 +255,7 @@ def test_boolean():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy boolean column is returned.
     """
-    column = column_factory.column_factory(schema={"type": "boolean"})
+    column = column_factory.column_factory(spec={"type": "boolean"})
 
     assert isinstance(column.type, sqlalchemy.Boolean)
 
@@ -278,10 +268,10 @@ def test_single_ref():
     WHEN column_factory is called with the schema and schemas
     THEN SQLAlchemy boolean column is returned.
     """
-    schema = {"$ref": "#/components/schemas/RefSchema"}
+    spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     column = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-        schema=schema, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1"
     )
 
     assert isinstance(column.type, sqlalchemy.Boolean)
@@ -305,7 +295,7 @@ def test_handle_object_no_properties():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(schema={"x-tablename": "table 1"})
+        column_factory._handle_object(spec={"x-tablename": "table 1"})
 
 
 @pytest.mark.column
@@ -316,9 +306,7 @@ def test_handle_object_id_missing():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(
-            schema={"x-tablename": "table 1", "properties": {}}
-        )
+        column_factory._handle_object(spec={"x-tablename": "table 1", "properties": {}})
 
 
 @pytest.mark.column
@@ -329,4 +317,4 @@ def test_handle_object_no_tablename():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(schema={"properties": {"id": {}}})
+        column_factory._handle_object(spec={"properties": {"id": {}}})
