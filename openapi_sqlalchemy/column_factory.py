@@ -38,7 +38,9 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         )
 
         # Creating relationship
-        return_value.append(sqlalchemy.orm.relationship(ref_schema.logical_name))
+        return_value.append(
+            (logical_name, sqlalchemy.orm.relationship(ref_schema.logical_name))
+        )
         return return_value
 
     return inner

@@ -203,7 +203,7 @@ def test_resolve_ref_object_return(
     return_value = decorated(spec=spec, schemas=schemas, logical_name=logical_name)
 
     mock_func.return_value.append.assert_called_once_with(
-        mocked_sqlalchemy_relationship.return_value
+        (logical_name, mocked_sqlalchemy_relationship.return_value)
     )
     assert return_value == mock_func.return_value
 
@@ -572,3 +572,33 @@ def test_integration():
 
     assert logical_name == "column_1"
     assert isinstance(column.type, sqlalchemy.Boolean)
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_object_ref():
+    """
+    GIVEN schema that references another object schema and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference and relationship is returned.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    [
+        (fk_logical_name, fk_column),
+        (tbl_logical_name, relationship),
+    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_id"
+    assert isinstance(fk_column.type, sqlalchemy.Integer)
+    assert len(fk_column.foreign_keys) == 1
+    assert tbl_logical_name == "column_1"
+    assert relationship.argument == "RefSchema"
