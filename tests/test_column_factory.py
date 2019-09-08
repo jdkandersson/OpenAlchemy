@@ -313,10 +313,9 @@ def test_integration():
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
-    (
-        logical_name,
-        column,
-    ) = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+    [
+        (logical_name, column)
+    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 

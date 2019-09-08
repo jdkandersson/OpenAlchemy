@@ -1,5 +1,6 @@
 """Generate model from openapi schema."""
 
+import itertools
 import typing
 
 from . import column_factory
@@ -44,16 +45,18 @@ def model_factory(
         {
             "__tablename__": schema.get("x-tablename"),
             **dict(
-                # pylint: disable=unexpected-keyword-arg
-                column_factory.column_factory(
-                    spec=value,
-                    schemas=schemas,
-                    logical_name=key,
-                    required=key in schema.get("required", [])
-                    if "required" in schema
-                    else None,
+                itertools.chain.from_iterable(
+                    # pylint: disable=unexpected-keyword-arg
+                    column_factory.column_factory(
+                        spec=value,
+                        schemas=schemas,
+                        logical_name=key,
+                        required=key in schema.get("required", [])
+                        if "required" in schema
+                        else None,
+                    )
+                    for key, value in schema.get("properties", []).items()
                 )
-                for key, value in schema.get("properties", []).items()
             ),
         },
     )

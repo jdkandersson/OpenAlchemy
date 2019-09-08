@@ -23,6 +23,6 @@ def add_logical_name(func: typing.Callable) -> typing.Callable:
         """Replace original function."""
         return_value = func(*args, **kwargs)
 
-        return (logical_name, return_value)
+        return [(logical_name, return_value)]
 
     return replacement
