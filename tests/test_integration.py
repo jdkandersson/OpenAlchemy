@@ -10,6 +10,7 @@ from sqlalchemy.ext import declarative
 import openapi_sqlalchemy
 
 
+@pytest.mark.prod_env
 @pytest.mark.integration
 def test_empty_spec():
     """
@@ -21,6 +22,7 @@ def test_empty_spec():
         openapi_sqlalchemy.init_model_factory(base=None, spec={})
 
 
+@pytest.mark.prod_env
 @pytest.mark.integration
 def test_empty_components():
     """
@@ -32,6 +34,7 @@ def test_empty_components():
         openapi_sqlalchemy.init_model_factory(base=None, spec={"components": {}})
 
 
+@pytest.mark.prod_env
 @pytest.mark.integration
 def test_cache_diff(mocked_model_factory: mock.MagicMock):
     """
@@ -50,6 +53,7 @@ def test_cache_diff(mocked_model_factory: mock.MagicMock):
     assert mocked_model_factory.call_count == 2
 
 
+@pytest.mark.prod_env
 @pytest.mark.integration
 def test_cache_same(mocked_model_factory: mock.MagicMock):
     """
@@ -67,6 +71,7 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
     assert mocked_model_factory.call_count == 1
 
 
+@pytest.mark.prod_env
 @pytest.mark.integration
 def test_schema():
     """
@@ -97,6 +102,7 @@ def test_schema():
     assert isinstance(model.column.type, sqlalchemy.Integer)
 
 
+@pytest.mark.prod_env
 @pytest.mark.parametrize(
     "type_, format_, value",
     [

@@ -48,6 +48,7 @@ def model_factory(
                 key: column_factory.column_factory(
                     schema=value,
                     schemas=schemas,
+                    logical_name=key,
                     required=key in schema.get("required", [])
                     if "required" in schema
                     else None,

@@ -10,6 +10,7 @@ import pytest
 from openapi_sqlalchemy import model_factory
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_missing_schema():
     """
@@ -21,6 +22,7 @@ def test_missing_schema():
         model_factory.model_factory(name="Missing", base=None, schemas={})
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_missing_tablename():
     """
@@ -34,6 +36,7 @@ def test_missing_tablename():
         )
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_not_object():
     """
@@ -49,6 +52,7 @@ def test_not_object():
         )
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_properties_missing():
     """
@@ -64,6 +68,7 @@ def test_properties_missing():
         )
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_properties_empty():
     """
@@ -85,6 +90,7 @@ def test_properties_empty():
         )
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_single_property():
     """
@@ -107,6 +113,7 @@ def test_single_property():
     assert hasattr(model, "property_1")
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_multiple_property():
     """
@@ -133,6 +140,7 @@ def test_multiple_property():
     assert hasattr(model, "property_2")
 
 
+@pytest.mark.prod_env
 @pytest.mark.model
 def test_single_tablename():
     """
@@ -175,7 +183,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, schemas=schemas, required=None
+        schema={"type": "integer"}, schemas=schemas, logical_name="id", required=None
     )
 
 
@@ -200,7 +208,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, schemas=schemas, required=False
+        schema={"type": "integer"}, schemas=schemas, logical_name="id", required=False
     )
 
 
@@ -225,5 +233,5 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"}, schemas=schemas, required=True
+        schema={"type": "integer"}, schemas=schemas, logical_name="id", required=True
     )

@@ -270,60 +270,7 @@ def test_boolean():
     assert isinstance(column.type, sqlalchemy.Boolean)
 
 
-@pytest.mark.column
-def test_ref_schemas_none():
-    """
-    GIVEN schema with reference but no schemas
-    WHEN column_factory is called with the schema
-    THEN MissingArgumentError is raised.
-    """
-    with pytest.raises(exceptions.MissingArgumentError):
-        schema = {"$ref": "#/components/not/schema"}
-        column_factory.column_factory(schema=schema)
-
-
-@pytest.mark.column
-def test_ref_not_schemas():
-    """
-    GIVEN schema that references something that is not a schema
-    WHEN column_factory is called with the schema and schemas
-    THEN SchemaNotFoundError is raised.
-    """
-    with pytest.raises(exceptions.SchemaNotFoundError):
-        schema = {"$ref": "#/components/not/schema"}
-        schemas = {}
-        column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-            schema=schema, schemas=schemas
-        )
-
-
-@pytest.mark.column
-def test_ref_without_schemas():
-    """
-    GIVEN schema that references another a schema
-    WHEN column_factory is called with the schema
-    THEN MissingArgumentError is raised.
-    """
-    with pytest.raises(exceptions.MissingArgumentError):
-        schema = {"$ref": "#/components/schemas/RefSchema"}
-        column_factory.column_factory(schema=schema)
-
-
-@pytest.mark.column
-def test_ref_not_defined():
-    """
-    GIVEN schema that references another a schema that is not in schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN SchemaNotFoundError is raised.
-    """
-    with pytest.raises(exceptions.SchemaNotFoundError):
-        schema = {"$ref": "#/components/schemas/RefSchema"}
-        schemas = {}
-        column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-            schema=schema, schemas=schemas
-        )
-
-
+@pytest.mark.prod_env
 @pytest.mark.column
 def test_single_ref():
     """
@@ -334,27 +281,7 @@ def test_single_ref():
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     column = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-        schema=schema, schemas=schemas
-    )
-
-    assert isinstance(column.type, sqlalchemy.Boolean)
-
-
-@pytest.mark.column
-def test_nested_ref():
-    """
-    GIVEN schema that references another schema which also references another schema
-        and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN SQLAlchemy boolean column is returned.
-    """
-    schema = {"$ref": "#/components/schemas/NestedRefSchema"}
-    schemas = {
-        "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
-        "RefSchema": {"type": "boolean"},
-    }
-    column = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
-        schema=schema, schemas=schemas
+        schema=schema, schemas=schemas, logical_name="column_1"
     )
 
     assert isinstance(column.type, sqlalchemy.Boolean)

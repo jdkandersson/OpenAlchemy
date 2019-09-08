@@ -6,49 +6,24 @@ import typing
 import sqlalchemy
 
 from openapi_sqlalchemy import exceptions
+from openapi_sqlalchemy import helpers
 from openapi_sqlalchemy import types
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
+@helpers.testing_guard(environment_name="TESTING")
 def resolve_ref(func: typing.Callable) -> typing.Callable:
     """Resolve $ref schemas."""
 
     def inner(
-        *,
-        schema: types.SchemaSpec,
-        schemas: typing.Optional[typing.Dict[str, types.SchemaSpec]] = None,
-        **kwargs,
+        *, schema: types.SchemaSpec, schemas: types.Schemas, logical_name: str, **kwargs
     ) -> sqlalchemy.Column:
         """Replace function."""
-        # Checking for $ref
-        ref = schema.get("$ref")
-        if ref is None:
-            return func(schema=schema, **kwargs)
-
-        # Checking for schemas
-        if schemas is None:
-            raise exceptions.MissingArgumentError(
-                "schemas is required for $ref schemas."
-            )
-
-        # Checking value of $ref
-        match = _REF_PATTER.match(ref)
-        if not match:
-            raise exceptions.SchemaNotFoundError(
-                f"{ref} format incorrect, expected #/components/schemas/<SchemaName>"
-            )
-
-        # Retrieving new schema
-        schema_name = match.group(1)
-        ref_schema = schemas.get(schema_name)
-        if ref_schema is None:
-            raise exceptions.SchemaNotFoundError(
-                f"{schema_name} was not found in schemas."
-            )
-
-        # Recursively resolving any more $ref
-        return inner(schema=ref_schema, schemas=schemas, **kwargs)
+        ref_schema = helpers.resolve_ref(
+            schema=types.Schema(logical_name=logical_name, spec=schema), schemas=schemas
+        )
+        return func(schema=ref_schema.spec, **kwargs)
 
     return inner
 
