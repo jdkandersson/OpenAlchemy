@@ -18,6 +18,7 @@ repos:
   rev: master
   hooks:
   - id: mypy
+    exclude: 'conf.py$'
 - repo: local
   hooks:
   - id: pylint
@@ -26,7 +27,7 @@ repos:
     args: [-rn]
     language: system
     types: [python]
-    exclude: '^example'
+    exclude: '^example|conf.py$'
 - repo: https://github.com/Lucas-C/pre-commit-hooks-markup.git
   rev: master
   hooks:
