@@ -81,7 +81,7 @@ def test_resolve_ref_return(mocked_resolve_ref: mock.MagicMock):
 
 @pytest.mark.prod_env
 @pytest.mark.column
-def test_resolve_ref_object(mocked_resolve_ref: mock.MagicMock):
+def test_resolve_ref_type_missing(mocked_resolve_ref: mock.MagicMock):
     """
     GIVEN mock function and mocked resolve_ref helper that returns object spec without
         type property
@@ -98,6 +98,43 @@ def test_resolve_ref_object(mocked_resolve_ref: mock.MagicMock):
     decorated = column_factory.resolve_ref(mock_func)
     with pytest.raises(exceptions.TypeMissingError):
         decorated(spec=spec, schemas=schemas, logical_name=logical_name)
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_object_call(mocked_resolve_ref: mock.MagicMock, kwargs):
+    """
+    GIVEN mock function and mocked resolve_ref helper that returns object spec
+    WHEN mock function is decorated with resolve_ref and called with schema, schemas
+        and logical name
+    THEN mock function is called with the object's id schema.
+    """
+    mock_func = mock.MagicMock()
+    spec = mock.MagicMock()
+    schemas = mock.MagicMock()
+    logical_name = "logical name 1"
+    mocked_resolve_ref.side_effect = [
+        types.Schema(
+            logical_name="name 1",
+            spec={
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"id": {"type": "boolean"}},
+            },
+        ),
+        types.Schema(
+            logical_name="id", spec={"type": "boolean", "x-foreign-key": "table 1.id"}
+        ),
+    ]
+
+    decorated = column_factory.resolve_ref(mock_func)
+    decorated(spec=spec, schemas=schemas, logical_name=logical_name, **kwargs)
+
+    mock_func.assert_called_once_with(
+        spec={"type": "boolean", "x-foreign-key": "table 1.id"},
+        logical_name="logical name 1_id",
+        **kwargs,
+    )
 
 
 @pytest.mark.column

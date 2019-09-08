@@ -28,8 +28,12 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         type_ = ref_schema.spec.get("type")
         if type_ is None:
             raise exceptions.TypeMissingError("Every property requires a type.")
+        if type_ != "object":
+            return func(logical_name=logical_name, spec=ref_schema.spec, **kwargs)
 
-        return func(logical_name=logical_name, spec=ref_schema.spec, **kwargs)
+        # Handling object
+        foreign_key_spec = _handle_object(spec=ref_schema.spec, schemas=schemas)
+        return func(logical_name=f"{logical_name}_id", spec=foreign_key_spec, **kwargs)
 
     return inner
 
