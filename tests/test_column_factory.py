@@ -2,12 +2,34 @@
 # pylint: disable=protected-access
 
 import typing
+from unittest import mock
 
 import pytest
 import sqlalchemy
 
 from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import exceptions
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_call(kwargs):
+    """
+    GIVEN mock function and kwargs
+    WHEN mock function is decorated with resolve_ref and called with kwargs
+    THEN mock function is called with kwargs.
+    """
+    mock_func = mock.MagicMock()
+    spec = {"key": "value"}
+    schemas = mock.MagicMock()
+    logical_name = mock.MagicMock()
+
+    decorated = column_factory.resolve_ref(mock_func)
+    decorated(spec=spec, schemas=schemas, logical_name=logical_name, **kwargs)
+
+    mock_func.assert_called_once_with(
+        spec={"key": "value"}, logical_name=logical_name, **kwargs
+    )
 
 
 @pytest.mark.column
