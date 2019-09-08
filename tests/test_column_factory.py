@@ -377,7 +377,7 @@ def test_handle_object_no_properties():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(column_factory.MalformedObjectSchemaError):
-        column_factory._handle_object(schema={})
+        column_factory._handle_object(schema={"x-tablename": "table 1"})
 
 
 @pytest.mark.column
@@ -388,4 +388,17 @@ def test_handle_object_id_missing():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(column_factory.MalformedObjectSchemaError):
-        column_factory._handle_object(schema={"properties": {}})
+        column_factory._handle_object(
+            schema={"x-tablename": "table 1", "properties": {}}
+        )
+
+
+@pytest.mark.column
+def test_handle_object_no_tablename():
+    """
+    GIVEN object schema without x-tablename key
+    WHEN _handle_object is called with the schema
+    THEN a MalformedObjectSchemaError should be raised.
+    """
+    with pytest.raises(column_factory.MalformedObjectSchemaError):
+        column_factory._handle_object(schema={"properties": {"id": {}}})

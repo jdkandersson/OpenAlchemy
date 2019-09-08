@@ -125,6 +125,11 @@ def _handle_object(*, schema: SchemaType):
         schema: The schema of the object reference.
 
     """
+    tablename = schema.get("x-tablename")
+    if not tablename:
+        raise MalformedObjectSchemaError(
+            "Referenced object is missing x-tablename property."
+        )
     properties = schema.get("properties")
     if properties is None:
         raise MalformedObjectSchemaError(
