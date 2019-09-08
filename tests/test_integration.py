@@ -18,7 +18,7 @@ def test_empty_spec():
     WHEN init_model_factory is called with the specification
     THEN KeyError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(openapi_sqlalchemy.exceptions.MalformedSpecificationError):
         openapi_sqlalchemy.init_model_factory(base=None, spec={})
 
 
@@ -30,7 +30,7 @@ def test_empty_components():
     WHEN init_model_factory is called with the specification
     THEN KeyError is raised.
     """
-    with pytest.raises(KeyError):
+    with pytest.raises(openapi_sqlalchemy.exceptions.MalformedSpecificationError):
         openapi_sqlalchemy.init_model_factory(base=None, spec={"components": {}})
 
 

@@ -5,6 +5,7 @@ import typing
 
 import typing_extensions
 
+from . import exceptions
 from . import model_factory as _model_factory
 
 
@@ -33,10 +34,12 @@ def init_model_factory(
     """
     # Retrieving the schema from the specification
     if "components" not in spec:
-        raise KeyError('"components" is a required key in the specification.')
+        raise exceptions.MalformedSpecificationError(
+            '"components" is a required key in the specification.'
+        )
     components = spec.get("components", {})
     if "schemas" not in components:
-        raise KeyError(
+        raise exceptions.MalformedSpecificationError(
             '"schemas" is a required key in the components of the specification.'
         )
     schemas = components.get("schemas", {})
