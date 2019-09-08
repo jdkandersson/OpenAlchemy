@@ -1,16 +1,26 @@
 """Used to resolve schema references."""
 
-from openapi_sqlalchemy.types import SchemaType
+import re
+
+from openapi_sqlalchemy import exceptions
+from openapi_sqlalchemy import types
+
+_REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
-class MissingArgumentError(ValueError):
-    """Raised when a required argument was not passed."""
-
-
-class SchemaNotFoundError(KeyError):
-    """Raised when a schema was not found in the schemas."""
-
-
-def resolve_ref(*, schema: SchemaType):
+def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
     """Resolve $ref schemas to the underlying schema."""
+    # Checking whether schema is a reference schema
+    ref = schema.get("$ref")
+    if ref is None:
+        return schema
+
+    # Checking value of $ref
+    match = _REF_PATTER.match(ref)
+    if not match:
+        raise exceptions.SchemaNotFoundError(
+            f"{ref} format incorrect, expected #/components/schemas/<SchemaName>"
+        )
+
+    print(schemas)
     return schema

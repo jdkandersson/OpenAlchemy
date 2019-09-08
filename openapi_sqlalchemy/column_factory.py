@@ -5,16 +5,8 @@ import typing
 
 import sqlalchemy
 
-from .types import SchemaType
-
-
-class MissingArgumentError(ValueError):
-    """Raised when a required argument was not passed."""
-
-
-class SchemaNotFoundError(KeyError):
-    """Raised when a schema was not found in the schemas."""
-
+from openapi_sqlalchemy import exceptions
+from openapi_sqlalchemy import types
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
@@ -24,8 +16,8 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
     def inner(
         *,
-        schema: SchemaType,
-        schemas: typing.Optional[typing.Dict[str, SchemaType]] = None,
+        schema: types.Schema,
+        schemas: typing.Optional[typing.Dict[str, types.Schema]] = None,
         **kwargs,
     ) -> sqlalchemy.Column:
         """Replace function."""
@@ -36,12 +28,14 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
         # Checking for schemas
         if schemas is None:
-            raise MissingArgumentError("schemas is required for $ref schemas.")
+            raise exceptions.MissingArgumentError(
+                "schemas is required for $ref schemas."
+            )
 
         # Checking value of $ref
         match = _REF_PATTER.match(ref)
         if not match:
-            raise SchemaNotFoundError(
+            raise exceptions.SchemaNotFoundError(
                 f"{ref} format incorrect, expected #/components/schemas/<SchemaName>"
             )
 
@@ -49,7 +43,9 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         schema_name = match.group(1)
         ref_schema = schemas.get(schema_name)
         if ref_schema is None:
-            raise SchemaNotFoundError(f"{schema_name} was not found in schemas.")
+            raise exceptions.SchemaNotFoundError(
+                f"{schema_name} was not found in schemas."
+            )
 
         # Recursively resolving any more $ref
         return inner(schema=ref_schema, schemas=schemas, **kwargs)
@@ -57,17 +53,9 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
     return inner
 
 
-class TypeMissingError(TypeError):
-    """Raised when a column schema does not have a type."""
-
-
-class FeatureNotImplementedError(NotImplementedError):
-    """Raised when a requested feature has not been implemented yet."""
-
-
 @resolve_ref
 def column_factory(
-    *, schema: SchemaType, required: typing.Optional[bool] = None
+    *, schema: types.Schema, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
@@ -81,7 +69,7 @@ def column_factory(
 
     """
     if "type" not in schema:
-        raise TypeMissingError("Every property requires a type.")
+        raise exceptions.TypeMissingError("Every property requires a type.")
 
     # Keep track of column arguments
     type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
@@ -108,16 +96,14 @@ def column_factory(
         type_ = sqlalchemy.Boolean
 
     if type_ is None:
-        raise FeatureNotImplementedError(f"{schema['type']} has not been implemented")
+        raise exceptions.FeatureNotImplementedError(
+            f"{schema['type']} has not been implemented"
+        )
 
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-class MalformedObjectSchemaError(ValueError):
-    """Raised when an object schema is missing required properties."""
-
-
-def _handle_object(*, schema: SchemaType):
+def _handle_object(*, schema: types.Schema):
     """
     Determine the relationship and foreign key combination for an object reference.
 
@@ -127,19 +113,23 @@ def _handle_object(*, schema: SchemaType):
     """
     tablename = schema.get("x-tablename")
     if not tablename:
-        raise MalformedObjectSchemaError(
+        raise exceptions.MalformedObjectSchemaError(
             "Referenced object is missing x-tablename property."
         )
     properties = schema.get("properties")
     if properties is None:
-        raise MalformedObjectSchemaError(
+        raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have any properties."
         )
     if "id" not in properties:
-        raise MalformedObjectSchemaError("Referenced object does not have id property.")
+        raise exceptions.MalformedObjectSchemaError(
+            "Referenced object does not have id property."
+        )
 
 
-def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) -> bool:
+def _calculate_nullable(
+    *, schema: types.Schema, required: typing.Optional[bool]
+) -> bool:
     """
     Calculate the value of the nullable field.
 
@@ -178,7 +168,7 @@ def _calculate_nullable(*, schema: SchemaType, required: typing.Optional[bool]) 
 
 
 def _handle_integer(
-    *, schema: SchemaType
+    *, schema: types.Schema
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
     Determine the type of integer to use for the schema.
@@ -194,12 +184,12 @@ def _handle_integer(
         return sqlalchemy.Integer
     if schema.get("format") == "int64":
         return sqlalchemy.BigInteger
-    raise FeatureNotImplementedError(
+    raise exceptions.FeatureNotImplementedError(
         f"{schema.get('format')} format for integer is not supported."
     )
 
 
-def _handle_number(*, schema: SchemaType) -> sqlalchemy.Float:
+def _handle_number(*, schema: types.Schema) -> sqlalchemy.Float:
     """
     Determine the type of number to use for the schema.
 
@@ -212,12 +202,12 @@ def _handle_number(*, schema: SchemaType) -> sqlalchemy.Float:
     """
     if schema.get("format", "float") == "float":
         return sqlalchemy.Float
-    raise FeatureNotImplementedError(
+    raise exceptions.FeatureNotImplementedError(
         f"{schema.get('format')} format for number is not supported."
     )
 
 
-def _handle_string(*, schema: SchemaType) -> sqlalchemy.String:
+def _handle_string(*, schema: types.Schema) -> sqlalchemy.String:
     """
     Determine the setup of the string to use for the schema.
 

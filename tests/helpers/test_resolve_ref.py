@@ -2,6 +2,7 @@
 
 import pytest
 
+from openapi_sqlalchemy import exceptions
 from openapi_sqlalchemy import helpers
 
 
@@ -21,6 +22,19 @@ def test_resolve_ref_not_ref_schema():
     WHEN resolve_ref is called with the schema
     THEN the schema is returned.
     """
-    return_schema = helpers.resolve_ref(schema={"type": "integer"})
+    return_schema = helpers.resolve_ref(schema={"type": "integer"}, schemas={})
 
     assert return_schema == {"type": "integer"}
+
+
+def test_resolve_ref_not_schema():
+    """
+    GIVEN schema that references something that is not a schema
+    WHEN resolve_ref is called with the schema
+    THEN SchemaNotFoundError is raised.
+    """
+    schema = {"$ref": "#/components/not/schema"}
+    schemas = {}
+
+    with pytest.raises(exceptions.SchemaNotFoundError):
+        helpers.resolve_ref(schema=schema, schemas=schemas)

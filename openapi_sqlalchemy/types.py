@@ -2,4 +2,5 @@
 
 import typing
 
-SchemaType = typing.Dict[str, typing.Any]
+Schema = typing.Dict[str, typing.Any]
+Schemas = typing.Dict[str, Schema]
