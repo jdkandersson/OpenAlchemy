@@ -8,7 +8,6 @@ To make a column the primary key for a table, set the *x-primary-key* property
 on an object property to *true*. For example:
 
 .. code-block:: yaml
-   :linenos:
 
    Employee:
       type: object
@@ -27,7 +26,6 @@ To make a column auto increment, set the *x-autoincrement* property to *true*.
 For example:
 
 .. code-block:: yaml
-   :linenos:
 
    Employee:
       type: object
@@ -53,7 +51,6 @@ To add an index to a column, set the *x-index* property on an object property
 to *true*. For example:
 
 .. code-block:: yaml
-   :linenos:
 
    Employee:
       type: object
@@ -72,7 +69,6 @@ To add an unique constraint to a column, set the *x-unique* property on an
 object property to *true*. For example:
 
 .. code-block:: yaml
-   :linenos:
 
    Employee:
       type: object
@@ -91,7 +87,6 @@ To add a foreign key constraint, set the *x-foreign-key* property on an object
 property to the <table name>.<column>. For example:
 
 .. code-block:: yaml
-   :linenos:
 
    Division:
       type: object
