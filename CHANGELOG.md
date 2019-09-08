@@ -1,4 +1,9 @@
 # Release Notes
+## Version 0.2.0 - 2019-09-08
+- Added support for `autoincrement`.
+- Added support for `$ref` for columns referencing other table objects.
+- Added documentation
+
 ## Version 0.2.0 - 2019-08-25
 - Added support for `$ref` for columns.
 
