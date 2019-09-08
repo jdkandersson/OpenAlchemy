@@ -59,6 +59,8 @@ def column_factory(
         kwargs["index"] = True
     if spec.get("x-unique"):
         kwargs["unique"] = True
+    if spec.get("x-foreign-key"):
+        args = (*args, sqlalchemy.ForeignKey(spec.get("x-foreign-key")))
 
     # Calculating type of column
     if spec.get("type") == "integer":

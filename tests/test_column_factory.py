@@ -85,6 +85,22 @@ def test_unique(unique: bool):
     assert column.unique == unique
 
 
+@pytest.mark.column
+def test_foreign_key():
+    """
+    GIVEN valid schema which has x-foreign-key set
+    WHEN column_factory is called with the schema
+    THEN the returned SQLAlchemy column foreign key property is set.
+    """
+    column = column_factory.column_factory(
+        spec={"type": "number", "x-foreign-key": "foreign.key"}
+    )
+
+    assert len(column.foreign_keys) == 1
+    foreign_key = column.foreign_keys.pop()
+    assert str(foreign_key) == "ForeignKey('foreign.key')"
+
+
 @pytest.mark.parametrize(
     "required, nullable, expected",
     [
