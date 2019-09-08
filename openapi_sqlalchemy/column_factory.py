@@ -20,8 +20,15 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
         *, spec: types.SchemaSpec, schemas: types.Schemas, logical_name: str, **kwargs
     ) -> sqlalchemy.Column:
         """Replace function."""
+        # Resolveing any $ref
         schema = types.Schema(logical_name=logical_name, spec=spec)
         ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+
+        # Checking for type
+        type_ = ref_schema.spec.get("type")
+        if type_ is None:
+            raise exceptions.TypeMissingError("Every property requires a type.")
+
         return func(logical_name=logical_name, spec=ref_schema.spec, **kwargs)
 
     return inner
@@ -43,9 +50,6 @@ def column_factory(
         The SQLAlchemy column based on the schema.
 
     """
-    if "type" not in spec:
-        raise exceptions.TypeMissingError("Every property requires a type.")
-
     # Keep track of column arguments
     type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
     args: typing.Tuple[typing.Any, ...] = ()

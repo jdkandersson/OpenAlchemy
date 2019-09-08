@@ -79,15 +79,25 @@ def test_resolve_ref_return(mocked_resolve_ref: mock.MagicMock):
     assert return_value == mock_func.return_value
 
 
+@pytest.mark.prod_env
 @pytest.mark.column
-def test_type_missing():
+def test_resolve_ref_object(mocked_resolve_ref: mock.MagicMock):
     """
-    GIVEN column schema that does not have the type key
-    WHEN column_factory is called with the schema
+    GIVEN mock function and mocked resolve_ref helper that returns object spec without
+        type property
+    WHEN mock function is decorated with resolve_ref and called with schema, schemas
+        and logical name
     THEN TypeMissingError is raised.
     """
+    mock_func = mock.MagicMock()
+    spec = mock.MagicMock()
+    schemas = mock.MagicMock()
+    logical_name = mock.MagicMock()
+    mocked_resolve_ref.return_value = types.Schema(logical_name="name 1", spec={})
+
+    decorated = column_factory.resolve_ref(mock_func)
     with pytest.raises(exceptions.TypeMissingError):
-        column_factory.column_factory(spec={})
+        decorated(spec=spec, schemas=schemas, logical_name=logical_name)
 
 
 @pytest.mark.column
