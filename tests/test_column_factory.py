@@ -278,7 +278,7 @@ def test_handle_object_no_tablename():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(spec={"properties": {"id": {}}})
+        column_factory._handle_object(spec={"properties": {"id": {}}}, schemas={})
 
 
 @pytest.mark.column
@@ -289,7 +289,7 @@ def test_handle_object_no_properties():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(spec={"x-tablename": "table 1"})
+        column_factory._handle_object(spec={"x-tablename": "table 1"}, schemas={})
 
 
 @pytest.mark.column
@@ -300,7 +300,9 @@ def test_handle_object_id_missing():
     THEN a MalformedObjectSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
-        column_factory._handle_object(spec={"x-tablename": "table 1", "properties": {}})
+        column_factory._handle_object(
+            spec={"x-tablename": "table 1", "properties": {}}, schemas={}
+        )
 
 
 @pytest.mark.column
@@ -312,7 +314,7 @@ def test_handle_object_id_no_type():
     """
     with pytest.raises(exceptions.MalformedObjectSchemaError):
         column_factory._handle_object(
-            spec={"x-tablename": "table 1", "properties": {"id": {}}}
+            spec={"x-tablename": "table 1", "properties": {"id": {}}}, schemas={}
         )
 
 
@@ -324,8 +326,27 @@ def test_handle_object_return():
     THEN a schema with the type of the id property and x-foreign-key property.
     """
     spec = {"x-tablename": "table 1", "properties": {"id": {"type": "idType"}}}
+    schemas = {}
 
-    return_value = column_factory._handle_object(spec=spec)
+    return_value = column_factory._handle_object(spec=spec, schemas=schemas)
+
+    assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
+
+
+@pytest.mark.column
+def test_handle_object_ref_return():
+    """
+    GIVEN object schema with x-tablename and id property that is a $ref
+    WHEN _handle_object is called with the schema
+    THEN a schema with the type of the id property and x-foreign-key property.
+    """
+    spec = {
+        "x-tablename": "table 1",
+        "properties": {"id": {"$ref": "#/components/schemas/IdSchema"}},
+    }
+    schemas = {"IdSchema": {"type": "idType"}}
+
+    return_value = column_factory._handle_object(spec=spec, schemas=schemas)
 
     assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 

@@ -78,12 +78,15 @@ def column_factory(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _handle_object(*, spec: types.SchemaSpec) -> types.SchemaSpec:
+def _handle_object(
+    *, spec: types.SchemaSpec, schemas: types.Schemas
+) -> types.SchemaSpec:
     """
     Determine the foreign key schema for an object reference.
 
     Args:
         spec: The schema of the object reference.
+        schemas: All defined schemas.
 
     Returns:
         The foreign key schema.
@@ -99,12 +102,16 @@ def _handle_object(*, spec: types.SchemaSpec) -> types.SchemaSpec:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have any properties."
         )
-    id_spec = properties.get("id")
+    logical_name = "id"
+    id_spec = properties.get(logical_name)
     if id_spec is None:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object does not have id property."
         )
-    id_type = id_spec.get("type")
+    # Resolving references
+    id_schema = types.Schema(logical_name=logical_name, spec=id_spec)
+    ref_id_spec = helpers.resolve_ref(schema=id_schema, schemas=schemas).spec
+    id_type = ref_id_spec.get("type")
     if id_type is None:
         raise exceptions.MalformedObjectSchemaError(
             "Referenced object id property does not have a type."
