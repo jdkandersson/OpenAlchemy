@@ -71,3 +71,22 @@ def test_resolve_ref_single():
 
     expected_schema = types.Schema("RefSchema", {"type": "boolean"})
     assert return_schema == expected_schema
+
+
+def test_resolve_ref_nested():
+    """
+    GIVEN schema that references another schema which also references another schema
+        and schemas
+    WHEN resolve_ref is called with the schema and schemas
+    THEN the final referenced schema and logical name is returned.
+    """
+    schema = types.Schema("Schema", {"$ref": "#/components/schemas/NestedRefSchema"})
+    schemas = {
+        "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
+        "RefSchema": {"type": "boolean"},
+    }
+
+    return_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+
+    expected_schema = types.Schema("RefSchema", {"type": "boolean"})
+    assert return_schema == expected_schema

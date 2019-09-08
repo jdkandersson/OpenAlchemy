@@ -28,4 +28,5 @@ def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
     if ref_schema is None:
         raise exceptions.SchemaNotFoundError(f"{schema_name} was not found in schemas.")
 
-    return types.Schema(schema_name, ref_schema)
+    new_schema = types.Schema(schema_name, ref_schema)
+    return resolve_ref(schema=new_schema, schemas=schemas)
