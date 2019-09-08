@@ -33,7 +33,13 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
         # Handling object
         foreign_key_spec = _handle_object(spec=ref_schema.spec, schemas=schemas)
-        return func(logical_name=f"{logical_name}_id", spec=foreign_key_spec, **kwargs)
+        return_value = func(
+            logical_name=f"{logical_name}_id", spec=foreign_key_spec, **kwargs
+        )
+
+        # Creating relationship
+        return_value.append(sqlalchemy.orm.relationship(ref_schema.logical_name))
+        return return_value
 
     return inner
 

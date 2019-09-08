@@ -29,6 +29,14 @@ def mocked_sqlalchemy_string(monkeypatch):
 
 
 @pytest.fixture
+def mocked_sqlalchemy_relationship(monkeypatch):
+    """Monkeypatches sqlalchemy.orm.relationship."""
+    mock_relationship = mock.MagicMock()
+    monkeypatch.setattr(sqlalchemy.orm, "relationship", mock_relationship)
+    return mock_relationship
+
+
+@pytest.fixture
 def mocked_column_factory(monkeypatch):
     """Monkeypatches column_factory.column_factory."""
     mock_column_factory = mock.MagicMock()

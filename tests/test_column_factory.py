@@ -105,8 +105,7 @@ def test_resolve_ref_type_missing(mocked_resolve_ref: mock.MagicMock):
 def test_resolve_ref_object_call(mocked_resolve_ref: mock.MagicMock, kwargs):
     """
     GIVEN mock function and mocked resolve_ref helper that returns object spec
-    WHEN mock function is decorated with resolve_ref and called with schema, schemas
-        and logical name
+    WHEN mock function is decorated with resolve_ref and called
     THEN mock function is called with the object's id schema.
     """
     mock_func = mock.MagicMock()
@@ -135,6 +134,78 @@ def test_resolve_ref_object_call(mocked_resolve_ref: mock.MagicMock, kwargs):
         logical_name="logical name 1_id",
         **kwargs,
     )
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_object_relationship_call(
+    mocked_resolve_ref: mock.MagicMock, mocked_sqlalchemy_relationship: mock.MagicMock
+):
+    """
+    GIVEN mock function, mocked resolve_ref helper that returns object spec and mocked
+        sqlalchemy.orm.relationship
+    WHEN mock function is decorated with resolve_ref and called
+    THEN sqlalchemy.orm.relationship is called with object logical name.
+    """
+    mock_func = mock.MagicMock()
+    spec = mock.MagicMock()
+    schemas = mock.MagicMock()
+    logical_name = "logical name 1"
+    mocked_resolve_ref.side_effect = [
+        types.Schema(
+            logical_name="name 1",
+            spec={
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"id": {"type": "boolean"}},
+            },
+        ),
+        types.Schema(
+            logical_name="id", spec={"type": "boolean", "x-foreign-key": "table 1.id"}
+        ),
+    ]
+
+    decorated = column_factory.resolve_ref(mock_func)
+    decorated(spec=spec, schemas=schemas, logical_name=logical_name)
+
+    mocked_sqlalchemy_relationship.assert_called_once_with("name 1")
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_object_return(
+    mocked_resolve_ref: mock.MagicMock, mocked_sqlalchemy_relationship: mock.MagicMock
+):
+    """
+    GIVEN mock function and mocked resolve_ref helper that returns object spec
+    WHEN mock function is decorated with resolve_ref and called
+    THEN mock function return together with relationship is returned.
+    """
+    mock_func = mock.MagicMock()
+    spec = mock.MagicMock()
+    schemas = mock.MagicMock()
+    logical_name = "logical name 1"
+    mocked_resolve_ref.side_effect = [
+        types.Schema(
+            logical_name="name 1",
+            spec={
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"id": {"type": "boolean"}},
+            },
+        ),
+        types.Schema(
+            logical_name="id", spec={"type": "boolean", "x-foreign-key": "table 1.id"}
+        ),
+    ]
+
+    decorated = column_factory.resolve_ref(mock_func)
+    return_value = decorated(spec=spec, schemas=schemas, logical_name=logical_name)
+
+    mock_func.return_value.append.assert_called_once_with(
+        mocked_sqlalchemy_relationship.return_value
+    )
+    assert return_value == mock_func.return_value
 
 
 @pytest.mark.column
