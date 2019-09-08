@@ -2,7 +2,10 @@
 
 import typing
 
+from .testing_guard import testing_guard
 
+
+@testing_guard(environment_name="TESTING")
 def add_logical_name(func: typing.Callable) -> typing.Callable:
     """
     Convert return value to dictionary with logical_name: <return value>.

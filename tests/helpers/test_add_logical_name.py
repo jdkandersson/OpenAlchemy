@@ -7,6 +7,7 @@ import pytest
 from openapi_sqlalchemy import helpers
 
 
+@pytest.mark.prod_env
 @pytest.mark.helper
 def test_add_logical_name_exists():
     """
@@ -17,6 +18,7 @@ def test_add_logical_name_exists():
     assert hasattr(helpers, "add_logical_name")
 
 
+@pytest.mark.prod_env
 @pytest.mark.helper
 def test_add_logical_name_call(args, kwargs):
     """
@@ -33,6 +35,7 @@ def test_add_logical_name_call(args, kwargs):
     mock_func.assert_called_once_with(*args, **kwargs)
 
 
+@pytest.mark.prod_env
 @pytest.mark.helper
 def test_add_logical_name_return():
     """
