@@ -15,8 +15,9 @@ from openapi_sqlalchemy import exceptions
 @pytest.mark.column
 def test_resolve_ref_call(kwargs):
     """
-    GIVEN mock function and kwargs
-    WHEN mock function is decorated with resolve_ref and called with kwargs
+    GIVEN mock function, schema, schemas, logical name and kwargs
+    WHEN mock function is decorated with resolve_ref and called with schema, schemas,
+        logical name and kwargs
     THEN mock function is called with kwargs.
     """
     mock_func = mock.MagicMock()
@@ -30,6 +31,26 @@ def test_resolve_ref_call(kwargs):
     mock_func.assert_called_once_with(
         spec={"key": "value"}, logical_name=logical_name, **kwargs
     )
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_resolve_ref_return():
+    """
+    GIVEN mock function, schema, schemas and logical name
+    WHEN mock function is decorated with resolve_ref and called with schema, schemas
+        and logical name
+    THEN mock function return value is returned.
+    """
+    mock_func = mock.MagicMock()
+    spec = {"key": "value"}
+    schemas = mock.MagicMock()
+    logical_name = mock.MagicMock()
+
+    decorated = column_factory.resolve_ref(mock_func)
+    return_value = decorated(spec=spec, schemas=schemas, logical_name=logical_name)
+
+    assert return_value == mock_func.return_value
 
 
 @pytest.mark.column
