@@ -61,6 +61,14 @@ def mocked_resolve_ref(monkeypatch):
     return mock_resolve_ref
 
 
+@pytest.fixture
+def mocked_merge_all_of(monkeypatch):
+    """Monkeypatches helpers.merge_all_of."""
+    mock_merge_all_of = mock.MagicMock()
+    monkeypatch.setattr(helpers, "merge_all_of", mock_merge_all_of)
+    return mock_merge_all_of
+
+
 @pytest.fixture(scope="function", params=["sqlite:///:memory:"])
 def engine(request):
     """Creates a sqlite engine."""
