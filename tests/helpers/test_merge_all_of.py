@@ -89,3 +89,19 @@ def test_ref():
     return_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
 
     assert return_spec == {"key": "value"}
+
+
+@pytest.mark.helper
+def test_ref_all_of():
+    """
+    GIVEN spec that has allOf statement with $ref to another spec with an allOf
+        statement with a spec
+    WHEN merge_all_of is called with the spec
+    THEN the allOf $ref spec in allOf is returned.
+    """
+    spec = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
+    schemas = {"RefSchema": {"allOf": [{"key": "value"}]}}
+
+    return_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
+
+    assert return_spec == {"key": "value"}
