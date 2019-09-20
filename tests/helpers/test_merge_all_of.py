@@ -9,26 +9,40 @@ from openapi_sqlalchemy import helpers
 @pytest.mark.helper
 def test_not_all_of():
     """
-    GIVEN schema that does not have the allOf statement
-    WHEN merge_all_of is called with the schema
-    THEN the schema is returned.
+    GIVEN spec that does not have the allOf statement
+    WHEN merge_all_of is called with the spec
+    THEN the spec is returned.
     """
-    schema = {"key": "value"}
+    spec = {"key": "value"}
 
-    return_schema = helpers.merge_all_of(schema=schema)
+    return_spec = helpers.merge_all_of(spec=spec)
 
-    assert return_schema == {"key": "value"}
+    assert return_spec == {"key": "value"}
 
 
 @pytest.mark.helper
 def test_all_of_single():
     """
-    GIVEN schema that does not have the allOf statement
-    WHEN merge_all_of is called with the schema
-    THEN the schema is returned.
+    GIVEN spec that has allOf statement with a single spec
+    WHEN merge_all_of is called with the spec
+    THEN the spec in allOf is returned.
     """
-    schema = {"allOf": [{"key": "value"}]}
+    spec = {"allOf": [{"key": "value"}]}
 
-    return_schema = helpers.merge_all_of(schema=schema)
+    return_spec = helpers.merge_all_of(spec=spec)
 
-    assert return_schema == {"key": "value"}
+    assert return_spec == {"key": "value"}
+
+
+@pytest.mark.helper
+def test_all_of_multiple():
+    """
+    GIVEN spec that has multiple specs under allOf
+    WHEN merge_all_of is called with the spec
+    THEN the merged spec of all specs under allOf is returned.
+    """
+    spec = {"allOf": [{"key_1": "value_1"}, {"key_2": "value_2"}]}
+
+    return_spec = helpers.merge_all_of(spec=spec)
+
+    assert return_spec == {"key_1": "value_1", "key_2": "value_2"}
