@@ -3,22 +3,22 @@
 from openapi_sqlalchemy import types
 
 
-def merge_all_of(*, schema: types.SchemaSpec) -> types.SchemaSpec:
+def merge_all_of(*, spec: types.SchemaSpec) -> types.SchemaSpec:
     """
-    Merge schemas under allOf statement.
+    Merge specifications under allOf statement.
 
     Args:
-        schema: The schema to operate on.
+        spec: The specification to operate on.
 
     Returns:
-        The schema with all top level allOf statements resolved.
+        The specification with all top level allOf statements resolved.
 
     """
-    all_of = schema.get("allOf")
+    all_of = spec.get("allOf")
     if all_of is None:
-        return schema
+        return spec
 
-    merged_schema: types.SchemaSpec = {}
-    for sub_schema in all_of:
-        merged_schema = {**merged_schema, **sub_schema}
-    return merged_schema
+    merged_spec: types.SchemaSpec = {}
+    for sub_spec in all_of:
+        merged_spec = {**merged_spec, **sub_spec}
+    return merged_spec
