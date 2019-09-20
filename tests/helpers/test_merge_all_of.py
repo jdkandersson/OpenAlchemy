@@ -46,3 +46,17 @@ def test_all_of_multiple():
     return_spec = helpers.merge_all_of(spec=spec)
 
     assert return_spec == {"key_1": "value_1", "key_2": "value_2"}
+
+
+@pytest.mark.helper
+def test_all_of_multiple_same_key():
+    """
+    GIVEN spec that has multiple specs under allOf with the same key
+    WHEN merge_all_of is called with the spec
+    THEN the value of the last spec is assigned to the key in the returned spec.
+    """
+    spec = {"allOf": [{"key": "value_1"}, {"key": "value_2"}]}
+
+    return_spec = helpers.merge_all_of(spec=spec)
+
+    assert return_spec == {"key": "value_2"}

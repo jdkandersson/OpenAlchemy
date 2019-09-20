@@ -7,6 +7,10 @@ def merge_all_of(*, spec: types.SchemaSpec) -> types.SchemaSpec:
     """
     Merge specifications under allOf statement.
 
+    Merges objects under allOf statement which is expected to have a list of objects.
+    Any duplicate keys will be overridden. Objects are processed in the order they are
+    listed.
+
     Args:
         spec: The specification to operate on.
 
