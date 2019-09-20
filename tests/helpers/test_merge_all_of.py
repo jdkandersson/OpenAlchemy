@@ -21,7 +21,7 @@ def test_not_all_of():
 
 
 @pytest.mark.helper
-def test_all_of_single():
+def test_single():
     """
     GIVEN spec that has allOf statement with a single spec
     WHEN merge_all_of is called with the spec
@@ -35,7 +35,7 @@ def test_all_of_single():
 
 
 @pytest.mark.helper
-def test_all_of_multiple():
+def test_multiple():
     """
     GIVEN spec that has multiple specs under allOf
     WHEN merge_all_of is called with the spec
@@ -49,7 +49,7 @@ def test_all_of_multiple():
 
 
 @pytest.mark.helper
-def test_all_of_multiple_same_key():
+def test_multiple_same_key():
     """
     GIVEN spec that has multiple specs under allOf with the same key
     WHEN merge_all_of is called with the spec
@@ -60,3 +60,17 @@ def test_all_of_multiple_same_key():
     return_spec = helpers.merge_all_of(spec=spec)
 
     assert return_spec == {"key": "value_2"}
+
+
+@pytest.mark.helper
+def test_nested_all_of():
+    """
+    GIVEN spec that has allOf statement with an allOf statement with a single spec
+    WHEN merge_all_of is called with the spec
+    THEN the spec in allOf is returned.
+    """
+    spec = {"allOf": [{"allOf": [{"key": "value"}]}]}
+
+    return_spec = helpers.merge_all_of(spec=spec)
+
+    assert return_spec == {"key": "value"}

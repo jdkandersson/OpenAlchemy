@@ -24,5 +24,8 @@ def merge_all_of(*, spec: types.SchemaSpec) -> types.SchemaSpec:
 
     merged_spec: types.SchemaSpec = {}
     for sub_spec in all_of:
-        merged_spec = {**merged_spec, **sub_spec}
+        # Merging any nested allOf
+        merged_sub_spec = merge_all_of(spec=sub_spec)
+        # Combining sub into merged specification
+        merged_spec = {**merged_spec, **merged_sub_spec}
     return merged_spec
