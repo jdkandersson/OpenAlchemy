@@ -8,8 +8,18 @@ from openapi_sqlalchemy import types
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
-def resolve_ref(*, schema: types.Schema, schemas: types.Schemas):
-    """Resolve $ref schemas to the underlying schema."""
+def resolve_ref(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+    """
+    Resolve $ref schemas to the underlying schema.
+
+    Args:
+        schema: The schema to operate on.
+        schemas: All the schemas used to resolve referenced schemas.
+
+    Returns:
+        The schema where all top level $ref have been removed.
+
+    """
     # Checking whether schema is a reference schema
     ref = schema.spec.get("$ref")
     if ref is None:
