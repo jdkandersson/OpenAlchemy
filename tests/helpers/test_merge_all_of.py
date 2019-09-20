@@ -15,7 +15,7 @@ def test_not_all_of():
     """
     spec = {"key": "value"}
 
-    return_spec = helpers.merge_all_of(spec=spec)
+    return_spec = helpers.merge_all_of(spec=spec, schemas={})
 
     assert return_spec == {"key": "value"}
 
@@ -29,7 +29,7 @@ def test_single():
     """
     spec = {"allOf": [{"key": "value"}]}
 
-    return_spec = helpers.merge_all_of(spec=spec)
+    return_spec = helpers.merge_all_of(spec=spec, schemas={})
 
     assert return_spec == {"key": "value"}
 
@@ -43,7 +43,7 @@ def test_multiple():
     """
     spec = {"allOf": [{"key_1": "value_1"}, {"key_2": "value_2"}]}
 
-    return_spec = helpers.merge_all_of(spec=spec)
+    return_spec = helpers.merge_all_of(spec=spec, schemas={})
 
     assert return_spec == {"key_1": "value_1", "key_2": "value_2"}
 
@@ -57,7 +57,7 @@ def test_multiple_same_key():
     """
     spec = {"allOf": [{"key": "value_1"}, {"key": "value_2"}]}
 
-    return_spec = helpers.merge_all_of(spec=spec)
+    return_spec = helpers.merge_all_of(spec=spec, schemas={})
 
     assert return_spec == {"key": "value_2"}
 
@@ -71,6 +71,21 @@ def test_nested_all_of():
     """
     spec = {"allOf": [{"allOf": [{"key": "value"}]}]}
 
-    return_spec = helpers.merge_all_of(spec=spec)
+    return_spec = helpers.merge_all_of(spec=spec, schemas={})
+
+    assert return_spec == {"key": "value"}
+
+
+@pytest.mark.helper
+def test_ref():
+    """
+    GIVEN spec that has allOf statement with $ref to another spec
+    WHEN merge_all_of is called with the spec
+    THEN the $ref spec in allOf is returned.
+    """
+    spec = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
+    schemas = {"RefSchema": {"key": "value"}}
+
+    return_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
 
     assert return_spec == {"key": "value"}
