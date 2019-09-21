@@ -53,7 +53,7 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
 
 @helpers.testing_guard(environment_name="TESTING")
-def merge_all(func: typing.Callable) -> typing.Callable:
+def merge_all_of(func: typing.Callable) -> typing.Callable:
     """Merge allOf specification."""
 
     def inner(
@@ -68,7 +68,7 @@ def merge_all(func: typing.Callable) -> typing.Callable:
 
 @resolve_ref
 @helpers.add_logical_name
-@merge_all
+@merge_all_of
 def column_factory(
     *, spec: types.SchemaSpec, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:

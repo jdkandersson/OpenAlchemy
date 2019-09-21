@@ -203,7 +203,7 @@ def test_merge_all_of_merge_all_of_call(mocked_merge_all_of: mock.MagicMock):
     mock_spec = mock.MagicMock()
     mock_schemas = mock.MagicMock()
 
-    decorated = column_factory.merge_all(mock_func)
+    decorated = column_factory.merge_all_of(mock_func)
     decorated(spec=mock_spec, schemas=mock_schemas)
 
     mocked_merge_all_of.assert_called_once_with(spec=mock_spec, schemas=mock_schemas)
@@ -220,7 +220,7 @@ def test_merge_all_of_call(mocked_merge_all_of: mock.MagicMock, kwargs):
     """
     mock_func = mock.MagicMock()
 
-    decorated = column_factory.merge_all(mock_func)
+    decorated = column_factory.merge_all_of(mock_func)
     decorated(spec=mock.MagicMock(), schemas=mock.MagicMock(), **kwargs)
 
     mock_func.assert_called_once_with(spec=mocked_merge_all_of.return_value, **kwargs)
@@ -236,7 +236,7 @@ def test_merge_all_of_return(mocked_merge_all_of):  # pylint: disable=unused-arg
     """
     mock_func = mock.MagicMock()
 
-    decorated = column_factory.merge_all(mock_func)
+    decorated = column_factory.merge_all_of(mock_func)
     return_value = decorated(spec=mock.MagicMock(), schemas=mock.MagicMock())
 
     assert return_value == mock_func.return_value
