@@ -97,13 +97,15 @@ The following features are supported:
 - `boolean`,
 - `string`,
 - `$ref` references for columns,
-- foreign keys and
-- relationships.
+- foreign keys,
+- many to one relationships and
+- `allOf` inheritance for columns.
 
 ### Not Supported
 The following features are on the backlog:
-- `allOf` inheritance and
-- `$ref` references for models.
+- `allOf` inheritance for models,
+- `$ref` references for models and
+- one to many relationships.
 
 ## Contributing
 Fork and checkout the repository. To install:
