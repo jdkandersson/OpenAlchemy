@@ -60,9 +60,7 @@ def merge_all(func: typing.Callable) -> typing.Callable:
         *, spec: types.SchemaSpec, schemas: types.Schemas, **kwargs
     ) -> sqlalchemy.Column:
         """Replace function."""
-        print(spec)
         merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
-        print(merged_spec)
         return func(spec=merged_spec, **kwargs)
 
     return inner

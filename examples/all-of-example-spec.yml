@@ -1,0 +1,73 @@
+
+openapi: "3.0.0"
+
+info:
+  title: Test Schema
+  description: API to illustrate allOf usage for columns.
+  version: "0.1"
+
+paths:
+  /employee:
+    get:
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Employee"
+
+components:
+  schemas:
+    IdBase:
+      type: integer
+      description: Base for the id schema of an object.
+      example: 0
+      x-primary-key: true
+      x-autoincrement: true
+    NameBase:
+      type: string
+      description: The name of the object.
+      example: Object 1.
+      x-index: true
+    Employee:
+      description: Person that works for a company.
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          allOf:
+            - "$ref": "#/components/schemas/IdBase"
+            - description: Unique identifier for the employee.
+        name:
+          allOf:
+            - "$ref": "#/components/schemas/NameBase"
+            - description: The name of the employee.
+              example: David Andersson.
+        division:
+          "$ref": "#/components/schemas/Division"
+        salary:
+          type: number
+          description: The amount of money the employee is paid.
+          example: 1000000.00
+      required:
+        - id
+        - name
+        - division
+    Division:
+      description: A part of a company.
+      type: object
+      x-tablename: division
+      properties:
+        id:
+          allOf:
+            - "$ref": "#/components/schemas/IdBase"
+            - description: Unique identifier for the division.
+        name:
+          allOf:
+            - "$ref": "#/components/schemas/NameBase"
+            - description: The name of the division.
+              example: Engineering.
