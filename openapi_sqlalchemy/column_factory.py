@@ -140,10 +140,9 @@ def _handle_object(
         raise exceptions.MalformedSchemaError(
             "Referenced object does not have id property."
         )
-    # Resolving references
-    id_schema = types.Schema(logical_name=logical_name, spec=id_spec)
-    ref_id_spec = helpers.resolve_ref(schema=id_schema, schemas=schemas).spec
-    id_type = ref_id_spec.get("type")
+    # Preparing specification
+    prepared_id_spec = helpers.prepare_spec(spec=id_spec, schemas=schemas)
+    id_type = prepared_id_spec.get("type")
     if id_type is None:
         raise exceptions.MalformedSchemaError(
             "Referenced object id property does not have a type."
