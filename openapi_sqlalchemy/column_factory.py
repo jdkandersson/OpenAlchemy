@@ -26,15 +26,21 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
         # Checking for type
         type_ = ref_schema.spec.get("type")
-        if type_ is None:
-            raise exceptions.TypeMissingError("Every property requires a type.")
         if type_ != "object":
-            return func(logical_name=logical_name, spec=ref_schema.spec, **kwargs)
+            return func(
+                logical_name=logical_name,
+                spec=ref_schema.spec,
+                schemas=schemas,
+                **kwargs,
+            )
 
         # Handling object
         foreign_key_spec = _handle_object(spec=ref_schema.spec, schemas=schemas)
         return_value = func(
-            logical_name=f"{logical_name}_id", spec=foreign_key_spec, **kwargs
+            logical_name=f"{logical_name}_id",
+            spec=foreign_key_spec,
+            schemas=schemas,
+            **kwargs,
         )
 
         # Creating relationship
@@ -54,7 +60,9 @@ def merge_all(func: typing.Callable) -> typing.Callable:
         *, spec: types.SchemaSpec, schemas: types.Schemas, **kwargs
     ) -> sqlalchemy.Column:
         """Replace function."""
+        print(spec)
         merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
+        print(merged_spec)
         return func(spec=merged_spec, **kwargs)
 
     return inner
@@ -62,6 +70,7 @@ def merge_all(func: typing.Callable) -> typing.Callable:
 
 @resolve_ref
 @helpers.add_logical_name
+@merge_all
 def column_factory(
     *, spec: types.SchemaSpec, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
@@ -77,7 +86,6 @@ def column_factory(
 
     """
     # Keep track of column arguments
-    type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
     args: typing.Tuple[typing.Any, ...] = ()
     kwargs: typing.Dict[str, typing.Any] = {}
 
@@ -99,19 +107,7 @@ def column_factory(
         args = (*args, sqlalchemy.ForeignKey(spec.get("x-foreign-key")))
 
     # Calculating type of column
-    if spec.get("type") == "integer":
-        type_ = _handle_integer(spec=spec)
-    elif spec.get("type") == "number":
-        type_ = _handle_number(spec=spec)
-    elif spec.get("type") == "string":
-        type_ = _handle_string(spec=spec)
-    elif spec.get("type") == "boolean":
-        type_ = sqlalchemy.Boolean
-
-    if type_ is None:
-        raise exceptions.FeatureNotImplementedError(
-            f"{spec['type']} has not been implemented"
-        )
+    type_ = _determine_type(spec=spec)
 
     return sqlalchemy.Column(type_, *args, **kwargs)
 
@@ -196,6 +192,43 @@ def _calculate_nullable(
     if nullable:
         return True
     return False
+
+
+def _determine_type(*, spec: types.SchemaSpec) -> sqlalchemy.sql.type_api.TypeEngine:
+    """
+    Determine the type for a specification.
+
+    If no type is found, raises TypeMissingError. If the type is found but is not
+    handled, raises FeatureNotImplementedError.
+
+    Args:
+        spec: The specification to determine the type for.
+
+    Returns:
+        The type for the specification.
+
+    """
+    # Checking for type
+    spec_type = spec.get("type")
+    if spec_type is None:
+        raise exceptions.TypeMissingError("Every property requires a type.")
+
+    # Determining the type
+    type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
+    if spec_type == "integer":
+        type_ = _handle_integer(spec=spec)
+    elif spec_type == "number":
+        type_ = _handle_number(spec=spec)
+    elif spec_type == "string":
+        type_ = _handle_string(spec=spec)
+    elif spec_type == "boolean":
+        type_ = sqlalchemy.Boolean
+
+    if type_ is None:
+        raise exceptions.FeatureNotImplementedError(
+            f"{spec['type']} has not been implemented"
+        )
+    return type_
 
 
 def _handle_integer(

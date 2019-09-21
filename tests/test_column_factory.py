@@ -54,7 +54,10 @@ def test_resolve_ref_call(mocked_resolve_ref: mock.MagicMock, kwargs):
     decorated(spec=spec, schemas=schemas, logical_name=logical_name, **kwargs)
 
     mock_func.assert_called_once_with(
-        spec=mocked_resolve_ref.return_value.spec, logical_name=logical_name, **kwargs
+        spec=mocked_resolve_ref.return_value.spec,
+        logical_name=logical_name,
+        schemas=schemas,
+        **kwargs,
     )
 
 
@@ -77,27 +80,6 @@ def test_resolve_ref_return(mocked_resolve_ref: mock.MagicMock):
     return_value = decorated(spec=spec, schemas=schemas, logical_name=logical_name)
 
     assert return_value == mock_func.return_value
-
-
-@pytest.mark.prod_env
-@pytest.mark.column
-def test_resolve_ref_type_missing(mocked_resolve_ref: mock.MagicMock):
-    """
-    GIVEN mock function and mocked resolve_ref helper that returns object spec without
-        type property
-    WHEN mock function is decorated with resolve_ref and called with schema, schemas
-        and logical name
-    THEN TypeMissingError is raised.
-    """
-    mock_func = mock.MagicMock()
-    spec = mock.MagicMock()
-    schemas = mock.MagicMock()
-    logical_name = mock.MagicMock()
-    mocked_resolve_ref.return_value = types.Schema(logical_name="name 1", spec={})
-
-    decorated = column_factory.resolve_ref(mock_func)
-    with pytest.raises(exceptions.TypeMissingError):
-        decorated(spec=spec, schemas=schemas, logical_name=logical_name)
 
 
 @pytest.mark.prod_env
@@ -132,6 +114,7 @@ def test_resolve_ref_object_call(mocked_resolve_ref: mock.MagicMock, kwargs):
     mock_func.assert_called_once_with(
         spec={"type": "boolean", "x-foreign-key": "table 1.id"},
         logical_name="logical name 1_id",
+        schemas=schemas,
         **kwargs,
     )
 
@@ -257,6 +240,17 @@ def test_merge_all_of_return(mocked_merge_all_of):  # pylint: disable=unused-arg
     return_value = decorated(spec=mock.MagicMock(), schemas=mock.MagicMock())
 
     assert return_value == mock_func.return_value
+
+
+@pytest.mark.column
+def test_no_type():
+    """
+    GIVEN column schema without type
+    WHEN column_factory is called with the schema
+    THEN TypeMissingError is raised.
+    """
+    with pytest.raises(exceptions.TypeMissingError):
+        column_factory.column_factory(spec={})
 
 
 @pytest.mark.column
@@ -622,7 +616,7 @@ def test_handle_object_ref_return():
 
 @pytest.mark.prod_env
 @pytest.mark.column
-def test_integration():
+def test_integration_ref():
     """
     GIVEN schema that references another schema and schemas
     WHEN column_factory is called with the schema and schemas
@@ -668,3 +662,23 @@ def test_integration_object_ref():
     assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == "column_1"
     assert relationship.argument == "RefSchema"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_all_of():
+    """
+    GIVEN schema with allOf statement
+    WHEN column_factory is called with the schema and schemas
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name.
+    """
+    spec = {"allOf": [{"type": "boolean"}]}
+    schemas = {}
+    [
+        (logical_name, column)
+    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert logical_name == "column_1"
+    assert isinstance(column.type, sqlalchemy.Boolean)
