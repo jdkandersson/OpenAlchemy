@@ -14,3 +14,5 @@ use of references:
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
     relationships between tables.
+
+    :ref:`inheritance` shows how to use inheritance for schemas.

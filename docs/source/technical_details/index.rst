@@ -10,3 +10,4 @@ Technical Details
    null
    references
    relationships
+   inheritance
