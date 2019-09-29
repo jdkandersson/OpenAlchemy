@@ -236,3 +236,28 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     mocked_column_factory.assert_called_once_with(
         spec={"type": "integer"}, schemas=schemas, logical_name="id", required=True
     )
+
+
+@pytest.mark.prod_env
+@pytest.mark.model
+def test_ref():
+    """
+    GIVEN schemas with schema that has $ref and the referenced schema
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the property and tablename is returned.
+    """
+    model = model_factory.model_factory(
+        name="Schema",
+        base=mock.MagicMock,
+        schemas={
+            "Schema": {"$ref": "#/components/schemas/RefSchema"},
+            "RefSchema": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+            },
+        },
+    )
+
+    assert hasattr(model, "property_1")
+    assert model.__tablename__ == "table 1"

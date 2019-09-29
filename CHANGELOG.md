@@ -1,5 +1,5 @@
 # Release Notes
-## Version -.5.0 - 2019-09-29
+## Version 0.5.0 - 2019-09-29
 - Refactored column factory to use fewer decorators.
 - Changed exceptions to include the schema name.
 
