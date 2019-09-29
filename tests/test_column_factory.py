@@ -243,7 +243,7 @@ def test_merge_all_of_return(mocked_merge_all_of):  # pylint: disable=unused-arg
 
 
 @pytest.mark.column
-def test_no_type():
+def test_spec_to_column_no_type():
     """
     GIVEN column schema without type
     WHEN column_factory is called with the schema
@@ -254,7 +254,7 @@ def test_no_type():
 
 
 @pytest.mark.column
-def test_type_unsupported():
+def test_spec_to_column_type_unsupported():
     """
     GIVEN column schema with type that has not been implemented
     WHEN column_factory is called with the schema
@@ -265,7 +265,7 @@ def test_type_unsupported():
 
 
 @pytest.mark.column
-def test_column_return():
+def test_spec_to_column_column_return():
     """
     GIVEN valid schema
     WHEN column_factory is called with the schema
@@ -278,7 +278,7 @@ def test_column_return():
 
 @pytest.mark.parametrize("primary_key", [True, False], ids=["set", "reset"])
 @pytest.mark.column
-def test_primary_key(primary_key: bool):
+def test_spec_to_column_primary_key(primary_key: bool):
     """
     GIVEN valid schema and the value of the primary key property
     WHEN column_factory is called with the schema
@@ -293,7 +293,7 @@ def test_primary_key(primary_key: bool):
 
 @pytest.mark.parametrize("autoincrement", [True, False], ids=["set", "reset"])
 @pytest.mark.column
-def test_autoincrement(autoincrement: bool):
+def test_spec_to_column_autoincrement(autoincrement: bool):
     """
     GIVEN valid schema and the value of the autoincrement property
     WHEN column_factory is called with the schema
@@ -308,7 +308,7 @@ def test_autoincrement(autoincrement: bool):
 
 @pytest.mark.parametrize("index", [True, None], ids=["set", "reset"])
 @pytest.mark.column
-def test_index(index: bool):
+def test_spec_to_column_index(index: bool):
     """
     GIVEN valid schema and the value of the index property
     WHEN column_factory is called with the schema
@@ -321,7 +321,7 @@ def test_index(index: bool):
 
 @pytest.mark.parametrize("unique", [True, None], ids=["set", "reset"])
 @pytest.mark.column
-def test_unique(unique: bool):
+def test_spec_to_column_unique(unique: bool):
     """
     GIVEN valid schema and the value of the unique property
     WHEN column_factory is called with the schema
@@ -333,7 +333,7 @@ def test_unique(unique: bool):
 
 
 @pytest.mark.column
-def test_foreign_key():
+def test_spec_to_column_foreign_key():
     """
     GIVEN valid schema which has x-foreign-key set
     WHEN column_factory is called with the schema
@@ -374,7 +374,7 @@ def test_foreign_key():
     ],
 )
 @pytest.mark.column
-def test_nullable(
+def test_spec_to_column_nullable(
     required: typing.Optional[bool], nullable: typing.Optional[bool], expected: bool
 ):
     """
@@ -395,7 +395,7 @@ def test_nullable(
 
 
 @pytest.mark.column
-def test_number():
+def test_spec_to_column_number():
     """
     GIVEN schema with number type
     WHEN column_factory is called with the schema
@@ -407,7 +407,7 @@ def test_number():
 
 
 @pytest.mark.column
-def test_number_float():
+def test_spec_to_column_number_float():
     """
     GIVEN schema with number type and float format
     WHEN column_factory is called with the schema
@@ -419,7 +419,7 @@ def test_number_float():
 
 
 @pytest.mark.column
-def test_number_double():
+def test_spec_to_column_number_double():
     """
     GIVEN schema with number type and double format
     WHEN column_factory is called with the schema
@@ -430,7 +430,7 @@ def test_number_double():
 
 
 @pytest.mark.column
-def test_number_unsupported_format():
+def test_spec_to_column_number_unsupported_format():
     """
     GIVEN schema with number type and format that has not been implemented
     WHEN column_factory is called with the schema
@@ -441,7 +441,7 @@ def test_number_unsupported_format():
 
 
 @pytest.mark.column
-def test_integer():
+def test_spec_to_column_integer():
     """
     GIVEN schema with integer type
     WHEN column_factory is called with the schema
@@ -453,7 +453,7 @@ def test_integer():
 
 
 @pytest.mark.column
-def test_integer_int32():
+def test_spec_to_column_integer_int32():
     """
     GIVEN schema with integer type and int32 format
     WHEN column_factory is called with the schema
@@ -465,7 +465,7 @@ def test_integer_int32():
 
 
 @pytest.mark.column
-def test_integer_int64():
+def test_spec_to_column_integer_int64():
     """
     GIVEN schema with integer type and int64 format
     WHEN column_factory is called with the schema
@@ -477,7 +477,7 @@ def test_integer_int64():
 
 
 @pytest.mark.column
-def test_integer_unsupported_format():
+def test_spec_to_column_integer_unsupported_format():
     """
     GIVEN schema with integer type and unsupported format
     WHEN column_factory is called with the schema
@@ -490,7 +490,7 @@ def test_integer_unsupported_format():
 
 
 @pytest.mark.column
-def test_string():
+def test_spec_to_column_string():
     """
     GIVEN schema with string type
     WHEN column_factory is called with the schema
@@ -502,7 +502,7 @@ def test_string():
 
 
 @pytest.mark.column
-def test_string_length():
+def test_spec_to_column_string_length():
     """
     GIVEN schema with string type and maxLength property
     WHEN column_factory is called with the schema
@@ -514,7 +514,7 @@ def test_string_length():
 
 
 @pytest.mark.column
-def test_boolean():
+def test_spec_to_column_boolean():
     """
     GIVEN schema with boolean type
     WHEN column_factory is called with the schema
