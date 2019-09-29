@@ -9,7 +9,19 @@ schemas section. This means that a single definition for a *property* of an
 *openapi-SQLAlchemy*. For example, the following *openapi* specification makes
 use of references:
 
-.. literalinclude:: ../../../examples/ref-example-spec.yml
+.. literalinclude:: ../../../examples/ref-column-example-spec.yml
+
+Which leads to the following *models.py* file:
+
+.. literalinclude:: ../../../examples/ref_column_models.py
+
+The same is also possible for whole models which allows for aliases for models:
+
+.. literalinclude:: ../../../examples/ref-model-example-spec.yml
+
+Which leads to the following *models.py* file:
+
+.. literalinclude:: ../../../examples/ref_model_models.py
 
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
