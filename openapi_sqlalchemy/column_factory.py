@@ -68,9 +68,11 @@ def merge_all_of(func: typing.Callable) -> typing.Callable:
 
 @resolve_ref
 @helpers.add_logical_name
-@merge_all_of
 def column_factory(
-    *, spec: types.SchemaSpec, required: typing.Optional[bool] = None
+    *,
+    spec: types.SchemaSpec,
+    schemas: types.Schemas,
+    required: typing.Optional[bool] = None,
 ) -> sqlalchemy.Column:
     """
     Generate column based on openapi schema property.
@@ -83,7 +85,10 @@ def column_factory(
         The SQLAlchemy column based on the schema.
 
     """
-    return _spec_to_column(spec=spec, required=required)
+    # Mering spec under allOf
+    merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
+
+    return _spec_to_column(spec=merged_spec, required=required)
 
 
 def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] = None):
