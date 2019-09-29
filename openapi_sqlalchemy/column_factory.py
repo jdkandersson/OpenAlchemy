@@ -83,6 +83,21 @@ def column_factory(
         The SQLAlchemy column based on the schema.
 
     """
+    return _spec_to_column(spec=spec, required=required)
+
+
+def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] = None):
+    """
+    Convert specification to a SQLAlchemy column.
+
+    Args:
+        spec: The schema for the column.
+        required: Whether the object property is required.
+
+    Returns:
+        The SQLAlchemy column based on the schema.
+
+    """
     # Keep track of column arguments
     args: typing.Tuple[typing.Any, ...] = ()
     kwargs: typing.Dict[str, typing.Any] = {}
