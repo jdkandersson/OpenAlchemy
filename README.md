@@ -96,15 +96,14 @@ The following features are supported:
 - `number` (float only),
 - `boolean`,
 - `string`,
-- `$ref` references for columns,
+- `$ref` references for columns and models,
 - foreign keys,
 - many to one relationships and
 - `allOf` inheritance for columns.
 
 ### Not Supported
 The following features are on the backlog:
-- `allOf` inheritance for models,
-- `$ref` references for models and
+- `allOf` inheritance for models and
 - one to many relationships.
 
 ## Contributing

@@ -2,6 +2,7 @@
 ## Version 0.5.0 - 2019-09-29
 - Refactored column factory to use fewer decorators.
 - Changed exceptions to include the schema name.
+- Added support for `$ref` for models.
 
 ## Version 0.4.0 - 2019-09-21
 - Added support for `allOf` for columns.
