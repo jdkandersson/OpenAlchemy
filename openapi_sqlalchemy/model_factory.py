@@ -33,15 +33,17 @@ def model_factory(
     # Checking for tablename key
     if "x-tablename" not in schema:
         raise exceptions.MalformedSchemaError(
-            '"x-tablename" is a required schema property.'
+            f'"x-tablename" is a required schema property for {name}.'
         )
     # Checking for object type
     if schema.get("type") != "object":
         raise exceptions.FeatureNotImplementedError(
-            f"{schema.get('type')} is not supported."
+            f"{schema.get('type')} is not supported in {name}."
         )
     if not schema.get("properties"):
-        raise exceptions.MalformedSchemaError("At least 1 property is required.")
+        raise exceptions.MalformedSchemaError(
+            f"At least 1 property is required for {name}."
+        )
 
     # Assembling model
     return type(
