@@ -53,28 +53,32 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
 
 
 @resolve_ref
-@helpers.add_logical_name
 def column_factory(
     *,
     spec: types.SchemaSpec,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> sqlalchemy.Column:
+    logical_name: str,
+) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
     """
     Generate column based on openapi schema property.
 
     Args:
         spec: The schema for the column.
+        schemas: Used to resolve any $ref.
         required: Whether the object property is required.
+        logical_name: The logical name in the specification for the schema.
 
     Returns:
-        The SQLAlchemy column based on the schema.
+        The logical name and the SQLAlchemy column based on the schema.
 
     """
     # Mering spec under allOf
     merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
-
-    return _spec_to_column(spec=merged_spec, required=required)
+    # Generating the SQLAlchemy column
+    column = _spec_to_column(spec=merged_spec, required=required)
+    # Adding the logical name
+    return [(logical_name, column)]
 
 
 def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] = None):
