@@ -52,20 +52,6 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
     return inner
 
 
-@helpers.testing_guard(environment_name="TESTING")
-def merge_all_of(func: typing.Callable) -> typing.Callable:
-    """Merge allOf specification."""
-
-    def inner(
-        *, spec: types.SchemaSpec, schemas: types.Schemas, **kwargs
-    ) -> sqlalchemy.Column:
-        """Replace function."""
-        merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
-        return func(spec=merged_spec, **kwargs)
-
-    return inner
-
-
 @resolve_ref
 @helpers.add_logical_name
 def column_factory(

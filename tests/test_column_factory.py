@@ -191,57 +191,6 @@ def test_resolve_ref_object_return(
     assert return_value == mock_func.return_value
 
 
-@pytest.mark.prod_env
-@pytest.mark.column
-def test_merge_all_of_merge_all_of_call(mocked_merge_all_of: mock.MagicMock):
-    """
-    GIVEN mock function, mocked merge_all_of helper, mock spec and schemas
-    WHEN mock function is decorated with merge_all_of and called with spec, schemas
-    THEN merge_all_of helper is called with the spec and schemas.
-    """
-    mock_func = mock.MagicMock()
-    mock_spec = mock.MagicMock()
-    mock_schemas = mock.MagicMock()
-
-    decorated = column_factory.merge_all_of(mock_func)
-    decorated(spec=mock_spec, schemas=mock_schemas)
-
-    mocked_merge_all_of.assert_called_once_with(spec=mock_spec, schemas=mock_schemas)
-
-
-@pytest.mark.prod_env
-@pytest.mark.column
-def test_merge_all_of_call(mocked_merge_all_of: mock.MagicMock, kwargs):
-    """
-    GIVEN mock function, mocked merge_all_of helper and kwargs
-    WHEN mock function is decorated with merge_all_of and called with kwargs
-    THEN mock function is called with merge_all_of helper return value as spec and
-        kwargs.
-    """
-    mock_func = mock.MagicMock()
-
-    decorated = column_factory.merge_all_of(mock_func)
-    decorated(spec=mock.MagicMock(), schemas=mock.MagicMock(), **kwargs)
-
-    mock_func.assert_called_once_with(spec=mocked_merge_all_of.return_value, **kwargs)
-
-
-@pytest.mark.prod_env
-@pytest.mark.column
-def test_merge_all_of_return(mocked_merge_all_of):  # pylint: disable=unused-argument
-    """
-    GIVEN mock function
-    WHEN mock function is decorated with merge_all_of and called
-    THEN mock function return value is returned.
-    """
-    mock_func = mock.MagicMock()
-
-    decorated = column_factory.merge_all_of(mock_func)
-    return_value = decorated(spec=mock.MagicMock(), schemas=mock.MagicMock())
-
-    assert return_value == mock_func.return_value
-
-
 @pytest.mark.column
 def test_spec_to_column_no_type():
     """
