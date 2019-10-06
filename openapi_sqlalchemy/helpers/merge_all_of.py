@@ -41,10 +41,11 @@ def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.Sch
         # Combining sub into merged specification
         merged_spec = {**merged_spec, **merged_sub_spec}
 
-        # Checking whether required was present on either spec
+        # Checking whether required was present on both specs
         if merged_required is None or sub_required is None:
             continue
 
+        # Both have a required array, need to merge them together with common elements
         required_set = set(merged_required).union(sub_required)
         merged_spec["required"] = list(required_set)
 
