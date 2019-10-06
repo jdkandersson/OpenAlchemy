@@ -33,6 +33,19 @@ def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.Sch
         ).spec
         # Merging any nested allOf
         merged_sub_spec = merge_all_of(spec=resolved_spec, schemas=schemas)
+
+        # Capturing required arrays
+        merged_required = merged_spec.get("required")
+        sub_required = merged_sub_spec.get("required")
+
         # Combining sub into merged specification
         merged_spec = {**merged_spec, **merged_sub_spec}
+
+        # Checking whether required was present on either spec
+        if merged_required is None or sub_required is None:
+            continue
+
+        required_set = set(merged_required).union(sub_required)
+        merged_spec["required"] = list(required_set)
+
     return merged_spec

@@ -105,3 +105,29 @@ def test_ref_all_of():
     return_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
 
     assert return_spec == {"key": "value"}
+
+
+@pytest.mark.parametrize(
+    "all_of_spec, expected_required",
+    [
+        ([{"required": ["id"]}, {}], ["id"]),
+        ([{}, {"required": ["id"]}], ["id"]),
+        ([{"required": ["id"]}, {"required": ["name"]}], ["id", "name"]),
+        ([{"required": ["id"]}, {"required": ["id"]}], ["id"]),
+    ],
+    ids=["first only", "second only", "different", "common"],
+)
+@pytest.mark.helper
+def test_ref_all_required(all_of_spec, expected_required):
+    """
+    GIVEN spec that has allOf with specs with given required properties and expected
+        final required
+    WHEN merge_all_of is called with the spec
+    THEN the returned spec has the expected required property.
+    """
+    spec = {"allOf": all_of_spec}
+    schemas = {}
+
+    return_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
+
+    assert sorted(return_spec["required"]) == sorted(expected_required)
