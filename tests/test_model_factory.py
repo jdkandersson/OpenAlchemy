@@ -261,3 +261,31 @@ def test_ref():
 
     assert hasattr(model, "property_1")
     assert model.__tablename__ == "table 1"
+
+
+@pytest.mark.prod_env
+@pytest.mark.model
+def test_all_of():
+    """
+    GIVEN schemas with schema that has allOf and the referenced schema
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the property and tablename is returned.
+    """
+    model = model_factory.model_factory(
+        name="Schema",
+        base=mock.MagicMock,
+        schemas={
+            "Schema": {
+                "allOf": [
+                    {
+                        "x-tablename": "table 1",
+                        "type": "object",
+                        "properties": {"property_1": {"type": "integer"}},
+                    }
+                ]
+            }
+        },
+    )
+
+    assert hasattr(model, "property_1")
+    assert model.__tablename__ == "table 1"
