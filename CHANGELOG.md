@@ -1,4 +1,8 @@
 # Release Notes
+
+## Version 0.6.0 - 2019-10-6
+- Added support for `allOf` for models.
+
 ## Version 0.5.0 - 2019-09-29
 - Refactored column factory to use fewer decorators.
 - Changed exceptions to include the schema name.
