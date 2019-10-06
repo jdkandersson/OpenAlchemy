@@ -6,5 +6,6 @@ python ref_column_models.py
 python ref_model_models.py
 python relationship_models.py
 python relationship_models_traditional.py
-python all_of_models.py
+python all_of_column_models.py
+python all_of_model_models.py
 cd -
