@@ -99,11 +99,10 @@ The following features are supported:
 - `$ref` references for columns and models,
 - foreign keys,
 - many to one relationships and
-- `allOf` inheritance for columns.
+- `allOf` inheritance for columns and models.
 
 ### Not Supported
 The following features are on the backlog:
-- `allOf` inheritance for models and
 - one to many relationships.
 
 ## Contributing
