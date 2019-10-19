@@ -583,9 +583,7 @@ def test_integration_ref():
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
-    [
-        (logical_name, column)
-    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+    [(logical_name, column)] = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -612,7 +610,7 @@ def test_integration_object_ref():
     [  # pylint: disable=unbalanced-tuple-unpacking
         (fk_logical_name, fk_column),
         (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+    ] = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -633,9 +631,7 @@ def test_integration_all_of():
     """
     spec = {"allOf": [{"type": "boolean"}]}
     schemas = {}
-    [
-        (logical_name, column)
-    ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg
+    [(logical_name, column)] = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
