@@ -339,3 +339,94 @@ def test_database_many_to_one_relationship(engine, sessionmaker):
     assert queried_ref_model.name == "ref table name 1"
     assert len(queried_ref_model.tables) == 1
     assert queried_ref_model.tables[0].id == 12
+
+
+@pytest.mark.parametrize(
+    "spec",
+    [
+        {
+            "components": {
+                "schemas": {
+                    "Column": {"type": "integer", "x-primary-key": True},
+                    "Table": {
+                        "properties": {
+                            "column": {"$ref": "#/components/schemas/Column"}
+                        },
+                        "x-tablename": "table",
+                        "type": "object",
+                    },
+                }
+            }
+        },
+        {
+            "components": {
+                "schemas": {
+                    "Table": {"$ref": "#/components/schemas/RefTable"},
+                    "RefTable": {
+                        "properties": {
+                            "column": {"type": "integer", "x-primary-key": True}
+                        },
+                        "x-tablename": "table",
+                        "type": "object",
+                    },
+                }
+            }
+        },
+        {
+            "components": {
+                "schemas": {
+                    "Table": {
+                        "properties": {
+                            "column": {
+                                "allOf": [{"type": "integer", "x-primary-key": True}]
+                            }
+                        },
+                        "x-tablename": "table",
+                        "type": "object",
+                    }
+                }
+            }
+        },
+        {
+            "components": {
+                "schemas": {
+                    "Table": {
+                        "allOf": [
+                            {
+                                "properties": {
+                                    "column": {"type": "integer", "x-primary-key": True}
+                                },
+                                "x-tablename": "table",
+                                "type": "object",
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+    ],
+    ids=["ref column", "ref model", "allOf column", "allOf model"],
+)
+@pytest.mark.integration
+def test_database_feature(engine, sessionmaker, spec):
+    """
+    GIVEN specification with a schema that has a $ref on a column
+    WHEN schema is created and an instance is added to the session
+    THEN the instance is returned when the session is queried for it.
+    """
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(column=1)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == 1
