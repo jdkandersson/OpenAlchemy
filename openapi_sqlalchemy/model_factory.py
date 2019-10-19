@@ -6,7 +6,6 @@ import typing
 from . import column_factory
 from . import exceptions
 from . import helpers
-from . import types
 
 
 def model_factory(
@@ -31,20 +30,21 @@ def model_factory(
     # Checking that name is in schemas
     if name not in schemas:
         raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
-    schema_spec: types.SchemaSpec = schemas.get(name, {})
+    schema: typing.Dict[str, typing.Any] = schemas.get(name, {})
     # De-referencing schema
-    schema_spec = helpers.prepare_spec(spec=schema_spec, schemas=schemas)
+    _, schema = helpers.resolve_ref(name="", schema=schema, schemas=schemas)
+    schema = helpers.merge_all_of(schema=schema, schemas=schemas)
     # Checking for tablename key
-    if "x-tablename" not in schema_spec:
+    if "x-tablename" not in schema:
         raise exceptions.MalformedSchemaError(
             f'"x-tablename" is a required schema property for {name}.'
         )
     # Checking for object type
-    if schema_spec.get("type") != "object":
+    if schema.get("type") != "object":
         raise exceptions.FeatureNotImplementedError(
-            f"{schema_spec.get('type')} is not supported in {name}."
+            f"{schema.get('type')} is not supported in {name}."
         )
-    if not schema_spec.get("properties"):
+    if not schema.get("properties"):
         raise exceptions.MalformedSchemaError(
             f"At least 1 property is required for {name}."
         )
@@ -54,7 +54,7 @@ def model_factory(
         name,
         (base,),
         {
-            "__tablename__": schema_spec.get("x-tablename"),
+            "__tablename__": schema.get("x-tablename"),
             **dict(
                 itertools.chain.from_iterable(
                     # pylint: disable=unexpected-keyword-arg
@@ -62,11 +62,11 @@ def model_factory(
                         spec=value,
                         schemas=schemas,
                         logical_name=key,
-                        required=key in schema_spec.get("required", [])
-                        if "required" in schema_spec
+                        required=key in schema.get("required", [])
+                        if "required" in schema
                         else None,
                     )
-                    for key, value in schema_spec.get("properties", []).items()
+                    for key, value in schema.get("properties", []).items()
                 )
             ),
         },
