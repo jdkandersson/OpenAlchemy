@@ -1,25 +1,33 @@
 """All custom exceptions that OpenAPI-SQLAlchemy can raise."""
 
 
-class MissingArgumentError(ValueError):
+class BaseError(Exception):
+    """All exceptions derive at least from this exception."""
+
+
+class MissingArgumentError(ValueError, BaseError):
     """Raised when a required argument was not passed."""
 
 
-class SchemaNotFoundError(KeyError):
+class SchemaNotFoundError(KeyError, BaseError):
     """Raised when a schema was not found in the schemas."""
 
 
-class TypeMissingError(TypeError):
+class TypeMissingError(TypeError, BaseError):
     """Raised when a column schema does not have a type."""
 
 
-class FeatureNotImplementedError(NotImplementedError):
+class FeatureNotImplementedError(NotImplementedError, BaseError):
     """Raised when a requested feature has not been implemented yet."""
 
 
-class MalformedSpecificationError(ValueError):
+class MalformedSpecificationError(ValueError, BaseError):
     """Raised when an object specification is missing required properties."""
 
 
-class MalformedSchemaError(ValueError):
+class MalformedSchemaError(ValueError, BaseError):
     """Raised when an object schema is missing required properties."""
+
+
+class MalformedManyToOne(ValueError, BaseError):
+    """Raised when a many to one relationship was not defined as expected."""
