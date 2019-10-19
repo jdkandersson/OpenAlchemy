@@ -9,9 +9,12 @@ from openapi_sqlalchemy import types
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
+NameSchema = typing.Tuple[str, types.Schema]
+
+
 def resolve_ref(
     *, name: str, schema: types.Schema, schemas: types.Schemas
-) -> typing.Tuple[str, types.Schema]:
+) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -34,6 +37,25 @@ def resolve_ref(
     if ref is None:
         return name, schema
 
+    ref_name, ref_schema = get_ref(ref=ref, schemas=schemas)
+
+    return resolve_ref(name=ref_name, schema=ref_schema, schemas=schemas)
+
+
+def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
+    """
+    Get the schema referenced by ref.
+
+    Raises SchemaNotFound is a $ref resolution fails.
+
+    Args:
+        ref: The reference to the schema.
+        schemas: The schemas to use to resolve the ref.
+
+    Returns:
+        The schema referenced by ref.
+
+    """
     # Checking value of $ref
     match = _REF_PATTER.match(ref)
     if not match:
@@ -47,4 +69,4 @@ def resolve_ref(
     if ref_schema is None:
         raise exceptions.SchemaNotFoundError(f"{ref_name} was not found in schemas.")
 
-    return resolve_ref(name=ref_name, schema=ref_schema, schemas=schemas)
+    return ref_name, ref_schema
