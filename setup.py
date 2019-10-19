@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="OpenAPI-SQLAlchemy",
-    version="0.6.1",
+    version="0.6.2",
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
     description="Maps an OpenAPI schema to SQLAlchemy models.",
@@ -29,6 +29,7 @@ setuptools.setup(
         "dev": [
             "pytest",
             "tox",
+            "tox-pyenv",
             "pylint",
             "pytest-cov",
             "pytest-flakes",

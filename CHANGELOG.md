@@ -1,5 +1,11 @@
 # Release Notes
 
+## Version 0.6.2 - 2019-10-19
+- Add support for python 3.8.
+
+## Version 0.6.1 - 2019-10-19
+- Updated name from openapi-SQLAlchemy to OpenAPI-SQLAlchemy. All urls are expected to keep working.
+
 ## Version 0.6.0 - 2019-10-6
 - Added support for `allOf` for models.
 
