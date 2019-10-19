@@ -17,6 +17,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: Apache Software License",
@@ -25,8 +26,8 @@ setuptools.setup(
         "Natural Language :: English",
         "Topic :: Database",
     ],
-    python_requires=">=3.7",
-    install_requires=["SQLAlchemy>=1.3.6", "typing-extensions>=3.7.4"],
+    python_requires=">=3.5",
+    install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5"],
     extras_require={
         "dev": [
             "pytest",
