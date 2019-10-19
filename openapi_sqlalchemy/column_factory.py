@@ -35,11 +35,46 @@ def column_factory(
     # Checking for the type
     type_ = helpers.peek_type(schema=spec, schemas=schemas)
 
-    # Checking for type
+    # CHandling columns
     if type_ != "object":
         spec = helpers.prepare_schema(schema=spec, schemas=schemas)
         return _handle_column(logical_name=logical_name, spec=spec, required=required)
 
+    # Handling objects
+    return _handle_object(
+        spec=spec, schemas=schemas, required=required, logical_name=logical_name
+    )
+
+
+def _handle_object(
+    *,
+    spec: types.Schema,
+    schemas: types.Schemas,
+    required: typing.Optional[bool] = None,
+    logical_name: str,
+) -> typing.List[
+    typing.Tuple[
+        str,
+        typing.Union[
+            sqlalchemy.Column,
+            sqlalchemy.orm.properties.RelationshipProperty,  # pylint: disable=no-member
+        ],
+    ]
+]:
+    """
+    Generate properties for a reference to another object.
+
+    Args:
+        spec: The schema for the column.
+        schemas: Used to resolve any $ref.
+        required: Whether the object property is required.
+        logical_name: The logical name in the specification for the schema.
+
+    Returns:
+        The logical name and the SQLAlchemy column for the foreign key and the logical
+        name and relationship for the reference to the object.
+
+    """
     # Resolveing any $ref and merging allOf
     ref_logical_name, spec = helpers.resolve_ref(
         name=logical_name, schema=spec, schemas=schemas
