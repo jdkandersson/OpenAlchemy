@@ -14,8 +14,8 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 def column_factory(
     *,
-    spec: typing.Dict[str, typing.Any],
-    schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
+    spec: types.Schema,
+    schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
@@ -62,7 +62,7 @@ def column_factory(
 
 
 def _handle_column(
-    *, spec: types.SchemaSpec, required: typing.Optional[bool] = None, logical_name: str
+    *, spec: types.Schema, required: typing.Optional[bool] = None, logical_name: str
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
     """
     Generate column based on OpenAPI schema property.
@@ -83,7 +83,7 @@ def _handle_column(
     return [(logical_name, column)]
 
 
-def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] = None):
+def _spec_to_column(*, spec: types.Schema, required: typing.Optional[bool] = None):
     """
     Convert specification to a SQLAlchemy column.
 
@@ -97,7 +97,7 @@ def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] =
     """
     # Keep track of column arguments
     args: typing.Tuple[typing.Any, ...] = ()
-    kwargs: typing.Dict[str, typing.Any] = {}
+    kwargs: types.Schema = {}
 
     # Calculate column modifiers
     kwargs["nullable"] = _calculate_nullable(spec=spec, required=required)
@@ -123,8 +123,8 @@ def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] =
 
 
 def _handle_object_reference(
-    *, spec: types.SchemaSpec, schemas: types.Schemas
-) -> types.SchemaSpec:
+    *, spec: types.Schema, schemas: types.Schemas
+) -> types.Schema:
     """
     Determine the foreign key schema for an object reference.
 
@@ -164,9 +164,7 @@ def _handle_object_reference(
     return {"type": id_type, "x-foreign-key": f"{tablename}.id"}
 
 
-def _calculate_nullable(
-    *, spec: types.SchemaSpec, required: typing.Optional[bool]
-) -> bool:
+def _calculate_nullable(*, spec: types.Schema, required: typing.Optional[bool]) -> bool:
     """
     Calculate the value of the nullable field.
 
@@ -204,7 +202,7 @@ def _calculate_nullable(
     return False
 
 
-def _determine_type(*, spec: types.SchemaSpec) -> sqlalchemy.sql.type_api.TypeEngine:
+def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine:
     """
     Determine the type for a specification.
 
@@ -242,7 +240,7 @@ def _determine_type(*, spec: types.SchemaSpec) -> sqlalchemy.sql.type_api.TypeEn
 
 
 def _handle_integer(
-    *, spec: types.SchemaSpec
+    *, spec: types.Schema
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
     Determine the type of integer to use for the schema.
@@ -263,7 +261,7 @@ def _handle_integer(
     )
 
 
-def _handle_number(*, spec: types.SchemaSpec) -> sqlalchemy.Float:
+def _handle_number(*, spec: types.Schema) -> sqlalchemy.Float:
     """
     Determine the type of number to use for the schema.
 
@@ -281,7 +279,7 @@ def _handle_number(*, spec: types.SchemaSpec) -> sqlalchemy.Float:
     )
 
 
-def _handle_string(*, spec: types.SchemaSpec) -> sqlalchemy.String:
+def _handle_string(*, spec: types.Schema) -> sqlalchemy.String:
     """
     Determine the setup of the string to use for the schema.
 

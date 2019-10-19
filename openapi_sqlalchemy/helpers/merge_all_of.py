@@ -1,15 +1,11 @@
 """Merges objects under allOf statement."""
 
-import typing
+from openapi_sqlalchemy import types
 
 from .resolve_ref import resolve_ref
 
 
-def merge_all_of(
-    *,
-    schema: typing.Dict[str, typing.Any],
-    schemas: typing.Dict[str, typing.Dict[str, typing.Any]]
-) -> typing.Dict[str, typing.Any]:
+def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
     """
     Merge schemas under allOf statement.
 
@@ -29,7 +25,7 @@ def merge_all_of(
     if all_of is None:
         return schema
 
-    merged_schema: typing.Dict[str, typing.Any] = {}
+    merged_schema: types.Schema = {}
     for sub_schema in all_of:
         # Resolving any $ref
         _, ref_schema = resolve_ref(name="", schema=sub_schema, schemas=schemas)

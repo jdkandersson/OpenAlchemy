@@ -10,11 +10,8 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
 def resolve_ref(
-    *,
-    name: str,
-    schema: typing.Dict[str, typing.Any],
-    schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
-) -> typing.Tuple[str, types.SchemaSpec]:
+    *, name: str, schema: types.Schema, schemas: types.Schemas
+) -> typing.Tuple[str, types.Schema]:
     """
     Resolve reference to another schema.
 

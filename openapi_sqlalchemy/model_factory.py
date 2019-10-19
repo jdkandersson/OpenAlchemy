@@ -6,13 +6,11 @@ import typing
 from . import column_factory
 from . import exceptions
 from . import helpers
+from . import types
 
 
 def model_factory(
-    *,
-    name: str,
-    base: typing.Type,
-    schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
+    *, name: str, base: typing.Type, schemas: types.Schemas
 ) -> typing.Type:
     """
     Convert OpenAPI schema to SQLAlchemy model.
@@ -30,7 +28,7 @@ def model_factory(
     # Checking that name is in schemas
     if name not in schemas:
         raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
-    schema: typing.Dict[str, typing.Any] = schemas.get(name, {})
+    schema: types.Schema = schemas.get(name, {})
     # De-referencing schema
     _, schema = helpers.resolve_ref(name="", schema=schema, schemas=schemas)
     schema = helpers.merge_all_of(schema=schema, schemas=schemas)

@@ -7,6 +7,7 @@ import typing_extensions
 
 from . import exceptions
 from . import model_factory as _model_factory
+from . import types
 
 
 class ModelFactory(typing_extensions.Protocol):
@@ -17,9 +18,7 @@ class ModelFactory(typing_extensions.Protocol):
         ...
 
 
-def init_model_factory(
-    *, base: typing.Type, spec: typing.Dict[str, typing.Any]
-) -> ModelFactory:
+def init_model_factory(*, base: typing.Type, spec: types.Schema) -> ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
 
