@@ -32,27 +32,22 @@ def column_factory(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    # Resolveing any $ref
+    # Resolveing any $ref and merging allOf
     schema = types.Schema(logical_name=logical_name, spec=spec)
     ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+    ref_schema.spec = helpers.merge_all_of(spec=ref_schema.spec, schemas=schemas)
 
     # Checking for type
     type_ = ref_schema.spec.get("type")
     if type_ != "object":
         return _handle_column(
-            logical_name=logical_name,
-            spec=ref_schema.spec,
-            schemas=schemas,
-            required=required,
+            logical_name=logical_name, spec=ref_schema.spec, required=required
         )
 
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=ref_schema.spec, schemas=schemas)
     return_value = _handle_column(
-        logical_name=f"{logical_name}_id",
-        spec=foreign_key_spec,
-        schemas=schemas,
-        required=required,
+        logical_name=f"{logical_name}_id", spec=foreign_key_spec, required=required
     )
 
     # Creating relationship
@@ -63,11 +58,7 @@ def column_factory(
 
 
 def _handle_column(
-    *,
-    spec: types.SchemaSpec,
-    schemas: types.Schemas,
-    required: typing.Optional[bool] = None,
-    logical_name: str,
+    *, spec: types.SchemaSpec, required: typing.Optional[bool] = None, logical_name: str
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
     """
     Generate column based on OpenAPI schema property.
@@ -82,10 +73,8 @@ def _handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    # Mering spec under allOf
-    merged_spec = helpers.merge_all_of(spec=spec, schemas=schemas)
     # Generating the SQLAlchemy column
-    column = _spec_to_column(spec=merged_spec, required=required)
+    column = _spec_to_column(spec=spec, required=required)
     # Adding the logical name
     return [(logical_name, column)]
 

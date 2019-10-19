@@ -417,25 +417,25 @@ def test_integration_mock_call(
     mocked_resolve_ref: mock.MagicMock, mocked_handle_column: mock.MagicMock
 ):
     """
-    GIVEN mocked _handle_column and resolve_ref helper, spec, schemas, logical name and
-        required
-    WHEN column_factory is called with spec, schemas, logical name and required
+    GIVEN mocked _handle_column and resolve_ref helper, spec, logical name and required
+    WHEN column_factory is called with spec, logical name and required
     THEN _handle_column is called with logical name, spec from resolve_ref helper
-        return value, schemas and required.
+        return value and required.
     """
     spec = mock.MagicMock()
-    schemas = mock.MagicMock()
     logical_name = mock.MagicMock()
     required = mock.MagicMock()
 
     column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, required=required
+        spec=spec,
+        schemas=mock.MagicMock(),
+        logical_name=logical_name,
+        required=required,
     )
 
     mocked_handle_column.assert_called_once_with(
         spec=mocked_resolve_ref.return_value.spec,
         logical_name=logical_name,
-        schemas=schemas,
         required=required,
     )
 
@@ -469,7 +469,6 @@ def test_integration_mock_object_call(
     THEN _handle_column is called with the object's id schema.
     """
     spec = mock.MagicMock()
-    schemas = mock.MagicMock()
     logical_name = "logical name 1"
     required = mock.MagicMock()
     mocked_resolve_ref.side_effect = [
@@ -487,13 +486,15 @@ def test_integration_mock_object_call(
     ]
 
     column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, required=required
+        spec=spec,
+        schemas=mock.MagicMock(),
+        logical_name=logical_name,
+        required=required,
     )
 
     mocked_handle_column.assert_called_once_with(
         spec={"type": "boolean", "x-foreign-key": "table 1.id"},
         logical_name="logical name 1_id",
-        schemas=schemas,
         required=required,
     )
 
