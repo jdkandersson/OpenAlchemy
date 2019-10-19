@@ -18,6 +18,7 @@ def test_resolve_ref_exists():
     assert hasattr(helpers, "resolve_ref")
 
 
+@pytest.mark.helper
 def test_resolve_ref_not_ref_schema():
     """
     GIVEN schema that does not have $ref and name
@@ -36,6 +37,7 @@ def test_resolve_ref_not_ref_schema():
     assert return_schema == schema
 
 
+@pytest.mark.helper
 def test_resolve_ref_not_schema():
     """
     GIVEN schema that references something that is not a schema
@@ -49,6 +51,7 @@ def test_resolve_ref_not_schema():
         helpers.resolve_ref(name="name 1", schema=schema, schemas=schemas)
 
 
+@pytest.mark.helper
 def test_resolve_ref_not_defined():
     """
     GIVEN schema that references a schema that doesn't exist
@@ -62,6 +65,7 @@ def test_resolve_ref_not_defined():
         helpers.resolve_ref(name="name 1", schema=schema, schemas=schemas)
 
 
+@pytest.mark.helper
 def test_resolve_ref_single():
     """
     GIVEN schema that references another schema and schemas
@@ -81,6 +85,7 @@ def test_resolve_ref_single():
     assert return_schema == ref_schema
 
 
+@pytest.mark.helper
 def test_resolve_ref_nested():
     """
     GIVEN schema that references another schema which also references another schema

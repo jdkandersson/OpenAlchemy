@@ -28,6 +28,7 @@ from openapi_sqlalchemy import helpers
     ],
     ids=["plain", "$ref", "allOf", "$ref then allOf", "allOf with $ref"],
 )
+@pytest.mark.helper
 def test_prepare_schema(schema, schemas, expected_schema):
     """
     GIVEN schema, schemas and expected schema
