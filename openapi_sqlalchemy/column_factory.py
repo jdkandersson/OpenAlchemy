@@ -75,10 +75,27 @@ def _handle_object(
         name and relationship for the reference to the object.
 
     """
-    # Resolveing any $ref and merging allOf
-    ref_logical_name, spec = helpers.resolve_ref(
-        name=logical_name, schema=spec, schemas=schemas
-    )
+    # Default backref
+    backref = None
+
+    # Checking for $ref and allOf
+    ref = spec.get("$ref")
+    all_of = spec.get("allOf")
+
+    if ref is not None:
+        # Handling $ref
+        ref_logical_name, spec = helpers.resolve_ref(
+            name=logical_name, schema=spec, schemas=schemas
+        )
+        backref = spec.get("x-backref")
+    elif all_of is not None:
+        # Handling allOf
+        for sub_spec in all_of:
+            backref = sub_spec.get("x-backref")
+            if sub_spec.get("$ref") is not None:
+                ref_logical_name, spec = helpers.resolve_ref(
+                    name=logical_name, schema=sub_spec, schemas=schemas
+                )
 
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
@@ -88,12 +105,7 @@ def _handle_object(
 
     # Creating relationship
     return_value.append(
-        (
-            logical_name,
-            sqlalchemy.orm.relationship(
-                ref_logical_name, backref=spec.get("x-backref")
-            ),
-        )
+        (logical_name, sqlalchemy.orm.relationship(ref_logical_name, backref=backref))
     )
     return return_value
 
