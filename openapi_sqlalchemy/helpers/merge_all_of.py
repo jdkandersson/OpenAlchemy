@@ -5,7 +5,9 @@ from openapi_sqlalchemy import types
 from .resolve_ref import legacy_resolve_ref
 
 
-def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.SchemaSpec:
+def legacy_merge_all_of(
+    *, spec: types.SchemaSpec, schemas: types.Schemas
+) -> types.SchemaSpec:
     """
     Merge specifications under allOf statement.
 
@@ -32,7 +34,7 @@ def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.Sch
             schema=types.Schema(logical_name="", spec=sub_spec), schemas=schemas
         ).spec
         # Merging any nested allOf
-        merged_sub_spec = merge_all_of(spec=resolved_spec, schemas=schemas)
+        merged_sub_spec = legacy_merge_all_of(spec=resolved_spec, schemas=schemas)
 
         # Capturing required arrays
         merged_required = merged_spec.get("required")

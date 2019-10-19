@@ -2,7 +2,7 @@
 
 from openapi_sqlalchemy import types
 
-from .merge_all_of import merge_all_of
+from .merge_all_of import legacy_merge_all_of
 from .resolve_ref import legacy_resolve_ref
 
 
@@ -24,5 +24,5 @@ def prepare_spec(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.Sch
     resolved_spec = legacy_resolve_ref(
         schema=types.Schema(logical_name="", spec=spec), schemas=schemas
     ).spec
-    merged_spec = merge_all_of(spec=resolved_spec, schemas=schemas)
+    merged_spec = legacy_merge_all_of(spec=resolved_spec, schemas=schemas)
     return merged_spec

@@ -70,11 +70,11 @@ def _mocked_legacy_resolve_ref(
 
 
 @pytest.fixture
-def mocked_merge_all_of(monkeypatch):
-    """Monkeypatches helpers.merge_all_of."""
-    mock_merge_all_of = mock.MagicMock()
-    monkeypatch.setattr(helpers, "merge_all_of", mock_merge_all_of)
-    return mock_merge_all_of
+def mocked_legacy_merge_all_of(monkeypatch):
+    """Monkeypatches helpers.legacy_merge_all_of."""
+    mock_legacy_merge_all_of = mock.MagicMock()
+    monkeypatch.setattr(helpers, "legacy_merge_all_of", mock_legacy_merge_all_of)
+    return mock_legacy_merge_all_of
 
 
 @pytest.fixture
