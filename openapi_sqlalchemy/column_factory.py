@@ -12,50 +12,57 @@ from openapi_sqlalchemy import types
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
-@helpers.testing_guard(environment_name="TESTING")
-def resolve_ref(func: typing.Callable) -> typing.Callable:
-    """Resolve $ref schemas."""
-
-    def inner(
-        *, spec: types.SchemaSpec, schemas: types.Schemas, logical_name: str, **kwargs
-    ) -> sqlalchemy.Column:
-        """Replace function."""
-        # Resolveing any $ref
-        schema = types.Schema(logical_name=logical_name, spec=spec)
-        ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
-
-        # Checking for type
-        type_ = ref_schema.spec.get("type")
-        if type_ != "object":
-            return func(
-                logical_name=logical_name,
-                spec=ref_schema.spec,
-                schemas=schemas,
-                **kwargs,
-            )
-
-        # Handling object
-        foreign_key_spec = _handle_object_reference(
-            spec=ref_schema.spec, schemas=schemas
-        )
-        return_value = func(
-            logical_name=f"{logical_name}_id",
-            spec=foreign_key_spec,
-            schemas=schemas,
-            **kwargs,
-        )
-
-        # Creating relationship
-        return_value.append(
-            (logical_name, sqlalchemy.orm.relationship(ref_schema.logical_name))
-        )
-        return return_value
-
-    return inner
-
-
-@resolve_ref
 def column_factory(
+    *,
+    spec: types.SchemaSpec,
+    schemas: types.Schemas,
+    required: typing.Optional[bool] = None,
+    logical_name: str,
+) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
+    """
+    Generate column based on OpenAPI schema property.
+
+    Args:
+        spec: The schema for the column.
+        schemas: Used to resolve any $ref.
+        required: Whether the object property is required.
+        logical_name: The logical name in the specification for the schema.
+
+    Returns:
+        The logical name and the SQLAlchemy column based on the schema.
+
+    """
+    # Resolveing any $ref
+    schema = types.Schema(logical_name=logical_name, spec=spec)
+    ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+
+    # Checking for type
+    type_ = ref_schema.spec.get("type")
+    if type_ != "object":
+        return _handle_column(
+            logical_name=logical_name,
+            spec=ref_schema.spec,
+            schemas=schemas,
+            required=required,
+        )
+
+    # Handling object
+    foreign_key_spec = _handle_object_reference(spec=ref_schema.spec, schemas=schemas)
+    return_value = _handle_column(
+        logical_name=f"{logical_name}_id",
+        spec=foreign_key_spec,
+        schemas=schemas,
+        required=required,
+    )
+
+    # Creating relationship
+    return_value.append(
+        (logical_name, sqlalchemy.orm.relationship(ref_schema.logical_name))
+    )
+    return return_value
+
+
+def _handle_column(
     *,
     spec: types.SchemaSpec,
     schemas: types.Schemas,

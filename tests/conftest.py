@@ -62,11 +62,31 @@ def mocked_resolve_ref(monkeypatch):
 
 
 @pytest.fixture
+def _mocked_resolve_ref(mocked_resolve_ref):  # pylint: disable=redefined-outer-name
+    """Alias of mocked_resolve_ref to suppress unused argument."""
+    return mocked_resolve_ref
+
+
+@pytest.fixture
 def mocked_merge_all_of(monkeypatch):
     """Monkeypatches helpers.merge_all_of."""
     mock_merge_all_of = mock.MagicMock()
     monkeypatch.setattr(helpers, "merge_all_of", mock_merge_all_of)
     return mock_merge_all_of
+
+
+@pytest.fixture
+def mocked_handle_column(monkeypatch):
+    """Mock column_factory._handle_column."""
+    mock_handle_column = mock.MagicMock()
+    monkeypatch.setattr(column_factory, "_handle_column", mock_handle_column)
+    return mock_handle_column
+
+
+@pytest.fixture
+def _mocked_handle_column(mocked_handle_column):  # pylint: disable=redefined-outer-name
+    """Alias of mocked_handle_column to suppress unused argument."""
+    return mocked_handle_column
 
 
 @pytest.fixture(scope="function", params=["sqlite:///:memory:"])
