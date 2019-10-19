@@ -14,8 +14,8 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 def column_factory(
     *,
-    spec: types.SchemaSpec,
-    schemas: types.Schemas,
+    spec: typing.Dict[str, typing.Any],
+    schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
     required: typing.Optional[bool] = None,
     logical_name: str,
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
@@ -33,19 +33,18 @@ def column_factory(
 
     """
     # Resolveing any $ref and merging allOf
-    schema = types.Schema(logical_name=logical_name, spec=spec)
-    ref_schema = helpers.legacy_resolve_ref(schema=schema, schemas=schemas)
-    ref_schema.spec = helpers.legacy_merge_all_of(spec=ref_schema.spec, schemas=schemas)
+    ref_logical_name, spec = helpers.resolve_ref(
+        name=logical_name, schema=spec, schemas=schemas
+    )
+    spec = helpers.merge_all_of(schema=spec, schemas=schemas)
 
     # Checking for type
-    type_ = ref_schema.spec.get("type")
+    type_ = spec.get("type")
     if type_ != "object":
-        return _handle_column(
-            logical_name=logical_name, spec=ref_schema.spec, required=required
-        )
+        return _handle_column(logical_name=logical_name, spec=spec, required=required)
 
     # Handling object
-    foreign_key_spec = _handle_object_reference(spec=ref_schema.spec, schemas=schemas)
+    foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
     return_value = _handle_column(
         logical_name=f"{logical_name}_id", spec=foreign_key_spec, required=required
     )
@@ -55,7 +54,7 @@ def column_factory(
         (
             logical_name,
             sqlalchemy.orm.relationship(
-                ref_schema.logical_name, backref=ref_schema.spec.get("x-backref")
+                ref_logical_name, backref=spec.get("x-backref")
             ),
         )
     )
