@@ -30,8 +30,7 @@ def model_factory(
         raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
     schema: types.Schema = schemas.get(name, {})
     # De-referencing schema
-    _, schema = helpers.resolve_ref(name="", schema=schema, schemas=schemas)
-    schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
     # Checking for tablename key
     if "x-tablename" not in schema:
         raise exceptions.MalformedSchemaError(

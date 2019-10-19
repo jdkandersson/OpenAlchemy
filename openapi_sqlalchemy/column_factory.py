@@ -153,8 +153,7 @@ def _handle_object_reference(
             "Referenced object does not have id property."
         )
     # Preparing specification
-    _, prepared_id_spec = helpers.resolve_ref(name="", schema=id_spec, schemas=schemas)
-    prepared_id_spec = helpers.merge_all_of(schema=id_spec, schemas=schemas)
+    prepared_id_spec = helpers.prepare_schema(schema=id_spec, schemas=schemas)
     id_type = prepared_id_spec.get("type")
     if id_type is None:
         raise exceptions.MalformedSchemaError(
