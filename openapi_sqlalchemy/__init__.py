@@ -1,4 +1,4 @@
-"""Map an openapi schema to SQLAlchemy models."""
+"""Map an OpenAPI schema to SQLAlchemy models."""
 
 import functools
 import typing
@@ -21,15 +21,15 @@ def init_model_factory(
     *, base: typing.Type, spec: typing.Dict[str, typing.Any]
 ) -> ModelFactory:
     """
-    Create factory that generates SQLAlchemy models based on openapi specification.
+    Create factory that generates SQLAlchemy models based on OpenAPI specification.
 
     Args:
         base: The declarative base for the models.
-        spec: The openapi specification in the form of a dictionary.
+        spec: The OpenAPI specification in the form of a dictionary.
 
     Returns:
         A factory that returns SQLAlchemy models derived from the base based on the
-        openapi specification.
+        OpenAPI specification.
 
     """
     # Retrieving the schema from the specification

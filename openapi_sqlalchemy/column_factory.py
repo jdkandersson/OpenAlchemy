@@ -1,4 +1,4 @@
-"""Generate columns based on openapi schema property."""
+"""Generate columns based on OpenAPI schema property."""
 
 import re
 import typing
@@ -61,7 +61,7 @@ def column_factory(
     logical_name: str,
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
     """
-    Generate column based on openapi schema property.
+    Generate column based on OpenAPI schema property.
 
     Args:
         spec: The schema for the column.

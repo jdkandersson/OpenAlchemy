@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate openapi-SQLALchemy MVP.
+  description: API to illustrate OpenAPI-SQLALchemy MVP.
   version: "0.1"
 
 paths:

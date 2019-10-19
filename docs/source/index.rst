@@ -1,11 +1,11 @@
 .. contents::
 
-Welcome to openapi-SQLAlchemy's documentation!
+Welcome to OpenAPI-SQLAlchemy's documentation!
 ==============================================
 
-Translates openapi schemas to SQLAlchemy models to reduce duplication when
-defining your API and database models. Any required additions to the openapi
-specification are compliant with the openapi standard.
+Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
+defining your API and database models. Any required additions to the OpenAPI
+specification are compliant with the OpenAPI standard.
 
 .. toctree::
    :maxdepth: 3
@@ -17,7 +17,7 @@ specification are compliant with the openapi standard.
 Getting Started
 ---------------
 
-If you have the following openapi specification:
+If you have the following OpenAPI specification:
 
 .. literalinclude:: ../../examples/simple-example-spec.yml
 
@@ -29,8 +29,8 @@ following *models.py* file:
 How Does It Work?
 -----------------
 
-Given a name for a schema, *openapi-SQLAlchemy* looks for that schema in the
+Given a name for a schema, *OpenAPI-SQLAlchemy* looks for that schema in the
 schemas section of the specification. The schema must have the *x-tablename*
 property which defines the name of the table. The schema is required to be an
 *object*. For each *property* of the schema, a column is generated for the
-table mapping openapi types to equivalent SQLAlchemy types.
+table mapping OpenAPI types to equivalent SQLAlchemy types.

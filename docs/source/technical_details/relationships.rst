@@ -14,7 +14,7 @@ other objects from an object property.
 Many to One
 -----------
 
-The following *openapi* specification defines a many to one relationship:
+The following *OpenAPI* specification defines a many to one relationship:
 
 .. literalinclude:: ../../../examples/relationship-example-spec.yml
 
@@ -33,7 +33,7 @@ Note that, the object being referenced must have the *id* property.
 The only way to make the foreign key column not nullable is to add the
 property with the reference to the *required* list.
 
-Without openapi-SQLAlchemy, the following is the equivalent *models.py* file:
+Without OpenAPI-SQLAlchemy, the following is the equivalent *models.py* file:
 
 .. literalinclude:: ../../../examples/relationship_models_traditional.py
 

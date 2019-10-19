@@ -1,4 +1,4 @@
-"""Generate model from openapi schema."""
+"""Generate model from OpenAPI schema."""
 
 import itertools
 import typing
@@ -16,12 +16,12 @@ def model_factory(
     schemas: typing.Dict[str, typing.Dict[str, typing.Any]],
 ) -> typing.Type:
     """
-    Convert openapi schema to SQLAlchemy model.
+    Convert OpenAPI schema to SQLAlchemy model.
 
     Args:
         name: The name of the schema.
         base: The SQLAlchemy declarative base.
-        schemas: The openapi schemas.
+        schemas: The OpenAPI schemas.
 
     Returns:
         The model as a class.

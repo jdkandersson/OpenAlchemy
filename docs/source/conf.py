@@ -18,7 +18,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "openapi-SQLAlchemy"
+project = "OpenAPI-SQLAlchemy"
 copyright = "2019, David Andersson"
 author = "David Andersson"
 

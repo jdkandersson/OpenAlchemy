@@ -1,4 +1,4 @@
-"""All custom exceptions that openapi-SQLAlchemy can raise."""
+"""All custom exceptions that OpenAPI-SQLAlchemy can raise."""
 
 
 class MissingArgumentError(ValueError):

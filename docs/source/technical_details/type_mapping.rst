@@ -1,11 +1,11 @@
 Type Mapping
 ============
 
-*openapi-SQLAlchemy* translates *openapi* types to *SQLalchemy* types using
+*OpenAPI-SQLAlchemy* translates *OpenAPI* types to *SQLalchemy* types using
 the following mapping:
 
 +--------------+----------------+-----------------+
-| openapi type | openapi format | SQLAlchemy type |
+| OpenAPI type | OpenAPI format | SQLAlchemy type |
 +==============+================+=================+
 | integer      | *undefined*    | Integer         |
 +--------------+----------------+-----------------+
@@ -25,6 +25,6 @@ the following mapping:
 string
 ------
 
-*openapi* optionally allows the *maxLength* property for *strings*. This is
+*OpenAPI* optionally allows the *maxLength* property for *strings*. This is
 translated to the *length* argument for the *SQLAlchemy* *String*, which is set
 to *None* if *maxLength* is *undefined*.
