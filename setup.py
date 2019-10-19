@@ -26,7 +26,7 @@ setuptools.setup(
         "Natural Language :: English",
         "Topic :: Database",
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5"],
     extras_require={
         "dev": [
