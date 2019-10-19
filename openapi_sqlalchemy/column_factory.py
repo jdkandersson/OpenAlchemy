@@ -79,7 +79,6 @@ def _handle_object(
     ref_logical_name, spec = helpers.resolve_ref(
         name=logical_name, schema=spec, schemas=schemas
     )
-    spec = helpers.merge_all_of(schema=spec, schemas=schemas)
 
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
