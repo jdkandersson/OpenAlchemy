@@ -16,7 +16,7 @@ Many to One
 
 The following *OpenAPI* specification defines a many to one relationship:
 
-.. literalinclude:: ../../../examples/relationship-example-spec.yml
+.. literalinclude:: ../../../examples/relationship-many-to-one-example-spec.yml
 
 By adding a *$ref* to an object property that points at another object, a
 relationship with the logical name will be formed. For example, if the *$ref*
@@ -24,7 +24,7 @@ points to the *Division* object, *sqlalchemy.orm.relationship* with
 *"Division"* will be called. Note that you must add both objects to the
 *models.py* file. For example:
 
-.. literalinclude:: ../../../examples/relationship_models.py
+.. literalinclude:: ../../../examples/relationship_many_to_one_models.py
 
 Alongside the *relationship*, a foreign key will also be added to the table
 with the *$ref* property under the name of the property suffixed with *_id*.
@@ -35,7 +35,7 @@ property with the reference to the *required* list.
 
 Without OpenAPI-SQLAlchemy, the following is the equivalent *models.py* file:
 
-.. literalinclude:: ../../../examples/relationship_models_traditional.py
+.. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
 
 Backref
 ^^^^^^^
@@ -57,6 +57,10 @@ being referenced:
 
 The reason it is not recommended is because this only allows a *x-backref* per
 table, whereas the other allows for many.
+
+Using *x-backref* is equivalent to the following traditional *models.py*:
+
+.. literalinclude:: ../../../examples/relationship_many_to_one_backref_models_traditional.py
 
 .. seealso::
     :ref:`references` shows how to reference to other schemas.
