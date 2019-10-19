@@ -280,7 +280,7 @@ def test_database_not_autoincrement(engine, sessionmaker):
 
 @pytest.mark.prod_env
 @pytest.mark.integration
-def test_database_relationship(engine, sessionmaker):
+def test_database_many_to_one_relationship(engine, sessionmaker):
     """
     GIVEN specification with a schema with an object relationship
     WHEN schema is created, values inserted in both tables and queried
@@ -296,6 +296,7 @@ def test_database_relationship(engine, sessionmaker):
                         "name": {"type": "string"},
                     },
                     "x-tablename": "ref_table",
+                    "x-backref": "tables",
                     "type": "object",
                 },
                 "Table": {
@@ -336,3 +337,5 @@ def test_database_relationship(engine, sessionmaker):
     queried_ref_model = session.query(ref_model).first()
     assert queried_ref_model.id == 11
     assert queried_ref_model.name == "ref table name 1"
+    assert len(queried_ref_model.tables) == 1
+    assert queried_ref_model.tables[0].id == 12

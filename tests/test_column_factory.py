@@ -391,14 +391,14 @@ def test_handle_object_reference_ref_return():
 
 
 @pytest.mark.column
-def test_integration_mock_resolve_ref_call(
-    mocked_resolve_ref: mock.MagicMock, _mocked_handle_column
+def test_integration_mock_legacy_resolve_ref_call(
+    mocked_legacy_resolve_ref: mock.MagicMock, _mocked_handle_column
 ):
     """
-    GIVEN mocked resolve_ref helper, spec, schemas and logical name
+    GIVEN mocked legacy_resolve_ref helper, spec, schemas and logical name
     WHEN column_factory called with spec, schemas, and logical name
-    THEN mocked resolve_ref helper is called with the schema based on spec and logical
-        name and schemas.
+    THEN mocked legacy_resolve_ref helper is called with the schema based on spec and
+        logical name and schemas.
     """
     spec = mock.MagicMock()
     schemas = mock.MagicMock()
@@ -409,17 +409,18 @@ def test_integration_mock_resolve_ref_call(
     )
 
     schema = types.Schema(spec=spec, logical_name=logical_name)
-    mocked_resolve_ref.assert_called_once_with(schema=schema, schemas=schemas)
+    mocked_legacy_resolve_ref.assert_called_once_with(schema=schema, schemas=schemas)
 
 
 @pytest.mark.column
 def test_integration_mock_call(
-    mocked_resolve_ref: mock.MagicMock, mocked_handle_column: mock.MagicMock
+    mocked_legacy_resolve_ref: mock.MagicMock, mocked_handle_column: mock.MagicMock
 ):
     """
-    GIVEN mocked _handle_column and resolve_ref helper, spec, logical name and required
+    GIVEN mocked _handle_column and legacy_resolve_ref helper, spec, logical name and
+        required
     WHEN column_factory is called with spec, logical name and required
-    THEN _handle_column is called with logical name, spec from resolve_ref helper
+    THEN _handle_column is called with logical name, spec from legacy_resolve_ref helper
         return value and required.
     """
     spec = mock.MagicMock()
@@ -434,7 +435,7 @@ def test_integration_mock_call(
     )
 
     mocked_handle_column.assert_called_once_with(
-        spec=mocked_resolve_ref.return_value.spec,
+        spec=mocked_legacy_resolve_ref.return_value.spec,
         logical_name=logical_name,
         required=required,
     )
@@ -442,7 +443,7 @@ def test_integration_mock_call(
 
 @pytest.mark.column
 def test_integration_mock_return(
-    _mocked_resolve_ref, mocked_handle_column: mock.MagicMock
+    _mocked_legacy_resolve_ref, mocked_handle_column: mock.MagicMock
 ):
     """
     GIVEN mocked _handle_column
@@ -461,17 +462,17 @@ def test_integration_mock_return(
 
 @pytest.mark.column
 def test_integration_mock_object_call(
-    mocked_resolve_ref: mock.MagicMock, mocked_handle_column: mock.MagicMock
+    mocked_legacy_resolve_ref: mock.MagicMock, mocked_handle_column: mock.MagicMock
 ):
     """
-    GIVEN mocked _handle_column and resolve_ref helper that returns object spec
+    GIVEN mocked _handle_column and legacy_resolve_ref helper that returns object spec
     WHEN column_factory is called
     THEN _handle_column is called with the object's id schema.
     """
     spec = mock.MagicMock()
     logical_name = "logical name 1"
     required = mock.MagicMock()
-    mocked_resolve_ref.side_effect = [
+    mocked_legacy_resolve_ref.side_effect = [
         types.Schema(
             logical_name="name 1",
             spec={
@@ -501,17 +502,17 @@ def test_integration_mock_object_call(
 
 @pytest.mark.column
 def test_integration_mock_object_relationship_call(
-    mocked_resolve_ref: mock.MagicMock,
+    mocked_legacy_resolve_ref: mock.MagicMock,
     mocked_sqlalchemy_relationship: mock.MagicMock,
     _mocked_handle_column,
 ):
     """
-    GIVEN mocked resolve_ref helper that returns object spec and mocked
+    GIVEN mocked legacy_resolve_ref helper that returns object spec and mocked
         sqlalchemy.orm.relationship
     WHEN column_factory is called
     THEN sqlalchemy.orm.relationship is called with object logical name.
     """
-    mocked_resolve_ref.side_effect = [
+    mocked_legacy_resolve_ref.side_effect = [
         types.Schema(
             logical_name="name 1",
             spec={
@@ -537,17 +538,17 @@ def test_integration_mock_object_relationship_call(
 
 @pytest.mark.column
 def test_integration_mock_object_relationship_backref_call(
-    mocked_resolve_ref: mock.MagicMock,
+    mocked_legacy_resolve_ref: mock.MagicMock,
     mocked_sqlalchemy_relationship: mock.MagicMock,
     _mocked_handle_column,
 ):
     """
-    GIVEN mocked resolve_ref helper that returns object spec with x-backref key and
-        mocked sqlalchemy.orm.relationship
+    GIVEN mocked legacy_resolve_ref helper that returns object spec with x-backref key
+        and mocked sqlalchemy.orm.relationship
     WHEN column_factory is called
     THEN sqlalchemy.orm.relationship is called with object logical name.
     """
-    mocked_resolve_ref.side_effect = [
+    mocked_legacy_resolve_ref.side_effect = [
         types.Schema(
             logical_name="name 1",
             spec={
@@ -574,17 +575,17 @@ def test_integration_mock_object_relationship_backref_call(
 
 @pytest.mark.column
 def test_integration_mock_object_return(
-    mocked_resolve_ref: mock.MagicMock,
+    mocked_legacy_resolve_ref: mock.MagicMock,
     mocked_sqlalchemy_relationship: mock.MagicMock,
     mocked_handle_column: mock.MagicMock,
 ):
     """
-    GIVEN mocked _handle_column and resolve_ref helper that returns object spec
+    GIVEN mocked _handle_column and legacy_resolve_ref helper that returns object spec
     WHEN column_factory is called
     THEN _handle_column return value together with relationship is returned.
     """
     logical_name = "logical name 1"
-    mocked_resolve_ref.side_effect = [
+    mocked_legacy_resolve_ref.side_effect = [
         types.Schema(
             logical_name="name 1",
             spec={

@@ -34,7 +34,7 @@ def column_factory(
     """
     # Resolveing any $ref and merging allOf
     schema = types.Schema(logical_name=logical_name, spec=spec)
-    ref_schema = helpers.resolve_ref(schema=schema, schemas=schemas)
+    ref_schema = helpers.legacy_resolve_ref(schema=schema, schemas=schemas)
     ref_schema.spec = helpers.merge_all_of(spec=ref_schema.spec, schemas=schemas)
 
     # Checking for type

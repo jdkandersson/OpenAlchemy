@@ -8,7 +8,7 @@ from openapi_sqlalchemy import types
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
-def resolve_ref(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+def legacy_resolve_ref(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
     """
     Resolve $ref schemas to the underlying schema.
 
@@ -39,4 +39,4 @@ def resolve_ref(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema
         raise exceptions.SchemaNotFoundError(f"{schema_name} was not found in schemas.")
 
     new_schema = types.Schema(schema_name, ref_schema)
-    return resolve_ref(schema=new_schema, schemas=schemas)
+    return legacy_resolve_ref(schema=new_schema, schemas=schemas)

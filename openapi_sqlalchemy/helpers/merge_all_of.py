@@ -2,7 +2,7 @@
 
 from openapi_sqlalchemy import types
 
-from .resolve_ref import resolve_ref
+from .resolve_ref import legacy_resolve_ref
 
 
 def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.SchemaSpec:
@@ -28,7 +28,7 @@ def merge_all_of(*, spec: types.SchemaSpec, schemas: types.Schemas) -> types.Sch
     merged_spec: types.SchemaSpec = {}
     for sub_spec in all_of:
         # Resolving any $ref
-        resolved_spec = resolve_ref(
+        resolved_spec = legacy_resolve_ref(
             schema=types.Schema(logical_name="", spec=sub_spec), schemas=schemas
         ).spec
         # Merging any nested allOf
