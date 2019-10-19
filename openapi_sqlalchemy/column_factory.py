@@ -32,16 +32,19 @@ def column_factory(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
+    # Checking for the type
+    type_ = helpers.peek_type(schema=spec, schemas=schemas)
+
+    # Checking for type
+    if type_ != "object":
+        spec = helpers.prepare_schema(schema=spec, schemas=schemas)
+        return _handle_column(logical_name=logical_name, spec=spec, required=required)
+
     # Resolveing any $ref and merging allOf
     ref_logical_name, spec = helpers.resolve_ref(
         name=logical_name, schema=spec, schemas=schemas
     )
     spec = helpers.merge_all_of(schema=spec, schemas=schemas)
-
-    # Checking for type
-    type_ = spec.get("type")
-    if type_ != "object":
-        return _handle_column(logical_name=logical_name, spec=spec, required=required)
 
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
