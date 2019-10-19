@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version 0.6.3 - 2019-10-19
+- Add support for backref for many to one relationships.
+- Refactored to remove reference resolving decorator.
+
 ## Version 0.6.2 - 2019-10-19
 - Add support for python 3.8.
 
