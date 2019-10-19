@@ -475,83 +475,87 @@ def test_spec_to_column_boolean():
 
 
 @pytest.mark.column
-def test_handle_object():
+def test_handle_object_reference():
     """
     GIVEN
-    WHEN _handle_object is called
+    WHEN _handle_object_reference is called
     THEN the function should exist.
     """
-    assert hasattr(column_factory, "_handle_object")
+    assert hasattr(column_factory, "_handle_object_reference")
 
 
 @pytest.mark.column
-def test_handle_object_no_tablename():
+def test_handle_object_reference_no_tablename():
     """
     GIVEN object schema without x-tablename key
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object(spec={"properties": {"id": {}}}, schemas={})
+        column_factory._handle_object_reference(
+            spec={"properties": {"id": {}}}, schemas={}
+        )
 
 
 @pytest.mark.column
-def test_handle_object_no_properties():
+def test_handle_object_reference_no_properties():
     """
     GIVEN object schema without properties key
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object(spec={"x-tablename": "table 1"}, schemas={})
+        column_factory._handle_object_reference(
+            spec={"x-tablename": "table 1"}, schemas={}
+        )
 
 
 @pytest.mark.column
-def test_handle_object_id_missing():
+def test_handle_object_reference_id_missing():
     """
     GIVEN object schema without id in properties
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object(
+        column_factory._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {}}, schemas={}
         )
 
 
 @pytest.mark.column
-def test_handle_object_id_no_type():
+def test_handle_object_reference_id_no_type():
     """
     GIVEN object schema with id but no type for id
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object(
+        column_factory._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {"id": {}}}, schemas={}
         )
 
 
 @pytest.mark.column
-def test_handle_object_return():
+def test_handle_object_reference_return():
     """
     GIVEN object schema with x-tablename and id property with a type
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a schema with the type of the id property and x-foreign-key property.
     """
     spec = {"x-tablename": "table 1", "properties": {"id": {"type": "idType"}}}
     schemas = {}
 
-    return_value = column_factory._handle_object(spec=spec, schemas=schemas)
+    return_value = column_factory._handle_object_reference(spec=spec, schemas=schemas)
 
     assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 
 
 @pytest.mark.column
-def test_handle_object_ref_return():
+def test_handle_object_reference_ref_return():
     """
     GIVEN object schema with x-tablename and id property that is a $ref
-    WHEN _handle_object is called with the schema
+    WHEN _handle_object_reference is called with the schema
     THEN a schema with the type of the id property and x-foreign-key property.
     """
     spec = {
@@ -560,7 +564,7 @@ def test_handle_object_ref_return():
     }
     schemas = {"IdSchema": {"type": "idType"}}
 
-    return_value = column_factory._handle_object(spec=spec, schemas=schemas)
+    return_value = column_factory._handle_object_reference(spec=spec, schemas=schemas)
 
     assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 
@@ -601,7 +605,7 @@ def test_integration_object_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    [
+    [  # pylint: disable=unbalanced-tuple-unpacking
         (fk_logical_name, fk_column),
         (tbl_logical_name, relationship),
     ] = column_factory.column_factory(  # pylint: disable=unexpected-keyword-arg

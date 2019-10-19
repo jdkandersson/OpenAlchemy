@@ -35,7 +35,9 @@ def resolve_ref(func: typing.Callable) -> typing.Callable:
             )
 
         # Handling object
-        foreign_key_spec = _handle_object(spec=ref_schema.spec, schemas=schemas)
+        foreign_key_spec = _handle_object_reference(
+            spec=ref_schema.spec, schemas=schemas
+        )
         return_value = func(
             logical_name=f"{logical_name}_id",
             spec=foreign_key_spec,
@@ -120,7 +122,7 @@ def _spec_to_column(*, spec: types.SchemaSpec, required: typing.Optional[bool] =
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _handle_object(
+def _handle_object_reference(
     *, spec: types.SchemaSpec, schemas: types.Schemas
 ) -> types.SchemaSpec:
     """
