@@ -52,7 +52,12 @@ def column_factory(
 
     # Creating relationship
     return_value.append(
-        (logical_name, sqlalchemy.orm.relationship(ref_schema.logical_name))
+        (
+            logical_name,
+            sqlalchemy.orm.relationship(
+                ref_schema.logical_name, backref=ref_schema.spec.get("x-backref")
+            ),
+        )
     )
     return return_value
 

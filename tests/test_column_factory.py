@@ -532,7 +532,44 @@ def test_integration_mock_object_relationship_call(
         required=mock.MagicMock(),
     )
 
-    mocked_sqlalchemy_relationship.assert_called_once_with("name 1")
+    mocked_sqlalchemy_relationship.assert_called_once_with("name 1", backref=None)
+
+
+@pytest.mark.column
+def test_integration_mock_object_relationship_backref_call(
+    mocked_resolve_ref: mock.MagicMock,
+    mocked_sqlalchemy_relationship: mock.MagicMock,
+    _mocked_handle_column,
+):
+    """
+    GIVEN mocked resolve_ref helper that returns object spec with x-backref key and
+        mocked sqlalchemy.orm.relationship
+    WHEN column_factory is called
+    THEN sqlalchemy.orm.relationship is called with object logical name.
+    """
+    mocked_resolve_ref.side_effect = [
+        types.Schema(
+            logical_name="name 1",
+            spec={
+                "type": "object",
+                "x-tablename": "table 1",
+                "x-backref": "backrefs",
+                "properties": {"id": {"type": "boolean"}},
+            },
+        ),
+        types.Schema(
+            logical_name="id", spec={"type": "boolean", "x-foreign-key": "table 1.id"}
+        ),
+    ]
+
+    column_factory.column_factory(
+        spec=mock.MagicMock(),
+        schemas=mock.MagicMock(),
+        logical_name="logical name 1",
+        required=mock.MagicMock(),
+    )
+
+    mocked_sqlalchemy_relationship.assert_called_once_with("name 1", backref="backrefs")
 
 
 @pytest.mark.column
