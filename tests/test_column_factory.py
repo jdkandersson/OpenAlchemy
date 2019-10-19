@@ -10,6 +10,40 @@ from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import exceptions
 
 
+@pytest.mark.parametrize(
+    "spec",
+    [
+        {"type": "object"},
+        {"allOf": [{"type": "object"}]},
+        {"allOf": [{"$ref": "ref 1"}, {"$ref": "ref 2"}]},
+        {
+            "allOf": [
+                {"$ref": "ref 1"},
+                {"x-backref": "backref 1"},
+                {"x-backref": "backref 2"},
+            ]
+        },
+    ],
+    ids=[
+        "object",
+        "allOf with object",
+        "allOf with multiple ref",
+        "allOf with multiple x-backref",
+    ],
+)
+@pytest.mark.column
+def test_handle_object_error(spec):
+    """
+    GIVEN spec
+    WHEN _handle_object is called with the spec
+    THEN MalformedManyToOneRelationship is raised.
+    """
+    with pytest.raises(exceptions.MalformedManyToOneRelationship):
+        column_factory._handle_object(
+            spec=spec, schemas={}, required=True, logical_name="name 1"
+        )
+
+
 @pytest.mark.column
 def test_spec_to_column_no_type():
     """

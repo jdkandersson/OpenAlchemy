@@ -64,6 +64,8 @@ def _handle_object(
     """
     Generate properties for a reference to another object.
 
+    Assume that, when any $ref and allOf are resolved, the schema is an object.
+
     Args:
         spec: The schema for the column.
         schemas: Used to resolve any $ref.
@@ -89,6 +91,24 @@ def _handle_object(
         )
         backref = spec.get("x-backref")
     elif all_of is not None:
+        # Checking for $ref and x-backref counts
+        ref_count = 0
+        backref_count = 0
+        for sub_spec in all_of:
+            if sub_spec.get("$ref") is not None:
+                ref_count += 1
+            if sub_spec.get("x-backref") is not None:
+                backref_count += 1
+        if ref_count != 1:
+            raise exceptions.MalformedManyToOneRelationship(
+                "Many to One relationships defined with allOf must have exactly one "
+                "$ref in the allOf list."
+            )
+        if backref_count > 1:
+            raise exceptions.MalformedManyToOneRelationship(
+                "Many to One relationships may have at most 1 x-backref defined."
+            )
+
         # Handling allOf
         for sub_spec in all_of:
             backref = sub_spec.get("x-backref")
@@ -96,6 +116,10 @@ def _handle_object(
                 ref_logical_name, spec = helpers.resolve_ref(
                     name=logical_name, schema=sub_spec, schemas=schemas
                 )
+    else:
+        raise exceptions.MalformedManyToOneRelationship(
+            "Many to One relationships are defined using either $ref or allOf."
+        )
 
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
