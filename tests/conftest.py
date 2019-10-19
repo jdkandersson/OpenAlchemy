@@ -69,32 +69,8 @@ def _mocked_resolve_ref(mocked_resolve_ref):  # pylint: disable=redefined-outer-
 
 
 @pytest.fixture
-def mocked_legacy_resolve_ref(monkeypatch):
-    """Monkeypatches helpers.legacy_resolve_ref."""
-    mock_legacy_resolve_ref = mock.MagicMock()
-    monkeypatch.setattr(helpers, "legacy_resolve_ref", mock_legacy_resolve_ref)
-    return mock_legacy_resolve_ref
-
-
-@pytest.fixture
-def _mocked_legacy_resolve_ref(
-    mocked_legacy_resolve_ref,
-):  # pylint: disable=redefined-outer-name
-    """Alias of mocked_legacy_resolve_ref to suppress unused argument."""
-    return mocked_legacy_resolve_ref
-
-
-@pytest.fixture
-def mocked_legacy_merge_all_of(monkeypatch):
-    """Monkeypatches helpers.legacy_merge_all_of."""
-    mock_legacy_merge_all_of = mock.MagicMock()
-    monkeypatch.setattr(helpers, "legacy_merge_all_of", mock_legacy_merge_all_of)
-    return mock_legacy_merge_all_of
-
-
-@pytest.fixture
 def mocked_merge_all_of(monkeypatch):
-    """Monkeypatches helpers.legacy_merge_all_of."""
+    """Monkeypatches helpers.merge_all_of."""
     mock_merge_all_of = mock.MagicMock()
     monkeypatch.setattr(helpers, "merge_all_of", mock_merge_all_of)
     return mock_merge_all_of
