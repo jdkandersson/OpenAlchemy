@@ -37,5 +37,26 @@ Without OpenAPI-SQLAlchemy, the following is the equivalent *models.py* file:
 
 .. literalinclude:: ../../../examples/relationship_models_traditional.py
 
+Backref
+^^^^^^^
+
+One of the features of *SQLAlchemy* is that a relationship can be back
+populated to the referred table. This is supported using the *x-backref*
+key. There are 2 places where the *x-backref* key can be defined. The
+recommended implementation adds it using *allOf*:
+
+.. literalinclude:: ./relationships/many_to_one/backref_recommended.yaml
+
+Note that, when *allOf* is used, there must be exacly one *$ref* in the list
+and at most one *x-backref* in the list.
+
+The other way, which is not recommended, adds the *x-backref* to the object
+being referenced:
+
+.. literalinclude:: ./relationships/many_to_one/backref_not_recommended.yaml
+
+The reason it is not recommended is because this only allows a *x-backref* per
+table, whereas the other allows for many.
+
 .. seealso::
     :ref:`references` shows how to reference to other schemas.

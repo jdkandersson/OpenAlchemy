@@ -2,39 +2,40 @@
 
 ## Version 0.6.3 - 2019-10-19
 - Add support for backref for many to one relationships.
-- Refactored to remove reference resolving decorator.
+- Refactor to remove reference resolving decorator.
+- Add integration tests for major features.
 
 ## Version 0.6.2 - 2019-10-19
 - Add support for python 3.8.
 
 ## Version 0.6.1 - 2019-10-19
-- Updated name from openapi-SQLAlchemy to OpenAPI-SQLAlchemy. All urls are expected to keep working.
+- Update name from openapi-SQLAlchemy to OpenAPI-SQLAlchemy. All urls are expected to keep working.
 
 ## Version 0.6.0 - 2019-10-6
-- Added support for `allOf` for models.
+- Add support for `allOf` for models.
 
 ## Version 0.5.0 - 2019-09-29
-- Refactored column factory to use fewer decorators.
-- Changed exceptions to include the schema name.
-- Added support for `$ref` for models.
+- Refactor column factory to use fewer decorators.
+- Change exceptions to include the schema name.
+- Add support for `$ref` for models.
 
 ## Version 0.4.0 - 2019-09-21
-- Added support for `allOf` for columns.
+- Add support for `allOf` for columns.
 
 ## Version 0.3.0 - 2019-09-08
-- Added support for `autoincrement`.
-- Added support for `$ref` for columns referencing other table objects.
-- Added documentation
+- Add support for `autoincrement`.
+- Add support for `$ref` for columns referencing other table objects.
+- Add documentation
 
 ## Version 0.2.0 - 2019-08-25
-- Added support for `$ref` for columns.
+- Add support for `$ref` for columns.
 
 ## Version 0.1.1 - 2019-08-18
-- Moved typing-extensions development to package dependency.
+- Move typing-extensions development to package dependency.
 
 ## Version 0.1.0 - 2019-08-18
 - Initial release
-- Added support for `integer` columns.
-- Added support for `boolean` columns.
-- Added support for `number` columns.
-- Added support for `string` columns.
+- Add support for `integer` columns.
+- Add support for `boolean` columns.
+- Add support for `number` columns.
+- Add support for `string` columns.

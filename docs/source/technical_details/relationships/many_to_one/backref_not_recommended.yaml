@@ -1,0 +1,9 @@
+Division:
+  ...
+  x-backref: "employees"
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      "$ref": "#/components/schemas/Division"
