@@ -6,6 +6,7 @@ from unittest import mock
 
 import pytest
 import sqlalchemy
+import yaml
 from sqlalchemy.ext import declarative
 
 import openapi_sqlalchemy
@@ -433,6 +434,19 @@ def test_database_feature(engine, sessionmaker, spec):
     assert queried_model.column == 1
 
 
+BASIC_SPEC = {
+    "components": {
+        "schemas": {
+            "Table": {
+                "properties": {"column": {"type": "integer", "x-primary-key": True}},
+                "x-tablename": "table",
+                "type": "object",
+            }
+        }
+    }
+}
+
+
 @pytest.mark.integration
 def test_init_json(engine, sessionmaker, tmp_path):
     """
@@ -441,26 +455,44 @@ def test_init_json(engine, sessionmaker, tmp_path):
     THEN a valid model factory is returned.
     """
     # Generate spec file
-    spec = {
-        "components": {
-            "schemas": {
-                "Table": {
-                    "properties": {
-                        "column": {"type": "integer", "x-primary-key": True}
-                    },
-                    "x-tablename": "table",
-                    "type": "object",
-                }
-            }
-        }
-    }
-    directory = tmp_path / "sub"
+    directory = tmp_path / "specs"
     directory.mkdir()
-    spec_file = directory / "hello.txt"
-    spec_file.write_text(json.dumps(spec))
+    spec_file = directory / "spec.json"
+    spec_file.write_text(json.dumps(BASIC_SPEC))
 
     # Creating model factory
     base, model_factory = openapi_sqlalchemy.init_json(str(spec_file))
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    value = 0
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+
+
+@pytest.mark.integration
+def test_init_yaml(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a YAML file
+    WHEN init_yaml is called with the file
+    THEN a valid model factory is returned.
+    """
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    base, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file))
     model = model_factory(name="Table")
 
     # Creating models
