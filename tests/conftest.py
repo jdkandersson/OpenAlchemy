@@ -1,4 +1,5 @@
 """Shared fixtures for tests."""
+# pylint: disable=redefined-outer-name
 
 import json
 from unittest import mock
@@ -6,7 +7,9 @@ from unittest import mock
 import pytest
 import sqlalchemy
 from sqlalchemy import orm
+from sqlalchemy.ext import declarative
 
+import openapi_sqlalchemy
 from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import helpers
 from openapi_sqlalchemy import model_factory
@@ -63,7 +66,7 @@ def mocked_resolve_ref(monkeypatch):
 
 
 @pytest.fixture
-def _mocked_resolve_ref(mocked_resolve_ref):  # pylint: disable=redefined-outer-name
+def _mocked_resolve_ref(mocked_resolve_ref):
     """Alias of mocked_resolve_ref to suppress unused argument."""
     return mocked_resolve_ref
 
@@ -85,7 +88,7 @@ def mocked_handle_column(monkeypatch):
 
 
 @pytest.fixture
-def _mocked_handle_column(mocked_handle_column):  # pylint: disable=redefined-outer-name
+def _mocked_handle_column(mocked_handle_column):
     """Alias of mocked_handle_column to suppress unused argument."""
     return mocked_handle_column
 
@@ -97,7 +100,7 @@ def engine(request):
 
 
 @pytest.fixture(scope="function")
-def sessionmaker(engine):  # pylint: disable=redefined-outer-name
+def sessionmaker(engine):
     """Creates a sqlite session."""
     return orm.sessionmaker(bind=engine)
 
@@ -128,10 +131,7 @@ def decorator_trace_env_name():
 
 @pytest.fixture(scope="function", autouse=True)
 def set_testing(
-    monkeypatch,
-    request,
-    testing_env_name: str,  # pylint: disable=redefined-outer-name
-    decorator_trace_env_name: str,  # pylint: disable=redefined-outer-name
+    monkeypatch, request, testing_env_name: str, decorator_trace_env_name: str
 ):
     """By default sets TESTING environment variable."""
     # Do not apply TESTING environment variable if test is marked with
@@ -141,3 +141,27 @@ def set_testing(
     monkeypatch.setenv(testing_env_name, "")
     # Setting up tracing of which functions were called
     monkeypatch.setenv(decorator_trace_env_name, json.dumps([]))
+
+
+@pytest.fixture
+def mocked_init_model_factory(monkeypatch):
+    """Monkeypatch openapi_sqlalchemy.init_model_factory."""
+    mock_init_model_factory = mock.MagicMock()
+    monkeypatch.setattr(
+        openapi_sqlalchemy, "init_model_factory", mock_init_model_factory
+    )
+    return mock_init_model_factory
+
+
+@pytest.fixture
+def _mocked_init_model_factory(mocked_init_model_factory):
+    """Used to hide unused argument error.."""
+    return mocked_init_model_factory
+
+
+@pytest.fixture
+def mocked_declarative_base(monkeypatch):
+    """Monkeypatch declarative.declarative_base."""
+    mock_declarative_base = mock.MagicMock()
+    monkeypatch.setattr(declarative, "declarative_base", mock_declarative_base)
+    return mock_declarative_base

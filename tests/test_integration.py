@@ -12,6 +12,70 @@ from sqlalchemy.ext import declarative
 import openapi_sqlalchemy
 
 
+def test_init_optional_base_none_call(
+    mocked_init_model_factory: mock.MagicMock, mocked_declarative_base: mock.MagicMock
+):
+    """
+    GIVEN mocked init_model_factory and declarative_base
+    WHEN _init_optional_base is called with none base
+    THEN init_model_factory is called with declarative_base return value as base.
+    """
+    # pylint: disable=protected-access
+    spec = mock.MagicMock()
+
+    openapi_sqlalchemy._init_optional_base(base=None, spec=spec)
+
+    mocked_init_model_factory.assert_called_once_with(
+        base=mocked_declarative_base.return_value, spec=spec
+    )
+
+
+def test_init_optional_base_none_return(
+    _mocked_init_model_factory: mock.MagicMock, mocked_declarative_base: mock.MagicMock
+):
+    """
+    GIVEN mocked init_model_factory and declarative_base
+    WHEN _init_optional_base is called with none base
+    THEN the declarative_base return value is returned as base.
+    """
+    # pylint: disable=protected-access
+    spec = mock.MagicMock()
+
+    base, _ = openapi_sqlalchemy._init_optional_base(base=None, spec=spec)
+
+    assert base == mocked_declarative_base.return_value
+
+
+def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
+    """
+    GIVEN mocked init_model_factory and mock base
+    WHEN _init_optional_base is called with the base
+    THEN init_model_factory is called with base.
+    """
+    # pylint: disable=protected-access
+    spec = mock.MagicMock()
+    base = mock.MagicMock()
+
+    openapi_sqlalchemy._init_optional_base(base=base, spec=spec)
+
+    mocked_init_model_factory.assert_called_once_with(base=base, spec=spec)
+
+
+def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMock):
+    """
+    GIVEN mocked init_model_factory and and mock base
+    WHEN _init_optional_base is called with the base
+    THEN the base is returned.
+    """
+    # pylint: disable=protected-access
+    spec = mock.MagicMock()
+    base = mock.MagicMock()
+
+    returned_base, _ = openapi_sqlalchemy._init_optional_base(base=base, spec=spec)
+
+    assert returned_base == base
+
+
 @pytest.mark.prod_env
 @pytest.mark.integration
 def test_empty_spec():

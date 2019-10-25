@@ -4,7 +4,7 @@ import functools
 import typing
 
 import typing_extensions
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext import declarative
 
 from . import exceptions
 from . import model_factory as _model_factory
@@ -54,9 +54,21 @@ def init_model_factory(*, base: typing.Type, spec: types.Schema) -> ModelFactory
     return cached_model_factories
 
 
+BaseAndModelFactory = typing.Tuple[typing.Type, ModelFactory]
+
+
+def _init_optional_base(
+    *, base: typing.Optional[typing.Type], spec: types.Schema
+) -> BaseAndModelFactory:
+    """Wrap init_model_factory with optional base."""
+    if base is None:
+        base = declarative.declarative_base()
+    return base, init_model_factory(base=base, spec=spec)
+
+
 def init_json(
     spec_filename: str, *, base: typing.Optional[typing.Type] = None
-) -> typing.Tuple[typing.Type, ModelFactory]:
+) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a JSON file.
 
@@ -76,18 +88,15 @@ def init_json(
     # need it:
     import json  # pylint: disable=import-outside-toplevel
 
-    if base is None:
-        base = declarative_base()
-
     with open(spec_filename) as spec_file:
         spec = json.load(spec_file)
-    model_factory = init_model_factory(base=base, spec=spec)
-    return base, model_factory
+
+    return _init_optional_base(base=base, spec=spec)
 
 
 def init_yaml(
     spec_filename: str, *, base: typing.Optional[typing.Type] = None
-) -> typing.Tuple[typing.Type, ModelFactory]:
+) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a YAML file.
 
@@ -114,13 +123,10 @@ def init_yaml(
             "Using init_yaml requires the pyyaml package. Try `pip install pyyaml`."
         )
 
-    if base is None:
-        base = declarative_base()
-
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.Loader)
-    model_factory = init_model_factory(base=base, spec=spec)
-    return base, model_factory
+
+    return _init_optional_base(base=base, spec=spec)
 
 
 __all__ = ["init_model_factory", "init_json", "init_yaml"]
