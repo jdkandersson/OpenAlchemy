@@ -1,5 +1,6 @@
 """Integration tests."""
 
+import json
 import typing
 from unittest import mock
 
@@ -430,3 +431,47 @@ def test_database_feature(engine, sessionmaker, spec):
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == 1
+
+
+@pytest.mark.integration
+def test_init_json(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a JSON file
+    WHEN init_json is called with the file
+    THEN a valid model factory is returned.
+    """
+    # Generate spec file
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "column": {"type": "integer", "x-primary-key": True}
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    directory = tmp_path / "sub"
+    directory.mkdir()
+    spec_file = directory / "hello.txt"
+    spec_file.write_text(json.dumps(spec))
+
+    # Creating model factory
+    base, model_factory = openapi_sqlalchemy.init_json(str(spec_file))
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    value = 0
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
