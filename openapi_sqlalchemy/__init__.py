@@ -54,10 +54,11 @@ def init_model_factory(*, base: typing.Type, spec: types.Schema) -> ModelFactory
     return cached_model_factories
 
 
-def init_json(spec_filename: str, *, base: typing.Type) -> typing.Tuple:
+def init_json(
+    spec_filename: str, *, base: typing.Optional[typing.Type] = None
+) -> typing.Tuple[typing.Type, ModelFactory]:
     """
-    Create factory that generates SQLAlchemy models based on an OpenAPI specification
-    as a JSON file.
+    Create SQLAlchemy models factory based on an OpenAPI specification as a JSON file.
 
     Args:
         spec_filename: filename of an OpenAPI spec in JSON format
@@ -73,21 +74,24 @@ def init_json(spec_filename: str, *, base: typing.Type) -> typing.Tuple:
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
     # need it:
-    import json
+    import json  # pylint: disable=import-outside-toplevel
 
     if base is None:
-        Base = declarative_base()
+        base = declarative_base()
 
     with open(spec_filename) as spec_file:
-        spec = json.load(spec_file, Loader=Loader)
-    model_factory = init_model_factory(base=Base, spec=spec)
-    return Base, model_factory
+        spec = json.load(spec_file)
+    model_factory = init_model_factory(base=base, spec=spec)
+    return base, model_factory
 
 
-def init_yaml(spec_filename: str, *, base: typing.Type = None) -> typing.Tuple:
+def init_yaml(
+    spec_filename: str, *, base: typing.Optional[typing.Type] = None
+) -> typing.Tuple[typing.Type, ModelFactory]:
     """
-    Create factory that generates SQLAlchemy models based on an OpenAPI specification
-    as a YAML file.
+    Create SQLAlchemy models factory based on an OpenAPI specification as a YAML file.
+
+    Raise ImportError if pyyaml has not been installed.
 
     Args:
         spec_filename: filename of an OpenAPI spec in YAML format
@@ -104,19 +108,19 @@ def init_yaml(spec_filename: str, *, base: typing.Type = None) -> typing.Tuple:
     """
 
     try:
-        import yaml
+        import yaml  # pylint: disable=import-outside-toplevel
     except ImportError:
-        raise ImportError('Using init_yaml requires the pyyaml package. '
-                          'Try `pip install pyyaml`.'
+        raise ImportError(
+            "Using init_yaml requires the pyyaml package. Try `pip install pyyaml`."
         )
 
     if base is None:
-        Base = declarative_base()
+        base = declarative_base()
 
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.Loader)
-    model_factory = init_model_factory(base=Base, spec=spec)
-    return Base, model_factory
+    model_factory = init_model_factory(base=base, spec=spec)
+    return base, model_factory
 
 
-__all__ = ['init_model_factory', 'init_json', 'init_yaml']
+__all__ = ["init_model_factory", "init_json", "init_yaml"]
