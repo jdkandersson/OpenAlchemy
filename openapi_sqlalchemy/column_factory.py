@@ -52,15 +52,7 @@ def _handle_object(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
-) -> typing.List[
-    typing.Tuple[
-        str,
-        typing.Union[
-            sqlalchemy.Column,
-            sqlalchemy.orm.properties.RelationshipProperty,  # pylint: disable=no-member
-        ],
-    ]
-]:
+) -> typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]]:
     """
     Generate properties for a reference to another object.
 
