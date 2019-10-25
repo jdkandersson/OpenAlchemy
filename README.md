@@ -71,18 +71,11 @@ components:
 The SQLALchemy models file then becomes:
 ```python
 # models.py
-from yaml import load, Loader
-from sqlalchemy.ext.declarative import declarative_base
-from openapi_sqlalchemy import init_model_factory
+from openapi_sqlalchemy import init_yaml
 
+Base, model_factory = init_yaml('./examples/simple-example-spec.yml')
 
-Base = declarative_base()
-with open("example-spec.yml") as spec_file:
-    SPEC = load(spec_file, Loader=Loader)
-MODEL_FACTORY = init_model_factory(base=Base, spec=SPEC)
-
-
-Employee = MODEL_FACTORY(name="Employee")
+Employee = model_factory(name="Employee")
 
 ```
 
