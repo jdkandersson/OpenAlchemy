@@ -12,6 +12,7 @@ from sqlalchemy.ext import declarative
 import openapi_sqlalchemy
 
 
+@pytest.mark.integration
 def test_init_optional_base_none_call(
     mocked_init_model_factory: mock.MagicMock, mocked_declarative_base: mock.MagicMock
 ):
@@ -30,6 +31,7 @@ def test_init_optional_base_none_call(
     )
 
 
+@pytest.mark.integration
 def test_init_optional_base_none_return(
     _mocked_init_model_factory: mock.MagicMock, mocked_declarative_base: mock.MagicMock
 ):
@@ -46,6 +48,7 @@ def test_init_optional_base_none_return(
     assert base == mocked_declarative_base.return_value
 
 
+@pytest.mark.integration
 def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     """
     GIVEN mocked init_model_factory and mock base
@@ -61,6 +64,7 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     mocked_init_model_factory.assert_called_once_with(base=base, spec=spec)
 
 
+@pytest.mark.integration
 def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMock):
     """
     GIVEN mocked init_model_factory and and mock base
@@ -571,3 +575,15 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == value
+
+
+@pytest.mark.integration
+def test_init_yaml_import_error():
+    """
+    GIVEN yaml package is not available
+    WHEN init_yaml is called
+    THEN ImportError is raised.
+    """
+    with mock.patch.dict("sys.modules", {"yaml": None}):
+        with pytest.raises(ImportError):
+            openapi_sqlalchemy.init_yaml("some file")
