@@ -88,11 +88,11 @@ Employee = MODEL_FACTORY(name="Employee")
 
 An extensive set of examples with a range of features is here:
 
-[examples](examples)
+[examples for main features](examples)
 
 An example API has been defined using connexion and Flask here:
 
-[examples](examples/app)
+[example connexion app](examples/app)
 
 ## Documentation
 [Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
