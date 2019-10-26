@@ -86,11 +86,6 @@ Employee = MODEL_FACTORY(name="Employee")
 
 ```
 
-## Documentation
-[Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
-
-## Examples
-
 An extensive set of examples with a range of features is here:
 
 [examples](examples)
@@ -98,6 +93,9 @@ An extensive set of examples with a range of features is here:
 An example API has been defined using connexion and Flask here:
 
 [examples](examples/app)
+
+## Documentation
+[Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
 
 ## Features
 ### Supported
