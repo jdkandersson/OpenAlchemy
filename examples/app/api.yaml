@@ -1,0 +1,123 @@
+
+openapi: "3.0.0"
+
+info:
+  title: Test Schema
+  description: API to illustrate OpenAPI-SQLALchemy.
+  version: "1.0"
+
+paths:
+  /employee:
+    get:
+      operationId: api.search
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+    post:
+      operationId: api.post
+      summary: Used to save an employee to the database.
+      requestBody:
+        description: The employee to save.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+      responses:
+        200:
+          description: Save successful.
+        400:
+          description: The Employee already exists.
+  /employee/{id}:
+    get:
+      operationId: api.get
+      summary: Used to retrieve an Employee from the database.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: The Employee.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        404:
+          description: The Employee was not found.
+    patch:
+      operationId: api.patch
+      summary: Update an Employee in the database.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        description: The employee to save.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Employee"
+      responses:
+        200:
+          description: The Employee was updated.
+        404:
+          description: The Employee was not found.
+    delete:
+      operationId: api.delete
+      summary: Delete an Employee from the database.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: The Employee was deleted.
+        404:
+          description: The Employee was not found.
+
+components:
+  schemas:
+    Employee:
+      description: Person that works for a company.
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the employee.
+          example: 0
+          x-primary-key: true
+          x-autoincrement: true
+        name:
+          type: string
+          description: The name of the employee.
+          example: David Andersson.
+          x-index: true
+        division:
+          type: string
+          description: The part of the company the employee works in.
+          example: Engineering
+          x-index: true
+        salary:
+          type: number
+          description: The amount of money the employee is paid.
+          example: 1000000.00
+      required:
+        - id
+        - name
+        - division
