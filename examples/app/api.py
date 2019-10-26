@@ -15,8 +15,7 @@ def post(body):
     """Save an employee to the database."""
     if Employee.query.filter_by(id=body["id"]).first() is not None:
         return ("Employee already exists.", 400)
-
-    employee = Employee(**body)
+    employee = Employee.from_dict(body)
     db.session.add(employee)
     db.session.commit()
 

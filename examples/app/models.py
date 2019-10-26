@@ -16,7 +16,12 @@ MODEL_FACTORY = init_model_factory(base=db.Model, spec=SPEC)
 
 
 class Employee(MODEL_FACTORY(name="Employee")):  # type: ignore
-    """Employee model with serialization function."""
+    """Employee model with conversion to and from dictionaries."""
+
+    @classmethod
+    def from_dict(cls, body):
+        """Convert a dictionary to an Employee."""
+        return cls(**body)
 
     def to_dict(self):
         """Convert Employee to a dictionary."""

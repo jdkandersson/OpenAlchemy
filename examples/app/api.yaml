@@ -36,15 +36,15 @@ paths:
         400:
           description: The Employee already exists.
   /employee/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
     get:
       operationId: api.get
       summary: Used to retrieve an Employee from the database.
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
       responses:
         200:
           description: The Employee.
@@ -57,12 +57,6 @@ paths:
     patch:
       operationId: api.patch
       summary: Update an Employee in the database.
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
       requestBody:
         description: The employee to save.
         required: true
@@ -78,12 +72,6 @@ paths:
     delete:
       operationId: api.delete
       summary: Delete an Employee from the database.
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
       responses:
         200:
           description: The Employee was deleted.
