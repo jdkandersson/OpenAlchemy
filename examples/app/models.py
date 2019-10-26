@@ -1,5 +1,7 @@
 """Database models."""
 
+import os
+
 from flask_sqlalchemy import SQLAlchemy
 from yaml import safe_load
 
@@ -7,7 +9,8 @@ from openapi_sqlalchemy import init_model_factory
 
 db = SQLAlchemy()
 
-with open("api.yaml") as spec_file:
+models_dir = os.path.dirname(__file__)
+with open(os.path.join(models_dir, "api.yaml")) as spec_file:
     SPEC = safe_load(spec_file)
 MODEL_FACTORY = init_model_factory(base=db.Model, spec=SPEC)
 
