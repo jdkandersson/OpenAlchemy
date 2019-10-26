@@ -15,7 +15,7 @@ with open(os.path.join(models_dir, "api.yaml")) as spec_file:
 MODEL_FACTORY = init_model_factory(base=db.Model, spec=SPEC)
 
 
-class Employee(MODEL_FACTORY(name="Employee")):
+class Employee(MODEL_FACTORY(name="Employee")):  # type: ignore
     """Employee model with serialization function."""
 
     def to_dict(self):

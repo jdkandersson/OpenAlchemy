@@ -1,5 +1,5 @@
 [run]
-omit =
+omit = examples/app/app.py
 branch = True
 
 [report]

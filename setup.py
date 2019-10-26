@@ -36,6 +36,8 @@ setuptools.setup(
             "pylint",
             "pytest-cov",
             "pytest-flakes",
+            "pytest-flask",
+            "pytest-flask-sqlalchemy",
             "mypy",
             "pydocstyle",
             "black",
