@@ -51,7 +51,7 @@ components:
         name:
           type: string
           description: The name of the employee.
-          example: David Andersson.
+          example: David Andersson
           x-index: true
         division:
           type: string
@@ -85,6 +85,14 @@ MODEL_FACTORY = init_model_factory(base=Base, spec=SPEC)
 Employee = MODEL_FACTORY(name="Employee")
 
 ```
+
+An extensive set of examples with a range of features is here:
+
+[examples for main features](examples)
+
+An example API has been defined using connexion and Flask here:
+
+[example connexion app](examples/app)
 
 ## Documentation
 [Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
