@@ -2,6 +2,7 @@
 
 ## Version <next> - <date>
 - Add support for Python 3.6.
+- Add connexion example application.
 
 ## Version 0.6.3 - 2019-10-19
 - Add support for backref for many to one relationships.
