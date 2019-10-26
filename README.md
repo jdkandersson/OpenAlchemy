@@ -51,7 +51,7 @@ components:
         name:
           type: string
           description: The name of the employee.
-          example: David Andersson.
+          example: David Andersson
           x-index: true
         division:
           type: string
@@ -88,6 +88,16 @@ Employee = MODEL_FACTORY(name="Employee")
 
 ## Documentation
 [Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
+
+## Examples
+
+An extensive set of examples with a range of features is here:
+
+[examples](examples)
+
+An example API has been defined using connexion and Flask here:
+
+[examples](examples/app)
 
 ## Features
 ### Supported

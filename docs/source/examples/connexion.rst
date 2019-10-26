@@ -43,13 +43,13 @@ For convenience, a *from_dict* method has been defined which constructs the
 model from a dictionary.
 
 For convenience, a *to_dict* method has been defined which converts the model
-and a dictionary that can be returned by an API endpoint fulfillment function.
+to a dictionary that can be returned by an API endpoint fulfillment function.
 
 Endpoint Fulfillment
 --------------------
 
 The API endpoints are all fulfilled in the *api.py* file which has a function
-for each method:
+for each combination of path and method:
 
 .. literalinclude:: ../../../examples/app/api.py
 
