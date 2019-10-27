@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version <next> - <date>
+## Version 0.7.0 - 2019-10-27
 - Add support for Python 3.6.
 - Add connexion example application.
 - Fixed bug where referencing a schema which uses allOf in many to one relationships does not merge the allOf statement.
