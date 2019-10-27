@@ -1,5 +1,6 @@
 """Helper functions."""
 
+from .get_extension_property import get_extension_property
 from .merge_all_of import merge_all_of
 from .peek_type import peek_type
 from .prepare_schema import prepare_schema

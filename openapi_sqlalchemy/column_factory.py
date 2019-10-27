@@ -100,12 +100,12 @@ def _handle_object(
             if sub_spec.get("x-backref") is not None:
                 backref_count += 1
         if ref_count != 1:
-            raise exceptions.MalformedManyToOneRelationship(
+            raise exceptions.MalformedManyToOneRelationshipError(
                 "Many to One relationships defined with allOf must have exactly one "
                 "$ref in the allOf list."
             )
         if backref_count > 1:
-            raise exceptions.MalformedManyToOneRelationship(
+            raise exceptions.MalformedManyToOneRelationshipError(
                 "Many to One relationships may have at most 1 x-backref defined."
             )
 
@@ -117,7 +117,7 @@ def _handle_object(
                     name=logical_name, schema=sub_spec, schemas=schemas
                 )
     else:
-        raise exceptions.MalformedManyToOneRelationship(
+        raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships are defined using either $ref or allOf."
         )
 

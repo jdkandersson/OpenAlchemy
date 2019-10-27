@@ -27,7 +27,7 @@ setuptools.setup(
         "Topic :: Database",
     ],
     python_requires=">=3.6",
-    install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5"],
+    install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5", "jsonschema>=3"],
     extras_require={
         "dev": [
             "pytest",

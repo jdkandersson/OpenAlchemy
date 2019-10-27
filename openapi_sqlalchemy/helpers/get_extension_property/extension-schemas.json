@@ -1,0 +1,31 @@
+{
+  "x-backref": {
+    "description": "Add a back reference to a relationship.",
+    "type": "string"
+  },
+  "x-primary-key": {
+    "description": "Make a column a primary key.",
+    "type": "boolean"
+  },
+  "x-autoincrement": {
+    "description": "Make an integer primary key column auto increment.",
+    "type": "boolean"
+  },
+  "x-index": {
+    "description": "Add index to a column.",
+    "type": "boolean"
+  },
+  "x-unique": {
+    "description": "Add unique constraint to a column.",
+    "type": "boolean"
+  },
+  "x-foreign-key": {
+    "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
+    "type": "string",
+    "pattern": "^.+\\..+$"
+  },
+  "x-tablename": {
+    "description": "Define the name of a table.",
+    "type": "string"
+  }
+}

@@ -36,9 +36,9 @@ def test_handle_object_error(spec):
     """
     GIVEN spec
     WHEN _handle_object is called with the spec
-    THEN MalformedManyToOneRelationship is raised.
+    THEN MalformedManyToOneRelationshipError is raised.
     """
-    with pytest.raises(exceptions.MalformedManyToOneRelationship):
+    with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
         column_factory._handle_object(
             spec=spec, schemas={}, required=True, logical_name="name 1"
         )
