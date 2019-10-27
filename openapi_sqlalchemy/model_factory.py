@@ -51,7 +51,7 @@ def model_factory(
         name,
         (base,),
         {
-            "__tablename__": schema.get("x-tablename"),
+            "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
             **dict(
                 itertools.chain.from_iterable(
                     # pylint: disable=unexpected-keyword-arg

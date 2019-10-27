@@ -29,5 +29,9 @@ class MalformedSchemaError(ValueError, BaseError):
     """Raised when an object schema is missing required properties."""
 
 
-class MalformedManyToOneRelationship(ValueError, BaseError):
+class MalformedManyToOneRelationshipError(ValueError, BaseError):
     """Raised when a many to one relationship was not defined as expected."""
+
+
+class MalformedExtensionPropertyError(ValueError, BaseError):
+    """Raised when an extension property does not have the expected schema."""

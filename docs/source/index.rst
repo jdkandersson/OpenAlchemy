@@ -15,6 +15,8 @@ specification are compliant with the OpenAPI standard.
    technical_details/index
 
 
+.. _getting-started:
+
 Getting Started
 ---------------
 
@@ -27,6 +29,8 @@ following *models.py* file:
 
 .. literalinclude:: ../../examples/simple_models.py
 
+.. _how-does-it-work:
+
 How Does It Work?
 -----------------
 
@@ -35,3 +39,31 @@ schemas section of the specification. The schema must have the *x-tablename*
 property which defines the name of the table. The schema is required to be an
 *object*. For each *property* of the schema, a column is generated for the
 table mapping OpenAPI types to equivalent SQLAlchemy types.
+
+On top of the information in the OpenAPI specification, certain extension
+properties are used to define the database schema. The following specification
+defines the format and provides a description for each of the supported
+extension properties.
+
+.. literalinclude:: ../../openapi_sqlalchemy/helpers/get_ext_prop/extension-schemas.json
+
+To find out more about an extension property, go to the following section of
+the documentation:
+
++-----------------+-------------------------+
+| property        | documentation section   |
++=================+=========================+
+| x-backref       | :ref:`backref`          |
++-----------------+-------------------------+
+| x-primary-key   | :ref:`primary-key`      |
++-----------------+-------------------------+
+| x-autoincrement | :ref:`autoincrement`    |
++-----------------+-------------------------+
+| x-index         | :ref:`index`            |
++-----------------+-------------------------+
+| x-unique        | :ref:`unique`           |
++-----------------+-------------------------+
+| x-foreign-key   | :ref:`foreign-key`      |
++-----------------+-------------------------+
+| x-tablename     | :ref:`how-does-it-work` |
++-----------------+-------------------------+

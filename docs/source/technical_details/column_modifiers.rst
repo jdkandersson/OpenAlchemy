@@ -1,6 +1,8 @@
 Applying Modifiers to Columns
 =============================
 
+.. _primary-key:
+
 Primary Key
 -----------
 
@@ -19,6 +21,8 @@ on an object property to *true*. For example:
           x-primary-key: true
         name:
           type: string
+
+.. _autoincrement:
 
 Auto Increment
 --------------
@@ -50,6 +54,8 @@ For example:
    `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__>`_
       Documentation for SQLAlchemy autoincrement.
 
+.. _index:
+
 Index
 -----
 
@@ -69,6 +75,8 @@ to *true*. For example:
           type: string
           x-index: true
 
+.. _unique:
+
 Unique Constraint
 -----------------
 
@@ -87,6 +95,8 @@ object property to *true*. For example:
         name:
           type: string
           x-unique: true
+
+.. _foreign-key:
 
 Foreign Key Constraint
 ----------------------
