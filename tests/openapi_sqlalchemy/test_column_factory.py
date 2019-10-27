@@ -422,22 +422,39 @@ def test_integration_ref():
     assert isinstance(column.type, sqlalchemy.Boolean)
 
 
+@pytest.mark.parametrize(
+    "schemas",
+    [
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+        {
+            "RefSchema": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "x-tablename": "table 1",
+                        "properties": {"id": {"type": "integer"}},
+                    }
+                ]
+            }
+        },
+    ],
+    ids=["simple", "allOf"],
+)
 @pytest.mark.prod_env
 @pytest.mark.column
-def test_integration_object_ref():
+def test_integration_object_ref(schemas):
     """
     GIVEN schema that references another object schema and schemas
     WHEN column_factory is called with the schema and schemas
     THEN foreign key reference and relationship is returned.
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
     [  # pylint: disable=unbalanced-tuple-unpacking
         (fk_logical_name, fk_column),
         (tbl_logical_name, relationship),
