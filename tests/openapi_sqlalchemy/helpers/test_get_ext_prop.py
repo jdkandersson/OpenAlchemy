@@ -1,4 +1,4 @@
-"""Tests for get_extension_property."""
+"""Tests for get_ext_prop."""
 
 import pytest
 
@@ -10,10 +10,10 @@ from openapi_sqlalchemy import helpers
 def test_miss():
     """
     GIVEN empty source
-    WHEN get_extension_property is called with the source
+    WHEN get_ext_prop is called with the source
     THEN None is returned.
     """
-    assert helpers.get_extension_property(source={}, property_name="missing") is None
+    assert helpers.get_ext_prop(source={}, name="missing") is None
 
 
 @pytest.mark.parametrize(
@@ -43,13 +43,13 @@ def test_miss():
 def test_invalid(name, value):
     """
     GIVEN property and invalid value
-    WHEN get_extension_property is called with a source made of the property and value
+    WHEN get_ext_prop is called with a source made of the property and value
     THEN MalformedExtensionPropertyError is raised.
     """
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.get_extension_property(source=source, property_name=name)
+        helpers.get_ext_prop(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -77,11 +77,11 @@ def test_invalid(name, value):
 def test_valid(name, value):
     """
     GIVEN property and valid value
-    WHEN get_extension_property is called with a source made of the property and value
+    WHEN get_ext_prop is called with a source made of the property and value
     THEN the value is returned.
     """
     source = {name: value}
 
-    returned_value = helpers.get_extension_property(source=source, property_name=name)
+    returned_value = helpers.get_ext_prop(source=source, name=name)
 
     assert returned_value == value

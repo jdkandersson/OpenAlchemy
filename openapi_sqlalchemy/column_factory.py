@@ -89,7 +89,7 @@ def _handle_object(
         ref_logical_name, spec = helpers.resolve_ref(
             name=logical_name, schema=spec, schemas=schemas
         )
-        backref = spec.get("x-backref")
+        backref = helpers.get_ext_prop(source=spec, name="x-backref")
     elif all_of is not None:
         # Checking for $ref and x-backref counts
         ref_count = 0
@@ -111,7 +111,7 @@ def _handle_object(
 
         # Handling allOf
         for sub_spec in all_of:
-            backref = sub_spec.get("x-backref")
+            backref = helpers.get_ext_prop(source=sub_spec, name="x-backref")
             if sub_spec.get("$ref") is not None:
                 ref_logical_name, spec = helpers.resolve_ref(
                     name=logical_name, schema=sub_spec, schemas=schemas
@@ -177,20 +177,21 @@ def _spec_to_column(*, spec: types.Schema, required: typing.Optional[bool] = Non
 
     # Calculate column modifiers
     kwargs["nullable"] = _calculate_nullable(spec=spec, required=required)
-    if spec.get("x-primary-key"):
+    if helpers.get_ext_prop(source=spec, name="x-primary-key"):
         kwargs["primary_key"] = True
-    autoincrement = spec.get("x-autoincrement")
+    autoincrement = helpers.get_ext_prop(source=spec, name="x-autoincrement")
     if autoincrement is not None:
         if autoincrement:
             kwargs["autoincrement"] = True
         else:
             kwargs["autoincrement"] = False
-    if spec.get("x-index"):
+    if helpers.get_ext_prop(source=spec, name="x-index"):
         kwargs["index"] = True
-    if spec.get("x-unique"):
+    if helpers.get_ext_prop(source=spec, name="x-unique"):
         kwargs["unique"] = True
-    if spec.get("x-foreign-key"):
-        args = (*args, sqlalchemy.ForeignKey(spec.get("x-foreign-key")))
+    foreign_key = helpers.get_ext_prop(source=spec, name="x-foreign-key")
+    if foreign_key:
+        args = (*args, sqlalchemy.ForeignKey(foreign_key))
 
     # Calculating type of column
     type_ = _determine_type(spec=spec)
@@ -212,7 +213,7 @@ def _handle_object_reference(
         The foreign key schema.
 
     """
-    tablename = spec.get("x-tablename")
+    tablename = helpers.get_ext_prop(source=spec, name="x-tablename")
     if not tablename:
         raise exceptions.MalformedSchemaError(
             "Referenced object is missing x-tablename property."

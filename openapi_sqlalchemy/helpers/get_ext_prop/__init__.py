@@ -14,8 +14,8 @@ with open(SCHEMAS_FILE) as in_file:
     SCHEMAS = json.load(in_file)
 
 
-def get_extension_property(
-    *, source: typing.Dict[str, typing.Any], property_name: str
+def get_ext_prop(
+    *, source: typing.Dict[str, typing.Any], name: str
 ) -> typing.Optional[typing.Union[str, bool]]:
     """
     Read the value of an extension property, validate the schema and return it.
@@ -25,22 +25,22 @@ def get_extension_property(
 
     Args:
         source: The object to get the extension property from.
-        property_name: The name of the property.
+        name: The name of the property.
 
     Returns:
         The value of the property.
 
     """
-    value = source.get(property_name)
+    value = source.get(name)
     if value is None:
         return None
 
-    schema = SCHEMAS.get(property_name)
+    schema = SCHEMAS.get(name)
     try:
         jsonschema.validate(instance=value, schema=schema)
     except jsonschema.ValidationError:
         raise exceptions.MalformedExtensionPropertyError(
-            f"The value of the {json.dumps(property_name)} extension property is not "
+            f"The value of the {json.dumps(name)} extension property is not "
             "valid. "
             f"The expected schema is {json.dumps(schema)}. "
             f"The given value is {json.dumps(value)}."
