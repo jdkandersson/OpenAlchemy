@@ -37,6 +37,8 @@ Without OpenAPI-SQLAlchemy, the following is the equivalent *models.py* file:
 
 .. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
 
+.. _backref:
+
 Backref
 ^^^^^^^
 
