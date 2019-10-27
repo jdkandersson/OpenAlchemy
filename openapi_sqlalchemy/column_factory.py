@@ -121,6 +121,9 @@ def _handle_object(
             "Many to One relationships are defined using either $ref or allOf."
         )
 
+    # Resolving allOf
+    spec = helpers.merge_all_of(schema=spec, schemas=schemas)
+
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
     return_value = _handle_column(

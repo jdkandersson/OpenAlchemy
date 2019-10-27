@@ -3,6 +3,8 @@
 ## Version <next> - <date>
 - Add support for Python 3.6.
 - Add connexion example application.
+- Fixed bug where referencing a schema which uses allOf in many to one relationships does not merge the allOf statement.
+- Fixed bug where a type hint that is not always exported from SQLAlchemy may cause an no member error.
 
 ## Version 0.6.3 - 2019-10-19
 - Add support for backref for many to one relationships.

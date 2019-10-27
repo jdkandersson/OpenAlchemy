@@ -46,6 +46,8 @@ setuptools.setup(
             "PyYAML",
             "Sphinx",
             "doc8",
+            "connexion[swagger-ui]",
+            "Flask-SQLAlchemy",
         ]
     },
 )
