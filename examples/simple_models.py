@@ -1,12 +1,5 @@
-from sqlalchemy.ext.declarative import declarative_base
-from yaml import safe_load
+from openapi_sqlalchemy import init_yaml
 
-from openapi_sqlalchemy import init_model_factory
+Base, model_factory = init_yaml("simple-example-spec.yml")
 
-Base = declarative_base()
-with open("simple-example-spec.yml") as spec_file:
-    SPEC = safe_load(spec_file)
-MODEL_FACTORY = init_model_factory(base=Base, spec=SPEC)
-
-
-Employee = MODEL_FACTORY(name="Employee")
+Employee = model_factory(name="Employee")

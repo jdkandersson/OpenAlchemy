@@ -3,9 +3,9 @@ Translates an OpenAPI schema to SQLAlchemy models.
 
 ## Installation
 ```bash
-python3 -m pip install OpenAPI-SQLAlchemy
+python -m pip install OpenAPI-SQLAlchemy
 # To be able to load yaml file
-python3 -m pip install PyYAML
+python -m pip install PyYAML
 ```
 
 ## Example
@@ -13,7 +13,7 @@ python3 -m pip install PyYAML
 For example, given the following OpenAPI specification:
 
 ```yaml
-# example-spec.yml
+# ./examples/simple-example-spec.yml
 openapi: "3.0.0"
 
 info:
@@ -71,18 +71,11 @@ components:
 The SQLALchemy models file then becomes:
 ```python
 # models.py
-from yaml import load, Loader
-from sqlalchemy.ext.declarative import declarative_base
-from openapi_sqlalchemy import init_model_factory
+from openapi_sqlalchemy import init_yaml
 
+Base, model_factory = init_yaml("./examples/simple-example-spec.yml")
 
-Base = declarative_base()
-with open("example-spec.yml") as spec_file:
-    SPEC = load(spec_file, Loader=Loader)
-MODEL_FACTORY = init_model_factory(base=Base, spec=SPEC)
-
-
-Employee = MODEL_FACTORY(name="Employee")
+Employee = model_factory(name="Employee")
 
 ```
 
@@ -116,9 +109,9 @@ The following features are on the backlog:
 ## Contributing
 Fork and checkout the repository. To install:
 ```bash
-python3 -m venv venv
+python -m venv venv
 source ./venv/bin/activate
-python3 -m pip install -e .[dev]
+python -m pip install -e .[dev]
 ```
 To run tests:
 ```bash
@@ -128,7 +121,7 @@ Make your changes and raise a pull request.
 
 ## Compiling Docs
 ```bash
-python3 -m venv venv
+python -m venv venv
 cd docs
 make html
 ```
