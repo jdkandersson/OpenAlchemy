@@ -31,7 +31,7 @@ components:
     Name:
       type: string
       description: The name of the employee.
-      example: David Andersson.
+      example: David Andersson
       x-index: true
     Division:
       type: string
