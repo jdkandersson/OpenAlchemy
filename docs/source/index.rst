@@ -32,8 +32,8 @@ following *models.py* file:
 The *Base* for the SQLAlchemy models and the *Employee* model is now available
 from *openapi_sqlalchemy.models*::
 
-    from openapi_sqlalchemy import Base
-    from openapi_sqlalchemy import Employee
+    from openapi_sqlalchemy.models import Base
+    from openapi_sqlalchemy.models import Employee
 
 
 .. _how-does-it-work:
