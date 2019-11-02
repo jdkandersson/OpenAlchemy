@@ -73,10 +73,13 @@ The SQLALchemy models file then becomes:
 # models.py
 from openapi_sqlalchemy import init_yaml
 
-Base, model_factory = init_yaml("./examples/simple-example-spec.yml")
+init_yaml("./examples/simple-example-spec.yml")
+```
 
-Employee = model_factory(name="Employee")
-
+The _Base_ and _Employee_ objects can be accessed:
+```python
+from openapi_sqlalchemy.models import Base
+from openapi_sqlalchemy.models import Employee
 ```
 
 An extensive set of examples with a range of features is here:

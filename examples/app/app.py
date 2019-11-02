@@ -2,12 +2,17 @@
 
 import connexion
 
-from models import db
+import database
 
+# Creating Flask app
 app = connexion.FlaskApp(__name__, specification_dir=".")
+
+# Initializing database
 app.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-db.init_app(app.app)
+database.db.init_app(app.app)
 with app.app.app_context():
-    db.create_all()
+    database.db.create_all()
+
+# Running app
 app.add_api("api.yaml")
 app.run(port=8080)

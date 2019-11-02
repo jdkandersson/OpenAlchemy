@@ -13,6 +13,7 @@ import openapi_sqlalchemy
 from openapi_sqlalchemy import column_factory
 from openapi_sqlalchemy import helpers
 from openapi_sqlalchemy import model_factory
+from openapi_sqlalchemy import models
 
 
 @pytest.fixture
@@ -165,3 +166,23 @@ def mocked_declarative_base(monkeypatch):
     mock_declarative_base = mock.MagicMock()
     monkeypatch.setattr(declarative, "declarative_base", mock_declarative_base)
     return mock_declarative_base
+
+
+@pytest.fixture(autouse=True)
+def cleanup_models():
+    """Remove any new attributes on openapi_sqlalchemy.models."""
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)
+
+    yield
+
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)

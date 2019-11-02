@@ -1,11 +1,13 @@
 """Fixtures for example app."""
+# pylint: disable=no-member
 
 import sys
 
 import connexion
 import pytest
 
-from examples.app import models
+from examples.app.database import db
+from openapi_sqlalchemy import models
 
 
 @pytest.fixture(scope="session")
@@ -26,10 +28,10 @@ def app():
 @pytest.fixture(scope="session")
 def _db(app):  # pylint: disable=redefined-outer-name
     """Database session for testing"""
-    models.db.init_app(app)
-    models.db.app = app
-    models.db.create_all()
-    return models.db
+    db.init_app(app)
+    db.app = app
+    db.create_all()
+    return db
 
 
 @pytest.fixture(autouse=True)

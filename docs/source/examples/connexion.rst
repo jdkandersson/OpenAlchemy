@@ -34,16 +34,10 @@ Database Models
 ---------------
 
 The OpenAPI specification above includes a *schemas* section which defines the
-*Employee* schema. This schema is used to construct the *Employee* model in the
-SQLAlchemy *models.py* file:
+*Employee* schema. This schema is used to construct the *Employee* model. The
+database setup is defined in the following file:
 
-.. literalinclude:: ../../../examples/app/models.py
-
-For convenience, a *from_dict* method has been defined which constructs the
-model from a dictionary.
-
-For convenience, a *to_dict* method has been defined which converts the model
-to a dictionary that can be returned by an API endpoint fulfillment function.
+.. literalinclude:: ../../../examples/app/database.py
 
 Endpoint Fulfillment
 --------------------

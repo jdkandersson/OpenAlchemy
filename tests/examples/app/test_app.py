@@ -1,10 +1,11 @@
 """Tests for example app."""
+# pylint: disable=no-member
 
 import json
 
 import pytest
 
-from examples.app import models
+from openapi_sqlalchemy import models
 
 
 @pytest.mark.app
