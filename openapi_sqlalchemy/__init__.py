@@ -11,6 +11,7 @@ from sqlalchemy.ext import declarative
 from openapi_sqlalchemy import types as os_types
 
 from . import exceptions
+from . import helpers as _helpers
 from . import model_factory as _model_factory
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
@@ -18,7 +19,7 @@ sys.modules["openapi_sqlalchemy.models"] = models
 
 
 def init_model_factory(
-    *, base: typing.Type, spec: os_types.Schema
+    *, base: typing.Type, spec: os_types.Schema, define_all: bool = False
 ) -> os_types.ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
@@ -26,6 +27,7 @@ def init_model_factory(
     Args:
         base: The declarative base for the models.
         spec: The OpenAPI specification in the form of a dictionary.
+        define_all: Whether to define all the models during initialization.
 
     Returns:
         A factory that returns SQLAlchemy models derived from the base based on the
@@ -61,6 +63,9 @@ def init_model_factory(
         setattr(models, name, model)
         return model
 
+    if define_all:
+        _helpers.define_all(model_factory=_register_model, schemas=schemas)
+
     return _register_model
 
 
@@ -68,16 +73,16 @@ BaseAndModelFactory = typing.Tuple[typing.Type, os_types.ModelFactory]
 
 
 def _init_optional_base(
-    *, base: typing.Optional[typing.Type], spec: os_types.Schema
+    *, base: typing.Optional[typing.Type], spec: os_types.Schema, define_all: bool
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
         base = declarative.declarative_base()
-    return base, init_model_factory(base=base, spec=spec)
+    return base, init_model_factory(base=base, spec=spec, define_all=define_all)
 
 
 def init_json(
-    spec_filename: str, *, base: typing.Optional[typing.Type] = None
+    spec_filename: str, *, base: typing.Optional[typing.Type] = None, define_all=True
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a JSON file.
@@ -91,7 +96,8 @@ def init_json(
 
         Base: a SQLAlchemy declarative base class
         model_factory: A factory that returns SQLAlchemy models derived from the
-                       base based on the OpenAPI specification.
+            base based on the OpenAPI specification.
+        define_all: Whether to define all the models during initialization.
 
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
@@ -101,11 +107,11 @@ def init_json(
     with open(spec_filename) as spec_file:
         spec = json.load(spec_file)
 
-    return _init_optional_base(base=base, spec=spec)
+    return _init_optional_base(base=base, spec=spec, define_all=define_all)
 
 
 def init_yaml(
-    spec_filename: str, *, base: typing.Optional[typing.Type] = None
+    spec_filename: str, *, base: typing.Optional[typing.Type] = None, define_all=True
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a YAML file.
@@ -122,7 +128,8 @@ def init_yaml(
 
         Base: a SQLAlchemy declarative base class
         model_factory: A factory that returns SQLAlchemy models derived from the
-                       base based on the OpenAPI specification.
+            base based on the OpenAPI specification.
+        define_all: Whether to define all the models during initialization.
 
     """
 
@@ -136,7 +143,7 @@ def init_yaml(
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.Loader)
 
-    return _init_optional_base(base=base, spec=spec)
+    return _init_optional_base(base=base, spec=spec, define_all=define_all)
 
 
 __all__ = ["init_model_factory", "init_json", "init_yaml"]

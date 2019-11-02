@@ -24,10 +24,10 @@ def test_init_optional_base_none_call(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    openapi_sqlalchemy._init_optional_base(base=None, spec=spec)
+    openapi_sqlalchemy._init_optional_base(base=None, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
-        base=mocked_declarative_base.return_value, spec=spec
+        base=mocked_declarative_base.return_value, spec=spec, define_all=True
     )
 
 
@@ -43,7 +43,9 @@ def test_init_optional_base_none_return(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    base, _ = openapi_sqlalchemy._init_optional_base(base=None, spec=spec)
+    base, _ = openapi_sqlalchemy._init_optional_base(
+        base=None, spec=spec, define_all=True
+    )
 
     assert base == mocked_declarative_base.return_value
 
@@ -59,9 +61,11 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    openapi_sqlalchemy._init_optional_base(base=base, spec=spec)
+    openapi_sqlalchemy._init_optional_base(base=base, spec=spec, define_all=True)
 
-    mocked_init_model_factory.assert_called_once_with(base=base, spec=spec)
+    mocked_init_model_factory.assert_called_once_with(
+        base=base, spec=spec, define_all=True
+    )
 
 
 @pytest.mark.integration
@@ -75,7 +79,9 @@ def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMoc
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    returned_base, _ = openapi_sqlalchemy._init_optional_base(base=base, spec=spec)
+    returned_base, _ = openapi_sqlalchemy._init_optional_base(
+        base=base, spec=spec, define_all=True
+    )
 
     assert returned_base == base
 
@@ -529,7 +535,7 @@ def test_init_json(engine, sessionmaker, tmp_path):
     spec_file.write_text(json.dumps(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = openapi_sqlalchemy.init_json(str(spec_file))
+    base, model_factory = openapi_sqlalchemy.init_json(str(spec_file), define_all=False)
     model = model_factory(name="Table")
 
     # Creating models
@@ -560,7 +566,7 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file))
+    base, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file), define_all=False)
     model = model_factory(name="Table")
 
     # Creating models
@@ -636,8 +642,7 @@ def test_import_model(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    _, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file))
-    model_factory(name="Table")
+    openapi_sqlalchemy.init_yaml(str(spec_file), define_all=True)
 
     # Creating models
     from openapi_sqlalchemy.models import Base
