@@ -590,6 +590,18 @@ def test_init_yaml_import_error():
 
 
 @pytest.mark.integration
+def test_import_base_initial():
+    """
+    GIVEN
+    WHEN
+    THEN ImportError is raised when Base is imported from openapi_sqlalchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel,unused-import
+    with pytest.raises(ImportError):
+        from openapi_sqlalchemy.models import Base  # noqa: F401
+
+
+@pytest.mark.integration
 def test_import_base(tmp_path):
     """
     GIVEN specification file
