@@ -29,6 +29,13 @@ following *models.py* file:
 
 .. literalinclude:: ../../examples/simple_models.py
 
+The *Base* for the SQLAlchemy models and the *Employee* model is now available
+from *openapi_sqlalchemy.models*::
+
+    from openapi_sqlalchemy import Base
+    from openapi_sqlalchemy import Employee
+
+
 .. _how-does-it-work:
 
 How Does It Work?
@@ -67,3 +74,6 @@ the documentation:
 +-----------------+-------------------------+
 | x-tablename     | :ref:`how-does-it-work` |
 +-----------------+-------------------------+
+
+The SQLAlchemy *Base* and any constructed database models are dynamically added
+to the *models* module that is available from OpenAPI-SQLAlchemy.
