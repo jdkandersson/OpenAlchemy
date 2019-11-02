@@ -4,10 +4,20 @@ from models import Employee
 from models import db
 
 
+def _employee_to_dict(employee):
+    """Transform Employee to dictionary."""
+    return {
+        "id": employee.id,
+        "name": employee.name,
+        "division": employee.division,
+        "salary": employee.salary,
+    }
+
+
 def search():
     """Get all employees from the database."""
     employees = Employee.query.all()
-    employee_dicts = map(lambda employee: employee.to_dict(), employees)
+    employee_dicts = map(lambda employee: _employee_to_dict(employee), employees)
     return list(employee_dicts)
 
 
@@ -15,7 +25,7 @@ def post(body):
     """Save an employee to the database."""
     if Employee.query.filter_by(id=body["id"]).first() is not None:
         return ("Employee already exists.", 400)
-    employee = Employee.from_dict(body)
+    employee = Employee(**body)
     db.session.add(employee)
     db.session.commit()
 
@@ -25,7 +35,7 @@ def get(id):
     employee = Employee.query.filter_by(id=id).first()
     if employee is None:
         return ("Employee not found.", 404)
-    return employee.to_dict()
+    return _employee_to_dict(employee)
 
 
 def patch(body, id):
