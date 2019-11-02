@@ -17,15 +17,9 @@ models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["openapi_sqlalchemy.models"] = models
 
 
-class ModelFactory(typing_extensions.Protocol):
-    """Defines interface for model factory."""
-
-    def __call__(self, *, name: str) -> typing.Type:
-        """Call signature for ModelFactory."""
-        ...
-
-
-def init_model_factory(*, base: typing.Type, spec: os_types.Schema) -> ModelFactory:
+def init_model_factory(
+    *, base: typing.Type, spec: os_types.Schema
+) -> os_types.ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
 
@@ -70,7 +64,7 @@ def init_model_factory(*, base: typing.Type, spec: os_types.Schema) -> ModelFact
     return _register_model
 
 
-BaseAndModelFactory = typing.Tuple[typing.Type, ModelFactory]
+BaseAndModelFactory = typing.Tuple[typing.Type, os_types.ModelFactory]
 
 
 def _init_optional_base(
