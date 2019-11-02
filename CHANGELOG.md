@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _unreleased_
+- Add less verbose initialisation with _init_yaml_ and _init_json*.
+- Remove need for separate models file by exposing _Base_ and constructed models at _openapi_sqlalchemy.models_.
+
 ## Version 0.7.0 - 2019-10-27
 - Add support for Python 3.6.
 - Add connexion example application.
