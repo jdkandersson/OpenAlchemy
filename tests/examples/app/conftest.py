@@ -7,15 +7,12 @@ import connexion
 import pytest
 
 from examples.app.database import db
-from openapi_sqlalchemy import init_yaml
 from openapi_sqlalchemy import models
 
 
 @pytest.fixture(scope="session")
 def app():
     """Flask app for testing."""
-    # Constructing models
-    init_yaml("./examples/app/api.yaml", base=db.Model)
     # Adding app directory to path
     sys.path.append("examples/app/")
     # Adding swagger file
