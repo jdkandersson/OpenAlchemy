@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 from openapi_sqlalchemy import init_yaml
 
+# Construct models
 db = SQLAlchemy()
-models_dir = os.path.dirname(__file__)
-models_file = os.path.join(models_dir, "api.yaml")
-init_yaml(models_file, base=db.Model)
+SPEC_DIR = os.path.dirname(__file__)
+SPEC_FILE = os.path.join(SPEC_DIR, "api.yaml")
+init_yaml(SPEC_FILE, base=db.Model)

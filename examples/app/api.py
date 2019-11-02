@@ -17,7 +17,7 @@ def _employee_to_dict(employee):
 def search():
     """Get all employees from the database."""
     employees = Employee.query.all()
-    employee_dicts = map(lambda employee: _employee_to_dict(employee), employees)
+    employee_dicts = map(_employee_to_dict, employees)
     return list(employee_dicts)
 
 
@@ -46,7 +46,6 @@ def patch(body, id):
     employee.name = body["name"]
     employee.division = body["division"]
     employee.salary = body["salary"]
-    # db.session.add(employee)
     db.session.commit()
     return 200
 
