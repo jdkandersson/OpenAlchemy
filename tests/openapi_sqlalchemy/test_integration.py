@@ -587,3 +587,23 @@ def test_init_yaml_import_error():
     with mock.patch.dict("sys.modules", {"yaml": None}):
         with pytest.raises(ImportError):
             openapi_sqlalchemy.init_yaml("some file")
+
+
+@pytest.mark.integration
+def test_import_base(tmp_path):
+    """
+    GIVEN specification file
+    WHEN init_yaml is called with the specification file
+    THEN Base can be imported from openapi_sqlalchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel,unused-import
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    openapi_sqlalchemy.init_yaml(str(spec_file))
+
+    from openapi_sqlalchemy.models import Base  # noqa: F401

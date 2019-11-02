@@ -1,14 +1,20 @@
 """Map an OpenAPI schema to SQLAlchemy models."""
 
 import functools
+import sys
+import types as py_types
 import typing
 
 import typing_extensions
 from sqlalchemy.ext import declarative
 
+from openapi_sqlalchemy import types as os_types
+
 from . import exceptions
 from . import model_factory as _model_factory
-from . import types
+
+models = py_types.ModuleType("models")  # pylint: disable=invalid-name
+sys.modules["openapi_sqlalchemy.models"] = models
 
 
 class ModelFactory(typing_extensions.Protocol):
@@ -19,7 +25,7 @@ class ModelFactory(typing_extensions.Protocol):
         ...
 
 
-def init_model_factory(*, base: typing.Type, spec: types.Schema) -> ModelFactory:
+def init_model_factory(*, base: typing.Type, spec: os_types.Schema) -> ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
 
@@ -51,6 +57,9 @@ def init_model_factory(*, base: typing.Type, spec: types.Schema) -> ModelFactory
     # Caching calls
     cached_model_factories = functools.lru_cache(maxsize=None)(bound_model_factories)
 
+    # Making Base importable
+    setattr(models, "Base", base)
+
     return cached_model_factories
 
 
@@ -58,7 +67,7 @@ BaseAndModelFactory = typing.Tuple[typing.Type, ModelFactory]
 
 
 def _init_optional_base(
-    *, base: typing.Optional[typing.Type], spec: types.Schema
+    *, base: typing.Optional[typing.Type], spec: os_types.Schema
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
