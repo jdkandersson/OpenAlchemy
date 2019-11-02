@@ -20,7 +20,7 @@ sys.modules["openapi_sqlalchemy.models"] = models
 class ModelFactory(typing_extensions.Protocol):
     """Defines interface for model factory."""
 
-    def __call__(self, name: str) -> typing.Type:
+    def __call__(self, *, name: str) -> typing.Type:
         """Call signature for ModelFactory."""
         ...
 
@@ -60,7 +60,14 @@ def init_model_factory(*, base: typing.Type, spec: os_types.Schema) -> ModelFact
     # Making Base importable
     setattr(models, "Base", base)
 
-    return cached_model_factories
+    # Intercepting factory calls to make models available
+    def _register_model(*, name: str) -> typing.Type:
+        """Intercept calls to model factory and register model on models."""
+        model = cached_model_factories(name=name)
+        setattr(models, name, model)
+        return model
+
+    return _register_model
 
 
 BaseAndModelFactory = typing.Tuple[typing.Type, ModelFactory]

@@ -619,3 +619,40 @@ def test_import_base(tmp_path):
     openapi_sqlalchemy.init_yaml(str(spec_file))
 
     from openapi_sqlalchemy.models import Base  # noqa: F401
+
+
+@pytest.mark.integration
+def test_import_model(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a YAML file
+    WHEN init_yaml is called with the file
+    THEN the model is importable from openapi_sqlalchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    _, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file))
+    model_factory(name="Table")
+
+    # Creating models
+    from openapi_sqlalchemy.models import Base
+
+    Base.metadata.create_all(engine)
+
+    # Creating model instance
+    from openapi_sqlalchemy.models import Table
+
+    value = 0
+    model_instance = Table(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(Table).first()
+    assert queried_model.column == value
