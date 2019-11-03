@@ -7,7 +7,7 @@ import connexion
 import pytest
 
 from examples.app.database import db
-from openapi_sqlalchemy import models
+from open_alchemy import models
 
 
 @pytest.fixture(scope="session")

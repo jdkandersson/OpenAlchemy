@@ -4,7 +4,7 @@ Inheritance
 ===========
 
 By default, re-using SQLAlchemy models through inheritance is not simple as
-SQLAlchemy uses inheritance for other purposes. OpenAPI-SQLAlchemy supports
+SQLAlchemy uses inheritance for other purposes. OpenAlchemy supports
 model inheritance using the *allOf* statement from OpenAPI. Currently column
 inheritance is supported, model inheritance is planned for the future.
 

@@ -7,8 +7,8 @@ from unittest import mock
 
 import pytest
 
-from openapi_sqlalchemy import exceptions
-from openapi_sqlalchemy import model_factory
+from open_alchemy import exceptions
+from open_alchemy import model_factory
 
 
 @pytest.mark.prod_env

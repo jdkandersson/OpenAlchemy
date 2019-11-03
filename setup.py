@@ -6,14 +6,14 @@ with open("README.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
 
 setuptools.setup(
-    name="OpenAPI-SQLAlchemy",
-    version="0.7.0",
+    name="OpenAlchemy",
+    version="0.8.0",
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
     description="Maps an OpenAPI schema to SQLAlchemy models.",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    url="https://github.com/jdkandersson/OpenAPI-SQLAlchemy",
+    url="https://github.com/jdkandersson/OpenAlchemy",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -5,9 +5,9 @@ import typing
 
 import sqlalchemy
 
-from openapi_sqlalchemy import exceptions
-from openapi_sqlalchemy import helpers
-from openapi_sqlalchemy import types
+from open_alchemy import exceptions
+from open_alchemy import helpers
+from open_alchemy import types
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 

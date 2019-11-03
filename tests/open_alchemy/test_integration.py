@@ -9,7 +9,7 @@ import sqlalchemy
 import yaml
 from sqlalchemy.ext import declarative
 
-import openapi_sqlalchemy
+import open_alchemy
 
 
 @pytest.mark.integration
@@ -24,7 +24,7 @@ def test_init_optional_base_none_call(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    openapi_sqlalchemy._init_optional_base(base=None, spec=spec, define_all=True)
+    open_alchemy._init_optional_base(base=None, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
         base=mocked_declarative_base.return_value, spec=spec, define_all=True
@@ -43,9 +43,7 @@ def test_init_optional_base_none_return(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    base, _ = openapi_sqlalchemy._init_optional_base(
-        base=None, spec=spec, define_all=True
-    )
+    base, _ = open_alchemy._init_optional_base(base=None, spec=spec, define_all=True)
 
     assert base == mocked_declarative_base.return_value
 
@@ -61,7 +59,7 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    openapi_sqlalchemy._init_optional_base(base=base, spec=spec, define_all=True)
+    open_alchemy._init_optional_base(base=base, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
         base=base, spec=spec, define_all=True
@@ -79,7 +77,7 @@ def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMoc
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    returned_base, _ = openapi_sqlalchemy._init_optional_base(
+    returned_base, _ = open_alchemy._init_optional_base(
         base=base, spec=spec, define_all=True
     )
 
@@ -94,8 +92,8 @@ def test_empty_spec():
     WHEN init_model_factory is called with the specification
     THEN KeyError is raised.
     """
-    with pytest.raises(openapi_sqlalchemy.exceptions.MalformedSpecificationError):
-        openapi_sqlalchemy.init_model_factory(base=None, spec={})
+    with pytest.raises(open_alchemy.exceptions.MalformedSpecificationError):
+        open_alchemy.init_model_factory(base=None, spec={})
 
 
 @pytest.mark.prod_env
@@ -106,8 +104,8 @@ def test_empty_components():
     WHEN init_model_factory is called with the specification
     THEN KeyError is raised.
     """
-    with pytest.raises(openapi_sqlalchemy.exceptions.MalformedSpecificationError):
-        openapi_sqlalchemy.init_model_factory(base=None, spec={"components": {}})
+    with pytest.raises(open_alchemy.exceptions.MalformedSpecificationError):
+        open_alchemy.init_model_factory(base=None, spec={"components": {}})
 
 
 @pytest.mark.prod_env
@@ -119,7 +117,7 @@ def test_cache_diff(mocked_model_factory: mock.MagicMock):
     THEN mocked model_factory is called the same number of times the return value is
         called.
     """
-    model_factory = openapi_sqlalchemy.init_model_factory(
+    model_factory = open_alchemy.init_model_factory(
         base=mock.MagicMock, spec={"components": {"schemas": {}}}
     )
 
@@ -137,7 +135,7 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
     WHEN return value of init_model_factory is called multiple times with the same name
     THEN mocked model_factory is called once.
     """
-    model_factory = openapi_sqlalchemy.init_model_factory(
+    model_factory = open_alchemy.init_model_factory(
         base=mock.MagicMock, spec={"components": {"schemas": {}}}
     )
 
@@ -155,7 +153,7 @@ def test_schema():
     WHEN return value of init_model_factory is called with the name of the schema
     THEN a SQLAlchemy model with a single property is returned.
     """
-    model_factory = openapi_sqlalchemy.init_model_factory(
+    model_factory = open_alchemy.init_model_factory(
         base=mock.MagicMock,
         spec={
             "components": {
@@ -216,7 +214,7 @@ def test_database_types(
     }
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
     # Creating models
@@ -259,7 +257,7 @@ def test_database_indexes(engine, index: str):
     }
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model_factory(name="Table")
 
     # Creating models
@@ -295,7 +293,7 @@ def test_database_autoincrement(engine, sessionmaker):
     }
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
     # Creating models
@@ -341,7 +339,7 @@ def test_database_not_autoincrement(engine, sessionmaker):
     }
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
     # Creating models
@@ -389,7 +387,7 @@ def test_database_many_to_one_relationship(engine, sessionmaker):
     }
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
@@ -492,7 +490,7 @@ def test_database_feature(engine, sessionmaker, spec):
     """
     # Creating model factory
     base = declarative.declarative_base()
-    model_factory = openapi_sqlalchemy.init_model_factory(spec=spec, base=base)
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
     # Creating models
@@ -535,7 +533,7 @@ def test_init_json(engine, sessionmaker, tmp_path):
     spec_file.write_text(json.dumps(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = openapi_sqlalchemy.init_json(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_json(str(spec_file), define_all=False)
     model = model_factory(name="Table")
 
     # Creating models
@@ -566,7 +564,7 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = openapi_sqlalchemy.init_yaml(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_yaml(str(spec_file), define_all=False)
     model = model_factory(name="Table")
 
     # Creating models
@@ -592,7 +590,7 @@ def test_init_yaml_import_error():
     """
     with mock.patch.dict("sys.modules", {"yaml": None}):
         with pytest.raises(ImportError):
-            openapi_sqlalchemy.init_yaml("some file")
+            open_alchemy.init_yaml("some file")
 
 
 @pytest.mark.integration
@@ -600,11 +598,11 @@ def test_import_base_initial():
     """
     GIVEN
     WHEN
-    THEN ImportError is raised when Base is imported from openapi_sqlalchemy.models.
+    THEN ImportError is raised when Base is imported from open_alchemy.models.
     """
     # pylint: disable=import-error,import-outside-toplevel,unused-import
     with pytest.raises(ImportError):
-        from openapi_sqlalchemy.models import Base  # noqa: F401
+        from open_alchemy.models import Base  # noqa: F401
 
 
 @pytest.mark.integration
@@ -612,7 +610,7 @@ def test_import_base(tmp_path):
     """
     GIVEN specification file
     WHEN init_yaml is called with the specification file
-    THEN Base can be imported from openapi_sqlalchemy.models.
+    THEN Base can be imported from open_alchemy.models.
     """
     # pylint: disable=import-error,import-outside-toplevel,unused-import
     # Generate spec file
@@ -622,9 +620,9 @@ def test_import_base(tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    openapi_sqlalchemy.init_yaml(str(spec_file))
+    open_alchemy.init_yaml(str(spec_file))
 
-    from openapi_sqlalchemy.models import Base  # noqa: F401
+    from open_alchemy.models import Base  # noqa: F401
 
 
 @pytest.mark.integration
@@ -632,7 +630,7 @@ def test_import_model(engine, sessionmaker, tmp_path):
     """
     GIVEN specification stored in a YAML file
     WHEN init_yaml is called with the file
-    THEN the model is importable from openapi_sqlalchemy.models.
+    THEN the model is importable from open_alchemy.models.
     """
     # pylint: disable=import-error,import-outside-toplevel
     # Generate spec file
@@ -642,15 +640,15 @@ def test_import_model(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    openapi_sqlalchemy.init_yaml(str(spec_file), define_all=True)
+    open_alchemy.init_yaml(str(spec_file), define_all=True)
 
     # Creating models
-    from openapi_sqlalchemy.models import Base
+    from open_alchemy.models import Base
 
     Base.metadata.create_all(engine)
 
     # Creating model instance
-    from openapi_sqlalchemy.models import Table
+    from open_alchemy.models import Table
 
     value = 0
     model_instance = Table(column=value)

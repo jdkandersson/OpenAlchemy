@@ -2,7 +2,7 @@
 
 import pytest
 
-from openapi_sqlalchemy import helpers
+from open_alchemy import helpers
 
 
 @pytest.mark.parametrize(

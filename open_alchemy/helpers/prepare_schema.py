@@ -1,6 +1,6 @@
 """Resolve $ref and merge allOf."""
 
-from openapi_sqlalchemy import types
+from open_alchemy import types
 
 from .merge_all_of import merge_all_of
 from .resolve_ref import resolve_ref

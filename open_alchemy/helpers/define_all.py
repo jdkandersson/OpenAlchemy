@@ -1,6 +1,6 @@
 """Define all the models with x-tablename properties."""
 
-from openapi_sqlalchemy import types
+from open_alchemy import types
 
 
 def define_all(*, model_factory: types.ModelFactory, schemas: types.Schemas) -> None:

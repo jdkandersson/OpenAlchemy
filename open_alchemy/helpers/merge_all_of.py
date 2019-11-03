@@ -1,6 +1,6 @@
 """Merges objects under allOf statement."""
 
-from openapi_sqlalchemy import types
+from open_alchemy import types
 
 from .resolve_ref import resolve_ref
 

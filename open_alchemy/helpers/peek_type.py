@@ -2,8 +2,8 @@
 
 import typing
 
-from openapi_sqlalchemy import exceptions
-from openapi_sqlalchemy import types
+from open_alchemy import exceptions
+from open_alchemy import types
 
 from .resolve_ref import get_ref
 

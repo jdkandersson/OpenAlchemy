@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from openapi_sqlalchemy.helpers.testing_guard import testing_guard
+from open_alchemy.helpers.testing_guard import testing_guard
 
 
 @pytest.mark.prod_env

@@ -6,7 +6,7 @@ References
 Using *$ref* statements, *OpenAPI* allows you to reference other parts of the
 schemas section. This means that a single definition for a *property* of an
 *object* can be used for multiple *objects*. This pattern is supported by
-*OpenAPI-SQLAlchemy*. For example, the following *OpenAPI* specification makes
+*OpenAlchemy*. For example, the following *OpenAPI* specification makes
 use of references:
 
 .. literalinclude:: ../../../examples/ref-column-example-spec.yml

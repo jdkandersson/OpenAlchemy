@@ -1,6 +1,6 @@
 .. contents::
 
-Welcome to OpenAPI-SQLAlchemy's documentation!
+Welcome to OpenAlchemy's documentation!
 ==============================================
 
 Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
@@ -30,10 +30,10 @@ following *models.py* file:
 .. literalinclude:: ../../examples/simple_models.py
 
 The *Base* for the SQLAlchemy models and the *Employee* model is now available
-from *openapi_sqlalchemy.models*::
+from *open_alchemy.models*::
 
-    from openapi_sqlalchemy.models import Base
-    from openapi_sqlalchemy.models import Employee
+    from open_alchemy.models import Base
+    from open_alchemy.models import Employee
 
 
 .. _how-does-it-work:
@@ -41,7 +41,7 @@ from *openapi_sqlalchemy.models*::
 How Does It Work?
 -----------------
 
-Given a name for a schema, *OpenAPI-SQLAlchemy* looks for that schema in the
+Given a name for a schema, *OpenAlchemy* looks for that schema in the
 schemas section of the specification. The schema must have the *x-tablename*
 property which defines the name of the table. The schema is required to be an
 *object*. For each *property* of the schema, a column is generated for the
@@ -52,7 +52,7 @@ properties are used to define the database schema. The following specification
 defines the format and provides a description for each of the supported
 extension properties.
 
-.. literalinclude:: ../../openapi_sqlalchemy/helpers/get_ext_prop/extension-schemas.json
+.. literalinclude:: ../../open_alchemy/helpers/get_ext_prop/extension-schemas.json
 
 To find out more about an extension property, go to the following section of
 the documentation:
@@ -76,4 +76,4 @@ the documentation:
 +-----------------+-------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
-to the *models* module that is available from OpenAPI-SQLAlchemy.
+to the *models* module that is available from OpenAlchemy.

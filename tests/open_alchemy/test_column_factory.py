@@ -6,8 +6,8 @@ import typing
 import pytest
 import sqlalchemy
 
-from openapi_sqlalchemy import column_factory
-from openapi_sqlalchemy import exceptions
+from open_alchemy import column_factory
+from open_alchemy import exceptions
 
 
 @pytest.mark.parametrize(

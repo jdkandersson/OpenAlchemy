@@ -5,8 +5,8 @@ connexion is a package that allows you to define Flask APIs and how endpoints
 are fulfilled using an OpenAPI specification. This has the advantage that a UI
 is automatically generated and data that is passed to endpoints is validated
 based on the OpenAPI specification. By combining connexion with
-OpenAPI-SQLAlchemy, the OpenAPI specification not only defines the Flask
-application but also the SQLALchemy models.
+OpenAlchemy, the OpenAPI specification not only defines the Flask application
+but also the SQLALchemy models.
 
 .. contents::
     :depth: 2
@@ -19,7 +19,7 @@ application but also the SQLALchemy models.
 API specification
 -----------------
 
-As the case for combining connexion with OpenAPI-SQLAlchemy is compelling, an
+As the case for combining connexion with OpenAlchemy is compelling, an
 example application has been included here. The API is designed to keep track
 of employees of a company. The OpenAPI specification is:
 
