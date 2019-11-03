@@ -15,7 +15,8 @@ class UtilityBase:
     # the de-referenced name of the schema.
     _schema: types.Schema
 
-    def _get_properties(self) -> typing.Dict:
+    @classmethod
+    def _get_properties(cls) -> typing.Dict:
         """
         Get the properties from the schema.
 
@@ -27,13 +28,13 @@ class UtilityBase:
 
         """
         # Checking for _schema
-        if not hasattr(self, "_schema"):
+        if not hasattr(cls, "_schema"):
             raise exceptions.ModelAttributeError(
                 "Model does not have a record of its schema. "
                 "To support to_dict set the _schema class variable."
             )
         # Checking that _schema has properties
-        properties = self._schema.get("properties")
+        properties = cls._schema.get("properties")
         if properties is None:
             raise exceptions.MalformedSchemaError(
                 "The model schema does not have any properties."
