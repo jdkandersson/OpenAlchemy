@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate OpenAPI-SQLALchemy.
+  description: API to illustrate OpenAlchemy.
   version: "1.0"
 
 paths:

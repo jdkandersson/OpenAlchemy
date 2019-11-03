@@ -1,9 +1,9 @@
-# OpenAPI-SQLAlchemy
+# OpenAlchemy
 Translates an OpenAPI schema to SQLAlchemy models.
 
 ## Installation
 ```bash
-python -m pip install OpenAPI-SQLAlchemy
+python -m pip install OpenAlchemy
 # To be able to load yaml file
 python -m pip install PyYAML
 ```
@@ -18,7 +18,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate OpenAPI-SQLALchemy MVP.
+  description: API to illustrate OpenAlchemy MVP.
   version: "0.1"
 
 paths:

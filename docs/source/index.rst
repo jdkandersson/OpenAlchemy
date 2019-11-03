@@ -1,6 +1,6 @@
 .. contents::
 
-Welcome to OpenAPI-SQLAlchemy's documentation!
+Welcome to OpenAlchemy's documentation!
 ==============================================
 
 Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
@@ -41,7 +41,7 @@ from *openapi_sqlalchemy.models*::
 How Does It Work?
 -----------------
 
-Given a name for a schema, *OpenAPI-SQLAlchemy* looks for that schema in the
+Given a name for a schema, *OpenAlchemy* looks for that schema in the
 schemas section of the specification. The schema must have the *x-tablename*
 property which defines the name of the table. The schema is required to be an
 *object*. For each *property* of the schema, a column is generated for the
@@ -76,4 +76,4 @@ the documentation:
 +-----------------+-------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
-to the *models* module that is available from OpenAPI-SQLAlchemy.
+to the *models* module that is available from OpenAlchemy.

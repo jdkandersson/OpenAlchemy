@@ -1,8 +1,8 @@
 Type Mapping
 ============
 
-*OpenAPI-SQLAlchemy* translates *OpenAPI* types to *SQLalchemy* types using
-the following mapping:
+*OpenAlchemy* translates *OpenAPI* types to *SQLalchemy* types using the
+following mappings:
 
 +--------------+----------------+-----------------+
 | OpenAPI type | OpenAPI format | SQLAlchemy type |

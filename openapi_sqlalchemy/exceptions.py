@@ -1,4 +1,4 @@
-"""All custom exceptions that OpenAPI-SQLAlchemy can raise."""
+"""All custom exceptions that OpenAlchemy can raise."""
 
 
 class BaseError(Exception):

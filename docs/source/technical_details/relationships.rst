@@ -33,7 +33,7 @@ Note that, the object being referenced must have the *id* property.
 The only way to make the foreign key column not nullable is to add the
 property with the reference to the *required* list.
 
-Without OpenAPI-SQLAlchemy, the following is the equivalent *models.py* file:
+Without OpenLAlchemy, the following is the equivalent *models.py* file:
 
 .. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
 
