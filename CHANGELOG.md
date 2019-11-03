@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _unreleased_
+## Version 0.8.0 - 2019-11-03
 - Add less verbose initialisation with _init_yaml_ and _init_json_.
 - Remove need for separate models file by exposing _Base_ and constructed models at _open_alchemy.models_.
 - Update name from OpenAPI-SQLAlchemy to OpenAlchemy
