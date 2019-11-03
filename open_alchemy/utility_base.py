@@ -15,14 +15,15 @@ class UtilityBase:
     # the de-referenced name of the schema.
     _schema: types.Schema
 
-    def to_dict(self) -> typing.Dict:
+    def _get_properties(self) -> typing.Dict:
         """
-        Convert model instance to dictionary.
+        Get the properties from the schema.
 
         Raise ModelAttributeError if _schema is not defined.
+        Raise MalformedSchemaError if the schema does not have any properties.
 
         Returns:
-            The dictionary representation of the model.
+            The properties of the schema.
 
         """
         # Checking for _schema
@@ -37,6 +38,19 @@ class UtilityBase:
             raise exceptions.MalformedSchemaError(
                 "The model schema does not have any properties."
             )
+        return properties
+
+    def to_dict(self) -> typing.Dict:
+        """
+        Convert model instance to dictionary.
+
+        Raise TypeMissingError if a property does not have a type.
+
+        Returns:
+            The dictionary representation of the model.
+
+        """
+        properties = self._get_properties()
 
         # Collecting the values of the properties
         return_dict = {}
