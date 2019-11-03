@@ -182,3 +182,32 @@ def test_object():
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": mock_model.to_dict.return_value}
+
+
+def __init__(self, **kwargs):
+    """COnstruct."""
+    for name, value in kwargs.items():
+        setattr(self, name, value)
+
+
+@pytest.mark.utility_base
+def test_malformed_dictionary():
+    """
+    GIVEN class that derives from UtilityBase and schema
+    WHEN from_dict is called with a dictionary that does not satisfy the schema
+    THEN MalformedModelDictionaryError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "integer"}},
+                "required": ["key"],
+            },
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.MalformedModelDictionaryError):
+        model.from_dict(**{})

@@ -43,3 +43,7 @@ class ModelAttributeError(AttributeError, BaseError):
 
 class InvalidModelInstanceError(ValueError, BaseError):
     """Raised when model instance object property does not implement to_dict."""
+
+
+class MalformedModelDictionaryError(ValueError, BaseError):
+    """Raised when an dictionary of a model does not satisfy the model schema."""
