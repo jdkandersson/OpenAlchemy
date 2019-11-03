@@ -1,7 +1,7 @@
 """Functions handling API endpoints."""
 
 from database import db
-from openapi_sqlalchemy.models import Employee
+from open_alchemy.models import Employee
 
 
 def _employee_to_dict(employee):

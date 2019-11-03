@@ -4,7 +4,7 @@ import os
 
 from flask_sqlalchemy import SQLAlchemy
 
-from openapi_sqlalchemy import init_yaml
+from open_alchemy import init_yaml
 
 # Construct models
 db = SQLAlchemy()

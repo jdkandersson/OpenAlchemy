@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from openapi_sqlalchemy import models
+from open_alchemy import models
 
 
 @pytest.mark.app

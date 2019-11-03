@@ -6,7 +6,7 @@ import typing
 
 import jsonschema
 
-from openapi_sqlalchemy import exceptions
+from open_alchemy import exceptions
 
 DIRECTORY = os.path.dirname(__file__)
 SCHEMAS_FILE = os.path.join(DIRECTORY, "extension-schemas.json")

@@ -30,10 +30,10 @@ following *models.py* file:
 .. literalinclude:: ../../examples/simple_models.py
 
 The *Base* for the SQLAlchemy models and the *Employee* model is now available
-from *openapi_sqlalchemy.models*::
+from *open_alchemy.models*::
 
-    from openapi_sqlalchemy.models import Base
-    from openapi_sqlalchemy.models import Employee
+    from open_alchemy.models import Base
+    from open_alchemy.models import Employee
 
 
 .. _how-does-it-work:
@@ -52,7 +52,7 @@ properties are used to define the database schema. The following specification
 defines the format and provides a description for each of the supported
 extension properties.
 
-.. literalinclude:: ../../openapi_sqlalchemy/helpers/get_ext_prop/extension-schemas.json
+.. literalinclude:: ../../open_alchemy/helpers/get_ext_prop/extension-schemas.json
 
 To find out more about an extension property, go to the following section of
 the documentation:

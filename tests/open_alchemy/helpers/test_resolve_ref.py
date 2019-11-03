@@ -4,8 +4,8 @@ import copy
 
 import pytest
 
-from openapi_sqlalchemy import exceptions
-from openapi_sqlalchemy import helpers
+from open_alchemy import exceptions
+from open_alchemy import helpers
 
 
 @pytest.mark.helper

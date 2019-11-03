@@ -71,15 +71,15 @@ components:
 The SQLALchemy models file then becomes:
 ```python
 # models.py
-from openapi_sqlalchemy import init_yaml
+from open_alchemy import init_yaml
 
 init_yaml("./examples/simple-example-spec.yml")
 ```
 
 The _Base_ and _Employee_ objects can be accessed:
 ```python
-from openapi_sqlalchemy.models import Base
-from openapi_sqlalchemy.models import Employee
+from open_alchemy.models import Base
+from open_alchemy.models import Employee
 ```
 
 An extensive set of examples with a range of features is here:

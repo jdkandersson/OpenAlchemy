@@ -8,14 +8,14 @@ import typing
 import typing_extensions
 from sqlalchemy.ext import declarative
 
-from openapi_sqlalchemy import types as os_types
+from open_alchemy import types as os_types
 
 from . import exceptions
 from . import helpers as _helpers
 from . import model_factory as _model_factory
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
-sys.modules["openapi_sqlalchemy.models"] = models
+sys.modules["open_alchemy.models"] = models
 
 
 def init_model_factory(

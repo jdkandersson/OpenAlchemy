@@ -9,11 +9,11 @@ import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 
-import openapi_sqlalchemy
-from openapi_sqlalchemy import column_factory
-from openapi_sqlalchemy import helpers
-from openapi_sqlalchemy import model_factory
-from openapi_sqlalchemy import models
+import open_alchemy
+from open_alchemy import column_factory
+from open_alchemy import helpers
+from open_alchemy import model_factory
+from open_alchemy import models
 
 
 @pytest.fixture
@@ -146,11 +146,9 @@ def set_testing(
 
 @pytest.fixture
 def mocked_init_model_factory(monkeypatch):
-    """Monkeypatch openapi_sqlalchemy.init_model_factory."""
+    """Monkeypatch open_alchemy.init_model_factory."""
     mock_init_model_factory = mock.MagicMock()
-    monkeypatch.setattr(
-        openapi_sqlalchemy, "init_model_factory", mock_init_model_factory
-    )
+    monkeypatch.setattr(open_alchemy, "init_model_factory", mock_init_model_factory)
     return mock_init_model_factory
 
 
@@ -170,7 +168,7 @@ def mocked_declarative_base(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def cleanup_models():
-    """Remove any new attributes on openapi_sqlalchemy.models."""
+    """Remove any new attributes on open_alchemy.models."""
     for key in set(models.__dict__.keys()):
         if key.startswith("__"):
             continue
