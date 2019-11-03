@@ -97,7 +97,7 @@ def init_json(
         Base: a SQLAlchemy declarative base class
         model_factory: A factory that returns SQLAlchemy models derived from the
             base based on the OpenAPI specification.
-        define_all: Whether to define all the models during initialization.
+        define_all: (optional) Whether to define all the models during initialization.
 
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
@@ -122,6 +122,7 @@ def init_yaml(
         spec_filename: filename of an OpenAPI spec in YAML format
         base: (optional) The declarative base for the models.
               If base=None, construct a new SQLAlchemy declarative base.
+        define_all: (optional) Whether to define all the models during initialization.
 
     Returns:
         A tuple (Base, model_factory), where:
