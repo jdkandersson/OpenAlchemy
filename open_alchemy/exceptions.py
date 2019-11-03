@@ -35,3 +35,7 @@ class MalformedManyToOneRelationshipError(ValueError, BaseError):
 
 class MalformedExtensionPropertyError(ValueError, BaseError):
     """Raised when an extension property does not have the expected schema."""
+
+
+class ModelAttributeError(AttributeError, BaseError):
+    """Raised when a model lacks a required property."""
