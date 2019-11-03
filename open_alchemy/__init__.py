@@ -8,7 +8,7 @@ import typing
 import typing_extensions
 from sqlalchemy.ext import declarative
 
-from open_alchemy import types as os_types
+from open_alchemy import types as oa_types
 
 from . import exceptions
 from . import helpers as _helpers
@@ -19,8 +19,8 @@ sys.modules["open_alchemy.models"] = models
 
 
 def init_model_factory(
-    *, base: typing.Type, spec: os_types.Schema, define_all: bool = False
-) -> os_types.ModelFactory:
+    *, base: typing.Type, spec: oa_types.Schema, define_all: bool = False
+) -> oa_types.ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
 
@@ -69,11 +69,11 @@ def init_model_factory(
     return _register_model
 
 
-BaseAndModelFactory = typing.Tuple[typing.Type, os_types.ModelFactory]
+BaseAndModelFactory = typing.Tuple[typing.Type, oa_types.ModelFactory]
 
 
 def _init_optional_base(
-    *, base: typing.Optional[typing.Type], spec: os_types.Schema, define_all: bool
+    *, base: typing.Optional[typing.Type], spec: oa_types.Schema, define_all: bool
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
