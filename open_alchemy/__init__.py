@@ -142,7 +142,7 @@ def init_yaml(
         )
 
     with open(spec_filename) as spec_file:
-        spec = yaml.load(spec_file, Loader=yaml.Loader)
+        spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
 
     return _init_optional_base(base=base, spec=spec, define_all=define_all)
 
