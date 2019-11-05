@@ -34,6 +34,10 @@ class ModelClass(typing_extensions.Protocol):
         """Construct."""
         ...
 
+    def to_dict(self) -> typing.Dict:
+        """Convert model instance to dictionary."""
+        ...
+
 
 # ModelClass = typing.TypeVar("ModelClass", bound="UtilityBase")
 
