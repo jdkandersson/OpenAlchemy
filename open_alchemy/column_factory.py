@@ -122,6 +122,10 @@ def _handle_object(
     # Resolving allOf
     spec = helpers.merge_all_of(schema=spec, schemas=schemas)
 
+    # If backref has not been found look in referenced schema
+    if backref is None:
+        backref = helpers.get_ext_prop(source=spec, name="x-backref")
+
     # Handling object
     foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
     return_value = _handle_column(

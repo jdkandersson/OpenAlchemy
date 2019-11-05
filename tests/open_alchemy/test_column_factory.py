@@ -538,6 +538,39 @@ def test_integration_object_all_of_ref():
 
 @pytest.mark.prod_env
 @pytest.mark.column
+def test_integration_object_all_of_ref_backref():
+    """
+    GIVEN schema with allOf that references another object schema with backref and
+        schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference and relationship is returned with a backref.
+    """
+    spec = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "x-backref": "backref 1",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        _,
+    ) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_id"
+    assert isinstance(fk_column.type, sqlalchemy.Integer)
+    assert len(fk_column.foreign_keys) == 1
+    assert tbl_logical_name == "column_1"
+    assert relationship.argument == "RefSchema"
+    assert relationship.backref == "backref 1"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
 def test_integration_object_all_of_backref_ref():
     """
     GIVEN schema with allOf that references another object schema and has x-backref and
