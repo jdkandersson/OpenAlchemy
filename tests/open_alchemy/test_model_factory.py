@@ -398,13 +398,11 @@ def test_all_of():
 def test_schema(schemas, expected_schema):
     """
     GIVEN schemas and expected schema
-    WHEN model_factory is called with the name of the a schema
+    WHEN model_factory is called with the schemas and the name of a schema
     THEN a model with _schema set to the expected schema is returned.
     """
     model = model_factory.model_factory(
         name="Schema", base=mock.MagicMock, schemas=schemas
     )
 
-    print(model._schema)
-    print(expected_schema)
     assert model._schema == expected_schema
