@@ -377,6 +377,21 @@ def test_handle_object_reference_id_missing():
 
 
 @pytest.mark.column
+def test_handle_object_reference_name_missing():
+    """
+    GIVEN foreign key argument and object schema without foreign key property
+    WHEN _handle_object_reference is called with the schema
+    THEN a MalformedSchemaError should be raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column_factory._handle_object_reference(
+            spec={"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
+            schemas={},
+            foreign_key_column="column_1",
+        )
+
+
+@pytest.mark.column
 def test_handle_object_reference_id_no_type():
     """
     GIVEN object schema with id but no type for id
@@ -402,6 +417,27 @@ def test_handle_object_reference_return():
     return_value = column_factory._handle_object_reference(spec=spec, schemas=schemas)
 
     assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
+
+
+@pytest.mark.column
+def test_handle_object_reference_fk_return():
+    """
+    GIVEN foreign key column and object schema with x-tablename and id and foreign key
+        property with a type
+    WHEN _handle_object_reference is called with the schema
+    THEN a schema with the type of the foreign key property and x-foreign-key property.
+    """
+    spec = {
+        "x-tablename": "table 1",
+        "properties": {"id": {"type": "idType"}, "fk": {"type": "fkType"}},
+    }
+    schemas = {}
+
+    return_value = column_factory._handle_object_reference(
+        spec=spec, schemas=schemas, foreign_key_column="fk"
+    )
+
+    assert return_value == {"type": "fkType", "x-foreign-key": "table 1.fk"}
 
 
 @pytest.mark.prod_env

@@ -205,7 +205,7 @@ def _handle_object_reference(
     *,
     spec: types.Schema,
     schemas: types.Schemas,
-    foreign_key: typing.Optional[str] = None,
+    foreign_key_column: typing.Optional[str] = None,
 ) -> types.Schema:
     """
     Determine the foreign key schema for an object reference.
@@ -213,7 +213,7 @@ def _handle_object_reference(
     Args:
         spec: The schema of the object reference.
         schemas: All defined schemas.
-        foreign_key: The foreign key constraint to use.
+        foreign_key_column: The foreign column name to use.
 
     Returns:
         The foreign key schema.
@@ -229,21 +229,21 @@ def _handle_object_reference(
         raise exceptions.MalformedSchemaError(
             "Referenced object does not have any properties."
         )
-    logical_name = foreign_key if foreign_key is not None else "id"
-    id_spec = properties.get(logical_name)
-    if id_spec is None:
+    fk_logical_name = foreign_key_column if foreign_key_column is not None else "id"
+    fk_spec = properties.get(fk_logical_name)
+    if fk_spec is None:
         raise exceptions.MalformedSchemaError(
-            "Referenced object does not have id property."
+            f"Referenced object does not have {fk_logical_name} property."
         )
     # Preparing specification
-    prepared_id_spec = helpers.prepare_schema(schema=id_spec, schemas=schemas)
-    id_type = prepared_id_spec.get("type")
-    if id_type is None:
+    prepared_fk_spec = helpers.prepare_schema(schema=fk_spec, schemas=schemas)
+    fk_type = prepared_fk_spec.get("type")
+    if fk_type is None:
         raise exceptions.MalformedSchemaError(
-            "Referenced object id property does not have a type."
+            f"Referenced object {fk_logical_name} property does not have a type."
         )
 
-    return {"type": id_type, "x-foreign-key": f"{tablename}.id"}
+    return {"type": fk_type, "x-foreign-key": f"{tablename}.{fk_logical_name}"}
 
 
 def _calculate_nullable(*, spec: types.Schema, required: typing.Optional[bool]) -> bool:
