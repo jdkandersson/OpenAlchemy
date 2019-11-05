@@ -7,6 +7,7 @@ from . import column_factory
 from . import exceptions
 from . import helpers
 from . import types
+from . import utility_base
 
 
 def model_factory(
@@ -68,7 +69,7 @@ def model_factory(
     # Assembling model
     return type(
         name,
-        (base,),
+        (base, utility_base.UtilityBase),
         {
             "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
             "_schema": model_schema,

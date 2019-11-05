@@ -177,6 +177,36 @@ def test_schema():
 
 
 @pytest.mark.prod_env
+@pytest.mark.integration
+def test_to_from_dict():
+    """
+    GIVEN specification with single property
+    WHEN model is defined based on schema and constructed using from_dict
+    THEN when to_dict is called the construction dictionary is returned.
+    """
+    model_factory = open_alchemy.init_model_factory(
+        base=mock.MagicMock,
+        spec={
+            "components": {
+                "schemas": {
+                    "Table": {
+                        "properties": {"column": {"type": "integer"}},
+                        "x-tablename": "table",
+                        "type": "object",
+                    }
+                }
+            }
+        },
+    )
+    model = model_factory(name="Table")
+
+    # COnstructing and turning back to dictionary
+    model_dict = {"column": 1}
+    instance = model.from_dict(**model_dict)
+    assert instance.to_dict() == model_dict
+
+
+@pytest.mark.prod_env
 @pytest.mark.parametrize(
     "type_, format_, value",
     [
