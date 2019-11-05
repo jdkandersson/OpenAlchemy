@@ -48,14 +48,14 @@ def model_factory(
 
     # Calculating the class variables for the model
     model_class_vars = []
+    required_exists = "required" in schema
+    required_set = set(schema.get("required", []))
     for prop_name, prop_spec in schema.get("properties", []).items():
         prop_class_vars = column_factory.column_factory(
             spec=prop_spec,
             schemas=schemas,
             logical_name=prop_name,
-            required=prop_name in schema.get("required", [])
-            if "required" in schema
-            else None,
+            required=prop_name in required_set if required_exists else None,
         )
         model_class_vars.append(prop_class_vars)
 
