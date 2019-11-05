@@ -149,6 +149,9 @@ class UtilityBase:
                 raise exceptions.SchemaNotFoundError(
                     f"The {ref_model_name} model was not found on open_alchemy.models."
                 )
+            # Construct model
+            ref_model_instance = ref_model.from_dict(**value)
+            model_dict[name] = ref_model_instance
 
         return cls(**model_dict)
 

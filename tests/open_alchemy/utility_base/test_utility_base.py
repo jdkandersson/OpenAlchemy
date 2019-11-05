@@ -350,3 +350,56 @@ def test_from_dict_object_model_undefined():
 
     with pytest.raises(exceptions.SchemaNotFoundError):
         model.from_dict(**{"key": {"obj_key": "obj_value"}})
+
+
+@pytest.mark.utility_base
+def test_from_dict_object_from_dict_call(mocked_models):
+    """
+    GIVEN schema with object which references a model that has been mocked and
+        dictionary
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary.
+        for that model.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "object", "x-de-$ref": "RefModel"}}
+            },
+            "__init__": __init__,
+        },
+    )
+
+    model.from_dict(**{"key": {"obj_key": "obj_value"}})
+
+    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj_value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_object_return(mocked_models):
+    """
+    GIVEN schema with object which references a model that has been mocked and
+        dictionary
+    WHEN from_dict is called with the dictionary
+    THEN the from_dict on the mocked model return value is bound to the model instance.
+        for that model.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "object", "x-de-$ref": "RefModel"}}
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": {"obj_key": "obj_value"}})
+
+    assert (
+        instance.key  # pylint: disable=no-member
+        == mocked_models.RefModel.from_dict.return_value
+    )
