@@ -39,6 +39,7 @@ setuptools.setup(
             "pytest-flask",
             "pytest-flask-sqlalchemy",
             "pytest-randomly",
+            "pytest-bandit",
             "mypy",
             "pydocstyle",
             "black",
