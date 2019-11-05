@@ -51,7 +51,7 @@ def model_factory(
     required_exists = "required" in schema
     required_set = set(schema.get("required", []))
     for prop_name, prop_spec in schema.get("properties", []).items():
-        prop_class_vars = column_factory.column_factory(
+        prop_class_vars, _ = column_factory.column_factory(
             spec=prop_spec,
             schemas=schemas,
             logical_name=prop_name,

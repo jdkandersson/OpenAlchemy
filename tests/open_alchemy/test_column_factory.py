@@ -410,16 +410,18 @@ def test_integration_ref():
     """
     GIVEN schema that references another schema and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN SQLAlchemy boolean column is returned in a dictionary with logical name.
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
+        the spec.
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
-    [(logical_name, column)] = column_factory.column_factory(
+    ([(logical_name, column)], spec) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
     assert logical_name == "column_1"
     assert isinstance(column.type, sqlalchemy.Boolean)
+    assert spec == {"type": "boolean"}
 
 
 @pytest.mark.parametrize(
@@ -452,13 +454,13 @@ def test_integration_object_ref(schemas):
     """
     GIVEN schema that references another object schema and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference and relationship is returned.
+    THEN foreign key reference and relationship is returned with the spec.
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
-    [  # pylint: disable=unbalanced-tuple-unpacking
-        (fk_logical_name, fk_column),
-        (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        spec,
+    ) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -468,6 +470,7 @@ def test_integration_object_ref(schemas):
     assert tbl_logical_name == "column_1"
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
+    assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
 
 
 @pytest.mark.prod_env
@@ -487,10 +490,10 @@ def test_integration_object_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    [  # pylint: disable=unbalanced-tuple-unpacking
-        (fk_logical_name, fk_column),
-        (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        _,
+    ) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -518,10 +521,10 @@ def test_integration_object_all_of_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    [  # pylint: disable=unbalanced-tuple-unpacking
-        (fk_logical_name, fk_column),
-        (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        _,
+    ) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -555,10 +558,10 @@ def test_integration_object_all_of_backref_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    [  # pylint: disable=unbalanced-tuple-unpacking
-        (fk_logical_name, fk_column),
-        (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        _,
+    ) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -593,10 +596,10 @@ def test_integration_object_all_of_backref_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    [  # pylint: disable=unbalanced-tuple-unpacking
-        (fk_logical_name, fk_column),
-        (tbl_logical_name, relationship),
-    ] = column_factory.column_factory(
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        _,
+    ) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
@@ -614,13 +617,15 @@ def test_integration_all_of():
     """
     GIVEN schema with allOf statement
     WHEN column_factory is called with the schema and schemas
-    THEN SQLAlchemy boolean column is returned in a dictionary with logical name.
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
+        spec.
     """
     spec = {"allOf": [{"type": "boolean"}]}
     schemas = {}
-    [(logical_name, column)] = column_factory.column_factory(
+    ([(logical_name, column)], spec) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
     assert logical_name == "column_1"
     assert isinstance(column.type, sqlalchemy.Boolean)
+    assert spec == {"type": "boolean"}
