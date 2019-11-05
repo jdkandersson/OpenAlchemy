@@ -53,30 +53,26 @@ def test_to_dict_no_type():
         instance.to_dict()
 
 
+def __init__(self, **kwargs):
+    """COnstruct."""
+    for name, value in kwargs.items():
+        setattr(self, name, value)
+
+
 @pytest.mark.parametrize(
-    "model_dict, expected_dict",
+    "schema, init_args, expected_dict",
     [
-        ({"_schema": {"properties": {}}}, {}),
-        ({"_schema": {"properties": {}}, "key_1": "value 1"}, {}),
-        ({"_schema": {"properties": {"key_1": {"type": "type 1"}}}}, {"key_1": None}),
+        ({"properties": {}}, {}, {}),
+        ({"properties": {}}, {"key_1": "value 1"}, {}),
+        ({"properties": {"key_1": {"type": "type 1"}}}, {}, {"key_1": None}),
         (
-            {
-                "_schema": {"properties": {"key_1": {"type": "type 1"}}},
-                "key_1": "value 1",
-            },
+            {"properties": {"key_1": {"type": "type 1"}}},
+            {"key_1": "value 1"},
             {"key_1": "value 1"},
         ),
         (
-            {
-                "_schema": {
-                    "properties": {
-                        "key_1": {"type": "type 1"},
-                        "key_2": {"type": "type 2"},
-                    }
-                },
-                "key_1": "value 1",
-                "key_2": "value 2",
-            },
+            {"properties": {"key_1": {"type": "type 1"}, "key_2": {"type": "type 2"}}},
+            {"key_1": "value 1", "key_2": "value 2"},
             {"key_1": "value 1", "key_2": "value 2"},
         ),
     ],
@@ -89,15 +85,17 @@ def test_to_dict_no_type():
     ],
 )
 @pytest.mark.utility_base
-def test_to_dict_simple_type(model_dict, expected_dict):
+def test_to_dict_simple_type(schema, init_args, expected_dict):
     """
     GIVEN class that derives from UtilityBase with a given schema with properties that
         are not objects and expected object
     WHEN to_dict is called
     THEN the expected object is returned.
     """
-    model = type("model", (utility_base.UtilityBase,), model_dict)
-    instance = model()
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+    instance = model(**init_args)
 
     returned_dict = instance.to_dict()
 
@@ -115,7 +113,7 @@ def test_to_dict_object_undefined():
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
     instance = model()
 
@@ -135,9 +133,9 @@ def test_to_dict_object_none():
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": None},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
+    instance = model(**{"key": None})
 
     returned_dict = instance.to_dict()
 
@@ -157,9 +155,9 @@ def test_to_dict_object_no_to_dict():
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": mock_model},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
+    instance = model(**{"key": mock_model})
 
     with pytest.raises(exceptions.InvalidModelInstanceError):
         instance.to_dict()
@@ -178,9 +176,9 @@ def test_to_dict_object_to_dict_different_func():
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": mock_model},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
+    instance = model(**{"key": mock_model})
 
     with pytest.raises(exceptions.InvalidModelInstanceError):
         instance.to_dict()
@@ -198,19 +196,13 @@ def test_to_dict_object():
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": mock_model},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
+    instance = model(**{"key": mock_model})
 
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": mock_model.to_dict.return_value}
-
-
-def __init__(self, **kwargs):
-    """COnstruct."""
-    for name, value in kwargs.items():
-        setattr(self, name, value)
 
 
 @pytest.mark.utility_base
