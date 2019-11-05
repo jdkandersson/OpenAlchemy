@@ -84,8 +84,8 @@ class UtilityBase:
             jsonschema.validate(instance=kwargs, schema=schema)
         except jsonschema.ValidationError:
             raise exceptions.MalformedModelDictionaryError(
-                "The dictionary used to construct the model does not match the schema "
-                "of the model. "
+                "The dictionary passed to from_dict is not a valid instance of the "
+                "model schema. "
                 f"The expected schema is {json.dumps(schema)}. "
                 f"The given value is {json.dumps(kwargs)}."
             )
