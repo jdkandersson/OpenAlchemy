@@ -35,3 +35,15 @@ class MalformedManyToOneRelationshipError(ValueError, BaseError):
 
 class MalformedExtensionPropertyError(ValueError, BaseError):
     """Raised when an extension property does not have the expected schema."""
+
+
+class ModelAttributeError(AttributeError, BaseError):
+    """Raised when a model lacks a required property."""
+
+
+class InvalidModelInstanceError(ValueError, BaseError):
+    """Raised when model instance object property does not implement to_dict."""
+
+
+class MalformedModelDictionaryError(ValueError, BaseError):
+    """Raised when an dictionary of a model does not satisfy the model schema."""

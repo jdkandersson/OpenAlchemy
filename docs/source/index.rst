@@ -108,6 +108,77 @@ The return value is the *model_factory* as defined as part of the return value
 of :ref:`init-yaml`.
 
 
+.. _model-utilities:
+
+Model Utilities
+---------------
+
+There are a few common utility functions that are added to the models. The
+:ref:`from-dict` utility function constructs a model instance from a
+dictionary. The :ref:`to-dict` function converts a model instance to a
+dictionary.
+
+
+.. _from-dict:
+
+*from_dict*
+^^^^^^^^^^^
+
+The *from_dict* function is available on all constructed models. It accepts a
+dictionary and constructs a model instance based on the dictionary. It is
+similar to :python:`Employee(**employee_dict)` with a few advantages:
+
+* The dictionary based on which the model is constructed is checked against
+  the schema used to define the model.
+* If the model includes a relationship, the relationship is constructed
+  recursively.
+
+For example::
+
+    >>> employee_dict = {
+        "id": 1,
+        "name": "David Andersson",
+        "division": "engineering",
+        "salary": 1000000,
+    }
+    >>> employee = Employee.from_dict(**employee_dict)
+    >>> employee.name
+    'David Andersson'
+
+
+.. _x-de-ref:
+
+.. note:: To be able to support relationships, the schema stored alongside a
+    model, which is accessible at the *_schema* class variable (not a public
+    interface so it should not be used or relied upon), won't store the actual
+    schema for the referenced object. Instead, the *object* type is noted for
+    the property alongside the *x-de-$ref* extension property which stores the
+    name of the referenced model.
+
+
+.. _to-dict:
+
+*to_dict*
+^^^^^^^^^^^
+
+The *to_dict* function is available on all constructed models. It converts a
+model instance into a dictionary based on the schema that was used to define
+the model. If the model includes a relationship, the *to_dict* function is
+called recursively on the relationship.
+
+For example::
+
+    >>> employee_dict = {
+        "id": 1,
+        "name": "David Andersson",
+        "division": "engineering",
+        "salary": 1000000,
+    }
+    >>> employee = Employee.from_dict(**employee_dict)
+    >>> employee.to_dict()
+    {'id': 1, 'name': 'David Andersson', 'division': 'engineering', 'salary': 1000000}
+
+
 .. _how-does-it-work:
 
 How Does It Work?
@@ -129,23 +200,25 @@ extension properties.
 To find out more about an extension property, go to the following section of
 the documentation:
 
-+-----------------+-------------------------+
-| property        | documentation section   |
-+=================+=========================+
-| x-backref       | :ref:`backref`          |
-+-----------------+-------------------------+
-| x-primary-key   | :ref:`primary-key`      |
-+-----------------+-------------------------+
-| x-autoincrement | :ref:`autoincrement`    |
-+-----------------+-------------------------+
-| x-index         | :ref:`index`            |
-+-----------------+-------------------------+
-| x-unique        | :ref:`unique`           |
-+-----------------+-------------------------+
-| x-foreign-key   | :ref:`foreign-key`      |
-+-----------------+-------------------------+
-| x-tablename     | :ref:`how-does-it-work` |
-+-----------------+-------------------------+
++-----------------+----------------------------------+
+| property        | documentation section            |
++=================+==================================+
+| x-backref       | :ref:`backref`                   |
++-----------------+----------------------------------+
+| x-primary-key   | :ref:`primary-key`               |
++-----------------+----------------------------------+
+| x-autoincrement | :ref:`autoincrement`             |
++-----------------+----------------------------------+
+| x-index         | :ref:`index`                     |
++-----------------+----------------------------------+
+| x-unique        | :ref:`unique`                    |
++-----------------+----------------------------------+
+| x-foreign-key   | :ref:`foreign-key`               |
++-----------------+----------------------------------+
+| x-tablename     | :ref:`how-does-it-work`          |
++-----------------+----------------------------------+
+| x-de-$ref       | :ref:`from_dict Note <x-de-ref>` |
++-----------------+----------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.

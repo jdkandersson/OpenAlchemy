@@ -7,6 +7,7 @@ from . import column_factory
 from . import exceptions
 from . import helpers
 from . import types
+from . import utility_base
 
 
 def model_factory(
@@ -46,25 +47,32 @@ def model_factory(
             f"At least 1 property is required for {name}."
         )
 
+    # Calculating the class variables for the model
+    model_class_vars = []
+    required_exists = "required" in schema
+    required_array = schema.get("required", [])
+    required_set = set(required_array)
+    # Initializing the schema to record for the model
+    model_schema: types.Schema = {"type": "object", "properties": {}}
+    if required_exists:
+        model_schema["required"] = required_array
+    for prop_name, prop_spec in schema.get("properties", []).items():
+        prop_class_vars, prop_final_spec = column_factory.column_factory(
+            spec=prop_spec,
+            schemas=schemas,
+            logical_name=prop_name,
+            required=prop_name in required_set if required_exists else None,
+        )
+        model_class_vars.append(prop_class_vars)
+        model_schema["properties"][prop_name] = prop_final_spec
+
     # Assembling model
     return type(
         name,
-        (base,),
+        (base, utility_base.UtilityBase),
         {
             "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
-            **dict(
-                itertools.chain.from_iterable(
-                    # pylint: disable=unexpected-keyword-arg
-                    column_factory.column_factory(
-                        spec=value,
-                        schemas=schemas,
-                        logical_name=key,
-                        required=key in schema.get("required", [])
-                        if "required" in schema
-                        else None,
-                    )
-                    for key, value in schema.get("properties", []).items()
-                )
-            ),
+            "_schema": model_schema,
+            **dict(itertools.chain.from_iterable(model_class_vars)),
         },
     )

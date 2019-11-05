@@ -18,7 +18,7 @@ def column_factory(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
-) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
+) -> typing.Tuple[typing.List[typing.Tuple[str, sqlalchemy.Column]], types.Schema]:
     """
     Generate column based on OpenAPI schema property.
 
@@ -38,7 +38,10 @@ def column_factory(
     # CHandling columns
     if type_ != "object":
         spec = helpers.prepare_schema(schema=spec, schemas=schemas)
-        return _handle_column(logical_name=logical_name, spec=spec, required=required)
+        return (
+            _handle_column(logical_name=logical_name, spec=spec, required=required),
+            spec,
+        )
 
     # Handling objects
     return _handle_object(
@@ -52,7 +55,10 @@ def _handle_object(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
-) -> typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]]:
+) -> typing.Tuple[
+    typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
+    types.Schema,
+]:
     """
     Generate properties for a reference to another object.
 
@@ -126,7 +132,7 @@ def _handle_object(
     return_value.append(
         (logical_name, sqlalchemy.orm.relationship(ref_logical_name, backref=backref))
     )
-    return return_value
+    return return_value, {"type": "object", "x-de-$ref": ref_logical_name}
 
 
 def _handle_column(

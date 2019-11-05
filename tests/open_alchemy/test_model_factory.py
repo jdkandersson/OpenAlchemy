@@ -289,3 +289,120 @@ def test_all_of():
 
     assert hasattr(model, "property_1")
     assert model.__tablename__ == "table 1"
+
+
+@pytest.mark.parametrize(
+    "schemas, expected_schema",
+    [
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                }
+            },
+            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                    "required": ["property_1"],
+                }
+            },
+            {
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "required": ["property_1"],
+            },
+        ),
+        (
+            {
+                "RefSchema": {"type": "integer"},
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"$ref": "#/components/schemas/RefSchema"}
+                    },
+                },
+            },
+            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+        ),
+        (
+            {
+                "RefSchema": {
+                    "x-tablename": "table 2",
+                    "type": "object",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"$ref": "#/components/schemas/RefSchema"}
+                    },
+                },
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "property_1": {"type": "object", "x-de-$ref": "RefSchema"}
+                },
+            },
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"allOf": [{"type": "integer"}]}},
+                }
+            },
+            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"type": "integer"},
+                        "property_2": {"type": "string"},
+                    },
+                }
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "property_1": {"type": "integer"},
+                    "property_2": {"type": "string"},
+                },
+            },
+        ),
+    ],
+    ids=[
+        "single no required",
+        "single required",
+        "single ref",
+        "single ref object",
+        "single allOf",
+        "multiple",
+    ],
+)
+@pytest.mark.prod_env
+@pytest.mark.model
+def test_schema(schemas, expected_schema):
+    """
+    GIVEN schemas and expected schema
+    WHEN model_factory is called with the schemas and the name of a schema
+    THEN a model with _schema set to the expected schema is returned.
+    """
+    model = model_factory.model_factory(
+        name="Schema", base=mock.MagicMock, schemas=schemas
+    )
+
+    assert model._schema == expected_schema

@@ -27,5 +27,9 @@
   "x-tablename": {
     "description": "Define the name of a table.",
     "type": "string"
+  },
+  "x-de-$ref": {
+    "description": "Used to track the constructed model for a property referencing an object.",
+    "type": "string"
   }
 }

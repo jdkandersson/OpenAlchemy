@@ -4,20 +4,10 @@ from database import db
 from open_alchemy.models import Employee
 
 
-def _employee_to_dict(employee):
-    """Transform models.Employee to dictionary."""
-    return {
-        "id": employee.id,
-        "name": employee.name,
-        "division": employee.division,
-        "salary": employee.salary,
-    }
-
-
 def search():
     """Get all employees from the database."""
     employees = Employee.query.all()
-    employee_dicts = map(_employee_to_dict, employees)
+    employee_dicts = map(lambda employee: employee.to_dict(), employees)
     return list(employee_dicts)
 
 
@@ -25,7 +15,7 @@ def post(body):
     """Save an employee to the database."""
     if Employee.query.filter_by(id=body["id"]).first() is not None:
         return ("Employee already exists.", 400)
-    employee = Employee(**body)
+    employee = Employee.from_dict(**body)
     db.session.add(employee)
     db.session.commit()
 
@@ -35,7 +25,7 @@ def get(id):
     employee = Employee.query.filter_by(id=id).first()
     if employee is None:
         return ("Employee not found.", 404)
-    return _employee_to_dict(employee)
+    return employee.to_dict()
 
 
 def patch(body, id):
