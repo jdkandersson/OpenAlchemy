@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _unreleased_
+
+- Add _from_dict_ and _to_dict_ functions to all models that are used to construct a model from a dictionary and to convert a model instance to a dictionary, respectively.
+
 ## Version 0.8.0 - 2019-11-03
 - Add less verbose initialisation with _init_yaml_ and _init_json_.
 - Remove need for separate models file by exposing _Base_ and constructed models at _open_alchemy.models_.
