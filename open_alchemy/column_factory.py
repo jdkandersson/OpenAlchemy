@@ -202,7 +202,10 @@ def _spec_to_column(*, spec: types.Schema, required: typing.Optional[bool] = Non
 
 
 def _handle_object_reference(
-    *, spec: types.Schema, schemas: types.Schemas
+    *,
+    spec: types.Schema,
+    schemas: types.Schemas,
+    foreign_key: typing.Optional[str] = None,
 ) -> types.Schema:
     """
     Determine the foreign key schema for an object reference.
@@ -210,6 +213,7 @@ def _handle_object_reference(
     Args:
         spec: The schema of the object reference.
         schemas: All defined schemas.
+        foreign_key: The foreign key constraint to use.
 
     Returns:
         The foreign key schema.
@@ -225,7 +229,7 @@ def _handle_object_reference(
         raise exceptions.MalformedSchemaError(
             "Referenced object does not have any properties."
         )
-    logical_name = "id"
+    logical_name = foreign_key if foreign_key is not None else "id"
     id_spec = properties.get(logical_name)
     if id_spec is None:
         raise exceptions.MalformedSchemaError(
