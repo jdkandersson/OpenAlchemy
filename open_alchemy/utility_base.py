@@ -98,7 +98,10 @@ class UtilityBase:
             spec = properties.get(name)
             if spec is None:
                 raise exceptions.MalformedModelDictionaryError(
-                    "A parameter was passed in that is not a property of the model."
+                    "A parameter was passed in that is not a property in the model "
+                    "schema. "
+                    f"The parameter is {name}. "
+                    f"The model schema is {json.dumps(schema)}."
                 )
             type_ = spec.get("type")
             if type_ is None:
@@ -117,7 +120,9 @@ class UtilityBase:
                 raise exceptions.MalformedSchemaError(
                     "To construct object parameters the schema for the property must "
                     "include the x-de-$ref extension property with the name of the "
-                    "model to construct for the property."
+                    "model to construct for the property. "
+                    f"The property is {name}. "
+                    f"The model schema is {json.dumps(schema)}."
                 )
             # Try to get model
             ref_model = getattr(open_alchemy.models, ref_model_name, None)
@@ -149,7 +154,8 @@ class UtilityBase:
             type_ = spec.get("type")
             if type_ is None:
                 raise exceptions.TypeMissingError(
-                    f"The schema for the {name} property does not have a type."
+                    f"The schema for the {name} property does not have a type. "
+                    f"The property schema is {json.dumps(spec)}."
                 )
 
             # Handle basic types
@@ -166,12 +172,13 @@ class UtilityBase:
                 return_dict[name] = object_value.to_dict()
             except AttributeError:
                 raise exceptions.InvalidModelInstanceError(
-                    "Object property instance does not have a to_dict implementation."
+                    f"The {name} object property instance does not have a to_dict "
+                    "implementation."
                 )
             except TypeError:
                 raise exceptions.InvalidModelInstanceError(
-                    "Object property instance to_dict implementation is expecting "
-                    "arguments."
+                    f"The {name} object property instance to_dict implementation is "
+                    "expecting arguments."
                 )
 
         return return_dict
