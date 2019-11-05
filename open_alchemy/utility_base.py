@@ -4,39 +4,12 @@ import json
 import typing
 
 import jsonschema
-import typing_extensions
 
 import open_alchemy
 
 from . import exceptions
 from . import helpers
 from . import types
-
-
-class ModelClass(typing_extensions.Protocol):
-    """Defines interface for model factory."""
-
-    _schema: types.Schema
-
-    @classmethod
-    def _get_schema(cls) -> typing.Dict:
-        """Call signature to retrieve schema."""
-        ...
-
-    @classmethod
-    def _get_properties(cls) -> typing.Dict:
-        """Call signature to retrieve properties."""
-        ...
-
-    def __init__(  # pylint: disable=super-init-not-called
-        self, kwargs: typing.Any
-    ) -> None:
-        """Construct."""
-        ...
-
-    def to_dict(self) -> typing.Dict:
-        """Convert model instance to dictionary."""
-        ...
 
 
 class UtilityBase:
@@ -49,7 +22,7 @@ class UtilityBase:
     _schema: types.Schema
 
     @classmethod
-    def _get_schema(cls: typing.Type[ModelClass]) -> typing.Dict:
+    def _get_schema(cls: typing.Type[types.ModelClass]) -> typing.Dict:
         """
         Get the schema.
 
@@ -68,7 +41,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls: typing.Type[ModelClass]) -> typing.Dict:
+    def _get_properties(cls: typing.Type[types.ModelClass]) -> typing.Dict:
         """
         Get the properties from the schema.
 
@@ -89,7 +62,9 @@ class UtilityBase:
         return properties
 
     @classmethod
-    def from_dict(cls: typing.Type[ModelClass], **kwargs: typing.Any) -> ModelClass:
+    def from_dict(
+        cls: typing.Type[types.ModelClass], **kwargs: typing.Any
+    ) -> types.ModelClass:
         """
         Construct model instance from a dictionary.
 
