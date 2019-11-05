@@ -16,7 +16,7 @@ with open(SCHEMAS_FILE) as in_file:
 
 def get_ext_prop(
     *, source: typing.Dict[str, typing.Any], name: str
-) -> typing.Optional[typing.Union[str, bool]]:
+) -> typing.Optional[typing.Any]:
     """
     Read the value of an extension property, validate the schema and return it.
 

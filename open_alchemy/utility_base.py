@@ -6,6 +6,8 @@ import typing
 import jsonschema
 import typing_extensions
 
+import open_alchemy
+
 from . import exceptions
 from . import helpers
 from . import types
@@ -134,12 +136,18 @@ class UtilityBase:
                 continue
 
             # Handle object
-            param_model = helpers.get_ext_prop(source=spec, name="x-de-$ref")
-            if param_model is None:
+            ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
+            if ref_model_name is None:
                 raise exceptions.MalformedSchemaError(
                     "To construct object parameters the schema for the property must "
                     "include the x-de-$ref extension property with the name of the "
                     "model to construct for the property."
+                )
+            # Try to get model
+            ref_model = getattr(open_alchemy.models, ref_model_name, None)
+            if ref_model is None:
+                raise exceptions.SchemaNotFoundError(
+                    f"The {ref_model_name} model was not found on open_alchemy.models."
                 )
 
         return cls(**model_dict)

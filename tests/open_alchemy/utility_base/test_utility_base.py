@@ -277,7 +277,7 @@ def test_from_dict_no_type_schema():
 def test_from_dict(schema, dictionary):
     """
     GIVEN schema and dictionary to use for construction
-    WHEN model is defined with the schema and constructed with __init__
+    WHEN model is defined with the schema and constructed with from_dict
     THEN the instance has the properties from the dictionary.
     """
     model = type(
@@ -294,7 +294,7 @@ def test_from_dict(schema, dictionary):
 def test_from_dict_object_de_ref_missing():
     """
     GIVEN schema with object without x-de-$ref
-    WHEN model is defined and constructed
+    WHEN model is defined and constructed with from_dict
     THEN MalformedSchemaError is raised.
     """
     model = type(
@@ -304,4 +304,26 @@ def test_from_dict_object_de_ref_missing():
     )
 
     with pytest.raises(exceptions.MalformedSchemaError):
+        model.from_dict(**{"key": {"obj_key": "obj_value"}})
+
+
+@pytest.mark.utility_base
+def test_from_dict_object_model_undefined():
+    """
+    GIVEN schema with object which references a model that has not been defined
+    WHEN from_dict is called
+    THEN SchemaNotFoundError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "object", "x-de-$ref": "RefModel"}}
+            },
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.SchemaNotFoundError):
         model.from_dict(**{"key": {"obj_key": "obj_value"}})
