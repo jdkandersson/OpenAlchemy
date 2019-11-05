@@ -23,12 +23,20 @@ from open_alchemy import exceptions
                 {"x-backref": "backref 2"},
             ]
         },
+        {
+            "allOf": [
+                {"$ref": "ref 1"},
+                {"x-foreign-key-column": "column 1"},
+                {"x-foreign-key-column": "column 2"},
+            ]
+        },
     ],
     ids=[
         "object",
         "allOf with object",
         "allOf with multiple ref",
         "allOf with multiple x-backref",
+        "allOf with multiple x-foreign-key-column",
     ],
 )
 @pytest.mark.column

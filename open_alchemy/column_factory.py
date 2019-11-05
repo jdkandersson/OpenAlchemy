@@ -89,23 +89,8 @@ def _handle_object(
         )
         backref = helpers.get_ext_prop(source=spec, name="x-backref")
     elif all_of is not None:
-        # Checking for $ref and x-backref counts
-        ref_count = 0
-        backref_count = 0
-        for sub_spec in all_of:
-            if sub_spec.get("$ref") is not None:
-                ref_count += 1
-            if sub_spec.get("x-backref") is not None:
-                backref_count += 1
-        if ref_count != 1:
-            raise exceptions.MalformedManyToOneRelationshipError(
-                "Many to One relationships defined with allOf must have exactly one "
-                "$ref in the allOf list."
-            )
-        if backref_count > 1:
-            raise exceptions.MalformedManyToOneRelationshipError(
-                "Many to One relationships may have at most 1 x-backref defined."
-            )
+        # Checking for $ref, and x-backref and x-foreign-key-column counts
+        _check_object_all_of(all_of_spec=all_of)
 
         # Handling allOf
         for sub_spec in all_of:
@@ -137,6 +122,43 @@ def _handle_object(
         (logical_name, sqlalchemy.orm.relationship(ref_logical_name, backref=backref))
     )
     return return_value, {"type": "object", "x-de-$ref": ref_logical_name}
+
+
+def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
+    """
+    Check format of allOf for an object reference.
+
+    Raise MalformedManyToOneRelationshipError if the allOf schema is not as expected.
+
+    Args:
+        all_of_spec: The allOf specification to check.
+
+    """
+    # Checking for $ref and x-backref counts
+    ref_count = 0
+    backref_count = 0
+    foreign_key_column_count = 0
+    for sub_spec in all_of_spec:
+        if sub_spec.get("$ref") is not None:
+            ref_count += 1
+        if sub_spec.get("x-backref") is not None:
+            backref_count += 1
+        if sub_spec.get("x-foreign-key-column") is not None:
+            foreign_key_column_count += 1
+    if ref_count != 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships defined with allOf must have exactly one "
+            "$ref in the allOf list."
+        )
+    if backref_count > 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships may have at most 1 x-backref defined."
+        )
+    if foreign_key_column_count > 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships may have at most 1 x-foreign-key-column "
+            "defined."
+        )
 
 
 def _handle_column(
