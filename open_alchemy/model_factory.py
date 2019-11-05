@@ -46,25 +46,25 @@ def model_factory(
             f"At least 1 property is required for {name}."
         )
 
+    # Calculating the class variables for the model
+    model_class_vars = []
+    for prop_name, prop_spec in schema.get("properties", []).items():
+        prop_class_vars = column_factory.column_factory(
+            spec=prop_spec,
+            schemas=schemas,
+            logical_name=prop_name,
+            required=prop_name in schema.get("required", [])
+            if "required" in schema
+            else None,
+        )
+        model_class_vars.append(prop_class_vars)
+
     # Assembling model
     return type(
         name,
         (base,),
         {
             "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
-            **dict(
-                itertools.chain.from_iterable(
-                    # pylint: disable=unexpected-keyword-arg
-                    column_factory.column_factory(
-                        spec=value,
-                        schemas=schemas,
-                        logical_name=key,
-                        required=key in schema.get("required", [])
-                        if "required" in schema
-                        else None,
-                    )
-                    for key, value in schema.get("properties", []).items()
-                )
-            ),
+            **dict(itertools.chain.from_iterable(model_class_vars)),
         },
     )
