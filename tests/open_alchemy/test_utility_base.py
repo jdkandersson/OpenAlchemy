@@ -213,6 +213,40 @@ def test_to_dict_malformed_dictionary():
         model.from_dict(**{})
 
 
+@pytest.mark.utility_base
+def test_from_dict_argument_not_in_properties():
+    """
+    GIVEN dictionary with a key which is not a property in the schema
+    WHEN from_dict is called with the dictionary
+    THEN MalformedModelDictionaryError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {}}, "__init__": __init__},
+    )
+
+    with pytest.raises(exceptions.MalformedModelDictionaryError):
+        model.from_dict(**{"key": "value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_no_type_schema():
+    """
+    GIVEN model with a schema with a property without a type
+    WHEN from_dict is called with the dictionary
+    THEN MissingTypeError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {}}}, "__init__": __init__},
+    )
+
+    with pytest.raises(exceptions.TypeMissingError):
+        model.from_dict(**{"key": "value"})
+
+
 @pytest.mark.parametrize(
     "schema, dictionary",
     [
@@ -254,3 +288,20 @@ def test_from_dict(schema, dictionary):
 
     for key, value in dictionary.items():
         assert getattr(instance, key) == value
+
+
+@pytest.mark.utility_base
+def test_from_dict_object_de_ref_missing():
+    """
+    GIVEN schema with object without x-de-$ref
+    WHEN model is defined and constructed
+    THEN MalformedSchemaError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
+    )
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        model.from_dict(**{"key": {"obj_key": "obj_value"}})

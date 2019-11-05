@@ -27,6 +27,7 @@ def test_miss():
         ("x-foreign-key", True),
         ("x-foreign-key", "no column"),
         ("x-tablename", True),
+        ("x-de-$ref", True),
     ],
     ids=[
         "x-backref",
@@ -37,6 +38,7 @@ def test_miss():
         "x-foreign-key invalid type",
         "x-foreign-key invalid format",
         "x-tablename",
+        "x-de-$ref",
     ],
 )
 @pytest.mark.helper
@@ -62,6 +64,7 @@ def test_invalid(name, value):
         ("x-unique", True),
         ("x-foreign-key", "table 1.column 1"),
         ("x-tablename", "table 1"),
+        ("x-de-$ref", "Table1"),
     ],
     ids=[
         "x-backref",
@@ -71,6 +74,7 @@ def test_invalid(name, value):
         "x-unique",
         "x-foreign-key",
         "x-tablename",
+        "x-de-$ref",
     ],
 )
 @pytest.mark.helper

@@ -7,6 +7,7 @@ import jsonschema
 import typing_extensions
 
 from . import exceptions
+from . import helpers
 from . import types
 
 
@@ -111,7 +112,37 @@ class UtilityBase:
                 f"The given value is {json.dumps(kwargs)}."
             )
 
-        return cls(**kwargs)
+        # Assemble dictionary for construction
+        properties = cls._get_properties()
+        model_dict = {}
+        for name, value in kwargs.items():
+            # Get the specification and type of the property
+            spec = properties.get(name)
+            if spec is None:
+                raise exceptions.MalformedModelDictionaryError(
+                    "A parameter was passed in that is not a property of the model."
+                )
+            type_ = spec.get("type")
+            if type_ is None:
+                raise exceptions.TypeMissingError(
+                    f"The schema for the {name} property does not have a type."
+                )
+
+            # Handle simple types
+            if type_ != "object":
+                model_dict[name] = value
+                continue
+
+            # Handle object
+            param_model = helpers.get_ext_prop(source=spec, name="x-de-$ref")
+            if param_model is None:
+                raise exceptions.MalformedSchemaError(
+                    "To construct object parameters the schema for the property must "
+                    "include the x-de-$ref extension property with the name of the "
+                    "model to construct for the property."
+                )
+
+        return cls(**model_dict)
 
     def to_dict(self) -> typing.Dict:
         """
