@@ -89,7 +89,7 @@ def test_to_dict_no_type():
     ],
 )
 @pytest.mark.utility_base
-def test_simple_type(model_dict, expected_dict):
+def test_to_dict_simple_type(model_dict, expected_dict):
     """
     GIVEN class that derives from UtilityBase with a given schema with properties that
         are not objects and expected object
@@ -105,7 +105,7 @@ def test_simple_type(model_dict, expected_dict):
 
 
 @pytest.mark.utility_base
-def test_object_undefined():
+def test_to_dict_object_undefined():
     """
     GIVEN class that derives from UtilityBase with a schema with an object property
         that is not defined
@@ -125,7 +125,7 @@ def test_object_undefined():
 
 
 @pytest.mark.utility_base
-def test_object_none():
+def test_to_dict_object_none():
     """
     GIVEN class that derives from UtilityBase with a schema with an object property
         that has a value of None
@@ -145,7 +145,7 @@ def test_object_none():
 
 
 @pytest.mark.utility_base
-def test_object_no_to_dict():
+def test_to_dict_object_no_to_dict():
     """
     GIVEN class that derives from UtilityBase with a schema with an object property
         that does not have a to_dict function
@@ -164,7 +164,7 @@ def test_object_no_to_dict():
 
 
 @pytest.mark.utility_base
-def test_object():
+def test_to_dict_object():
     """
     GIVEN class that derives from UtilityBase with a schema with an object property
         that has a mock model
@@ -191,7 +191,7 @@ def __init__(self, **kwargs):
 
 
 @pytest.mark.utility_base
-def test_malformed_dictionary():
+def test_to_dict_malformed_dictionary():
     """
     GIVEN class that derives from UtilityBase and schema
     WHEN from_dict is called with a dictionary that does not satisfy the schema
@@ -211,3 +211,46 @@ def test_malformed_dictionary():
 
     with pytest.raises(exceptions.MalformedModelDictionaryError):
         model.from_dict(**{})
+
+
+@pytest.mark.parametrize(
+    "schema, dictionary",
+    [
+        ({"properties": {"key_1": {"type": "integer"}}}, {}),
+        ({"properties": {"key_1": {"type": "integer"}}}, {"key_1": 1}),
+        (
+            {"properties": {"key_1": {"type": "integer"}}, "required": ["key_1"]},
+            {"key_1": 1},
+        ),
+        (
+            {
+                "properties": {
+                    "key_1": {"type": "integer"},
+                    "key_2": {"type": "integer"},
+                }
+            },
+            {"key_1": 11, "key_2": 12},
+        ),
+    ],
+    ids=[
+        "single not required not given",
+        "single not required given",
+        "single required given",
+        "multiple",
+    ],
+)
+@pytest.mark.utility_base
+def test_from_dict(schema, dictionary):
+    """
+    GIVEN schema and dictionary to use for construction
+    WHEN model is defined with the schema and constructed with __init__
+    THEN the instance has the properties from the dictionary.
+    """
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+
+    instance = model.from_dict(**dictionary)
+
+    for key, value in dictionary.items():
+        assert getattr(instance, key) == value
