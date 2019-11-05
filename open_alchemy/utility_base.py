@@ -39,9 +39,6 @@ class ModelClass(typing_extensions.Protocol):
         ...
 
 
-# ModelClass = typing.TypeVar("ModelClass", bound="UtilityBase")
-
-
 class UtilityBase:
     """Base class providing utilities for SQLAlchemy models."""
 
