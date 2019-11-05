@@ -152,10 +152,33 @@ def test_to_dict_object_no_to_dict():
     WHEN to_dict is called
     THEN InvalidModelInstanceError is raised.
     """
+    mock_model = mock.MagicMock()
+    mock_model.to_dict.side_effect = AttributeError
     model = type(
         "model",
         (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": "value"},
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": mock_model},
+    )
+    instance = model()
+
+    with pytest.raises(exceptions.InvalidModelInstanceError):
+        instance.to_dict()
+
+
+@pytest.mark.utility_base
+def test_to_dict_object_to_dict_different_func():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an object property
+        that has a to_dict function that raises TypeError
+    WHEN to_dict is called
+    THEN InvalidModelInstanceError is raised.
+    """
+    mock_model = mock.MagicMock()
+    mock_model.to_dict.side_effect = TypeError
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {"type": "object"}}}, "key": mock_model},
     )
     instance = model()
 

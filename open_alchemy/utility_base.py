@@ -189,5 +189,10 @@ class UtilityBase:
                 raise exceptions.InvalidModelInstanceError(
                     "Object property instance does not have a to_dict implementation."
                 )
+            except TypeError:
+                raise exceptions.InvalidModelInstanceError(
+                    "Object property instance to_dict implementation is expecting "
+                    "arguments."
+                )
 
         return return_dict
