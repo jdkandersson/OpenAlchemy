@@ -49,15 +49,21 @@ def model_factory(
     # Calculating the class variables for the model
     model_class_vars = []
     required_exists = "required" in schema
-    required_set = set(schema.get("required", []))
+    required_array = schema.get("required", [])
+    required_set = set(required_array)
+    # Initializing the schema to record for the model
+    model_schema: types.Schema = {"type": "object", "properties": {}}
+    if required_exists:
+        model_schema["required"] = required_array
     for prop_name, prop_spec in schema.get("properties", []).items():
-        prop_class_vars, _ = column_factory.column_factory(
+        prop_class_vars, prop_final_spec = column_factory.column_factory(
             spec=prop_spec,
             schemas=schemas,
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,
         )
         model_class_vars.append(prop_class_vars)
+        model_schema["properties"][prop_name] = prop_final_spec
 
     # Assembling model
     return type(
@@ -65,6 +71,7 @@ def model_factory(
         (base,),
         {
             "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
+            "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
         },
     )
