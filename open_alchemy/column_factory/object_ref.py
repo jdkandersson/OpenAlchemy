@@ -93,7 +93,6 @@ def _gather_object_artifacts(
         ref_logical_name, spec = helpers.resolve_ref(
             name=logical_name, schema=spec, schemas=schemas
         )
-        backref = helpers.get_ext_prop(source=spec, name="x-backref")
     elif all_of is not None:
         # Checking for $ref, and x-backref and x-foreign-key-column counts
         _check_object_all_of(all_of_spec=all_of)
