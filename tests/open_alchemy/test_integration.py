@@ -483,6 +483,67 @@ def test_database_many_to_one_relationship(engine, sessionmaker):
     assert queried_ref_model.tables[0].id == 12
 
 
+@pytest.mark.prod_env
+@pytest.mark.integration
+def test_database_many_to_one_relationship_fk(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with an object relationship with a defined
+        foreign key
+    WHEN schema is created, values inserted in both tables and queried
+    THEN the data is returned as it was inserted.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "tables",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {
+                            "allOf": [
+                                {"$ref": "#/components/schemas/RefTable"},
+                                {"x-foreign-key-column": "name"},
+                            ]
+                        },
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance = ref_model(id=11, name="ref table name 1")
+    model_instance = model(id=12, name="table name 1", ref_table=ref_model_instance)
+    session = sessionmaker()
+    session.add(ref_model_instance)
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.ref_table_name == "ref table name 1"
+    assert queried_model.ref_table.name == "ref table name 1"
+
+
 @pytest.mark.parametrize(
     "spec",
     [
