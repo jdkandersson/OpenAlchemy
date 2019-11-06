@@ -58,43 +58,6 @@ def handle_object(
     return return_value, {"type": "object", "x-de-$ref": ref_logical_name}
 
 
-def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
-    """
-    Check format of allOf for an object reference.
-
-    Raise MalformedManyToOneRelationshipError if the allOf schema is not as expected.
-
-    Args:
-        all_of_spec: The allOf specification to check.
-
-    """
-    # Checking for $ref and x-backref counts
-    ref_count = 0
-    backref_count = 0
-    fk_column_count = 0
-    for sub_spec in all_of_spec:
-        if sub_spec.get("$ref") is not None:
-            ref_count += 1
-        if sub_spec.get("x-backref") is not None:
-            backref_count += 1
-        if sub_spec.get("x-foreign-key-column") is not None:
-            fk_column_count += 1
-    if ref_count != 1:
-        raise exceptions.MalformedManyToOneRelationshipError(
-            "Many to One relationships defined with allOf must have exactly one "
-            "$ref in the allOf list."
-        )
-    if backref_count > 1:
-        raise exceptions.MalformedManyToOneRelationshipError(
-            "Many to One relationships may have at most 1 x-backref defined."
-        )
-    if fk_column_count > 1:
-        raise exceptions.MalformedManyToOneRelationshipError(
-            "Many to One relationships may have at most 1 x-foreign-key-column "
-            "defined."
-        )
-
-
 def _gather_object_artifacts(
     *, spec: types.Schema, logical_name: str, schemas: types.Schemas
 ) -> typing.Tuple[types.Schema, str, typing.Optional[str], str]:
@@ -164,6 +127,43 @@ def _gather_object_artifacts(
         fk_column = "id"
 
     return spec, ref_logical_name, backref, fk_column
+
+
+def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
+    """
+    Check format of allOf for an object reference.
+
+    Raise MalformedManyToOneRelationshipError if the allOf schema is not as expected.
+
+    Args:
+        all_of_spec: The allOf specification to check.
+
+    """
+    # Checking for $ref and x-backref counts
+    ref_count = 0
+    backref_count = 0
+    fk_column_count = 0
+    for sub_spec in all_of_spec:
+        if sub_spec.get("$ref") is not None:
+            ref_count += 1
+        if sub_spec.get("x-backref") is not None:
+            backref_count += 1
+        if sub_spec.get("x-foreign-key-column") is not None:
+            fk_column_count += 1
+    if ref_count != 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships defined with allOf must have exactly one "
+            "$ref in the allOf list."
+        )
+    if backref_count > 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships may have at most 1 x-backref defined."
+        )
+    if fk_column_count > 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships may have at most 1 x-foreign-key-column "
+            "defined."
+        )
 
 
 def _handle_object_reference(

@@ -9,32 +9,8 @@ from open_alchemy.column_factory import object_ref
 
 @pytest.mark.parametrize(
     "spec",
-    [
-        {"type": "object"},
-        {"allOf": [{"type": "object"}]},
-        {"allOf": [{"$ref": "ref 1"}, {"$ref": "ref 2"}]},
-        {
-            "allOf": [
-                {"$ref": "ref 1"},
-                {"x-backref": "backref 1"},
-                {"x-backref": "backref 2"},
-            ]
-        },
-        {
-            "allOf": [
-                {"$ref": "ref 1"},
-                {"x-foreign-key-column": "column 1"},
-                {"x-foreign-key-column": "column 2"},
-            ]
-        },
-    ],
-    ids=[
-        "object",
-        "allOf with object",
-        "allOf with multiple ref",
-        "allOf with multiple x-backref",
-        "allOf with multiple x-foreign-key-column",
-    ],
+    [{"type": "object"}, {"allOf": [{"type": "object"}]}],
+    ids=["object", "allOf with object"],
 )
 @pytest.mark.column
 def test_handle_object_error(spec):
@@ -45,8 +21,38 @@ def test_handle_object_error(spec):
     """
     with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
         object_ref.handle_object(
-            spec=spec, schemas={}, required=True, logical_name="name 1"
+            spec=spec, schemas={"type": "object"}, required=True, logical_name="name 1"
         )
+
+
+@pytest.mark.parametrize(
+    "spec",
+    [
+        [{"type": "object"}],
+        [{"$ref": "ref 1"}, {"$ref": "ref 2"}],
+        [{"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}],
+        [
+            {"$ref": "ref 1"},
+            {"x-foreign-key-column": "column 1"},
+            {"x-foreign-key-column": "column 2"},
+        ],
+    ],
+    ids=[
+        "object",
+        "multiple ref",
+        "multiple x-backref",
+        "multiple x-foreign-key-column",
+    ],
+)
+@pytest.mark.column
+def test_check_object_all_of_error(spec):
+    """
+    GIVEN spec
+    WHEN handle_object is called with the spec
+    THEN MalformedManyToOneRelationshipError is raised.
+    """
+    with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
+        object_ref._check_object_all_of(all_of_spec=spec)
 
 
 @pytest.mark.column
