@@ -269,3 +269,69 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     )
 
     assert backref == expected_backref
+
+
+@pytest.mark.parametrize(
+    "spec, schemas, expected_fk_column",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            "id",
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "x-foreign-key-column": "fk_column_1"}},
+            "fk_column_1",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            "id",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-foreign-key-column": "fk_column_2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "fk_column_2",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "x-foreign-key-column": "fk_column_1"}},
+            "fk_column_1",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-foreign-key-column": "fk_column_2"},
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-foreign-key-column": "fk_column_1"}},
+            "fk_column_2",
+        ),
+    ],
+    ids=[
+        "$ref no backref",
+        "$ref backref",
+        "allOf no backref",
+        "allOf backref",
+        "allOf $ref backref",
+        "allOf backref $ref backref",
+    ],
+)
+def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
+    """
+    GIVEN specification and schemas and expected foreign key column
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN the expected foreign key column is returned.
+    """
+    _, _, _, fk_column = object_ref._gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert fk_column == expected_fk_column
