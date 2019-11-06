@@ -179,3 +179,27 @@ def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     )
 
     assert returned_spec == expected_spec
+
+
+@pytest.mark.parametrize(
+    "spec, schemas",
+    [
+        ({"$ref": "#/components/schemas/RefSchema"}, {"RefSchema": {"type": "object"}}),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+        ),
+    ],
+    ids=["$ref", "allOf"],
+)
+def test_gather_object_artifacts_ref_logical_name(spec, schemas):
+    """
+    GIVEN specification and schemas
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN the referenced schema name is returned as the ref logical name.
+    """
+    _, ref_logical_name, _, _ = object_ref._gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert ref_logical_name == "RefSchema"
