@@ -9,7 +9,7 @@ from open_alchemy import helpers
 from open_alchemy import types
 
 
-def _handle_column(
+def handle_column(
     *, spec: types.Schema, required: typing.Optional[bool] = None, logical_name: str
 ) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
     """

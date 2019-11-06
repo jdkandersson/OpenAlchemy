@@ -9,13 +9,7 @@ from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
 
-from .column import _calculate_nullable
-from .column import _determine_type
-from .column import _handle_column
-from .column import _handle_integer
-from .column import _handle_number
-from .column import _handle_string
-from .column import _spec_to_column
+from . import column
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
@@ -47,7 +41,9 @@ def column_factory(
     if type_ != "object":
         spec = helpers.prepare_schema(schema=spec, schemas=schemas)
         return (
-            _handle_column(logical_name=logical_name, spec=spec, required=required),
+            column.handle_column(
+                logical_name=logical_name, spec=spec, required=required
+            ),
             spec,
         )
 
@@ -134,7 +130,7 @@ def _handle_object(
     foreign_key_spec = _handle_object_reference(
         spec=spec, schemas=schemas, fk_column=fk_column
     )
-    return_value = _handle_column(
+    return_value = column.handle_column(
         logical_name=f"{logical_name}_{fk_column}",
         spec=foreign_key_spec,
         required=required,
