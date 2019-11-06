@@ -203,3 +203,69 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
     )
 
     assert ref_logical_name == "RefSchema"
+
+
+@pytest.mark.parametrize(
+    "spec, schemas, expected_backref",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "x-backref": "backref 1"}},
+            "backref 1",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "backref 2",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "x-backref": "backref 1"}},
+            "backref 1",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-backref": "backref 1"}},
+            "backref 2",
+        ),
+    ],
+    ids=[
+        "$ref no backref",
+        "$ref backref",
+        "allOf no backref",
+        "allOf backref",
+        "allOf $ref backref",
+        "allOf backref $ref backref",
+    ],
+)
+def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
+    """
+    GIVEN specification and schemas and expected backref
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN the expected backref is returned.
+    """
+    _, _, backref, _ = object_ref._gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert backref == expected_backref
