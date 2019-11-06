@@ -395,7 +395,7 @@ def test_handle_object_reference_name_missing():
         column_factory._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
             schemas={},
-            foreign_key_column="column_1",
+            fk_column="column_1",
         )
 
 
@@ -442,7 +442,7 @@ def test_handle_object_reference_fk_return():
     schemas = {}
 
     return_value = column_factory._handle_object_reference(
-        spec=spec, schemas=schemas, foreign_key_column="fk"
+        spec=spec, schemas=schemas, fk_column="fk"
     )
 
     assert return_value == {"type": "fkType", "x-foreign-key": "table 1.fk"}
@@ -523,7 +523,7 @@ def test_integration_object_ref_backref():
     """
     GIVEN schema that references another object schema which has x-backref and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference and relationship with backref is returned.
+    THEN relationship with backref is returned.
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
@@ -534,19 +534,38 @@ def test_integration_object_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        _,
-    ) = column_factory.column_factory(
+    ([_, (_, relationship)], _) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert fk_logical_name == "column_1_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
-    assert len(fk_column.foreign_keys) == 1
-    assert tbl_logical_name == "column_1"
-    assert relationship.argument == "RefSchema"
     assert relationship.backref == "backref 1"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_object_ref_fk_column():
+    """
+    GIVEN schema that references another object schema which has x-foreign-key-column
+        and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference pointing to the foreign key column is returned.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "x-foreign-key-column": "fk_column",
+            "properties": {"id": {"type": "integer"}, "fk_column": {"type": "string"}},
+        }
+    }
+    ([(fk_logical_name, fk_column), _], _) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_fk_column"
+    assert isinstance(fk_column.type, sqlalchemy.String)
+    assert len(fk_column.foreign_keys) == 1
 
 
 @pytest.mark.prod_env
@@ -598,19 +617,38 @@ def test_integration_object_all_of_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        _,
-    ) = column_factory.column_factory(
+    ([_, (_, relationship)], _) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert fk_logical_name == "column_1_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
-    assert len(fk_column.foreign_keys) == 1
-    assert tbl_logical_name == "column_1"
-    assert relationship.argument == "RefSchema"
     assert relationship.backref == "backref 1"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_object_all_of_ref_fk_column():
+    """
+    GIVEN schema with allOf that references another object schema with foreign key
+        column and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference and relationship is returned pointing to the foreign key
+        column.
+    """
+    spec = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "x-foreign-key-column": "fk_column",
+            "properties": {"id": {"type": "integer"}, "fk_column": {"type": "string"}},
+        }
+    }
+    ([(fk_logical_name, fk_column), _], _) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_fk_column"
+    assert isinstance(fk_column.type, sqlalchemy.String)
 
 
 @pytest.mark.prod_env
@@ -620,7 +658,7 @@ def test_integration_object_all_of_backref_ref():
     GIVEN schema with allOf that references another object schema and has x-backref and
         schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference and relationship with backref is returned.
+    THEN relationship with backref is returned.
     """
     spec = {
         "allOf": [
@@ -635,19 +673,41 @@ def test_integration_object_all_of_backref_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        _,
-    ) = column_factory.column_factory(
+    ([_, (_, relationship)], _) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert fk_logical_name == "column_1_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
-    assert len(fk_column.foreign_keys) == 1
-    assert tbl_logical_name == "column_1"
-    assert relationship.argument == "RefSchema"
     assert relationship.backref == "backref 1"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_object_all_of_fk_column_ref():
+    """
+    GIVEN schema with allOf that references another object schema and has
+        x-foreign-key-column and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference to foreign key column is returned.
+    """
+    spec = {
+        "allOf": [
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"x-foreign-key-column": "fk_column"},
+        ]
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}, "fk_column": {"type": "string"}},
+        }
+    }
+    ([(fk_logical_name, fk_column), _], _) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_fk_column"
+    assert isinstance(fk_column.type, sqlalchemy.String)
 
 
 @pytest.mark.prod_env
@@ -657,7 +717,7 @@ def test_integration_object_all_of_backref_ref_backref():
     GIVEN schema with allOf that references another object schema with backref and has
         x-backref and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference and relationship with backref from allOf is returned.
+    THEN backref from allOf is returned.
     """
     spec = {
         "allOf": [
@@ -673,19 +733,46 @@ def test_integration_object_all_of_backref_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        _,
-    ) = column_factory.column_factory(
+    ([_, (_, relationship)], _) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert fk_logical_name == "column_1_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
-    assert len(fk_column.foreign_keys) == 1
-    assert tbl_logical_name == "column_1"
-    assert relationship.argument == "RefSchema"
     assert relationship.backref == "backref 2"
+
+
+@pytest.mark.prod_env
+@pytest.mark.column
+def test_integration_object_all_of_fk_column_ref_fk_column():
+    """
+    GIVEN schema with allOf that references another object schema with foreign key
+        column and has foreign key column and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key column from allOf is returned.
+    """
+    spec = {
+        "allOf": [
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"x-foreign-key-column": "fk_column_2"},
+        ]
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "x-foreign-key-column": "fk_column_1",
+            "properties": {
+                "id": {"type": "integer"},
+                "fk_column_1": {"type": "string"},
+                "fk_column_2": {"type": "boolean"},
+            },
+        }
+    }
+    ([(fk_logical_name, fk_column), _], _) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert fk_logical_name == "column_1_fk_column_2"
+    assert isinstance(fk_column.type, sqlalchemy.Boolean)
 
 
 @pytest.mark.prod_env

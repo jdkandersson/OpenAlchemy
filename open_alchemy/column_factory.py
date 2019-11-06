@@ -77,6 +77,8 @@ def _handle_object(
     """
     # Default backref
     backref = None
+    # Default foreign key column
+    fk_column = None
 
     # Checking for $ref and allOf
     ref = spec.get("$ref")
@@ -95,6 +97,9 @@ def _handle_object(
         # Handling allOf
         for sub_spec in all_of:
             backref = helpers.get_ext_prop(source=sub_spec, name="x-backref")
+            fk_column = helpers.get_ext_prop(
+                source=sub_spec, name="x-foreign-key-column"
+            )
             if sub_spec.get("$ref") is not None:
                 ref_logical_name, spec = helpers.resolve_ref(
                     name=logical_name, schema=sub_spec, schemas=schemas
@@ -110,11 +115,21 @@ def _handle_object(
     # If backref has not been found look in referenced schema
     if backref is None:
         backref = helpers.get_ext_prop(source=spec, name="x-backref")
+    # If foreign key column has not been found look in referenced schema
+    if fk_column is None:
+        fk_column = helpers.get_ext_prop(source=spec, name="x-foreign-key-column")
+    # If foreign key column is still None, default to id
+    if fk_column is None:
+        fk_column = "id"
 
     # Handling object
-    foreign_key_spec = _handle_object_reference(spec=spec, schemas=schemas)
+    foreign_key_spec = _handle_object_reference(
+        spec=spec, schemas=schemas, fk_column=fk_column
+    )
     return_value = _handle_column(
-        logical_name=f"{logical_name}_id", spec=foreign_key_spec, required=required
+        logical_name=f"{logical_name}_{fk_column}",
+        spec=foreign_key_spec,
+        required=required,
     )
 
     # Creating relationship
@@ -137,14 +152,14 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
     # Checking for $ref and x-backref counts
     ref_count = 0
     backref_count = 0
-    foreign_key_column_count = 0
+    fk_column_count = 0
     for sub_spec in all_of_spec:
         if sub_spec.get("$ref") is not None:
             ref_count += 1
         if sub_spec.get("x-backref") is not None:
             backref_count += 1
         if sub_spec.get("x-foreign-key-column") is not None:
-            foreign_key_column_count += 1
+            fk_column_count += 1
     if ref_count != 1:
         raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships defined with allOf must have exactly one "
@@ -154,7 +169,7 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
         raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships may have at most 1 x-backref defined."
         )
-    if foreign_key_column_count > 1:
+    if fk_column_count > 1:
         raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships may have at most 1 x-foreign-key-column "
             "defined."
@@ -227,7 +242,7 @@ def _handle_object_reference(
     *,
     spec: types.Schema,
     schemas: types.Schemas,
-    foreign_key_column: typing.Optional[str] = None,
+    fk_column: typing.Optional[str] = None,
 ) -> types.Schema:
     """
     Determine the foreign key schema for an object reference.
@@ -235,7 +250,7 @@ def _handle_object_reference(
     Args:
         spec: The schema of the object reference.
         schemas: All defined schemas.
-        foreign_key_column: The foreign column name to use.
+        fk_column: The foreign column name to use.
 
     Returns:
         The foreign key schema.
@@ -251,7 +266,7 @@ def _handle_object_reference(
         raise exceptions.MalformedSchemaError(
             "Referenced object does not have any properties."
         )
-    fk_logical_name = foreign_key_column if foreign_key_column is not None else "id"
+    fk_logical_name = fk_column if fk_column is not None else "id"
     fk_spec = properties.get(fk_logical_name)
     if fk_spec is None:
         raise exceptions.MalformedSchemaError(
