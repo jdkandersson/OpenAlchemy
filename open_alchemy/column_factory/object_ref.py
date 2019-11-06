@@ -37,52 +37,9 @@ def handle_object(
         name and relationship for the reference to the object.
 
     """
-    # Default backref
-    backref = None
-    # Default foreign key column
-    fk_column = None
-
-    # Checking for $ref and allOf
-    ref = spec.get("$ref")
-    all_of = spec.get("allOf")
-
-    if ref is not None:
-        # Handling $ref
-        ref_logical_name, spec = helpers.resolve_ref(
-            name=logical_name, schema=spec, schemas=schemas
-        )
-        backref = helpers.get_ext_prop(source=spec, name="x-backref")
-    elif all_of is not None:
-        # Checking for $ref, and x-backref and x-foreign-key-column counts
-        _check_object_all_of(all_of_spec=all_of)
-
-        # Handling allOf
-        for sub_spec in all_of:
-            backref = helpers.get_ext_prop(source=sub_spec, name="x-backref")
-            fk_column = helpers.get_ext_prop(
-                source=sub_spec, name="x-foreign-key-column"
-            )
-            if sub_spec.get("$ref") is not None:
-                ref_logical_name, spec = helpers.resolve_ref(
-                    name=logical_name, schema=sub_spec, schemas=schemas
-                )
-    else:
-        raise exceptions.MalformedManyToOneRelationshipError(
-            "Many to One relationships are defined using either $ref or allOf."
-        )
-
-    # Resolving allOf
-    spec = helpers.merge_all_of(schema=spec, schemas=schemas)
-
-    # If backref has not been found look in referenced schema
-    if backref is None:
-        backref = helpers.get_ext_prop(source=spec, name="x-backref")
-    # If foreign key column has not been found look in referenced schema
-    if fk_column is None:
-        fk_column = helpers.get_ext_prop(source=spec, name="x-foreign-key-column")
-    # If foreign key column is still None, default to id
-    if fk_column is None:
-        fk_column = "id"
+    spec, ref_logical_name, backref, fk_column = _gather_object_artifacts(
+        spec=spec, logical_name=logical_name, schemas=schemas
+    )
 
     # Handling object
     foreign_key_spec = _handle_object_reference(
@@ -136,6 +93,77 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
             "Many to One relationships may have at most 1 x-foreign-key-column "
             "defined."
         )
+
+
+def _gather_object_artifacts(
+    *, spec: types.Schema, logical_name: str, schemas: types.Schemas
+) -> typing.Tuple[types.Schema, str, typing.Optional[str], str]:
+    """
+    Collect artifacts from a specification for constructing an object reference.
+
+    Get the prepared specification, reference logical name, back reference and foreign
+    key column name from a raw object specification.
+
+    Raise MalformedManyToOneRelationshipError if neither $ref not $allOf is found.
+
+    Args:
+        spec: The schema for the column.
+        schemas: Used to resolve any $ref.
+        logical_name: The logical name in the specification for the schema.
+
+    Returns:
+        The prepared specification, reference logical name, back reference and foreign
+        key column.
+
+    """
+    # Default backref
+    backref = None
+    # Default foreign key column
+    fk_column = None
+
+    # Checking for $ref and allOf
+    ref = spec.get("$ref")
+    all_of = spec.get("allOf")
+
+    if ref is not None:
+        # Handling $ref
+        ref_logical_name, spec = helpers.resolve_ref(
+            name=logical_name, schema=spec, schemas=schemas
+        )
+        backref = helpers.get_ext_prop(source=spec, name="x-backref")
+    elif all_of is not None:
+        # Checking for $ref, and x-backref and x-foreign-key-column counts
+        _check_object_all_of(all_of_spec=all_of)
+
+        # Handling allOf
+        for sub_spec in all_of:
+            backref = helpers.get_ext_prop(source=sub_spec, name="x-backref")
+            fk_column = helpers.get_ext_prop(
+                source=sub_spec, name="x-foreign-key-column"
+            )
+            if sub_spec.get("$ref") is not None:
+                ref_logical_name, spec = helpers.resolve_ref(
+                    name=logical_name, schema=sub_spec, schemas=schemas
+                )
+    else:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships are defined using either $ref or allOf."
+        )
+
+    # Resolving allOf
+    spec = helpers.merge_all_of(schema=spec, schemas=schemas)
+
+    # If backref has not been found look in referenced schema
+    if backref is None:
+        backref = helpers.get_ext_prop(source=spec, name="x-backref")
+    # If foreign key column has not been found look in referenced schema
+    if fk_column is None:
+        fk_column = helpers.get_ext_prop(source=spec, name="x-foreign-key-column")
+    # If foreign key column is still None, default to id
+    if fk_column is None:
+        fk_column = "id"
+
+    return spec, ref_logical_name, backref, fk_column
 
 
 def _handle_object_reference(
