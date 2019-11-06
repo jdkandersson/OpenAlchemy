@@ -43,11 +43,11 @@ from open_alchemy import exceptions
 def test_handle_object_error(spec):
     """
     GIVEN spec
-    WHEN _handle_object is called with the spec
+    WHEN handle_object is called with the spec
     THEN MalformedManyToOneRelationshipError is raised.
     """
     with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
-        column_factory._handle_object(
+        column_factory.object_ref.handle_object(
             spec=spec, schemas={}, required=True, logical_name="name 1"
         )
 
@@ -352,16 +352,6 @@ def test_spec_to_column_boolean():
 
 
 @pytest.mark.column
-def test_handle_object_reference():
-    """
-    GIVEN
-    WHEN _handle_object_reference is called
-    THEN the function should exist.
-    """
-    assert hasattr(column_factory, "_handle_object_reference")
-
-
-@pytest.mark.column
 def test_handle_object_reference_no_tablename():
     """
     GIVEN object schema without x-tablename key
@@ -369,7 +359,7 @@ def test_handle_object_reference_no_tablename():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object_reference(
+        column_factory.object_ref._handle_object_reference(
             spec={"properties": {"id": {}}}, schemas={}
         )
 
@@ -382,7 +372,7 @@ def test_handle_object_reference_no_properties():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object_reference(
+        column_factory.object_ref._handle_object_reference(
             spec={"x-tablename": "table 1"}, schemas={}
         )
 
@@ -395,7 +385,7 @@ def test_handle_object_reference_id_missing():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object_reference(
+        column_factory.object_ref._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {}}, schemas={}
         )
 
@@ -408,7 +398,7 @@ def test_handle_object_reference_name_missing():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object_reference(
+        column_factory.object_ref._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
             schemas={},
             fk_column="column_1",
@@ -423,7 +413,7 @@ def test_handle_object_reference_id_no_type():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        column_factory._handle_object_reference(
+        column_factory.object_ref._handle_object_reference(
             spec={"x-tablename": "table 1", "properties": {"id": {}}}, schemas={}
         )
 
@@ -438,7 +428,9 @@ def test_handle_object_reference_return():
     spec = {"x-tablename": "table 1", "properties": {"id": {"type": "idType"}}}
     schemas = {}
 
-    return_value = column_factory._handle_object_reference(spec=spec, schemas=schemas)
+    return_value = column_factory.object_ref._handle_object_reference(
+        spec=spec, schemas=schemas
+    )
 
     assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 
@@ -457,7 +449,7 @@ def test_handle_object_reference_fk_return():
     }
     schemas = {}
 
-    return_value = column_factory._handle_object_reference(
+    return_value = column_factory.object_ref._handle_object_reference(
         spec=spec, schemas=schemas, fk_column="fk"
     )
 
