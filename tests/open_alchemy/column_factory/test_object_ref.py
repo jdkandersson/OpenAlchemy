@@ -145,3 +145,37 @@ def test_handle_object_reference_fk_return():
     )
 
     assert return_value == {"type": "fkType", "x-foreign-key": "table 1.fk"}
+
+
+@pytest.mark.parametrize(
+    "spec, schemas, expected_spec",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            {"type": "object"},
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"allOf": [{"type": "object"}]}},
+            {"type": "object"},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            {"type": "object"},
+        ),
+    ],
+    ids=["$ref", "$ref to allOf", "allOf"],
+)
+def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
+    """
+    GIVEN specification, schemas and expected specification
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN the expected specification is returned.
+    """
+    returned_spec, _, _, _ = object_ref._gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert returned_spec == expected_spec
