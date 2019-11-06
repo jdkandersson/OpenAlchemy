@@ -63,7 +63,9 @@ def test_handle_object_reference_no_tablename():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(spec={"properties": {"id": {}}}, schemas={})
+        object_ref._handle_object_reference(
+            spec={"properties": {"id": {}}}, schemas={}, fk_column="id"
+        )
 
 
 @pytest.mark.column
@@ -74,7 +76,9 @@ def test_handle_object_reference_no_properties():
     THEN a MalformedSchemaError should be raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(spec={"x-tablename": "table 1"}, schemas={})
+        object_ref._handle_object_reference(
+            spec={"x-tablename": "table 1"}, schemas={}, fk_column="id"
+        )
 
 
 @pytest.mark.column
@@ -86,7 +90,9 @@ def test_handle_object_reference_id_missing():
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1", "properties": {}}, schemas={}
+            spec={"x-tablename": "table 1", "properties": {}},
+            schemas={},
+            fk_column="id",
         )
 
 
@@ -114,23 +120,10 @@ def test_handle_object_reference_id_no_type():
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1", "properties": {"id": {}}}, schemas={}
+            spec={"x-tablename": "table 1", "properties": {"id": {}}},
+            schemas={},
+            fk_column="id",
         )
-
-
-@pytest.mark.column
-def test_handle_object_reference_return():
-    """
-    GIVEN object schema with x-tablename and id property with a type
-    WHEN _handle_object_reference is called with the schema
-    THEN a schema with the type of the id property and x-foreign-key property.
-    """
-    spec = {"x-tablename": "table 1", "properties": {"id": {"type": "idType"}}}
-    schemas = {}
-
-    return_value = object_ref._handle_object_reference(spec=spec, schemas=schemas)
-
-    assert return_value == {"type": "idType", "x-foreign-key": "table 1.id"}
 
 
 @pytest.mark.column

@@ -167,10 +167,7 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
 
 
 def _handle_object_reference(
-    *,
-    spec: types.Schema,
-    schemas: types.Schemas,
-    fk_column: typing.Optional[str] = None,
+    *, spec: types.Schema, schemas: types.Schemas, fk_column: str
 ) -> types.Schema:
     """
     Determine the foreign key schema for an object reference.
