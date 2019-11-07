@@ -28,7 +28,8 @@
         "type": "array",
         "items": {
           "$ref": "#/UniqueConstraint"
-        }
+        },
+        "minItems": 1
       }
     ]
   },

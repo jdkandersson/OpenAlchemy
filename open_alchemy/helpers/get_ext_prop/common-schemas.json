@@ -3,7 +3,8 @@
     "type": "array",
     "items": {
       "type": "string"
-    }
+    },
+    "minItems": 1
   },
   "UniqueConstraint": {
     "oneOf": [
@@ -22,6 +23,28 @@
         },
         "required": ["columns"]
       }
+    ]
+  },
+  "Index": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "expressions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      },
+      "unique": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "name",
+      "expressions"
     ]
   }
 }

@@ -97,8 +97,15 @@ def test_valid(name, value):
 
 @pytest.mark.parametrize(
     "value",
-    ["column 1", [1], [{}]],
-    ids=["not list", "list of int", "list of object without columns"],
+    ["column 1", [], [[]], [None], [1], [{}]],
+    ids=[
+        "not list",
+        "empty list",
+        "empty list of list",
+        "list of null",
+        "list of int",
+        "list of object without columns",
+    ],
 )
 @pytest.mark.helper
 def test_unique_constraint_invalid(value):
