@@ -60,7 +60,7 @@ def test_handle_object_reference_no_tablename():
     """
     GIVEN object schema without x-tablename key
     WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError should be raised.
+    THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
@@ -73,7 +73,7 @@ def test_handle_object_reference_no_properties():
     """
     GIVEN object schema without properties key
     WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError should be raised.
+    THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
@@ -86,7 +86,7 @@ def test_handle_object_reference_id_missing():
     """
     GIVEN object schema without id in properties
     WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError should be raised.
+    THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
@@ -101,7 +101,7 @@ def test_handle_object_reference_name_missing():
     """
     GIVEN foreign key argument and object schema without foreign key property
     WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError should be raised.
+    THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
@@ -116,7 +116,7 @@ def test_handle_object_reference_id_no_type():
     """
     GIVEN object schema with id but no type for id
     WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError should be raised.
+    THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
