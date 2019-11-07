@@ -28,14 +28,14 @@ def test_handle_object_error(spec):
 @pytest.mark.parametrize(
     "spec",
     [
-        ({"type": "object"}),
-        ({"$ref": "ref 1"}, {"$ref": "ref 2"}),
-        ({"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}),
-        (
+        [{"type": "object"}],
+        [{"$ref": "ref 1"}, {"$ref": "ref 2"}],
+        [{"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}],
+        [
             {"$ref": "ref 1"},
             {"x-foreign-key-column": "column 1"},
             {"x-foreign-key-column": "column 2"},
-        ),
+        ],
     ],
     ids=[
         "object",
@@ -55,74 +55,54 @@ def test_check_object_all_of_error(spec):
         object_ref._check_object_all_of(all_of_spec=spec)
 
 
+@pytest.mark.parametrize(
+    "spec, schemas, fk_column",
+    [
+        (
+            {"properties": {"id": {}}},
+            {},
+            "id",
+        ),
+        (
+            {"x-tablename": "table 1"},
+            {},
+            "id",
+        ),
+        (
+            {"x-tablename": "table 1", "properties": {}},
+            {},
+            "id",
+        ),
+        (
+            {"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
+            {},
+            "column_1",
+        ),
+        (
+            {"x-tablename": "table 1", "properties": {"id": {}}},
+            {},
+            "id",
+        ),
+    ],
+    ids=[
+        "no tablename",
+        "no properties",
+        "no id property",
+        "custom foreign key property missing",
+        "id property no type",
+    ]
+)
 @pytest.mark.column
-def test_handle_object_reference_no_tablename():
+def test_handle_object_reference_malformed_schema(spec, schemas, fk_column):
     """
-    GIVEN object schema without x-tablename key
-    WHEN _handle_object_reference is called with the schema
+    GIVEN spec, schemas and foreign key column
+    WHEN _handle_object_reference is called with the spec, schemas and foreign key
+        column
     THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         object_ref._handle_object_reference(
-            spec={"properties": {"id": {}}}, schemas={}, fk_column="id"
-        )
-
-
-@pytest.mark.column
-def test_handle_object_reference_no_properties():
-    """
-    GIVEN object schema without properties key
-    WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1"}, schemas={}, fk_column="id"
-        )
-
-
-@pytest.mark.column
-def test_handle_object_reference_id_missing():
-    """
-    GIVEN object schema without id in properties
-    WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1", "properties": {}},
-            schemas={},
-            fk_column="id",
-        )
-
-
-@pytest.mark.column
-def test_handle_object_reference_name_missing():
-    """
-    GIVEN foreign key argument and object schema without foreign key property
-    WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
-            schemas={},
-            fk_column="column_1",
-        )
-
-
-@pytest.mark.column
-def test_handle_object_reference_id_no_type():
-    """
-    GIVEN object schema with id but no type for id
-    WHEN _handle_object_reference is called with the schema
-    THEN a MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(
-            spec={"x-tablename": "table 1", "properties": {"id": {}}},
-            schemas={},
-            fk_column="id",
+            spec=spec, schemas=schemas, fk_column=fk_column
         )
 
 
