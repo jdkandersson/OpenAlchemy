@@ -8,15 +8,15 @@ import jsonschema
 
 from open_alchemy import exceptions
 
-DIRECTORY = os.path.dirname(__file__)
-SCHEMAS_FILE = os.path.join(DIRECTORY, "extension-schemas.json")
-with open(SCHEMAS_FILE) as in_file:
-    SCHEMAS = json.load(in_file)
-COMMON_SCHEMAS_FILE = os.path.join(DIRECTORY, "common-schemas.json")
-with open(COMMON_SCHEMAS_FILE) as in_file:
-    COMMON_SCHEMAS = json.load(in_file)
-resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
-    COMMON_SCHEMAS
+_DIRECTORY = os.path.dirname(__file__)
+_SCHEMAS_FILE = os.path.join(_DIRECTORY, "extension-schemas.json")
+with open(_SCHEMAS_FILE) as in_file:
+    _SCHEMAS = json.load(in_file)
+_COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, "common-schemas.json")
+with open(_COMMON_SCHEMAS_FILE) as in_file:
+    _COMMON_SCHEMAS = json.load(in_file)
+_resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
+    _COMMON_SCHEMAS
 )
 
 
@@ -41,9 +41,9 @@ def get_ext_prop(
     if value is None:
         return None
 
-    schema = SCHEMAS.get(name)
+    schema = _SCHEMAS.get(name)
     try:
-        jsonschema.validate(instance=value, schema=schema, resolver=resolver)
+        jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
     except jsonschema.ValidationError:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "
