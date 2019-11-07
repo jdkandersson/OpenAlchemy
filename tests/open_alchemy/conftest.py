@@ -1,7 +1,6 @@
 """Shared fixtures for tests."""
 # pylint: disable=redefined-outer-name
 
-import json
 from unittest import mock
 
 import pytest
@@ -128,20 +127,6 @@ def testing_env_name():
 def decorator_trace_env_name():
     """Environment variable name where decorator traces are stored."""
     return "DECORATOR_TRACE"
-
-
-@pytest.fixture(scope="function", autouse=True)
-def set_testing(
-    monkeypatch, request, testing_env_name: str, decorator_trace_env_name: str
-):
-    """By default sets TESTING environment variable."""
-    # Do not apply TESTING environment variable if test is marked with
-    # prod_env
-    if "prod_env" in request.keywords:
-        return
-    monkeypatch.setenv(testing_env_name, "")
-    # Setting up tracing of which functions were called
-    monkeypatch.setenv(decorator_trace_env_name, json.dumps([]))
 
 
 @pytest.fixture

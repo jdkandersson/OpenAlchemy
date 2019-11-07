@@ -11,7 +11,6 @@ from open_alchemy import exceptions
 from open_alchemy import model_factory
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_missing_schema():
     """
@@ -23,7 +22,6 @@ def test_missing_schema():
         model_factory.model_factory(name="Missing", base=None, schemas={})
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_missing_tablename():
     """
@@ -37,7 +35,6 @@ def test_missing_tablename():
         )
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_not_object():
     """
@@ -53,7 +50,6 @@ def test_not_object():
         )
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_properties_missing():
     """
@@ -69,7 +65,6 @@ def test_properties_missing():
         )
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_properties_empty():
     """
@@ -91,7 +86,6 @@ def test_properties_empty():
         )
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_single_property():
     """
@@ -114,7 +108,6 @@ def test_single_property():
     assert hasattr(model, "property_1")
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_multiple_property():
     """
@@ -141,7 +134,6 @@ def test_multiple_property():
     assert hasattr(model, "property_2")
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_single_tablename():
     """
@@ -238,7 +230,6 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     )
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_ref():
     """
@@ -263,7 +254,6 @@ def test_ref():
     assert model.__tablename__ == "table 1"
 
 
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_all_of():
     """
@@ -393,7 +383,6 @@ def test_all_of():
         "multiple",
     ],
 )
-@pytest.mark.prod_env
 @pytest.mark.model
 def test_schema(schemas, expected_schema):
     """

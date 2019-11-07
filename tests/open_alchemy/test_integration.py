@@ -84,7 +84,6 @@ def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMoc
     assert returned_base == base
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_empty_spec():
     """
@@ -96,7 +95,6 @@ def test_empty_spec():
         open_alchemy.init_model_factory(base=None, spec={})
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_empty_components():
     """
@@ -108,7 +106,6 @@ def test_empty_components():
         open_alchemy.init_model_factory(base=None, spec={"components": {}})
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_cache_diff(mocked_model_factory: mock.MagicMock):
     """
@@ -127,7 +124,6 @@ def test_cache_diff(mocked_model_factory: mock.MagicMock):
     assert mocked_model_factory.call_count == 2
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_cache_same(mocked_model_factory: mock.MagicMock):
     """
@@ -145,7 +141,6 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
     assert mocked_model_factory.call_count == 1
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_schema():
     """
@@ -176,7 +171,6 @@ def test_schema():
     assert isinstance(model.column.type, sqlalchemy.Integer)
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_to_from_dict():
     """
@@ -206,7 +200,6 @@ def test_to_from_dict():
     assert instance.to_dict() == model_dict
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_to_from_dict_relationship():
     """
@@ -244,7 +237,6 @@ def test_to_from_dict_relationship():
     assert instance.to_dict() == model_dict
 
 
-@pytest.mark.prod_env
 @pytest.mark.parametrize(
     "type_, format_, value",
     [
@@ -298,7 +290,6 @@ def test_database_types(
     assert queried_model.column == value
 
 
-@pytest.mark.prod_env
 @pytest.mark.parametrize("index", ["x-primary-key", "x-index", "x-unique"])
 @pytest.mark.integration
 def test_database_indexes(engine, index: str):
@@ -332,7 +323,6 @@ def test_database_indexes(engine, index: str):
     base.metadata.create_all(engine)
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_database_autoincrement(engine, sessionmaker):
     """
@@ -378,7 +368,6 @@ def test_database_autoincrement(engine, sessionmaker):
     assert queried_model.name == "table name 1"
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_database_not_autoincrement(engine, sessionmaker):
     """
@@ -420,7 +409,6 @@ def test_database_not_autoincrement(engine, sessionmaker):
         session.flush()
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_database_many_to_one_relationship(engine, sessionmaker):
     """
@@ -483,7 +471,6 @@ def test_database_many_to_one_relationship(engine, sessionmaker):
     assert queried_ref_model.tables[0].id == 12
 
 
-@pytest.mark.prod_env
 @pytest.mark.integration
 def test_database_many_to_one_relationship_fk(engine, sessionmaker):
     """

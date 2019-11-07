@@ -7,7 +7,6 @@ import sqlalchemy
 from open_alchemy import column_factory
 
 
-@pytest.mark.prod_env
 @pytest.mark.column
 def test_integration():
     """
@@ -27,7 +26,6 @@ def test_integration():
     assert spec == {"type": "boolean"}
 
 
-@pytest.mark.prod_env
 @pytest.mark.column
 def test_integration_all_of():
     """
@@ -47,7 +45,6 @@ def test_integration_all_of():
     assert spec == {"type": "boolean"}
 
 
-@pytest.mark.prod_env
 @pytest.mark.column
 def test_integration_ref():
     """
@@ -67,7 +64,6 @@ def test_integration_ref():
     assert spec == {"type": "boolean"}
 
 
-@pytest.mark.prod_env
 @pytest.mark.column
 def test_integration_object_ref():
     """
