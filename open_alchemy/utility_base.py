@@ -22,7 +22,7 @@ class UtilityBase:
     _schema: types.Schema
 
     @classmethod
-    def _get_schema(cls: typing.Type[types.ModelClass]) -> typing.Dict:
+    def _get_schema(cls: typing.Type[types.ModelClass]) -> types.Schema:
         """
         Get the schema.
 
@@ -41,7 +41,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls: typing.Type[types.ModelClass]) -> typing.Dict:
+    def _get_properties(cls: typing.Type[types.ModelClass]) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -136,7 +136,7 @@ class UtilityBase:
 
         return cls(**model_dict)
 
-    def to_dict(self) -> typing.Dict:
+    def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
@@ -149,7 +149,7 @@ class UtilityBase:
         properties = self._get_properties()
 
         # Collecting the values of the properties
-        return_dict = {}
+        return_dict: typing.Dict[str, typing.Any] = {}
         for name, spec in properties.items():
             type_ = spec.get("type")
             if type_ is None:

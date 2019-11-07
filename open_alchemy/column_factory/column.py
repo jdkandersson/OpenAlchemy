@@ -31,7 +31,9 @@ def handle_column(
     return [(logical_name, column)]
 
 
-def _spec_to_column(*, spec: types.Schema, required: typing.Optional[bool] = None):
+def _spec_to_column(
+    *, spec: types.Schema, required: typing.Optional[bool] = None
+) -> sqlalchemy.Column:
     """
     Convert specification to a SQLAlchemy column.
 

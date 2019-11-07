@@ -82,7 +82,10 @@ def _init_optional_base(
 
 
 def init_json(
-    spec_filename: str, *, base: typing.Optional[typing.Type] = None, define_all=True
+    spec_filename: str,
+    *,
+    base: typing.Optional[typing.Type] = None,
+    define_all: bool = True,
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a JSON file.
@@ -111,7 +114,10 @@ def init_json(
 
 
 def init_yaml(
-    spec_filename: str, *, base: typing.Optional[typing.Type] = None, define_all=True
+    spec_filename: str,
+    *,
+    base: typing.Optional[typing.Type] = None,
+    define_all: bool = True,
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a YAML file.
