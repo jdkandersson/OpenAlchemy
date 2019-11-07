@@ -41,3 +41,13 @@ class ModelClass(typing_extensions.Protocol):
     def to_dict(self) -> typing.Dict:
         """Convert model instance to dictionary."""
         ...
+
+
+# Unique consraint functions
+ColumnList = typing.List[str]
+ColumnListList = typing.List[ColumnList]
+UniqueConstraint = typing.Dict[str, typing.Any]
+UniqueConstraintList = typing.List[UniqueConstraint]
+AnyUniqueConstraint = typing.Union[
+    ColumnList, ColumnListList, UniqueConstraint, UniqueConstraintList
+]

@@ -2,6 +2,7 @@
 
 import json
 import os
+import typing
 
 import jsonschema
 
@@ -18,7 +19,9 @@ _resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
 )
 
 
-def _spec_to_schema_name(*, spec: types.Schema) -> str:
+def _spec_to_schema_name(
+    *, spec: types.Schema, schema_names: typing.Optional[typing.List[str]] = None
+) -> str:
     """
     Convert a specification to the name of the matched schema.
 
@@ -27,14 +30,20 @@ def _spec_to_schema_name(*, spec: types.Schema) -> str:
 
     Args:
         spec: The specification to convert.
+        schema_names: The names of the schemas to check.
 
     Returns:
         The name of the specification.
 
     """
-    for name, schema in _COMMON_SCHEMAS.items():
+    if schema_names is None:
+        schema_names = _COMMON_SCHEMAS.keys()
+
+    for name in schema_names:
         try:
-            jsonschema.validate(instance=spec, schema=schema, resolver=_resolver)
+            jsonschema.validate(
+                instance=spec, schema=_COMMON_SCHEMAS[name], resolver=_resolver
+            )
             return name
         except jsonschema.ValidationError:
             continue
