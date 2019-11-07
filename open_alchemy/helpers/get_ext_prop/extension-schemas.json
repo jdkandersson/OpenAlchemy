@@ -19,6 +19,19 @@
     "description": "Add unique constraint to a column.",
     "type": "boolean"
   },
+  "x-unique-constraint": {
+    "oneOf": [
+      {
+        "$ref": "#/UniqueConstraint"
+      },
+      {
+        "type": "array",
+        "items": {
+          "$ref": "#/UniqueConstraint"
+        }
+      }
+    ]
+  },
   "x-foreign-key": {
     "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
     "type": "string",

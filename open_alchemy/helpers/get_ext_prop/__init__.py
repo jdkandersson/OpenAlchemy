@@ -12,6 +12,9 @@ DIRECTORY = os.path.dirname(__file__)
 SCHEMAS_FILE = os.path.join(DIRECTORY, "extension-schemas.json")
 with open(SCHEMAS_FILE) as in_file:
     SCHEMAS = json.load(in_file)
+COMMON_SCHEMAS_FILE = os.path.join(DIRECTORY, "common-schemas.json")
+with open(COMMON_SCHEMAS_FILE) as in_file:
+    COMMON_SCHEMAS = json.load(in_file)
 
 
 def get_ext_prop(
@@ -36,8 +39,9 @@ def get_ext_prop(
         return None
 
     schema = SCHEMAS.get(name)
+    resolver = jsonschema.RefResolver.from_schema(COMMON_SCHEMAS)
     try:
-        jsonschema.validate(instance=value, schema=schema)
+        jsonschema.validate(instance=value, schema=schema, resolver=resolver)
     except jsonschema.ValidationError:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "

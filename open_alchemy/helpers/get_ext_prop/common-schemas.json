@@ -1,0 +1,27 @@
+{
+  "ColumnList": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "UniqueConstraint": {
+    "oneOf": [
+      {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "columns": {
+            "$ref": "#/ColumnList"
+          }
+        },
+        "required": ["columns"]
+      }
+    ]
+  }
+}

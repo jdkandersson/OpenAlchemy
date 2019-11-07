@@ -93,3 +93,54 @@ def test_valid(name, value):
     returned_value = helpers.get_ext_prop(source=source, name=name)
 
     assert returned_value == value
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["column 1", [1], [{}]],
+    ids=["not list", "list of int", "list of object without columns"],
+)
+@pytest.mark.helper
+def test_unique_constraint_invalid(value):
+    """
+    GIVEN value for x-unique-constraint that has an invalid format
+    WHEN get_ext_prop with x-unique-constraint and the value
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    name = "x-unique-constraint"
+    source = {name: value}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.get_ext_prop(source=source, name=name)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        ["column 1"],
+        [["column 1"]],
+        {"columns": ["column 1"]},
+        {"columns": ["column 1"], "name": "name 1"},
+        [{"columns": ["column 1"]}],
+    ],
+    ids=[
+        "list of string",
+        "list of list of string",
+        "object with columns",
+        "object with columns and name",
+        "list of object with columns",
+    ],
+)
+@pytest.mark.helper
+def test_unique_constraint_valid(value):
+    """
+    GIVEN value for x-unique-constraint that has a valid format
+    WHEN get_ext_prop with x-unique-constraint and the value
+    THEN the value is returned.
+    """
+    name = "x-unique-constraint"
+    source = {name: value}
+
+    returned_value = helpers.get_ext_prop(source=source, name=name)
+
+    assert returned_value == value
