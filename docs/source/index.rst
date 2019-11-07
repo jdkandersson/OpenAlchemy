@@ -10,13 +10,6 @@ Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
 defining your API and database models. Any required additions to the OpenAPI
 specification are compliant with the OpenAPI standard.
 
-.. toctree::
-   :maxdepth: 3
-   :caption: Contents:
-
-   examples/index
-   technical_details/index
-
 
 .. _getting-started:
 
@@ -26,11 +19,15 @@ Getting Started
 If you have the following OpenAPI specification:
 
 .. literalinclude:: ../../examples/simple-example-spec.yml
+    :language: yaml
+    :linenos:
 
 To use SQLAlchemy to retrieve *Employees* from a database you need the
 following *models.py* file:
 
 .. literalinclude:: ../../examples/simple_models.py
+    :language: python
+    :linenos:
 
 The *Base* for the SQLAlchemy models and the *Employee* model is now available
 from *open_alchemy.models*::
@@ -196,6 +193,8 @@ defines the format and provides a description for each of the supported
 extension properties.
 
 .. literalinclude:: ../../open_alchemy/helpers/get_ext_prop/extension-schemas.json
+    :language: json
+    :linenos:
 
 To find out more about an extension property, go to the following section of
 the documentation:
@@ -224,3 +223,19 @@ the documentation:
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.
+
+Technical Details
+-----------------
+
+.. toctree::
+   :maxdepth: 3
+
+   technical_details/index
+
+Examples
+--------
+
+.. toctree::
+   :maxdepth: 3
+
+   examples/index
