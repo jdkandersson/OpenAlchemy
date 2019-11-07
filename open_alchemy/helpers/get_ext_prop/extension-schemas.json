@@ -36,14 +36,16 @@
   "x-unique-constraint": {
     "oneOf": [
       {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
         "$ref": "#/UniqueConstraint"
       },
       {
-        "type": "array",
-        "items": {
-          "$ref": "#/UniqueConstraint"
-        },
-        "minItems": 1
+        "$ref": "#/UniqueConstraintList"
       }
     ]
   },

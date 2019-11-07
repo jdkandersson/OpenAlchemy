@@ -6,24 +6,31 @@
     },
     "minItems": 1
   },
+  "ColumnListList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/ColumnList"
+    },
+    "minItems": 1
+  },
   "UniqueConstraint": {
-    "oneOf": [
-      {
-        "$ref": "#/ColumnList"
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
       },
-      {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "columns": {
-            "$ref": "#/ColumnList"
-          }
-        },
-        "required": ["columns"]
+      "columns": {
+        "$ref": "#/ColumnList"
       }
-    ]
+    },
+    "required": ["columns"]
+  },
+  "UniqueConstraintList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/UniqueConstraint"
+    },
+    "minItems": 1
   },
   "Index": {
     "type": "object",
