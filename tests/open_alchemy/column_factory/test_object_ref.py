@@ -28,14 +28,14 @@ def test_handle_object_error(spec):
 @pytest.mark.parametrize(
     "spec",
     [
-        [{"type": "object"}],
-        [{"$ref": "ref 1"}, {"$ref": "ref 2"}],
-        [{"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}],
-        [
+        ({"type": "object"}),
+        ({"$ref": "ref 1"}, {"$ref": "ref 2"}),
+        ({"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}),
+        (
             {"$ref": "ref 1"},
             {"x-foreign-key-column": "column 1"},
             {"x-foreign-key-column": "column 2"},
-        ],
+        ),
     ],
     ids=[
         "object",
