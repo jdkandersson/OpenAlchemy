@@ -6,6 +6,7 @@ import typing_extensions
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
+AllOfSpec = typing.List[Schema]
 
 
 class ModelFactory(typing_extensions.Protocol):

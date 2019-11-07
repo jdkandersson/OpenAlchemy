@@ -84,9 +84,9 @@ To add an unique constraint to a column, set the *x-unique* property on an
 object property to *true*. For example:
 
 .. code-block:: yaml
-   :linenos:
+    :linenos:
 
-   Employee:
+    Employee:
       type: object
       x-tablename: employee
       properties:
@@ -105,9 +105,9 @@ To add a foreign key constraint, set the *x-foreign-key* property on an object
 property to the <table name>.<column>. For example:
 
 .. code-block:: yaml
-   :linenos:
+    :linenos:
 
-   Division:
+    Division:
       type: object
       x-tablename: division
       properties:
@@ -116,7 +116,7 @@ property to the <table name>.<column>. For example:
         name:
           type: string
           x-unique: true
-   Employee:
+    Employee:
       type: object
       x-tablename: employee
       properties:

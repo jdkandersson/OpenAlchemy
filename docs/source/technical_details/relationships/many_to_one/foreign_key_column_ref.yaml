@@ -1,6 +1,6 @@
 Division:
   ...
-  x-backref: employees
+  x-foreign-key-column: name
 Employee:
   ...
   properties:

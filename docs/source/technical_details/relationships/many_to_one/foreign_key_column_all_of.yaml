@@ -7,4 +7,4 @@ Employee:
     division:
       allOf:
         - "$ref": "#/components/schemas/Division"
-        - x-backref: employees
+        - x-foreign-key-column: name

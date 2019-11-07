@@ -24,6 +24,8 @@ example application has been included here. The API is designed to keep track
 of employees of a company. The OpenAPI specification is:
 
 .. literalinclude:: ../../../examples/app/api.yaml
+    :language: yaml
+    :linenos:
 
 There is a *POST* endpoint for inserting new employees into the database, a
 *GET* endpoint for all employees and for a specific employee by id, there is a
@@ -38,6 +40,8 @@ The OpenAPI specification above includes a *schemas* section which defines the
 database setup is defined in the following file:
 
 .. literalinclude:: ../../../examples/app/database.py
+    :language: python
+    :linenos:
 
 Endpoint Fulfillment
 --------------------
@@ -46,6 +50,8 @@ The API endpoints are all fulfilled in the *api.py* file which has a function
 for each combination of path and method:
 
 .. literalinclude:: ../../../examples/app/api.py
+    :language: python
+    :linenos:
 
 App Construction
 ----------------
@@ -54,6 +60,8 @@ All the steps needed to make the Flask app work are defined in the *app.py*
 file:
 
 .. literalinclude:: ../../../examples/app/app.py
+    :language: python
+    :linenos:
 
 Conclusion
 ----------

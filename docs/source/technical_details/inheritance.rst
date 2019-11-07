@@ -26,10 +26,14 @@ example, the following specification defines a base schema for the *id* and
 some changes to the description, example or both.
 
 .. literalinclude:: ../../../examples/all-of-column-example-spec.yml
+    :language: yaml
+    :linenos:
 
 The SQLAlchemy models might then look like:
 
 .. literalinclude:: ../../../examples/all_of_column_models.py
+    :language: python
+    :linenos:
 
 Any duplicate properties are overridden by subsequent entries in *allOf*. For
 example, if all entries have the *description* property, the *description* from
@@ -49,10 +53,14 @@ they can copy the *id* and *name* columns from *IdNameBase* and define their
 own *description* and *tablename*.
 
 .. literalinclude:: ../../../examples/all-of-model-example-spec.yml
+    :language: yaml
+    :linenos:
 
 The SQLAlchemy models might then look like:
 
 .. literalinclude:: ../../../examples/all_of_model_models.py
+    :language: python
+    :linenos:
 
 Similar rules as for columns apply for duplicate properties in *allOf* entries
 with one difference. The *required* property is treated as an aggregate of all

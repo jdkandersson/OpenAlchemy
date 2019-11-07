@@ -24,6 +24,10 @@
     "type": "string",
     "pattern": "^.+\\..+$"
   },
+  "x-foreign-key-column": {
+    "description": "Customize the column used for the foreign key constraint of a relationship.",
+    "type": "string"
+  },
   "x-tablename": {
     "description": "Define the name of a table.",
     "type": "string"

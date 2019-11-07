@@ -10,18 +10,26 @@ schemas section. This means that a single definition for a *property* of an
 use of references:
 
 .. literalinclude:: ../../../examples/ref-column-example-spec.yml
+    :language: yaml
+    :linenos:
 
 Which leads to the following *models.py* file:
 
 .. literalinclude:: ../../../examples/ref_column_models.py
+    :language: python
+    :linenos:
 
 The same is also possible for whole models which allows for aliases for models:
 
 .. literalinclude:: ../../../examples/ref-model-example-spec.yml
+    :language: yaml
+    :linenos:
 
 Which leads to the following *models.py* file:
 
 .. literalinclude:: ../../../examples/ref_model_models.py
+    :language: python
+    :linenos:
 
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
