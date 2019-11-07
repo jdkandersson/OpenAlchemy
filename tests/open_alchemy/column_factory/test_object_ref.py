@@ -58,31 +58,15 @@ def test_check_object_all_of_error(spec):
 @pytest.mark.parametrize(
     "spec, schemas, fk_column",
     [
-        (
-            {"properties": {"id": {}}},
-            {},
-            "id",
-        ),
-        (
-            {"x-tablename": "table 1"},
-            {},
-            "id",
-        ),
-        (
-            {"x-tablename": "table 1", "properties": {}},
-            {},
-            "id",
-        ),
+        ({"properties": {"id": {}}}, {}, "id"),
+        ({"x-tablename": "table 1"}, {}, "id"),
+        ({"x-tablename": "table 1", "properties": {}}, {}, "id"),
         (
             {"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
             {},
             "column_1",
         ),
-        (
-            {"x-tablename": "table 1", "properties": {"id": {}}},
-            {},
-            "id",
-        ),
+        ({"x-tablename": "table 1", "properties": {"id": {}}}, {}, "id"),
     ],
     ids=[
         "no tablename",
@@ -90,7 +74,7 @@ def test_check_object_all_of_error(spec):
         "no id property",
         "custom foreign key property missing",
         "id property no type",
-    ]
+    ],
 )
 @pytest.mark.column
 def test_handle_object_reference_malformed_schema(spec, schemas, fk_column):
