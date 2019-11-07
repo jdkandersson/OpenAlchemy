@@ -15,6 +15,20 @@
     "description": "Add index to a column.",
     "type": "boolean"
   },
+  "x-composite-index": {
+    "oneOf": [
+      {
+        "$ref": "#/Index"
+      },
+      {
+        "type": "array",
+        "items": {
+          "$ref": "#/Index"
+        },
+        "minItems": 1
+      }
+    ]
+  },
   "x-unique": {
     "description": "Add unique constraint to a column.",
     "type": "boolean"

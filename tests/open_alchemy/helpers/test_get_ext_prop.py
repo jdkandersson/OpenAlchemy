@@ -151,3 +151,40 @@ def test_unique_constraint_valid(value):
     returned_value = helpers.get_ext_prop(source=source, name=name)
 
     assert returned_value == value
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "column 1",
+        {"expressions": ["column 1"]},
+        {"name": "name 1"},
+        {"name": "name 1", "expressions": []},
+        {"name": "name 1", "expressions": [1]},
+        {"name": 1, "expressions": ["column 1"]},
+        {"name": "name 1", "expressions": ["column 1"], "unique": "true"},
+        [],
+    ],
+    ids=[
+        "not object not array",
+        "object name missing",
+        "object expressions missing",
+        "object expressions empty",
+        "object expressions not string",
+        "object name not string",
+        "object unique not boolean",
+        "array empty",
+    ],
+)
+@pytest.mark.helper
+def test_composite_index_invalid(value):
+    """
+    GIVEN value for x-composite-index that has an invalid format
+    WHEN get_ext_prop with x-composite-index and the value
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    name = "x-composite-index"
+    source = {name: value}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.get_ext_prop(source=source, name=name)
