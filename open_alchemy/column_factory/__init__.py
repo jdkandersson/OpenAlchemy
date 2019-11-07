@@ -32,7 +32,8 @@ def column_factory(
         logical_name: The logical name in the specification for the schema.
 
     Returns:
-        The logical name and the SQLAlchemy column based on the schema.
+        The logical name, the SQLAlchemy column based on the schema and the
+        specification to store for the column.
 
     """
     # Checking for the type

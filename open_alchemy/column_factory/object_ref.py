@@ -33,8 +33,9 @@ def handle_object(
         logical_name: The logical name in the specification for the schema.
 
     Returns:
-        The logical name and the SQLAlchemy column for the foreign key and the logical
-        name and relationship for the reference to the object.
+        The logical name, the SQLAlchemy column for the foreign key and the logical
+        name and relationship for the reference to the object and the specification to
+        record for the object reference.
 
     """
     spec, ref_logical_name, backref, fk_column = _gather_object_artifacts(
