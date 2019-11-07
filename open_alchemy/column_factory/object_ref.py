@@ -82,7 +82,7 @@ def _gather_object_artifacts(
     """
     # Default backref
     backref = None
-    # Default foreign key column
+    # Initial foreign key column
     fk_column = None
 
     # Checking for $ref and allOf
