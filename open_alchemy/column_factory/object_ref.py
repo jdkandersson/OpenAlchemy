@@ -68,7 +68,7 @@ def _gather_object_artifacts(
     Get the prepared specification, reference logical name, back reference and foreign
     key column name from a raw object specification.
 
-    Raise MalformedManyToOneRelationshipError if neither $ref not $allOf is found.
+    Raise MalformedManyToOneRelationshipError if neither $ref nor $allOf is found.
 
     Args:
         spec: The schema for the column.
