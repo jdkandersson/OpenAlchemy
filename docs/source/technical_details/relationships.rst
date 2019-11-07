@@ -37,6 +37,7 @@ Without OpenLAlchemy, the following is the equivalent *models.py* file:
 
 .. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
 
+
 .. _backref:
 
 Backref
@@ -49,7 +50,7 @@ recommended implementation adds it using *allOf*:
 
 .. literalinclude:: ./relationships/many_to_one/backref_recommended.yaml
 
-Note that, when *allOf* is used, there must be exacly one *$ref* in the list
+Note that, when *allOf* is used, there must be exactly one *$ref* in the list
 and at most one *x-backref* in the list.
 
 The other way, which is not recommended, adds the *x-backref* to the object
@@ -58,7 +59,8 @@ being referenced:
 .. literalinclude:: ./relationships/many_to_one/backref_not_recommended.yaml
 
 The reason it is not recommended is because this only allows a *x-backref* per
-table, whereas the other allows for many.
+table, whereas the other allows for many. If *x-backref* is both in the *allOf*
+list and the referenced object, the value from the *allOf* list will be used.
 
 Using *x-backref* is equivalent to the following traditional *models.py*:
 
@@ -66,3 +68,30 @@ Using *x-backref* is equivalent to the following traditional *models.py*:
 
 .. seealso::
     :ref:`references` shows how to reference to other schemas.
+
+
+.. _custom-foreign-key:
+
+Custom Foreign Key
+^^^^^^^^^^^^^^^^^^
+
+The  *x-foreign-key-column* extension property is used to define a different
+foreign key constraint column to the default *id* column. It is similar to the
+:ref:`backref` extension property. There are two ways the foreign key constrain
+can be defined. The first adds the *x-foreign-key-column* extension property
+using *allOf* which allows for a different foreign key column for each
+relationship:
+
+.. literalinclude:: ./relationships/many_to_one/foreign_key_column_all_of.yaml
+
+The second adds the extension property on the referenced object:
+
+.. literalinclude:: ./relationships/many_to_one/foreign_key_column_ref.yaml
+
+This allows for a common definition for the foreign key constraint for all
+relationships referencing the same object. If *x-foreign-key-column* is both in
+the *allOf* list and the referenced object, the value from the *allOf* list
+will be used.
+
+.. seealso::
+    :ref:`foreign-key` describes how to define foreign key constraints.
