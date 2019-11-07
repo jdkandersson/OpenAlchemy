@@ -21,11 +21,7 @@
         "$ref": "#/Index"
       },
       {
-        "type": "array",
-        "items": {
-          "$ref": "#/Index"
-        },
-        "minItems": 1
+        "$ref": "#/IndexList"
       }
     ]
   },

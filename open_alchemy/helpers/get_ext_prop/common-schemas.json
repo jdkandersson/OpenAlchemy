@@ -53,5 +53,12 @@
       "name",
       "expressions"
     ]
+  },
+  "IndexList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/Index"
+    },
+    "minItems": 1
   }
 }
