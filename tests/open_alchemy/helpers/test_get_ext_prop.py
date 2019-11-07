@@ -188,3 +188,27 @@ def test_composite_index_invalid(value):
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
         helpers.get_ext_prop(source=source, name=name)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"name": "name 1", "expressions": ["column 1"]},
+        {"name": "name 1", "expressions": ["column 1"], "unique": True},
+        [{"name": "name 1", "expressions": ["column 1"]}],
+    ],
+    ids=["object", "object unique", "list of object"],
+)
+@pytest.mark.helper
+def test_composite_index_valid(value):
+    """
+    GIVEN value for x-composite-index that has a valid format
+    WHEN get_ext_prop with x-composite-index and the value
+    THEN the value is returned.
+    """
+    name = "x-composite-index"
+    source = {name: value}
+
+    returned_value = helpers.get_ext_prop(source=source, name=name)
+
+    assert returned_value == value
