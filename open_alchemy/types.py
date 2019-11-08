@@ -43,7 +43,7 @@ class ModelClass(typing_extensions.Protocol):
         ...
 
 
-# Unique consraint functions
+# Unique consraint types
 ColumnList = typing.List[str]
 ColumnListList = typing.List[ColumnList]
 UniqueConstraint = typing.Dict[str, typing.Any]
@@ -51,3 +51,7 @@ UniqueConstraintList = typing.List[UniqueConstraint]
 AnyUniqueConstraint = typing.Union[
     ColumnList, ColumnListList, UniqueConstraint, UniqueConstraintList
 ]
+# Index types
+Index = typing.Dict[str, typing.Any]
+IndexList = typing.List[Index]
+AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]

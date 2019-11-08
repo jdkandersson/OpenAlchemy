@@ -52,9 +52,9 @@ def _spec_to_schema_name(
     raise exceptions.SchemaNotFoundError("Specification did not match any schemas.")
 
 
-def _handle_column_list(spec: typing.List[str]) -> types.UniqueConstraint:
+def _uq_handle_column_list(spec: typing.List[str]) -> types.UniqueConstraint:
     """
-    Convert ColumnList specification to UniqueConstrain.
+    Convert ColumnList specification to UniqueConstraint.
 
     Args:
         spec: The specification to convert.
@@ -67,8 +67,8 @@ def _handle_column_list(spec: typing.List[str]) -> types.UniqueConstraint:
 
 
 _UNIQUE_MAPPING: typing.Dict[str, typing.Callable[..., types.UniqueConstraintList]] = {
-    "ColumnList": lambda spec: [_handle_column_list(spec=spec)],
-    "ColumnListList": lambda spec: list(map(_handle_column_list, spec)),
+    "ColumnList": lambda spec: [_uq_handle_column_list(spec=spec)],
+    "ColumnListList": lambda spec: list(map(_uq_handle_column_list, spec)),
     "UniqueConstraint": lambda spec: [spec],
     "UniqueConstraintList": lambda spec: spec,
 }
@@ -98,3 +98,48 @@ def _handle_unique(*, spec: types.AnyUniqueConstraint) -> types.UniqueConstraint
     """
     name = _spec_to_schema_name(spec=spec, schema_names=_UNIQUE_SCHEMA_NAMES)
     return _UNIQUE_MAPPING[name](spec)
+
+
+def _ix_handle_column_list(spec: typing.List[str]) -> types.Index:
+    """
+    Convert ColumnList specification to Index.
+
+    Args:
+        spec: The specification to convert.
+
+    Returns:
+        The Index.
+
+    """
+    return {"expressions": spec}
+
+
+_INDEX_MAPPING: typing.Dict[str, typing.Callable[..., types.IndexList]] = {
+    "ColumnList": lambda spec: [_ix_handle_column_list(spec=spec)],
+    "ColumnListList": lambda spec: list(map(_ix_handle_column_list, spec)),
+    "Index": lambda spec: [spec],
+    "IndexList": lambda spec: spec,
+}
+
+
+_INDEX_SCHEMA_NAMES: typing.List[str] = list(
+    map(
+        lambda schema: schema["$ref"].split("/")[-1],
+        _SCHEMAS["x-composite-index"]["oneOf"],
+    )
+)
+
+
+def _handle_index(*, spec: types.AnyIndex) -> types.IndexList:
+    """
+    Convert any composite index to IndexList.
+
+    Args:
+        spec: The specification to convert.
+
+    Returns:
+        The IndexList.
+
+    """
+    name = _spec_to_schema_name(spec=spec, schema_names=_INDEX_SCHEMA_NAMES)
+    return _INDEX_MAPPING[name](spec)

@@ -116,3 +116,35 @@ def test_handle_unique(spec, expected_spec):
     )
 
     assert returned_spec == expected_spec
+
+
+@pytest.mark.parametrize(
+    "spec, expected_spec",
+    [
+        (["column 1"], [{"expressions": ["column 1"]}]),
+        ([["column 1"]], [{"expressions": ["column 1"]}]),
+        (
+            [["column 1"], ["column 2"]],
+            [{"expressions": ["column 1"]}, {"expressions": ["column 2"]}],
+        ),
+        ({"expressions": ["column 1"]}, [{"expressions": ["column 1"]}]),
+        ([{"expressions": ["column 1"]}], [{"expressions": ["column 1"]}]),
+    ],
+    ids=[
+        "column list",
+        "column list of list single",
+        "column list of list multiple",
+        "composite index",
+        "list of composite index",
+    ],
+)
+@pytest.mark.table_args
+def test_handle_index(spec, expected_spec):
+    """
+    GIVEN specification and expected specification
+    WHEN _handle_index is called with the specification
+    THEN the expected specification is returned.
+    """
+    returned_spec = factory._handle_index(spec=spec)  # pylint: disable=protected-access
+
+    assert returned_spec == expected_spec
