@@ -598,7 +598,7 @@ def test_database_many_to_one_relationship_fk(engine, sessionmaker):
     ids=["ref column", "ref model", "allOf column", "allOf model"],
 )
 @pytest.mark.integration
-def test_database_feature(engine, sessionmaker, spec):
+def test_database_ref_all_of(engine, sessionmaker, spec):
     """
     GIVEN specification with a schema that has a $ref on a column
     WHEN schema is created and an instance is added to the session
@@ -620,6 +620,92 @@ def test_database_feature(engine, sessionmaker, spec):
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == 1
+
+
+@pytest.mark.parametrize(
+    "schema_additions, sql, expected_contents",
+    [
+        (
+            {"x-unique-constraint": ["id"]},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["UNIQUE (id)"],
+        ),
+        (
+            {"x-unique-constraint": ["id", "column"]},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ['UNIQUE (id, "column")'],
+        ),
+        (
+            {"x-unique-constraint": [["id"], ["column"]]},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["UNIQUE (id)", 'UNIQUE ("column")'],
+        ),
+        (
+            {"x-unique-constraint": {"columns": ["id"]}},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["UNIQUE (id)"],
+        ),
+        (
+            {"x-unique-constraint": {"name": "id", "columns": ["id"]}},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["CONSTRAINT id UNIQUE (id)"],
+        ),
+        (
+            {
+                "x-unique-constraint": [
+                    {"name": "id", "columns": ["id"]},
+                    {"name": "column", "columns": ["column"]},
+                ]
+            },
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["CONSTRAINT id UNIQUE (id)", 'CONSTRAINT "column" UNIQUE ("column")'],
+        ),
+    ],
+    ids=[
+        "unique array single",
+        "unique array multiple",
+        "unique multiple array",
+        "unique object",
+        "unique object name",
+        "unique multiple object name",
+    ],
+)
+@pytest.mark.integration
+def test_table_args_unique(engine, schema_additions, sql, expected_contents):
+    """
+    GIVEN schema, additional properties for schema, sql to execute and expected
+        contents
+    WHEN models are constructed
+    THEN when sql is executed the expected contents are in the result.
+    """
+    # Defining schema
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "column": {"type": "integer"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                    **schema_additions,
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+
+    # Query schema
+    [(result,)] = engine.execute(sql)
+    for expected_content in expected_contents:
+        assert expected_content in result
 
 
 BASIC_SPEC = {
