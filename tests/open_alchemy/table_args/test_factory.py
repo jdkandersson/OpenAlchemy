@@ -232,7 +232,7 @@ def test_unique_factory():
     """
     spec = [["column 1"], ["column 2"]]
 
-    (unique_1, unique_2) = factory.unique_factory(spec=spec)
+    unique_1, unique_2 = factory.unique_factory(spec=spec)
 
     assert unique_1._pending_colargs == ["column 1"]  # pylint: disable=protected-access
     assert unique_2._pending_colargs == ["column 2"]  # pylint: disable=protected-access
@@ -247,7 +247,7 @@ def test_index_factory():
     """
     spec = [["column 1"], ["column 2"]]
 
-    (index_1, index_2) = factory.index_factory(spec=spec)
+    index_1, index_2 = factory.index_factory(spec=spec)
 
     assert index_1.expressions == ["column 1"]
     assert index_2.expressions == ["column 2"]
