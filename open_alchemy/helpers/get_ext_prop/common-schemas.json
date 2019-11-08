@@ -13,7 +13,7 @@
     },
     "minItems": 1
   },
-  "UniqueConstraint": {
+  "Unique": {
     "type": "object",
     "properties": {
       "name": {
@@ -25,10 +25,10 @@
     },
     "required": ["columns"]
   },
-  "UniqueConstraintList": {
+  "UniqueList": {
     "type": "array",
     "items": {
-      "$ref": "#/UniqueConstraint"
+      "$ref": "#/Unique"
     },
     "minItems": 1
   },

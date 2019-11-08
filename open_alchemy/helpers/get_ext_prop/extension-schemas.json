@@ -44,10 +44,10 @@
         "$ref": "#/ColumnListList"
       },
       {
-        "$ref": "#/UniqueConstraint"
+        "$ref": "#/Unique"
       },
       {
-        "$ref": "#/UniqueConstraintList"
+        "$ref": "#/UniqueList"
       }
     ]
   },

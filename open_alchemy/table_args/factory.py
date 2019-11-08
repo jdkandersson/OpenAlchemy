@@ -1,4 +1,4 @@
-"""Create table args such as UniqueConstraints and Index."""
+"""Create table args such as Uniques and Index."""
 
 import functools
 import json
@@ -9,6 +9,9 @@ import jsonschema
 
 from open_alchemy import exceptions
 from open_alchemy import types
+
+# from sqlalchemy import schema
+
 
 _DIRECTORY = os.path.dirname(__file__)
 _PATHS = ("..", "helpers", "get_ext_prop")
@@ -21,9 +24,7 @@ _resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
 
 
 def _spec_to_schema_name(
-    *,
-    spec: types.AnyUniqueConstraint,
-    schema_names: typing.Optional[typing.List[str]] = None,
+    *, spec: types.AnyUnique, schema_names: typing.Optional[typing.List[str]] = None
 ) -> str:
     """
     Convert a specification to the name of the matched schema.
@@ -53,18 +54,16 @@ def _spec_to_schema_name(
     raise exceptions.SchemaNotFoundError("Specification did not match any schemas.")
 
 
-def _handle_column_list(
-    spec: typing.List[str], property_name: str
-) -> types.UniqueConstraint:
+def _handle_column_list(spec: typing.List[str], property_name: str) -> types.Unique:
     """
-    Convert ColumnList specification to UniqueConstraint.
+    Convert ColumnList specification to Unique.
 
     Args:
         spec: The specification to convert.
         property_name: The property name under which to store the column list.
 
     Returns:
-        The UniqueConstraint.
+        The Unique.
 
     """
     return {property_name: spec}
@@ -96,11 +95,11 @@ _INDEX_SCHEMA_NAMES: typing.List[str] = list(
 )
 
 # Unique and index name to conversion function
-_UNIQUE_MAPPING: typing.Dict[str, typing.Callable[..., types.UniqueConstraintList]] = {
+_UNIQUE_MAPPING: typing.Dict[str, typing.Callable[..., types.UniqueList]] = {
     "ColumnList": lambda spec: [_uq_handle_column_list(spec=spec)],
     "ColumnListList": lambda spec: list(map(_uq_handle_column_list, spec)),
-    "UniqueConstraint": lambda spec: [spec],
-    "UniqueConstraintList": lambda spec: spec,
+    "Unique": lambda spec: [spec],
+    "UniqueList": lambda spec: spec,
 }
 _INDEX_MAPPING: typing.Dict[str, typing.Callable[..., types.IndexList]] = {
     "ColumnList": lambda spec: [_ix_handle_column_list(spec=spec)],
@@ -110,15 +109,15 @@ _INDEX_MAPPING: typing.Dict[str, typing.Callable[..., types.IndexList]] = {
 }
 
 
-def _map_unique(*, spec: types.AnyUniqueConstraint) -> types.UniqueConstraintList:
+def _map_unique(*, spec: types.AnyUnique) -> types.UniqueList:
     """
-    Convert any unique constraint to UniqueConstraintList.
+    Convert any unique constraint to UniqueList.
 
     Args:
         spec: The specification to convert.
 
     Returns:
-        The UniqueConstraintList.
+        The UniqueList.
 
     """
     name = _spec_to_schema_name(spec=spec, schema_names=_UNIQUE_SCHEMA_NAMES)
@@ -138,3 +137,16 @@ def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     """
     name = _spec_to_schema_name(spec=spec, schema_names=_INDEX_SCHEMA_NAMES)
     return _INDEX_MAPPING[name](spec)
+
+
+# def _construct_unique(*, spec: types.UniqueList) -> typing.List[schema.Index]:
+#     """
+#     Construct unique constraints.
+
+#     Args:
+#         spec: The definitions for the unique constraints.
+
+#     Returns:
+#         The unique constraints.
+
+#     """
