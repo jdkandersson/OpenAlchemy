@@ -97,14 +97,15 @@ def test_valid(name, value):
 
 @pytest.mark.parametrize(
     "value",
-    ["column 1", [], [[]], [None], [1], [{}]],
+    ["column 1", [], [[]], [None], [1], {}, {"name": 1}],
     ids=[
-        "not list",
+        "not object not array",
         "empty list",
         "empty list of list",
         "list of null",
-        "list of int",
-        "list of object without columns",
+        "list of not string",
+        "object columns missing",
+        "object name not string",
     ],
 )
 @pytest.mark.helper
@@ -157,23 +158,23 @@ def test_unique_constraint_valid(value):
     "value",
     [
         "column 1",
-        {"expressions": ["column 1"]},
-        {"name": "name 1"},
-        {"name": "name 1", "expressions": []},
-        {"name": "name 1", "expressions": [1]},
-        {"name": 1, "expressions": ["column 1"]},
-        {"name": "name 1", "expressions": ["column 1"], "unique": "true"},
         [],
+        [[]],
+        [None],
+        [1],
+        {},
+        {"name": 1, "expressions": ["column 1"]},
+        {"expressions": ["column 1"], "unique": "true"},
     ],
     ids=[
         "not object not array",
-        "object name missing",
+        "empty list",
+        "empty list of list",
+        "list of null",
+        "list of not string",
         "object expressions missing",
-        "object expressions empty",
-        "object expressions not string",
         "object name not string",
         "object unique not boolean",
-        "array empty",
     ],
 )
 @pytest.mark.helper
@@ -193,11 +194,21 @@ def test_composite_index_invalid(value):
 @pytest.mark.parametrize(
     "value",
     [
+        ["column 1"],
+        [["column 1"]],
+        {"expressions": ["column 1"]},
         {"name": "name 1", "expressions": ["column 1"]},
-        {"name": "name 1", "expressions": ["column 1"], "unique": True},
-        [{"name": "name 1", "expressions": ["column 1"]}],
+        {"expressions": ["column 1"], "unique": True},
+        [{"expressions": ["column 1"]}],
     ],
-    ids=["object", "object unique", "list of object"],
+    ids=[
+        "list of string",
+        "list of list of string",
+        "object",
+        "object name",
+        "object unique",
+        "list of object",
+    ],
 )
 @pytest.mark.helper
 def test_composite_index_valid(value):

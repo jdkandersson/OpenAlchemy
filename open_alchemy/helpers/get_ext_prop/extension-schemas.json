@@ -18,6 +18,12 @@
   "x-composite-index": {
     "oneOf": [
       {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
         "$ref": "#/Index"
       },
       {
