@@ -10,7 +10,8 @@ from open_alchemy import types
 
 from . import factory
 
-TableArgs = typing.Tuple[typing.Union[sa_schema.UniqueConstraint, sa_schema.Index], ...]
+TableArg = typing.Union[sa_schema.UniqueConstraint, sa_schema.Index]
+TableArgs = typing.Tuple[TableArg, ...]
 
 
 def construct(*, schema: types.Schema) -> TableArgs:
@@ -28,7 +29,7 @@ def construct(*, schema: types.Schema) -> TableArgs:
 
     """
     # Keep track of any table arguments
-    table_args = []
+    table_args: typing.List[typing.Iterable[TableArg]] = []
 
     # Handle x-unique-constraint
     unique_spec = helpers.get_ext_prop(source=schema, name="x-unique-constraint")
