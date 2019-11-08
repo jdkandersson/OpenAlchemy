@@ -631,11 +631,6 @@ def test_database_ref_all_of(engine, sessionmaker, spec):
             ["UNIQUE (id)"],
         ),
         (
-            {"x-unique-constraint": ["id", "column"]},
-            "SELECT sql FROM sqlite_master WHERE name='table'",
-            ['UNIQUE (id, "column")'],
-        ),
-        (
             {"x-unique-constraint": [["id"], ["column"]]},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["UNIQUE (id)", 'UNIQUE ("column")'],
@@ -651,23 +646,64 @@ def test_database_ref_all_of(engine, sessionmaker, spec):
             ["CONSTRAINT id UNIQUE (id)"],
         ),
         (
+            {"x-unique-constraint": [{"columns": ["id"]}, {"columns": ["column"]}]},
+            "SELECT sql FROM sqlite_master WHERE name='table'",
+            ["UNIQUE (id)", 'UNIQUE ("column")'],
+        ),
+        (
+            {"x-composite-index": ["id"]},
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            ['INDEX ix_table_id ON "table" (id)'],
+        ),
+        (
+            {"x-composite-index": [["id"], ["column"]]},
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            [
+                'INDEX ix_table_id ON "table" (id)',
+                'INDEX ix_table_column ON "table" ("column")',
+            ],
+        ),
+        (
+            {"x-composite-index": {"expressions": ["id"]}},
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            ['INDEX ix_table_id ON "table" (id)'],
+        ),
+        (
+            {"x-composite-index": {"name": "id", "expressions": ["id"]}},
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            ['INDEX id ON "table" (id)'],
+        ),
+        (
+            {"x-composite-index": {"expressions": ["id"], "unique": True}},
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            ['UNIQUE INDEX ix_table_id ON "table" (id)'],
+        ),
+        (
             {
-                "x-unique-constraint": [
-                    {"name": "id", "columns": ["id"]},
-                    {"name": "column", "columns": ["column"]},
+                "x-composite-index": [
+                    {"expressions": ["id"]},
+                    {"expressions": ["column"]},
                 ]
             },
-            "SELECT sql FROM sqlite_master WHERE name='table'",
-            ["CONSTRAINT id UNIQUE (id)", 'CONSTRAINT "column" UNIQUE ("column")'],
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            [
+                'INDEX ix_table_id ON "table" (id)',
+                'INDEX ix_table_column ON "table" ("column")',
+            ],
         ),
     ],
     ids=[
-        "unique array single",
-        "unique array multiple",
+        "unique array",
         "unique multiple array",
         "unique object",
         "unique object name",
-        "unique multiple object name",
+        "unique multiple object",
+        "index array single",
+        "index multiple array",
+        "index object",
+        "index object name",
+        "index object unique",
+        "index multiple object",
     ],
 )
 @pytest.mark.integration
@@ -703,9 +739,10 @@ def test_table_args_unique(engine, schema_additions, sql, expected_contents):
     base.metadata.create_all(engine)
 
     # Query schema
-    [(result,)] = engine.execute(sql)
+    results_list = list(str(result) for result in engine.execute(sql))
+    results = "\n".join(results_list)
     for expected_content in expected_contents:
-        assert expected_content in result
+        assert expected_content in results
 
 
 BASIC_SPEC = {
