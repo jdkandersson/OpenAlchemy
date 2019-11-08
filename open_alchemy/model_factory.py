@@ -6,6 +6,7 @@ import typing
 from . import column_factory
 from . import exceptions
 from . import helpers
+from . import table_args
 from . import types
 from . import utility_base
 
@@ -74,5 +75,6 @@ def model_factory(
             "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
             "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
+            "__table_args__": table_args.construct(schema=schema),
         },
     )
