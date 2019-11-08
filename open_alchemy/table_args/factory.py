@@ -149,3 +149,19 @@ def _construct_unique(*, spec: types.Unique) -> schema.UniqueConstraint:
 
     """
     return schema.UniqueConstraint(*spec["columns"], name=spec.get("name"))
+
+
+def _construct_index(*, spec: types.Index) -> schema.Index:
+    """
+    Construct composite index.
+
+    Args:
+        spec: The definitions for the composite index.
+
+    Returns:
+        The composite index.
+
+    """
+    return schema.Index(
+        spec.get("name"), *spec["expressions"], unique=spec.get("unique")
+    )

@@ -176,9 +176,48 @@ def test_construct_unique(spec, expected_name, expected_columns):
     WHEN _construct_unique is called
     THEN a unique constraint with the expected name and columns is returned.
     """
+    assert (
+        factory._spec_to_schema_name(spec=spec)  # pylint: disable=protected-access
+        == "Unique"
+    )
+
     unique = factory._construct_unique(spec=spec)  # pylint: disable=protected-access
 
     assert unique.name == expected_name
     assert (
         unique._pending_colargs == expected_columns  # pylint: disable=protected-access
     )
+
+
+@pytest.mark.parametrize(
+    "spec, expected_name, expected_expressions, expected_unique",
+    [
+        ({"expressions": ["column 1"]}, None, ["column 1"], None),
+        ({"name": "name 1", "expressions": ["column 1"]}, "name 1", ["column 1"], None),
+        ({"expressions": ["column 1"], "unique": True}, None, ["column 1"], True),
+        (
+            {"expressions": ["column 1", "column 2"]},
+            None,
+            ["column 1", "column 2"],
+            None,
+        ),
+    ],
+    ids=["single", "single name", "single unique", "multiple"],
+)
+@pytest.mark.table_args
+def test_construct_index(spec, expected_name, expected_expressions, expected_unique):
+    """
+    GIVEN spec, expected name, expressions and unique
+    WHEN _construct_index is called
+    THEN a index with the expected name, expressions and unique is returned.
+    """
+    assert (
+        factory._spec_to_schema_name(spec=spec)  # pylint: disable=protected-access
+        == "Index"
+    )
+
+    index = factory._construct_index(spec=spec)  # pylint: disable=protected-access
+
+    assert index.name == expected_name
+    assert index.expressions == expected_expressions
+    assert index.unique == expected_unique
