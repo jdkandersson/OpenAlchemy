@@ -11,4 +11,6 @@ python relationship_many_to_one_backref_models.py
 python relationship_many_to_one_backref_models_traditional.py
 python all_of_column_models.py
 python all_of_model_models.py
+python unique_constraint_models.py
+python composite_index_models.py
 cd -
