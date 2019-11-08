@@ -137,7 +137,7 @@ def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     return _INDEX_MAPPING[name](spec)
 
 
-def _construct_unique(*, spec: types.Unique) -> schema.UniqueConstraint:
+def _construct_unique(spec: types.Unique) -> schema.UniqueConstraint:
     """
     Construct unique constraints.
 
@@ -151,7 +151,7 @@ def _construct_unique(*, spec: types.Unique) -> schema.UniqueConstraint:
     return schema.UniqueConstraint(*spec["columns"], name=spec.get("name"))
 
 
-def _construct_index(*, spec: types.Index) -> schema.Index:
+def _construct_index(spec: types.Index) -> schema.Index:
     """
     Construct composite index.
 
@@ -165,3 +165,35 @@ def _construct_index(*, spec: types.Index) -> schema.Index:
     return schema.Index(
         spec.get("name"), *spec["expressions"], unique=spec.get("unique")
     )
+
+
+def unique_factory(
+    *, spec: types.AnyUnique
+) -> typing.Iterator[schema.UniqueConstraint]:
+    """
+    Generate unique constraints from specification.
+
+    Args:
+        spec: The specification to use.
+
+    Returns:
+        The unique constraints.
+
+    """
+    mapped_spec = _map_unique(spec=spec)
+    return map(_construct_unique, mapped_spec)
+
+
+def index_factory(*, spec: types.AnyUnique) -> typing.Iterator[schema.Index]:
+    """
+    Generate composite indexes from specification.
+
+    Args:
+        spec: The specification to use.
+
+    Returns:
+        The composite indexes.
+
+    """
+    mapped_spec = _map_index(spec=spec)
+    return map(_construct_index, mapped_spec)

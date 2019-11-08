@@ -221,3 +221,33 @@ def test_construct_index(spec, expected_name, expected_expressions, expected_uni
     assert index.name == expected_name
     assert index.expressions == expected_expressions
     assert index.unique == expected_unique
+
+
+@pytest.mark.table_args
+def test_unique_factory():
+    """
+    GIVEN specification
+    WHEN unique_factory is called with the specification
+    THEN UniqueConstraints are returned.
+    """
+    spec = [["column 1"], ["column 2"]]
+
+    [unique_1, unique_2] = factory.unique_factory(spec=spec)
+
+    assert unique_1._pending_colargs == ["column 1"]  # pylint: disable=protected-access
+    assert unique_2._pending_colargs == ["column 2"]  # pylint: disable=protected-access
+
+
+@pytest.mark.table_args
+def test_index_factory():
+    """
+    GIVEN specification
+    WHEN index_factory is called with the specification
+    THEN UniqueConstraints are returned.
+    """
+    spec = [["column 1"], ["column 2"]]
+
+    [index_1, index_2] = factory.index_factory(spec=spec)
+
+    assert index_1.expressions == ["column 1"]
+    assert index_2.expressions == ["column 2"]
