@@ -6,12 +6,10 @@ import os
 import typing
 
 import jsonschema
+from sqlalchemy import schema
 
 from open_alchemy import exceptions
 from open_alchemy import types
-
-# from sqlalchemy import schema
-
 
 _DIRECTORY = os.path.dirname(__file__)
 _PATHS = ("..", "helpers", "get_ext_prop")
@@ -139,14 +137,15 @@ def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     return _INDEX_MAPPING[name](spec)
 
 
-# def _construct_unique(*, spec: types.UniqueList) -> typing.List[schema.Index]:
-#     """
-#     Construct unique constraints.
+def _construct_unique(*, spec: types.Unique) -> schema.UniqueConstraint:
+    """
+    Construct unique constraints.
 
-#     Args:
-#         spec: The definitions for the unique constraints.
+    Args:
+        spec: The definitions for the unique constraints.
 
-#     Returns:
-#         The unique constraints.
+    Returns:
+        The unique constraints.
 
-#     """
+    """
+    return schema.UniqueConstraint(*spec["columns"], name=spec.get("name"))

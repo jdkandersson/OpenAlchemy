@@ -158,3 +158,27 @@ def test_map_index(spec, expected_spec):
         )
         == "IndexList"
     )
+
+
+@pytest.mark.parametrize(
+    "spec, expected_name, expected_columns",
+    [
+        ({"columns": ["column 1"]}, None, ["column 1"]),
+        ({"name": "name 1", "columns": ["column 1"]}, "name 1", ["column 1"]),
+        ({"columns": ["column 1", "column 2"]}, None, ["column 1", "column 2"]),
+    ],
+    ids=["single", "single name", "multiple"],
+)
+@pytest.mark.table_args
+def test_construct_unique(spec, expected_name, expected_columns):
+    """
+    GIVEN spec, expected name and columns
+    WHEN _construct_unique is called
+    THEN a unique constraint with the expected name and columns is returned.
+    """
+    unique = factory._construct_unique(spec=spec)  # pylint: disable=protected-access
+
+    assert unique.name == expected_name
+    assert (
+        unique._pending_colargs == expected_columns  # pylint: disable=protected-access
+    )
