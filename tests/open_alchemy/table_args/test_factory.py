@@ -105,15 +105,13 @@ def test_spec_to_name_schemas(schema_names, spec, raises):
     ],
 )
 @pytest.mark.table_args
-def test_handle_unique(spec, expected_spec):
+def test_map_unique(spec, expected_spec):
     """
     GIVEN specification and expected specification
-    WHEN _handle_unique is called with the specification
+    WHEN _map_unique is called with the specification
     THEN the expected specification is returned.
     """
-    returned_spec = factory._handle_unique(  # pylint: disable=protected-access
-        spec=spec
-    )
+    returned_spec = factory._map_unique(spec=spec)  # pylint: disable=protected-access
 
     assert returned_spec == expected_spec
 
@@ -139,12 +137,12 @@ def test_handle_unique(spec, expected_spec):
     ],
 )
 @pytest.mark.table_args
-def test_handle_index(spec, expected_spec):
+def test_map_index(spec, expected_spec):
     """
     GIVEN specification and expected specification
-    WHEN _handle_index is called with the specification
+    WHEN _map_index is called with the specification
     THEN the expected specification is returned.
     """
-    returned_spec = factory._handle_index(spec=spec)  # pylint: disable=protected-access
+    returned_spec = factory._map_index(spec=spec)  # pylint: disable=protected-access
 
     assert returned_spec == expected_spec

@@ -110,7 +110,7 @@ _INDEX_MAPPING: typing.Dict[str, typing.Callable[..., types.IndexList]] = {
 }
 
 
-def _handle_unique(*, spec: types.AnyUniqueConstraint) -> types.UniqueConstraintList:
+def _map_unique(*, spec: types.AnyUniqueConstraint) -> types.UniqueConstraintList:
     """
     Convert any unique constraint to UniqueConstraintList.
 
@@ -125,7 +125,7 @@ def _handle_unique(*, spec: types.AnyUniqueConstraint) -> types.UniqueConstraint
     return _UNIQUE_MAPPING[name](spec)
 
 
-def _handle_index(*, spec: types.AnyIndex) -> types.IndexList:
+def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     """
     Convert any composite index to IndexList.
 
