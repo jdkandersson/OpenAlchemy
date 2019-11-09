@@ -52,18 +52,8 @@ def _spec_to_schema_name(
     raise exceptions.SchemaNotFoundError("Specification did not match any schemas.")
 
 
-def _handle_column_list(spec: typing.List[str], property_name: str) -> types.Unique:
-    """
-    Convert ColumnList specification to Unique.
-
-    Args:
-        spec: The specification to convert.
-        property_name: The property name under which to store the column list.
-
-    Returns:
-        The Unique.
-
-    """
+def _handle_column_list(spec, property_name):
+    """Convert ColumnList to a dictionary."""
     return {property_name: spec}
 
 
