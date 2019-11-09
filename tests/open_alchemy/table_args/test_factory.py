@@ -56,7 +56,7 @@ def test_spec_to_schema_name(spec, expected_name):
         (["Unique", "ColumnList"], ["column 1"], False),
     ],
     ids=[
-        "empty schemas,   -,              raises",
+        "empty schemas,    -,             raises",
         "single schemas,   spec diff,     raises",
         "single schemas,   spec match,    not raises",
         "multiple schemas, spec not in,   raises",
