@@ -98,7 +98,7 @@ An example API has been defined using connexion and Flask here:
 The following features are supported:
 - initializing from JSON,
 - initializing from YAML,
-- `integer ` (32 and 64 bit),
+- `integer` (32 and 64 bit),
 - `number` (float only),
 - `boolean`,
 - `string`,
