@@ -159,6 +159,7 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
     ref_count = 0
     backref_count = 0
     fk_column_count = 0
+    uselist_count = 0
     for sub_spec in all_of_spec:
         if sub_spec.get("$ref") is not None:
             ref_count += 1
@@ -166,6 +167,8 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
             backref_count += 1
         if sub_spec.get("x-foreign-key-column") is not None:
             fk_column_count += 1
+        if sub_spec.get("x-uselist") is not None:
+            uselist_count += 1
     if ref_count != 1:
         raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships defined with allOf must have exactly one "
@@ -179,6 +182,10 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
         raise exceptions.MalformedManyToOneRelationshipError(
             "Many to One relationships may have at most 1 x-foreign-key-column "
             "defined."
+        )
+    if uselist_count > 1:
+        raise exceptions.MalformedManyToOneRelationshipError(
+            "Many to One relationships may have at most 1 x-uselist defined."
         )
 
 

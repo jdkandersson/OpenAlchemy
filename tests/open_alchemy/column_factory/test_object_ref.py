@@ -36,19 +36,21 @@ def test_handle_object_error(spec):
             {"x-foreign-key-column": "column 1"},
             {"x-foreign-key-column": "column 2"},
         ],
+        [{"$ref": "ref 1"}, {"x-uselist": True}, {"x-uselist": False}],
     ],
     ids=[
         "object",
         "multiple ref",
         "multiple x-backref",
         "multiple x-foreign-key-column",
+        "multiple x-use-list",
     ],
 )
 @pytest.mark.column
 def test_check_object_all_of_error(spec):
     """
     GIVEN spec
-    WHEN handle_object is called with the spec
+    WHEN _check_object_all_of is called with the spec
     THEN MalformedManyToOneRelationshipError is raised.
     """
     with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
