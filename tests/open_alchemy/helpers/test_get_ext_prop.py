@@ -20,6 +20,7 @@ def test_miss():
     "name, value",
     [
         ("x-backref", True),
+        ("x-uselist", "True"),
         ("x-primary-key", "True"),
         ("x-autoincrement", "True"),
         ("x-index", "True"),
@@ -32,6 +33,7 @@ def test_miss():
     ],
     ids=[
         "x-backref",
+        "x-uselist",
         "x-primary-key",
         "x-autoincrement",
         "x-index",
@@ -60,6 +62,7 @@ def test_invalid(name, value):
     "name, value",
     [
         ("x-backref", "table 1"),
+        ("x-uselist", True),
         ("x-primary-key", True),
         ("x-autoincrement", True),
         ("x-index", True),
@@ -71,6 +74,7 @@ def test_invalid(name, value):
     ],
     ids=[
         "x-backref",
+        "x-uselist",
         "x-primary-key",
         "x-autoincrement",
         "x-index",

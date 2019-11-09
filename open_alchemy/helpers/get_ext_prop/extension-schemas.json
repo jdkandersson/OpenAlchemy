@@ -3,6 +3,10 @@
     "description": "Add a back reference to a relationship.",
     "type": "string"
   },
+  "x-uselist": {
+    "description": "Turn a many to one into a one to one relationship.",
+    "type": "boolean"
+  },
   "x-primary-key": {
     "description": "Make a column a primary key.",
     "type": "boolean"
