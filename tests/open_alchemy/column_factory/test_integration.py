@@ -93,3 +93,26 @@ def test_integration_object_ref():
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_backref():
+    """
+    GIVEN schema that references another object schema with a backref and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN relationship with backref is returned with the spec.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+            "x-backref": "ref_schemas",
+        }
+    }
+    ([_, (_, relationship)], spec) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert relationship.backref == "ref_schemas"
