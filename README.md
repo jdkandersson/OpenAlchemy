@@ -117,7 +117,7 @@ The following features are supported:
 - back references for relationships,
 - `allOf` inheritance for columns and models,
 - `from_dict` model methods to construct from dictionaries,
-- `to_dict` model methods to convert instances back to dictionaries and
+- `to_dict` model methods to convert instances to dictionaries and
 - exposing created models under `open_alchemy.models` removing the need for `models.py` files.
 
 ### Not Supported
