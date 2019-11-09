@@ -18,7 +18,7 @@ def construct(*, schema: types.Schema) -> TableArgs:
     """
     Construct any table args from the object schema.
 
-    Look for x-unique-constraint and x-composite-index keys in the schema and construct
+    Look for x-composite-unique and x-composite-index keys in the schema and construct
     any unique constraints and indexes based on their value.
 
     Args:
@@ -31,8 +31,8 @@ def construct(*, schema: types.Schema) -> TableArgs:
     # Keep track of any table arguments
     table_args: typing.List[typing.Iterable[TableArg]] = []
 
-    # Handle x-unique-constraint
-    unique_spec = helpers.get_ext_prop(source=schema, name="x-unique-constraint")
+    # Handle x-composite-unique
+    unique_spec = helpers.get_ext_prop(source=schema, name="x-composite-unique")
     if unique_spec is not None:
         table_args.append(factory.unique_factory(spec=unique_spec))
     # Handle x-composite-index

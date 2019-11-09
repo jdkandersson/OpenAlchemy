@@ -82,7 +82,7 @@ with open(_SCHEMAS_FILE) as in_file:
 _UNIQUE_SCHEMA_NAMES: typing.List[str] = list(
     map(
         lambda schema: schema["$ref"].split("/")[-1],
-        _SCHEMAS["x-unique-constraint"]["oneOf"],
+        _SCHEMAS["x-composite-unique"]["oneOf"],
     )
 )
 _INDEX_SCHEMA_NAMES: typing.List[str] = list(

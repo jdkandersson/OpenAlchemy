@@ -10,14 +10,14 @@ from open_alchemy import table_args
     "schema, expected_args",
     [
         ({}, tuple()),
-        ({"x-unique-constraint": ["column 1"]}, (sa_schema.UniqueConstraint,)),
+        ({"x-composite-unique": ["column 1"]}, (sa_schema.UniqueConstraint,)),
         ({"x-composite-index": ["column 1"]}, (sa_schema.Index,)),
         (
-            {"x-unique-constraint": ["column 1"], "x-composite-index": ["column 2"]},
+            {"x-composite-unique": ["column 1"], "x-composite-index": ["column 2"]},
             (sa_schema.UniqueConstraint, sa_schema.Index),
         ),
     ],
-    ids=["empty", "x-unique-constraint", "x-composite-index", "all"],
+    ids=["empty", "x-composite-unique", "x-composite-index", "all"],
 )
 @pytest.mark.table_args
 def test_construct(schema, expected_args):

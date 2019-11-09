@@ -626,27 +626,27 @@ def test_database_ref_all_of(engine, sessionmaker, spec):
     "schema_additions, sql, expected_contents",
     [
         (
-            {"x-unique-constraint": ["id"]},
+            {"x-composite-unique": ["id"]},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["UNIQUE (id)"],
         ),
         (
-            {"x-unique-constraint": [["id"], ["column"]]},
+            {"x-composite-unique": [["id"], ["column"]]},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["UNIQUE (id)", 'UNIQUE ("column")'],
         ),
         (
-            {"x-unique-constraint": {"columns": ["id"]}},
+            {"x-composite-unique": {"columns": ["id"]}},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["UNIQUE (id)"],
         ),
         (
-            {"x-unique-constraint": {"name": "id", "columns": ["id"]}},
+            {"x-composite-unique": {"name": "id", "columns": ["id"]}},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["CONSTRAINT id UNIQUE (id)"],
         ),
         (
-            {"x-unique-constraint": [{"columns": ["id"]}, {"columns": ["column"]}]},
+            {"x-composite-unique": [{"columns": ["id"]}, {"columns": ["column"]}]},
             "SELECT sql FROM sqlite_master WHERE name='table'",
             ["UNIQUE (id)", 'UNIQUE ("column")'],
         ),

@@ -111,11 +111,11 @@ def test_valid(name, value):
 @pytest.mark.helper
 def test_unique_constraint_invalid(value):
     """
-    GIVEN value for x-unique-constraint that has an invalid format
-    WHEN get_ext_prop with x-unique-constraint and the value
+    GIVEN value for x-composite-unique that has an invalid format
+    WHEN get_ext_prop with x-composite-unique and the value
     THEN MalformedExtensionPropertyError is raised.
     """
-    name = "x-unique-constraint"
+    name = "x-composite-unique"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
@@ -142,11 +142,11 @@ def test_unique_constraint_invalid(value):
 @pytest.mark.helper
 def test_unique_constraint_valid(value):
     """
-    GIVEN value for x-unique-constraint that has a valid format
-    WHEN get_ext_prop with x-unique-constraint and the value
+    GIVEN value for x-composite-unique that has a valid format
+    WHEN get_ext_prop with x-composite-unique and the value
     THEN the value is returned.
     """
-    name = "x-unique-constraint"
+    name = "x-composite-unique"
     source = {name: value}
 
     returned_value = helpers.get_ext_prop(source=source, name=name)

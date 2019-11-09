@@ -56,6 +56,6 @@ components:
         - id
         - name
         - division
-      x-unique-constraint:
+      x-composite-unique:
         - division
         - address

@@ -413,7 +413,7 @@ def test_table_args_unique():
                 "x-tablename": "table 1",
                 "type": "object",
                 "properties": {"property_1": {"type": "integer"}},
-                "x-unique-constraint": ["property_1"],
+                "x-composite-unique": ["property_1"],
             }
         },
     )

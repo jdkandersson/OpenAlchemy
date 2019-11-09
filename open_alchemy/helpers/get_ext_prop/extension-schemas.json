@@ -35,7 +35,7 @@
     "description": "Add unique constraint to a column.",
     "type": "boolean"
   },
-  "x-unique-constraint": {
+  "x-composite-unique": {
     "oneOf": [
       {
         "$ref": "#/ColumnList"

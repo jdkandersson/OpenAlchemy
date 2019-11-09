@@ -4,7 +4,7 @@
 
 - Add _from_dict_ and _to_dict_ functions to all models that are used to construct a model from a dictionary and to convert a model instance to a dictionary, respectively.
 - Add _x-foreign-key-column_ extension property to define a custom foreign key constraint for many to one relationships.
-- Add _x-unique-constraint_ extension property at the object level to construct unique constraints with multiple columns.
+- Add _x-composite-unique_ extension property at the object level to construct unique constraints with multiple columns.
 - Add _x-composite-index_ extension property at the object level to construct indexes with multiple columns.
 
 ## Version 0.8.0 - 2019-11-03
