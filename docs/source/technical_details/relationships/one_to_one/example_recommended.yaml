@@ -1,0 +1,11 @@
+PayInfo:
+  ...
+Employee:
+  ...
+  properties:
+    ...
+    pay_info:
+      allOf:
+        - "$ref": "#/components/schemas/PayInfo"
+        - x-backref: employee
+          x-uselist: false

@@ -1,0 +1,10 @@
+PayInfo:
+  ...
+  x-backref: employee
+  x-uselist: false
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      "$ref": "#/components/schemas/PayInfo"

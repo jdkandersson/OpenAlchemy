@@ -6,6 +6,7 @@
 - Add _x-foreign-key-column_ extension property to define a custom foreign key constraint for many to one relationships.
 - Add _x-composite-unique_ extension property at the object level to construct unique constraints with multiple columns.
 - Add _x-composite-index_ extension property at the object level to construct indexes with multiple columns.
+- Add support for one to one relationships.
 
 ## Version 0.8.0 - 2019-11-03
 - Add less verbose initialisation with _init_yaml_ and _init_json_.

@@ -30,16 +30,9 @@ setuptools.setup(
     install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5", "jsonschema>=3"],
     extras_require={
         "dev": [
-            "pytest",
             "tox",
             "tox-pyenv",
             "pylint",
-            "pytest-cov",
-            "pytest-flake8",
-            "pytest-flask",
-            "pytest-flask-sqlalchemy",
-            "pytest-randomly",
-            "pytest-bandit",
             "mypy",
             "pydocstyle",
             "black",
@@ -50,6 +43,18 @@ setuptools.setup(
             "doc8",
             "connexion[swagger-ui]",
             "Flask-SQLAlchemy",
-        ]
+        ],
+        "test": [
+            "pytest",
+            "pytest-cov",
+            "pytest-flake8",
+            "pytest-flask",
+            "pytest-flask-sqlalchemy",
+            "pytest-randomly",
+            "pytest-bandit",
+            "PyYAML",
+            "connexion[swagger-ui]",
+        ],
+        ":python_version<'3.7'": ["dataclasses>=0.7"],
     },
 )

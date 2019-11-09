@@ -16,10 +16,25 @@ def test_miss():
     assert helpers.get_ext_prop(source={}, name="missing") is None
 
 
+@pytest.mark.helper
+def test_miss_default():
+    """
+    GIVEN empty source and default value
+    WHEN get_ext_prop is called with the source and default value
+    THEN default value is returned.
+    """
+    default = "value 1"
+
+    value = helpers.get_ext_prop(source={}, name="missing", default=default)
+
+    assert value == default
+
+
 @pytest.mark.parametrize(
     "name, value",
     [
         ("x-backref", True),
+        ("x-uselist", "True"),
         ("x-primary-key", "True"),
         ("x-autoincrement", "True"),
         ("x-index", "True"),
@@ -32,6 +47,7 @@ def test_miss():
     ],
     ids=[
         "x-backref",
+        "x-uselist",
         "x-primary-key",
         "x-autoincrement",
         "x-index",
@@ -60,6 +76,7 @@ def test_invalid(name, value):
     "name, value",
     [
         ("x-backref", "table 1"),
+        ("x-uselist", True),
         ("x-primary-key", True),
         ("x-autoincrement", True),
         ("x-index", True),
@@ -71,6 +88,7 @@ def test_invalid(name, value):
     ],
     ids=[
         "x-backref",
+        "x-uselist",
         "x-primary-key",
         "x-autoincrement",
         "x-index",
