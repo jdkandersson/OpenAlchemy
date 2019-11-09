@@ -21,7 +21,10 @@ _resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
 
 
 def get_ext_prop(
-    *, source: typing.Dict[str, typing.Any], name: str
+    *,
+    source: typing.Dict[str, typing.Any],
+    name: str,
+    default: typing.Optional[typing.Any] = None,
 ) -> typing.Optional[typing.Any]:
     """
     Read the value of an extension property, validate the schema and return it.
@@ -32,14 +35,15 @@ def get_ext_prop(
     Args:
         source: The object to get the extension property from.
         name: The name of the property.
+        default: The default value.
 
     Returns:
-        The value of the property.
+        The value of the property or the default value if it does not exist.
 
     """
     value = source.get(name)
     if value is None:
-        return None
+        return default
 
     schema = _SCHEMAS.get(name)
     try:

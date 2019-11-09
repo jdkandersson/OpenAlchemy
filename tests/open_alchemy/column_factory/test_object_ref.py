@@ -17,9 +17,9 @@ def test_handle_object_error(spec):
     """
     GIVEN spec
     WHEN handle_object is called with the spec
-    THEN MalformedManyToOneRelationshipError is raised.
+    THEN MalformedRelationshipError is raised.
     """
-    with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
+    with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
             spec=spec, schemas={"type": "object"}, required=True, logical_name="name 1"
         )
@@ -51,9 +51,9 @@ def test_check_object_all_of_error(spec):
     """
     GIVEN spec
     WHEN _check_object_all_of is called with the spec
-    THEN MalformedManyToOneRelationshipError is raised.
+    THEN MalformedRelationshipError is raised.
     """
-    with pytest.raises(exceptions.MalformedManyToOneRelationshipError):
+    with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref._check_object_all_of(all_of_spec=spec)
 
 
@@ -200,6 +200,17 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
             "backref 2",
         ),
         (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"x-uselist": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "backref 2",
+        ),
+        (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"type": "object", "x-backref": "backref 1"}},
             "backref 1",
@@ -220,6 +231,7 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
         "$ref backref",
         "allOf no backref",
         "allOf backref",
+        "allOf backref before other",
         "allOf $ref backref",
         "allOf backref $ref backref",
     ],
@@ -237,6 +249,19 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     assert obj_artifacts.backref == expected_backref
 
 
+def test_gather_object_artifacts_uselist_no_backref():
+    """
+    GIVEN specification with uselist but not backref and schemas
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN MalformedRelationshipError is raised.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {"RefSchema": {"type": "object", "x-uselist": False}}
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        object_ref._gather_object_artifacts(spec=spec, logical_name="", schemas=schemas)
+
+
 @pytest.mark.parametrize(
     "spec, schemas, expected_uselist",
     [
@@ -247,7 +272,13 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
         ),
         (
             {"$ref": "#/components/schemas/RefSchema"},
-            {"RefSchema": {"type": "object", "x-uselist": True}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-backref": "backref 1",
+                    "x-uselist": True,
+                }
+            },
             True,
         ),
         (
@@ -260,6 +291,7 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
                     {"x-uselist": False},
+                    {"x-backref": "backref 2"},
                 ]
             },
             {"RefSchema": {"type": "object"}},
@@ -267,17 +299,30 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
         ),
         (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
-            {"RefSchema": {"type": "object", "x-uselist": True}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-backref": "backref 1",
+                    "x-uselist": True,
+                }
+            },
             True,
         ),
         (
             {
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
                     {"x-uselist": False},
                 ]
             },
-            {"RefSchema": {"type": "object", "x-uselist": True}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-backref": "backref 1",
+                    "x-uselist": True,
+                }
+            },
             False,
         ),
     ],
@@ -332,6 +377,17 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
             "fk_column_2",
         ),
         (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-foreign-key-column": "fk_column_2"},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "fk_column_2",
+        ),
+        (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"type": "object", "x-foreign-key-column": "fk_column_1"}},
             "fk_column_1",
@@ -348,12 +404,13 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
         ),
     ],
     ids=[
-        "$ref no backref",
-        "$ref backref",
-        "allOf no backref",
-        "allOf backref",
-        "allOf $ref backref",
-        "allOf backref $ref backref",
+        "$ref no fk",
+        "$ref fk",
+        "allOf no fk",
+        "allOf fk",
+        "allOf fk before other",
+        "allOf $ref fk",
+        "allOf fk $ref fk",
     ],
 )
 def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
