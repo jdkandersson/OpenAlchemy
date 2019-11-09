@@ -6,6 +6,7 @@ import copy
 from unittest import mock
 
 import pytest
+from sqlalchemy import schema
 
 from open_alchemy import exceptions
 from open_alchemy import model_factory
@@ -135,7 +136,7 @@ def test_multiple_property():
 
 
 @pytest.mark.model
-def test_single_tablename():
+def test_tablename():
     """
     GIVEN schemas with schema
     WHEN model_factory is called with the name of the schema
@@ -395,3 +396,51 @@ def test_schema(schemas, expected_schema):
     )
 
     assert model._schema == expected_schema
+
+
+@pytest.mark.model
+def test_table_args_unique():
+    """
+    GIVEN schemas with schema that has a unique constraint
+    WHEN model_factory is called with the name of the schema
+    THEN a model with a unique constraint is returned.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "x-composite-unique": ["property_1"],
+            }
+        },
+    )
+
+    (unique,) = model.__table_args__
+    assert isinstance(unique, schema.UniqueConstraint)
+
+
+@pytest.mark.model
+def test_table_args_index():
+    """
+    GIVEN schemas with schema that has a composite index
+    WHEN model_factory is called with the name of the schema
+    THEN a model with a composite index is returned.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "x-composite-index": ["property_1"],
+            }
+        },
+    )
+
+    (index,) = model.__table_args__
+    assert isinstance(index, schema.Index)

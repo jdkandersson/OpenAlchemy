@@ -59,13 +59,22 @@ For example:
 Index
 -----
 
+Indexes can be added at the column level and at the object level. At the column
+level, the index is applied on a single column. At the object level, an index
+can be defined over multiple columns.
+
+.. _column-index:
+
+Column Index
+^^^^^^^^^^^^
+
 To add an index to a column, set the *x-index* property on an object property
 to *true*. For example:
 
 .. code-block:: yaml
-   :linenos:
+    :linenos:
 
-   Employee:
+    Employee:
       type: object
       x-tablename: employee
       properties:
@@ -75,10 +84,128 @@ to *true*. For example:
           type: string
           x-index: true
 
+This applies an index on the *name* property so that queries filtering by name
+are faster.
+
+.. _composite-index:
+
+Composite Index
+^^^^^^^^^^^^^^^
+
+To add an index over multiple columns, set *x-composite-index* on the object.
+For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      x-composite-index:
+        - id
+        - name
+
+This defines an index over *id* and *name* to allow for faster querying when
+filtering by both *id* and *name*. Use an array of arrays to define multiple
+composite indexes for an object. For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        division:
+          type: string
+        salary:
+          type: number
+      x-composite-index:
+        - - id
+          - name
+        - - division
+          - salary
+
+This defines an index over *id* and *name* and over *division* and *salary*. It
+is also possible to define a composite index as an object which has the
+following properties:
+
+* *expressions*: Defines the columns of the index.
+* *name* (optional): The name of the index. Defaults to letting the database
+  define the name.
+* *unique* (optional): Whether to enforce a unique constraint on the index.
+  Defaults to *false*.
+
+For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      x-composite-index:
+        name: ix_employee_id_name
+        expressions:
+          - id
+          - name
+        unique: true
+
+It is also possible to define multiple composite indexes as an array of
+objects. For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        division:
+          type: string
+        salary:
+          type: number
+      x-composite-index:
+        - name: ix_employee_id_name
+          expressions:
+            - id
+            - name
+        - name: ix_employee_division_salary
+          expressions:
+            - division
+            - salary
+
 .. _unique:
 
 Unique Constraint
 -----------------
+
+Unique constraints can be added at the column level and at the object level. At
+the column level, the constraint is applied on a single column. At the object
+level, a constraint can be defined over multiple columns.
+
+.. _column-unique:
+
+Column Unique Constraint
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 To add an unique constraint to a column, set the *x-unique* property on an
 object property to *true*. For example:
@@ -95,6 +222,121 @@ object property to *true*. For example:
         name:
           type: string
           x-unique: true
+
+This applies a unique constraint on the *name* property which ensures that
+there are no duplicate names in the database.
+
+.. _composite-unique:
+
+Composite Unique Constraint
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To add a unique constraint over multiple columns, set *x-composite-unique* on
+the object. For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+      x-composite-unique:
+        - name
+        - address
+
+This applies a unique constraint over the *name* and *address* columns to
+ensure an employee can be uniquely identified by their name and place of
+residence. Use an array of arrays to define multiple unique constraints for an
+object. For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        division:
+          type: string
+        salary:
+          type: number
+      x-composite-unique:
+        - - name
+          - address
+        - - division
+          - salary
+
+This defines two unique constraints, one for *name* and *address* and another
+for *division* and *salary*. It is also possible to define a composite unique
+constraint as an object which has the following properties:
+
+* *columns*: Defines the columns of the unique constraint.
+* *name* (optional): The name of the unique constraint. Defaults to letting the
+  database define the name.
+
+For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+      x-composite-unique:
+        name: uq_employee_name_address
+        columns:
+          - name
+          - address
+
+It is also possible to define multiple unique constraints as an array of
+objects. For example:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        division:
+          type: string
+        salary:
+          type: number
+      x-composite-unique:
+        - name: uq_employee_name_address
+          columns:
+            - name
+            - address
+        - name: uq_employee_division_salary
+          columns:
+            - division
+            - salary
 
 .. _foreign-key:
 

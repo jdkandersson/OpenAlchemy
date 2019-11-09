@@ -199,27 +199,31 @@ extension properties.
 To find out more about an extension property, go to the following section of
 the documentation:
 
-+----------------------+----------------------------------+
-| property             | documentation section            |
-+======================+==================================+
-| x-backref            | :ref:`backref`                   |
-+----------------------+----------------------------------+
-| x-primary-key        | :ref:`primary-key`               |
-+----------------------+----------------------------------+
-| x-autoincrement      | :ref:`autoincrement`             |
-+----------------------+----------------------------------+
-| x-index              | :ref:`index`                     |
-+----------------------+----------------------------------+
-| x-unique             | :ref:`unique`                    |
-+----------------------+----------------------------------+
-| x-foreign-key        | :ref:`foreign-key`               |
-+----------------------+----------------------------------+
-| x-tablename          | :ref:`how-does-it-work`          |
-+----------------------+----------------------------------+
-| x-foreign-key-column | :ref:`custom-foreign-key`        |
-+----------------------+----------------------------------+
-| x-de-$ref            | :ref:`from_dict Note <x-de-ref>` |
-+----------------------+----------------------------------+
++---------------------+----------------------------------+
+| property            | documentation section            |
++=====================+==================================+
+| x-backref           | :ref:`backref`                   |
++---------------------+----------------------------------+
+| x-primary-key       | :ref:`primary-key`               |
++---------------------+----------------------------------+
+| x-autoincrement     | :ref:`autoincrement`             |
++---------------------+----------------------------------+
+| x-index             | :ref:`column-index`              |
++---------------------+----------------------------------+
+| x-composite-index   | :ref:`composite-index`           |
++---------------------+----------------------------------+
+| x-unique            | :ref:`column-unique`             |
++---------------------+----------------------------------+
+| x-composite-unique  | :ref:`composite-unique`          |
++---------------------+----------------------------------+
+| x-foreign-key       | :ref:`foreign-key`               |
++---------------------+----------------------------------+
+| x-tablename         | :ref:`how-does-it-work`          |
++---------------------+----------------------------------+
+| x-foreign-key-colum | :ref:`custom-foreign-key`        |
++---------------------+----------------------------------+
+| x-de-$ref           | :ref:`from_dict Note <x-de-ref>` |
++---------------------+----------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.

@@ -41,3 +41,15 @@ class ModelClass(typing_extensions.Protocol):
     def to_dict(self) -> typing.Dict:
         """Convert model instance to dictionary."""
         ...
+
+
+# Unique consraint types
+ColumnList = typing.List[str]
+ColumnListList = typing.List[ColumnList]
+Unique = typing.Dict[str, typing.Any]
+UniqueList = typing.List[Unique]
+AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
+# Index types
+Index = typing.Dict[str, typing.Any]
+IndexList = typing.List[Index]
+AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]

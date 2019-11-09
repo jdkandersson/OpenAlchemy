@@ -1,0 +1,63 @@
+{
+  "ColumnList": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "minItems": 1
+  },
+  "ColumnListList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/ColumnList"
+    },
+    "minItems": 1
+  },
+  "Unique": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "columns": {
+        "$ref": "#/ColumnList"
+      }
+    },
+    "required": ["columns"]
+  },
+  "UniqueList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/Unique"
+    },
+    "minItems": 1
+  },
+  "Index": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "expressions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      },
+      "unique": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "expressions"
+    ]
+  },
+  "IndexList": {
+    "type": "array",
+    "items": {
+      "$ref": "#/Index"
+    },
+    "minItems": 1
+  }
+}

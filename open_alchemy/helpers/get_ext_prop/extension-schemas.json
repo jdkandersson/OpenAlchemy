@@ -15,9 +15,41 @@
     "description": "Add index to a column.",
     "type": "boolean"
   },
+  "x-composite-index": {
+    "oneOf": [
+      {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
+        "$ref": "#/Index"
+      },
+      {
+        "$ref": "#/IndexList"
+      }
+    ]
+  },
   "x-unique": {
     "description": "Add unique constraint to a column.",
     "type": "boolean"
+  },
+  "x-composite-unique": {
+    "oneOf": [
+      {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
+        "$ref": "#/Unique"
+      },
+      {
+        "$ref": "#/UniqueList"
+      }
+    ]
   },
   "x-foreign-key": {
     "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
