@@ -54,13 +54,16 @@ def handle_object(
     )
 
     # Creating relationship
+    backref = None
+    if obj_artifacts.backref is not None:
+        backref = sqlalchemy.orm.backref(
+            obj_artifacts.backref, uselist=obj_artifacts.uselist
+        )
     return_value.append(
         (
             logical_name,
             sqlalchemy.orm.relationship(
-                obj_artifacts.ref_logical_name,
-                backref=obj_artifacts.backref,
-                uselist=obj_artifacts.uselist,
+                obj_artifacts.ref_logical_name, backref=backref
             ),
         )
     )

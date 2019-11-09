@@ -116,7 +116,7 @@ def test_integration_object_ref_backref():
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert relationship.backref == "ref_schemas"
+    assert relationship.backref == ("ref_schemas", {"uselist": None})
 
 
 @pytest.mark.column
@@ -132,11 +132,12 @@ def test_integration_object_ref_uselist():
             "type": "object",
             "x-tablename": "table 1",
             "properties": {"id": {"type": "integer"}},
-            "x-uselist": True,
+            "x-backref": "ref_schemas",
+            "x-uselist": False,
         }
     }
     ([_, (_, relationship)], spec) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name="column_1"
     )
 
-    assert relationship.uselist is True
+    assert relationship.backref == ("ref_schemas", {"uselist": False})
