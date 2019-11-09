@@ -73,6 +73,7 @@ class ObjectArtifacts:
     ref_logical_name: str
     backref: typing.Optional[str]
     fk_column: str
+    uselist: typing.Optional[bool]
 
 
 def _gather_object_artifacts(
@@ -98,6 +99,8 @@ def _gather_object_artifacts(
     """
     # Default backref
     backref = None
+    # Default uselist
+    uselist = None
     # Initial foreign key column
     fk_column = None
 
@@ -117,6 +120,7 @@ def _gather_object_artifacts(
         # Handling allOf
         for sub_spec in all_of:
             backref = helpers.get_ext_prop(source=sub_spec, name="x-backref")
+            uselist = helpers.get_ext_prop(source=sub_spec, name="x-uselist")
             fk_column = helpers.get_ext_prop(
                 source=sub_spec, name="x-foreign-key-column"
             )
@@ -135,6 +139,9 @@ def _gather_object_artifacts(
     # If backref has not been found look in referenced schema
     if backref is None:
         backref = helpers.get_ext_prop(source=spec, name="x-backref")
+    # If uselist has not been found look in referenced schema
+    if uselist is None:
+        uselist = helpers.get_ext_prop(source=spec, name="x-uselist")
     # If foreign key column has not been found look in referenced schema
     if fk_column is None:
         fk_column = helpers.get_ext_prop(source=spec, name="x-foreign-key-column")
@@ -142,7 +149,7 @@ def _gather_object_artifacts(
     if fk_column is None:
         fk_column = "id"
 
-    return ObjectArtifacts(spec, ref_logical_name, backref, fk_column)
+    return ObjectArtifacts(spec, ref_logical_name, backref, fk_column, uselist)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:

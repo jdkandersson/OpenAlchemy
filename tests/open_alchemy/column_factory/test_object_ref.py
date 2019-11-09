@@ -238,6 +238,72 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
 
 
 @pytest.mark.parametrize(
+    "spec, schemas, expected_uselist",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "x-uselist": True}},
+            True,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-uselist": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "x-uselist": True}},
+            True,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-uselist": False},
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-uselist": True}},
+            False,
+        ),
+    ],
+    ids=[
+        "$ref no uselist",
+        "$ref uselist",
+        "allOf no uselist",
+        "allOf uselist",
+        "allOf $ref uselist",
+        "allOf uselist $ref uselist",
+    ],
+)
+def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
+    """
+    GIVEN specification and schemas and expected uselist
+    WHEN _gather_object_artifacts is called with the specification and schemas
+    THEN the expected uselist is returned.
+    """
+    obj_artifacts = object_ref._gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert obj_artifacts.uselist == expected_uselist
+
+
+@pytest.mark.parametrize(
     "spec, schemas, expected_fk_column",
     [
         (
