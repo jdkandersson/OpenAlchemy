@@ -96,18 +96,34 @@ An example API has been defined using connexion and Flask here:
 ## Features
 ### Supported
 The following features are supported:
+- initializing from JSON,
+- initializing from YAML,
 - `integer ` (32 and 64 bit),
 - `number` (float only),
 - `boolean`,
 - `string`,
 - `$ref` references for columns and models,
+- primary keys,
+- auto incrementing,
+- indexes,
+- composite indexes,
+- unique constraints,
+- composite unique constraints,
+- column nullability,
 - foreign keys,
-- many to one relationships and
-- `allOf` inheritance for columns and models.
+- many to one relationships,
+- one to one relationships,
+- custom foreign keys for relationships,
+- back references for relationships,
+- `allOf` inheritance for columns and models,
+- models have `from_dict` methods to construct from dictionaries,
+- models have `to_dict` methods to convert instances back to dictionaries and
+- exposing created models under `open_alchemy.models` removing the need for `models.py` files.
 
 ### Not Supported
 The following features are on the backlog:
-- one to many relationships.
+- one to many relationships and
+- many to many relationships.
 
 ## Contributing
 Fork and checkout the repository. To install:
