@@ -124,7 +124,7 @@ One to One
 
 A one to one relationship associates one child with one parent and vice-versa.
 For example, the pay information for an employee may be stored in a different
-table than the employee. However, one employee can only be paid one one way
+table than the employee. However, one employee can only be paid in one way
 and each employee must be paid separately. This means that there is a one to
 one relationship between an employee and pay information.
 
