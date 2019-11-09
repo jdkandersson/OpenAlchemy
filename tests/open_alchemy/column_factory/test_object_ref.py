@@ -211,6 +211,16 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
             "backref 2",
         ),
         (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2", "x-uselist": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "backref 2",
+        ),
+        (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"type": "object", "x-backref": "backref 1"}},
             "backref 1",
@@ -232,6 +242,7 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
         "allOf no backref",
         "allOf backref",
         "allOf backref before other",
+        "allOf backref with uselist",
         "allOf $ref backref",
         "allOf backref $ref backref",
     ],
@@ -298,6 +309,16 @@ def test_gather_object_artifacts_uselist_no_backref():
             False,
         ),
         (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-uselist": False, "x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+        ),
+        (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {
                 "RefSchema": {
@@ -331,6 +352,7 @@ def test_gather_object_artifacts_uselist_no_backref():
         "$ref uselist",
         "allOf no uselist",
         "allOf uselist",
+        "allOf uselist with backref",
         "allOf $ref uselist",
         "allOf uselist $ref uselist",
     ],
