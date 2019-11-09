@@ -11,38 +11,44 @@ other objects from an object property.
    `SQLAlchemy relationship documentation <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html>`_
       Documentation for SQLAlchemy relationships.
 
+.. _many-to-one:
+
 Many to One
 -----------
 
-The following *OpenAPI* specification defines a many to one relationship:
+A many to one relationship associates many children with a single parent. For
+example, a company can have many employees working in the same division (for
+example engineering, legal, marketing, ...) but a particular employee can only
+work in one division. In this case the employees are the children on the "many"
+side and the division is the parent on the "one" side. The following *OpenAPI*
+specification snippet defines a many to one relationship:
 
-.. literalinclude:: ../../../examples/relationship-many-to-one-example-spec.yml
+.. literalinclude:: ./relationships/many_to_one/example.yaml
     :language: yaml
     :linenos:
 
 By adding a *$ref* to an object property that points at another object, a
 relationship with the logical name will be formed. For example, if the *$ref*
 points to the *Division* object, *sqlalchemy.orm.relationship* with
-*"Division"* will be called. Note that you must add both objects to the
-*models.py* file. For example:
-
-.. literalinclude:: ../../../examples/relationship_many_to_one_models.py
-    :language: python
-    :linenos:
+*"Division"* will be called.
 
 Alongside the *relationship*, a foreign key will also be added to the table
 with the *$ref* property under the name of the property suffixed with *_id*.
 Note that, the object being referenced must have the *id* property.
 
 The only way to make the foreign key column not nullable is to add the
-property with the reference to the *required* list.
+property with the reference to the *required* list. For example:
 
-Without OpenLAlchemy, the following is the equivalent *models.py* file:
+.. literalinclude:: ./relationships/many_to_one/example-required.yaml
+    :language: yaml
+    :linenos:
+
+OpenAlchemy defined relationships are equivalent to the following traditional
+*models.py*:
 
 .. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
     :language: python
     :linenos:
-
 
 .. _backref:
 
@@ -81,7 +87,6 @@ Using *x-backref* is equivalent to the following traditional *models.py*:
 .. seealso::
     :ref:`references` shows how to reference to other schemas.
 
-
 .. _custom-foreign-key:
 
 Custom Foreign Key
@@ -111,3 +116,47 @@ will be used.
 
 .. seealso::
     :ref:`foreign-key` describes how to define foreign key constraints.
+
+.. _one-to-one:
+
+One to One
+----------
+
+A one to one relationship associates one child with one parent and vice-versa.
+For example, the pay information for an employee may be stored in a different
+table than the employee. However, one employee can only be paid one one way
+and each employee must be paid separately. This means that there is a one to
+one relationship between an employee and pay information.
+
+The one to one relationship is defined in the same way as the
+:ref:`many to one <many-to-one>` relationship except that it requires the
+*x-uselist* extension property to be set to *False* and
+:ref:`x-backref <backref>` to be defined.
+:ref:`Custom foreign keys <custom-foreign-key>` are also supported. The
+*x-uselist* property can be defined along with the *x-backref* extension
+property using *allOf* or on the object being referenced. To define it on
+*allOf*:
+
+.. literalinclude:: ./relationships/one_to_one/example_recommended.yaml
+    :language: yaml
+    :linenos:
+
+This is the recommended approach as it allows for other relationships to the
+referenced object to be, for example, many to one relationships. To default
+relationships to an object to one to one, the *x-uselist* property can be set
+on the referenced object:
+
+.. literalinclude:: ./relationships/one_to_one/example_not_recommended.yaml
+    :language: yaml
+    :linenos:
+
+If *x-uselist* is both in  the *allOf* list and the referenced object, the
+value from the *allOf* list will be used. The *x-uselist* and *x-backref*
+properties don't have to be defined together, they can be separated. For
+example:
+
+.. literalinclude:: ./relationships/one_to_one/uselist-backref-separated.yaml
+    :language: yaml
+    :linenos:
+
+Other permutations are also supported.
