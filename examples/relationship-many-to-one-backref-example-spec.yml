@@ -35,7 +35,7 @@ components:
         name:
           type: string
           description: The name of the division.
-          example: Engineering.
+          example: Engineering
     Employee:
       description: Person that works for a company.
       type: object

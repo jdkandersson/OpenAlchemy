@@ -35,7 +35,7 @@ components:
         account_number:
           type: string
           description: The account number to pay the employee into.
-          example: David's Account.
+          example: David's Account
     Employee:
       description: Person that works for a company.
       type: object
