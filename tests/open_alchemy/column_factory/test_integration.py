@@ -92,6 +92,7 @@ def test_integration_object_ref():
     assert tbl_logical_name == "column_1"
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
+    assert relationship.uselist is None
     assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
 
 
@@ -116,3 +117,26 @@ def test_integration_object_ref_backref():
     )
 
     assert relationship.backref == "ref_schemas"
+
+
+@pytest.mark.column
+def test_integration_object_ref_uselist():
+    """
+    GIVEN schema that references another object schema with a uselist and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN relationship with uselist is returned with the spec.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+            "x-uselist": True,
+        }
+    }
+    ([_, (_, relationship)], spec) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name="column_1"
+    )
+
+    assert relationship.uselist is True

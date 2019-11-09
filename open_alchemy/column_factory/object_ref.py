@@ -58,7 +58,9 @@ def handle_object(
         (
             logical_name,
             sqlalchemy.orm.relationship(
-                obj_artifacts.ref_logical_name, backref=obj_artifacts.backref
+                obj_artifacts.ref_logical_name,
+                backref=obj_artifacts.backref,
+                uselist=obj_artifacts.uselist,
             ),
         )
     )
