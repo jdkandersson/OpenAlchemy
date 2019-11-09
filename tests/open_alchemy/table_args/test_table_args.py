@@ -22,9 +22,9 @@ from open_alchemy import table_args
 @pytest.mark.table_args
 def test_construct(schema, expected_args):
     """
-    GIVEN schema and expected length
+    GIVEN schema and expected constructed table arg types
     WHEN construct is called with the schema
-    THEN a tuple with the expected length is returned.
+    THEN a tuple with the expected table args is returned.
     """
     returned_args = table_args.construct(schema=schema)
 
