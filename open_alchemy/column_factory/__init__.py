@@ -39,17 +39,15 @@ def column_factory(
     # Checking for the type
     type_ = helpers.peek_type(schema=spec, schemas=schemas)
 
-    # CHandling columns
-    if type_ != "object":
-        spec = helpers.prepare_schema(schema=spec, schemas=schemas)
-        return (
-            column.handle_column(
-                logical_name=logical_name, spec=spec, required=required
-            ),
-            spec,
+    if type_ == "object":
+        # Handle objects
+        return object_ref.handle_object(
+            spec=spec, schemas=schemas, required=required, logical_name=logical_name
         )
 
-    # Handling objects
-    return object_ref.handle_object(
-        spec=spec, schemas=schemas, required=required, logical_name=logical_name
+    # Handle columns
+    spec = helpers.prepare_schema(schema=spec, schemas=schemas)
+    return (
+        column.handle_column(logical_name=logical_name, spec=spec, required=required),
+        spec,
     )
