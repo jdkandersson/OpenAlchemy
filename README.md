@@ -114,7 +114,7 @@ Fork and checkout the repository. To install:
 ```bash
 python -m venv venv
 source ./venv/bin/activate
-python -m pip install -e .[dev]
+python -m pip install -e .[dev,test]
 ```
 To run tests:
 ```bash
