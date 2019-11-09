@@ -1,5 +1,6 @@
 """Functions relating to object references."""
 
+import dataclasses
 import typing
 
 import sqlalchemy
@@ -38,30 +39,45 @@ def handle_object(
         record for the object reference.
 
     """
-    spec, ref_logical_name, backref, fk_column = _gather_object_artifacts(
+    obj_artifacts = _gather_object_artifacts(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
     # Handling object
     foreign_key_spec = _handle_object_reference(
-        spec=spec, schemas=schemas, fk_column=fk_column
+        spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
     return_value = column.handle_column(
-        logical_name=f"{logical_name}_{fk_column}",
+        logical_name=f"{logical_name}_{obj_artifacts.fk_column}",
         spec=foreign_key_spec,
         required=required,
     )
 
     # Creating relationship
     return_value.append(
-        (logical_name, sqlalchemy.orm.relationship(ref_logical_name, backref=backref))
+        (
+            logical_name,
+            sqlalchemy.orm.relationship(
+                obj_artifacts.ref_logical_name, backref=obj_artifacts.backref
+            ),
+        )
     )
-    return return_value, {"type": "object", "x-de-$ref": ref_logical_name}
+    return return_value, {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name}
+
+
+@dataclasses.dataclass
+class ObjectArtifacts:
+    """Artifacts retrieved from object schema."""
+
+    spec: types.Schema
+    ref_logical_name: str
+    backref: typing.Optional[str]
+    fk_column: str
 
 
 def _gather_object_artifacts(
     *, spec: types.Schema, logical_name: str, schemas: types.Schemas
-) -> typing.Tuple[types.Schema, str, typing.Optional[str], str]:
+) -> ObjectArtifacts:
     """
     Collect artifacts from a specification for constructing an object reference.
 
@@ -126,7 +142,7 @@ def _gather_object_artifacts(
     if fk_column is None:
         fk_column = "id"
 
-    return spec, ref_logical_name, backref, fk_column
+    return ObjectArtifacts(spec, ref_logical_name, backref, fk_column)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
