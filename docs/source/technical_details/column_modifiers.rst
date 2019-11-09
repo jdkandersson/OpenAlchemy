@@ -84,8 +84,8 @@ to *true*. For example:
           type: string
           x-index: true
 
-This applies an index on the *name* property making queries that filter by name
-faster.
+This applies an index on the *name* property so that queries filtering by name
+are faster.
 
 .. _composite-index:
 
