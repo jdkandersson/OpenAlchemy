@@ -113,6 +113,13 @@ def _set_foreign_key(
         fk_column: The name of the foreign key column.
 
     """
+    # Check that model is in schemas
+    if ref_model_name not in schemas:
+        raise exceptions.MalformedRelationshipError(
+            f"{ref_model_name} referenced in relationship was not found in the "
+            "schemas."
+        )
+
     # Calculate foreign key specification
     fk_spec = object_ref.handle_object_reference(
         spec=model_schema, schemas=schemas, fk_column=fk_column

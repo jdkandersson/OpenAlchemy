@@ -131,6 +131,29 @@ def test_handle_array(spec, schemas):
 
 
 @pytest.mark.column
+def test_set_foreign_key_schemas_missing():
+    """
+    GIVEN referenced model is not in models and not in schemas
+    WHEN _set_foreign_key is called with the referenced model name
+    THEN MalformedRelationshipError is raised.
+    """
+    fk_column = "column_1"
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {fk_column: {"type": "integer"}},
+    }
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        array_ref._set_foreign_key(  # pylint: disable=protected-access
+            ref_model_name="RefSchema",
+            model_schema=model_schema,
+            schemas={},
+            fk_column=fk_column,
+        )
+
+
+@pytest.mark.column
 def test_set_foreign_key_schemas():
     """
     GIVEN referenced model is not in models, model schema, schemas and foreign key
