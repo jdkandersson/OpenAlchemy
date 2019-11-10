@@ -7,6 +7,8 @@
 - Add _x-composite-unique_ extension property at the object level to construct unique constraints with multiple columns.
 - Add _x-composite-index_ extension property at the object level to construct indexes with multiple columns.
 - Add support for one to one relationships.
+- Fix bug where _allOf_ merging would only return the properties of the last object instead of merging the properties.
+- Add support for one to many relationships.
 
 ## Version 0.8.0 - 2019-11-03
 - Add less verbose initialisation with _init_yaml_ and _init_json_.
