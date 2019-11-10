@@ -137,10 +137,10 @@ def test_handle_object_reference_fk_return():
 def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     """
     GIVEN specification, schemas and expected specification
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN the expected specification is returned.
     """
-    obj_artifacts = object_ref._gather_object_artifacts(
+    obj_artifacts = object_ref.gather_object_artifacts(
         spec=spec, logical_name="", schemas=schemas
     )
 
@@ -161,10 +161,10 @@ def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
 def test_gather_object_artifacts_ref_logical_name(spec, schemas):
     """
     GIVEN specification and schemas
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN the referenced schema name is returned as the ref logical name.
     """
-    obj_artifacts = object_ref._gather_object_artifacts(
+    obj_artifacts = object_ref.gather_object_artifacts(
         spec=spec, logical_name="", schemas=schemas
     )
 
@@ -250,10 +250,10 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
 def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     """
     GIVEN specification and schemas and expected backref
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN the expected backref is returned.
     """
-    obj_artifacts = object_ref._gather_object_artifacts(
+    obj_artifacts = object_ref.gather_object_artifacts(
         spec=spec, logical_name="", schemas=schemas
     )
 
@@ -263,14 +263,14 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
 def test_gather_object_artifacts_uselist_no_backref():
     """
     GIVEN specification with uselist but not backref and schemas
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN MalformedRelationshipError is raised.
     """
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "object", "x-uselist": False}}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
-        object_ref._gather_object_artifacts(spec=spec, logical_name="", schemas=schemas)
+        object_ref.gather_object_artifacts(spec=spec, logical_name="", schemas=schemas)
 
 
 @pytest.mark.parametrize(
@@ -360,10 +360,10 @@ def test_gather_object_artifacts_uselist_no_backref():
 def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
     """
     GIVEN specification and schemas and expected uselist
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN the expected uselist is returned.
     """
-    obj_artifacts = object_ref._gather_object_artifacts(
+    obj_artifacts = object_ref.gather_object_artifacts(
         spec=spec, logical_name="", schemas=schemas
     )
 
@@ -438,10 +438,10 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
 def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
     """
     GIVEN specification and schemas and expected foreign key column
-    WHEN _gather_object_artifacts is called with the specification and schemas
+    WHEN gather_object_artifacts is called with the specification and schemas
     THEN the expected foreign key column is returned.
     """
-    obj_artifacts = object_ref._gather_object_artifacts(
+    obj_artifacts = object_ref.gather_object_artifacts(
         spec=spec, logical_name="", schemas=schemas
     )
 

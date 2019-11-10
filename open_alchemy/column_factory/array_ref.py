@@ -41,40 +41,12 @@ def handle_array(
         raise exceptions.MalformedRelationshipError(
             "An array property must include items property."
         )
-    ref = item_spec.get("$ref")
-    all_of = item_spec.get("allOf")
-
-    if ref is not None:
-        # Handle $ref
-        ref_logical_name, ref_spec = helpers.resolve_ref(
-            name=logical_name, schema=item_spec, schemas=schemas
-        )
-    elif all_of is not None:
-        # Checking for $ref presence
-        ref_count = 0
-        for sub_spec in all_of:
-            if sub_spec.get("$ref") is not None:
-                ref_count += 1
-        if ref_count != 1:
-            raise exceptions.MalformedRelationshipError(
-                "One to many relationships defined with allOf must have exactly one "
-                "$ref in the allOf list."
-            )
-
-        # Handle all of
-        for sub_spec in all_of:
-            if sub_spec.get("$ref") is not None:
-                ref_logical_name, ref_spec = helpers.resolve_ref(
-                    name=logical_name, schema=sub_spec, schemas=schemas
-                )
-    else:
-        raise exceptions.MalformedRelationshipError(
-            "One to many relationships are defined using either $ref or allOf in the "
-            "items property."
-        )
+    obj_artifacts = object_ref.gather_object_artifacts(
+        spec=item_spec, logical_name=logical_name, schemas=schemas
+    )
 
     # Check referenced specification
-    ref_spec = helpers.prepare_schema(schema=ref_spec, schemas=schemas)
+    ref_spec = helpers.prepare_schema(schema=obj_artifacts.spec, schemas=schemas)
     ref_type = ref_spec.get("type")
     if ref_type != "object":
         raise exceptions.MalformedRelationshipError(
@@ -88,11 +60,14 @@ def handle_array(
         )
 
     # Construct relationship
-    relationship_return = (logical_name, sqlalchemy.orm.relationship(ref_logical_name))
+    relationship_return = (
+        logical_name,
+        sqlalchemy.orm.relationship(obj_artifacts.ref_logical_name),
+    )
     # COnstruct entry for the model schema
     spec_return = {
         "type": "array",
-        "items": {"type": "object", "x-de-$ref": ref_logical_name},
+        "items": {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name},
     }
 
     return [relationship_return], spec_return

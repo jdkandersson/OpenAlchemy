@@ -39,7 +39,7 @@ def handle_object(
         record for the object reference.
 
     """
-    obj_artifacts = _gather_object_artifacts(
+    obj_artifacts = gather_object_artifacts(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
@@ -81,7 +81,7 @@ class ObjectArtifacts:
     uselist: typing.Optional[bool]
 
 
-def _gather_object_artifacts(
+def gather_object_artifacts(
     *, spec: types.Schema, logical_name: str, schemas: types.Schemas
 ) -> ObjectArtifacts:
     """
@@ -140,7 +140,7 @@ def _gather_object_artifacts(
                 )
     else:
         raise exceptions.MalformedRelationshipError(
-            "Many to one relationships are defined using either $ref or allOf."
+            "Relationships are defined using either $ref or allOf."
         )
 
     # Resolving allOf
