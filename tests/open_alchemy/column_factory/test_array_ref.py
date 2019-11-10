@@ -72,8 +72,19 @@ def test_handle_array_invalid(spec, schemas):
     WHEN handle_array is called
     THEN MalformedRelationshipError is raised.
     """
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
+
     with pytest.raises(exceptions.MalformedRelationshipError):
-        array_ref.handle_array(spec=spec, schemas=schemas, logical_name="ref_schema")
+        array_ref.handle_array(
+            spec=spec,
+            model_schema=model_schema,
+            schemas=schemas,
+            logical_name="ref_schema",
+        )
 
 
 @pytest.mark.parametrize(
@@ -125,16 +136,21 @@ def test_handle_array_invalid(spec, schemas):
     ],
 )
 @pytest.mark.column
-def test_handle_array(spec, schemas):
+def test_handle_array_relationship(spec, schemas):
     """
     GIVEN schema with array referencing another schema and schemas
     WHEN handle_array is called
     THEN relationship is returned pointing to the referenced schema.
     """
     logical_name = "ref_schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
 
     ([(tbl_logical_name, relationship)], schema_spec) = array_ref.handle_array(
-        spec=spec, schemas=schemas, logical_name=logical_name
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name=logical_name
     )
 
     assert relationship.argument == "RefSchema"
@@ -147,7 +163,7 @@ def test_handle_array(spec, schemas):
 
 
 @pytest.mark.column
-def test_handle_array_backref():
+def test_handle_array_relationship_backref():
     """
     GIVEN schema with array referencing another schema with backref and schemas
     WHEN handle_array is called
@@ -161,12 +177,62 @@ def test_handle_array_backref():
             "x-backref": "schema",
         }
     }
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
 
     ([(_, relationship)], _) = array_ref.handle_array(
-        spec=spec, schemas=schemas, logical_name="ref_schema"
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
     )
 
     assert relationship.backref == "schema"
+
+
+@pytest.mark.column
+def test_handle_array_schemas():
+    """
+    GIVEN schema with array referencing another schema with backref and schemas
+    WHEN handle_array is called
+    THEN foreign key is added to the referenced schema.
+    """
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"id": {"type": "integer"}},
+    }
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "x-backref": "schema",
+        }
+    }
+
+    array_ref.handle_array(
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {"type": "object", "x-tablename": "ref_schema", "x-backref": "schema"},
+                {
+                    "type": "object",
+                    "properties": {
+                        f"{tablename}_id": {
+                            "type": "integer",
+                            "x-foreign-key": f"{tablename}.id",
+                            "x-dict-ignore": True,
+                        }
+                    },
+                },
+            ]
+        }
+    }
 
 
 @pytest.mark.column

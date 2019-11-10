@@ -14,7 +14,11 @@ from . import object_ref
 
 
 def handle_array(
-    *, spec: types.Schema, schemas: types.Schemas, logical_name: str
+    *,
+    spec: types.Schema,
+    model_schema: types.Schema,
+    schemas: types.Schemas,
+    logical_name: str,
 ) -> typing.Tuple[typing.List[typing.Tuple[str, typing.Type]], types.Schema]:
     """
     Generate properties for a reference to another object through an array.
@@ -24,6 +28,7 @@ def handle_array(
 
     Args:
         spec: The schema for the column.
+        model_schema: The schema of the one to many parent.
         schemas: Used to resolve any $ref.
         logical_name: The logical name in the specification for the schema.
         schema_name: The name of the schema the property belongs to.
@@ -72,11 +77,18 @@ def handle_array(
             obj_artifacts.ref_logical_name, backref=obj_artifacts.backref
         ),
     )
-    # COnstruct entry for the model schema
+    # Construct entry for the addition for the model schema
     spec_return = {
         "type": "array",
         "items": {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name},
     }
+    # Add foreign key to referenced schema
+    _set_foreign_key(
+        ref_model_name=obj_artifacts.ref_logical_name,
+        model_schema=model_schema,
+        schemas=schemas,
+        fk_column=obj_artifacts.fk_column,
+    )
 
     return [relationship_return], spec_return
 
