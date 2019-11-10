@@ -1,0 +1,10 @@
+Division:
+  ...
+  properties:
+    ...
+    employees:
+      type: array
+      items:
+        "$ref": "#/components/schemas/Division"
+Employee:
+  ...

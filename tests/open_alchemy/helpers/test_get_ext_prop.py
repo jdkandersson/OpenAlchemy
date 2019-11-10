@@ -44,6 +44,7 @@ def test_miss_default():
         ("x-foreign-key-column", True),
         ("x-tablename", True),
         ("x-de-$ref", True),
+        ("x-dict-ignore", "True"),
     ],
     ids=[
         "x-backref",
@@ -57,6 +58,7 @@ def test_miss_default():
         "x-foreign-key-column",
         "x-tablename",
         "x-de-$ref",
+        "x-dict-ignore",
     ],
 )
 @pytest.mark.helper
@@ -85,6 +87,7 @@ def test_invalid(name, value):
         ("x-foreign-key-column", "column 1"),
         ("x-tablename", "table 1"),
         ("x-de-$ref", "Table1"),
+        ("x-dict-ignore", True),
     ],
     ids=[
         "x-backref",
@@ -97,6 +100,7 @@ def test_invalid(name, value):
         "x-foreign-key-column",
         "x-tablename",
         "x-de-$ref",
+        "x-dict-ignore",
     ],
 )
 @pytest.mark.helper
@@ -111,6 +115,22 @@ def test_valid(name, value):
     returned_value = helpers.get_ext_prop(source=source, name=name)
 
     assert returned_value == value
+
+
+def test_pop():
+    """
+    GIVEN property and valid value
+    WHEN get_ext_property is called with the name, value and pop set
+    THEN the key is removed from the dictionary.
+    """
+    name = "x-dict-ignore"
+    value = True
+    source = {name: value}
+
+    returned_value = helpers.get_ext_prop(source=source, name=name, pop=True)
+
+    assert returned_value == value
+    assert source == {}
 
 
 @pytest.mark.parametrize(

@@ -35,16 +35,22 @@ def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schem
         # Capturing required arrays
         merged_required = merged_schema.get("required")
         sub_required = merged_sub_schema.get("required")
+        # Capturing properties
+        merged_properties = merged_schema.get("properties")
+        sub_properties = merged_sub_schema.get("properties")
 
         # Combining sub into merged specification
         merged_schema = {**merged_schema, **merged_sub_schema}
 
         # Checking whether required was present on both specs
-        if merged_required is None or sub_required is None:
-            continue
+        if merged_required is not None and sub_required is not None:
+            # Both have a required array, need to merge them together
+            required_set = set(merged_required).union(sub_required)
+            merged_schema["required"] = list(required_set)
 
-        # Both have a required array, need to merge them together with common elements
-        required_set = set(merged_required).union(sub_required)
-        merged_schema["required"] = list(required_set)
+        # Checking whether properties was present on both specs
+        if merged_properties is not None and sub_properties is not None:
+            # Both have properties, merge properties
+            merged_schema["properties"] = {**merged_properties, **sub_properties}
 
     return merged_schema

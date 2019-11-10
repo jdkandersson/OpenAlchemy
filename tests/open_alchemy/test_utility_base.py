@@ -8,6 +8,12 @@ from open_alchemy import exceptions
 from open_alchemy import utility_base
 
 
+def __init__(self, **kwargs):
+    """Construct."""
+    for name, value in kwargs.items():
+        setattr(self, name, value)
+
+
 @pytest.mark.utility_base
 def test_to_dict_no_schema():
     """
@@ -15,7 +21,7 @@ def test_to_dict_no_schema():
     WHEN to_dict is called
     THEN ModelAttributeError is raised.
     """
-    model = type("model", (utility_base.UtilityBase,), {})
+    model = type("model", (utility_base.UtilityBase,), {"__init__": __init__})
     instance = model()
 
     with pytest.raises(exceptions.ModelAttributeError):
@@ -29,7 +35,9 @@ def test_to_dict_no_properties():
     WHEN to_dict is called
     THEN MalformedSchemaError is raised.
     """
-    model = type("model", (utility_base.UtilityBase,), {"_schema": {}})
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": {}, "__init__": __init__}
+    )
     instance = model()
 
     with pytest.raises(exceptions.MalformedSchemaError):
@@ -45,18 +53,14 @@ def test_to_dict_no_type():
     THEN MalformedSchemaError is raised.
     """
     model = type(
-        "model", (utility_base.UtilityBase,), {"_schema": {"properties": {"key": {}}}}
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {}}}, "__init__": __init__},
     )
     instance = model()
 
     with pytest.raises(exceptions.TypeMissingError):
         instance.to_dict()
-
-
-def __init__(self, **kwargs):
-    """COnstruct."""
-    for name, value in kwargs.items():
-        setattr(self, name, value)
 
 
 @pytest.mark.parametrize(
@@ -102,12 +106,13 @@ def test_to_dict_simple_type(schema, init_args, expected_dict):
     assert returned_dict == expected_dict
 
 
+@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
 @pytest.mark.utility_base
-def test_to_dict_object_undefined():
+def test_to_dict_object_none(init_kwargs):
     """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that is not defined
-    WHEN to_dict is called
+    GIVEN class that derives from UtilityBase with a schema with an object property and
+        init args
+    WHEN model is initialized with init_args and to_dict is called
     THEN None is returned for the property.
     """
     model = type(
@@ -115,27 +120,7 @@ def test_to_dict_object_undefined():
         (utility_base.UtilityBase,),
         {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": None}
-
-
-@pytest.mark.utility_base
-def test_to_dict_object_none():
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that has a value of None
-    WHEN to_dict is called
-    THEN None is returned for the property.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**{"key": None})
+    instance = model(**init_kwargs)
 
     returned_dict = instance.to_dict()
 
@@ -190,7 +175,7 @@ def test_to_dict_object():
     GIVEN class that derives from UtilityBase with a schema with an object property
         that has a mock model
     WHEN to_dict is called
-    THEN the mock object to_dict return value is returned as the property value.
+    THEN the mock model to_dict return value is returned as the property value.
     """
     mock_model = mock.MagicMock()
     model = type(
@@ -203,6 +188,115 @@ def test_to_dict_object():
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": mock_model.to_dict.return_value}
+
+
+@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
+@pytest.mark.utility_base
+def test_to_dict_array_none(init_kwargs):
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property and
+        init args
+    WHEN model is initialized with init_args and to_dict is called
+    THEN an empty list is returned for the property.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**init_kwargs)
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": []}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_empty():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that is empty
+    WHEN to_dict is called
+    THEN an empty list is returned as the property value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": []})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": []}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_single():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that has a single mock model
+    WHEN to_dict is called
+    THEN list with the mock model to_dict return value is returned as the property
+        value.
+    """
+    mock_model = mock.MagicMock()
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": [mock_model]})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": [mock_model.to_dict.return_value]}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_multiple():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that has multiple mock models
+    WHEN to_dict is called
+    THEN list with the mock models to_dict return value is returned as the property
+        value.
+    """
+    mock_models = [mock.MagicMock(), mock.MagicMock()]
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": mock_models})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {
+        "key": list(
+            map(lambda mock_model: mock_model.to_dict.return_value, mock_models)
+        )
+    }
 
 
 @pytest.mark.utility_base
@@ -319,7 +413,7 @@ def test_from_dict_object_de_ref_missing():
     )
 
     with pytest.raises(exceptions.MalformedSchemaError):
-        model.from_dict(**{"key": {"obj_key": "obj_value"}})
+        model.from_dict(**{"key": {"obj_key": "obj value"}})
 
 
 @pytest.mark.utility_base
@@ -341,7 +435,7 @@ def test_from_dict_object_model_undefined():
     )
 
     with pytest.raises(exceptions.SchemaNotFoundError):
-        model.from_dict(**{"key": {"obj_key": "obj_value"}})
+        model.from_dict(**{"key": {"obj_key": "obj value"}})
 
 
 @pytest.mark.utility_base
@@ -350,7 +444,7 @@ def test_from_dict_object_from_dict_call(mocked_models):
     GIVEN schema with object which references a model that has been mocked and
         dictionary
     WHEN from_dict is called with the dictionary
-    THEN from_dict on the mocked model is called with the portion of the dictionary.
+    THEN from_dict on the mocked model is called with the portion of the dictionary
         for that model.
     """
     model = type(
@@ -364,9 +458,9 @@ def test_from_dict_object_from_dict_call(mocked_models):
         },
     )
 
-    model.from_dict(**{"key": {"obj_key": "obj_value"}})
+    model.from_dict(**{"key": {"obj_key": "obj value"}})
 
-    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj_value"})
+    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
 
 
 @pytest.mark.utility_base
@@ -389,9 +483,130 @@ def test_from_dict_object_return(mocked_models):
         },
     )
 
-    instance = model.from_dict(**{"key": {"obj_key": "obj_value"}})
+    instance = model.from_dict(**{"key": {"obj_key": "obj value"}})
 
     assert (
         instance.key  # pylint: disable=no-member
         == mocked_models.RefModel.from_dict.return_value
     )
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_no_items():
+    """
+    GIVEN schema with array which does not define items
+    WHEN from_dict is called with the dictionary
+    THEN MalformedSchemaError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {"type": "array"}}}, "__init__": __init__},
+    )
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        model.from_dict(**{"key": []})
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_empty_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with an empty array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is not called and the value is set to an empty
+        list.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": []})
+
+    mocked_models.RefModel.from_dict.assert_not_called()
+    assert instance.key == []  # pylint: disable=no-member
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_single_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with a single item array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary
+        for that model and the value is set to a list of the model from_dict return
+        value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": [{"obj_key": "obj value"}]})
+
+    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
+    assert instance.key == [  # pylint: disable=no-member
+        mocked_models.RefModel.from_dict.return_value
+    ]
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_multiple_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with a multiple item array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary
+        for that model and the value is set to a list of the model from_dict return
+        value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(
+        **{"key": [{"obj_key_1": "obj value 1"}, {"obj_key_2": "obj value 2"}]}
+    )
+
+    assert mocked_models.RefModel.from_dict.call_count == 2
+    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_1": "obj value 1"})
+    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_2": "obj value 2"})
+    assert instance.key == [  # pylint: disable=no-member
+        mocked_models.RefModel.from_dict.return_value,
+        mocked_models.RefModel.from_dict.return_value,
+    ]

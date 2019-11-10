@@ -63,9 +63,14 @@ def model_factory(
             schemas=schemas,
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,
+            model_schema=schema,
         )
         model_class_vars.append(prop_class_vars)
-        model_schema["properties"][prop_name] = prop_final_spec
+        dict_ignore = helpers.get_ext_prop(
+            source=prop_final_spec, name="x-dict-ignore", default=False, pop=True
+        )
+        if not dict_ignore:
+            model_schema["properties"][prop_name] = prop_final_spec
 
     # Assembling model
     return type(

@@ -1,5 +1,6 @@
 """Base class providing utilities for SQLAlchemy models."""
 
+import functools
 import json
 import typing
 
@@ -11,6 +12,8 @@ from . import exceptions
 from . import helpers
 from . import types
 
+TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
+
 
 class UtilityBase:
     """Base class providing utilities for SQLAlchemy models."""
@@ -21,8 +24,12 @@ class UtilityBase:
     # the de-referenced name of the schema.
     _schema: types.Schema
 
+    def __init__(self, **kwargs: typing.Any) -> None:
+        """Construct."""
+        raise NotImplementedError
+
     @classmethod
-    def _get_schema(cls: typing.Type[types.ModelClass]) -> types.Schema:
+    def _get_schema(cls) -> types.Schema:
         """
         Get the schema.
 
@@ -41,7 +48,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls: typing.Type[types.ModelClass]) -> types.Schema:
+    def _get_properties(cls) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -61,10 +68,37 @@ class UtilityBase:
             )
         return properties
 
+    @staticmethod
+    def _get_model(
+        *, spec: types.Schema, name: str, schema: types.Schema
+    ) -> typing.Type[TUtilityBase]:
+        """Get the model based on the schema."""
+        ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
+        if ref_model_name is None:
+            raise exceptions.MalformedSchemaError(
+                "To construct object parameters the schema for the property must "
+                "include the x-de-$ref extension property with the name of the "
+                "model to construct for the property. "
+                f"The property is {name}. "
+                f"The model schema is {json.dumps(schema)}."
+            )
+        # Try to get model
+        ref_model = getattr(open_alchemy.models, ref_model_name, None)
+        if ref_model is None:
+            raise exceptions.SchemaNotFoundError(
+                f"The {ref_model_name} model was not found on open_alchemy.models."
+            )
+        return ref_model
+
+    @staticmethod
+    def _from_dict(
+        kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
+    ) -> TUtilityBase:
+        """Construct model from dictionary."""
+        return model.from_dict(**kwargs)
+
     @classmethod
-    def from_dict(
-        cls: typing.Type[types.ModelClass], **kwargs: typing.Any
-    ) -> types.ModelClass:
+    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
         """
         Construct model instance from a dictionary.
 
@@ -92,7 +126,7 @@ class UtilityBase:
 
         # Assemble dictionary for construction
         properties = cls._get_properties()
-        model_dict = {}
+        model_dict: typing.Dict[str, typing.Any] = {}
         for name, value in kwargs.items():
             # Get the specification and type of the property
             spec = properties.get(name)
@@ -109,38 +143,57 @@ class UtilityBase:
                     f"The schema for the {name} property does not have a type."
                 )
 
-            # Handle simple types
-            if type_ != "object":
-                model_dict[name] = value
+            # Handle object
+            ref_model: typing.Type[TUtilityBase]
+            if type_ == "object":
+                ref_model = cls._get_model(spec=spec, name=name, schema=schema)
+                ref_model_instance = cls._from_dict(value, model=ref_model)
+                model_dict[name] = ref_model_instance
                 continue
 
-            # Handle object
-            ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
-            if ref_model_name is None:
-                raise exceptions.MalformedSchemaError(
-                    "To construct object parameters the schema for the property must "
-                    "include the x-de-$ref extension property with the name of the "
-                    "model to construct for the property. "
-                    f"The property is {name}. "
-                    f"The model schema is {json.dumps(schema)}."
-                )
-            # Try to get model
-            ref_model = getattr(open_alchemy.models, ref_model_name, None)
-            if ref_model is None:
-                raise exceptions.SchemaNotFoundError(
-                    f"The {ref_model_name} model was not found on open_alchemy.models."
-                )
-            # Construct model
-            ref_model_instance = ref_model.from_dict(**value)
-            model_dict[name] = ref_model_instance
+            if type_ == "array":
+                item_spec = spec.get("items")
+                if item_spec is None:
+                    raise exceptions.MalformedSchemaError(
+                        "To construct array parameters the schema for the property "
+                        "must include the items property with the information about "
+                        "the array items. "
+                        f"The property is {name}. "
+                        f"The model schema is {json.dumps(schema)}."
+                    )
+                ref_model = cls._get_model(spec=item_spec, name=name, schema=schema)
+                model_from_dict = functools.partial(cls._from_dict, model=ref_model)
+                ref_model_instances = map(model_from_dict, value)
+                model_dict[name] = list(ref_model_instances)
+                continue
+
+            # Handle other types
+            model_dict[name] = value
 
         return cls(**model_dict)
+
+    @staticmethod
+    def _object_to_dict(value, *, name: str) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on object."""
+        try:
+            return value.to_dict()
+        except AttributeError:
+            raise exceptions.InvalidModelInstanceError(
+                f"The {name} object property instance does not have a to_dict "
+                "implementation."
+            )
+        except TypeError:
+            raise exceptions.InvalidModelInstanceError(
+                f"The {name} object property instance to_dict implementation is "
+                "expecting arguments."
+            )
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
         Raise TypeMissingError if a property does not have a type.
+        Raise InvalidModelInstanceError is an object to_dict call failed.
 
         Returns:
             The dictionary representation of the model.
@@ -158,27 +211,27 @@ class UtilityBase:
                     f"The property schema is {json.dumps(spec)}."
                 )
 
-            # Handle basic types
-            if type_ != "object":
-                return_dict[name] = getattr(self, name, None)
+            # Handle object
+            if type_ == "object":
+                object_value = getattr(self, name, None)
+                if object_value is None:
+                    return_dict[name] = None
+                    continue
+                return_dict[name] = self._object_to_dict(object_value, name=name)
                 continue
 
-            # Object type
-            object_value = getattr(self, name, None)
-            if object_value is None:
-                return_dict[name] = getattr(self, name, None)
+            # Handle array
+            if type_ == "array":
+                array_value = getattr(self, name, None)
+                if array_value is None:
+                    return_dict[name] = []
+                    continue
+                name_obj_to_dict = functools.partial(self._object_to_dict, name=name)
+                array_dict_values = map(name_obj_to_dict, array_value)
+                return_dict[name] = list(array_dict_values)
                 continue
-            try:
-                return_dict[name] = object_value.to_dict()
-            except AttributeError:
-                raise exceptions.InvalidModelInstanceError(
-                    f"The {name} object property instance does not have a to_dict "
-                    "implementation."
-                )
-            except TypeError:
-                raise exceptions.InvalidModelInstanceError(
-                    f"The {name} object property instance to_dict implementation is "
-                    "expecting arguments."
-                )
+
+            # Handle other types
+            return_dict[name] = getattr(self, name, None)
 
         return return_dict

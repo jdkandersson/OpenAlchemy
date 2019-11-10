@@ -69,7 +69,11 @@
     "type": "string"
   },
   "x-de-$ref": {
-    "description": "Used to track the constructed model for a property referencing an object.",
+    "description": "INTERNAL USE ONLY: Track the name of a constructed model for a property referencing an object.",
     "type": "string"
+  },
+  "x-dict-ignore": {
+    "description": "INTERNAL USE ONLY: Do not add to the schema record used by from_- and to_dict functions.",
+    "type": "boolean"
   }
 }

@@ -165,19 +165,22 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required as None.
     """
-    schemas = {
-        "SingleProperty": {
-            "x-tablename": "table 1",
-            "type": "object",
-            "properties": {"id": {"type": "integer"}},
-        }
+    model_schema = {
+        "x-tablename": "table 1",
+        "type": "object",
+        "properties": {"id": {"type": "integer"}},
     }
+    schemas = {"SingleProperty": model_schema}
     model_factory.model_factory(
         name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"}, schemas=schemas, logical_name="id", required=None
+        spec={"type": "integer"},
+        schemas=schemas,
+        logical_name="id",
+        required=None,
+        model_schema=model_schema,
     )
 
 
@@ -189,20 +192,23 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required reset.
     """
-    schemas = {
-        "SingleProperty": {
-            "x-tablename": "table 1",
-            "type": "object",
-            "properties": {"id": {"type": "integer"}},
-            "required": [],
-        }
+    model_schema = {
+        "x-tablename": "table 1",
+        "type": "object",
+        "properties": {"id": {"type": "integer"}},
+        "required": [],
     }
+    schemas = {"SingleProperty": model_schema}
     model_factory.model_factory(
         name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"}, schemas=schemas, logical_name="id", required=False
+        spec={"type": "integer"},
+        schemas=schemas,
+        logical_name="id",
+        required=False,
+        model_schema=model_schema,
     )
 
 
@@ -214,20 +220,23 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     WHEN model_factory is called with the name of the schema
     THEN column_factory is called with required reset.
     """
-    schemas = {
-        "SingleProperty": {
-            "x-tablename": "table 1",
-            "type": "object",
-            "properties": {"id": {"type": "integer"}},
-            "required": ["id"],
-        }
+    model_schema = {
+        "x-tablename": "table 1",
+        "type": "object",
+        "properties": {"id": {"type": "integer"}},
+        "required": ["id"],
     }
+    schemas = {"SingleProperty": model_schema}
     model_factory.model_factory(
         name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"}, schemas=schemas, logical_name="id", required=True
+        spec={"type": "integer"},
+        schemas=schemas,
+        logical_name="id",
+        required=True,
+        model_schema=model_schema,
     )
 
 
@@ -285,6 +294,30 @@ def test_all_of():
 @pytest.mark.parametrize(
     "schemas, expected_schema",
     [
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"type": "integer", "x-dict-ignore": True}
+                    },
+                }
+            },
+            {"type": "object", "properties": {}},
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"type": "integer", "x-dict-ignore": False}
+                    },
+                }
+            },
+            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+        ),
         (
             {
                 "Schema": {
@@ -376,6 +409,8 @@ def test_all_of():
         ),
     ],
     ids=[
+        "single x-dict-ignore true",
+        "single x-dict-ignore false",
         "single no required",
         "single required",
         "single ref",

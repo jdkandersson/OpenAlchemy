@@ -19,8 +19,8 @@ Many to One
 A many to one relationship associates many children with a single parent. For
 example, a company can have many employees working in the same division (for
 example engineering, legal, marketing, ...) but a particular employee can only
-work in one division. In this case the employees are the children on the "many"
-side and the division is the parent on the "one" side. The following *OpenAPI*
+work in one division. In this case the employees are the parents on the "many"
+side and the division is the child on the "one" side. The following *OpenAPI*
 specification snippet defines a many to one relationship:
 
 .. literalinclude:: ./relationships/many_to_one/example.yaml
@@ -160,3 +160,37 @@ example:
     :linenos:
 
 Other permutations are also supported.
+
+.. _one-to-many:
+
+One to Many
+-----------
+
+The one to many relationship is similar to the may to one relationship except
+that the role of the child and parent is swapped. Following on from the
+:ref:`many to one <many-to-one>` example, in the one to many case the division
+would be the parent and the employees the children. The following *OpenAPI*
+specification snippet defines a one to many relationship:
+
+.. literalinclude:: ./relationships/one_to_many/example.yaml
+    :language: yaml
+    :linenos:
+
+The one to many relationship also supports back references and custom foreign
+keys. They are defined similar to how they are defined for many to one
+relationships. For back references see :ref:`many to one backref <backref>`
+and for custom foreign keys see
+:ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
+*x-uselist* is not supported as it does not make sense to turn a one to many
+relationship defined as an OpenAPI array into a one to one relationship.
+
+.. _x-dict-ignore:
+
+.. note:: To be able to support one to many relationships, the schemas stored
+    with the model factory may be modified by putting a particular schema
+    behind an *allOf* statement together with a object that has a foreign key
+    property. The schema for the added object will include the *x-dict-ignore*
+    extension property to ensure that *from_dict* and *to_dict* don't attempt
+    to construct the foreign key associated with the one to many relationship.
+    The *x-dict-ignore* extension property is an internal extension property
+    that may change at any time and should not be used externally.

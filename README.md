@@ -113,6 +113,7 @@ The following features are supported:
 - foreign keys,
 - many to one relationships,
 - one to one relationships,
+- one to many relationships,
 - custom foreign keys for relationships,
 - back references for relationships,
 - `allOf` inheritance for columns and models,
@@ -122,7 +123,6 @@ The following features are supported:
 
 ### Not Supported
 The following features are on the backlog:
-- one to many relationships and
 - many to many relationships.
 
 ## Contributing
