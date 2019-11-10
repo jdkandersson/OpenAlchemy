@@ -142,6 +142,18 @@ class UtilityBase:
                 model_dict[name] = ref_model_instance
                 continue
 
+            if type_ == "array":
+                item_spec = spec.get("items")
+                ref_model = cls._get_model(spec=item_spec, name=name, schema=schema)
+                ref_model_instances = map(
+                    lambda val, model=ref_model: model.from_dict(  # type: ignore
+                        **val
+                    ),
+                    value,
+                )
+                model_dict[name] = list(ref_model_instances)
+                continue
+
             # Handle other types
             model_dict[name] = value
 

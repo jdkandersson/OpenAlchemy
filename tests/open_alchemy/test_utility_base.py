@@ -413,7 +413,7 @@ def test_from_dict_object_de_ref_missing():
     )
 
     with pytest.raises(exceptions.MalformedSchemaError):
-        model.from_dict(**{"key": {"obj_key": "obj_value"}})
+        model.from_dict(**{"key": {"obj_key": "obj value"}})
 
 
 @pytest.mark.utility_base
@@ -435,7 +435,7 @@ def test_from_dict_object_model_undefined():
     )
 
     with pytest.raises(exceptions.SchemaNotFoundError):
-        model.from_dict(**{"key": {"obj_key": "obj_value"}})
+        model.from_dict(**{"key": {"obj_key": "obj value"}})
 
 
 @pytest.mark.utility_base
@@ -444,7 +444,7 @@ def test_from_dict_object_from_dict_call(mocked_models):
     GIVEN schema with object which references a model that has been mocked and
         dictionary
     WHEN from_dict is called with the dictionary
-    THEN from_dict on the mocked model is called with the portion of the dictionary.
+    THEN from_dict on the mocked model is called with the portion of the dictionary
         for that model.
     """
     model = type(
@@ -458,9 +458,9 @@ def test_from_dict_object_from_dict_call(mocked_models):
         },
     )
 
-    model.from_dict(**{"key": {"obj_key": "obj_value"}})
+    model.from_dict(**{"key": {"obj_key": "obj value"}})
 
-    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj_value"})
+    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
 
 
 @pytest.mark.utility_base
@@ -483,9 +483,113 @@ def test_from_dict_object_return(mocked_models):
         },
     )
 
-    instance = model.from_dict(**{"key": {"obj_key": "obj_value"}})
+    instance = model.from_dict(**{"key": {"obj_key": "obj value"}})
 
     assert (
         instance.key  # pylint: disable=no-member
         == mocked_models.RefModel.from_dict.return_value
     )
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_empty_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with an empty array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is not called and the value is set to an empty
+        list.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": []})
+
+    mocked_models.RefModel.from_dict.assert_not_called()
+    assert instance.key == []  # pylint: disable=no-member
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_single_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with a single item array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary
+        for that model and the value is set to a list of the model from_dict return
+        value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": [{"obj_key": "obj value"}]})
+
+    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
+    assert instance.key == [  # pylint: disable=no-member
+        mocked_models.RefModel.from_dict.return_value
+    ]
+
+
+@pytest.mark.utility_base
+def test_from_dict_array_multiple_from_dict(mocked_models):
+    """
+    GIVEN schema with array which references a model that has been mocked and
+        dictionary with a multiple item array
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary
+        for that model and the value is set to a list of the model from_dict return
+        value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {
+                    "key": {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "RefModel"},
+                    }
+                }
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(
+        **{"key": [{"obj_key_1": "obj value 1"}, {"obj_key_2": "obj value 2"}]}
+    )
+
+    assert mocked_models.RefModel.from_dict.call_count == 2
+    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_1": "obj value 1"})
+    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_2": "obj value 2"})
+    assert instance.key == [  # pylint: disable=no-member
+        mocked_models.RefModel.from_dict.return_value,
+        mocked_models.RefModel.from_dict.return_value,
+    ]
