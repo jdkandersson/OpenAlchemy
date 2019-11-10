@@ -118,7 +118,7 @@ def test_ref_all_of():
     ids=["first only", "second only", "different", "common"],
 )
 @pytest.mark.helper
-def test_ref_all_required(all_of_schema, expected_required):
+def test_required(all_of_schema, expected_required):
     """
     GIVEN schema that has allOf with schemas with given required properties and expected
         final required
@@ -131,3 +131,51 @@ def test_ref_all_required(all_of_schema, expected_required):
     return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
 
     assert sorted(return_schema["required"]) == sorted(expected_required)
+
+
+@pytest.mark.parametrize(
+    "all_of_schema, expected_properties",
+    [
+        ([{"properties": {"key_1": "value 1"}}], {"key_1": "value 1"}),
+        (
+            [{"properties": {"key_1": "value 1", "key_2": "value 2"}}],
+            {"key_1": "value 1", "key_2": "value 2"},
+        ),
+        ([{"properties": {"key_1": "value 1"}}, {}], {"key_1": "value 1"}),
+        (
+            [
+                {"properties": {"key_1": "value 1"}},
+                {"properties": {"key_2": "value 2"}},
+            ],
+            {"key_1": "value 1", "key_2": "value 2"},
+        ),
+        (
+            [
+                {"properties": {"key_1": "value 1"}},
+                {"properties": {"key_1": "value 2"}},
+            ],
+            {"key_1": "value 2"},
+        ),
+    ],
+    ids=[
+        "single all of single property",
+        "single all of multiple properties",
+        "multiple all of one property",
+        "multiple all of all properties",
+        "multiple all of all properties duplicates",
+    ],
+)
+@pytest.mark.helper
+def test_properties(all_of_schema, expected_properties):
+    """
+    GIVEN schema that has allOf with schemas with given properties and expected
+        properties
+    WHEN merge_all_of is called with the schema
+    THEN the returned schema has the expected properties.
+    """
+    schema = {"allOf": all_of_schema}
+    schemas = {}
+
+    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+
+    assert return_schema["properties"] == expected_properties
