@@ -135,15 +135,15 @@ class UtilityBase:
                     f"The schema for the {name} property does not have a type."
                 )
 
-            # Handle simple types
-            if type_ != "object":
-                model_dict[name] = value
+            # Handle object
+            if type_ == "object":
+                ref_model = cls._get_model(spec=spec, name=name, schema=schema)
+                ref_model_instance = ref_model.from_dict(**value)
+                model_dict[name] = ref_model_instance
                 continue
 
-            # Handle object
-            ref_model = cls._get_model(spec=spec, name=name, schema=schema)
-            ref_model_instance = ref_model.from_dict(**value)
-            model_dict[name] = ref_model_instance
+            # Handle other types
+            model_dict[name] = value
 
         return cls(**model_dict)
 
