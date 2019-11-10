@@ -1,5 +1,6 @@
 """Base class providing utilities for SQLAlchemy models."""
 
+import functools
 import json
 import typing
 
@@ -70,7 +71,7 @@ class UtilityBase:
     @staticmethod
     def _get_model(
         *, spec: types.Schema, name: str, schema: types.Schema
-    ) -> typing.Type:
+    ) -> typing.Type[TUtilityBase]:
         """Get the model based on the schema."""
         ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
         if ref_model_name is None:
@@ -88,6 +89,13 @@ class UtilityBase:
                 f"The {ref_model_name} model was not found on open_alchemy.models."
             )
         return ref_model
+
+    @staticmethod
+    def _from_dict(
+        kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
+    ) -> TUtilityBase:
+        """Construct model from dictionary."""
+        return model.from_dict(**kwargs)
 
     @classmethod
     def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
@@ -118,7 +126,7 @@ class UtilityBase:
 
         # Assemble dictionary for construction
         properties = cls._get_properties()
-        model_dict = {}
+        model_dict: typing.Dict[str, typing.Any] = {}
         for name, value in kwargs.items():
             # Get the specification and type of the property
             spec = properties.get(name)
@@ -136,21 +144,18 @@ class UtilityBase:
                 )
 
             # Handle object
+            ref_model: typing.Type[TUtilityBase]
             if type_ == "object":
                 ref_model = cls._get_model(spec=spec, name=name, schema=schema)
-                ref_model_instance = ref_model.from_dict(**value)
+                ref_model_instance = cls._from_dict(value, model=ref_model)
                 model_dict[name] = ref_model_instance
                 continue
 
             if type_ == "array":
                 item_spec = spec.get("items")
                 ref_model = cls._get_model(spec=item_spec, name=name, schema=schema)
-                ref_model_instances = map(
-                    lambda val, model=ref_model: model.from_dict(  # type: ignore
-                        **val
-                    ),
-                    value,
-                )
+                model_from_dict = functools.partial(cls._from_dict, model=ref_model)
+                ref_model_instances = map(model_from_dict, value)
                 model_dict[name] = list(ref_model_instances)
                 continue
 
@@ -160,7 +165,7 @@ class UtilityBase:
         return cls(**model_dict)
 
     @staticmethod
-    def _object_to_dict(*, value, name: str) -> typing.Dict[str, typing.Any]:
+    def _object_to_dict(value, *, name: str) -> typing.Dict[str, typing.Any]:
         """Call to_dict on object."""
         try:
             return value.to_dict()
@@ -213,12 +218,8 @@ class UtilityBase:
                 if array_value is None:
                     return_dict[name] = []
                     continue
-                array_dict_values = map(
-                    lambda value, name=name: self._object_to_dict(  # type: ignore
-                        value=value, name=name
-                    ),
-                    array_value,
-                )
+                name_obj_to_dict = functools.partial(self._object_to_dict, name=name)
+                array_dict_values = map(name_obj_to_dict, array_value)
                 return_dict[name] = list(array_dict_values)
                 continue
 
