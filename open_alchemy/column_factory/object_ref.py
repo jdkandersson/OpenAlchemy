@@ -43,7 +43,7 @@ def handle_object(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
-    # Handling object
+    # Handle object
     foreign_key_spec = _handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
@@ -115,7 +115,7 @@ def _gather_object_artifacts(
     all_of = spec.get("allOf")
 
     if ref is not None:
-        # Handling $ref
+        # Handle $ref
         ref_logical_name, spec = helpers.resolve_ref(
             name=logical_name, schema=spec, schemas=schemas
         )
@@ -123,7 +123,7 @@ def _gather_object_artifacts(
         # Checking for $ref, and x-backref and x-foreign-key-column counts
         _check_object_all_of(all_of_spec=all_of)
 
-        # Handling allOf
+        # Handle allOf
         for sub_spec in all_of:
             backref = helpers.get_ext_prop(
                 source=sub_spec, name="x-backref", default=backref
@@ -140,7 +140,7 @@ def _gather_object_artifacts(
                 )
     else:
         raise exceptions.MalformedRelationshipError(
-            "Many to One relationships are defined using either $ref or allOf."
+            "Many to one relationships are defined using either $ref or allOf."
         )
 
     # Resolving allOf
@@ -194,21 +194,21 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
             uselist_count += 1
     if ref_count != 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to One relationships defined with allOf must have exactly one "
+            "Many to one relationships defined with allOf must have exactly one "
             "$ref in the allOf list."
         )
     if backref_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to One relationships may have at most 1 x-backref defined."
+            "Many to one relationships may have at most 1 x-backref defined."
         )
     if fk_column_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to One relationships may have at most 1 x-foreign-key-column "
+            "Many to one relationships may have at most 1 x-foreign-key-column "
             "defined."
         )
     if uselist_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to One relationships may have at most 1 x-uselist defined."
+            "Many to one relationships may have at most 1 x-uselist defined."
         )
 
 
