@@ -1,9 +1,11 @@
 """Integration tests for initialization."""
 
+import json
 from unittest import mock
 
 import pytest
 import sqlalchemy
+import yaml
 
 import open_alchemy
 
@@ -165,3 +167,158 @@ def test_schema():
     assert model.__tablename__ == "table"
     assert hasattr(model, "column")
     assert isinstance(model.column.type, sqlalchemy.Integer)
+
+
+BASIC_SPEC = {
+    "components": {
+        "schemas": {
+            "Table": {
+                "properties": {"column": {"type": "integer", "x-primary-key": True}},
+                "x-tablename": "table",
+                "type": "object",
+            }
+        }
+    }
+}
+
+
+@pytest.mark.integration
+def test_init_json(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a JSON file
+    WHEN init_json is called with the file
+    THEN a valid model factory is returned.
+    """
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.json"
+    spec_file.write_text(json.dumps(BASIC_SPEC))
+
+    # Creating model factory
+    base, model_factory = open_alchemy.init_json(str(spec_file), define_all=False)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    value = 0
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+
+
+@pytest.mark.integration
+def test_init_yaml(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a YAML file
+    WHEN init_yaml is called with the file
+    THEN a valid model factory is returned.
+    """
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    base, model_factory = open_alchemy.init_yaml(str(spec_file), define_all=False)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    value = 0
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+
+
+@pytest.mark.integration
+def test_init_yaml_import_error():
+    """
+    GIVEN yaml package is not available
+    WHEN init_yaml is called
+    THEN ImportError is raised.
+    """
+    with mock.patch.dict("sys.modules", {"yaml": None}):
+        with pytest.raises(ImportError):
+            open_alchemy.init_yaml("some file")
+
+
+@pytest.mark.integration
+def test_import_base_initial():
+    """
+    GIVEN
+    WHEN
+    THEN ImportError is raised when Base is imported from open_alchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel,unused-import
+    with pytest.raises(ImportError):
+        from open_alchemy.models import Base  # noqa: F401
+
+
+@pytest.mark.integration
+def test_import_base(tmp_path):
+    """
+    GIVEN specification file
+    WHEN init_yaml is called with the specification file
+    THEN Base can be imported from open_alchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel,unused-import
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    open_alchemy.init_yaml(str(spec_file))
+
+    from open_alchemy.models import Base  # noqa: F401
+
+
+@pytest.mark.integration
+def test_import_model(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a YAML file
+    WHEN init_yaml is called with the file
+    THEN the model is importable from open_alchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Creating model factory
+    open_alchemy.init_yaml(str(spec_file), define_all=True)
+
+    # Creating models
+    from open_alchemy.models import Base
+
+    Base.metadata.create_all(engine)
+
+    # Creating model instance
+    from open_alchemy.models import Table
+
+    value = 0
+    model_instance = Table(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(Table).first()
+    assert queried_model.column == value
