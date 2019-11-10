@@ -31,7 +31,6 @@ def handle_array(
         model_schema: The schema of the one to many parent.
         schemas: Used to resolve any $ref.
         logical_name: The logical name in the specification for the schema.
-        schema_name: The name of the schema the property belongs to.
 
     Returns:
         The logical name and the relationship for the referenced object.
