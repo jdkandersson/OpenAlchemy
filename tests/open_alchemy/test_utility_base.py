@@ -492,6 +492,23 @@ def test_from_dict_object_return(mocked_models):
 
 
 @pytest.mark.utility_base
+def test_from_dict_array_no_items():
+    """
+    GIVEN schema with array which does not define items
+    WHEN from_dict is called with the dictionary
+    THEN MalformedSchemaError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {"type": "array"}}}, "__init__": __init__},
+    )
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        model.from_dict(**{"key": []})
+
+
+@pytest.mark.utility_base
 def test_from_dict_array_empty_from_dict(mocked_models):
     """
     GIVEN schema with array which references a model that has been mocked and
