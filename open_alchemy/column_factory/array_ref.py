@@ -122,6 +122,11 @@ def _set_foreign_key(
     schemas[ref_model_name] = {
         "allOf": [
             schemas[ref_model_name],
-            {"type": "object", "properties": {f"{tablename}_{fk_column}": fk_spec}},
+            {
+                "type": "object",
+                "properties": {
+                    f"{tablename}_{fk_column}": {**fk_spec, "x-dict-ignore": True}
+                },
+            },
         ]
     }

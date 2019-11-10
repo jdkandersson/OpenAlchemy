@@ -44,6 +44,7 @@ def test_miss_default():
         ("x-foreign-key-column", True),
         ("x-tablename", True),
         ("x-de-$ref", True),
+        ("x-dict-ignore", "True"),
     ],
     ids=[
         "x-backref",
@@ -57,6 +58,7 @@ def test_miss_default():
         "x-foreign-key-column",
         "x-tablename",
         "x-de-$ref",
+        "x-dict-ignore",
     ],
 )
 @pytest.mark.helper
@@ -85,6 +87,7 @@ def test_invalid(name, value):
         ("x-foreign-key-column", "column 1"),
         ("x-tablename", "table 1"),
         ("x-de-$ref", "Table1"),
+        ("x-dict-ignore", True),
     ],
     ids=[
         "x-backref",
@@ -97,6 +100,7 @@ def test_invalid(name, value):
         "x-foreign-key-column",
         "x-tablename",
         "x-de-$ref",
+        "x-dict-ignore",
     ],
 )
 @pytest.mark.helper

@@ -166,6 +166,7 @@ def test_set_foreign_key_schemas():
                         f"{tablename}_{fk_column}": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.{fk_column}",
+                            "x-dict-ignore": True,
                         }
                     },
                 },
