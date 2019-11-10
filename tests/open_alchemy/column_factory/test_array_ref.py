@@ -128,3 +128,47 @@ def test_handle_array(spec, schemas):
         "type": "array",
         "items": {"type": "object", "x-de-$ref": "RefSchema"},
     }
+
+
+@pytest.mark.column
+def test_set_foreign_key_schemas():
+    """
+    GIVEN referenced model is not in models, model schema, schemas and foreign key
+        column
+    WHEN _set_foreign_key is called with the model schema, schemas and foreign key
+        column
+    THEN The foreign key column is added to the referenced model using allOf.
+    """
+    ref_model_name = "RefSchema"
+    fk_column = "column_1"
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {fk_column: {"type": "integer"}},
+    }
+    schemas = {ref_model_name: {"type": "object"}}
+
+    array_ref._set_foreign_key(  # pylint: disable=protected-access
+        ref_model_name=ref_model_name,
+        model_schema=model_schema,
+        schemas=schemas,
+        fk_column=fk_column,
+    )
+
+    assert schemas == {
+        ref_model_name: {
+            "allOf": [
+                {"type": "object"},
+                {
+                    "type": "object",
+                    "properties": {
+                        f"{tablename}_{fk_column}": {
+                            "type": "integer",
+                            "x-foreign-key": f"{tablename}.{fk_column}",
+                        }
+                    },
+                },
+            ]
+        }
+    }

@@ -82,12 +82,12 @@ def test_check_object_all_of_error(spec):
 def test_handle_object_reference_malformed_schema(spec, schemas, fk_column):
     """
     GIVEN spec, schemas and foreign key column
-    WHEN _handle_object_reference is called with the spec, schemas and foreign key
+    WHEN handle_object_reference is called with the spec, schemas and foreign key
         column
     THEN a MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref._handle_object_reference(
+        object_ref.handle_object_reference(
             spec=spec, schemas=schemas, fk_column=fk_column
         )
 
@@ -97,7 +97,7 @@ def test_handle_object_reference_fk_return():
     """
     GIVEN foreign key column and object schema with x-tablename and id and foreign key
         property with a type
-    WHEN _handle_object_reference is called with the schema
+    WHEN handle_object_reference is called with the schema
     THEN a schema with the type of the foreign key property and x-foreign-key property.
     """
     spec = {
@@ -106,7 +106,7 @@ def test_handle_object_reference_fk_return():
     }
     schemas = {}
 
-    return_value = object_ref._handle_object_reference(
+    return_value = object_ref.handle_object_reference(
         spec=spec, schemas=schemas, fk_column="fk"
     )
 

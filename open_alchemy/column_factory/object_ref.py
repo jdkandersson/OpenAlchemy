@@ -44,7 +44,7 @@ def handle_object(
     )
 
     # Handle object
-    foreign_key_spec = _handle_object_reference(
+    foreign_key_spec = handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
     return_value = column.handle_column(
@@ -212,7 +212,7 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
         )
 
 
-def _handle_object_reference(
+def handle_object_reference(
     *, spec: types.Schema, schemas: types.Schemas, fk_column: str
 ) -> types.Schema:
     """
