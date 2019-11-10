@@ -45,6 +45,12 @@ def handle_array(
         spec=item_spec, logical_name=logical_name, schemas=schemas
     )
 
+    # Check for uselist
+    if obj_artifacts.uselist is not None:
+        raise exceptions.MalformedRelationshipError(
+            "x-uselist is not supported for one to many relationships."
+        )
+
     # Check referenced specification
     ref_spec = helpers.prepare_schema(schema=obj_artifacts.spec, schemas=schemas)
     ref_type = ref_spec.get("type")

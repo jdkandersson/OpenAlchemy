@@ -41,6 +41,17 @@ from open_alchemy.column_factory import array_ref
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"type": "object"}},
         ),
+        (
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "x-backref": "schema",
+                    "x-uselist": False,
+                }
+            },
+        ),
     ],
     ids=[
         "no items",
@@ -51,6 +62,7 @@ from open_alchemy.column_factory import array_ref
         "allOf items no type",
         "items type not object",
         "items no x-tablename",
+        "backref and uselist defined",
     ],
 )
 @pytest.mark.column
