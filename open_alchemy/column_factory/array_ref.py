@@ -4,10 +4,12 @@ import typing
 
 import sqlalchemy
 
+import open_alchemy
 from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
 
+from . import column
 from . import object_ref
 
 
@@ -125,15 +127,27 @@ def _set_foreign_key(
         spec=model_schema, schemas=schemas, fk_column=fk_column
     )
 
+    # Calculate values for foreign key
     tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
+    fk_logical_name = f"{tablename}_{fk_column}"
+
+    # Handle model already constructed
+    ref_model = getattr(open_alchemy.models, ref_model_name, None)
+    if ref_model is not None:
+        # Construct foreign key
+        [(_, fk_column)] = column.handle_column(
+            spec=fk_spec, logical_name=fk_logical_name
+        )
+        setattr(ref_model, fk_logical_name, fk_column)
+        return
+
+    # Handle model not constructed
     schemas[ref_model_name] = {
         "allOf": [
             schemas[ref_model_name],
             {
                 "type": "object",
-                "properties": {
-                    f"{tablename}_{fk_column}": {**fk_spec, "x-dict-ignore": True}
-                },
+                "properties": {fk_logical_name: {**fk_spec, "x-dict-ignore": True}},
             },
         ]
     }
