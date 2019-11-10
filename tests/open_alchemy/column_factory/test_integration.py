@@ -18,7 +18,7 @@ def test_integration():
     spec = {"type": "boolean"}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
     )
 
     assert logical_name == "column_1"
@@ -37,7 +37,7 @@ def test_integration_all_of():
     spec = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
     )
 
     assert logical_name == "column_1"
@@ -56,7 +56,7 @@ def test_integration_ref():
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
     )
 
     assert logical_name == "column_1"
@@ -79,17 +79,19 @@ def test_integration_object_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
+    logical_name = "column_1"
+
     (
         [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
         spec,
     ) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name=logical_name, model_schema={}
     )
 
     assert fk_logical_name == "column_1_id"
     assert isinstance(fk_column.type, sqlalchemy.Integer)
     assert len(fk_column.foreign_keys) == 1
-    assert tbl_logical_name == "column_1"
+    assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert relationship.uselist is None
@@ -113,7 +115,7 @@ def test_integration_object_ref_backref():
         }
     }
     ([_, (_, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
     )
 
     assert relationship.backref == ("ref_schemas", {"uselist": None})
@@ -137,7 +139,63 @@ def test_integration_object_ref_uselist():
         }
     }
     ([_, (_, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1"
+        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
     )
 
     assert relationship.backref == ("ref_schemas", {"uselist": False})
+
+
+@pytest.mark.column
+def test_integration_array_ref():
+    """
+    GIVEN schema that references another object schema from an array and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN foreign key reference  is added to the referenced schema and relationship is
+        returned with the spec.
+    """
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
+    logical_name = "column_1"
+
+    ([(tbl_logical_name, relationship)], spec) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+    )
+
+    assert tbl_logical_name == logical_name
+    assert relationship.argument == "RefSchema"
+    assert spec == {
+        "type": "array",
+        "items": {"type": "object", "x-de-$ref": "RefSchema"},
+    }
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "schema_id": {
+                            "type": "integer",
+                            "x-foreign-key": "schema.id",
+                            "x-dict-ignore": True,
+                        }
+                    },
+                },
+            ]
+        }
+    }

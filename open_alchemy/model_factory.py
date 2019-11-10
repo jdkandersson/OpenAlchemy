@@ -63,6 +63,7 @@ def model_factory(
             schemas=schemas,
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,
+            model_schema=schema,
         )
         model_class_vars.append(prop_class_vars)
         dict_ignore = helpers.get_ext_prop(

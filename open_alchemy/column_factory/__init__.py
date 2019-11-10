@@ -9,6 +9,7 @@ from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
 
+from . import array_ref
 from . import column
 from . import object_ref
 
@@ -21,6 +22,7 @@ def column_factory(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
+    model_schema: types.Schema,
 ) -> typing.Tuple[typing.List[typing.Tuple[str, sqlalchemy.Column]], types.Schema]:
     """
     Generate column based on OpenAPI schema property.
@@ -30,6 +32,7 @@ def column_factory(
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
+        model_schema: The schema for the model.
 
     Returns:
         The logical name, the SQLAlchemy column based on the schema and the
@@ -43,6 +46,15 @@ def column_factory(
         # Handle objects
         return object_ref.handle_object(
             spec=spec, schemas=schemas, required=required, logical_name=logical_name
+        )
+
+    if type_ == "array":
+        # Handle arrays
+        return array_ref.handle_array(
+            spec=spec,
+            model_schema=model_schema,
+            schemas=schemas,
+            logical_name=logical_name,
         )
 
     # Handle columns
