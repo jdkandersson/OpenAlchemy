@@ -10,7 +10,6 @@ Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
 defining your API and database models. Any required additions to the OpenAPI
 specification are compliant with the OpenAPI standard.
 
-
 .. _getting-started:
 
 Getting Started
@@ -43,7 +42,6 @@ The most user friendly interfaces are the :ref:`init-yaml` and
 lower level interface which has fewer dependencies but is not as user
 friendly.
 
-
 .. _init-yaml:
 
 *init_yaml*
@@ -71,7 +69,6 @@ The return value is a tuple consisting of:
   constructed models are added to the *open_alchemy.models* module and are
   importable. For example: :python:`from open_alchemy.models import Employee`.
 
-
 .. _init-json:
 
 *init_json*
@@ -80,7 +77,6 @@ The return value is a tuple consisting of:
 The *init_json* interface is similar to the :ref:`init-yaml` interface except
 that *spec_filename* must be a JSON file and *PyYAML* is not a required
 dependency.
-
 
 .. _init-model-factory:
 
@@ -104,7 +100,6 @@ does not construct a declarative base. It accepts the following parameters:
 The return value is the *model_factory* as defined as part of the return value
 of :ref:`init-yaml`.
 
-
 .. _model-utilities:
 
 Model Utilities
@@ -114,7 +109,6 @@ There are a few common utility functions that are added to the models. The
 :ref:`from-dict` utility function constructs a model instance from a
 dictionary. The :ref:`to-dict` function converts a model instance to a
 dictionary.
-
 
 .. _from-dict:
 
@@ -142,7 +136,6 @@ For example::
     >>> employee.name
     'David Andersson'
 
-
 .. _x-de-ref:
 
 .. note:: To be able to support relationships, the schema stored alongside a
@@ -151,7 +144,6 @@ For example::
     schema for the referenced object. Instead, the *object* type is noted for
     the property alongside the *x-de-$ref* extension property which stores the
     name of the referenced model.
-
 
 .. _to-dict:
 
@@ -174,7 +166,6 @@ For example::
     >>> employee = Employee.from_dict(**employee_dict)
     >>> employee.to_dict()
     {'id': 1, 'name': 'David Andersson', 'division': 'engineering', 'salary': 1000000}
-
 
 .. _how-does-it-work:
 
@@ -199,33 +190,35 @@ extension properties.
 To find out more about an extension property, go to the following section of
 the documentation:
 
-+---------------------+----------------------------------+
-| property            | documentation section            |
-+=====================+==================================+
-| x-backref           | :ref:`backref`                   |
-+---------------------+----------------------------------+
-| x-uselist           | :ref:`one-to-one`                |
-+---------------------+----------------------------------+
-| x-primary-key       | :ref:`primary-key`               |
-+---------------------+----------------------------------+
-| x-autoincrement     | :ref:`autoincrement`             |
-+---------------------+----------------------------------+
-| x-index             | :ref:`column-index`              |
-+---------------------+----------------------------------+
-| x-composite-index   | :ref:`composite-index`           |
-+---------------------+----------------------------------+
-| x-unique            | :ref:`column-unique`             |
-+---------------------+----------------------------------+
-| x-composite-unique  | :ref:`composite-unique`          |
-+---------------------+----------------------------------+
-| x-foreign-key       | :ref:`foreign-key`               |
-+---------------------+----------------------------------+
-| x-tablename         | :ref:`how-does-it-work`          |
-+---------------------+----------------------------------+
-| x-foreign-key-colum | :ref:`custom-foreign-key`        |
-+---------------------+----------------------------------+
-| x-de-$ref           | :ref:`from_dict Note <x-de-ref>` |
-+---------------------+----------------------------------+
++---------------------+-----------------------------------------+
+| property            | documentation section                   |
++=====================+=========================================+
+| x-backref           | :ref:`backref`                          |
++---------------------+-----------------------------------------+
+| x-uselist           | :ref:`one-to-one`                       |
++---------------------+-----------------------------------------+
+| x-primary-key       | :ref:`primary-key`                      |
++---------------------+-----------------------------------------+
+| x-autoincrement     | :ref:`autoincrement`                    |
++---------------------+-----------------------------------------+
+| x-index             | :ref:`column-index`                     |
++---------------------+-----------------------------------------+
+| x-composite-index   | :ref:`composite-index`                  |
++---------------------+-----------------------------------------+
+| x-unique            | :ref:`column-unique`                    |
++---------------------+-----------------------------------------+
+| x-composite-unique  | :ref:`composite-unique`                 |
++---------------------+-----------------------------------------+
+| x-foreign-key       | :ref:`foreign-key`                      |
++---------------------+-----------------------------------------+
+| x-tablename         | :ref:`how-does-it-work`                 |
++---------------------+-----------------------------------------+
+| x-foreign-key-colum | :ref:`custom-foreign-key`               |
++---------------------+-----------------------------------------+
+| x-de-$ref           | :ref:`from_dict Note <x-de-ref>`        |
++---------------------+-----------------------------------------+
+| x-dict-ignore       | :ref:`One to Many Note <x-dict-ignore>` |
++---------------------+-----------------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.
