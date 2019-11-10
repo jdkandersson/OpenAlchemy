@@ -171,7 +171,7 @@ def test_to_dict_object():
     GIVEN class that derives from UtilityBase with a schema with an object property
         that has a mock model
     WHEN to_dict is called
-    THEN the mock object to_dict return value is returned as the property value.
+    THEN the mock model to_dict return value is returned as the property value.
     """
     mock_model = mock.MagicMock()
     model = type(
@@ -210,6 +210,89 @@ def test_to_dict_array_none(init_kwargs):
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": []}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_empty():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that is empty
+    WHEN to_dict is called
+    THEN an empty list is returned as the property value.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": []})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": []}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_single():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that has a single mock model
+    WHEN to_dict is called
+    THEN list with the mock model to_dict return value is returned as the property
+        value.
+    """
+    mock_model = mock.MagicMock()
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": [mock_model]})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": [mock_model.to_dict.return_value]}
+
+
+@pytest.mark.utility_base
+def test_to_dict_array_multiple():
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property
+        that has multiple mock models
+    WHEN to_dict is called
+    THEN list with the mock models to_dict return value is returned as the property
+        value.
+    """
+    mock_models = [mock.MagicMock(), mock.MagicMock()]
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key": mock_models})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {
+        "key": list(
+            map(lambda mock_model: mock_model.to_dict.return_value, mock_models)
+        )
+    }
 
 
 @pytest.mark.utility_base

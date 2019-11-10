@@ -175,16 +175,31 @@ class UtilityBase:
                     f"The property schema is {json.dumps(spec)}."
                 )
 
-            # Handle basic types
-            if type_ != "object":
-                return_dict[name] = getattr(self, name, None)
+            # Handle object
+            if type_ == "object":
+                object_value = getattr(self, name, None)
+                if object_value is None:
+                    return_dict[name] = None
+                    continue
+                return_dict[name] = self._object_to_dict(object_value, name)
                 continue
 
-            # Object type
-            object_value = getattr(self, name, None)
-            if object_value is None:
-                return_dict[name] = getattr(self, name, None)
+            # Handle array
+            if type_ == "array":
+                array_value = getattr(self, name, None)
+                if array_value is None:
+                    return_dict[name] = []
+                    continue
+                array_dict_values = map(
+                    lambda value, name=name: self._object_to_dict(  # type: ignore
+                        value, name
+                    ),
+                    array_value,
+                )
+                return_dict[name] = list(array_dict_values)
                 continue
-            return_dict[name] = self._object_to_dict(object_value, name)
+
+            # Handle other types
+            return_dict[name] = getattr(self, name, None)
 
         return return_dict
