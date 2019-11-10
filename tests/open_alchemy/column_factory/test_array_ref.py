@@ -138,11 +138,35 @@ def test_handle_array(spec, schemas):
     )
 
     assert relationship.argument == "RefSchema"
+    assert relationship.backref is None
     assert tbl_logical_name == logical_name
     assert schema_spec == {
         "type": "array",
         "items": {"type": "object", "x-de-$ref": "RefSchema"},
     }
+
+
+@pytest.mark.column
+def test_handle_array_backref():
+    """
+    GIVEN schema with array referencing another schema with backref and schemas
+    WHEN handle_array is called
+    THEN relationship with backref is returned.
+    """
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "x-backref": "schema",
+        }
+    }
+
+    ([(_, relationship)], _) = array_ref.handle_array(
+        spec=spec, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert relationship.backref == "schema"
 
 
 @pytest.mark.column
