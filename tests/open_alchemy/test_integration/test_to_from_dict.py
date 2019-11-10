@@ -35,7 +35,7 @@ def test_to_from_dict(engine, sessionmaker):
     # Creating models
     base.metadata.create_all(engine)
 
-    # COnstructing and turning back to dictionary
+    # Constructing and turning back to dictionary
     model_dict = {"column": 1}
     instance = model.from_dict(**model_dict)
     session = sessionmaker()
@@ -83,7 +83,7 @@ def test_to_from_dict_many_to_one_relationship(engine, sessionmaker):
     # Creating models
     base.metadata.create_all(engine)
 
-    # COnstructing and turning back to dictionary
+    # Constructing and turning back to dictionary
     model_dict = {"id": 11, "ref_table": {"id": 12}}
     instance = model.from_dict(**model_dict)
     session = sessionmaker()
@@ -134,7 +134,7 @@ def test_to_from_dict_one_to_many_relationship(engine, sessionmaker):
     # Creating models
     base.metadata.create_all(engine)
 
-    # COnstructing and turning back to dictionary
+    # Constructing and turning back to dictionary
     model_dict = {"id": 11, "ref_tables": [{"id": 12}]}
     instance = model.from_dict(**model_dict)
     session = sessionmaker()

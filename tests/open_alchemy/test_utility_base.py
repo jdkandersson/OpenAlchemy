@@ -9,7 +9,7 @@ from open_alchemy import utility_base
 
 
 def __init__(self, **kwargs):
-    """COnstruct."""
+    """Construct."""
     for name, value in kwargs.items():
         setattr(self, name, value)
 
