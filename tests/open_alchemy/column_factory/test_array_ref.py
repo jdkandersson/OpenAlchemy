@@ -193,7 +193,7 @@ def test_handle_array_relationship_backref():
 @pytest.mark.column
 def test_handle_array_schemas():
     """
-    GIVEN schema with array referencing another schema with backref and schemas
+    GIVEN schema with array referencing another schema and schemas
     WHEN handle_array is called
     THEN foreign key is added to the referenced schema.
     """
@@ -204,11 +204,50 @@ def test_handle_array_schemas():
         "properties": {"id": {"type": "integer"}},
     }
     spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}}
+
+    array_ref.handle_array(
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {"type": "object", "x-tablename": "ref_schema"},
+                {
+                    "type": "object",
+                    "properties": {
+                        f"{tablename}_id": {
+                            "type": "integer",
+                            "x-foreign-key": f"{tablename}.id",
+                            "x-dict-ignore": True,
+                        }
+                    },
+                },
+            ]
+        }
+    }
+
+
+@pytest.mark.column
+def test_handle_array_schemas_foreign_key_column():
+    """
+    GIVEN schema with array referencing another schema with foreign key and schemas
+    WHEN handle_array is called
+    THEN foreign key is added to the referenced schema.
+    """
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"fk_column": {"type": "integer"}},
+    }
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
         "RefSchema": {
             "type": "object",
             "x-tablename": "ref_schema",
-            "x-backref": "schema",
+            "x-foreign-key-column": "fk_column",
         }
     }
 
@@ -219,13 +258,17 @@ def test_handle_array_schemas():
     assert schemas == {
         "RefSchema": {
             "allOf": [
-                {"type": "object", "x-tablename": "ref_schema", "x-backref": "schema"},
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "x-foreign-key-column": "fk_column",
+                },
                 {
                     "type": "object",
                     "properties": {
-                        f"{tablename}_id": {
+                        f"{tablename}_fk_column": {
                             "type": "integer",
-                            "x-foreign-key": f"{tablename}.id",
+                            "x-foreign-key": f"{tablename}.fk_column",
                             "x-dict-ignore": True,
                         }
                     },
