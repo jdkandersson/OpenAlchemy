@@ -11,6 +11,8 @@ from . import exceptions
 from . import helpers
 from . import types
 
+TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
+
 
 class UtilityBase:
     """Base class providing utilities for SQLAlchemy models."""
@@ -21,8 +23,12 @@ class UtilityBase:
     # the de-referenced name of the schema.
     _schema: types.Schema
 
+    def __init__(self, kwargs: typing.Any) -> None:
+        """Construct."""
+        raise NotImplementedError
+
     @classmethod
-    def _get_schema(cls: typing.Type[types.ModelClass]) -> types.Schema:
+    def _get_schema(cls) -> types.Schema:
         """
         Get the schema.
 
@@ -41,7 +47,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls: typing.Type[types.ModelClass]) -> types.Schema:
+    def _get_properties(cls) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -84,9 +90,7 @@ class UtilityBase:
         return ref_model
 
     @classmethod
-    def from_dict(
-        cls: typing.Type[types.ModelClass], **kwargs: typing.Any
-    ) -> types.ModelClass:
+    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
         """
         Construct model instance from a dictionary.
 
@@ -159,7 +163,7 @@ class UtilityBase:
                 "expecting arguments."
             )
 
-    def to_dict(self: types.ModelClass) -> typing.Dict[str, typing.Any]:
+    def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
