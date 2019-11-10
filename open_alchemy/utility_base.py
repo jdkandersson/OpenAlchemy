@@ -23,7 +23,7 @@ class UtilityBase:
     # the de-referenced name of the schema.
     _schema: types.Schema
 
-    def __init__(self, kwargs: typing.Any) -> None:
+    def __init__(self, **kwargs: typing.Any) -> None:
         """Construct."""
         raise NotImplementedError
 

@@ -8,6 +8,12 @@ from open_alchemy import exceptions
 from open_alchemy import utility_base
 
 
+def __init__(self, **kwargs):
+    """COnstruct."""
+    for name, value in kwargs.items():
+        setattr(self, name, value)
+
+
 @pytest.mark.utility_base
 def test_to_dict_no_schema():
     """
@@ -15,7 +21,7 @@ def test_to_dict_no_schema():
     WHEN to_dict is called
     THEN ModelAttributeError is raised.
     """
-    model = type("model", (utility_base.UtilityBase,), {})
+    model = type("model", (utility_base.UtilityBase,), {"__init__": __init__})
     instance = model()
 
     with pytest.raises(exceptions.ModelAttributeError):
@@ -29,7 +35,9 @@ def test_to_dict_no_properties():
     WHEN to_dict is called
     THEN MalformedSchemaError is raised.
     """
-    model = type("model", (utility_base.UtilityBase,), {"_schema": {}})
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": {}, "__init__": __init__}
+    )
     instance = model()
 
     with pytest.raises(exceptions.MalformedSchemaError):
@@ -45,18 +53,14 @@ def test_to_dict_no_type():
     THEN MalformedSchemaError is raised.
     """
     model = type(
-        "model", (utility_base.UtilityBase,), {"_schema": {"properties": {"key": {}}}}
+        "model",
+        (utility_base.UtilityBase,),
+        {"_schema": {"properties": {"key": {}}}, "__init__": __init__},
     )
     instance = model()
 
     with pytest.raises(exceptions.TypeMissingError):
         instance.to_dict()
-
-
-def __init__(self, **kwargs):
-    """COnstruct."""
-    for name, value in kwargs.items():
-        setattr(self, name, value)
 
 
 @pytest.mark.parametrize(
