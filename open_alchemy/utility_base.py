@@ -209,7 +209,7 @@ class UtilityBase:
                 if object_value is None:
                     return_dict[name] = None
                     continue
-                return_dict[name] = self._object_to_dict(value=object_value, name=name)
+                return_dict[name] = self._object_to_dict(object_value, name=name)
                 continue
 
             # Handle array
