@@ -117,6 +117,22 @@ def test_valid(name, value):
     assert returned_value == value
 
 
+def test_pop():
+    """
+    GIVEN property and valid value
+    WHEN get_ext_property is called with the name, value and pop set
+    THEN the key is removed from the dictionary.
+    """
+    name = "x-dict-ignore"
+    value = True
+    source = {name: value}
+
+    returned_value = helpers.get_ext_prop(source=source, name=name, pop=True)
+
+    assert returned_value == value
+    assert source == {}
+
+
 @pytest.mark.parametrize(
     "value",
     ["column 1", [], [[]], [None], [1], {}, {"name": 1}],

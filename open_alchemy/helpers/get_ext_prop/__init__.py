@@ -25,6 +25,7 @@ def get_ext_prop(
     source: typing.Dict[str, typing.Any],
     name: str,
     default: typing.Optional[typing.Any] = None,
+    pop: bool = False,
 ) -> typing.Optional[typing.Any]:
     """
     Read the value of an extension property, validate the schema and return it.
@@ -36,6 +37,7 @@ def get_ext_prop(
         source: The object to get the extension property from.
         name: The name of the property.
         default: The default value.
+        pop: Whether to remove the value from the dictionary.
 
     Returns:
         The value of the property or the default value if it does not exist.
@@ -55,4 +57,6 @@ def get_ext_prop(
             f"The expected schema is {json.dumps(schema)}. "
             f"The given value is {json.dumps(value)}."
         )
+    if pop:
+        del source[name]
     return value

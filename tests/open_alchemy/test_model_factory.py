@@ -290,6 +290,30 @@ def test_all_of():
                 "Schema": {
                     "x-tablename": "table 1",
                     "type": "object",
+                    "properties": {
+                        "property_1": {"type": "integer", "x-dict-ignore": True}
+                    },
+                }
+            },
+            {"type": "object", "properties": {}},
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {
+                        "property_1": {"type": "integer", "x-dict-ignore": False}
+                    },
+                }
+            },
+            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
                     "properties": {"property_1": {"type": "integer"}},
                 }
             },
@@ -376,6 +400,8 @@ def test_all_of():
         ),
     ],
     ids=[
+        "single x-dict-ignore true",
+        "single x-dict-ignore false",
         "single no required",
         "single required",
         "single ref",
