@@ -22,6 +22,16 @@ class ModelClass(typing_extensions.Protocol):
 
     _schema: Schema
 
+    @staticmethod
+    def _get_model(*, spec: Schema, name: str, schema: Schema) -> typing.Type:
+        """Retrieve the model from the spec."""
+        ...
+
+    @staticmethod
+    def _object_to_dict(*, value, name: str) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on object."""
+        ...
+
     @classmethod
     def _get_schema(cls) -> typing.Dict:
         """Call signature to retrieve schema."""

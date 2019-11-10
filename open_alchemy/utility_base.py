@@ -61,6 +61,28 @@ class UtilityBase:
             )
         return properties
 
+    @staticmethod
+    def _get_model(
+        *, spec: types.Schema, name: str, schema: types.Schema
+    ) -> typing.Type:
+        """Get the model based on the schema."""
+        ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
+        if ref_model_name is None:
+            raise exceptions.MalformedSchemaError(
+                "To construct object parameters the schema for the property must "
+                "include the x-de-$ref extension property with the name of the "
+                "model to construct for the property. "
+                f"The property is {name}. "
+                f"The model schema is {json.dumps(schema)}."
+            )
+        # Try to get model
+        ref_model = getattr(open_alchemy.models, ref_model_name, None)
+        if ref_model is None:
+            raise exceptions.SchemaNotFoundError(
+                f"The {ref_model_name} model was not found on open_alchemy.models."
+            )
+        return ref_model
+
     @classmethod
     def from_dict(
         cls: typing.Type[types.ModelClass], **kwargs: typing.Any
@@ -115,32 +137,17 @@ class UtilityBase:
                 continue
 
             # Handle object
-            ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
-            if ref_model_name is None:
-                raise exceptions.MalformedSchemaError(
-                    "To construct object parameters the schema for the property must "
-                    "include the x-de-$ref extension property with the name of the "
-                    "model to construct for the property. "
-                    f"The property is {name}. "
-                    f"The model schema is {json.dumps(schema)}."
-                )
-            # Try to get model
-            ref_model = getattr(open_alchemy.models, ref_model_name, None)
-            if ref_model is None:
-                raise exceptions.SchemaNotFoundError(
-                    f"The {ref_model_name} model was not found on open_alchemy.models."
-                )
-            # Construct model
+            ref_model = cls._get_model(spec=spec, name=name, schema=schema)
             ref_model_instance = ref_model.from_dict(**value)
             model_dict[name] = ref_model_instance
 
         return cls(**model_dict)
 
     @staticmethod
-    def _object_to_dict(object_value, name: str) -> typing.Dict[str, typing.Any]:
+    def _object_to_dict(*, value, name: str) -> typing.Dict[str, typing.Any]:
         """Call to_dict on object."""
         try:
-            return object_value.to_dict()
+            return value.to_dict()
         except AttributeError:
             raise exceptions.InvalidModelInstanceError(
                 f"The {name} object property instance does not have a to_dict "
@@ -152,7 +159,7 @@ class UtilityBase:
                 "expecting arguments."
             )
 
-    def to_dict(self) -> typing.Dict[str, typing.Any]:
+    def to_dict(self: types.ModelClass) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
@@ -181,7 +188,7 @@ class UtilityBase:
                 if object_value is None:
                     return_dict[name] = None
                     continue
-                return_dict[name] = self._object_to_dict(object_value, name)
+                return_dict[name] = self._object_to_dict(value=object_value, name=name)
                 continue
 
             # Handle array
@@ -192,7 +199,7 @@ class UtilityBase:
                     continue
                 array_dict_values = map(
                     lambda value, name=name: self._object_to_dict(  # type: ignore
-                        value, name
+                        value=value, name=name
                     ),
                     array_value,
                 )
