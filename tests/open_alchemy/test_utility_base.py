@@ -102,12 +102,13 @@ def test_to_dict_simple_type(schema, init_args, expected_dict):
     assert returned_dict == expected_dict
 
 
+@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
 @pytest.mark.utility_base
-def test_to_dict_object_undefined():
+def test_to_dict_object_none(init_kwargs):
     """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that is not defined
-    WHEN to_dict is called
+    GIVEN class that derives from UtilityBase with a schema with an object property and
+        init args
+    WHEN model is initialized with init_args and to_dict is called
     THEN None is returned for the property.
     """
     model = type(
@@ -115,27 +116,7 @@ def test_to_dict_object_undefined():
         (utility_base.UtilityBase,),
         {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
     )
-    instance = model()
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": None}
-
-
-@pytest.mark.utility_base
-def test_to_dict_object_none():
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that has a value of None
-    WHEN to_dict is called
-    THEN None is returned for the property.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**{"key": None})
+    instance = model(**init_kwargs)
 
     returned_dict = instance.to_dict()
 
@@ -203,6 +184,32 @@ def test_to_dict_object():
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": mock_model.to_dict.return_value}
+
+
+@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
+@pytest.mark.utility_base
+def test_to_dict_array_none(init_kwargs):
+    """
+    GIVEN class that derives from UtilityBase with a schema with an array property and
+        init args
+    WHEN model is initialized with init_args and to_dict is called
+    THEN an empty list is returned for the property.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**init_kwargs)
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": []}
 
 
 @pytest.mark.utility_base

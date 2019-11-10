@@ -136,11 +136,28 @@ class UtilityBase:
 
         return cls(**model_dict)
 
+    @staticmethod
+    def _object_to_dict(object_value, name: str) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on object."""
+        try:
+            return object_value.to_dict()
+        except AttributeError:
+            raise exceptions.InvalidModelInstanceError(
+                f"The {name} object property instance does not have a to_dict "
+                "implementation."
+            )
+        except TypeError:
+            raise exceptions.InvalidModelInstanceError(
+                f"The {name} object property instance to_dict implementation is "
+                "expecting arguments."
+            )
+
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
         Raise TypeMissingError if a property does not have a type.
+        Raise InvalidModelInstanceError is an object to_dict call failed.
 
         Returns:
             The dictionary representation of the model.
@@ -168,17 +185,6 @@ class UtilityBase:
             if object_value is None:
                 return_dict[name] = getattr(self, name, None)
                 continue
-            try:
-                return_dict[name] = object_value.to_dict()
-            except AttributeError:
-                raise exceptions.InvalidModelInstanceError(
-                    f"The {name} object property instance does not have a to_dict "
-                    "implementation."
-                )
-            except TypeError:
-                raise exceptions.InvalidModelInstanceError(
-                    f"The {name} object property instance to_dict implementation is "
-                    "expecting arguments."
-                )
+            return_dict[name] = self._object_to_dict(object_value, name)
 
         return return_dict
