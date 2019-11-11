@@ -125,6 +125,19 @@ def _set_foreign_key(
     tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
     fk_logical_name = f"{tablename}_{fk_column}"
 
+    # Gather referenced schema
+    ref_schema = schemas[ref_model_name]
+    # Any top level $ref must already be resolved
+    ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
+    fk_required = object_ref.check_foreign_key_required(
+        fk_spec=fk_spec,
+        fk_logical_name=fk_logical_name,
+        model_schema=ref_schema,
+        schemas=schemas,
+    )
+    if not fk_required:
+        return
+
     # Handle model already constructed
     ref_model = getattr(open_alchemy.models, ref_model_name, None)
     if ref_model is not None:
