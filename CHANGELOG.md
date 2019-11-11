@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version -.9.1 - 2019-11-11
+## Version 0.9.1 - 2019-11-11
 
 - Fix bug where some static files where not included in the distribution.
 
