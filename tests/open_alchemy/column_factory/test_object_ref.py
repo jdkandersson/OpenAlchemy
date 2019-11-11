@@ -21,7 +21,11 @@ def test_handle_object_error(spec):
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
-            spec=spec, schemas={"type": "object"}, required=True, logical_name="name 1"
+            spec=spec,
+            schemas={"type": "object"},
+            required=True,
+            logical_name="name 1",
+            model_schema={},
         )
 
 

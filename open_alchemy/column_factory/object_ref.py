@@ -18,6 +18,7 @@ def handle_object(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
+    model_schema: types.Schema,
 ) -> typing.Tuple[
     typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
     types.Schema,
@@ -32,6 +33,7 @@ def handle_object(
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
+        model_schema: The schema of the model.
 
     Returns:
         The logical name, the SQLAlchemy column for the foreign key and the logical
@@ -39,19 +41,28 @@ def handle_object(
         record for the object reference.
 
     """
+    # Retrieve artifacts required for object
     obj_artifacts = gather_object_artifacts(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
-    # Handle object
+    # Construct foreign key
     foreign_key_spec = handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
-    return_value = column.handle_column(
-        logical_name=f"{logical_name}_{obj_artifacts.fk_column}",
-        spec=foreign_key_spec,
-        required=required,
+    fk_logical_name = f"{logical_name}_{obj_artifacts.fk_column}"
+    fk_required = check_foreign_key_required(
+        fk_spec=foreign_key_spec,
+        fk_logical_name=fk_logical_name,
+        model_schema=model_schema,
+        schemas=schemas,
     )
+    if fk_required:
+        return_value = column.handle_column(
+            logical_name=fk_logical_name, spec=foreign_key_spec, required=required
+        )
+    else:
+        return_value = []
 
     # Creating relationship
     backref = None
