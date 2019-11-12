@@ -306,7 +306,9 @@ def check_foreign_key_required(
     # Check type
     model_fk_type = model_fk_spec.get("type")
     if model_fk_type is None:
-        raise exceptions.MalformedRelationshipError("All properties must have a type.")
+        raise exceptions.MalformedRelationshipError(
+            f"{fk_logical_name} does not have a type. "
+        )
     fk_type = fk_spec["type"]
     if model_fk_type != fk_type:
         raise exceptions.MalformedRelationshipError(
