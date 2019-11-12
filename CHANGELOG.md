@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add check for whether foreign key for relationship is already constructed before automatically constructing it.
+
 ## Version 0.9.0 - 2019-11-10
 
 - Add _from_dict_ and _to_dict_ functions to all models that are used to construct a model from a dictionary and to convert a model instance to a dictionary, respectively.
