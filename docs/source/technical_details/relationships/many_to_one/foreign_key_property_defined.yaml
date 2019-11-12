@@ -1,0 +1,16 @@
+Division:
+  x-tablename: division
+  ...
+  properties:
+    ...
+    id:
+      type: integer
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      "$ref": "#/components/schemas/Division"
+    division_id:
+      type: integer
+      x-foreign-key: division.id
