@@ -75,20 +75,23 @@ def test_integration_object_ref():
     schemas = {
         "RefSchema": {
             "type": "object",
-            "x-tablename": "table 1",
+            "x-tablename": "ref_schema",
             "properties": {"id": {"type": "integer"}},
         }
     }
-    logical_name = "column_1"
+    logical_name = "ref_schema"
 
     (
         [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
         spec,
     ) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema={"properties": {}},
     )
 
-    assert fk_logical_name == "column_1_id"
+    assert fk_logical_name == "ref_schema_id"
     assert isinstance(fk_column.type, sqlalchemy.Integer)
     assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name
@@ -96,6 +99,37 @@ def test_integration_object_ref():
     assert relationship.backref is None
     assert relationship.uselist is None
     assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_fk_def():
+    """
+    GIVEN schema that references another object schema which already has the foreign
+        key defined and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN no foreign key column is returned.
+    """
+    model_schema = {
+        "properties": {
+            "ref_schema_id": {"type": "integer", "x-foreign-key": "ref_schema.id"}
+        }
+    }
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+
+    ([(tbl_logical_name, relationship)], _) = column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+    )
+
+    assert tbl_logical_name == logical_name
+    assert relationship.argument == "RefSchema"
 
 
 @pytest.mark.column
@@ -109,13 +143,16 @@ def test_integration_object_ref_backref():
     schemas = {
         "RefSchema": {
             "type": "object",
-            "x-tablename": "table 1",
+            "x-tablename": "ref_schema",
             "properties": {"id": {"type": "integer"}},
             "x-backref": "ref_schemas",
         }
     }
     ([_, (_, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="ref_schema",
+        model_schema={"properties": {}},
     )
 
     assert relationship.backref == ("ref_schemas", {"uselist": None})
@@ -132,14 +169,17 @@ def test_integration_object_ref_uselist():
     schemas = {
         "RefSchema": {
             "type": "object",
-            "x-tablename": "table 1",
+            "x-tablename": "ref_schema",
             "properties": {"id": {"type": "integer"}},
             "x-backref": "ref_schemas",
             "x-uselist": False,
         }
     }
     ([_, (_, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="ref_schema",
+        model_schema={"properties": {}},
     )
 
     assert relationship.backref == ("ref_schemas", {"uselist": False})
@@ -166,7 +206,7 @@ def test_integration_array_ref():
         "x-tablename": "schema",
         "properties": {"id": {"type": "integer"}},
     }
-    logical_name = "column_1"
+    logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], spec) = column_factory.column_factory(
         spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
@@ -197,5 +237,47 @@ def test_integration_array_ref():
                     },
                 },
             ]
+        }
+    }
+
+
+@pytest.mark.column
+def test_integration_array_ref_fk_def():
+    """
+    GIVEN schema that references another object schema with a foreign key already
+        defined from an array and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN schemas is not modified and relationship is returned with the spec.
+    """
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {
+                "id": {"type": "integer"},
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"},
+            },
+        }
+    }
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
+    logical_name = "ref_schema"
+
+    column_factory.column_factory(
+        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {
+                "id": {"type": "integer"},
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"},
+            },
         }
     }

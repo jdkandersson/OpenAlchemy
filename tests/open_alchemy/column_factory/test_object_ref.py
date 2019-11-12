@@ -21,7 +21,11 @@ def test_handle_object_error(spec):
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
-            spec=spec, schemas={"type": "object"}, required=True, logical_name="name 1"
+            spec=spec,
+            schemas={"type": "object"},
+            required=True,
+            logical_name="name 1",
+            model_schema={},
         )
 
 
@@ -134,6 +138,7 @@ def test_handle_object_reference_fk_return():
     ],
     ids=["$ref", "$ref to allOf", "allOf"],
 )
+@pytest.mark.column
 def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     """
     GIVEN specification, schemas and expected specification
@@ -158,6 +163,7 @@ def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     ],
     ids=["$ref", "allOf"],
 )
+@pytest.mark.column
 def test_gather_object_artifacts_ref_logical_name(spec, schemas):
     """
     GIVEN specification and schemas
@@ -247,6 +253,7 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
         "allOf backref $ref backref",
     ],
 )
+@pytest.mark.column
 def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     """
     GIVEN specification and schemas and expected backref
@@ -260,6 +267,7 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     assert obj_artifacts.backref == expected_backref
 
 
+@pytest.mark.column
 def test_gather_object_artifacts_uselist_no_backref():
     """
     GIVEN specification with uselist but not backref and schemas
@@ -357,6 +365,7 @@ def test_gather_object_artifacts_uselist_no_backref():
         "allOf uselist $ref uselist",
     ],
 )
+@pytest.mark.column
 def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
     """
     GIVEN specification and schemas and expected uselist
@@ -435,6 +444,7 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
         "allOf fk $ref fk",
     ],
 )
+@pytest.mark.column
 def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
     """
     GIVEN specification and schemas and expected foreign key column
@@ -446,3 +456,117 @@ def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
     )
 
     assert obj_artifacts.fk_column == expected_fk_column
+
+
+@pytest.mark.parametrize(
+    "model_schema",
+    [
+        {
+            "properties": {
+                "ref_table_fk_column": {"x-foreign-key": "ref_table.fk_column"}
+            }
+        },
+        {
+            "properties": {
+                "ref_table_fk_column": {
+                    "type": "not_fk_type",
+                    "x-foreign-key": "ref_table.fk_column",
+                }
+            }
+        },
+        {"properties": {"ref_table_fk_column": {"type": "fk_type"}}},
+        {
+            "properties": {
+                "ref_table_fk_column": {
+                    "type": "fk_type",
+                    "x-foreign-key": "wrong_table.wrong_column",
+                }
+            }
+        },
+    ],
+    ids=["no type", "wrong type", "no x-foreign-key", "wrong x-foreign-key"],
+)
+@pytest.mark.column
+def test_check_foreign_key_required_invalid_schema(model_schema):
+    """
+    GIVEN model schema that is not valid
+    WHEN check_foreign_key_required is called
+    THEN MalformedRelationshipError is raised.
+    """
+    fk_spec = {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}
+    fk_logical_name = "ref_table_fk_column"
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        object_ref.check_foreign_key_required(
+            fk_spec=fk_spec,
+            fk_logical_name=fk_logical_name,
+            model_schema=model_schema,
+            schemas={},
+        )
+
+
+@pytest.mark.parametrize(
+    "model_schema, schemas, expected_required",
+    [
+        ({"properties": {}}, {}, True),
+        (
+            {
+                "properties": {
+                    "ref_table_fk_column": {
+                        "type": "fk_type",
+                        "x-foreign-key": "ref_table.fk_column",
+                    }
+                }
+            },
+            {},
+            False,
+        ),
+        (
+            {
+                "properties": {
+                    "ref_table_fk_column": {"$ref": "#/components/schemas/FkSchema"}
+                }
+            },
+            {"FkSchema": {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}},
+            False,
+        ),
+        (
+            {
+                "properties": {
+                    "ref_table_fk_column": {
+                        "allOf": [
+                            {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}
+                        ]
+                    }
+                }
+            },
+            {},
+            False,
+        ),
+    ],
+    ids=[
+        "not in model schema",
+        "in model schema",
+        "in model schema $ref",
+        "in model schema allOf",
+    ],
+)
+@pytest.mark.column
+def test_check_foreign_key_required(model_schema, schemas, expected_required):
+    """
+    GIVEN foreign key spec, foreign key logical name, model schema, schemas and
+        expected required
+    WHEN check_foreign_key_required is called
+    THEN the expected required is returned.
+    """
+    fk_spec = {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}
+    fk_logical_name = "ref_table_fk_column"
+
+    required = object_ref.check_foreign_key_required(
+        fk_spec=fk_spec,
+        fk_logical_name=fk_logical_name,
+        model_schema=model_schema,
+        schemas=schemas,
+    )
+
+    assert required == expected_required

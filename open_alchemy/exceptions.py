@@ -30,7 +30,7 @@ class MalformedSchemaError(ValueError, BaseError):
 
 
 class MalformedRelationshipError(ValueError, BaseError):
-    """Raised when a many to one relationship was not defined as expected."""
+    """Raised when a relationship was not defined as expected."""
 
 
 class MalformedExtensionPropertyError(ValueError, BaseError):

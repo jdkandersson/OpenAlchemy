@@ -18,6 +18,7 @@ def handle_object(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
+    model_schema: types.Schema,
 ) -> typing.Tuple[
     typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
     types.Schema,
@@ -32,6 +33,7 @@ def handle_object(
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
+        model_schema: The schema of the model.
 
     Returns:
         The logical name, the SQLAlchemy column for the foreign key and the logical
@@ -39,19 +41,28 @@ def handle_object(
         record for the object reference.
 
     """
+    # Retrieve artifacts required for object
     obj_artifacts = gather_object_artifacts(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
-    # Handle object
+    # Construct foreign key
     foreign_key_spec = handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
-    return_value = column.handle_column(
-        logical_name=f"{logical_name}_{obj_artifacts.fk_column}",
-        spec=foreign_key_spec,
-        required=required,
+    fk_logical_name = f"{logical_name}_{obj_artifacts.fk_column}"
+    fk_required = check_foreign_key_required(
+        fk_spec=foreign_key_spec,
+        fk_logical_name=fk_logical_name,
+        model_schema=model_schema,
+        schemas=schemas,
     )
+    if fk_required:
+        return_value = column.handle_column(
+            logical_name=fk_logical_name, spec=foreign_key_spec, required=required
+        )
+    else:
+        return_value = []
 
     # Creating relationship
     backref = None
@@ -252,3 +263,76 @@ def handle_object_reference(
         )
 
     return {"type": fk_type, "x-foreign-key": f"{tablename}.{fk_logical_name}"}
+
+
+def check_foreign_key_required(
+    *,
+    fk_spec: types.Schema,
+    fk_logical_name: str,
+    model_schema: types.Schema,
+    schemas: types.Schemas,
+) -> bool:
+    """
+    Check whether a foreign key has already been defined.
+
+    Assume model_schema has already resolved any $ref and allOf at the object level.
+    They may not have been resolved at the property level.
+
+    Check whether the proposed logical name is already defined on the model schema. If
+    it has been, check that the type is correct and that the foreign key reference has
+    been defined and points to the correct column.
+
+    Raise MalformedRelationshipError if a property has already been defined with the
+    same name as is proposed for the foreign key but it has the wrong type or does not
+    define the correct foreign key constraint.
+
+    Args:
+        fk_spec: The proposed foreign key specification.
+        fk_logical_name: The proposed name for the foreign key property.
+        model_schema: The schema for the model on which the foreign key is proposed to
+            be added.
+        schemas: Used to resolve any $ref at the property level.
+
+    Returns:
+        Whether defining the foreign key is necessary given the model schema.
+
+    """
+    properties = model_schema["properties"]
+    model_fk_spec = properties.get(fk_logical_name)
+    if model_fk_spec is None:
+        return True
+    model_fk_spec = helpers.prepare_schema(schema=model_fk_spec, schemas=schemas)
+
+    # Check type
+    model_fk_type = model_fk_spec.get("type")
+    if model_fk_type is None:
+        raise exceptions.MalformedRelationshipError(
+            f"{fk_logical_name} does not have a type. "
+        )
+    fk_type = fk_spec["type"]
+    if model_fk_type != fk_type:
+        raise exceptions.MalformedRelationshipError(
+            "The foreign key required for the relationship has a different type than "
+            "the property already defined under that name. "
+            f"The required type is {fk_type}. "
+            f"The {fk_logical_name} property has the {model_fk_type} type."
+        )
+
+    # Check foreign key constraint
+    model_foreign_key = helpers.get_ext_prop(source=model_fk_spec, name="x-foreign-key")
+    foreign_key = fk_spec["x-foreign-key"]
+    if model_foreign_key is None:
+        raise exceptions.MalformedRelationshipError(
+            f"The property already defined under {fk_logical_name} does not define a "
+            'foreign key constraint. Use the "x-foreign-key" extension property to '
+            f'define a foreign key constraint, for example: "{foreign_key}".'
+        )
+    if model_foreign_key != foreign_key:
+        raise exceptions.MalformedRelationshipError(
+            "The foreign key required for the relationship has a different foreign "
+            "key constraint than the property already defined under that name. "
+            f"The required constraint is {foreign_key}. "
+            f"The {fk_logical_name} property has the {model_foreign_key} constraint."
+        )
+
+    return False

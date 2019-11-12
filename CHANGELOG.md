@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add check for whether foreign key for relationship is already constructed before automatically constructing it.
+
 ## Version 0.9.1 - 2019-11-11
 
 - Fix bug where some static files where not included in the distribution.

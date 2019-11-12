@@ -92,7 +92,13 @@ def test_handle_array_invalid(spec, schemas):
     [
         (
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {},
+                }
+            },
         ),
         (
             {"$ref": "#/components/schemas/Schema"},
@@ -101,7 +107,11 @@ def test_handle_array_invalid(spec, schemas):
                     "type": "array",
                     "items": {"$ref": "#/components/schemas/RefSchema"},
                 },
-                "RefSchema": {"type": "object", "x-tablename": "ref_schema"},
+                "RefSchema": {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {},
+                },
             },
         ),
         (
@@ -113,18 +123,40 @@ def test_handle_array_invalid(spec, schemas):
                     }
                 ]
             },
-            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {},
+                }
+            },
         ),
         (
             {
                 "type": "array",
                 "items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             },
-            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+            {
+                "RefSchema": {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {},
+                }
+            },
         ),
         (
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {"allOf": [{"type": "object", "x-tablename": "ref_schema"}]}},
+            {
+                "RefSchema": {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "x-tablename": "ref_schema",
+                            "properties": {},
+                        }
+                    ]
+                }
+            },
         ),
     ],
     ids=[
@@ -175,6 +207,7 @@ def test_handle_array_relationship_backref():
             "type": "object",
             "x-tablename": "ref_schema",
             "x-backref": "schema",
+            "properties": {},
         }
     }
     model_schema = {
@@ -204,7 +237,9 @@ def test_handle_array_schemas():
         "properties": {"id": {"type": "integer"}},
     }
     spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}}
+    schemas = {
+        "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
+    }
 
     array_ref.handle_array(
         spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
@@ -213,7 +248,7 @@ def test_handle_array_schemas():
     assert schemas == {
         "RefSchema": {
             "allOf": [
-                {"type": "object", "x-tablename": "ref_schema"},
+                {"type": "object", "x-tablename": "ref_schema", "properties": {}},
                 {
                     "type": "object",
                     "properties": {
@@ -224,6 +259,94 @@ def test_handle_array_schemas():
                         }
                     },
                 },
+            ]
+        }
+    }
+
+
+@pytest.mark.column
+def test_handle_array_schemas_fk_def():
+    """
+    GIVEN schema with array referencing another schema which already has foreign key
+        and schemas
+    WHEN handle_array is called
+    THEN foreign key is not added to the referenced schema.
+    """
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"id": {"type": "integer"}},
+    }
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+            },
+        }
+    }
+
+    array_ref.handle_array(
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+            },
+        }
+    }
+
+
+@pytest.mark.column
+def test_handle_array_schemas_fk_def_all_of():
+    """
+    GIVEN schema with array referencing another schema which has allOf which already
+        has foreign key and schemas
+    WHEN handle_array is called
+    THEN foreign key is not added to the referenced schema.
+    """
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"id": {"type": "integer"}},
+    }
+    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schemas = {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {
+                        "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+                    },
+                }
+            ]
+        }
+    }
+
+    array_ref.handle_array(
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {
+                        "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+                    },
+                }
             ]
         }
     }
@@ -248,6 +371,7 @@ def test_handle_array_schemas_foreign_key_column():
             "type": "object",
             "x-tablename": "ref_schema",
             "x-foreign-key-column": "fk_column",
+            "properties": {},
         }
     }
 
@@ -262,6 +386,7 @@ def test_handle_array_schemas_foreign_key_column():
                     "type": "object",
                     "x-tablename": "ref_schema",
                     "x-foreign-key-column": "fk_column",
+                    "properties": {},
                 },
                 {
                     "type": "object",
@@ -318,7 +443,7 @@ def test_set_foreign_key_schemas():
         "x-tablename": tablename,
         "properties": {fk_column: {"type": "integer"}},
     }
-    schemas = {ref_model_name: {"type": "object"}}
+    schemas = {ref_model_name: {"type": "object", "properties": {}}}
 
     array_ref._set_foreign_key(  # pylint: disable=protected-access
         ref_model_name=ref_model_name,
@@ -330,7 +455,7 @@ def test_set_foreign_key_schemas():
     assert schemas == {
         ref_model_name: {
             "allOf": [
-                {"type": "object"},
+                {"type": "object", "properties": {}},
                 {
                     "type": "object",
                     "properties": {
@@ -363,7 +488,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
         "x-tablename": tablename,
         "properties": {fk_column: {"type": "integer"}},
     }
-    schemas = {ref_model_name: {"type": "object"}}
+    schemas = {ref_model_name: {"type": "object", "properties": {}}}
     mock_ref_model = mock.MagicMock()
     setattr(mocked_models, ref_model_name, mock_ref_model)
 
