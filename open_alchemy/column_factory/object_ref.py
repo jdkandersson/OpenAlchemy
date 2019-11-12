@@ -320,12 +320,13 @@ def check_foreign_key_required(
 
     # Check foreign key constraint
     model_foreign_key = helpers.get_ext_prop(source=model_fk_spec, name="x-foreign-key")
+    foreign_key = fk_spec["x-foreign-key"]
     if model_foreign_key is None:
         raise exceptions.MalformedRelationshipError(
             f"The property already defined under {fk_logical_name} does not define a "
-            "foreign key constraint."
+            'foreign key constraint. Use the "x-foreign-key" extension property to '
+            f'define a foreign key constraint, for example: "{foreign_key}".'
         )
-    foreign_key = fk_spec["x-foreign-key"]
     if model_foreign_key != foreign_key:
         raise exceptions.MalformedRelationshipError(
             "The foreign key required for the relationship has a different foreign "
