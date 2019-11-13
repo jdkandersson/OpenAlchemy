@@ -37,7 +37,7 @@ from open_alchemy import helpers
         "x-backref-column missing",
     ],
 )
-@pytest.mark.column
+@pytest.mark.helper
 def test_check_read_only_malformed(spec):
     """
     GIVEN malformed spec
@@ -66,7 +66,7 @@ def test_check_read_only_malformed(spec):
     ],
     ids=["readOnly missing", "readOnly false", "readOnly true", "readOnly array true"],
 )
-@pytest.mark.column
+@pytest.mark.helper
 def test_check_read_only(spec, expected_result):
     """
     GIVEN spec and expected check result

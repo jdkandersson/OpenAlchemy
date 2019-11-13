@@ -15,6 +15,8 @@ def handle_column(
     """
     Generate column based on OpenAPI schema property.
 
+    Assume any $ref and allOf has already been resolved.
+
     Args:
         spec: The schema for the column.
         schemas: Used to resolve any $ref.
@@ -25,6 +27,11 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
+    # Check for readOnly
+    read_only = helpers.check_read_only(spec=spec)
+    if read_only:
+        return []
+
     # Generating the SQLAlchemy column
     column = _spec_to_column(spec=spec, required=required)
     # Adding the logical name
