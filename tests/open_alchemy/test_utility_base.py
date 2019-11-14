@@ -128,48 +128,6 @@ def test_to_dict_object_none(init_kwargs):
 
 
 @pytest.mark.utility_base
-def test_to_dict_object_no_to_dict():
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that does not have a to_dict function
-    WHEN to_dict is called
-    THEN InvalidModelInstanceError is raised.
-    """
-    mock_model = mock.MagicMock()
-    mock_model.to_dict.side_effect = AttributeError
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**{"key": mock_model})
-
-    with pytest.raises(exceptions.InvalidModelInstanceError):
-        instance.to_dict()
-
-
-@pytest.mark.utility_base
-def test_to_dict_object_to_dict_different_func():
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that has a to_dict function that raises TypeError
-    WHEN to_dict is called
-    THEN InvalidModelInstanceError is raised.
-    """
-    mock_model = mock.MagicMock()
-    mock_model.to_dict.side_effect = TypeError
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**{"key": mock_model})
-
-    with pytest.raises(exceptions.InvalidModelInstanceError):
-        instance.to_dict()
-
-
-@pytest.mark.utility_base
 def test_to_dict_object():
     """
     GIVEN class that derives from UtilityBase with a schema with an object property
@@ -649,3 +607,84 @@ def test_from_dict_array_multiple_from_dict(mocked_models):
         mocked_models.RefModel.from_dict.return_value,
         mocked_models.RefModel.from_dict.return_value,
     ]
+
+
+class TestObjectToDict:
+    """Tests _object_to_dict."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_object_to_dict_object_no_to_dict():
+        """
+        GIVEN value that has a to_dict function that raises AttributeError
+        WHEN _object_to_dict is called with the value
+        THEN InvalidModelInstanceError is raised.
+        """
+        value = mock.MagicMock()
+        value.to_dict.side_effect = AttributeError
+
+        with pytest.raises(exceptions.InvalidModelInstanceError):
+            utility_base.UtilityBase._object_to_dict(value=value, name="name 1")
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_object_to_dict_object_to_dict_different_func():
+        """
+        GIVEN value that has a to_dict function that raises TypeError
+        WHEN _object_to_dict is called with the value
+        THEN InvalidModelInstanceError is raised.
+        """
+        value = mock.MagicMock()
+        value.to_dict.side_effect = TypeError
+
+        with pytest.raises(exceptions.InvalidModelInstanceError):
+            utility_base.UtilityBase._object_to_dict(value=value, name="name 1")
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_object_to_dict_object_to_dict():
+        """
+        GIVEN value that has a to_dict function that raises TypeError
+        WHEN _object_to_dict is called with the value
+        THEN InvalidModelInstanceError is raised.
+        """
+        value = mock.MagicMock()
+
+        returned_value = utility_base.UtilityBase._object_to_dict(
+            value=value, name="name 1"
+        )
+
+        assert returned_value == value.to_dict.return_value
+        value.to_dict.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    "spec, value, error",
+    [
+        ({}, mock.MagicMock(), exceptions.TypeMissingError),
+        ({"type": "array"}, [mock.MagicMock()], exceptions.MalformedSchemaError),
+        (
+            {"type": "array", "items": {}},
+            [mock.MagicMock()],
+            exceptions.TypeMissingError,
+        ),
+        (
+            {"type": "array", "items": {"type": "array"}},
+            [mock.MagicMock()],
+            exceptions.MalformedSchemaError,
+        ),
+    ],
+    ids=["no type", "array no items", "array items no type", "array items array"],
+)
+@pytest.mark.utility_base
+def test_to_dict_property_invalid_spec(spec, value, error):
+    """
+    GIVEN invalid property spec and expected error
+    WHEN _to_dict_property is called with the spec
+    THEN the expected error is raised.
+    """
+    # pylint: disable=protected-access
+    with pytest.raises(error):
+        utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")

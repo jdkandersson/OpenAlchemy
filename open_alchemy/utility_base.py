@@ -200,6 +200,65 @@ class UtilityBase:
                 "expecting arguments."
             )
 
+    @classmethod
+    def _to_dict_property(
+        cls,
+        value: typing.Any,
+        *,
+        spec: types.Schema,
+        name: str,
+        array_context: bool = False,
+    ) -> typing.Any:
+        """
+        Perform property level to dict operation.
+
+        Args:
+            value: The value of the property.
+            spec: The specification for the property.
+            name: The name of the property.
+            array_context: Whether array items are being worked on.
+
+        Returns:
+            property value.
+
+        """
+        type_ = spec.get("type")
+        if type_ is None:
+            schema_descriptor = "array item" if array_context else "property"
+            raise exceptions.TypeMissingError(
+                f"The {schema_descriptor} schema for the {name} property does not have "
+                f"a type. The {schema_descriptor} schema is {json.dumps(spec)}."
+            )
+
+        # Handle object
+        if type_ == "object":
+            if value is None:
+                return None
+            return cls._object_to_dict(value, name=name)
+
+        # Handle array
+        if type_ == "array":
+            print(type_)
+            if array_context:
+                raise exceptions.MalformedSchemaError(
+                    "The array item schema cannot have the array type."
+                )
+            if value is None:
+                return []
+            item_spec = spec.get("items")
+            if item_spec is None:
+                raise exceptions.MalformedSchemaError(
+                    "The array item schema must have an items property."
+                )
+            to_dict_property = functools.partial(
+                cls._to_dict_property, spec=item_spec, name=name, array_context=True
+            )
+            array_dict_values = map(to_dict_property, value)
+            return list(array_dict_values)
+
+        # Handle other types
+        return value
+
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
@@ -216,34 +275,9 @@ class UtilityBase:
         # Collecting the values of the properties
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, spec in properties.items():
-            type_ = spec.get("type")
-            if type_ is None:
-                raise exceptions.TypeMissingError(
-                    f"The schema for the {name} property does not have a type. "
-                    f"The property schema is {json.dumps(spec)}."
-                )
-
-            # Handle object
-            if type_ == "object":
-                object_value = getattr(self, name, None)
-                if object_value is None:
-                    return_dict[name] = None
-                    continue
-                return_dict[name] = self._object_to_dict(object_value, name=name)
-                continue
-
-            # Handle array
-            if type_ == "array":
-                array_value = getattr(self, name, None)
-                if array_value is None:
-                    return_dict[name] = []
-                    continue
-                name_obj_to_dict = functools.partial(self._object_to_dict, name=name)
-                array_dict_values = map(name_obj_to_dict, array_value)
-                return_dict[name] = list(array_dict_values)
-                continue
-
-            # Handle other types
-            return_dict[name] = getattr(self, name, None)
+            value = getattr(self, name, None)
+            return_dict[name] = self._to_dict_property(
+                spec=spec, name=name, value=value
+            )
 
         return return_dict
