@@ -503,3 +503,32 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     assert isinstance(added_fk_column.type, sqlalchemy.Integer)
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
+
+
+@pytest.mark.column
+def test_read_only():
+    """
+    GIVEN readOnly array spec
+    WHEN handle_array is called with the spec
+    THEN the spec is returned with an empty array.
+    """
+    schemas = {}
+    spec = {
+        "readOnly": True,
+        "type": "array",
+        "items": {"type": "integer"},
+        "x-backref-column": "column_1",
+    }
+
+    (returned_list, returned_spec) = array_ref.handle_array(
+        spec=spec, model_schema={}, schemas=schemas, logical_name="name 1"
+    )
+
+    assert returned_list == []
+    assert returned_spec == {
+        "readOnly": True,
+        "type": "array",
+        "items": {"type": "integer"},
+        "x-backref-column": "column_1",
+    }
+    assert schemas == {}
