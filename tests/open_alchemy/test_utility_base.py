@@ -660,31 +660,249 @@ class TestObjectToDict:
         value.to_dict.assert_called_once_with()
 
 
-@pytest.mark.parametrize(
-    "spec, value, error",
-    [
-        ({}, mock.MagicMock(), exceptions.TypeMissingError),
-        ({"type": "array"}, [mock.MagicMock()], exceptions.MalformedSchemaError),
-        (
-            {"type": "array", "items": {}},
-            [mock.MagicMock()],
-            exceptions.TypeMissingError,
-        ),
-        (
-            {"type": "array", "items": {"type": "array"}},
-            [mock.MagicMock()],
-            exceptions.MalformedSchemaError,
-        ),
-    ],
-    ids=["no type", "array no items", "array items no type", "array items array"],
-)
-@pytest.mark.utility_base
-def test_to_dict_property_invalid_spec(spec, value, error):
-    """
-    GIVEN invalid property spec and expected error
-    WHEN _to_dict_property is called with the spec
-    THEN the expected error is raised.
-    """
+class TestToDictProperty:
+    """Tests for _to_dict_property."""
+
     # pylint: disable=protected-access
-    with pytest.raises(error):
-        utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "spec, value, error",
+        [
+            ({}, mock.MagicMock(), exceptions.TypeMissingError),
+            ({"type": "array"}, [mock.MagicMock()], exceptions.MalformedSchemaError),
+            (
+                {"type": "array", "items": {}},
+                [mock.MagicMock()],
+                exceptions.TypeMissingError,
+            ),
+            (
+                {"type": "array", "items": {"type": "array"}},
+                [mock.MagicMock()],
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {
+                    "type": "array",
+                    "items": {"type": "object", "x-backref-column": "column_1"},
+                },
+                [mock.MagicMock()],
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {
+                    "type": "array",
+                    "x-backref-column": "column_1",
+                    "items": {"type": "string"},
+                },
+                [mock.MagicMock()],
+                exceptions.MalformedSchemaError,
+            ),
+        ],
+        ids=[
+            "no type",
+            "array no items",
+            "array items no type",
+            "array items array",
+            "array items object x-backref-column",
+            "array x-backref-column",
+        ],
+    )
+    @pytest.mark.utility_base
+    def test_invalid_spec(spec, value, error):
+        """
+        GIVEN invalid property spec and expected error
+        WHEN _to_dict_property is called with the spec
+        THEN the expected error is raised.
+        """
+        with pytest.raises(error):
+            utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")
+
+    @staticmethod
+    @pytest.mark.parametrize("value", [None, "value 1"], ids=["none", "value"])
+    @pytest.mark.utility_base
+    def test_simple_value(value):
+        """
+        GIVEN spec that isn't an object or array and value
+        WHEN _to_dict_property is called with the spec and value
+        THEN value is returned.
+        """
+        spec = {"type": "string"}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == value
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_object_none():
+        """
+        GIVEN object spec and None value
+        WHEN _to_dict_property is called with the spec and value
+        THEN None is returned.
+        """
+        value = None
+        spec = {"type": "object"}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == value
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_object_value():
+        """
+        GIVEN object spec and value
+        WHEN _to_dict_property is called with the spec and value
+        THEN value to_dict return value is returned.
+        """
+        value = mock.MagicMock()
+        spec = {"type": "object"}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == value.to_dict.return_value
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_array_none():
+        """
+        GIVEN areray spec and None value
+        WHEN _to_dict_property is called with the spec and value
+        THEN empty list is returned.
+        """
+        spec = {"type": "array", "items": {"type": "object"}}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            None, spec=spec, name="name 1"
+        )
+
+        assert returned_value == []
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_array_empty():
+        """
+        GIVEN object spec and empty list value
+        WHEN _to_dict_property is called with the spec and value
+        THEN empty list.
+        """
+        spec = {"type": "array", "items": {"type": "object"}}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            [], spec=spec, name="name 1"
+        )
+
+        assert returned_value == []
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_array_single():
+        """
+        GIVEN object spec and single item list value
+        WHEN _to_dict_property is called with the spec and value
+        THEN item to_dict value is returned in a list.
+        """
+        item_value = mock.MagicMock()
+        spec = {"type": "array", "items": {"type": "object"}}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            [item_value], spec=spec, name="name 1"
+        )
+
+        assert returned_value == [item_value.to_dict.return_value]
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_array_multiple():
+        """
+        GIVEN object spec and multiple item list values
+        WHEN _to_dict_property is called with the spec and value
+        THEN item to_dict values are returned in a list.
+        """
+        item1_value = mock.MagicMock()
+        item2_value = mock.MagicMock()
+        spec = {"type": "array", "items": {"type": "object"}}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            [item1_value, item2_value], spec=spec, name="name 1"
+        )
+
+        assert returned_value == [
+            item1_value.to_dict.return_value,
+            item2_value.to_dict.return_value,
+        ]
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_backref_column_none():
+        """
+        GIVEN simple type spec with x-backref-column and None value
+        WHEN _to_dict_property is called with the spec and value
+        THEN None is returned.
+        """
+        value = None
+        spec = {"type": "string", "x-backref-column": "column_1"}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == value
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_backref_column_property_missing():
+        """
+        GIVEN simple type spec with x-backref-column and value without column
+        WHEN _to_dict_property is called with the spec and value
+        THEN InvalidModelInstanceError is raised.
+        """
+        value = "value 1"
+        spec = {"type": "string", "x-backref-column": "column_1"}
+
+        with pytest.raises(exceptions.InvalidModelInstanceError):
+            utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_backref_column():
+        """
+        GIVEN simple type spec with x-backref-column and value
+        WHEN _to_dict_property is called with the spec and value
+        THEN x-backref-column value is returned.
+        """
+        value = mock.MagicMock()
+        spec = {"type": "string", "x-backref-column": "column_1"}
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == value.column_1
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_backref_column_array():
+        """
+        GIVEN array type spec with x-backref-column and value in list
+        WHEN _to_dict_property is called with the spec and value
+        THEN x-backref-column value is returned.
+        """
+        value = mock.MagicMock()
+        spec = {
+            "type": "array",
+            "items": {"type": "string", "x-backref-column": "column_1"},
+        }
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            [value], spec=spec, name="name 1"
+        )
+
+        assert returned_value == [value.column_1]

@@ -223,6 +223,8 @@ class UtilityBase:
 
         """
         type_ = spec.get("type")
+        backref_column = helpers.get_ext_prop(source=spec, name="x-backref-column")
+
         if type_ is None:
             schema_descriptor = "array item" if array_context else "property"
             raise exceptions.TypeMissingError(
@@ -230,15 +232,13 @@ class UtilityBase:
                 f"a type. The {schema_descriptor} schema is {json.dumps(spec)}."
             )
 
-        # Handle object
-        if type_ == "object":
-            if value is None:
-                return None
-            return cls._object_to_dict(value, name=name)
-
         # Handle array
         if type_ == "array":
-            print(type_)
+            if backref_column is not None:
+                raise exceptions.MalformedSchemaError(
+                    '"x-backref-column" for arrays can only be defined at the items '
+                    "level."
+                )
             if array_context:
                 raise exceptions.MalformedSchemaError(
                     "The array item schema cannot have the array type."
@@ -255,6 +255,27 @@ class UtilityBase:
             )
             array_dict_values = map(to_dict_property, value)
             return list(array_dict_values)
+
+        if value is None:
+            return None
+
+        # Handle object
+        if type_ == "object":
+            if backref_column is not None:
+                raise exceptions.MalformedSchemaError(
+                    '"x-backref-column" cannot be defined for object types.'
+                )
+            return cls._object_to_dict(value, name=name)
+
+        # Handle backref_column
+        if backref_column:
+            if not hasattr(value, backref_column):
+                raise exceptions.InvalidModelInstanceError(
+                    'The value for a "x-backref-column" does not have the column '
+                    "property. "
+                    f"Expected {backref_column} property to be defined."
+                )
+            return getattr(value, backref_column)
 
         # Handle other types
         return value
