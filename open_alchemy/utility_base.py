@@ -137,6 +137,18 @@ class UtilityBase:
                     f"The parameter is {name}. "
                     f"The model schema is {json.dumps(schema)}."
                 )
+
+            # Check readOnly
+            read_only = spec.get("readOnly")
+            if read_only is True:
+                raise exceptions.MalformedModelDictionaryError(
+                    "A parameter was passed in that is marked as readOnly in the "
+                    "schema. "
+                    f"The parameter is {name}. "
+                    f"The model schema is {json.dumps(schema)}."
+                )
+
+            # Check type
             type_ = spec.get("type")
             if type_ is None:
                 raise exceptions.TypeMissingError(

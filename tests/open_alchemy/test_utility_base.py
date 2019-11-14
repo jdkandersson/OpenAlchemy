@@ -340,6 +340,45 @@ def test_from_dict_argument_not_in_properties():
 
 
 @pytest.mark.utility_base
+def test_from_dict_read_only():
+    """
+    GIVEN schema with readOnly and dictionary
+    WHEN from_dict is called with the dictionary
+    THEN MalformedModelDictionaryError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key": {"readOnly": True, "type": "string"}}},
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.MalformedModelDictionaryError):
+        model.from_dict(**{"key": "value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_read_only_false():
+    """
+    GIVEN schema with readOnly and dictionary
+    WHEN from_dict is called with the dictionary
+    THEN MalformedModelDictionaryError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key": {"readOnly": False, "type": "string"}}},
+            "__init__": __init__,
+        },
+    )
+
+    model.from_dict(**{"key": "value"})
+
+
+@pytest.mark.utility_base
 def test_from_dict_no_type_schema():
     """
     GIVEN model with a schema with a property without a type
