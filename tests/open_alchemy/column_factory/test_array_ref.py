@@ -1,5 +1,6 @@
 """Tests for array references."""
 
+import copy
 from unittest import mock
 
 import pytest
@@ -505,23 +506,56 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     assert f"{tablename}.{fk_column}" in str(foreign_key)
 
 
+@pytest.mark.parametrize(
+    "spec, schemas",
+    [
+        (
+            {
+                "readOnly": True,
+                "type": "array",
+                "items": {"type": "integer"},
+                "x-backref-column": "column_1",
+            },
+            {},
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSpec"},
+            {
+                "RefSpec": {
+                    "readOnly": True,
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "x-backref-column": "column_1",
+                }
+            },
+        ),
+        (
+            {
+                "allOf": [
+                    {
+                        "readOnly": True,
+                        "type": "array",
+                        "items": {"type": "integer"},
+                        "x-backref-column": "column_1",
+                    }
+                ]
+            },
+            {},
+        ),
+    ],
+    ids=["simple", "$ref", "allOf"],
+)
 @pytest.mark.column
-def test_read_only():
+def test_read_only(spec, schemas):
     """
     GIVEN readOnly array spec
     WHEN handle_array is called with the spec
     THEN the spec is returned with an empty array.
     """
-    schemas = {}
-    spec = {
-        "readOnly": True,
-        "type": "array",
-        "items": {"type": "integer"},
-        "x-backref-column": "column_1",
-    }
+    in_schemas = copy.deepcopy(schemas)
 
     (returned_list, returned_spec) = array_ref.handle_array(
-        spec=spec, model_schema={}, schemas=schemas, logical_name="name 1"
+        spec=spec, model_schema={}, schemas=in_schemas, logical_name="name 1"
     )
 
     assert returned_list == []
@@ -531,4 +565,4 @@ def test_read_only():
         "items": {"type": "integer"},
         "x-backref-column": "column_1",
     }
-    assert schemas == {}
+    assert schemas == in_schemas
