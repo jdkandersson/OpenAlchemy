@@ -513,8 +513,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"type": "integer"},
-                "x-backref-column": "column_1",
+                "items": {"type": "integer", "x-backref-column": "column_1"},
             },
             {},
         ),
@@ -524,8 +523,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
                 "RefSpec": {
                     "readOnly": True,
                     "type": "array",
-                    "items": {"type": "integer"},
-                    "x-backref-column": "column_1",
+                    "items": {"type": "integer", "x-backref-column": "column_1"},
                 }
             },
         ),
@@ -535,8 +533,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
                     {
                         "readOnly": True,
                         "type": "array",
-                        "items": {"type": "integer"},
-                        "x-backref-column": "column_1",
+                        "items": {"type": "integer", "x-backref-column": "column_1"},
                     }
                 ]
             },
@@ -562,7 +559,6 @@ def test_read_only(spec, schemas):
     assert returned_spec == {
         "readOnly": True,
         "type": "array",
-        "items": {"type": "integer"},
-        "x-backref-column": "column_1",
+        "items": {"type": "integer", "x-backref-column": "column_1"},
     }
     assert schemas == in_schemas
