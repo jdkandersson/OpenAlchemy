@@ -11,17 +11,13 @@ from open_alchemy import helpers
     [
         ({"readOnly": True, "x-backref-column": "id"}, None),
         ({"readOnly": True, "type": "object", "x-backref-column": "id"}, None),
-        ({"readOnly": True, "type": "array", "x-backref-column": "id"}, {}),
-        (
-            {"readOnly": True, "type": "array", "items": {}, "x-backref-column": "id"},
-            {},
-        ),
+        ({"readOnly": True, "type": "array"}, {}),
+        ({"readOnly": True, "type": "array", "items": {"x-backref-column": "id"}}, {}),
         (
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"type": "object"},
-                "x-backref-column": "id",
+                "items": {"type": "object", "x-backref-column": "id"},
             },
             {},
         ),
@@ -29,11 +25,11 @@ from open_alchemy import helpers
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"type": "array"},
-                "x-backref-column": "id",
+                "items": {"type": "array", "x-backref-column": "id"},
             },
             {},
         ),
+        ({"readOnly": True, "type": "array", "items": {"type": "simple_type"}}, {}),
         ({"readOnly": True, "type": "simple_type"}, None),
     ],
     ids=[
@@ -41,8 +37,9 @@ from open_alchemy import helpers
         "object",
         "array no items",
         "array no items type",
-        "array no items type object",
-        "array no items type array",
+        "array items type object",
+        "array items type array",
+        "array items x-backref-column",
         "x-backref-column missing",
     ],
 )
@@ -71,8 +68,7 @@ def test_malformed(spec, schemas):
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"type": "simple_type"},
-                "x-backref-column": "id",
+                "items": {"type": "simple_type", "x-backref-column": "id"},
             },
             {},
             True,
@@ -82,17 +78,15 @@ def test_malformed(spec, schemas):
                 "readOnly": True,
                 "type": "array",
                 "items": {"$ref": "#/components/schemas/Items"},
-                "x-backref-column": "id",
             },
-            {"Items": {"type": "simple_type"}},
+            {"Items": {"type": "simple_type", "x-backref-column": "id"}},
             True,
         ),
         (
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"allOf": [{"type": "simple_type"}]},
-                "x-backref-column": "id",
+                "items": {"allOf": [{"type": "simple_type", "x-backref-column": "id"}]},
             },
             {},
             True,

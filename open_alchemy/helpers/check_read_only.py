@@ -34,17 +34,47 @@ def check_read_only(
     if read_only is None or read_only is False:
         return False
 
+    # Check readOnly spec
+    _check_read_only_valid(spec=spec, schemas=schemas)
+
+    return True
+
+
+def _check_read_only_valid(
+    *,
+    spec: types.Schema,
+    array_context: bool = False,
+    schemas: typing.Optional[types.Schemas] = None,
+) -> None:
+    """
+    Check that a read only specification is valid.
+
+    Args:
+        spec: The spec to check.
+        array_context: Whether check is being done on an array items.
+        schemas: Used to resolve $ref for array items.
+
+    """
     # Check type
     type_ = spec.get("type")
     if type_ is None:
         raise exceptions.MalformedSchemaError(
             "Every readOnly property must have a type."
+            if not array_context
+            else "Array readOnly items must have a type."
         )
     if type_ == "object":
         raise exceptions.MalformedSchemaError(
             "readOnly properties cannot be an object."
+            if not array_context
+            else "readOnly array items cannot be an object."
         )
+
     if type_ == "array":
+        if array_context:
+            raise exceptions.MalformedSchemaError(
+                "readOnly array items cannot be an array."
+            )
         if schemas is None:
             raise exceptions.MissingArgumentError(
                 "check_read_only for arrays must be called with schemas not None."
@@ -55,22 +85,18 @@ def check_read_only(
                 "A readOnly array must define its items."
             )
         items_spec = prepare_schema(schema=items_spec, schemas=schemas)
-        items_type = items_spec.get("type")
-        if items_type is None:
-            raise exceptions.MalformedSchemaError(
-                "A readOnly array must define the type of its items."
-            )
-        if items_type in {"object", "array"}:
-            raise exceptions.MalformedSchemaError(
-                "A readOnly array must not have object or array item types."
-            )
+        _check_read_only_valid(spec=items_spec, array_context=True)
 
     # Check x-backref-column
-    backref_column = get_ext_prop(source=spec, name="x-backref-column")
-    if backref_column is None:
-        raise exceptions.MalformedSchemaError(
-            "Every readOnly property must define the column of the relationship to "
-            'return using "x-backref-column".'
-        )
-
-    return True
+    if type_ != "array":
+        backref_column = get_ext_prop(source=spec, name="x-backref-column")
+        if backref_column is None:
+            raise exceptions.MalformedSchemaError(
+                (
+                    "Every readOnly property "
+                    if not array_context
+                    else "Every readOnly array items "
+                )
+                + "must define the column of the relationship to return using "
+                '"x-backref-column".'
+            )
