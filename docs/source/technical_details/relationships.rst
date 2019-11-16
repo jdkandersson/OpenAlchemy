@@ -214,7 +214,7 @@ and for custom foreign keys see
 *x-uselist* is not supported as it does not make sense to turn a one to many
 relationship defined as an OpenAPI array into a one to one relationship.
 
-.. _x-dict-ignore:
+.. _dict-ignore:
 
 .. note:: To be able to support one to many relationships, the schemas stored
     with the model factory may be modified by putting a particular schema
@@ -224,3 +224,88 @@ relationship defined as an OpenAPI array into a one to one relationship.
     to construct the foreign key associated with the one to many relationship.
     The *x-dict-ignore* extension property is an internal extension property
     that may change at any time and should not be used externally.
+
+.. _backref-column:
+
+Including Parent References with Child
+--------------------------------------
+
+So far, relationships have been used to include the full details for a child
+with a parent. This is only possible from one side of the relationship without
+circular references that would produce infinite sized API response payloads.
+This can be overcome by including references to the parent in the child, rather
+than the full parent details.
+
+This is done using *readOnly* properties. At a high level, properties marked as
+*readOnly* are not constructed as columns in the *SQLAlchemy* models. They are
+also not constructed as a part of a call to *from_dict*. The purpose of
+*readOnly* properties is to include one of the properties of the parent in the
+child dictionary when calling *to_dict*.
+
+Many to One
+^^^^^^^^^^^
+
+For example, the following *Division* schema includes the *id* of all employees
+working in the division as an array:
+
+.. literalinclude:: ./relationships/many_to_one/read-only.yaml
+    :language: yaml
+    :linenos:
+
+Querying for a *Division* would, for example, result in the following
+dictionary::
+
+    >>> division = Division.query.first()
+    >>> division.to_dict()
+    {'id': 1, 'name': 'Engineering', 'employees': [1, 2, 5]}
+
+Indicating that employees with the id *1*, *2* and *5* work in the
+*Engineering* division. To retrieve further details for those employees, the
+relevant endpoints can be queried with the ids.
+
+In the above example, there is a many to one relationship from *Employee* to
+*Division*. The difference for other relationship types is the type of the
+*readOnly* property.
+
+One to One
+^^^^^^^^^^
+
+The difference between many to one and one to one is that the type of the
+*readOnly* property cannot be an array. Instead, it is any other supported type
+except object.
+
+.. literalinclude:: ./relationships/one_to_one/read-only.yaml
+    :language: yaml
+    :linenos:
+
+Querying for a *PayInfo* would, for example, result in the following
+dictionary::
+
+    >>> pay_info = PayInfo.query.first()
+    >>> pay_info.to_dict()
+    {'id': 1, 'account': '012 345', 'employee': 1}
+
+Indicating that the pay information is for the employee with an id of *1*.
+
+
+One to Many
+^^^^^^^^^^^
+
+Including a parent reference with a child for a one to many relationship is
+very similar to the one to one relationship case. If the relationship between
+*Employee* and *Division* is defined with *Division* as the parent, the
+following *Employee* schema includes a reference to the employee's division
+with the employee dictionary:
+
+.. literalinclude:: ./relationships/one_to_many/read-only.yaml
+    :language: yaml
+    :linenos:
+
+Querying for an *Employee* would, for example, result in the following
+dictionary::
+
+    >>> employee = Employee.query.first()
+    >>> employee.to_dict()
+    {'id': 1, 'name': 'David Andersson', 'division': 1}
+
+Indicating that the employee is working in the division with an id of 1.

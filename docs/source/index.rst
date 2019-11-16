@@ -136,7 +136,7 @@ For example::
     >>> employee.name
     'David Andersson'
 
-.. _x-de-ref:
+.. _de-ref:
 
 .. note:: To be able to support relationships, the schema stored alongside a
     model, which is accessible at the *_schema* class variable (not a public
@@ -167,6 +167,9 @@ For example::
     >>> employee.to_dict()
     {'id': 1, 'name': 'David Andersson', 'division': 'engineering', 'salary': 1000000}
 
+.. seealso::
+    :ref:`backref-column`
+
 .. _how-does-it-work:
 
 How Does It Work?
@@ -190,35 +193,37 @@ extension properties.
 To find out more about an extension property, go to the following section of
 the documentation:
 
-+---------------------+-----------------------------------------+
-| property            | documentation section                   |
-+=====================+=========================================+
-| x-backref           | :ref:`backref`                          |
-+---------------------+-----------------------------------------+
-| x-uselist           | :ref:`one-to-one`                       |
-+---------------------+-----------------------------------------+
-| x-primary-key       | :ref:`primary-key`                      |
-+---------------------+-----------------------------------------+
-| x-autoincrement     | :ref:`autoincrement`                    |
-+---------------------+-----------------------------------------+
-| x-index             | :ref:`column-index`                     |
-+---------------------+-----------------------------------------+
-| x-composite-index   | :ref:`composite-index`                  |
-+---------------------+-----------------------------------------+
-| x-unique            | :ref:`column-unique`                    |
-+---------------------+-----------------------------------------+
-| x-composite-unique  | :ref:`composite-unique`                 |
-+---------------------+-----------------------------------------+
-| x-foreign-key       | :ref:`foreign-key`                      |
-+---------------------+-----------------------------------------+
-| x-tablename         | :ref:`how-does-it-work`                 |
-+---------------------+-----------------------------------------+
-| x-foreign-key-colum | :ref:`custom-foreign-key`               |
-+---------------------+-----------------------------------------+
-| x-de-$ref           | :ref:`from_dict Note <x-de-ref>`        |
-+---------------------+-----------------------------------------+
-| x-dict-ignore       | :ref:`One to Many Note <x-dict-ignore>` |
-+---------------------+-----------------------------------------+
++---------------------+---------------------------------------+
+| property            | documentation section                 |
++=====================+=======================================+
+| x-backref           | :ref:`backref`                        |
++---------------------+---------------------------------------+
+| x-backref-column    | :ref:`backref-column`                 |
++---------------------+---------------------------------------+
+| x-uselist           | :ref:`one-to-one`                     |
++---------------------+---------------------------------------+
+| x-primary-key       | :ref:`primary-key`                    |
++---------------------+---------------------------------------+
+| x-autoincrement     | :ref:`autoincrement`                  |
++---------------------+---------------------------------------+
+| x-index             | :ref:`column-index`                   |
++---------------------+---------------------------------------+
+| x-composite-index   | :ref:`composite-index`                |
++---------------------+---------------------------------------+
+| x-unique            | :ref:`column-unique`                  |
++---------------------+---------------------------------------+
+| x-composite-unique  | :ref:`composite-unique`               |
++---------------------+---------------------------------------+
+| x-foreign-key       | :ref:`foreign-key`                    |
++---------------------+---------------------------------------+
+| x-tablename         | :ref:`how-does-it-work`               |
++---------------------+---------------------------------------+
+| x-foreign-key-colum | :ref:`custom-foreign-key`             |
++---------------------+---------------------------------------+
+| x-de-$ref           | :ref:`from_dict Note <de-ref>`        |
++---------------------+---------------------------------------+
+| x-dict-ignore       | :ref:`One to Many Note <dict-ignore>` |
++---------------------+---------------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.

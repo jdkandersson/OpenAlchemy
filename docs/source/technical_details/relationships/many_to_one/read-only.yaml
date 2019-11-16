@@ -1,0 +1,20 @@
+Employee:
+  type: object
+  ...
+  properties:
+    id:
+      type: integer
+    ...
+    division
+      $ref: "#/../Division"
+Division:
+  type: object
+  x-tablename: division
+  properties:
+    ...
+    employees:
+      readOnly: True
+      type: array
+      items:
+        type: integer
+        x-backref-column: id

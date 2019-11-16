@@ -1,0 +1,19 @@
+Employee:
+  type: object
+  ...
+  properties:
+    ...
+    division:
+      type: integer
+      x-backref-column: id
+Division:
+  type: object
+  x-tablename: division
+  properties:
+    id:
+      type: integer
+    ...
+    employees:
+      type: array
+      items:
+        $ref: "#/../Employee"

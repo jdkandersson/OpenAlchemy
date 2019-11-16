@@ -1,0 +1,19 @@
+PayInfo:
+  ...
+  properties:
+    ...
+    employee:
+      readOnly: true
+      type: integer
+      x-backref-column: id
+Employee:
+  ...
+  properties:
+    id:
+      type: integer
+    ...
+    pay_info:
+      allOf:
+        - "$ref": "#/.../PayInfo"
+        - x-backref: employee
+          x-uselist: false
