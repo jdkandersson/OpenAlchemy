@@ -1,12 +1,17 @@
-Employee:
+BaseEmployee:
   type: object
   ...
   properties:
     id:
       type: integer
     ...
-    division:
-      $ref: "#/../Division"
+Employee:
+  allOf:
+    - $ref: "#/.../BaseEmployee"
+    - type: object
+      properties:
+        division:
+          $ref: "#/../Division"
 Division:
   type: object
   x-tablename: division
@@ -16,7 +21,4 @@ Division:
       readOnly: True
       type: array
       items:
-        type: object
-        properties:
-          id:
-            type: integer
+        $ref: "#/../BaseEmployee"

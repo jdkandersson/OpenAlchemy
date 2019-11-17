@@ -225,7 +225,7 @@ relationship defined as an OpenAPI array into a one to one relationship.
     The *x-dict-ignore* extension property is an internal extension property
     that may change at any time and should not be used externally.
 
-.. _backref-column:
+.. _child-parent-reference:
 
 Including Parent References with Child
 --------------------------------------
@@ -233,14 +233,16 @@ Including Parent References with Child
 So far, relationships have been used to include the full details for a child
 with a parent. This is only possible from one side of the relationship without
 circular references that would produce infinite sized API response payloads.
-This can be overcome by including references to the parent in the child, rather
-than the full parent details.
+This can be overcome by including a subset of parent properties in the child.
 
 This is done using *readOnly* properties. At a high level, properties marked as
 *readOnly* are not constructed as columns in the *SQLAlchemy* models. They are
 also not constructed as a part of a call to *from_dict*. The purpose of
-*readOnly* properties is to include one of the properties of the parent in the
-child dictionary when calling *to_dict*.
+*readOnly* properties is to include some of the properties of the parent in the
+child dictionary when calling *to_dict*. *readOnly* properties are required to
+be defined as objects or arrays of object. In both cases object properties may
+not be of type object nor array to avoid circular references. *$ref* and
+*allOf* are supported as normal.
 
 Many to One
 ^^^^^^^^^^^
@@ -257,11 +259,21 @@ dictionary::
 
     >>> division = Division.query.first()
     >>> division.to_dict()
-    {'id': 1, 'name': 'Engineering', 'employees': [1, 2, 5]}
+    {'id': 1, 'name': 'Engineering', 'employees': [{'id': 1}, {'id': 2}, ['id': 5}]}
 
-Indicating that employees with the id *1*, *2* and *5* work in the
-*Engineering* division. To retrieve further details for those employees, the
+Indicating that employees with the ids *1*, *2* and *5* work in the
+engineering division. To retrieve further details for those employees, the
 relevant endpoints can be queried with the ids.
+
+Any number of properties may be included in the *readOnly* object schema.
+Schema duplication can be reduced by making use of *$ref*. For example:
+
+.. literalinclude:: ./relationships/many_to_one/read-only-$ref.yaml
+    :language: yaml
+    :linenos:
+
+This means that all *Employee* properties are included except for the reference
+to *Division* to avoid circular references.
 
 In the above example, there is a many to one relationship from *Employee* to
 *Division*. The difference for other relationship types is the type of the
@@ -271,8 +283,7 @@ One to One
 ^^^^^^^^^^
 
 The difference between many to one and one to one is that the type of the
-*readOnly* property cannot be an array. Instead, it is any other supported type
-except object.
+*readOnly* property is an object instead of an array.
 
 .. literalinclude:: ./relationships/one_to_one/read-only.yaml
     :language: yaml
@@ -283,7 +294,7 @@ dictionary::
 
     >>> pay_info = PayInfo.query.first()
     >>> pay_info.to_dict()
-    {'id': 1, 'account': '012 345', 'employee': 1}
+    {'id': 1, 'account': '012 345', 'employee': {'id': 1}}
 
 Indicating that the pay information is for the employee with an id of *1*.
 
@@ -292,10 +303,9 @@ One to Many
 ^^^^^^^^^^^
 
 Including a parent reference with a child for a one to many relationship is
-very similar to the one to one relationship case. If the relationship between
-*Employee* and *Division* is defined with *Division* as the parent, the
-following *Employee* schema includes a reference to the employee's division
-with the employee dictionary:
+very similar to the one to one relationship case. To illustrate, the following
+schema redefines the relationship between *Employee* and *Division* so that the
+*Division* is the parent resulting in a one to many relationship:
 
 .. literalinclude:: ./relationships/one_to_many/read-only.yaml
     :language: yaml
@@ -306,6 +316,6 @@ dictionary::
 
     >>> employee = Employee.query.first()
     >>> employee.to_dict()
-    {'id': 1, 'name': 'David Andersson', 'division': 1}
+    {'id': 1, 'name': 'David Andersson', 'division': {'id': 1}}
 
 Indicating that the employee is working in the division with an id of 1.

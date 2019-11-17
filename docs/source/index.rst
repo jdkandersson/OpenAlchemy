@@ -168,7 +168,7 @@ For example::
     {'id': 1, 'name': 'David Andersson', 'division': 'engineering', 'salary': 1000000}
 
 .. seealso::
-    :ref:`backref-column`
+    :ref:`child-parent-reference`
 
 .. _how-does-it-work:
 
@@ -197,8 +197,6 @@ the documentation:
 | property            | documentation section                 |
 +=====================+=======================================+
 | x-backref           | :ref:`backref`                        |
-+---------------------+---------------------------------------+
-| x-backref-column    | :ref:`backref-column`                 |
 +---------------------+---------------------------------------+
 | x-uselist           | :ref:`one-to-one`                     |
 +---------------------+---------------------------------------+
