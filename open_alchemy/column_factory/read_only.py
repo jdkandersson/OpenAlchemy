@@ -36,9 +36,28 @@ type is preserved.
 
 """
 
+import typing
+
 from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
+
+
+def handle_read_only(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Tuple[typing.List, types.Schema]:
+    """
+    Handle readOnly property.
+
+    Args:
+        schema: The readOnly property schema.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        Empty list and transformed schema.
+
+    """
+    return [], _prepare_schema(schema=schema, schemas=schemas)
 
 
 def _prepare_schema(

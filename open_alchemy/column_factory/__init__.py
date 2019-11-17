@@ -12,6 +12,7 @@ from open_alchemy import types
 from . import array_ref
 from . import column
 from . import object_ref
+from . import read_only
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
@@ -39,7 +40,11 @@ def column_factory(
         specification to store for the column.
 
     """
-    # Checking for the type
+    # Check readOnly
+    if helpers.peek.read_only(schema=spec, schemas=schemas):
+        return read_only.handle_read_only(schema=spec, schemas=schemas)
+
+    # Check type
     type_ = helpers.peek.type_(schema=spec, schemas=schemas)
 
     if type_ == "object":

@@ -185,8 +185,8 @@ class UtilityBase:
         return cls(**model_dict)
 
     @staticmethod
-    def _object_to_dict(value, *, name: str) -> typing.Dict[str, typing.Any]:
-        """Call to_dict on object."""
+    def _object_to_dict_relationship(*, value, name) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on relationshup object."""
         try:
             return value.to_dict()
         except AttributeError:
@@ -201,6 +201,15 @@ class UtilityBase:
             )
 
     @classmethod
+    def _object_to_dict(
+        cls, value, name: str, read_only: bool
+    ) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on object."""
+        if not read_only:
+            return cls._object_to_dict_relationship(value=value, name=name)
+        return {}
+
+    @classmethod
     def _to_dict_property(
         cls,
         value: typing.Any,
@@ -208,6 +217,7 @@ class UtilityBase:
         spec: types.Schema,
         name: str,
         array_context: bool = False,
+        read_only: bool = False,
     ) -> typing.Any:
         """
         Perform property level to dict operation.
@@ -217,13 +227,15 @@ class UtilityBase:
             spec: The specification for the property.
             name: The name of the property.
             array_context: Whether array items are being worked on.
+            read_only: Whether a readOnly property is being worked on.
 
         Returns:
             property value.
 
         """
+        if not read_only:
+            read_only = spec.get("readOnly", read_only)
         type_ = spec.get("type")
-        backref_column = helpers.get_ext_prop(source=spec, name="x-backref-column")
 
         if type_ is None:
             schema_descriptor = "array item" if array_context else "property"
@@ -234,11 +246,6 @@ class UtilityBase:
 
         # Handle array
         if type_ == "array":
-            if backref_column is not None:
-                raise exceptions.MalformedSchemaError(
-                    '"x-backref-column" for arrays can only be defined at the items '
-                    "level."
-                )
             if array_context:
                 raise exceptions.MalformedSchemaError(
                     "The array item schema cannot have the array type."
@@ -251,7 +258,11 @@ class UtilityBase:
                     "The array item schema must have an items property."
                 )
             to_dict_property = functools.partial(
-                cls._to_dict_property, spec=item_spec, name=name, array_context=True
+                cls._to_dict_property,
+                spec=item_spec,
+                name=name,
+                array_context=True,
+                read_only=read_only,
             )
             array_dict_values = map(to_dict_property, value)
             return list(array_dict_values)
@@ -261,21 +272,7 @@ class UtilityBase:
 
         # Handle object
         if type_ == "object":
-            if backref_column is not None:
-                raise exceptions.MalformedSchemaError(
-                    '"x-backref-column" cannot be defined for object types.'
-                )
-            return cls._object_to_dict(value, name=name)
-
-        # Handle backref_column
-        if backref_column:
-            if not hasattr(value, backref_column):
-                raise exceptions.InvalidModelInstanceError(
-                    'The value for a "x-backref-column" does not have the column '
-                    "property. "
-                    f"Expected {backref_column} property to be defined."
-                )
-            return getattr(value, backref_column)
+            return cls._object_to_dict(value=value, name=name, read_only=read_only)
 
         # Handle other types
         return value

@@ -610,49 +610,53 @@ def test_from_dict_array_multiple_from_dict(mocked_models):
 
 
 class TestObjectToDict:
-    """Tests _object_to_dict."""
+    """Tests _object_to_dict_relationship."""
 
     # pylint: disable=protected-access
 
     @staticmethod
     @pytest.mark.utility_base
-    def test_object_to_dict_object_no_to_dict():
+    def test_object_to_dict_relationship_object_no_to_dict():
         """
         GIVEN value that has a to_dict function that raises AttributeError
-        WHEN _object_to_dict is called with the value
+        WHEN _object_to_dict_relationship is called with the value
         THEN InvalidModelInstanceError is raised.
         """
         value = mock.MagicMock()
         value.to_dict.side_effect = AttributeError
 
         with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.UtilityBase._object_to_dict(value=value, name="name 1")
+            utility_base.UtilityBase._object_to_dict_relationship(
+                value=value, name="name 1"
+            )
 
     @staticmethod
     @pytest.mark.utility_base
-    def test_object_to_dict_object_to_dict_different_func():
+    def test_object_to_dict_relationship_object_to_dict_relationship_different_func():
         """
         GIVEN value that has a to_dict function that raises TypeError
-        WHEN _object_to_dict is called with the value
+        WHEN _object_to_dict_relationship is called with the value
         THEN InvalidModelInstanceError is raised.
         """
         value = mock.MagicMock()
         value.to_dict.side_effect = TypeError
 
         with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.UtilityBase._object_to_dict(value=value, name="name 1")
+            utility_base.UtilityBase._object_to_dict_relationship(
+                value=value, name="name 1"
+            )
 
     @staticmethod
     @pytest.mark.utility_base
-    def test_object_to_dict_object_to_dict():
+    def test_object_to_dict_relationship_object_to_dict_relationship():
         """
         GIVEN value that has a to_dict function that raises TypeError
-        WHEN _object_to_dict is called with the value
+        WHEN _object_to_dict_relationship is called with the value
         THEN InvalidModelInstanceError is raised.
         """
         value = mock.MagicMock()
 
-        returned_value = utility_base.UtilityBase._object_to_dict(
+        returned_value = utility_base.UtilityBase._object_to_dict_relationship(
             value=value, name="name 1"
         )
 
@@ -681,32 +685,8 @@ class TestToDictProperty:
                 [mock.MagicMock()],
                 exceptions.MalformedSchemaError,
             ),
-            (
-                {
-                    "type": "array",
-                    "items": {"type": "object", "x-backref-column": "column_1"},
-                },
-                [mock.MagicMock()],
-                exceptions.MalformedSchemaError,
-            ),
-            (
-                {
-                    "type": "array",
-                    "x-backref-column": "column_1",
-                    "items": {"type": "string"},
-                },
-                [mock.MagicMock()],
-                exceptions.MalformedSchemaError,
-            ),
         ],
-        ids=[
-            "no type",
-            "array no items",
-            "array items no type",
-            "array items array",
-            "array items object x-backref-column",
-            "array x-backref-column",
-        ],
+        ids=["no type", "array no items", "array items no type", "array items array"],
     )
     @pytest.mark.utility_base
     def test_invalid_spec(spec, value, error):
@@ -838,71 +818,3 @@ class TestToDictProperty:
             item1_value.to_dict.return_value,
             item2_value.to_dict.return_value,
         ]
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_backref_column_none():
-        """
-        GIVEN simple type spec with x-backref-column and None value
-        WHEN _to_dict_property is called with the spec and value
-        THEN None is returned.
-        """
-        value = None
-        spec = {"type": "string", "x-backref-column": "column_1"}
-
-        returned_value = utility_base.UtilityBase._to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == value
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_backref_column_property_missing():
-        """
-        GIVEN simple type spec with x-backref-column and value without column
-        WHEN _to_dict_property is called with the spec and value
-        THEN InvalidModelInstanceError is raised.
-        """
-        value = "value 1"
-        spec = {"type": "string", "x-backref-column": "column_1"}
-
-        with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_backref_column():
-        """
-        GIVEN simple type spec with x-backref-column and value
-        WHEN _to_dict_property is called with the spec and value
-        THEN x-backref-column value is returned.
-        """
-        value = mock.MagicMock()
-        spec = {"type": "string", "x-backref-column": "column_1"}
-
-        returned_value = utility_base.UtilityBase._to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == value.column_1
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_backref_column_array():
-        """
-        GIVEN array type spec with x-backref-column and value in list
-        WHEN _to_dict_property is called with the spec and value
-        THEN x-backref-column value is returned.
-        """
-        value = mock.MagicMock()
-        spec = {
-            "type": "array",
-            "items": {"type": "string", "x-backref-column": "column_1"},
-        }
-
-        returned_value = utility_base.UtilityBase._to_dict_property(
-            [value], spec=spec, name="name 1"
-        )
-
-        assert returned_value == [value.column_1]
