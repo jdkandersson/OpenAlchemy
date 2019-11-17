@@ -8,12 +8,25 @@ from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.parametrize(
-    "spec",
-    [{"type": "object"}, {"allOf": [{"type": "object"}]}],
-    ids=["object", "allOf with object"],
+    "spec, schemas",
+    [
+        ({"type": "object"}, {}),
+        ({"allOf": [{"type": "object"}]}, {}),
+        (
+            {"$ref": "#/components/schemas/Schema"},
+            {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "table",
+                    "x-secondary": "secondary",
+                }
+            },
+        ),
+    ],
+    ids=["object", "allOf with object", "secondary defined"],
 )
 @pytest.mark.column
-def test_handle_object_error(spec):
+def test_handle_object_error(spec, schemas):
     """
     GIVEN spec
     WHEN handle_object is called with the spec
@@ -22,7 +35,7 @@ def test_handle_object_error(spec):
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
             spec=spec,
-            schemas={"type": "object"},
+            schemas=schemas,
             required=True,
             logical_name="name 1",
             model_schema={},

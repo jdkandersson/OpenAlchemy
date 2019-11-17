@@ -46,6 +46,12 @@ def handle_object(
         spec=spec, logical_name=logical_name, schemas=schemas
     )
 
+    # Check for secondary
+    if obj_artifacts.secondary is not None:
+        raise exceptions.MalformedRelationshipError(
+            "Many to one and one to one relationships do not support x-secondary."
+        )
+
     # Construct foreign key
     foreign_key_spec = handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
