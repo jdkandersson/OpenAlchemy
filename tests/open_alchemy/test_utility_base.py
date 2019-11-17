@@ -609,7 +609,7 @@ def test_from_dict_array_multiple_from_dict(mocked_models):
     ]
 
 
-class TestObjectToDict:
+class TestObjectToDictRelationship:
     """Tests _object_to_dict_relationship."""
 
     # pylint: disable=protected-access
@@ -662,6 +662,83 @@ class TestObjectToDict:
 
         assert returned_value == value.to_dict.return_value
         value.to_dict.assert_called_once_with()
+
+
+class TestObjectToDictReadOnly:
+    """Tests for _object_to_dict_read_only"""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "spec", [{}, {"properties": {}}], ids=["properties missing", "properties empty"]
+    )
+    @pytest.mark.utility_base
+    def test_spec_invalid(spec):
+        """
+        GIVEN invalid spec
+        WHEN _object_to_dict_read_only is called with the spec
+        THEN MalformedSchemaError is raised.
+        """
+        with pytest.raises(exceptions.MalformedSchemaError):
+            utility_base.UtilityBase._object_to_dict_read_only(
+                spec=spec, value=mock.MagicMock(), name="name 1"
+            )
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_missing():
+        """
+        GIVEN spec and value without key
+        WHEN _object_to_dict_read_only is called with the value
+        THEN None is returned for the key.
+        """
+        value = mock.MagicMock()
+        del value.key_1
+        spec = {"type": "object", "properties": {"key_1": {"type": "string"}}}
+
+        returned_value = utility_base.UtilityBase._object_to_dict_read_only(
+            value=value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == {"key_1": None}
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_single():
+        """
+        GIVEN spec with single property and mock value
+        WHEN _object_to_dict_read_only is called with the value
+        THEN dictionary with values for the key is returned.
+        """
+        value = mock.MagicMock()
+        spec = {"type": "object", "properties": {"key_1": {"type": "string"}}}
+
+        returned_value = utility_base.UtilityBase._object_to_dict_read_only(
+            value=value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == {"key_1": value.key_1}
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_multiple():
+        """
+        GIVEN spec with multiple properties and mock value
+        WHEN _object_to_dict_read_only is called with the value
+        THEN dictionary with values for the key is returned.
+        """
+        value = mock.MagicMock()
+        spec = {
+            "type": "object",
+            "properties": {"key_1": {"type": "string"}, "key_2": {"type": "string"}},
+        }
+
+        returned_value = utility_base.UtilityBase._object_to_dict_read_only(
+            value=value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == {"key_1": value.key_1, "key_2": value.key_2}
 
 
 class TestToDictProperty:

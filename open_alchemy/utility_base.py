@@ -185,7 +185,9 @@ class UtilityBase:
         return cls(**model_dict)
 
     @staticmethod
-    def _object_to_dict_relationship(*, value, name) -> typing.Dict[str, typing.Any]:
+    def _object_to_dict_relationship(
+        *, value: typing.Any, name: str
+    ) -> typing.Dict[str, typing.Any]:
         """Call to_dict on relationshup object."""
         try:
             return value.to_dict()
@@ -199,6 +201,25 @@ class UtilityBase:
                 f"The {name} object property instance to_dict implementation is "
                 "expecting arguments."
             )
+
+    @staticmethod
+    def _object_to_dict_read_only(
+        *, value: typing.Any, spec: types.Schema, name: str
+    ) -> typing.Dict[str, typing.Any]:
+        """Convert relationship to dictionary based on spec."""
+        properties = spec.get("properties")
+        if properties is None:
+            raise exceptions.MalformedSchemaError(
+                f"readOnly object definition {name} must have properties."
+            )
+        if not properties:
+            raise exceptions.MalformedSchemaError(
+                f"readOnly object definitions {name} must have at least 1 property."
+            )
+        return_dict = {}
+        for key in properties.keys():
+            return_dict[key] = getattr(value, key, None)
+        return return_dict
 
     @classmethod
     def _object_to_dict(
