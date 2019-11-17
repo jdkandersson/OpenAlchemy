@@ -115,7 +115,10 @@ def test_to_from_dict_many_to_one_read_only(engine, sessionmaker):
                             "tables": {
                                 "type": "array",
                                 "readOnly": True,
-                                "items": {"type": "integer", "x-backref-column": "id"},
+                                "items": {
+                                    "type": "object",
+                                    "properties": {"id": {"type": "integer"}},
+                                },
                             },
                         },
                         "x-tablename": "ref_table",
@@ -146,7 +149,7 @@ def test_to_from_dict_many_to_one_read_only(engine, sessionmaker):
     session.add(instance)
     session.flush()
     queried_ref_instance = session.query(ref_model).first()
-    assert queried_ref_instance.to_dict() == {"id": 12, "tables": [11]}
+    assert queried_ref_instance.to_dict() == {"id": 12, "tables": [{"id": 11}]}
 
 
 @pytest.mark.integration
@@ -221,8 +224,8 @@ def test_to_from_dict_one_to_many_read_only(engine, sessionmaker):
                             "id": {"type": "integer", "x-primary-key": True},
                             "table": {
                                 "readOnly": True,
-                                "type": "integer",
-                                "x-backref-column": "id",
+                                "type": "object",
+                                "properties": {"id": {"type": "integer"}},
                             },
                         },
                         "x-tablename": "ref_table",
@@ -256,7 +259,7 @@ def test_to_from_dict_one_to_many_read_only(engine, sessionmaker):
     session.add(instance)
     session.flush()
     queried_ref_instance = session.query(ref_model).first()
-    assert queried_ref_instance.to_dict() == {"id": 12, "table": 11}
+    assert queried_ref_instance.to_dict() == {"id": 12, "table": {"id": 11}}
 
 
 @pytest.mark.integration
@@ -336,8 +339,8 @@ def test_to_from_dict_one_to_one_read_only(engine, sessionmaker):
                             "id": {"type": "integer", "x-primary-key": True},
                             "table": {
                                 "readOnly": True,
-                                "type": "integer",
-                                "x-backref-column": "id",
+                                "type": "object",
+                                "properties": {"id": {"type": "integer"}},
                             },
                         },
                         "x-tablename": "ref_table",
@@ -369,4 +372,4 @@ def test_to_from_dict_one_to_one_read_only(engine, sessionmaker):
     session.add(instance)
     session.flush()
     queried_ref_instance = session.query(ref_model).first()
-    assert queried_ref_instance.to_dict() == {"id": 12, "table": 11}
+    assert queried_ref_instance.to_dict() == {"id": 12, "table": {"id": 11}}
