@@ -38,9 +38,39 @@ def test_type():
 
 
 @pytest.mark.helper
+def test_format_wrong_type():
+    """
+    GIVEN schema with format defined as a boolean
+    WHEN format_ is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"format": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.format_(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_format",
+    [({}, None), ({"format": "format 1"}, "format 1")],
+    ids=["missing", "present"],
+)
+@pytest.mark.helper
+def test_format(schema, expected_format):
+    """
+    GIVEN schema and expected format
+    WHEN format_ is called with the schema
+    THEN the expected format is returned.
+    """
+    returned_format = helpers.peek.format_(schema=schema, schemas={})
+
+    assert returned_format == expected_format
+
+
+@pytest.mark.helper
 def test_read_only_wrong_type():
     """
-    GIVEN schema without readOnly defined as a string
+    GIVEN schema with readOnly defined as a string
     WHEN read_only is called with the schema
     THEN MalformedSchemaError is raised.
     """
@@ -66,6 +96,36 @@ def test_read_only(schema, expected_read_only):
     returned_read_only = helpers.peek.read_only(schema=schema, schemas={})
 
     assert returned_read_only == expected_read_only
+
+
+@pytest.mark.helper
+def test_primary_key_wrong_type():
+    """
+    GIVEN schema with primary key defined as a string
+    WHEN primary_key is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-primary-key": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.primary_key(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_primary_key",
+    [({}, False), ({"x-primary-key": False}, False), ({"x-primary-key": True}, True)],
+    ids=["missing", "false", "true"],
+)
+@pytest.mark.helper
+def test_primary_key(schema, expected_primary_key):
+    """
+    GIVEN schema and expected primary key
+    WHEN primary_key is called with the schema
+    THEN the expected primary key is returned.
+    """
+    returned_primary_key = helpers.peek.primary_key(schema=schema, schemas={})
+
+    assert returned_primary_key == expected_primary_key
 
 
 @pytest.mark.parametrize(

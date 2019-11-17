@@ -33,6 +33,30 @@ def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
     return value
 
 
+def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the format property from a property schema.
+
+    Raises MalformedSchemaError if the format value is not a string.
+
+    Args:
+        schema: The schema got get the format from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The format value or None if it was not found.
+
+    """
+    value = _peek_key(schema=schema, schemas=schemas, key="format")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "A type format value must be of type string."
+        )
+    return value
+
+
 def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     """
     Determine whether schema is readOnly.
@@ -40,7 +64,7 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     Raises MalformedSchemaError if the readOnly value is not a boolean.
 
     Args:
-        schema: The schema for which to get the type.
+        schema: The schema to get readOnly from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -53,6 +77,30 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if not isinstance(value, bool):
         raise exceptions.MalformedSchemaError(
             "A readOnly property must be of type boolean."
+        )
+    return value
+
+
+def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
+    """
+    Determine whether property schema is for a primary key.
+
+    Raises MalformedSchemaError if the x-primary-key value is not a boolean.
+
+    Args:
+        schema: The schema got get x-primary-key from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        Whether the schema is for a primary key property.
+
+    """
+    value = _peek_key(schema=schema, schemas=schemas, key="x-primary-key")
+    if value is None:
+        return False
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "The x-primary-key property must be of type boolean."
         )
     return value
 
