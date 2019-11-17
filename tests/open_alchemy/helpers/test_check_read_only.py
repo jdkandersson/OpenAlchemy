@@ -7,68 +7,71 @@ from open_alchemy import helpers
 
 
 @pytest.mark.parametrize(
-    "spec, schemas",
+    "spec",
     [
-        ({"readOnly": True, "x-backref-column": "id"}, None),
-        ({"readOnly": True, "type": "object", "x-backref-column": "id"}, None),
-        ({"readOnly": True, "type": "array"}, {}),
-        ({"readOnly": True, "type": "array", "items": {"x-backref-column": "id"}}, {}),
-        (
-            {
-                "readOnly": True,
-                "type": "array",
-                "items": {"type": "object", "x-backref-column": "id"},
-            },
-            {},
-        ),
-        (
-            {
-                "readOnly": True,
-                "type": "array",
-                "items": {"type": "array", "x-backref-column": "id"},
-            },
-            {},
-        ),
-        ({"readOnly": True, "type": "array", "items": {"type": "simple_type"}}, {}),
-        ({"readOnly": True, "type": "simple_type"}, None),
+        {"readOnly": True},
+        {"readOnly": True, "type": "simple_type"},
+        {"readOnly": True, "type": "array"},
+        {"readOnly": True, "type": "array", "items": {}},
+        {"readOnly": True, "type": "array", "items": {"type": "simple_type"}},
+        {"readOnly": True, "type": "array", "items": {"type": "array"}},
+        {"readOnly": True, "type": "object"},
+        {"readOnly": True, "type": "object", "properties": {}},
+        {"readOnly": True, "type": "object", "properties": {"key": {"type": "array"}}},
+        {"readOnly": True, "type": "object", "properties": {"key": {"type": "object"}}},
     ],
     ids=[
         "no type",
-        "object",
+        "not object nor array",
         "array no items",
         "array no items type",
-        "array items type object",
+        "array items type not object nor array",
         "array items type array",
-        "array items x-backref-column",
-        "x-backref-column missing",
+        "object no properties",
+        "object empty properties",
+        "object property type array",
+        "object property type object",
     ],
 )
 @pytest.mark.helper
-def test_malformed(spec, schemas):
+def test_malformed(spec):
     """
     GIVEN malformed spec
     WHEN check_read_only is called
     THEN MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.check_read_only(spec=spec, schemas=schemas)
+        helpers.check_read_only(spec=spec, schemas={})
 
 
 @pytest.mark.parametrize(
     "spec, schemas, expected_result",
     [
-        ({}, None, False),
-        ({"readOnly": False}, None, False),
+        ({}, {}, False),
+        ({"readOnly": False}, {}, False),
         (
-            {"readOnly": True, "type": "simple_type", "x-backref-column": "id"},
-            None,
+            {
+                "readOnly": True,
+                "type": "object",
+                "properties": {"key": {"type": "simple_type"}},
+            },
+            {},
             True,
         ),
         (
             {
                 "readOnly": True,
-                "type": "array",
-                "items": {"type": "simple_type", "x-backref-column": "id"},
+                "type": "object",
+                "properties": {"key": {"$ref": "#/components/schemas/Key"}},
+            },
+            {"Key": {"type": "simple_type"}},
+            True,
+        ),
+        (
+            {
+                "readOnly": True,
+                "type": "object",
+                "properties": {"key": {"allOf": [{"type": "simple_type"}]}},
             },
             {},
             True,
@@ -77,16 +80,40 @@ def test_malformed(spec, schemas):
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"$ref": "#/components/schemas/Items"},
+                "items": {
+                    "type": "object",
+                    "properties": {"key": {"type": "simple_type"}},
+                },
             },
-            {"Items": {"type": "simple_type", "x-backref-column": "id"}},
+            {},
             True,
         ),
         (
             {
                 "readOnly": True,
                 "type": "array",
-                "items": {"allOf": [{"type": "simple_type", "x-backref-column": "id"}]},
+                "items": {"$ref": "#/components/schemas/Schema"},
+            },
+            {
+                "Schema": {
+                    "type": "object",
+                    "properties": {"key": {"type": "simple_type"}},
+                }
+            },
+            True,
+        ),
+        (
+            {
+                "readOnly": True,
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {"key": {"type": "simple_type"}},
+                        }
+                    ]
+                },
             },
             {},
             True,
@@ -96,6 +123,8 @@ def test_malformed(spec, schemas):
         "readOnly missing",
         "readOnly false",
         "readOnly true",
+        "readOnly true object property $ref",
+        "readOnly true object property allOf",
         "readOnly true array",
         "readOnly true array items $ref",
         "readOnly true array items allOf",
@@ -111,21 +140,3 @@ def test_valid(spec, schemas, expected_result):
     result = helpers.check_read_only(spec=spec, schemas=schemas)
 
     assert result == expected_result
-
-
-@pytest.mark.helper
-def test_array_schemas_none():
-    """
-    GIVEN array readOnly spec
-    WHEN check_read_only with None for schemas
-    THEN MissingArgumentError is raised.
-    """
-    spec = {
-        "readOnly": True,
-        "type": "array",
-        "items": {"type": "simple_type"},
-        "x-backref-column": "id",
-    }
-
-    with pytest.raises(exceptions.MissingArgumentError):
-        helpers.check_read_only(spec=spec)
