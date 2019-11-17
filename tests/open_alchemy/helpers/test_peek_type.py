@@ -10,10 +10,11 @@ from open_alchemy import helpers
     "schema, schemas",
     [
         ({}, {}),
+        ({"type": True}, {}),
         ({"$ref": "#/components/schemas/RefSchema"}, {"RefSchema": {"key": "value"}}),
         ({"allOf": [{"key": "value"}]}, {}),
     ],
-    ids=["plain", "$ref", "allOf"],
+    ids=["plain", "not string value", "$ref", "allOf"],
 )
 @pytest.mark.helper
 def test_peek_type_no_type(schema, schemas):
