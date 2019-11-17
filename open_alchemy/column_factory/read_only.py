@@ -136,7 +136,7 @@ def _prepare_schema(
         property_type = helpers.peek.type_(schema=property_schema, schemas=schemas)
         if property_type in {"array", "object"}:
             raise exceptions.MalformedSchemaError(
-                "readOnly object properties cannot be of type array or object."
+                "readOnly object properties cannot be of type array nor object."
             )
         properties_schema[property_name] = {"type": property_type}
 
