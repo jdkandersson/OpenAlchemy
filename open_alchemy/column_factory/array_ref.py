@@ -39,11 +39,6 @@ def handle_array(
     # Resolve any allOf and $ref
     spec = helpers.prepare_schema(schema=spec, schemas=schemas)
 
-    # Check for readOnly
-    read_only = helpers.check_read_only(spec=spec, schemas=schemas)
-    if read_only:
-        return [], spec
-
     # Get item specification
     item_spec = spec.get("items")
     if item_spec is None:

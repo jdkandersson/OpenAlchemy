@@ -311,18 +311,3 @@ def test_integration():
 
     assert isinstance(returned_column, sqlalchemy.Column)
     assert returned_logical_name == logical_name
-
-
-@pytest.mark.column
-def test_integration_read_only():
-    """
-    GIVEN read only schema
-    WHEN handle_column is called with the schema
-    THEN an empty array is returned.
-    """
-    return_value = column.handle_column(
-        spec={"type": "number", "readOnly": True, "x-backref-column": "column 1"},
-        logical_name="name 1",
-    )
-
-    assert return_value == []

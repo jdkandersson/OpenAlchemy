@@ -27,11 +27,6 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    # Check for readOnly
-    read_only = helpers.check_read_only(spec=spec)
-    if read_only:
-        return []
-
     # Generating the SQLAlchemy column
     column = _spec_to_column(spec=spec, required=required)
     # Adding the logical name
