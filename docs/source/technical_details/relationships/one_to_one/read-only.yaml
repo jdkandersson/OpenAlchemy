@@ -1,0 +1,21 @@
+Employee:
+  ...
+  properties:
+    id:
+      type: integer
+    ...
+    pay_info:
+      allOf:
+        - $ref: "#/.../PayInfo"
+        - x-backref: employee
+          x-uselist: false
+PayInfo:
+  ...
+  properties:
+    ...
+    employee:
+      readOnly: true
+      type: object
+      properties:
+        id:
+          type: integer

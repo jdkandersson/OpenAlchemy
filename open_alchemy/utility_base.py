@@ -137,6 +137,18 @@ class UtilityBase:
                     f"The parameter is {name}. "
                     f"The model schema is {json.dumps(schema)}."
                 )
+
+            # Check readOnly
+            read_only = spec.get("readOnly")
+            if read_only is True:
+                raise exceptions.MalformedModelDictionaryError(
+                    "A parameter was passed in that is marked as readOnly in the "
+                    "schema. "
+                    f"The parameter is {name}. "
+                    f"The model schema is {json.dumps(schema)}."
+                )
+
+            # Check type
             type_ = spec.get("type")
             if type_ is None:
                 raise exceptions.TypeMissingError(
@@ -173,8 +185,10 @@ class UtilityBase:
         return cls(**model_dict)
 
     @staticmethod
-    def _object_to_dict(value, *, name: str) -> typing.Dict[str, typing.Any]:
-        """Call to_dict on object."""
+    def _object_to_dict_relationship(
+        *, value: typing.Any, name: str
+    ) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on relationshup object."""
         try:
             return value.to_dict()
         except AttributeError:
@@ -187,6 +201,104 @@ class UtilityBase:
                 f"The {name} object property instance to_dict implementation is "
                 "expecting arguments."
             )
+
+    @staticmethod
+    def _object_to_dict_read_only(
+        *, value: typing.Any, spec: types.Schema, name: str
+    ) -> typing.Dict[str, typing.Any]:
+        """Convert relationship to dictionary based on spec."""
+        properties = spec.get("properties")
+        if properties is None:
+            raise exceptions.MalformedSchemaError(
+                f"readOnly object definition {name} must have properties."
+            )
+        if not properties:
+            raise exceptions.MalformedSchemaError(
+                f"readOnly object definitions {name} must have at least 1 property."
+            )
+        return_dict = {}
+        for key in properties.keys():
+            return_dict[key] = getattr(value, key, None)
+        return return_dict
+
+    @classmethod
+    def _object_to_dict(
+        cls, value, name: str, spec: types.Schema, read_only: bool
+    ) -> typing.Dict[str, typing.Any]:
+        """Call to_dict on object."""
+        if not read_only:
+            return cls._object_to_dict_relationship(value=value, name=name)
+        return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
+
+    @classmethod
+    def _to_dict_property(
+        cls,
+        value: typing.Any,
+        *,
+        spec: types.Schema,
+        name: str,
+        array_context: bool = False,
+        read_only: bool = False,
+    ) -> typing.Any:
+        """
+        Perform property level to dict operation.
+
+        Args:
+            value: The value of the property.
+            spec: The specification for the property.
+            name: The name of the property.
+            array_context: Whether array items are being worked on.
+            read_only: Whether a readOnly property is being worked on.
+
+        Returns:
+            property value.
+
+        """
+        if not read_only:
+            read_only = spec.get("readOnly", read_only)
+        type_ = spec.get("type")
+
+        if type_ is None:
+            schema_descriptor = "array item" if array_context else "property"
+            raise exceptions.TypeMissingError(
+                f"The {schema_descriptor} schema for the {name} property does not have "
+                f"a type. The {schema_descriptor} schema is {json.dumps(spec)}."
+            )
+
+        # Handle array
+        if type_ == "array":
+            if array_context:
+                raise exceptions.MalformedSchemaError(
+                    "The array item schema cannot have the array type."
+                )
+            if value is None:
+                return []
+            item_spec = spec.get("items")
+            if item_spec is None:
+                raise exceptions.MalformedSchemaError(
+                    "The array item schema must have an items property."
+                )
+            to_dict_property = functools.partial(
+                cls._to_dict_property,
+                spec=item_spec,
+                name=name,
+                array_context=True,
+                read_only=read_only,
+            )
+            array_dict_values = map(to_dict_property, value)
+            return list(array_dict_values)
+
+        if value is None:
+            return None
+
+        # Handle object
+        if type_ == "object":
+            return cls._object_to_dict(
+                value=value, name=name, spec=spec, read_only=read_only
+            )
+
+        # Handle other types
+        return value
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
@@ -204,34 +316,9 @@ class UtilityBase:
         # Collecting the values of the properties
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, spec in properties.items():
-            type_ = spec.get("type")
-            if type_ is None:
-                raise exceptions.TypeMissingError(
-                    f"The schema for the {name} property does not have a type. "
-                    f"The property schema is {json.dumps(spec)}."
-                )
-
-            # Handle object
-            if type_ == "object":
-                object_value = getattr(self, name, None)
-                if object_value is None:
-                    return_dict[name] = None
-                    continue
-                return_dict[name] = self._object_to_dict(object_value, name=name)
-                continue
-
-            # Handle array
-            if type_ == "array":
-                array_value = getattr(self, name, None)
-                if array_value is None:
-                    return_dict[name] = []
-                    continue
-                name_obj_to_dict = functools.partial(self._object_to_dict, name=name)
-                array_dict_values = map(name_obj_to_dict, array_value)
-                return_dict[name] = list(array_dict_values)
-                continue
-
-            # Handle other types
-            return_dict[name] = getattr(self, name, None)
+            value = getattr(self, name, None)
+            return_dict[name] = self._to_dict_property(
+                spec=spec, name=name, value=value
+            )
 
         return return_dict

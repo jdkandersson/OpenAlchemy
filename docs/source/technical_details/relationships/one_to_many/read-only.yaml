@@ -1,0 +1,22 @@
+Division:
+  type: object
+  x-tablename: division
+  properties:
+    id:
+      type: integer
+    ...
+    employees:
+      type: array
+      items:
+        $ref: "#/../Employee"
+Employee:
+  type: object
+  ...
+  properties:
+    ...
+    division:
+      readOnly: true
+      type: object
+      properties:
+        id:
+          type: integer

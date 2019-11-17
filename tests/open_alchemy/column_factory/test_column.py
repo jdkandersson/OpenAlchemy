@@ -14,7 +14,7 @@ from open_alchemy.column_factory import column
 def test_spec_to_column_no_type():
     """
     GIVEN column schema without type
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN TypeMissingError is raised.
     """
     with pytest.raises(exceptions.TypeMissingError):
@@ -25,7 +25,7 @@ def test_spec_to_column_no_type():
 def test_spec_to_column_type_unsupported():
     """
     GIVEN column schema with type that has not been implemented
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
@@ -36,7 +36,7 @@ def test_spec_to_column_type_unsupported():
 def test_spec_to_column_column_return():
     """
     GIVEN valid schema
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN an instance of SQLAlchemy Column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "number"})
@@ -49,7 +49,7 @@ def test_spec_to_column_column_return():
 def test_spec_to_column_primary_key(primary_key: bool):
     """
     GIVEN valid schema and the value of the primary key property
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN the returned SQLAlchemy column primary_key property is set to the input.
     """
     returned_column = column._spec_to_column(
@@ -64,7 +64,7 @@ def test_spec_to_column_primary_key(primary_key: bool):
 def test_spec_to_column_autoincrement(autoincrement: bool):
     """
     GIVEN valid schema and the value of the autoincrement property
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN the returned SQLAlchemy column autoincrement property is set to the input.
     """
     returned_column = column._spec_to_column(
@@ -79,7 +79,7 @@ def test_spec_to_column_autoincrement(autoincrement: bool):
 def test_spec_to_column_index(index: bool):
     """
     GIVEN valid schema and the value of the index property
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN the returned SQLAlchemy column index property is set to the input.
     """
     returned_column = column._spec_to_column(spec={"type": "number", "x-index": index})
@@ -92,7 +92,7 @@ def test_spec_to_column_index(index: bool):
 def test_spec_to_column_unique(unique: bool):
     """
     GIVEN valid schema and the value of the unique property
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN the returned SQLAlchemy column unique property is set to the input.
     """
     returned_column = column._spec_to_column(
@@ -106,7 +106,7 @@ def test_spec_to_column_unique(unique: bool):
 def test_spec_to_column_foreign_key():
     """
     GIVEN valid schema which has x-foreign-key set
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN the returned SQLAlchemy column foreign key property is set.
     """
     returned_column = column._spec_to_column(
@@ -149,7 +149,7 @@ def test_spec_to_column_nullable(
 ):
     """
     GIVEN schema, the value for the nullable property and the required argument
-    WHEN column_factory is called with the schema and required argument
+    WHEN _spec_to_column is called with the schema and required argument
     THEN SQLAlchemy column is returned where nullable property is equal to the
         expected input.
     """
@@ -168,7 +168,7 @@ def test_spec_to_column_nullable(
 def test_spec_to_column_number():
     """
     GIVEN schema with number type
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy Float column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "number"})
@@ -180,7 +180,7 @@ def test_spec_to_column_number():
 def test_spec_to_column_number_float():
     """
     GIVEN schema with number type and float format
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy Float column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "number", "format": "float"})
@@ -192,7 +192,7 @@ def test_spec_to_column_number_float():
 def test_spec_to_column_number_double():
     """
     GIVEN schema with number type and double format
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
@@ -203,7 +203,7 @@ def test_spec_to_column_number_double():
 def test_spec_to_column_number_unsupported_format():
     """
     GIVEN schema with number type and format that has not been implemented
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
@@ -214,7 +214,7 @@ def test_spec_to_column_number_unsupported_format():
 def test_spec_to_column_integer():
     """
     GIVEN schema with integer type
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy Integer column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "integer"})
@@ -226,7 +226,7 @@ def test_spec_to_column_integer():
 def test_spec_to_column_integer_int32():
     """
     GIVEN schema with integer type and int32 format
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy Integer column is returned.
     """
     returned_column = column._spec_to_column(
@@ -240,7 +240,7 @@ def test_spec_to_column_integer_int32():
 def test_spec_to_column_integer_int64():
     """
     GIVEN schema with integer type and int64 format
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy BigInteger column is returned.
     """
     returned_column = column._spec_to_column(
@@ -254,7 +254,7 @@ def test_spec_to_column_integer_int64():
 def test_spec_to_column_integer_unsupported_format():
     """
     GIVEN schema with integer type and unsupported format
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN FeatureNotImplementedError is raised.
     """
     with pytest.raises(exceptions.FeatureNotImplementedError):
@@ -265,7 +265,7 @@ def test_spec_to_column_integer_unsupported_format():
 def test_spec_to_column_string():
     """
     GIVEN schema with string type
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy String column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "string"})
@@ -277,7 +277,7 @@ def test_spec_to_column_string():
 def test_spec_to_column_string_length():
     """
     GIVEN schema with string type and maxLength property
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy String column is returned with the length set to the maxLength.
     """
     returned_column = column._spec_to_column(spec={"type": "string", "maxLength": 1})
@@ -289,9 +289,25 @@ def test_spec_to_column_string_length():
 def test_spec_to_column_boolean():
     """
     GIVEN schema with boolean type
-    WHEN column_factory is called with the schema
+    WHEN _spec_to_column is called with the schema
     THEN SQLAlchemy boolean column is returned.
     """
     returned_column = column._spec_to_column(spec={"type": "boolean"})
 
     assert isinstance(returned_column.type, sqlalchemy.Boolean)
+
+
+@pytest.mark.column
+def test_integration():
+    """
+    GIVEN schema and logical name
+    WHEN handle_column is called with the schema
+    THEN the logical name and an instance of SQLAlchemy Column is returned.
+    """
+    logical_name = "name 1"
+    [(returned_logical_name, returned_column)] = column.handle_column(
+        spec={"type": "number"}, logical_name=logical_name
+    )
+
+    assert isinstance(returned_column, sqlalchemy.Column)
+    assert returned_logical_name == logical_name

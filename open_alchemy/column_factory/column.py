@@ -15,6 +15,8 @@ def handle_column(
     """
     Generate column based on OpenAPI schema property.
 
+    Assume any $ref and allOf has already been resolved.
+
     Args:
         spec: The schema for the column.
         schemas: Used to resolve any $ref.

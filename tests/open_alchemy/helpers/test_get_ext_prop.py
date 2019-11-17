@@ -117,6 +117,7 @@ def test_valid(name, value):
     assert returned_value == value
 
 
+@pytest.mark.helper
 def test_pop():
     """
     GIVEN property and valid value

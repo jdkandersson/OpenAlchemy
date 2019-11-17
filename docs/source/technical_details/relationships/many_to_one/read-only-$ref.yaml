@@ -1,0 +1,24 @@
+BaseEmployee:
+  type: object
+  ...
+  properties:
+    id:
+      type: integer
+    ...
+Employee:
+  allOf:
+    - $ref: "#/.../BaseEmployee"
+    - type: object
+      properties:
+        division:
+          $ref: "#/../Division"
+Division:
+  type: object
+  x-tablename: division
+  properties:
+    ...
+    employees:
+      readOnly: True
+      type: array
+      items:
+        $ref: "#/../BaseEmployee"

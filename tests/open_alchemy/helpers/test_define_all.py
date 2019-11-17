@@ -13,18 +13,25 @@ from open_alchemy import helpers
         ({}, []),
         ({"Table": {}}, []),
         ({"Table": {"x-tablename": "table"}}, ["Table"]),
+        ({"Table1": {}, "Table2": {}}, []),
+        ({"Table1": {"x-tablename": "table1"}, "Table2": {}}, ["Table1"]),
+        ({"Table1": {}, "Table2": {"x-tablename": "table2"}}, ["Table2"]),
         (
             {"Table1": {"x-tablename": "table1"}, "Table2": {"x-tablename": "table2"}},
             ["Table1", "Table2"],
         ),
     ],
     ids=[
-        "empty,zero",
-        "single no x-tablename,zero",
-        "single x-tablename,one",
-        "multiple all x-tablename,multiple",
+        "empty,                          zero",
+        "single no x-tablename,          zero",
+        "single x-tablename,             one",
+        "multiple no x-tablename,        multiple",
+        "multiple one first x-tablename, multiple",
+        "multiple one last x-tablename, multiple",
+        "multiple all x-tablename,       multiple",
     ],
 )
+@pytest.mark.helper
 def test_call(schemas, expected_calls):
     """
     GIVEN mocked model factory, schemas and expected calls
