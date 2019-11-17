@@ -895,3 +895,45 @@ class TestToDictProperty:
             item1_value.to_dict.return_value,
             item2_value.to_dict.return_value,
         ]
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_read_only():
+        """
+        GIVEN readOnly spec and mock value
+        WHEN _to_dict_property is called with the spec and value
+        THEN spec property values are returned.
+        """
+        value = mock.MagicMock()
+        spec = {
+            "readOnly": True,
+            "type": "object",
+            "properties": {"key": {"type": "string"}},
+        }
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == {"key": value.key}
+
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_read_only_array():
+        """
+        GIVEN readOnly array spec and mock value
+        WHEN _to_dict_property is called with the spec and value
+        THEN spec property values are returned.
+        """
+        value = mock.MagicMock()
+        spec = {
+            "readOnly": True,
+            "type": "array",
+            "items": {"type": "object", "properties": {"key": {"type": "string"}}},
+        }
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            [value], spec=spec, name="name 1"
+        )
+
+        assert returned_value == [{"key": value.key}]

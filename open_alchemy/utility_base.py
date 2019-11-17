@@ -223,12 +223,12 @@ class UtilityBase:
 
     @classmethod
     def _object_to_dict(
-        cls, value, name: str, read_only: bool
+        cls, value, name: str, spec: types.Schema, read_only: bool
     ) -> typing.Dict[str, typing.Any]:
         """Call to_dict on object."""
         if not read_only:
             return cls._object_to_dict_relationship(value=value, name=name)
-        return {}
+        return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
 
     @classmethod
     def _to_dict_property(
@@ -293,7 +293,9 @@ class UtilityBase:
 
         # Handle object
         if type_ == "object":
-            return cls._object_to_dict(value=value, name=name, read_only=read_only)
+            return cls._object_to_dict(
+                value=value, name=name, spec=spec, read_only=read_only
+            )
 
         # Handle other types
         return value
