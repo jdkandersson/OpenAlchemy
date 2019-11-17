@@ -60,7 +60,7 @@ def handle_array(
     ref_type = ref_spec.get("type")
     if ref_type != "object":
         raise exceptions.MalformedRelationshipError(
-            "One to many relationships must reference an object type " "schema."
+            "One to many relationships must reference an object type schema."
         )
     ref_tablename = helpers.get_ext_prop(source=ref_spec, name="x-tablename")
     if ref_tablename is None:

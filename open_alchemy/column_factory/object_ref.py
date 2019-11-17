@@ -90,6 +90,7 @@ class ObjectArtifacts:
     backref: typing.Optional[str]
     fk_column: str
     uselist: typing.Optional[bool]
+    secondary: typing.Optional[str]
 
 
 def gather_object_artifacts(
@@ -103,6 +104,8 @@ def gather_object_artifacts(
 
     Raise MalformedRelationshipError if neither $ref nor $allOf is found.
     Raise MalformedRelationshipError if uselist is defined but backref is not.
+    Raise MalformedRelationshipError if multiple $ref, x-backref, x-secondary,
+    x-foreign-key-column or x-uselist are found.
 
     Args:
         spec: The schema for the column.
@@ -118,6 +121,8 @@ def gather_object_artifacts(
     backref = None
     # Default uselist
     uselist = None
+    # Default secondary
+    secondary = None
     # Initial foreign key column
     fk_column = None
 
@@ -142,6 +147,9 @@ def gather_object_artifacts(
             uselist = helpers.get_ext_prop(
                 source=sub_spec, name="x-uselist", default=uselist
             )
+            secondary = helpers.get_ext_prop(
+                source=sub_spec, name="x-secondary", default=secondary
+            )
             fk_column = helpers.get_ext_prop(
                 source=sub_spec, name="x-foreign-key-column", default=fk_column
             )
@@ -163,6 +171,9 @@ def gather_object_artifacts(
     # If uselist has not been found look in referenced schema
     if uselist is None:
         uselist = helpers.get_ext_prop(source=spec, name="x-uselist")
+    # If secondary has not been found look in referenced schema
+    if secondary is None:
+        secondary = helpers.get_ext_prop(source=spec, name="x-secondary")
     # If foreign key column has not been found look in referenced schema
     if fk_column is None:
         fk_column = helpers.get_ext_prop(source=spec, name="x-foreign-key-column")
@@ -176,7 +187,9 @@ def gather_object_artifacts(
             "Relationships with x-uselist defined must also define x-backref."
         )
 
-    return ObjectArtifacts(spec, ref_logical_name, backref, fk_column, uselist)
+    return ObjectArtifacts(
+        spec, ref_logical_name, backref, fk_column, uselist, secondary
+    )
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
@@ -194,6 +207,7 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
     backref_count = 0
     fk_column_count = 0
     uselist_count = 0
+    secondary_count = 0
     for sub_spec in all_of_spec:
         if sub_spec.get("$ref") is not None:
             ref_count += 1
@@ -203,23 +217,28 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
             fk_column_count += 1
         if sub_spec.get("x-uselist") is not None:
             uselist_count += 1
+        if sub_spec.get("x-secondary") is not None:
+            secondary_count += 1
     if ref_count != 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to one relationships defined with allOf must have exactly one "
-            "$ref in the allOf list."
+            "Relationships defined with allOf must have exactly one $ref in the allOf "
+            "list."
         )
     if backref_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to one relationships may have at most 1 x-backref defined."
+            "Relationships may have at most 1 x-backref defined."
         )
     if fk_column_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to one relationships may have at most 1 x-foreign-key-column "
-            "defined."
+            "Relationships may have at most 1 x-foreign-key-column defined."
         )
     if uselist_count > 1:
         raise exceptions.MalformedRelationshipError(
-            "Many to one relationships may have at most 1 x-uselist defined."
+            "Relationships may have at most 1 x-uselist defined."
+        )
+    if secondary_count > 1:
+        raise exceptions.MalformedRelationshipError(
+            "Relationships may have at most 1 x-secondary defined."
         )
 
 
