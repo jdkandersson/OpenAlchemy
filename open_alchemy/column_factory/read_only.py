@@ -114,7 +114,7 @@ def _prepare_schema(
         raise exceptions.MalformedSchemaError(
             "readOnly array item type must be an object."
             if array_context
-            else "readyOnly property must be of type array."
+            else "readyOnly property must be of type array or object."
         )
 
     # Handle object
