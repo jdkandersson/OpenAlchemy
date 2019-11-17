@@ -105,7 +105,6 @@ def _prepare_schema(
             raise exceptions.MalformedSchemaError(
                 "A readOnly array must define its items."
             )
-        items_schema = helpers.prepare_schema(schema=items_schema, schemas=schemas)
         object_schema = _prepare_schema(
             schema=items_schema, array_context=True, schemas=schemas
         )
