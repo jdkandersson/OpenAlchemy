@@ -40,7 +40,7 @@ def column_factory(
 
     """
     # Checking for the type
-    type_ = helpers.peek_type(schema=spec, schemas=schemas)
+    type_ = helpers.peek.type_(schema=spec, schemas=schemas)
 
     if type_ == "object":
         # Handle objects

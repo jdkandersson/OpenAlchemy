@@ -5,7 +5,7 @@ import typing
 from open_alchemy import exceptions
 from open_alchemy import types
 
-from .peek_type import peek_type
+from . import peek
 from .prepare_schema import prepare_schema
 
 
@@ -55,7 +55,7 @@ def _check_read_only_valid(
     """
     # Check type
     try:
-        type_ = peek_type(schema=spec, schemas=schemas)
+        type_ = peek.type_(schema=spec, schemas=schemas)
     except exceptions.TypeMissingError:
         raise exceptions.MalformedSchemaError(
             "Every readOnly property must have a type."
@@ -94,7 +94,7 @@ def _check_read_only_valid(
             "readOnly object definition must include at least 1 property."
         )
     for property_spec in properties.values():
-        property_type = peek_type(schema=property_spec, schemas=schemas)
+        property_type = peek.type_(schema=property_spec, schemas=schemas)
         if property_type in {"array", "object"}:
             raise exceptions.MalformedSchemaError(
                 "readOnly object properties cannot be of type array or object."
