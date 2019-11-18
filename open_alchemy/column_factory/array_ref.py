@@ -160,7 +160,7 @@ def _set_foreign_key(
 
 
 @dataclasses.dataclass
-class _ManyToManyColumn:
+class _ManyToManyColumnArtifacts:
     """Artifacts for constructing a many to many column of a secondary table."""
 
     type_: str
@@ -169,9 +169,9 @@ class _ManyToManyColumn:
     column_name: str
 
 
-def _many_to_many_column(
+def _many_to_many_column_artifacts(
     *, model_schema: types.Schema, schemas: types.Schemas
-) -> _ManyToManyColumn:
+) -> _ManyToManyColumnArtifacts:
     """
     Retrieve column artifacts of a secondary table for a many to many relationship.
 
@@ -245,4 +245,4 @@ def _many_to_many_column(
             "primary key to be of type object nor array."
         )
 
-    return _ManyToManyColumn(type_, format_, tablename, column_name)
+    return _ManyToManyColumnArtifacts(type_, format_, tablename, column_name)

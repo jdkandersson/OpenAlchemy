@@ -505,8 +505,8 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     assert f"{tablename}.{fk_column}" in str(foreign_key)
 
 
-class TestManyToManyColumn:
-    """Tests for _many_to_many_column."""
+class TestManyToManyColumnArtifacts:
+    """Tests for _many_to_many_column_artifacts."""
 
     # pylint: disable=protected-access
 
@@ -575,11 +575,11 @@ class TestManyToManyColumn:
     def test_invalid(schema):
         """
         GIVEN invalid schema
-        WHEN _many_to_many_column is called with the schema
+        WHEN _many_to_many_column_artifacts is called with the schema
         THEN MalformedSchemaError is raised.
         """
         with pytest.raises(exceptions.MalformedSchemaError):
-            array_ref._many_to_many_column(model_schema=schema, schemas={})
+            array_ref._many_to_many_column_artifacts(model_schema=schema, schemas={})
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -712,14 +712,16 @@ class TestManyToManyColumn:
     def test_valid(schema, schemas, expected_format):
         """
         GIVEN schema, schemas and expected format, type, tablename and column name
-        WHEN _many_to_many_column is called with the schema and schemas
+        WHEN _many_to_many_column_artifacts is called with the schema and schemas
         THEN the expected format, type, tablename and column name are returned.
         """
         expected_type = "simple_type_1"
         expected_tablename = "table 1"
         expected_column_name = "key_1"
 
-        column = array_ref._many_to_many_column(model_schema=schema, schemas=schemas)
+        column = array_ref._many_to_many_column_artifacts(
+            model_schema=schema, schemas=schemas
+        )
 
         assert column.type_ == expected_type
         assert column.format_ == expected_format
