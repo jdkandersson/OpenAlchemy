@@ -1,5 +1,6 @@
 """Functions relating to object references in arrays."""
 
+import dataclasses
 import typing
 
 import sqlalchemy
@@ -158,3 +159,92 @@ def _set_foreign_key(
             },
         ]
     }
+
+
+@dataclasses.dataclass
+class _ManyToManyColumn:
+    """Artifacts for constructing a many to many column of a secondary table."""
+
+    type_: str
+    format_: typing.Optional[str]
+    tablename: str
+    column_name: str
+
+
+def _many_to_many_column(
+    *, model_schema: types.Schema, schemas: types.Schemas
+) -> _ManyToManyColumn:
+    """
+    Retrieve column artifacts of a secondary table for a many to many relationship.
+
+    Args:
+        model_schema: The schema for one side of the many to many relationship.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        The artifacts needed to construct a column of the secondary table in a many to
+        many relationship.
+
+    """
+    # Resolve $ref and merge allOf
+    model_schema = helpers.prepare_schema(schema=model_schema, schemas=schemas)
+
+    # Check schema type
+    model_type = model_schema.get("type")
+    if model_type is None:
+        raise exceptions.MalformedSchemaError("Every schema must have a type.")
+    if model_type != "object":
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship must be of type "
+            "object."
+        )
+
+    # Retrieve table name
+    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
+    if tablename is None:
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship must set the "
+            "x-tablename property."
+        )
+
+    # Find primary key
+    properties = model_schema.get("properties")
+    if properties is None:
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship must have properties."
+        )
+    if not properties:
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship must have at least 1 "
+            "property."
+        )
+    type_ = None
+    format_ = None
+    for property_name, property_schema in properties.items():
+        if helpers.peek.primary_key(schema=property_schema, schemas=schemas):
+            if type_ is not None:
+                raise exceptions.MalformedSchemaError(
+                    "A schema that is part of a many to many relationship must have "
+                    "exactly 1 primary key."
+                )
+            try:
+                type_ = helpers.peek.type_(schema=property_schema, schemas=schemas)
+            except exceptions.TypeMissingError:
+                raise exceptions.MalformedSchemaError(
+                    "A schema that is part of a many to many relationship must define "
+                    "a type for the primary key."
+                )
+            format_ = property_schema.get("format")
+            column_name = property_name
+    if type_ is None:
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship must have "
+            "exactly 1 primary key."
+        )
+    if type_ in {"object", "array"}:
+        raise exceptions.MalformedSchemaError(
+            "A schema that is part of a many to many relationship cannot define it's "
+            "primary key to be of type object nor array."
+        )
+
+    return _ManyToManyColumn(type_, format_, tablename, column_name)

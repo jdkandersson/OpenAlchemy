@@ -503,3 +503,223 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     assert isinstance(added_fk_column.type, sqlalchemy.Integer)
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
+
+
+class TestManyToManyColumn:
+    """Tests for _many_to_many_column."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schema",
+        [
+            {
+                "x-tablename": "table 1",
+                "properties": {"key": {"type": "integer", "x-primary-key": True}},
+            },
+            {
+                "type": "not_object",
+                "x-tablename": "table 1",
+                "properties": {"key": {"type": "integer", "x-primary-key": True}},
+            },
+            {
+                "type": "object",
+                "properties": {"key": {"type": "integer", "x-primary-key": True}},
+            },
+            {"type": "object", "x-tablename": "table 1"},
+            {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"key": {"type": "integer"}},
+            },
+            {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"key": {"x-primary-key": True}},
+            },
+            {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"key": {"type": "object", "x-primary-key": True}},
+            },
+            {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {"key": {"type": "array", "x-primary-key": True}},
+            },
+            {
+                "type": "object",
+                "x-tablename": "table 1",
+                "properties": {
+                    "key_1": {"type": "simple_type", "x-primary-key": True},
+                    "key_2": {"type": "simple_type", "x-primary-key": True},
+                },
+            },
+        ],
+        ids=[
+            "type missing",
+            "not object",
+            "no tablename",
+            "no properties",
+            "no primary key",
+            "primary key no type",
+            "primary key object",
+            "primary key array",
+            "multiple primary key",
+        ],
+    )
+    @pytest.mark.column
+    def test_invalid(schema):
+        """
+        GIVEN invalid schema
+        WHEN _many_to_many_column is called with the schema
+        THEN MalformedSchemaError is raised.
+        """
+        with pytest.raises(exceptions.MalformedSchemaError):
+            array_ref._many_to_many_column(model_schema=schema, schemas={})
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schema, schemas, expected_format",
+        [
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {
+                        "key_1": {"type": "simple_type_1", "x-primary-key": True}
+                    },
+                },
+                {},
+                None,
+            ),
+            (
+                {"$ref": "#/components/schemas/Schema"},
+                {
+                    "Schema": {
+                        "type": "object",
+                        "x-tablename": "table 1",
+                        "properties": {
+                            "key_1": {"type": "simple_type_1", "x-primary-key": True}
+                        },
+                    }
+                },
+                None,
+            ),
+            (
+                {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "x-tablename": "table 1",
+                            "properties": {
+                                "key_1": {
+                                    "type": "simple_type_1",
+                                    "x-primary-key": True,
+                                }
+                            },
+                        }
+                    ]
+                },
+                {},
+                None,
+            ),
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {"key_1": {"$ref": "#/components/schemas/Property"}},
+                },
+                {"Property": {"type": "simple_type_1", "x-primary-key": True}},
+                None,
+            ),
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {
+                        "key_1": {
+                            "allOf": [{"type": "simple_type_1", "x-primary-key": True}]
+                        }
+                    },
+                },
+                {},
+                None,
+            ),
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {
+                        "key_1": {
+                            "type": "simple_type_1",
+                            "x-primary-key": True,
+                            "format": "format 1",
+                        }
+                    },
+                },
+                {},
+                "format 1",
+            ),
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {
+                        "key_1": {
+                            "type": "simple_type_1",
+                            "x-primary-key": True,
+                            "format": "format 1",
+                        },
+                        "key_2": {"type": "simple_type_2", "format": "format 2"},
+                    },
+                },
+                {},
+                "format 1",
+            ),
+            (
+                {
+                    "type": "object",
+                    "x-tablename": "table 1",
+                    "properties": {
+                        "key_2": {"type": "simple_type_2", "format": "format 2"},
+                        "key_1": {
+                            "type": "simple_type_1",
+                            "x-primary-key": True,
+                            "format": "format 1",
+                        },
+                    },
+                },
+                {},
+                "format 1",
+            ),
+        ],
+        ids=[
+            "plain",
+            "$ref",
+            "allOf",
+            "property $ref",
+            "property allOf",
+            "property format",
+            "multiple properties first",
+            "multiple properties last",
+        ],
+    )
+    @pytest.mark.column
+    def test_valid(schema, schemas, expected_format):
+        """
+        GIVEN schema, schemas and expected format, type, tablename and column name
+        WHEN _many_to_many_column is called with the schema and schemas
+        THEN the expected format, type, tablename and column name are returned.
+        """
+        expected_type = "simple_type_1"
+        expected_tablename = "table 1"
+        expected_column_name = "key_1"
+
+        column = array_ref._many_to_many_column(model_schema=schema, schemas=schemas)
+
+        assert column.type_ == expected_type
+        assert column.format_ == expected_format
+        assert column.tablename == expected_tablename
+        assert column.column_name == expected_column_name
