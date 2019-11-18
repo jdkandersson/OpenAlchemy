@@ -727,3 +727,23 @@ class TestManyToManyColumnArtifacts:
         assert column.format_ == expected_format
         assert column.tablename == expected_tablename
         assert column.column_name == expected_column_name
+
+
+@pytest.mark.column
+def test_many_to_many_column():
+    """
+    GIVEN many to many column artifacts
+    WHEN _many_to_many_column is called with the artifacts
+    THEN a column is returned.
+    """
+    # pylint: disable=protected-access
+    artifacts = array_ref._ManyToManyColumnArtifacts(
+        "integer", "int64", "table_1", "column_1"
+    )
+
+    column = array_ref._many_to_many_column(artifacts=artifacts)
+
+    assert isinstance(column.type, sqlalchemy.BigInteger)
+    assert len(column.foreign_keys) == 1
+    foreign_key = column.foreign_keys.pop()
+    assert str(foreign_key) == "ForeignKey('table_1.column_1')"

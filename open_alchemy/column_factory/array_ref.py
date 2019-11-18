@@ -246,3 +246,22 @@ def _many_to_many_column_artifacts(
         )
 
     return _ManyToManyColumnArtifacts(type_, format_, tablename, column_name)
+
+
+def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy.Column:
+    """
+    Construct many to many column.
+
+    Args:
+        artifacts: The artifacts based on which to construct the column
+
+    Returns:
+        The column.
+
+    """
+    spec = {
+        "type": artifacts.type_,
+        "format": artifacts.format_,
+        "x-foreign-key": f"{artifacts.tablename}.{artifacts.column_name}",
+    }
+    return column.handle_column(spec=spec)
