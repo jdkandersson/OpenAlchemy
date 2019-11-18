@@ -10,8 +10,8 @@ from open_alchemy import types
 
 
 def handle_column(
-    *, spec: types.Schema, required: typing.Optional[bool] = None, logical_name: str
-) -> typing.List[typing.Tuple[str, sqlalchemy.Column]]:
+    *, spec: types.Schema, required: typing.Optional[bool] = None
+) -> sqlalchemy.Column:
     """
     Generate column based on OpenAPI schema property.
 
@@ -21,16 +21,12 @@ def handle_column(
         spec: The schema for the column.
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
-        logical_name: The logical name in the specification for the schema.
 
     Returns:
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    # Generating the SQLAlchemy column
-    column = _spec_to_column(spec=spec, required=required)
-    # Adding the logical name
-    return [(logical_name, column)]
+    return _spec_to_column(spec=spec, required=required)
 
 
 def _spec_to_column(

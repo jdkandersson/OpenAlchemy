@@ -528,6 +528,7 @@ class TestManyToManyColumn:
                 "properties": {"key": {"type": "integer", "x-primary-key": True}},
             },
             {"type": "object", "x-tablename": "table 1"},
+            {"type": "object", "x-tablename": "table 1", "properties": {}},
             {
                 "type": "object",
                 "x-tablename": "table 1",
@@ -562,6 +563,7 @@ class TestManyToManyColumn:
             "not object",
             "no tablename",
             "no properties",
+            "properties empty",
             "no primary key",
             "primary key no type",
             "primary key object",

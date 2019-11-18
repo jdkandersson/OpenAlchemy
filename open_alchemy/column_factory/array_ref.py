@@ -143,9 +143,7 @@ def _set_foreign_key(
     ref_model = getattr(open_alchemy.models, ref_model_name, None)
     if ref_model is not None:
         # Construct foreign key
-        [(_, fk_column)] = column.handle_column(
-            spec=fk_spec, logical_name=fk_logical_name
-        )
+        fk_column = column.handle_column(spec=fk_spec)
         setattr(ref_model, fk_logical_name, fk_column)
         return
 
