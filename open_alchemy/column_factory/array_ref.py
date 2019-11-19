@@ -167,6 +167,7 @@ class _ManyToManyColumnArtifacts:
     format_: typing.Optional[str]
     tablename: str
     column_name: str
+    max_length: typing.Optional[int]
 
 
 def _many_to_many_column_artifacts(
@@ -232,7 +233,10 @@ def _many_to_many_column_artifacts(
                     "A schema that is part of a many to many relationship must define "
                     "a type for the primary key."
                 )
-            format_ = property_schema.get("format")
+            format_ = helpers.peek.format_(schema=property_schema, schemas=schemas)
+            max_length = helpers.peek.max_length(
+                schema=property_schema, schemas=schemas
+            )
             column_name = property_name
     if type_ is None:
         raise exceptions.MalformedSchemaError(
@@ -245,7 +249,9 @@ def _many_to_many_column_artifacts(
             "primary key to be of type object nor array."
         )
 
-    return _ManyToManyColumnArtifacts(type_, format_, tablename, column_name)
+    return _ManyToManyColumnArtifacts(
+        type_, format_, tablename, column_name, max_length
+    )
 
 
 def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy.Column:
@@ -259,9 +265,51 @@ def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy
         The column.
 
     """
-    spec = {
+    spec: types.Schema = {
         "type": artifacts.type_,
-        "format": artifacts.format_,
         "x-foreign-key": f"{artifacts.tablename}.{artifacts.column_name}",
     }
-    return column.handle_column(spec=spec)
+    if artifacts.format_ is not None:
+        spec["format"] = artifacts.format_
+    if artifacts.max_length is not None:
+        spec["maxLength"] = artifacts.max_length
+    return_column = column.handle_column(spec=spec)
+    return_column.name = f"{artifacts.tablename}_{artifacts.column_name}"
+    return return_column
+
+
+def _construct_association_table(
+    *,
+    parent_schema: types.Schema,
+    child_schema: types.Schema,
+    schemas: types.Schemas,
+    tablename: str,
+) -> sqlalchemy.Table:
+    """
+    Construct many to many association table.
+
+    Args:
+        parent_schema: The schema for the many to many parent.
+        child_schema: The schema for the many to many child.
+        schemas: Used to resolve any $ref.
+        tablename: The name of the association table.
+
+    Returns:
+        The association table.
+
+    """
+    parent_artifacts = _many_to_many_column_artifacts(
+        model_schema=parent_schema, schemas=schemas
+    )
+    child_artifacts = _many_to_many_column_artifacts(
+        model_schema=child_schema, schemas=schemas
+    )
+    parent_column = _many_to_many_column(artifacts=parent_artifacts)
+    child_column = _many_to_many_column(artifacts=child_artifacts)
+    # pylint: disable=no-member
+    return sqlalchemy.Table(
+        tablename,
+        open_alchemy.models.Base.metadata,  # type: ignore
+        parent_column,
+        child_column,
+    )

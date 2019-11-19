@@ -583,7 +583,7 @@ class TestManyToManyColumnArtifacts:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "schema, schemas, expected_format",
+        "schema, schemas, expected_format, expected_max_length",
         [
             (
                 {
@@ -594,6 +594,7 @@ class TestManyToManyColumnArtifacts:
                     },
                 },
                 {},
+                None,
                 None,
             ),
             (
@@ -607,6 +608,7 @@ class TestManyToManyColumnArtifacts:
                         },
                     }
                 },
+                None,
                 None,
             ),
             (
@@ -626,6 +628,7 @@ class TestManyToManyColumnArtifacts:
                 },
                 {},
                 None,
+                None,
             ),
             (
                 {
@@ -634,6 +637,7 @@ class TestManyToManyColumnArtifacts:
                     "properties": {"key_1": {"$ref": "#/components/schemas/Property"}},
                 },
                 {"Property": {"type": "simple_type_1", "x-primary-key": True}},
+                None,
                 None,
             ),
             (
@@ -648,6 +652,7 @@ class TestManyToManyColumnArtifacts:
                 },
                 {},
                 None,
+                None,
             ),
             (
                 {
@@ -658,11 +663,13 @@ class TestManyToManyColumnArtifacts:
                             "type": "simple_type_1",
                             "x-primary-key": True,
                             "format": "format 1",
+                            "maxLength": 1,
                         }
                     },
                 },
                 {},
                 "format 1",
+                1,
             ),
             (
                 {
@@ -673,28 +680,40 @@ class TestManyToManyColumnArtifacts:
                             "type": "simple_type_1",
                             "x-primary-key": True,
                             "format": "format 1",
+                            "maxLength": 1,
                         },
-                        "key_2": {"type": "simple_type_2", "format": "format 2"},
+                        "key_2": {
+                            "type": "simple_type_2",
+                            "format": "format 2",
+                            "maxLength": 2,
+                        },
                     },
                 },
                 {},
                 "format 1",
+                1,
             ),
             (
                 {
                     "type": "object",
                     "x-tablename": "table 1",
                     "properties": {
-                        "key_2": {"type": "simple_type_2", "format": "format 2"},
+                        "key_2": {
+                            "type": "simple_type_2",
+                            "format": "format 2",
+                            "maxLength": 2,
+                        },
                         "key_1": {
                             "type": "simple_type_1",
                             "x-primary-key": True,
                             "format": "format 1",
+                            "maxLength": 1,
                         },
                     },
                 },
                 {},
                 "format 1",
+                1,
             ),
         ],
         ids=[
@@ -709,7 +728,7 @@ class TestManyToManyColumnArtifacts:
         ],
     )
     @pytest.mark.column
-    def test_valid(schema, schemas, expected_format):
+    def test_valid(schema, schemas, expected_format, expected_max_length):
         """
         GIVEN schema, schemas and expected format, type, tablename and column name
         WHEN _many_to_many_column_artifacts is called with the schema and schemas
@@ -727,23 +746,106 @@ class TestManyToManyColumnArtifacts:
         assert column.format_ == expected_format
         assert column.tablename == expected_tablename
         assert column.column_name == expected_column_name
+        assert column.max_length == expected_max_length
+
+
+class TestManyToManyColumn:
+    """Tests for _many_to_many_column."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.column
+    def test_column():
+        """
+        GIVEN many to many column artifacts
+        WHEN _many_to_many_column is called with the artifacts
+        THEN a column is returned.
+        """
+        artifacts = array_ref._ManyToManyColumnArtifacts(
+            "integer", "int64", "table_1", "column_1", None
+        )
+
+        column = array_ref._many_to_many_column(artifacts=artifacts)
+
+        assert column.name == "table_1_column_1"
+        assert isinstance(column.type, sqlalchemy.BigInteger)
+        assert len(column.foreign_keys) == 1
+        foreign_key = column.foreign_keys.pop()
+        assert str(foreign_key) == "ForeignKey('table_1.column_1')"
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "type_, format_, max_length, expected_type",
+        [
+            ("integer", None, None, sqlalchemy.Integer),
+            ("integer", "int32", None, sqlalchemy.Integer),
+            ("integer", "int64", None, sqlalchemy.BigInteger),
+            ("number", None, None, sqlalchemy.Float),
+            ("number", "float", None, sqlalchemy.Float),
+            ("string", None, None, sqlalchemy.String),
+            ("string", None, "10", sqlalchemy.String),
+            ("boolean", None, None, sqlalchemy.Boolean),
+        ],
+        ids=[
+            "integer no format",
+            "integer 32 bit format",
+            "integer 64 bit format",
+            "number no format",
+            "number format",
+            "string no maxLength",
+            "string maxLength",
+            "boolean",
+        ],
+    )
+    @pytest.mark.column
+    def test_types(type_, format_, max_length, expected_type):
+        """
+        GIVEN type, format, maxLength and expected type
+        WHEN artifacts are constructed and _many_to_many_column is called
+        THEN a column with the expected type is returned.
+        """
+        artifacts = array_ref._ManyToManyColumnArtifacts(
+            type_, format_, "table_1", "column_1", max_length
+        )
+
+        column = array_ref._many_to_many_column(artifacts=artifacts)
+
+        assert isinstance(column.type, expected_type)
 
 
 @pytest.mark.column
-def test_many_to_many_column():
+def test_construct_association_table(mocked_models):
     """
-    GIVEN many to many column artifacts
-    WHEN _many_to_many_column is called with the artifacts
-    THEN a column is returned.
+    GIVEN parent and child schema and tablename
+    WHEN _construct_association_table is called with the parent and child schema and
+        tablename
+    THEN a table with the correct name, columns and metadata is constructed.
     """
-    # pylint: disable=protected-access
-    artifacts = array_ref._ManyToManyColumnArtifacts(
-        "integer", "int64", "table_1", "column_1"
+    # pylint: disable=protected-access,unsubscriptable-object
+    parent_schema = {
+        "type": "object",
+        "x-tablename": "parent",
+        "properties": {"parent_id": {"type": "integer", "x-primary-key": True}},
+    }
+    child_schema = {
+        "type": "object",
+        "x-tablename": "child",
+        "properties": {"child_id": {"type": "string", "x-primary-key": True}},
+    }
+    tablename = "association"
+
+    returned_table = array_ref._construct_association_table(
+        parent_schema=parent_schema,
+        child_schema=child_schema,
+        schemas={},
+        tablename=tablename,
     )
 
-    column = array_ref._many_to_many_column(artifacts=artifacts)
-
-    assert isinstance(column.type, sqlalchemy.BigInteger)
-    assert len(column.foreign_keys) == 1
-    foreign_key = column.foreign_keys.pop()
-    assert str(foreign_key) == "ForeignKey('table_1.column_1')"
+    assert returned_table.name == tablename
+    assert returned_table.metadata == mocked_models.Base.metadata
+    assert len(returned_table.columns) == 2
+    assert isinstance(
+        returned_table.columns["parent_parent_id"].type, sqlalchemy.Integer
+    )
+    assert isinstance(returned_table.columns["child_child_id"].type, sqlalchemy.String)

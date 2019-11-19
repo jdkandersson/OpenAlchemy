@@ -51,8 +51,30 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
     if value is None:
         return None
     if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError("A format value must be of type string.")
+    return value
+
+
+def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[int]:
+    """
+    Retrieve the maxLength property from a property schema.
+
+    Raises MalformedSchemaError if the maxLength value is not an integer.
+
+    Args:
+        schema: The schema got get the maxLength from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The maxLength value or None if it was not found.
+
+    """
+    value = _peek_key(schema=schema, schemas=schemas, key="maxLength")
+    if value is None:
+        return None
+    if not isinstance(value, int):
         raise exceptions.MalformedSchemaError(
-            "A type format value must be of type string."
+            "A maxLength value must be of type integer."
         )
     return value
 

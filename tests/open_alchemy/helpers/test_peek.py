@@ -68,6 +68,36 @@ def test_format(schema, expected_format):
 
 
 @pytest.mark.helper
+def test_max_length_wrong_type():
+    """
+    GIVEN schema with max_length defined as a boolean
+    WHEN max_length is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"maxLength": "1"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.max_length(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_max_length",
+    [({}, None), ({"maxLength": 1}, 1)],
+    ids=["missing", "present"],
+)
+@pytest.mark.helper
+def test_max_length(schema, expected_max_length):
+    """
+    GIVEN schema and expected max_length
+    WHEN max_length is called with the schema
+    THEN the expected max_length is returned.
+    """
+    returned_max_length = helpers.peek.max_length(schema=schema, schemas={})
+
+    assert returned_max_length == expected_max_length
+
+
+@pytest.mark.helper
 def test_read_only_wrong_type():
     """
     GIVEN schema with readOnly defined as a string
