@@ -10,6 +10,7 @@ from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
+from ..utility_base import TOptUtilityBase
 from . import column
 from . import object_ref
 
@@ -140,7 +141,7 @@ def _set_foreign_key(
         return
 
     # Handle model already constructed
-    ref_model = facades.models.get_model(name=ref_model_name)
+    ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
         # Construct foreign key
         fk_column = column.handle_column(spec=fk_spec)

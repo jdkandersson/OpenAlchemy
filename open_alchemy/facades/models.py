@@ -6,7 +6,7 @@ import sqlalchemy
 
 import open_alchemy
 
-from ..utility_base import UtilityBase
+from ..utility_base import TUtilityBase
 
 
 def get_base() -> typing.Any:
@@ -33,7 +33,7 @@ def set_association(*, table: sqlalchemy.Table, name: str) -> None:
     setattr(open_alchemy.models, name, table)
 
 
-def get_model(*, name: str) -> typing.Optional[UtilityBase]:
+def get_model(*, name: str) -> typing.Optional[typing.Type[TUtilityBase]]:
     """
     Get a model by name from models.
 
@@ -47,7 +47,7 @@ def get_model(*, name: str) -> typing.Optional[UtilityBase]:
     return getattr(open_alchemy.models, name, None)
 
 
-def set_model(*, name: str, model: UtilityBase) -> None:
+def set_model(*, name: str, model: TUtilityBase) -> None:
     """
     Set model by name on models.
 
