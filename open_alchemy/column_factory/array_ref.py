@@ -7,6 +7,7 @@ import sqlalchemy
 
 import open_alchemy
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
@@ -306,10 +307,5 @@ def _construct_association_table(
     )
     parent_column = _many_to_many_column(artifacts=parent_artifacts)
     child_column = _many_to_many_column(artifacts=child_artifacts)
-    # pylint: disable=no-member
-    return sqlalchemy.Table(
-        tablename,
-        open_alchemy.models.Base.metadata,  # type: ignore
-        parent_column,
-        child_column,
-    )
+    base = facades.models.get_base()
+    return sqlalchemy.Table(tablename, base.metadata, parent_column, child_column)

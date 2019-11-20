@@ -815,7 +815,7 @@ class TestManyToManyColumn:
 
 
 @pytest.mark.column
-def test_construct_association_table(mocked_models):
+def test_construct_association_table(mocked_facades_models):
     """
     GIVEN parent and child schema and tablename
     WHEN _construct_association_table is called with the parent and child schema and
@@ -843,7 +843,9 @@ def test_construct_association_table(mocked_models):
     )
 
     assert returned_table.name == tablename
-    assert returned_table.metadata == mocked_models.Base.metadata
+    assert returned_table.metadata == (
+        mocked_facades_models.get_base.return_value.metadata
+    )
     assert len(returned_table.columns) == 2
     assert isinstance(
         returned_table.columns["parent_parent_id"].type, sqlalchemy.Integer
