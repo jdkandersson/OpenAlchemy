@@ -75,7 +75,9 @@ def handle_array(
     relationship_return = (
         logical_name,
         sqlalchemy.orm.relationship(
-            obj_artifacts.ref_logical_name, backref=obj_artifacts.backref
+            obj_artifacts.ref_logical_name,
+            backref=obj_artifacts.backref,
+            secondary=obj_artifacts.secondary,
         ),
     )
     # Construct entry for the addition for the model schema
@@ -84,12 +86,21 @@ def handle_array(
         "items": {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name},
     }
     # Add foreign key to referenced schema
-    _set_foreign_key(
-        ref_model_name=obj_artifacts.ref_logical_name,
-        model_schema=model_schema,
-        schemas=schemas,
-        fk_column=obj_artifacts.fk_column,
-    )
+    if obj_artifacts.secondary is None:
+        _set_foreign_key(
+            ref_model_name=obj_artifacts.ref_logical_name,
+            model_schema=model_schema,
+            schemas=schemas,
+            fk_column=obj_artifacts.fk_column,
+        )
+    else:
+        table = _construct_association_table(
+            parent_schema=model_schema,
+            child_schema=obj_artifacts.spec,
+            schemas=schemas,
+            tablename=obj_artifacts.secondary,
+        )
+        facades.models.set_association(table=table, name=obj_artifacts.secondary)
 
     return [relationship_return], spec_return
 
