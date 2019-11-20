@@ -5,7 +5,6 @@ import typing
 
 import sqlalchemy
 
-import open_alchemy
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
@@ -141,7 +140,7 @@ def _set_foreign_key(
         return
 
     # Handle model already constructed
-    ref_model = getattr(open_alchemy.models, ref_model_name, None)
+    ref_model = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
         # Construct foreign key
         fk_column = column.handle_column(spec=fk_spec)

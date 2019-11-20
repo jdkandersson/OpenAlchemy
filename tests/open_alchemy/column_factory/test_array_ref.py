@@ -472,7 +472,7 @@ def test_set_foreign_key_schemas():
 
 
 @pytest.mark.column
-def test_set_foreign_key_models(mocked_models: mock.MagicMock):
+def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
     """
     GIVEN mocked models, referenced model is in models, model schema, schemas and
         foreign key column
@@ -490,7 +490,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     }
     schemas = {ref_model_name: {"type": "object", "properties": {}}}
     mock_ref_model = mock.MagicMock()
-    setattr(mocked_models, ref_model_name, mock_ref_model)
+    mocked_facades_models.get_model.return_value = mock_ref_model
 
     array_ref._set_foreign_key(  # pylint: disable=protected-access
         ref_model_name=ref_model_name,
@@ -503,6 +503,7 @@ def test_set_foreign_key_models(mocked_models: mock.MagicMock):
     assert isinstance(added_fk_column.type, sqlalchemy.Integer)
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
+    mocked_facades_models.get_model.assert_called_once_with(name=ref_model_name)
 
 
 class TestManyToManyColumnArtifacts:
