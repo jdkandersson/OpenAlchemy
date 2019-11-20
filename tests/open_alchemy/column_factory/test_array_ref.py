@@ -434,6 +434,48 @@ def test_handle_array_schemas_foreign_key_column():
 
 
 @pytest.mark.column
+def test_handle_array_secondary(mocked_facades_models):
+    """
+    GIVEN schema with array referencing another schema and secondary set and schemas
+    WHEN handle_array is called
+    THEN table is set on models.
+    """
+    secondary = "association"
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"id": {"type": "integer", "x-primary-key": True}},
+    }
+    spec = {
+        "type": "array",
+        "items": {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-secondary": secondary},
+            ]
+        },
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        }
+    }
+
+    array_ref.handle_array(
+        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert mocked_facades_models.set_association.call_count == 1
+    name = mocked_facades_models.set_association.call_args.kwargs["name"]
+    table = mocked_facades_models.set_association.call_args.kwargs["table"]
+    assert name == secondary
+    assert table.name == secondary
+
+
+@pytest.mark.column
 def test_set_foreign_key_schemas_missing():
     """
     GIVEN referenced model is not in models and not in schemas
