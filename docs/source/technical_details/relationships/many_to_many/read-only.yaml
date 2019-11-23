@@ -1,0 +1,29 @@
+Employee:
+  type: object
+  ...
+  properties:
+    id:
+      type: integer
+      x-primary-key: true
+    ...
+    projects:
+      allOf:
+        - $ref: "#/.../Project"
+        - x-backref: employees
+          x-secondary: employee_project
+Project:
+  type: object
+  ...
+  properties:
+    id:
+      type: integer
+      x-primary-key: true
+    ...
+    employees:
+      readOnly: true
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer

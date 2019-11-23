@@ -374,4 +374,35 @@ dictionary::
     >>> employee.to_dict()
     {'id': 1, 'name': 'David Andersson', 'division': {'id': 1}}
 
-Indicating that the employee is working in the division with an id of 1.
+Indicating that the employee is working in the division with an id of *1*.
+
+
+Many to Many
+^^^^^^^^^^^^
+
+Including a parent reference with a child for a many to many relationship is
+very similar to the many to one relationship case except that both sides are
+defined as arrays. To illustrate, the following schema defines a many to many
+relationship between *Employee* and *Project*:
+
+.. literalinclude:: ./relationships/many_to_many/read-only.yaml
+    :language: yaml
+    :linenos:
+
+Querying for an *Employee* would, for example, result in the following
+dictionary::
+
+    >>> employee = Employee.query.first()
+    >>> employee.to_dict()
+    {'id': 1, 'name': 'David Andersson', 'projects': [{'id': 1}, {'id': 2}]}
+
+Indicating that the employee is working on the projects with an id of *1* and
+*2*. Querying for a *Project* would, for example, result in the following
+dictionary::
+
+    >>> project = Project.query.first()
+    >>> project.to_dict()
+    {'id': 1, 'name': 'Expand to the USA', 'employees': [{'id': 1}, {'id': 3}]}
+
+Indicating that the project is being worked on by the employees with an id of
+*1* and *3*.
