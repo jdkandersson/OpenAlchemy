@@ -1,5 +1,6 @@
 """Tests for array references."""
 
+import sys
 from unittest import mock
 
 import pytest
@@ -469,8 +470,13 @@ def test_handle_array_secondary(mocked_facades_models):
     )
 
     assert mocked_facades_models.set_association.call_count == 1
-    name = mocked_facades_models.set_association.call_args.kwargs["name"]
-    table = mocked_facades_models.set_association.call_args.kwargs["table"]
+    if sys.version_info[1] == 8:
+        name = mocked_facades_models.set_association.call_args.kwargs["name"]
+        table = mocked_facades_models.set_association.call_args.kwargs["table"]
+    else:
+        _, kwargs = mocked_facades_models.set_association.call_args
+        name = kwargs["name"]
+        table = kwargs["table"]
     assert name == secondary
     assert table.name == secondary
 
