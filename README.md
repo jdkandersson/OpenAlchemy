@@ -94,8 +94,6 @@ An example API has been defined using connexion and Flask here:
 [Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
 
 ## Features
-### Supported
-The following features are supported:
 - initializing from JSON,
 - initializing from YAML,
 - `integer` (32 and 64 bit),
@@ -114,16 +112,13 @@ The following features are supported:
 - many to one relationships,
 - one to one relationships,
 - one to many relationships,
+- many to many relationships,
 - custom foreign keys for relationships,
 - back references for relationships,
 - `allOf` inheritance for columns and models,
 - `from_dict` model methods to construct from dictionaries,
 - `to_dict` model methods to convert instances to dictionaries and
 - exposing created models under `open_alchemy.models` removing the need for `models.py` files.
-
-### Not Supported
-The following features are on the backlog:
-- many to many relationships.
 
 ## Contributing
 Fork and checkout the repository. To install:
