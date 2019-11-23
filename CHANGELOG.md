@@ -1,6 +1,7 @@
 # Release Notes
 
-## Version _next_
+## Version 0.10.9 - 2019-11-23
+_Beta release_
 
 - Add check for whether foreign key for relationship is already constructed before automatically constructing it.
 - Add support for returning parent properties in the child _to_dict_ call using _readOnly_ properties.
