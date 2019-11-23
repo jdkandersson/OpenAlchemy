@@ -225,6 +225,62 @@ relationship defined as an OpenAPI array into a one to one relationship.
     The *x-dict-ignore* extension property is an internal extension property
     that may change at any time and should not be used externally.
 
+.. _many-to-many:
+
+Many to Many
+------------
+
+The many to many relationship is used when a parent model can have many
+children but the child can also have many parents. For example, an employee
+could be working on multiple projects and multiple employees are generally
+assigned to a project. Therefore, there is a many to many relationship between
+employees and projects. This is implemented using an association table which
+has a column for each primary key on the parent and child. One row in the
+association table implies a relationship between the parent and child.
+
+Many to many relationships are defined similar to
+:ref:`one to many <one-to-many>` relationships except that the *x-secondary*
+extension property is required to define the name of the association table.
+Both the parent and child must have a primary key column and, currently, both
+the parent and child must only have one primary key column. In the presence of
+the *x-secondary* extension property, a table with the name as the property
+value is constructed where the columns are defined based on the schema of the
+primary key columns of the parent and child. The names of the columns are
+defined to be "\<*x-tablename*>_\<property name>". Each column is given a
+foreign key constraint as defined by "\<*x-tablename*>.\<property name>".
+
+There are 2 places where the *x-secondary* key
+can be defined. The recommended implementation adds it using *allOf*:
+
+.. literalinclude:: ./relationships/many_to_many/example_recommended.yaml
+    :language: yaml
+    :linenos:
+
+Note that, when *allOf* is used, there must be exactly one *$ref* in the list
+and at most one *x-secondary* in the list. The other way, which is not
+recommended, adds the *x-secondary* to the object being referenced:
+
+.. literalinclude:: ./relationships/many_to_many/example_not_recommended.yaml
+    :language: yaml
+    :linenos:
+
+The reason it is not recommended is because this only allows a *x-secondary*
+per table, whereas the other allows for many. If *x-secondary* is both in the
+*allOf* list and the referenced object, the value from the *allOf* list will be
+used.
+
+Using *x-secondary* is equivalent to the following traditional *models.py*:
+
+.. literalinclude:: ../../../examples/relationship_many_to_many_models_traditional.py
+    :language: python
+    :linenos:
+
+Many to many relationships support *x-backref* and custom foreign keys. For
+back references see :ref:`many to one backref <backref>` and for custom foreign
+keys see :ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
+*x-uselist* is not supported as it does not make sense to turn a many to many
+relationship defined as an OpenAPI array into a many to one relationship.
+
 .. _child-parent-reference:
 
 Including Parent References with Child
