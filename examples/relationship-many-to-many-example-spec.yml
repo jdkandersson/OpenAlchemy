@@ -22,7 +22,7 @@ paths:
 
 components:
   schemas:
-    Projects:
+    Project:
       description: A large sized business objective.
       type: object
       x-tablename: project
