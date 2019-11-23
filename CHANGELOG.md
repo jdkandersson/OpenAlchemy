@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version 0.10.9 - 2019-11-23
+## Version 0.10.0 - 2019-11-23
 _Beta release_
 
 - Add check for whether foreign key for relationship is already constructed before automatically constructing it.
