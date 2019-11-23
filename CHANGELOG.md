@@ -4,6 +4,7 @@
 
 - Add check for whether foreign key for relationship is already constructed before automatically constructing it.
 - Add support for returning parent properties in the child _to_dict_ call using _readOnly_ properties.
+- Add support for many to many relationships.
 
 ## Version 0.9.1 - 2019-11-11
 

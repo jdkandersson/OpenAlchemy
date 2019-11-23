@@ -304,10 +304,6 @@ def test_integration():
     WHEN handle_column is called with the schema
     THEN the logical name and an instance of SQLAlchemy Column is returned.
     """
-    logical_name = "name 1"
-    [(returned_logical_name, returned_column)] = column.handle_column(
-        spec={"type": "number"}, logical_name=logical_name
-    )
+    returned_column = column.handle_column(spec={"type": "number"})
 
     assert isinstance(returned_column, sqlalchemy.Column)
-    assert returned_logical_name == logical_name

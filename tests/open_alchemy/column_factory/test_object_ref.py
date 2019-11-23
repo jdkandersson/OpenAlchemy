@@ -8,12 +8,25 @@ from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.parametrize(
-    "spec",
-    [{"type": "object"}, {"allOf": [{"type": "object"}]}],
-    ids=["object", "allOf with object"],
+    "spec, schemas",
+    [
+        ({"type": "object"}, {}),
+        ({"allOf": [{"type": "object"}]}, {}),
+        (
+            {"$ref": "#/components/schemas/Schema"},
+            {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "table",
+                    "x-secondary": "secondary",
+                }
+            },
+        ),
+    ],
+    ids=["object", "allOf with object", "secondary defined"],
 )
 @pytest.mark.column
-def test_handle_object_error(spec):
+def test_handle_object_error(spec, schemas):
     """
     GIVEN spec
     WHEN handle_object is called with the spec
@@ -22,7 +35,7 @@ def test_handle_object_error(spec):
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
             spec=spec,
-            schemas={"type": "object"},
+            schemas=schemas,
             required=True,
             logical_name="name 1",
             model_schema={},
@@ -37,6 +50,11 @@ def test_handle_object_error(spec):
         [{"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}],
         [
             {"$ref": "ref 1"},
+            {"x-secondary": "secondary 1"},
+            {"x-secondary": "secondary 2"},
+        ],
+        [
+            {"$ref": "ref 1"},
             {"x-foreign-key-column": "column 1"},
             {"x-foreign-key-column": "column 2"},
         ],
@@ -46,8 +64,9 @@ def test_handle_object_error(spec):
         "object",
         "multiple ref",
         "multiple x-backref",
+        "multiple x-secondary",
         "multiple x-foreign-key-column",
-        "multiple x-use-list",
+        "multiple x-uselist",
     ],
 )
 @pytest.mark.column
@@ -220,6 +239,17 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
             {
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-uselist": False},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "backref 2",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
                     {"x-backref": "backref 2", "x-uselist": False},
                 ]
             },
@@ -248,6 +278,7 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
         "allOf no backref",
         "allOf backref",
         "allOf backref before other",
+        "allOf backref after other",
         "allOf backref with uselist",
         "allOf $ref backref",
         "allOf backref $ref backref",
@@ -380,6 +411,97 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
 
 
 @pytest.mark.parametrize(
+    "spec, schemas, expected_secondary",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "x-secondary": "secondary 1"}},
+            "secondary 1",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-secondary": "secondary 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "secondary 2",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-secondary": "secondary 2"},
+                    {"x-backref": "backref 1"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "secondary 2",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 1"},
+                    {"x-secondary": "secondary 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "secondary 2",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "x-secondary": "secondary 1"}},
+            "secondary 1",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-secondary": "secondary 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-secondary": "secondary 1"}},
+            "secondary 2",
+        ),
+    ],
+    ids=[
+        "$ref no secondary",
+        "$ref secondary",
+        "allOf no secondary",
+        "allOf secondary",
+        "allOf secondary before other",
+        "allOf secondary after other",
+        "allOf $ref secondary",
+        "allOf secondary $ref secondary",
+    ],
+)
+@pytest.mark.column
+def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
+    """
+    GIVEN specification and schemas and expected secondary
+    WHEN gather_object_artifacts is called with the specification and schemas
+    THEN the expected secondary is returned.
+    """
+    obj_artifacts = object_ref.gather_object_artifacts(
+        spec=spec, logical_name="", schemas=schemas
+    )
+
+    assert obj_artifacts.secondary == expected_secondary
+
+
+@pytest.mark.parametrize(
     "spec, schemas, expected_fk_column",
     [
         (
@@ -419,6 +541,17 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
             "fk_column_2",
         ),
         (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"x-foreign-key-column": "fk_column_2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "fk_column_2",
+        ),
+        (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"type": "object", "x-foreign-key-column": "fk_column_1"}},
             "fk_column_1",
@@ -440,6 +573,7 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
         "allOf no fk",
         "allOf fk",
         "allOf fk before other",
+        "allOf fk after other",
         "allOf $ref fk",
         "allOf fk $ref fk",
     ],

@@ -322,3 +322,66 @@ def test_import_model(engine, sessionmaker, tmp_path):
     # Querying session
     queried_model = session.query(Table).first()
     assert queried_model.column == value
+
+
+@pytest.mark.integration
+def test_import_many_to_many_association(engine, sessionmaker, tmp_path):
+    """
+    GIVEN many to many specification stored in a YAML file
+    WHEN init_yaml is called with the file
+    THEN the association is importable from open_alchemy.models.
+    """
+    # pylint: disable=import-error,import-outside-toplevel
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "column": {"type": "integer", "x-primary-key": True}
+                    },
+                    "x-tablename": "ref_table",
+                    "type": "object",
+                    "x-secondary": "association",
+                },
+                "Table": {
+                    "properties": {
+                        "column": {"type": "integer", "x-primary-key": True},
+                        "ref_tables": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/RefTable"},
+                        },
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(spec))
+
+    # Creating model factory
+    open_alchemy.init_yaml(str(spec_file), define_all=True)
+
+    # Creating models
+    from open_alchemy.models import Base
+
+    Base.metadata.create_all(engine)
+
+    # Creating model instance
+    from open_alchemy.models import RefTable
+    from open_alchemy.models import Table
+    from open_alchemy.models import association
+
+    ref_instance = RefTable(column=11)
+    model_instance = Table(column=12, ref_tables=[ref_instance])
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_association = session.query(association).first()
+    assert queried_association == (12, 11)

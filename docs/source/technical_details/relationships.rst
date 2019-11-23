@@ -225,6 +225,62 @@ relationship defined as an OpenAPI array into a one to one relationship.
     The *x-dict-ignore* extension property is an internal extension property
     that may change at any time and should not be used externally.
 
+.. _many-to-many:
+
+Many to Many
+------------
+
+The many to many relationship is used when a parent model can have many
+children but the child can also have many parents. For example, an employee
+could be working on multiple projects and multiple employees are generally
+assigned to a project. Therefore, there is a many to many relationship between
+employees and projects. This is implemented using an association table which
+has a column for each primary key on the parent and child. One row in the
+association table implies a relationship between the parent and child.
+
+Many to many relationships are defined similar to
+:ref:`one to many <one-to-many>` relationships except that the *x-secondary*
+extension property is required to define the name of the association table.
+Both the parent and child must have a primary key column and, currently, both
+the parent and child must only have one primary key column. In the presence of
+the *x-secondary* extension property, a table with the name as the property
+value is constructed where the columns are defined based on the schema of the
+primary key columns of the parent and child. The names of the columns are
+defined to be "\<*x-tablename*>_\<property name>". Each column is given a
+foreign key constraint as defined by "\<*x-tablename*>.\<property name>".
+
+There are 2 places where the *x-secondary* key
+can be defined. The recommended implementation adds it using *allOf*:
+
+.. literalinclude:: ./relationships/many_to_many/example_recommended.yaml
+    :language: yaml
+    :linenos:
+
+Note that, when *allOf* is used, there must be exactly one *$ref* in the list
+and at most one *x-secondary* in the list. The other way, which is not
+recommended, adds the *x-secondary* to the object being referenced:
+
+.. literalinclude:: ./relationships/many_to_many/example_not_recommended.yaml
+    :language: yaml
+    :linenos:
+
+The reason it is not recommended is because this only allows a *x-secondary*
+per table, whereas the other allows for many. If *x-secondary* is both in the
+*allOf* list and the referenced object, the value from the *allOf* list will be
+used.
+
+Using *x-secondary* is equivalent to the following traditional *models.py*:
+
+.. literalinclude:: ../../../examples/relationship_many_to_many_models_traditional.py
+    :language: python
+    :linenos:
+
+Many to many relationships support *x-backref* and custom foreign keys. For
+back references see :ref:`many to one backref <backref>` and for custom foreign
+keys see :ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
+*x-uselist* is not supported as it does not make sense to turn a many to many
+relationship defined as an OpenAPI array into a many to one relationship.
+
 .. _child-parent-reference:
 
 Including Parent References with Child
@@ -318,4 +374,35 @@ dictionary::
     >>> employee.to_dict()
     {'id': 1, 'name': 'David Andersson', 'division': {'id': 1}}
 
-Indicating that the employee is working in the division with an id of 1.
+Indicating that the employee is working in the division with an id of *1*.
+
+
+Many to Many
+^^^^^^^^^^^^
+
+Including a parent reference with a child for a many to many relationship is
+very similar to the many to one relationship case except that both sides are
+defined as arrays. To illustrate, the following schema defines a many to many
+relationship between *Employee* and *Project*:
+
+.. literalinclude:: ./relationships/many_to_many/read-only.yaml
+    :language: yaml
+    :linenos:
+
+Querying for an *Employee* would, for example, result in the following
+dictionary::
+
+    >>> employee = Employee.query.first()
+    >>> employee.to_dict()
+    {'id': 1, 'name': 'David Andersson', 'projects': [{'id': 1}, {'id': 2}]}
+
+Indicating that the employee is working on the projects with an id of *1* and
+*2*. Querying for a *Project* would, for example, result in the following
+dictionary::
+
+    >>> project = Project.query.first()
+    >>> project.to_dict()
+    {'id': 1, 'name': 'Expand to the USA', 'employees': [{'id': 1}, {'id': 3}]}
+
+Indicating that the project is being worked on by the employees with an id of
+*1* and *3*.

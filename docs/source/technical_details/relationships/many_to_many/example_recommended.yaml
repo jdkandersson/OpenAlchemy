@@ -1,0 +1,24 @@
+Project:
+  type: object
+  x-tablename: project
+  ...
+  properties:
+    id:
+      type: integer
+      x-primary-key: true
+    ...
+Employee:
+  type: object
+  x-tablename: employee
+  ...
+  properties:
+    id:
+      type: integer
+      x-primary-key: true
+    ...
+    projects:
+      type: array
+      items:
+        allOf:
+          - "$ref": "#/components/schemas/Project"
+          - x-secondary: employee_project

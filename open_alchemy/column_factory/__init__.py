@@ -68,7 +68,5 @@ def column_factory(
 
     # Handle columns
     spec = helpers.prepare_schema(schema=spec, schemas=schemas)
-    return (
-        column.handle_column(logical_name=logical_name, spec=spec, required=required),
-        spec,
-    )
+    spec_column = column.handle_column(spec=spec, required=required)
+    return ([(logical_name, spec_column)], spec)

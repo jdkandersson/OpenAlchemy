@@ -6,13 +6,13 @@ import typing
 
 import jsonschema
 
-import open_alchemy
-
 from . import exceptions
+from . import facades
 from . import helpers
 from . import types
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
+TOptUtilityBase = typing.Optional[TUtilityBase]
 
 
 class UtilityBase:
@@ -83,7 +83,7 @@ class UtilityBase:
                 f"The model schema is {json.dumps(schema)}."
             )
         # Try to get model
-        ref_model = getattr(open_alchemy.models, ref_model_name, None)
+        ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
         if ref_model is None:
             raise exceptions.SchemaNotFoundError(
                 f"The {ref_model_name} model was not found on open_alchemy.models."

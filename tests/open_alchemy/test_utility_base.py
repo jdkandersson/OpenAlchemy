@@ -436,7 +436,7 @@ def test_from_dict_object_model_undefined():
 
 
 @pytest.mark.utility_base
-def test_from_dict_object_from_dict_call(mocked_models):
+def test_from_dict_object_from_dict_call(mocked_facades_models):
     """
     GIVEN schema with object which references a model that has been mocked and
         dictionary
@@ -457,11 +457,14 @@ def test_from_dict_object_from_dict_call(mocked_models):
 
     model.from_dict(**{"key": {"obj_key": "obj value"}})
 
-    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
+    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
+    mocked_facades_models.get_model.return_value.from_dict.assert_called_once_with(
+        **{"obj_key": "obj value"}
+    )
 
 
 @pytest.mark.utility_base
-def test_from_dict_object_return(mocked_models):
+def test_from_dict_object_return(mocked_facades_models):
     """
     GIVEN schema with object which references a model that has been mocked and
         dictionary
@@ -482,9 +485,10 @@ def test_from_dict_object_return(mocked_models):
 
     instance = model.from_dict(**{"key": {"obj_key": "obj value"}})
 
+    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
     assert (
         instance.key  # pylint: disable=no-member
-        == mocked_models.RefModel.from_dict.return_value
+        == mocked_facades_models.get_model.return_value.from_dict.return_value
     )
 
 
@@ -506,7 +510,7 @@ def test_from_dict_array_no_items():
 
 
 @pytest.mark.utility_base
-def test_from_dict_array_empty_from_dict(mocked_models):
+def test_from_dict_array_empty_from_dict(mocked_facades_models):
     """
     GIVEN schema with array which references a model that has been mocked and
         dictionary with an empty array
@@ -532,12 +536,12 @@ def test_from_dict_array_empty_from_dict(mocked_models):
 
     instance = model.from_dict(**{"key": []})
 
-    mocked_models.RefModel.from_dict.assert_not_called()
+    mocked_facades_models.get_model.return_value.from_dict.assert_not_called()
     assert instance.key == []  # pylint: disable=no-member
 
 
 @pytest.mark.utility_base
-def test_from_dict_array_single_from_dict(mocked_models):
+def test_from_dict_array_single_from_dict(mocked_facades_models):
     """
     GIVEN schema with array which references a model that has been mocked and
         dictionary with a single item array
@@ -564,14 +568,17 @@ def test_from_dict_array_single_from_dict(mocked_models):
 
     instance = model.from_dict(**{"key": [{"obj_key": "obj value"}]})
 
-    mocked_models.RefModel.from_dict.assert_called_once_with(**{"obj_key": "obj value"})
+    mocked_facades_models.get_model.return_value.from_dict.assert_called_once_with(
+        **{"obj_key": "obj value"}
+    )
+    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
     assert instance.key == [  # pylint: disable=no-member
-        mocked_models.RefModel.from_dict.return_value
+        mocked_facades_models.get_model.return_value.from_dict.return_value
     ]
 
 
 @pytest.mark.utility_base
-def test_from_dict_array_multiple_from_dict(mocked_models):
+def test_from_dict_array_multiple_from_dict(mocked_facades_models):
     """
     GIVEN schema with array which references a model that has been mocked and
         dictionary with a multiple item array
@@ -600,12 +607,17 @@ def test_from_dict_array_multiple_from_dict(mocked_models):
         **{"key": [{"obj_key_1": "obj value 1"}, {"obj_key_2": "obj value 2"}]}
     )
 
-    assert mocked_models.RefModel.from_dict.call_count == 2
-    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_1": "obj value 1"})
-    mocked_models.RefModel.from_dict.assert_any_call(**{"obj_key_2": "obj value 2"})
+    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
+    assert mocked_facades_models.get_model.return_value.from_dict.call_count == 2
+    mocked_facades_models.get_model.return_value.from_dict.assert_any_call(
+        **{"obj_key_1": "obj value 1"}
+    )
+    mocked_facades_models.get_model.return_value.from_dict.assert_any_call(
+        **{"obj_key_2": "obj value 2"}
+    )
     assert instance.key == [  # pylint: disable=no-member
-        mocked_models.RefModel.from_dict.return_value,
-        mocked_models.RefModel.from_dict.return_value,
+        mocked_facades_models.get_model.return_value.from_dict.return_value,
+        mocked_facades_models.get_model.return_value.from_dict.return_value,
     ]
 
 

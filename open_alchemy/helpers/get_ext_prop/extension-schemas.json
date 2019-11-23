@@ -7,6 +7,10 @@
     "description": "Turn a many to one into a one to one relationship.",
     "type": "boolean"
   },
+  "x-secondary": {
+    "description": "Turn a one to many into a many to many relationship. The value of x-secondary is used as the name of the association table.",
+    "type": "string"
+  },
   "x-primary-key": {
     "description": "Make a column a primary key.",
     "type": "boolean"
