@@ -468,6 +468,128 @@ def test_check_schema_required():
     assert artifacts.nullable is False
 
 
+@pytest.mark.parametrize(
+    "type_, expected_type",
+    [
+        ("integer", sqlalchemy.Integer),
+        ("number", sqlalchemy.Float),
+        ("string", sqlalchemy.String),
+        ("boolean", sqlalchemy.Boolean),
+    ],
+    ids=["integer", "number", "string", "boolean"],
+)
+@pytest.mark.column
+def test_construct_column(type_, expected_type):
+    """
+    GIVEN artifacts for a type
+    WHEN _construct_column is called with the artifacts
+    THEN a column with the expected type is returned.
+    """
+    artifacts = types.ColumnArtifacts(type_)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert isinstance(returned_column, sqlalchemy.Column)
+    assert isinstance(returned_column.type, expected_type)
+    assert len(returned_column.foreign_keys) == 0
+    assert returned_column.nullable is True
+
+
+@pytest.mark.column
+def test_construct_column_foreign_key():
+    """
+    GIVEN artifacts with foreign key
+    WHEN _construct_column is called with the artifacts
+    THEN a column with a foreign key is returned.
+    """
+    artifacts = types.ColumnArtifacts("integer", foreign_key="table.column")
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert len(returned_column.foreign_keys) == 1
+    foreign_key = returned_column.foreign_keys.pop()
+    assert str(foreign_key) == "ForeignKey('table.column')"
+
+
+@pytest.mark.parametrize("nullable", [True, False], ids=["true", "false"])
+@pytest.mark.column
+def test_construct_column_nullable(nullable):
+    """
+    GIVEN value for nullable
+    WHEN _construct_column is called with the artifacts with nullable
+    THEN the returned column nullable property is equal to nullable.
+    """
+    artifacts = types.ColumnArtifacts("integer", nullable=nullable)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert returned_column.nullable == nullable
+
+
+@pytest.mark.parametrize(
+    "primary_key", [None, True, False], ids=["none", "true", "false"]
+)
+@pytest.mark.column
+def test_construct_column_primary_key(primary_key):
+    """
+    GIVEN value for primary_key
+    WHEN _construct_column is called with the artifacts with primary_key
+    THEN the returned column primary_key property is equal to primary_key.
+    """
+    artifacts = types.ColumnArtifacts("integer", primary_key=primary_key)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert returned_column.primary_key == primary_key
+
+
+@pytest.mark.parametrize(
+    "autoincrement", [None, True, False], ids=["none", "true", "false"]
+)
+@pytest.mark.column
+def test_construct_column_autoincrement(autoincrement):
+    """
+    GIVEN value for autoincrement
+    WHEN _construct_column is called with the artifacts with autoincrement
+    THEN the returned column autoincrement property is equal to autoincrement.
+    """
+    artifacts = types.ColumnArtifacts("integer", autoincrement=autoincrement)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert returned_column.autoincrement == autoincrement
+
+
+@pytest.mark.parametrize("index", [None, True, False], ids=["none", "true", "false"])
+@pytest.mark.column
+def test_construct_column_index(index):
+    """
+    GIVEN value for index
+    WHEN _construct_column is called with the artifacts with index
+    THEN the returned column index property is equal to index.
+    """
+    artifacts = types.ColumnArtifacts("integer", index=index)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert returned_column.index == index
+
+
+@pytest.mark.parametrize("unique", [None, True, False], ids=["none", "true", "false"])
+@pytest.mark.column
+def test_construct_column_unique(unique):
+    """
+    GIVEN value for unique
+    WHEN _construct_column is called with the artifacts with unique
+    THEN the returned column unique property is equal to unique.
+    """
+    artifacts = types.ColumnArtifacts("integer", unique=unique)
+
+    returned_column = column._construct_column(artifacts=artifacts)
+
+    assert returned_column.unique == unique
+
+
 @pytest.mark.column
 def test_determine_type_unsupported():
     """

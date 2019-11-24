@@ -125,6 +125,32 @@ def _calculate_nullable(
     return False
 
 
+def _construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
+    """
+    Construct column from artifacts.
+
+    Args:
+        artifacts: The artifacts of the column.
+
+    Returns:
+        The SQLAlchemy column.
+
+    """
+    type_ = _determine_type(artifacts=artifacts)
+    foreign_key: typing.Optional[sqlalchemy.ForeignKey] = None
+    if artifacts.foreign_key is not None:
+        foreign_key = sqlalchemy.ForeignKey(artifacts.foreign_key)
+    return sqlalchemy.Column(
+        type_,
+        foreign_key,
+        nullable=artifacts.nullable,
+        primary_key=artifacts.primary_key,
+        autoincrement=artifacts.autoincrement,
+        index=artifacts.index,
+        unique=artifacts.unique,
+    )
+
+
 def _spec_to_column(
     *, spec: types.Schema, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
