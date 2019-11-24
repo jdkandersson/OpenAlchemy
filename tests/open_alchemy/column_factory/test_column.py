@@ -506,12 +506,62 @@ def test_handle_integer_invalid_format():
 @pytest.mark.column
 def test_handle_integer(format_, expected_integer):
     """
-    GIVEN artifacts with maxLength set
+    GIVEN artifacts and expected SQLALchemy type
     WHEN _handle_integer is called with the artifacts
-    THEN MalformedSchemaError is raised.
+    THEN the expected type is returned.
     """
     artifacts = types.ColumnArtifacts("integer", format=format_)
 
     integer = column._handle_integer(artifacts=artifacts)
 
     assert integer == expected_integer
+
+
+@pytest.mark.parametrize(
+    "artifacts_kwargs",
+    [{"max_length": 1}, {"autoincrement": True}],
+    ids=["max_length", "autoincrement"],
+)
+@pytest.mark.column
+def test_handle_number_invalid(artifacts_kwargs):
+    """
+    GIVEN artifacts with an artifact that is not supported
+    WHEN _handle_number is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts("number", **artifacts_kwargs)
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column._handle_number(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_handle_number_invalid_format():
+    """
+    GIVEN artifacts with format that is not supported
+    WHEN _handle_number is called with the artifacts
+    THEN FeatureNotImplementedError is raised.
+    """
+    artifacts = types.ColumnArtifacts("number", format="unsupported")
+
+    with pytest.raises(exceptions.FeatureNotImplementedError):
+        column._handle_number(artifacts=artifacts)
+
+
+@pytest.mark.parametrize(
+    "format_, expected_number",
+    [(None, sqlalchemy.Float), ("float", sqlalchemy.Float)],
+    ids=["None", "float"],
+)
+@pytest.mark.column
+def test_handle_number(format_, expected_number):
+    """
+    GIVEN artifacts and expected SQLALchemy type
+    WHEN _handle_integer is called with the artifacts
+    THEN the expected type is returned.
+    """
+    artifacts = types.ColumnArtifacts("number", format=format_)
+
+    number = column._handle_number(artifacts=artifacts)
+
+    assert number == expected_number

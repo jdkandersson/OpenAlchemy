@@ -212,7 +212,7 @@ def _handle_integer(
     """
     Handle artifacts for an integer type.
 
-    Raises MalformedSchemaError if maxLength is defined.
+    Raises MalformedSchemaError if max length is defined.
 
     Args:
         artifacts: The artifacts for the column.
@@ -223,7 +223,7 @@ def _handle_integer(
     """
     if artifacts.max_length is not None:
         raise exceptions.MalformedSchemaError(
-            "The integer type does not support maxLength."
+            "The integer type does not support a maximum length."
         )
     if artifacts.format is None or artifacts.format == "int32":
         return sqlalchemy.Integer
@@ -253,6 +253,36 @@ def _handle_integer_spec(
         return sqlalchemy.BigInteger
     raise exceptions.FeatureNotImplementedError(
         f"{spec.get('format')} format for integer is not supported."
+    )
+
+
+def _handle_number(
+    *, artifacts: types.ColumnArtifacts
+) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
+    """
+    Handle artifacts for an number type.
+
+    Raises MalformedSchemaError if max length or autoincrement is defined.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy number type of the column.
+
+    """
+    if artifacts.max_length is not None:
+        raise exceptions.MalformedSchemaError(
+            "The number type does not support a maximum length."
+        )
+    if artifacts.autoincrement is not None:
+        raise exceptions.MalformedSchemaError(
+            "The number type does not support a autoincrement."
+        )
+    if artifacts.format is None or artifacts.format == "float":
+        return sqlalchemy.Float
+    raise exceptions.FeatureNotImplementedError(
+        f"{artifacts.format} format for number is not supported."
     )
 
 
