@@ -43,6 +43,7 @@ def check_schema(
         construct the column as a tuple.
 
     """
+    # Retrieve artifacts
     type_ = helpers.peek.type_(schema=schema, schemas={})
     format_ = helpers.peek.format_(schema=schema, schemas={})
     max_length = helpers.peek.max_length(schema=schema, schemas={})
@@ -53,6 +54,7 @@ def check_schema(
     unique = helpers.get_ext_prop(source=schema, name="x-unique")
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
 
+    # Construct schema to return
     return_schema: types.ColumnSchema = {"type": type_}
     if format_ is not None:
         return_schema["format"] = format_
@@ -61,11 +63,13 @@ def check_schema(
     if nullable is not None:
         return_schema["nullable"] = nullable
 
+    # Construct return artifacts
+    nullable_artefact = _calculate_nullable(nullable=nullable, required=required)
     return_artifacts = types.ColumnArtifacts(
         type_,
         format=format_,
         max_length=max_length,
-        nullable=_calculate_nullable(nullable=nullable, required=required),
+        nullable=nullable_artefact,
         primary_key=primary_key,
         autoincrement=autoincrement,
         index=index,
