@@ -213,6 +213,7 @@ def _handle_integer(
     Handle artifacts for an integer type.
 
     Raises MalformedSchemaError if max length is defined.
+    Raise FeatureNotImplementedError is a format that is not supported is defined.
 
     Args:
         artifacts: The artifacts for the column.
@@ -256,13 +257,12 @@ def _handle_integer_spec(
     )
 
 
-def _handle_number(
-    *, artifacts: types.ColumnArtifacts
-) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
+def _handle_number(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Float:
     """
     Handle artifacts for an number type.
 
     Raises MalformedSchemaError if max length or autoincrement is defined.
+    Raise FeatureNotImplementedError is a format that is not supported is defined.
 
     Args:
         artifacts: The artifacts for the column.
@@ -301,6 +301,31 @@ def _handle_number_spec(*, spec: types.Schema) -> sqlalchemy.Float:
         return sqlalchemy.Float
     raise exceptions.FeatureNotImplementedError(
         f"{spec.get('format')} format for number is not supported."
+    )
+
+
+def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
+    """
+    Handle artifacts for an string type.
+
+    Raises MalformedSchemaError if autoincrement is defined.
+    Raise FeatureNotImplementedError is a format that is not supported is defined.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy string type of the column.
+
+    """
+    if artifacts.autoincrement is not None:
+        raise exceptions.MalformedSchemaError(
+            "The string type does not support a autoincrement."
+        )
+    if artifacts.format is None:
+        return sqlalchemy.String(length=artifacts.max_length)
+    raise exceptions.FeatureNotImplementedError(
+        f"{artifacts.format} format for string is not supported."
     )
 
 

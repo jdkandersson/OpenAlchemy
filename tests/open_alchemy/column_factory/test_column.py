@@ -468,14 +468,15 @@ def test_check_schema_required():
     assert artifacts.nullable is False
 
 
+@pytest.mark.parametrize("artifacts_kwargs", [{"max_length": 1}], ids=["max_length"])
 @pytest.mark.column
-def test_handle_integer_invalid_max_length():
+def test_handle_integer_invalid(artifacts_kwargs):
     """
-    GIVEN artifacts with maxLength set
+    GIVEN artifacts with an artifact that is not supported
     WHEN _handle_integer is called with the artifacts
     THEN MalformedSchemaError is raised.
     """
-    artifacts = types.ColumnArtifacts("integer", max_length=1)
+    artifacts = types.ColumnArtifacts("integer", **artifacts_kwargs)
 
     with pytest.raises(exceptions.MalformedSchemaError):
         column._handle_integer(artifacts=artifacts)
@@ -565,3 +566,64 @@ def test_handle_number(format_, expected_number):
     number = column._handle_number(artifacts=artifacts)
 
     assert number == expected_number
+
+
+@pytest.mark.parametrize(
+    "artifacts_kwargs", [{"autoincrement": True}], ids=["autoincrement"]
+)
+@pytest.mark.column
+def test_handle_string_invalid(artifacts_kwargs):
+    """
+    GIVEN artifacts with an artifact that is not supported
+    WHEN _handle_string is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts("string", **artifacts_kwargs)
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column._handle_string(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_handle_string_invalid_format():
+    """
+    GIVEN artifacts with format that is not supported
+    WHEN _handle_string is called with the artifacts
+    THEN FeatureNotImplementedError is raised.
+    """
+    artifacts = types.ColumnArtifacts("string", format="unsupported")
+
+    with pytest.raises(exceptions.FeatureNotImplementedError):
+        column._handle_string(artifacts=artifacts)
+
+
+@pytest.mark.parametrize(
+    "format_, expected_type", [(None, sqlalchemy.String)], ids=["None"]
+)
+@pytest.mark.column
+def test_handle_string(format_, expected_type):
+    """
+    GIVEN artifacts and expected SQLALchemy type
+    WHEN _handle_integer is called with the artifacts
+    THEN the expected type is returned.
+    """
+    artifacts = types.ColumnArtifacts("string", format=format_)
+
+    string = column._handle_string(artifacts=artifacts)
+
+    assert isinstance(string, expected_type)
+
+
+@pytest.mark.column
+def test_handle_string_max_length():
+    """
+    GIVEN artifacts with max_length
+    WHEN _handle_string is called with the artifacts
+    THEN a string with a maximum length is returned.
+    """
+    length = 1
+    artifacts = types.ColumnArtifacts("string", max_length=length)
+
+    string = column._handle_string(artifacts=artifacts)
+
+    assert string.length == length
