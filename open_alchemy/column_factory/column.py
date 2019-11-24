@@ -29,6 +29,53 @@ def handle_column(
     return _spec_to_column(spec=spec, required=required)
 
 
+def check_schema(
+    *, schema: types.Schema, required: typing.Optional[bool] = None
+) -> typing.Tuple[types.ColumnSchema, types.ColumnArtifacts]:
+    """
+    Check schema and transform into consistent schema and get the column artifacts.
+
+    Args:
+        schema: The schema to check.
+
+    Returns:
+        The schema against which to check dictionaries and the artifacts required to
+        construct the column as a tuple.
+
+    """
+    type_ = helpers.peek.type_(schema=schema, schemas={})
+    format_ = helpers.peek.format_(schema=schema, schemas={})
+    max_length = helpers.peek.max_length(schema=schema, schemas={})
+    nullable = helpers.peek.nullable(schema=schema, schemas={})
+    primary_key = helpers.get_ext_prop(source=schema, name="x-primary-key")
+    autoincrement = helpers.get_ext_prop(source=schema, name="x-autoincrement")
+    index = helpers.get_ext_prop(source=schema, name="x-index")
+    unique = helpers.get_ext_prop(source=schema, name="x-unique")
+    foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
+
+    return_schema: types.ColumnSchema = {"type": type_}
+    if format_ is not None:
+        return_schema["format"] = format_
+    if max_length is not None:
+        return_schema["maxLength"] = max_length
+    if nullable is not None:
+        return_schema["nullable"] = nullable
+
+    return_artifacts = types.ColumnArtifacts(
+        type_,
+        format=format_,
+        max_length=max_length,
+        nullable=_calculate_nullable(nullable=nullable, required=required),
+        primary_key=primary_key,
+        autoincrement=autoincrement,
+        index=index,
+        unique=unique,
+        foreign_key=foreign_key,
+    )
+
+    return return_schema, return_artifacts
+
+
 def _spec_to_column(
     *, spec: types.Schema, required: typing.Optional[bool] = None
 ) -> sqlalchemy.Column:
@@ -48,7 +95,9 @@ def _spec_to_column(
     kwargs: types.Schema = {}
 
     # Calculate column modifiers
-    kwargs["nullable"] = _calculate_nullable(spec=spec, required=required)
+    kwargs["nullable"] = _calculate_nullable(
+        nullable=spec.get("nullable", None), required=required
+    )
     if helpers.get_ext_prop(source=spec, name="x-primary-key"):
         kwargs["primary_key"] = True
     autoincrement = helpers.get_ext_prop(source=spec, name="x-autoincrement")
@@ -71,7 +120,9 @@ def _spec_to_column(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _calculate_nullable(*, spec: types.Schema, required: typing.Optional[bool]) -> bool:
+def _calculate_nullable(
+    *, nullable: typing.Optional[bool], required: typing.Optional[bool]
+) -> bool:
     """
     Calculate the value of the nullable field.
 
@@ -92,14 +143,13 @@ def _calculate_nullable(*, spec: types.Schema, required: typing.Optional[bool]) 
     is returned unless required is True.
 
     Args:
-        spec: The schema for the column.
+        nullable: Whether the property is nullable.
         required: Whether the property is required.
 
     Returns:
         The nullable value for the column.
 
     """
-    nullable = spec.get("nullable")
     if nullable is None:
         if required:
             return False

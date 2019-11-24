@@ -1,12 +1,14 @@
 """Tests for the column factory."""
 # pylint: disable=protected-access
 
+import copy
 import typing
 
 import pytest
 import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import types
 from open_alchemy.column_factory import column
 
 
@@ -307,3 +309,170 @@ def test_integration():
     returned_column = column.handle_column(spec={"type": "number"})
 
     assert isinstance(returned_column, sqlalchemy.Column)
+
+
+@pytest.mark.parametrize(
+    "schema, expected_exception",
+    [
+        ({}, exceptions.TypeMissingError),
+        ({"type": 1}, exceptions.TypeMissingError),
+        ({"type": "type 1", "format": 1}, exceptions.MalformedSchemaError),
+        ({"type": "type 1", "maxLength": "1"}, exceptions.MalformedSchemaError),
+        ({"type": "type 1", "nullable": "True"}, exceptions.MalformedSchemaError),
+        (
+            {"type": "type 1", "x-primary-key": "True"},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "type 1", "x-autoincrement": "True"},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "type 1", "x-index": "True"},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "type 1", "x-unique": "True"},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "type 1", "x-foreign-key": True},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+    ],
+    ids=[
+        "type missing",
+        "type not string",
+        "format not string",
+        "maxLength not integer",
+        "nullable not boolean",
+        "primary key not boolean",
+        "autoincrement not boolean",
+        "index not boolean",
+        "unique not boolean",
+        "foreign key not string",
+    ],
+)
+@pytest.mark.column
+def test_check_schema_invalid(schema, expected_exception):
+    """
+    GIVEN invalid schema
+    WHEN check_schema is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(expected_exception):
+        column.check_schema(schema=schema)
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [
+        {"type": "type 1"},
+        {"type": "type 1", "format": "format 1"},
+        {"type": "type 1", "maxLength": 1},
+        {"type": "type 1", "nullable": True},
+    ],
+    ids=["type only", "type with format", "type with maxLength", "type with nullable"],
+)
+@pytest.mark.column
+def test_check_schema_schema(schema):
+    """
+    GIVEN schema
+    WHEN check_schema is called with the schema
+    THEN the schema is returned.
+    """
+    returned_schema, _ = column.check_schema(schema=copy.deepcopy(schema))
+
+    assert returned_schema == schema
+
+
+@pytest.mark.column
+def test_check_schema_schema_other():
+    """
+    GIVEN schema with an extra key
+    WHEN check_schema is called with the schema
+    THEN the schema without the extra key is returned.
+    """
+    schema = {"type": "type 1", "extra_key": "extra value"}
+
+    returned_schema, _ = column.check_schema(schema=copy.deepcopy(schema))
+
+    assert returned_schema == {"type": "type 1"}
+
+
+@pytest.mark.parametrize(
+    "schema, expected_artifacts",
+    [
+        ({"type": "type 1"}, types.ColumnArtifacts("type 1")),
+        (
+            {"type": "type 1", "format": "format 1"},
+            types.ColumnArtifacts("type 1", format="format 1"),
+        ),
+        (
+            {"type": "type 1", "maxLength": 1},
+            types.ColumnArtifacts("type 1", max_length=1),
+        ),
+        (
+            {"type": "type 1", "nullable": True},
+            types.ColumnArtifacts("type 1", nullable=True),
+        ),
+        (
+            {"type": "type 1", "x-primary-key": True},
+            types.ColumnArtifacts("type 1", primary_key=True),
+        ),
+        (
+            {"type": "type 1", "x-autoincrement": True},
+            types.ColumnArtifacts("type 1", autoincrement=True),
+        ),
+        (
+            {"type": "type 1", "x-index": True},
+            types.ColumnArtifacts("type 1", index=True),
+        ),
+        (
+            {"type": "type 1", "x-unique": True},
+            types.ColumnArtifacts("type 1", unique=True),
+        ),
+        (
+            {"type": "type 1", "x-foreign-key": "table.column"},
+            types.ColumnArtifacts("type 1", foreign_key="table.column"),
+        ),
+    ],
+    ids=[
+        "type only",
+        "type with format",
+        "type with maxLength",
+        "type with nullable",
+        "type with primary key",
+        "type with autoincrement",
+        "type with index",
+        "type with unique",
+        "type with foreign key",
+    ],
+)
+@pytest.mark.column
+def test_check_schema_artifacts(schema, expected_artifacts):
+    """
+    GIVEN schema and expected artifacts
+    WHEN check_schema is called with the schema
+    THEN the expected artifacts are returned.
+    """
+    _, artifacts = column.check_schema(schema=schema)
+
+    assert artifacts == expected_artifacts
+
+
+@pytest.mark.column
+def test_check_schema_required():
+    """
+    GIVEN schema
+    WHEN check_schema is called with the schema and required True
+    THEN nullable is False.
+    """
+    schema = {"type": "type 1"}
+
+    returned_schema, artifacts = column.check_schema(
+        schema=copy.deepcopy(schema), required=True
+    )
+
+    assert returned_schema == schema
+    assert artifacts.nullable is False
