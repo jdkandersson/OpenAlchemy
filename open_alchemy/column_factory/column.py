@@ -11,7 +11,7 @@ from open_alchemy import types
 
 def handle_column(
     *,
-    spec: types.Schema,
+    schema: types.Schema,
     schemas: typing.Optional[types.Schemas] = None,
     required: typing.Optional[bool] = None,
 ) -> sqlalchemy.Column:
@@ -21,7 +21,7 @@ def handle_column(
     Assume any $ref and allOf has already been resolved.
 
     Args:
-        spec: The schema for the column.
+        schema: The schema for the column.
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
 
@@ -31,8 +31,8 @@ def handle_column(
     """
     if schemas is None:
         schemas = {}
-    spec = helpers.prepare_schema(schema=spec, schemas=schemas)
-    column_schema, artifacts = check_schema(schema=spec, required=required)
+    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    column_schema, artifacts = check_schema(schema=schema, required=required)
     column = construct_column(artifacts=artifacts)
     return column_schema, column
 

@@ -68,6 +68,6 @@ def column_factory(
 
     # Handle columns
     spec, spec_column = column.handle_column(
-        spec=spec, schemas=schemas, required=required
+        schema=spec, schemas=schemas, required=required
     )
     return ([(logical_name, spec_column)], spec)

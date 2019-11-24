@@ -48,23 +48,6 @@ def test_calculate_nullable(required, nullable, expected_result):
     assert result == expected_result
 
 
-@pytest.mark.column
-def test_integration():
-    """
-    GIVEN schema and logical name
-    WHEN handle_column is called with the schema
-    THEN the logical name and an instance of SQLAlchemy Column is returned.
-    """
-    returned_schema, returned_column = column.handle_column(
-        spec={"$ref": "#/components/schemas/Column"},
-        schemas={"Column": {"type": "number"}},
-    )
-
-    assert isinstance(returned_column, sqlalchemy.Column)
-    assert isinstance(returned_column.type, sqlalchemy.Float)
-    assert returned_schema == {"type": "number"}
-
-
 @pytest.mark.parametrize(
     "schema, expected_exception",
     [
@@ -595,3 +578,20 @@ def test_handle_boolean():
     boolean = column._handle_boolean(artifacts=artifacts)
 
     assert boolean == sqlalchemy.Boolean
+
+
+@pytest.mark.column
+def test_integration():
+    """
+    GIVEN schema and logical name
+    WHEN handle_column is called with the schema
+    THEN the logical name and an instance of SQLAlchemy Column is returned.
+    """
+    returned_schema, returned_column = column.handle_column(
+        schema={"$ref": "#/components/schemas/Column"},
+        schemas={"Column": {"type": "number"}},
+    )
+
+    assert isinstance(returned_column, sqlalchemy.Column)
+    assert isinstance(returned_column.type, sqlalchemy.Float)
+    assert returned_schema == {"type": "number"}
