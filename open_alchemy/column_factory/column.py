@@ -185,11 +185,11 @@ def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine
     # Determining the type
     type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
     if spec_type == "integer":
-        type_ = _handle_integer(spec=spec)
+        type_ = _handle_integer_spec(spec=spec)
     elif spec_type == "number":
-        type_ = _handle_number(spec=spec)
+        type_ = _handle_number_spec(spec=spec)
     elif spec_type == "string":
-        type_ = _handle_string(spec=spec)
+        type_ = _handle_string_spec(spec=spec)
     elif spec_type == "boolean":
         type_ = sqlalchemy.Boolean
 
@@ -200,7 +200,7 @@ def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine
     return type_
 
 
-def _handle_integer(
+def _handle_integer_spec(
     *, spec: types.Schema
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
     """
@@ -222,7 +222,7 @@ def _handle_integer(
     )
 
 
-def _handle_number(*, spec: types.Schema) -> sqlalchemy.Float:
+def _handle_number_spec(*, spec: types.Schema) -> sqlalchemy.Float:
     """
     Determine the type of number to use for the schema.
 
@@ -240,7 +240,7 @@ def _handle_number(*, spec: types.Schema) -> sqlalchemy.Float:
     )
 
 
-def _handle_string(*, spec: types.Schema) -> sqlalchemy.String:
+def _handle_string_spec(*, spec: types.Schema) -> sqlalchemy.String:
     """
     Determine the setup of the string to use for the schema.
 
