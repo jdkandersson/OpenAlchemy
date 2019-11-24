@@ -275,11 +275,12 @@ Using *x-secondary* is equivalent to the following traditional *models.py*:
     :language: python
     :linenos:
 
-Many to many relationships support *x-backref* and custom foreign keys. For
-back references see :ref:`many to one backref <backref>` and for custom foreign
-keys see :ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
-*x-uselist* is not supported as it does not make sense to turn a many to many
-relationship defined as an OpenAPI array into a many to one relationship.
+Many to many relationships support *x-backref*, see
+:ref:`many to one backref <backref>`. Note that *x-uselist* is not supported as
+it does not make sense to turn a many to many relationship defined as an
+OpenAPI array into a many to one relationship. Also, because the association
+table is defined based on the primary key properties, custom foreign keys are
+not supported.
 
 .. _child-parent-reference:
 
