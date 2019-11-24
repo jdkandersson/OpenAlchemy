@@ -23,12 +23,36 @@ def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
         The type of the schema.
 
     """
-    value = _peek_key(schema=schema, schemas=schemas, key="type")
+    value = peek_key(schema=schema, schemas=schemas, key="type")
     if value is None:
         raise exceptions.TypeMissingError("Every property requires a type.")
     if not isinstance(value, str):
         raise exceptions.TypeMissingError(
             "A type property value must be of type string."
+        )
+    return value
+
+
+def nullable(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the nullable property from a property schema.
+
+    Raises MalformedSchemaError if the nullable value is not a boolean.
+
+    Args:
+        schema: The schema got get the nullable from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The nullable value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="nullable")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "A nullable value must be of type boolean."
         )
     return value
 
@@ -47,7 +71,7 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The format value or None if it was not found.
 
     """
-    value = _peek_key(schema=schema, schemas=schemas, key="format")
+    value = peek_key(schema=schema, schemas=schemas, key="format")
     if value is None:
         return None
     if not isinstance(value, str):
@@ -69,7 +93,7 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
         The maxLength value or None if it was not found.
 
     """
-    value = _peek_key(schema=schema, schemas=schemas, key="maxLength")
+    value = peek_key(schema=schema, schemas=schemas, key="maxLength")
     if value is None:
         return None
     if not isinstance(value, int):
@@ -93,7 +117,7 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
         Whether the schema is readOnly.
 
     """
-    value = _peek_key(schema=schema, schemas=schemas, key="readOnly")
+    value = peek_key(schema=schema, schemas=schemas, key="readOnly")
     if value is None:
         return False
     if not isinstance(value, bool):
@@ -117,7 +141,7 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
         Whether the schema is for a primary key property.
 
     """
-    value = _peek_key(schema=schema, schemas=schemas, key="x-primary-key")
+    value = peek_key(schema=schema, schemas=schemas, key="x-primary-key")
     if value is None:
         return False
     if not isinstance(value, bool):
@@ -127,7 +151,7 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     return value
 
 
-def _peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
+def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
     """Recursive type lookup."""
     # Base case, look for type key
     value = schema.get(key)
@@ -138,13 +162,13 @@ def _peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typi
     ref = schema.get("$ref")
     if ref is not None:
         _, ref_schema = get_ref(ref=ref, schemas=schemas)
-        return _peek_key(schema=ref_schema, schemas=schemas, key=key)
+        return peek_key(schema=ref_schema, schemas=schemas, key=key)
 
     # Recursive case, look for allOf
     all_of = schema.get("allOf")
     if all_of is not None:
         for sub_schema in all_of:
-            value = _peek_key(schema=sub_schema, schemas=schemas, key=key)
+            value = peek_key(schema=sub_schema, schemas=schemas, key=key)
             if value is not None:
                 return value
 

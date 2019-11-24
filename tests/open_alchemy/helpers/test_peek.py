@@ -38,6 +38,36 @@ def test_type():
 
 
 @pytest.mark.helper
+def test_nullable_wrong_type():
+    """
+    GIVEN schema with nullable defined as a string
+    WHEN nullable is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"nullable": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.nullable(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_nullable",
+    [({}, None), ({"nullable": True}, True), ({"nullable": False}, False)],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_nullable(schema, expected_nullable):
+    """
+    GIVEN schema and expected nullable
+    WHEN nullable is called with the schema
+    THEN the expected nullable is returned.
+    """
+    returned_nullable = helpers.peek.nullable(schema=schema, schemas={})
+
+    assert returned_nullable == expected_nullable
+
+
+@pytest.mark.helper
 def test_format_wrong_type():
     """
     GIVEN schema with format defined as a boolean
@@ -201,10 +231,10 @@ def test_primary_key(schema, expected_primary_key):
 def test_peek_key(schema, schemas, expected_value):
     """
     GIVEN schema, schemas and expected value
-    WHEN _peek_key is called with the schema and schemas
+    WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
     # pylint: disable=protected-access
-    returned_type = helpers.peek._peek_key(schema=schema, schemas=schemas, key="key")
+    returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
 
     assert returned_type == expected_value
