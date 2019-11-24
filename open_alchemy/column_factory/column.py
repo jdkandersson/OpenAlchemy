@@ -26,7 +26,8 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    return _spec_to_column(spec=spec, required=required)
+    _column_schema, artifacts = check_schema(schema=spec, required=required)
+    return construct_column(artifacts=artifacts)
 
 
 def check_schema(
@@ -125,7 +126,7 @@ def _calculate_nullable(
     return False
 
 
-def _construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
+def construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
     """
     Construct column from artifacts.
 
@@ -149,50 +150,6 @@ def _construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
         index=artifacts.index,
         unique=artifacts.unique,
     )
-
-
-def _spec_to_column(
-    *, spec: types.Schema, required: typing.Optional[bool] = None
-) -> sqlalchemy.Column:
-    """
-    Convert specification to a SQLAlchemy column.
-
-    Args:
-        spec: The schema for the column.
-        required: Whether the object property is required.
-
-    Returns:
-        The SQLAlchemy column based on the schema.
-
-    """
-    # Keep track of column arguments
-    args: typing.Tuple[typing.Any, ...] = ()
-    kwargs: types.Schema = {}
-
-    # Calculate column modifiers
-    kwargs["nullable"] = _calculate_nullable(
-        nullable=spec.get("nullable", None), required=required
-    )
-    if helpers.get_ext_prop(source=spec, name="x-primary-key"):
-        kwargs["primary_key"] = True
-    autoincrement = helpers.get_ext_prop(source=spec, name="x-autoincrement")
-    if autoincrement is not None:
-        if autoincrement:
-            kwargs["autoincrement"] = True
-        else:
-            kwargs["autoincrement"] = False
-    if helpers.get_ext_prop(source=spec, name="x-index"):
-        kwargs["index"] = True
-    if helpers.get_ext_prop(source=spec, name="x-unique"):
-        kwargs["unique"] = True
-    foreign_key = helpers.get_ext_prop(source=spec, name="x-foreign-key")
-    if foreign_key:
-        args = (*args, sqlalchemy.ForeignKey(foreign_key))
-
-    # Calculating type of column
-    type_ = _determine_type_spec(spec=spec)
-
-    return sqlalchemy.Column(type_, *args, **kwargs)
 
 
 def _determine_type(
@@ -228,43 +185,6 @@ def _determine_type(
     return type_
 
 
-def _determine_type_spec(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine:
-    """
-    Determine the type for a specification.
-
-    If no type is found, raises TypeMissingError. If the type is found but is not
-    handled, raises FeatureNotImplementedError.
-
-    Args:
-        spec: The specification to determine the type for.
-
-    Returns:
-        The type for the specification.
-
-    """
-    # Checking for type
-    spec_type = spec.get("type")
-    if spec_type is None:
-        raise exceptions.TypeMissingError("Every property requires a type.")
-
-    # Determining the type
-    type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
-    if spec_type == "integer":
-        type_ = _handle_integer_spec(spec=spec)
-    elif spec_type == "number":
-        type_ = _handle_number_spec(spec=spec)
-    elif spec_type == "string":
-        type_ = _handle_string_spec(spec=spec)
-    elif spec_type == "boolean":
-        type_ = sqlalchemy.Boolean
-
-    if type_ is None:
-        raise exceptions.FeatureNotImplementedError(
-            f"{spec['type']} has not been implemented"
-        )
-    return type_
-
-
 def _handle_integer(
     *, artifacts: types.ColumnArtifacts
 ) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
@@ -291,28 +211,6 @@ def _handle_integer(
         return sqlalchemy.BigInteger
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.format} format for integer is not supported."
-    )
-
-
-def _handle_integer_spec(
-    *, spec: types.Schema
-) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
-    """
-    Determine the type of integer to use for the schema.
-
-    Args:
-        spec: The schema for the integer column.
-
-    Returns:
-        Integer or BigInteger depending on the format.
-
-    """
-    if spec.get("format", "int32") == "int32":
-        return sqlalchemy.Integer
-    if spec.get("format") == "int64":
-        return sqlalchemy.BigInteger
-    raise exceptions.FeatureNotImplementedError(
-        f"{spec.get('format')} format for integer is not supported."
     )
 
 
@@ -345,24 +243,6 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Float:
     )
 
 
-def _handle_number_spec(*, spec: types.Schema) -> sqlalchemy.Float:
-    """
-    Determine the type of number to use for the schema.
-
-    Args:
-        spec: The schema for the number column.
-
-    Returns:
-        Float.
-
-    """
-    if spec.get("format", "float") == "float":
-        return sqlalchemy.Float
-    raise exceptions.FeatureNotImplementedError(
-        f"{spec.get('format')} format for number is not supported."
-    )
-
-
 def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
     """
     Handle artifacts for an string type.
@@ -388,20 +268,6 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
     if artifacts.max_length is None:
         return sqlalchemy.String
     return sqlalchemy.String(length=artifacts.max_length)
-
-
-def _handle_string_spec(*, spec: types.Schema) -> sqlalchemy.String:
-    """
-    Determine the setup of the string to use for the schema.
-
-    Args:
-        spec: The schema for the string column.
-
-    Returns:
-        String.
-
-    """
-    return sqlalchemy.String(length=spec.get("maxLength"))
 
 
 def _handle_boolean(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Boolean:

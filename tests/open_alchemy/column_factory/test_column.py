@@ -11,114 +11,6 @@ from open_alchemy import types
 from open_alchemy.column_factory import column
 
 
-@pytest.mark.column
-def test_spec_to_column_no_type():
-    """
-    GIVEN column schema without type
-    WHEN _spec_to_column is called with the schema
-    THEN TypeMissingError is raised.
-    """
-    with pytest.raises(exceptions.TypeMissingError):
-        column._spec_to_column(spec={})
-
-
-@pytest.mark.column
-def test_spec_to_column_type_unsupported():
-    """
-    GIVEN column schema with type that has not been implemented
-    WHEN _spec_to_column is called with the schema
-    THEN FeatureNotImplementedError is raised.
-    """
-    with pytest.raises(exceptions.FeatureNotImplementedError):
-        column._spec_to_column(spec={"type": "unsupported"})
-
-
-@pytest.mark.column
-def test_spec_to_column_column_return():
-    """
-    GIVEN valid schema
-    WHEN _spec_to_column is called with the schema
-    THEN an instance of SQLAlchemy Column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "number"})
-
-    assert isinstance(returned_column, sqlalchemy.Column)
-
-
-@pytest.mark.parametrize("primary_key", [True, False], ids=["set", "reset"])
-@pytest.mark.column
-def test_spec_to_column_primary_key(primary_key: bool):
-    """
-    GIVEN valid schema and the value of the primary key property
-    WHEN _spec_to_column is called with the schema
-    THEN the returned SQLAlchemy column primary_key property is set to the input.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "number", "x-primary-key": primary_key}
-    )
-
-    assert returned_column.primary_key == primary_key
-
-
-@pytest.mark.parametrize("autoincrement", [True, False], ids=["set", "reset"])
-@pytest.mark.column
-def test_spec_to_column_autoincrement(autoincrement: bool):
-    """
-    GIVEN valid schema and the value of the autoincrement property
-    WHEN _spec_to_column is called with the schema
-    THEN the returned SQLAlchemy column autoincrement property is set to the input.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "number", "x-autoincrement": autoincrement}
-    )
-
-    assert returned_column.autoincrement == autoincrement
-
-
-@pytest.mark.parametrize("index", [True, None], ids=["set", "reset"])
-@pytest.mark.column
-def test_spec_to_column_index(index: bool):
-    """
-    GIVEN valid schema and the value of the index property
-    WHEN _spec_to_column is called with the schema
-    THEN the returned SQLAlchemy column index property is set to the input.
-    """
-    returned_column = column._spec_to_column(spec={"type": "number", "x-index": index})
-
-    assert returned_column.index == index
-
-
-@pytest.mark.parametrize("unique", [True, None], ids=["set", "reset"])
-@pytest.mark.column
-def test_spec_to_column_unique(unique: bool):
-    """
-    GIVEN valid schema and the value of the unique property
-    WHEN _spec_to_column is called with the schema
-    THEN the returned SQLAlchemy column unique property is set to the input.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "number", "x-unique": unique}
-    )
-
-    assert returned_column.unique == unique
-
-
-@pytest.mark.column
-def test_spec_to_column_foreign_key():
-    """
-    GIVEN valid schema which has x-foreign-key set
-    WHEN _spec_to_column is called with the schema
-    THEN the returned SQLAlchemy column foreign key property is set.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "number", "x-foreign-key": "foreign.key"}
-    )
-
-    assert len(returned_column.foreign_keys) == 1
-    foreign_key = returned_column.foreign_keys.pop()
-    assert str(foreign_key) == "ForeignKey('foreign.key')"
-
-
 @pytest.mark.parametrize(
     "required, nullable, expected_result",
     [
@@ -154,139 +46,6 @@ def test__calculate_nullable(required, nullable, expected_result):
     result = column._calculate_nullable(nullable=nullable, required=required)
 
     assert result == expected_result
-
-
-@pytest.mark.column
-def test_spec_to_column_number():
-    """
-    GIVEN schema with number type
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy Float column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "number"})
-
-    assert isinstance(returned_column.type, sqlalchemy.Float)
-
-
-@pytest.mark.column
-def test_spec_to_column_number_float():
-    """
-    GIVEN schema with number type and float format
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy Float column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "number", "format": "float"})
-
-    assert isinstance(returned_column.type, sqlalchemy.Float)
-
-
-@pytest.mark.column
-def test_spec_to_column_number_double():
-    """
-    GIVEN schema with number type and double format
-    WHEN _spec_to_column is called with the schema
-    THEN FeatureNotImplementedError is raised.
-    """
-    with pytest.raises(exceptions.FeatureNotImplementedError):
-        column._spec_to_column(spec={"type": "number", "format": "double"})
-
-
-@pytest.mark.column
-def test_spec_to_column_number_unsupported_format():
-    """
-    GIVEN schema with number type and format that has not been implemented
-    WHEN _spec_to_column is called with the schema
-    THEN FeatureNotImplementedError is raised.
-    """
-    with pytest.raises(exceptions.FeatureNotImplementedError):
-        column._spec_to_column(spec={"type": "number", "format": "unsupported"})
-
-
-@pytest.mark.column
-def test_spec_to_column_integer():
-    """
-    GIVEN schema with integer type
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy Integer column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "integer"})
-
-    assert isinstance(returned_column.type, sqlalchemy.Integer)
-
-
-@pytest.mark.column
-def test_spec_to_column_integer_int32():
-    """
-    GIVEN schema with integer type and int32 format
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy Integer column is returned.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "integer", "format": "int32"}
-    )
-
-    assert isinstance(returned_column.type, sqlalchemy.Integer)
-
-
-@pytest.mark.column
-def test_spec_to_column_integer_int64():
-    """
-    GIVEN schema with integer type and int64 format
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy BigInteger column is returned.
-    """
-    returned_column = column._spec_to_column(
-        spec={"type": "integer", "format": "int64"}
-    )
-
-    assert isinstance(returned_column.type, sqlalchemy.BigInteger)
-
-
-@pytest.mark.column
-def test_spec_to_column_integer_unsupported_format():
-    """
-    GIVEN schema with integer type and unsupported format
-    WHEN _spec_to_column is called with the schema
-    THEN FeatureNotImplementedError is raised.
-    """
-    with pytest.raises(exceptions.FeatureNotImplementedError):
-        column._spec_to_column(spec={"type": "integer", "format": "unsupported"})
-
-
-@pytest.mark.column
-def test_spec_to_column_string():
-    """
-    GIVEN schema with string type
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy String column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "string"})
-
-    assert isinstance(returned_column.type, sqlalchemy.String)
-
-
-@pytest.mark.column
-def test_spec_to_column_string_length():
-    """
-    GIVEN schema with string type and maxLength property
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy String column is returned with the length set to the maxLength.
-    """
-    returned_column = column._spec_to_column(spec={"type": "string", "maxLength": 1})
-
-    assert returned_column.type.length == 1
-
-
-@pytest.mark.column
-def test_spec_to_column_boolean():
-    """
-    GIVEN schema with boolean type
-    WHEN _spec_to_column is called with the schema
-    THEN SQLAlchemy boolean column is returned.
-    """
-    returned_column = column._spec_to_column(spec={"type": "boolean"})
-
-    assert isinstance(returned_column.type, sqlalchemy.Boolean)
 
 
 @pytest.mark.column
@@ -482,12 +241,12 @@ def test_check_schema_required():
 def test_construct_column(type_, expected_type):
     """
     GIVEN artifacts for a type
-    WHEN _construct_column is called with the artifacts
+    WHEN construct_column is called with the artifacts
     THEN a column with the expected type is returned.
     """
     artifacts = types.ColumnArtifacts(type_)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert isinstance(returned_column, sqlalchemy.Column)
     assert isinstance(returned_column.type, expected_type)
@@ -499,12 +258,12 @@ def test_construct_column(type_, expected_type):
 def test_construct_column_foreign_key():
     """
     GIVEN artifacts with foreign key
-    WHEN _construct_column is called with the artifacts
+    WHEN construct_column is called with the artifacts
     THEN a column with a foreign key is returned.
     """
     artifacts = types.ColumnArtifacts("integer", foreign_key="table.column")
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert len(returned_column.foreign_keys) == 1
     foreign_key = returned_column.foreign_keys.pop()
@@ -516,12 +275,12 @@ def test_construct_column_foreign_key():
 def test_construct_column_nullable(nullable):
     """
     GIVEN value for nullable
-    WHEN _construct_column is called with the artifacts with nullable
+    WHEN construct_column is called with the artifacts with nullable
     THEN the returned column nullable property is equal to nullable.
     """
     artifacts = types.ColumnArtifacts("integer", nullable=nullable)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert returned_column.nullable == nullable
 
@@ -533,12 +292,12 @@ def test_construct_column_nullable(nullable):
 def test_construct_column_primary_key(primary_key):
     """
     GIVEN value for primary_key
-    WHEN _construct_column is called with the artifacts with primary_key
+    WHEN construct_column is called with the artifacts with primary_key
     THEN the returned column primary_key property is equal to primary_key.
     """
     artifacts = types.ColumnArtifacts("integer", primary_key=primary_key)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert returned_column.primary_key == primary_key
 
@@ -550,12 +309,12 @@ def test_construct_column_primary_key(primary_key):
 def test_construct_column_autoincrement(autoincrement):
     """
     GIVEN value for autoincrement
-    WHEN _construct_column is called with the artifacts with autoincrement
+    WHEN construct_column is called with the artifacts with autoincrement
     THEN the returned column autoincrement property is equal to autoincrement.
     """
     artifacts = types.ColumnArtifacts("integer", autoincrement=autoincrement)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert returned_column.autoincrement == autoincrement
 
@@ -565,12 +324,12 @@ def test_construct_column_autoincrement(autoincrement):
 def test_construct_column_index(index):
     """
     GIVEN value for index
-    WHEN _construct_column is called with the artifacts with index
+    WHEN construct_column is called with the artifacts with index
     THEN the returned column index property is equal to index.
     """
     artifacts = types.ColumnArtifacts("integer", index=index)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert returned_column.index == index
 
@@ -580,12 +339,12 @@ def test_construct_column_index(index):
 def test_construct_column_unique(unique):
     """
     GIVEN value for unique
-    WHEN _construct_column is called with the artifacts with unique
+    WHEN construct_column is called with the artifacts with unique
     THEN the returned column unique property is equal to unique.
     """
     artifacts = types.ColumnArtifacts("integer", unique=unique)
 
-    returned_column = column._construct_column(artifacts=artifacts)
+    returned_column = column.construct_column(artifacts=artifacts)
 
     assert returned_column.unique == unique
 

@@ -863,7 +863,7 @@ class TestManyToManyColumn:
             ("number", None, None, sqlalchemy.Float),
             ("number", "float", None, sqlalchemy.Float),
             ("string", None, None, sqlalchemy.String),
-            ("string", None, "10", sqlalchemy.String),
+            ("string", None, 10, sqlalchemy.String),
             ("boolean", None, None, sqlalchemy.Boolean),
         ],
         ids=[
