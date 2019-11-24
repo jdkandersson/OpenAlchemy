@@ -253,7 +253,4 @@ class TestPrepareSchema:
         """
         returned_schema = read_only._prepare_schema(schema=schema, schemas=schemas)
 
-        print(returned_schema)
-        print(expected_schema)
-
         assert returned_schema == expected_schema

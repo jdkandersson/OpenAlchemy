@@ -430,8 +430,6 @@ def test_schema(schemas, expected_schema):
         name="Schema", base=mock.MagicMock, schemas=schemas
     )
 
-    print(model._schema)
-    print(expected_schema)
     assert model._schema == expected_schema
 
 
