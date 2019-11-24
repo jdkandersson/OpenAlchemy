@@ -155,7 +155,7 @@ def _set_foreign_key(
     ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
         # Construct foreign key
-        fk_column = column.handle_column(spec=fk_spec)
+        _, fk_column = column.handle_column(spec=fk_spec)
         setattr(ref_model, fk_logical_name, fk_column)
         return
 
@@ -285,7 +285,7 @@ def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy
         spec["format"] = artifacts.format_
     if artifacts.max_length is not None:
         spec["maxLength"] = artifacts.max_length
-    return_column = column.handle_column(spec=spec)
+    _, return_column = column.handle_column(spec=spec)
     return_column.name = f"{artifacts.tablename}_{artifacts.column_name}"
     return return_column
 

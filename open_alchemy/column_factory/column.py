@@ -10,7 +10,10 @@ from open_alchemy import types
 
 
 def handle_column(
-    *, spec: types.Schema, required: typing.Optional[bool] = None
+    *,
+    spec: types.Schema,
+    schemas: typing.Optional[types.Schemas] = None,
+    required: typing.Optional[bool] = None,
 ) -> sqlalchemy.Column:
     """
     Generate column based on OpenAPI schema property.
@@ -26,8 +29,12 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    _column_schema, artifacts = check_schema(schema=spec, required=required)
-    return construct_column(artifacts=artifacts)
+    if schemas is None:
+        schemas = {}
+    spec = helpers.prepare_schema(schema=spec, schemas=schemas)
+    column_schema, artifacts = check_schema(schema=spec, required=required)
+    column = construct_column(artifacts=artifacts)
+    return column_schema, column
 
 
 def check_schema(
@@ -60,6 +67,7 @@ def check_schema(
     index = helpers.get_ext_prop(source=schema, name="x-index")
     unique = helpers.get_ext_prop(source=schema, name="x-unique")
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
+    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
 
     # Construct schema to return
     return_schema: types.ColumnSchema = {"type": type_}
@@ -69,6 +77,8 @@ def check_schema(
         return_schema["maxLength"] = max_length
     if nullable is not None:
         return_schema["nullable"] = nullable
+    if dict_ignore is not None:
+        return_schema["x-dict-ignore"] = dict_ignore
 
     # Construct return artifacts
     nullable_artefact = _calculate_nullable(nullable=nullable, required=required)

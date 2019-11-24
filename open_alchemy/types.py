@@ -38,19 +38,17 @@ IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
 
 
-# Expected format of a column schema
-class _ColumnSchemaBase(TypedDict):
-    """Base class for column schema."""
+_ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ColumnSchemaBase",
+    {"x-dict-ignore": bool, "format": str, "maxLength": int, "nullable": bool},
+    total=False,
+)
 
-    type: str
 
-
-class ColumnSchema(_ColumnSchemaBase, total=False):
+class ColumnSchema(_ColumnSchemaBase, total=True):
     """Schema for column definitions."""
 
-    format: str
-    maxLength: int
-    nullable: bool
+    type: str
 
 
 @dataclasses.dataclass

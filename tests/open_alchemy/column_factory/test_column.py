@@ -37,7 +37,7 @@ from open_alchemy.column_factory import column
     ],
 )
 @pytest.mark.column
-def test__calculate_nullable(required, nullable, expected_result):
+def test_calculate_nullable(required, nullable, expected_result):
     """
     GIVEN required, nullable and expected result
     WHEN _calculate_nullable is called with nullable and required
@@ -55,9 +55,14 @@ def test_integration():
     WHEN handle_column is called with the schema
     THEN the logical name and an instance of SQLAlchemy Column is returned.
     """
-    returned_column = column.handle_column(spec={"type": "number"})
+    returned_schema, returned_column = column.handle_column(
+        spec={"$ref": "#/components/schemas/Column"},
+        schemas={"Column": {"type": "number"}},
+    )
 
     assert isinstance(returned_column, sqlalchemy.Column)
+    assert isinstance(returned_column.type, sqlalchemy.Float)
+    assert returned_schema == {"type": "number"}
 
 
 @pytest.mark.parametrize(
@@ -88,6 +93,10 @@ def test_integration():
             {"type": "type 1", "x-foreign-key": True},
             exceptions.MalformedExtensionPropertyError,
         ),
+        (
+            {"type": "type 1", "x-dict-ignore": "True"},
+            exceptions.MalformedExtensionPropertyError,
+        ),
     ],
     ids=[
         "type missing",
@@ -100,6 +109,7 @@ def test_integration():
         "index not boolean",
         "unique not boolean",
         "foreign key not string",
+        "x-dict-ignore not boolean",
     ],
 )
 @pytest.mark.column
@@ -120,8 +130,15 @@ def test_check_schema_invalid(schema, expected_exception):
         {"type": "type 1", "format": "format 1"},
         {"type": "type 1", "maxLength": 1},
         {"type": "type 1", "nullable": True},
+        {"type": "type 1", "x-dict-ignore": True},
     ],
-    ids=["type only", "type with format", "type with maxLength", "type with nullable"],
+    ids=[
+        "type only",
+        "type with format",
+        "type with maxLength",
+        "type with nullable",
+        "type with x-dict-ignore",
+    ],
 )
 @pytest.mark.column
 def test_check_schema_schema(schema):

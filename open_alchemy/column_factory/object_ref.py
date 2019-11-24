@@ -64,7 +64,7 @@ def handle_object(
         schemas=schemas,
     )
     if fk_required:
-        fk_column = column.handle_column(spec=foreign_key_spec, required=required)
+        _, fk_column = column.handle_column(spec=foreign_key_spec, required=required)
         return_value = [(fk_logical_name, fk_column)]
     else:
         return_value = []
