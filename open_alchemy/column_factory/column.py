@@ -164,12 +164,45 @@ def _spec_to_column(
         args = (*args, sqlalchemy.ForeignKey(foreign_key))
 
     # Calculating type of column
-    type_ = _determine_type(spec=spec)
+    type_ = _determine_type_spec(spec=spec)
 
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine:
+def _determine_type(
+    *, artifacts: types.ColumnArtifacts
+) -> sqlalchemy.sql.type_api.TypeEngine:
+    """
+    Determine the type for a specification.
+
+    Raise FeatureNotImplementedError for unsupported types.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The type for the column.
+
+    """
+    # Determining the type
+    type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
+    if artifacts.type == "integer":
+        type_ = _handle_integer(artifacts=artifacts)
+    elif artifacts.type == "number":
+        type_ = _handle_number(artifacts=artifacts)
+    elif artifacts.type == "string":
+        type_ = _handle_string(artifacts=artifacts)
+    elif artifacts.type == "boolean":
+        type_ = _handle_boolean(artifacts=artifacts)
+
+    if type_ is None:
+        raise exceptions.FeatureNotImplementedError(
+            f"{artifacts.type} has not been implemented"
+        )
+    return type_
+
+
+def _determine_type_spec(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine:
     """
     Determine the type for a specification.
 
@@ -322,11 +355,13 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
         raise exceptions.MalformedSchemaError(
             "The string type does not support autoincrement."
         )
-    if artifacts.format is None:
-        return sqlalchemy.String(length=artifacts.max_length)
-    raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for string is not supported."
-    )
+    if artifacts.format is not None:
+        raise exceptions.FeatureNotImplementedError(
+            f"{artifacts.format} format for string is not supported."
+        )
+    if artifacts.max_length is None:
+        return sqlalchemy.String
+    return sqlalchemy.String(length=artifacts.max_length)
 
 
 def _handle_string_spec(*, spec: types.Schema) -> sqlalchemy.String:

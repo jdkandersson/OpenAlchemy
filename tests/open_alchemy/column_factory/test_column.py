@@ -468,6 +468,43 @@ def test_check_schema_required():
     assert artifacts.nullable is False
 
 
+@pytest.mark.column
+def test_determine_type_unsupported():
+    """
+    GIVEN artifacts with an unsupported type
+    WHEN _determine_type is called with the artifacts
+    THEN FeatureNotImplementedError is raised.
+    """
+    artifacts = types.ColumnArtifacts("unsupported")
+
+    with pytest.raises(exceptions.FeatureNotImplementedError):
+        column._determine_type(artifacts=artifacts)
+
+
+@pytest.mark.parametrize(
+    "type_, expected_type",
+    [
+        ("integer", sqlalchemy.Integer),
+        ("number", sqlalchemy.Float),
+        ("string", sqlalchemy.String),
+        ("boolean", sqlalchemy.Boolean),
+    ],
+    ids=["integer", "number", "string", "boolean"],
+)
+@pytest.mark.column
+def test_determine_type(type_, expected_type):
+    """
+    GIVEN type
+    WHEN _determine_type is called with the artifacts with the type
+    THEN the expected type is returned.
+    """
+    artifacts = types.ColumnArtifacts(type_)
+
+    returned_type = column._determine_type(artifacts=artifacts)
+
+    assert returned_type == expected_type
+
+
 @pytest.mark.parametrize("artifacts_kwargs", [{"max_length": 1}], ids=["max_length"])
 @pytest.mark.column
 def test_handle_integer_invalid(artifacts_kwargs):
@@ -611,7 +648,7 @@ def test_handle_string(format_, expected_type):
 
     string = column._handle_string(artifacts=artifacts)
 
-    assert isinstance(string, expected_type)
+    assert string == expected_type
 
 
 @pytest.mark.column
@@ -626,6 +663,7 @@ def test_handle_string_max_length():
 
     string = column._handle_string(artifacts=artifacts)
 
+    assert isinstance(string, sqlalchemy.String)
     assert string.length == length
 
 
