@@ -192,6 +192,7 @@ def _determine_type(
         raise exceptions.FeatureNotImplementedError(
             f"{artifacts.type} has not been implemented"
         )
+
     return type_
 
 

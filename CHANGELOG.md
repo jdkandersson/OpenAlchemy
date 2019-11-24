@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Refactor column handler to first check the schema, then gather the required artifacts for column construction and then construct the column.
+
 ## Version 0.10.0 - 2019-11-23
 _Beta release_
 
