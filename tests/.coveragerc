@@ -23,6 +23,9 @@ exclude_lines =
 
     # Don't complain about print statements not run
     print\(.*\)
+
+    # Don't complain about typing_extension imports
+    typing_extension
 skip_covered=true
 show_missing=true
 fail_under=100

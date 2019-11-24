@@ -5,12 +5,12 @@ import typing
 
 try:
     from typing import TypedDict
-except ImportError:
+except ImportError:  # pragma: no cover
     from typing_extensions import TypedDict
 
 try:
     from typing import Protocol
-except ImportError:
+except ImportError:  # pragma: no cover
     from typing_extensions import Protocol  # type: ignore
 
 Schema = typing.Dict[str, typing.Any]
