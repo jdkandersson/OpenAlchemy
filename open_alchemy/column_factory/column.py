@@ -35,6 +35,12 @@ def check_schema(
     """
     Check schema and transform into consistent schema and get the column artifacts.
 
+    Raise TypeMissingError of the type is not in the schema or is not a string.
+    Raise MalformedSchemaError if format, maxLength or nullable are not of the correct
+    type.
+    Raise MalformedExtensionPropertyError if an extension property is of the wrong
+    type.
+
     Args:
         schema: The schema to check.
 
@@ -78,6 +84,45 @@ def check_schema(
     )
 
     return return_schema, return_artifacts
+
+
+def _calculate_nullable(
+    *, nullable: typing.Optional[bool], required: typing.Optional[bool]
+) -> bool:
+    """
+    Calculate the value of the nullable field.
+
+    The following is the truth table for the nullable property.
+    required  | schema nullable | returned nullable
+    --------------------------------------------------------
+    None      | not given       | True
+    None      | False           | False
+    None      | True            | True
+    False     | not given       | True
+    False     | False           | False
+    False     | True            | True
+    True      | not given       | False
+    True      | False           | False
+    True      | True            | True
+
+    To summarize, if nullable is the schema the value for it is used. Otherwise True
+    is returned unless required is True.
+
+    Args:
+        nullable: Whether the property is nullable.
+        required: Whether the property is required.
+
+    Returns:
+        The nullable value for the column.
+
+    """
+    if nullable is None:
+        if required:
+            return False
+        return True
+    if nullable:
+        return True
+    return False
 
 
 def _spec_to_column(
@@ -124,45 +169,6 @@ def _spec_to_column(
     return sqlalchemy.Column(type_, *args, **kwargs)
 
 
-def _calculate_nullable(
-    *, nullable: typing.Optional[bool], required: typing.Optional[bool]
-) -> bool:
-    """
-    Calculate the value of the nullable field.
-
-    The following is the truth table for the nullable property.
-    required  | schema nullable | returned nullable
-    --------------------------------------------------------
-    None      | not given       | True
-    None      | False           | False
-    None      | True            | True
-    False     | not given       | True
-    False     | False           | False
-    False     | True            | True
-    True      | not given       | False
-    True      | False           | False
-    True      | True            | True
-
-    To summarize, if nullable is the schema the value for it is used. Otherwise True
-    is returned unless required is True.
-
-    Args:
-        nullable: Whether the property is nullable.
-        required: Whether the property is required.
-
-    Returns:
-        The nullable value for the column.
-
-    """
-    if nullable is None:
-        if required:
-            return False
-        return True
-    if nullable:
-        return True
-    return False
-
-
 def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine:
     """
     Determine the type for a specification.
@@ -198,6 +204,34 @@ def _determine_type(*, spec: types.Schema) -> sqlalchemy.sql.type_api.TypeEngine
             f"{spec['type']} has not been implemented"
         )
     return type_
+
+
+def _handle_integer(
+    *, artifacts: types.ColumnArtifacts
+) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
+    """
+    Handle artifacts for an integer type.
+
+    Raises MalformedSchemaError if maxLength is defined.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy integer type of the column.
+
+    """
+    if artifacts.max_length is not None:
+        raise exceptions.MalformedSchemaError(
+            "The integer type does not support maxLength."
+        )
+    if artifacts.format is None or artifacts.format == "int32":
+        return sqlalchemy.Integer
+    if artifacts.format == "int64":
+        return sqlalchemy.BigInteger
+    raise exceptions.FeatureNotImplementedError(
+        f"{artifacts.format} format for integer is not supported."
+    )
 
 
 def _handle_integer_spec(

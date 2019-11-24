@@ -466,3 +466,52 @@ def test_check_schema_required():
 
     assert returned_schema == schema
     assert artifacts.nullable is False
+
+
+@pytest.mark.column
+def test_handle_integer_invalid_max_length():
+    """
+    GIVEN artifacts with maxLength set
+    WHEN _handle_integer is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts("integer", max_length=1)
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column._handle_integer(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_handle_integer_invalid_format():
+    """
+    GIVEN artifacts with format that is not supported
+    WHEN _handle_integer is called with the artifacts
+    THEN FeatureNotImplementedError is raised.
+    """
+    artifacts = types.ColumnArtifacts("integer", format="unsupported")
+
+    with pytest.raises(exceptions.FeatureNotImplementedError):
+        column._handle_integer(artifacts=artifacts)
+
+
+@pytest.mark.parametrize(
+    "format_, expected_integer",
+    [
+        (None, sqlalchemy.Integer),
+        ("int32", sqlalchemy.Integer),
+        ("int64", sqlalchemy.BigInteger),
+    ],
+    ids=["None", "int32", "int64"],
+)
+@pytest.mark.column
+def test_handle_integer(format_, expected_integer):
+    """
+    GIVEN artifacts with maxLength set
+    WHEN _handle_integer is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts("integer", format=format_)
+
+    integer = column._handle_integer(artifacts=artifacts)
+
+    assert integer == expected_integer
