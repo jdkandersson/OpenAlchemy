@@ -2,7 +2,6 @@
 # pylint: disable=protected-access
 
 import copy
-import typing
 
 import pytest
 import sqlalchemy
@@ -121,7 +120,7 @@ def test_spec_to_column_foreign_key():
 
 
 @pytest.mark.parametrize(
-    "required, nullable, expected",
+    "required, nullable, expected_result",
     [
         (None, None, True),
         (None, False, False),
@@ -146,24 +145,15 @@ def test_spec_to_column_foreign_key():
     ],
 )
 @pytest.mark.column
-def test_spec_to_column_nullable(
-    required: typing.Optional[bool], nullable: typing.Optional[bool], expected: bool
-):
+def test__calculate_nullable(required, nullable, expected_result):
     """
-    GIVEN schema, the value for the nullable property and the required argument
-    WHEN _spec_to_column is called with the schema and required argument
-    THEN SQLAlchemy column is returned where nullable property is equal to the
-        expected input.
+    GIVEN required, nullable and expected result
+    WHEN _calculate_nullable is called with nullable and required
+    THEN the expected result is returned.
     """
-    kwargs: typing.Dict[str, bool] = {}
-    if required is not None:
-        kwargs["required"] = required
-    schema: typing.Dict[str, typing.Union[str, bool]] = {"type": "number"}
-    if nullable is not None:
-        schema["nullable"] = nullable
-    returned_column = column._spec_to_column(spec=schema, **kwargs)
+    result = column._calculate_nullable(nullable=nullable, required=required)
 
-    assert returned_column.nullable == expected
+    assert result == expected_result
 
 
 @pytest.mark.column
