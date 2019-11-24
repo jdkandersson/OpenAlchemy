@@ -627,3 +627,35 @@ def test_handle_string_max_length():
     string = column._handle_string(artifacts=artifacts)
 
     assert string.length == length
+
+
+@pytest.mark.parametrize(
+    "artifacts_kwargs",
+    [{"format": "format 1"}, {"max_length": 1}, {"autoincrement": True}],
+    ids=["format", "max_length", "autoincrement"],
+)
+@pytest.mark.column
+def test_handle_boolean_invalid(artifacts_kwargs):
+    """
+    GIVEN artifacts with an artifact that is not supported
+    WHEN _handle_boolean is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts("boolean", **artifacts_kwargs)
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column._handle_boolean(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_handle_boolean():
+    """
+    GIVEN artifacts
+    WHEN _handle_integer is called with the artifacts
+    THEN the boolean type is returned.
+    """
+    artifacts = types.ColumnArtifacts("boolean")
+
+    boolean = column._handle_boolean(artifacts=artifacts)
+
+    assert boolean == sqlalchemy.Boolean

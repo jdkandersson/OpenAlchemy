@@ -277,7 +277,7 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Float:
         )
     if artifacts.autoincrement is not None:
         raise exceptions.MalformedSchemaError(
-            "The number type does not support a autoincrement."
+            "The number type does not support autoincrement."
         )
     if artifacts.format is None or artifacts.format == "float":
         return sqlalchemy.Float
@@ -320,7 +320,7 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
     """
     if artifacts.autoincrement is not None:
         raise exceptions.MalformedSchemaError(
-            "The string type does not support a autoincrement."
+            "The string type does not support autoincrement."
         )
     if artifacts.format is None:
         return sqlalchemy.String(length=artifacts.max_length)
@@ -341,3 +341,31 @@ def _handle_string_spec(*, spec: types.Schema) -> sqlalchemy.String:
 
     """
     return sqlalchemy.String(length=spec.get("maxLength"))
+
+
+def _handle_boolean(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Boolean:
+    """
+    Handle artifacts for an boolean type.
+
+    Raises MalformedSchemaError if format, autoincrement or max length is defined.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy boolean type of the column.
+
+    """
+    if artifacts.format is not None:
+        raise exceptions.MalformedSchemaError(
+            "The boolean type does not support format."
+        )
+    if artifacts.autoincrement is not None:
+        raise exceptions.MalformedSchemaError(
+            "The boolean type does not support autoincrement."
+        )
+    if artifacts.max_length is not None:
+        raise exceptions.MalformedSchemaError(
+            "The boolean type does not support a maximum length."
+        )
+    return sqlalchemy.Boolean
