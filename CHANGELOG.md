@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 0.10.1 - 2019-12-15
 
 - Refactor column handler to first check the schema, then gather the required artifacts for column construction and then construct the column.
 - Add support for DateTime.
