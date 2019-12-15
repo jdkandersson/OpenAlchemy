@@ -1,5 +1,6 @@
 """Base class providing utilities for SQLAlchemy models."""
 
+import datetime
 import functools
 import json
 import typing
@@ -150,6 +151,7 @@ class UtilityBase:
 
             # Check type
             type_ = spec.get("type")
+            format_ = spec.get("format")
             if type_ is None:
                 raise exceptions.TypeMissingError(
                     f"The schema for the {name} property does not have a type."
@@ -180,6 +182,9 @@ class UtilityBase:
                 continue
 
             # Handle other types
+            if format_ == "date-time":
+                model_dict[name] = datetime.datetime.fromisoformat(value)
+                continue
             model_dict[name] = value
 
         return cls(**model_dict)

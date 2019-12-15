@@ -1,5 +1,6 @@
 """Tests for UtilityBase."""
 
+import datetime
 from unittest import mock
 
 import pytest
@@ -394,6 +395,32 @@ def test_from_dict(schema, dictionary):
 
     for key, value in dictionary.items():
         assert getattr(instance, key) == value
+
+
+@pytest.mark.utility_base
+def test_from_dict_date_time():
+    """
+    GIVEN schema with string type and date-time format
+    WHEN model is defined and constructed with from_dict
+    THEN the instance has a datetime.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "string", "format": "date-time"}}
+            },
+            "__init__": __init__,
+        },
+    )
+    dictionary = {"key": "2000-01-01T01:01:01"}
+
+    instance = model.from_dict(**dictionary)
+
+    assert instance.key == datetime.datetime(  # pylint: disable=no-member
+        year=2000, month=1, day=1, hour=1, minute=1, second=1
+    )
 
 
 @pytest.mark.utility_base
