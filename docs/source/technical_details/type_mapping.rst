@@ -17,14 +17,25 @@ following mappings:
 +--------------+----------------+-----------------+
 |              | float          | Float           |
 +--------------+----------------+-----------------+
-| string       |                | String          |
+| string       | *undefined*    | String          |
++--------------+----------------+-----------------+
+|              | date-time      | DateTime        |
 +--------------+----------------+-----------------+
 | boolean      |                | Boolean         |
 +--------------+----------------+-----------------+
 
-string
+String
 ------
 
 *OpenAPI* optionally allows the *maxLength* property for *strings*. This is
 translated to the *length* argument for the *SQLAlchemy* *String*, which is set
 to *None* if *maxLength* is *undefined*.
+
+DateTime
+--------
+
+*OpenAPI* supports the inbuilt *date-time* format for a string. This is mapped
+to the *DateTime* SQLAlchemy type. Currently, time zones are not supported.
+Database best practice is to store everything in UTC. Applications, such as web
+front ends, should convert to UTC as early as possible and localize a date and
+time as late as possible.

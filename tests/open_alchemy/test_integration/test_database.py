@@ -1,5 +1,6 @@
 """Integration tests against database."""
 
+import datetime
 import typing
 
 import pytest
@@ -16,6 +17,11 @@ import open_alchemy
         ("integer", "int64", 1),
         ("number", None, 1.0),
         ("string", None, "some string"),
+        (
+            "string",
+            "date-time",
+            datetime.datetime(year=2000, month=1, day=1, hour=1, minute=1, second=1),
+        ),
         ("boolean", None, True),
     ],
 )

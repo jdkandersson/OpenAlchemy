@@ -6,10 +6,21 @@ from sqlalchemy.ext import declarative
 import open_alchemy
 
 
+@pytest.mark.parametrize(
+    "column_schema, value",
+    [
+        ({"type": "integer", "x-primary-key": True}, 1),
+        (
+            {"type": "string", "format": "date-time", "x-primary-key": True},
+            "2000-01-01T01:01:01",
+        ),
+    ],
+    ids=["integer", "date-time"],
+)
 @pytest.mark.integration
-def test_to_from_dict(engine, sessionmaker):
+def test_basic_types(engine, sessionmaker, column_schema, value):
     """
-    GIVEN specification that has schema with a single property
+    GIVEN specification that has schema with a basic type property
     WHEN model is defined based on schema and constructed using from_dict
     THEN when to_dict is called the construction dictionary is returned.
     """
@@ -21,9 +32,7 @@ def test_to_from_dict(engine, sessionmaker):
             "components": {
                 "schemas": {
                     "Table": {
-                        "properties": {
-                            "column": {"type": "integer", "x-primary-key": True}
-                        },
+                        "properties": {"column": column_schema},
                         "x-tablename": "table",
                         "type": "object",
                     }
@@ -36,7 +45,7 @@ def test_to_from_dict(engine, sessionmaker):
     base.metadata.create_all(engine)
 
     # Constructing and turning back to dictionary
-    model_dict = {"column": 1}
+    model_dict = {"column": value}
     instance = model.from_dict(**model_dict)
     session = sessionmaker()
     session.add(instance)

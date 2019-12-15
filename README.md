@@ -100,6 +100,7 @@ An example API has been defined using connexion and Flask here:
 - `number` (float only),
 - `boolean`,
 - `string`,
+- `date-time`,
 - `$ref` references for columns and models,
 - primary keys,
 - auto incrementing,
