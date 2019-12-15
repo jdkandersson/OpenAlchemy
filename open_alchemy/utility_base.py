@@ -262,6 +262,7 @@ class UtilityBase:
         if not read_only:
             read_only = spec.get("readOnly", read_only)
         type_ = spec.get("type")
+        format_ = spec.get("format")
 
         if type_ is None:
             schema_descriptor = "array item" if array_context else "property"
@@ -303,6 +304,8 @@ class UtilityBase:
             )
 
         # Handle other types
+        if format_ == "date-time":
+            return value.isoformat()
         return value
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:

@@ -833,6 +833,23 @@ class TestToDictProperty:
 
     @staticmethod
     @pytest.mark.utility_base
+    def test_date_time():
+        """
+        GIVEN spec that is a date time and value
+        WHEN _to_dict_property is called with the spec and value
+        THEN value is returned as a string.
+        """
+        spec = {"type": "string", "format": "date-time"}
+        value = datetime.datetime(year=2000, month=1, day=1, hour=1, minute=1, second=1)
+
+        returned_value = utility_base.UtilityBase._to_dict_property(
+            value, spec=spec, name="name 1"
+        )
+
+        assert returned_value == "2000-01-01T01:01:01"
+
+    @staticmethod
+    @pytest.mark.utility_base
     def test_object_none():
         """
         GIVEN object spec and None value
