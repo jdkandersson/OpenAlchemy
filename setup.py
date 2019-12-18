@@ -30,6 +30,9 @@ setuptools.setup(
     install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5", "jsonschema>=3"],
     include_package_data=True,
     extras_require={
+        "yaml": [
+            "PyYAML",
+        ],
         "dev": [
             "tox",
             "tox-pyenv",

@@ -3,9 +3,9 @@ Translates an OpenAPI schema to SQLAlchemy models.
 
 ## Installation
 ```bash
-python -m pip install OpenAlchemy
+python -m pip install OpenAlchemy[yaml]
 # To be able to load yaml file
-python -m pip install PyYAML
+python -m pip install OpenAlchemy[yaml]
 ```
 
 ## Example
