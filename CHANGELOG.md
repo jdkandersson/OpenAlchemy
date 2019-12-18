@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version 0.10.2 - 2019-12-18
+
+- Fix bug where some static files where not included in the distribution.
+
 ## Version 0.10.1 - 2019-12-15
 
 - Refactor column handler to first check the schema, then gather the required artifacts for column construction and then construct the column.
