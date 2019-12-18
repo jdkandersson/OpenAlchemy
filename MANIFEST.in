@@ -1,0 +1,2 @@
+include open_alchemy/helpers/get_ext_prop/common-schemas.json
+include open_alchemy/helpers/get_ext_prop/extension-schemas.json
