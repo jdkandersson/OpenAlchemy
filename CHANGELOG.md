@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version 0.10.3 - 2019-12-18
+## Version 0.10.4 - 2019-12-18
 
 - Fix bug where some static files where not included in the distribution.
 
