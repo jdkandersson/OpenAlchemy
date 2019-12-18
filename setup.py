@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="OpenAlchemy",
-    version="0.10.1",
+    version="0.10.2",
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
     description="Maps an OpenAPI schema to SQLAlchemy models.",
@@ -30,6 +30,9 @@ setuptools.setup(
     install_requires=["SQLAlchemy>=1.0", "typing-extensions>=3.5", "jsonschema>=3"],
     include_package_data=True,
     extras_require={
+        "yaml": [
+            "PyYAML",
+        ],
         "dev": [
             "tox",
             "tox-pyenv",
