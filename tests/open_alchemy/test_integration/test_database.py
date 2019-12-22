@@ -17,6 +17,9 @@ import open_alchemy
         ("integer", "int64", 1),
         ("number", None, 1.0),
         ("string", None, "some string"),
+        ("string", "password", "some password"),
+        ("string", "byte", "some string"),
+        ("string", "binary", b"some bytes"),
         ("string", "date", datetime.date(year=2000, month=1, day=1)),
         (
             "string",
@@ -25,7 +28,18 @@ import open_alchemy
         ),
         ("boolean", None, True),
     ],
-    ids=["integer", "int64", "number", "string", "date", "date-time", "boolean"],
+    ids=[
+        "integer",
+        "int64",
+        "number",
+        "string",
+        "password",
+        "byte",
+        "binary",
+        "date",
+        "date-time",
+        "boolean",
+    ],
 )
 @pytest.mark.integration
 def test_database_types(

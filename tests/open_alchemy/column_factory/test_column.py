@@ -522,8 +522,10 @@ def test_handle_string_invalid_format():
         ("date", sqlalchemy.Date),
         ("date-time", sqlalchemy.DateTime),
         ("byte", sqlalchemy.String),
+        ("password", sqlalchemy.String),
+        ("binary", sqlalchemy.LargeBinary),
     ],
-    ids=["None", "date", "date-time", "byte"],
+    ids=["None", "date", "date-time", "byte", "password", "binary"],
 )
 @pytest.mark.column
 def test_handle_string(format_, expected_type):
@@ -539,19 +541,24 @@ def test_handle_string(format_, expected_type):
     assert string == expected_type
 
 
+@pytest.mark.parametrize(
+    "format_, expected_type",
+    [(None, sqlalchemy.String), ("binary", sqlalchemy.LargeBinary)],
+    ids=["string", "binary"],
+)
 @pytest.mark.column
-def test_handle_string_max_length():
+def test_handle_string_max_length(format_, expected_type):
     """
-    GIVEN artifacts with max_length
+    GIVEN artifacts with max_length and given format
     WHEN _handle_string is called with the artifacts
-    THEN a string with a maximum length is returned.
+    THEN a given expected type column with a maximum length is returned.
     """
     length = 1
-    artifacts = types.ColumnArtifacts("string", max_length=length)
+    artifacts = types.ColumnArtifacts("string", max_length=length, format=format_)
 
     string = column._handle_string(artifacts=artifacts)
 
-    assert isinstance(string, sqlalchemy.String)
+    assert isinstance(string, expected_type)
     assert string.length == length
 
 

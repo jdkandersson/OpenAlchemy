@@ -2,6 +2,8 @@
 
 ## Version _next_
 
+- Add support for _password_
+- Add support for _binary_
 - Add support for _byte_
 - Add support for _date_
 - Move SQLAlchemy relationship construction behind facade

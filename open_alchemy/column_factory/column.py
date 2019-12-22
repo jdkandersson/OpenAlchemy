@@ -272,10 +272,14 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
         raise exceptions.MalformedSchemaError(
             "The string type does not support autoincrement."
         )
-    if artifacts.format in {None, "byte"}:
+    if artifacts.format in {None, "byte", "password"}:
         if artifacts.max_length is None:
             return sqlalchemy.String
         return sqlalchemy.String(length=artifacts.max_length)
+    if artifacts.format == "binary":
+        if artifacts.max_length is None:
+            return sqlalchemy.LargeBinary
+        return sqlalchemy.LargeBinary(length=artifacts.max_length)
     if artifacts.format == "date":
         return sqlalchemy.Date
     if artifacts.format == "date-time":
