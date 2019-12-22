@@ -2,6 +2,7 @@
 
 ## Version _next_
 
+- Add support for _byte_
 - Add support for _date_
 - Move SQLAlchemy relationship construction behind facade
 - Move schema calculations into separate files
