@@ -26,6 +26,8 @@ exclude_lines =
 
     # Don't complain about typing_extension imports
     typing_extension
+    # Don't complain about compatibility code
+    sys.version_info
 skip_covered=true
 show_missing=true
 fail_under=100

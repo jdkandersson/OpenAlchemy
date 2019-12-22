@@ -23,7 +23,7 @@ def test_post(client, db_session):
         headers={"Content-Type": "application/json"},
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     db_employees = db_session.query(models.Employee).all()
     assert len(db_employees) == 1
     db_employee = db_employees[0]

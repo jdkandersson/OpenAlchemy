@@ -3,6 +3,7 @@
 import datetime
 import functools
 import json
+import sys
 import typing
 
 import jsonschema
@@ -11,6 +12,12 @@ from . import exceptions
 from . import facades
 from . import helpers
 from . import types
+
+if sys.version_info[1] < 7:
+    # pylint: disable=import-error
+    from backports.datetime_fromisoformat import MonkeyPatch
+
+    MonkeyPatch.patch_fromisoformat()
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
 TOptUtilityBase = typing.Optional[TUtilityBase]
