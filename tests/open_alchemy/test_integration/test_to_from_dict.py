@@ -10,7 +10,10 @@ import open_alchemy
     "column_schema, value",
     [
         ({"type": "integer", "x-primary-key": True}, 1),
-        ({"type": "string", "format": "byte", "x-primary-key": True}, "some bytes"),
+        (
+            {"type": "string", "format": "binary", "x-primary-key": True},
+            "some binary files",
+        ),
         ({"type": "string", "format": "date", "x-primary-key": True}, "2000-01-01"),
         (
             {"type": "string", "format": "date-time", "x-primary-key": True},

@@ -112,6 +112,8 @@ class UtilityBase:
             return datetime.date.fromisoformat(value)
         if format_ == "date-time":
             return datetime.datetime.fromisoformat(value)
+        if format_ == "binary":
+            return value.encode()
         return value
 
     @classmethod
@@ -270,6 +272,8 @@ class UtilityBase:
             return value.isoformat()
         if format_ == "date-time":
             return value.isoformat()
+        if format_ == "binary":
+            return value.decode()
         return value
 
     @classmethod

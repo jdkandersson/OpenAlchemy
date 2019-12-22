@@ -523,7 +523,7 @@ def test_handle_string_invalid_format():
         ("date-time", sqlalchemy.DateTime),
         ("byte", sqlalchemy.String),
         ("password", sqlalchemy.String),
-        ("binary", sqlalchemy.Binary),
+        ("binary", sqlalchemy.LargeBinary),
     ],
     ids=["None", "date", "date-time", "byte", "password", "binary"],
 )
@@ -543,7 +543,7 @@ def test_handle_string(format_, expected_type):
 
 @pytest.mark.parametrize(
     "format_, expected_type",
-    [(None, sqlalchemy.String), ("binary", sqlalchemy.Binary)],
+    [(None, sqlalchemy.String), ("binary", sqlalchemy.LargeBinary)],
     ids=["string", "binary"],
 )
 @pytest.mark.column

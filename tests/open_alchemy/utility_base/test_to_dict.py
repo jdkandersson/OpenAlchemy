@@ -439,7 +439,7 @@ class TestToDictProperty:
     @pytest.mark.parametrize(
         "format_, value, expected_value",
         [
-            ("byte", "some bytes", "some bytes"),
+            ("binary", b"some binary file", "some binary file"),
             ("date", datetime.date(year=2000, month=1, day=1), "2000-01-01"),
             (
                 "date-time",
@@ -449,7 +449,7 @@ class TestToDictProperty:
                 "2000-01-01T01:01:01",
             ),
         ],
-        ids=["byte", "date", "date-time"],
+        ids=["binary", "date", "date-time"],
     )
     @pytest.mark.utility_base
     def test_string_format(format_, value, expected_value):
