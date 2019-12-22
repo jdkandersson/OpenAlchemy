@@ -6,6 +6,7 @@ import typing
 import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
@@ -70,19 +71,8 @@ def handle_object(
         return_value = []
 
     # Creating relationship
-    backref = None
-    if obj_artifacts.backref is not None:
-        backref = sqlalchemy.orm.backref(
-            obj_artifacts.backref, uselist=obj_artifacts.uselist
-        )
-    return_value.append(
-        (
-            logical_name,
-            sqlalchemy.orm.relationship(
-                obj_artifacts.ref_logical_name, backref=backref
-            ),
-        )
-    )
+    relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
+    return_value.append((logical_name, relationship))
     return return_value, {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name}
 
 
@@ -96,6 +86,7 @@ class ObjectArtifacts:
     fk_column: str
     uselist: typing.Optional[bool]
     secondary: typing.Optional[str]
+    relationship: types.RelationshipArtifacts
 
 
 def gather_object_artifacts(
@@ -192,8 +183,24 @@ def gather_object_artifacts(
             "Relationships with x-uselist defined must also define x-backref."
         )
 
+    back_reference_artifacts = None
+    if backref is not None:
+        back_reference_artifacts = types.BackReferenceArtifacts(
+            model_name=backref, uselist=uselist
+        )
+    relationship_artifacts = types.RelationshipArtifacts(
+        model_name=ref_logical_name,
+        back_reference=back_reference_artifacts,
+        secondary=secondary,
+    )
     return ObjectArtifacts(
-        spec, ref_logical_name, backref, fk_column, uselist, secondary
+        spec,
+        ref_logical_name,
+        backref,
+        fk_column,
+        uselist,
+        secondary,
+        relationship_artifacts,
     )
 
 

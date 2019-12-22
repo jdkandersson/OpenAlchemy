@@ -74,11 +74,7 @@ def handle_array(
     # Construct relationship
     relationship_return = (
         logical_name,
-        sqlalchemy.orm.relationship(
-            obj_artifacts.ref_logical_name,
-            backref=obj_artifacts.backref,
-            secondary=obj_artifacts.secondary,
-        ),
+        facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship),
     )
     # Construct entry for the addition for the model schema
     spec_return = {

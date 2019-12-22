@@ -222,7 +222,7 @@ def test_handle_array_relationship_backref():
         spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
     )
 
-    assert relationship.backref == "schema"
+    assert relationship.backref == ("schema", {"uselist": None})
 
 
 @pytest.mark.column
