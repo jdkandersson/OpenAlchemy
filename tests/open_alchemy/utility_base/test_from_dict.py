@@ -150,6 +150,7 @@ def test_from_dict(schema, dictionary, __init__):
 @pytest.mark.parametrize(
     "format_, value, expected_value",
     [
+        ("byte", "some bytes", "some bytes"),
         ("date", "2000-01-01", datetime.date(year=2000, month=1, day=1)),
         (
             "date-time",
@@ -157,7 +158,7 @@ def test_from_dict(schema, dictionary, __init__):
             datetime.datetime(year=2000, month=1, day=1, hour=1, minute=1, second=1),
         ),
     ],
-    ids=["date", "date-time"],
+    ids=["byte", "date", "date-time"],
 )
 @pytest.mark.utility_base
 def test_from_dict_string_format(format_, value, expected_value, __init__):

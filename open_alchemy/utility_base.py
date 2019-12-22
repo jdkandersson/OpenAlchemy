@@ -99,11 +99,20 @@ class UtilityBase:
         return ref_model
 
     @staticmethod
-    def _from_dict(
+    def _model_from_dict(
         kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
     ) -> TUtilityBase:
         """Construct model from dictionary."""
         return model.from_dict(**kwargs)
+
+    @staticmethod
+    def _simple_type_from_dict(format_: str, value: typing.Any) -> typing.Any:
+        """Construct dictionary key for simple types."""
+        if format_ == "date":
+            return datetime.date.fromisoformat(value)
+        if format_ == "date-time":
+            return datetime.datetime.fromisoformat(value)
+        return value
 
     @classmethod
     def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
@@ -168,7 +177,7 @@ class UtilityBase:
             ref_model: typing.Type[TUtilityBase]
             if type_ == "object":
                 ref_model = cls._get_model(spec=spec, name=name, schema=schema)
-                ref_model_instance = cls._from_dict(value, model=ref_model)
+                ref_model_instance = cls._model_from_dict(value, model=ref_model)
                 model_dict[name] = ref_model_instance
                 continue
 
@@ -183,19 +192,15 @@ class UtilityBase:
                         f"The model schema is {json.dumps(schema)}."
                     )
                 ref_model = cls._get_model(spec=item_spec, name=name, schema=schema)
-                model_from_dict = functools.partial(cls._from_dict, model=ref_model)
+                model_from_dict = functools.partial(
+                    cls._model_from_dict, model=ref_model
+                )
                 ref_model_instances = map(model_from_dict, value)
                 model_dict[name] = list(ref_model_instances)
                 continue
 
             # Handle other types
-            if format_ == "date":
-                model_dict[name] = datetime.date.fromisoformat(value)
-                continue
-            if format_ == "date-time":
-                model_dict[name] = datetime.datetime.fromisoformat(value)
-                continue
-            model_dict[name] = value
+            model_dict[name] = cls._simple_type_from_dict(format_=format_, value=value)
 
         return cls(**model_dict)
 
