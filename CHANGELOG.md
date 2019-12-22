@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add support for _date_
+
 ## Version 0.10.4 - 2019-12-18
 
 - Fix bug where some static files where not included in the distribution.
