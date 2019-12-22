@@ -73,7 +73,10 @@ def handle_object(
     # Creating relationship
     relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
     return_value.append((logical_name, relationship))
-    return return_value, {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name}
+    return (
+        return_value,
+        {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
+    )
 
 
 @dataclasses.dataclass
@@ -81,7 +84,6 @@ class ObjectArtifacts:
     """Artifacts retrieved from object schema."""
 
     spec: types.Schema
-    ref_logical_name: str
     fk_column: str
     relationship: types.RelationshipArtifacts
 
@@ -190,7 +192,7 @@ def gather_object_artifacts(
         back_reference=back_reference_artifacts,
         secondary=secondary,
     )
-    return ObjectArtifacts(spec, ref_logical_name, fk_column, relationship_artifacts)
+    return ObjectArtifacts(spec, fk_column, relationship_artifacts)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:

@@ -82,12 +82,12 @@ def handle_array(
     # Construct entry for the addition for the model schema
     spec_return = {
         "type": "array",
-        "items": {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name},
+        "items": {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
     }
     # Add foreign key to referenced schema
     if obj_artifacts.relationship.secondary is None:
         _set_foreign_key(
-            ref_model_name=obj_artifacts.ref_logical_name,
+            ref_model_name=obj_artifacts.relationship.model_name,
             model_schema=model_schema,
             schemas=schemas,
             fk_column=obj_artifacts.fk_column,

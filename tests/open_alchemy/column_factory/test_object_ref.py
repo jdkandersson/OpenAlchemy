@@ -193,7 +193,6 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
         spec=spec, logical_name="", schemas=schemas
     )
 
-    assert obj_artifacts.ref_logical_name == "RefSchema"
     assert obj_artifacts.relationship.model_name == "RefSchema"
 
 
