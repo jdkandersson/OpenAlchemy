@@ -10,7 +10,8 @@ from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
-from . import column
+from .. import column
+from . import calculate_schema as _calculate_schema
 
 
 def handle_object(
@@ -70,27 +71,16 @@ def handle_object(
     else:
         return_value = []
 
-    # Creating relationship
+    return_schema = _calculate_schema.calculate_schema(artifacts=obj_artifacts)
+    # Create relationship
     relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
     return_value.append((logical_name, relationship))
-    return (
-        return_value,
-        {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
-    )
-
-
-@dataclasses.dataclass
-class ObjectArtifacts:
-    """Artifacts retrieved from object schema."""
-
-    spec: types.Schema
-    fk_column: str
-    relationship: types.RelationshipArtifacts
+    return (return_value, return_schema)
 
 
 def gather_object_artifacts(
     *, spec: types.Schema, logical_name: str, schemas: types.Schemas
-) -> ObjectArtifacts:
+) -> types.ObjectArtifacts:
     """
     Collect artifacts from a specification for constructing an object reference.
 
@@ -192,7 +182,7 @@ def gather_object_artifacts(
         back_reference=back_reference_artifacts,
         secondary=secondary,
     )
-    return ObjectArtifacts(spec, fk_column, relationship_artifacts)
+    return types.ObjectArtifacts(spec, fk_column, relationship_artifacts)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
