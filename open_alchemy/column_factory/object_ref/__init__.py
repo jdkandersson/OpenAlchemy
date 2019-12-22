@@ -10,7 +10,7 @@ from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
-from . import column
+from .. import column
 
 
 def handle_object(
