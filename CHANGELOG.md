@@ -4,6 +4,7 @@
 
 - Add support for _date_
 - Move SQLAlchemy relationship construction behind facade
+- Move schema calculations into separate files
 
 ## Version 0.10.4 - 2019-12-18
 
