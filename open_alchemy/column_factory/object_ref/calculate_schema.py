@@ -14,7 +14,4 @@ def calculate_schema(*, artifacts: types.ObjectArtifacts) -> types.Schema:
         The schema for the array to store with the model.
 
     """
-    return {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": artifacts.relationship.model_name},
-    }
+    return {"type": "object", "x-de-$ref": artifacts.relationship.model_name}

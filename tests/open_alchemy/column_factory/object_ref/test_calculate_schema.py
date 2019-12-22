@@ -4,7 +4,7 @@
 import pytest
 
 from open_alchemy import types
-from open_alchemy.column_factory import array_ref
+from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.column
@@ -19,9 +19,6 @@ def test_calculate_schema():
         spec={}, fk_column="fk_column", relationship=relationship
     )
 
-    schema = array_ref._calculate_schema.calculate_schema(artifacts=artifacts)
+    schema = object_ref._calculate_schema.calculate_schema(artifacts=artifacts)
 
-    assert schema == {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": "RefSchema"},
-    }
+    assert schema == {"type": "object", "x-de-$ref": "RefSchema"}

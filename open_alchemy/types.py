@@ -89,3 +89,12 @@ class RelationshipArtifacts:
     back_reference: typing.Optional[BackReferenceArtifacts] = None
     # The name of the optional secondary table to use
     secondary: typing.Optional[str] = None
+
+
+@dataclasses.dataclass
+class ObjectArtifacts:
+    """Artifacts retrieved from object schema."""
+
+    spec: Schema
+    fk_column: str
+    relationship: RelationshipArtifacts
