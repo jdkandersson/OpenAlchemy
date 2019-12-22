@@ -197,64 +197,6 @@ def test_handle_array_relationship(spec, schemas):
 
 
 @pytest.mark.column
-def test_handle_array_relationship_backref():
-    """
-    GIVEN schema with array referencing another schema with backref and schemas
-    WHEN handle_array is called
-    THEN relationship with backref is returned.
-    """
-    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "x-backref": "schema",
-            "properties": {},
-        }
-    }
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {"id": {"type": "integer"}},
-    }
-
-    ([(_, relationship)], _) = array_ref.handle_array(
-        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
-    )
-
-    assert relationship.backref == "schema"
-
-
-@pytest.mark.column
-def test_handle_array_relationship_secondary(_mocked_facades_models):
-    """
-    GIVEN schema with array referencing another schema with secondary and schemas
-    WHEN handle_array is called
-    THEN relationship with secondary is returned.
-    """
-    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "x-secondary": "association",
-            "properties": {"id": {"type": "integer", "x-primary-key": True}},
-        }
-    }
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {"id": {"type": "integer", "x-primary-key": True}},
-    }
-
-    ([(_, relationship)], _) = array_ref.handle_array(
-        spec=spec, model_schema=model_schema, schemas=schemas, logical_name="ref_schema"
-    )
-
-    assert relationship.secondary == "association"
-
-
-@pytest.mark.column
 def test_handle_array_schemas():
     """
     GIVEN schema with array referencing another schema and schemas

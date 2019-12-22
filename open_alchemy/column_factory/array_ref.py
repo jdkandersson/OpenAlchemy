@@ -52,7 +52,10 @@ def handle_array(
     )
 
     # Check for uselist
-    if obj_artifacts.uselist is not None:
+    if (
+        obj_artifacts.relationship.back_reference is not None
+        and obj_artifacts.relationship.back_reference.uselist is not None
+    ):
         raise exceptions.MalformedRelationshipError(
             "x-uselist is not supported for one to many relationships."
         )
@@ -74,21 +77,17 @@ def handle_array(
     # Construct relationship
     relationship_return = (
         logical_name,
-        sqlalchemy.orm.relationship(
-            obj_artifacts.ref_logical_name,
-            backref=obj_artifacts.backref,
-            secondary=obj_artifacts.secondary,
-        ),
+        facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship),
     )
     # Construct entry for the addition for the model schema
     spec_return = {
         "type": "array",
-        "items": {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name},
+        "items": {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
     }
     # Add foreign key to referenced schema
-    if obj_artifacts.secondary is None:
+    if obj_artifacts.relationship.secondary is None:
         _set_foreign_key(
-            ref_model_name=obj_artifacts.ref_logical_name,
+            ref_model_name=obj_artifacts.relationship.model_name,
             model_schema=model_schema,
             schemas=schemas,
             fk_column=obj_artifacts.fk_column,
@@ -98,9 +97,11 @@ def handle_array(
             parent_schema=model_schema,
             child_schema=obj_artifacts.spec,
             schemas=schemas,
-            tablename=obj_artifacts.secondary,
+            tablename=obj_artifacts.relationship.secondary,
         )
-        facades.models.set_association(table=table, name=obj_artifacts.secondary)
+        facades.models.set_association(
+            table=table, name=obj_artifacts.relationship.secondary
+        )
 
     return [relationship_return], spec_return
 

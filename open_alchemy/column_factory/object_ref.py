@@ -6,6 +6,7 @@ import typing
 import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
@@ -47,7 +48,7 @@ def handle_object(
     )
 
     # Check for secondary
-    if obj_artifacts.secondary is not None:
+    if obj_artifacts.relationship.secondary is not None:
         raise exceptions.MalformedRelationshipError(
             "Many to one and one to one relationships do not support x-secondary."
         )
@@ -70,20 +71,12 @@ def handle_object(
         return_value = []
 
     # Creating relationship
-    backref = None
-    if obj_artifacts.backref is not None:
-        backref = sqlalchemy.orm.backref(
-            obj_artifacts.backref, uselist=obj_artifacts.uselist
-        )
-    return_value.append(
-        (
-            logical_name,
-            sqlalchemy.orm.relationship(
-                obj_artifacts.ref_logical_name, backref=backref
-            ),
-        )
+    relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
+    return_value.append((logical_name, relationship))
+    return (
+        return_value,
+        {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
     )
-    return return_value, {"type": "object", "x-de-$ref": obj_artifacts.ref_logical_name}
 
 
 @dataclasses.dataclass
@@ -91,11 +84,8 @@ class ObjectArtifacts:
     """Artifacts retrieved from object schema."""
 
     spec: types.Schema
-    ref_logical_name: str
-    backref: typing.Optional[str]
     fk_column: str
-    uselist: typing.Optional[bool]
-    secondary: typing.Optional[str]
+    relationship: types.RelationshipArtifacts
 
 
 def gather_object_artifacts(
@@ -192,9 +182,17 @@ def gather_object_artifacts(
             "Relationships with x-uselist defined must also define x-backref."
         )
 
-    return ObjectArtifacts(
-        spec, ref_logical_name, backref, fk_column, uselist, secondary
+    back_reference_artifacts = None
+    if backref is not None:
+        back_reference_artifacts = types.BackReferenceArtifacts(
+            model_name=backref, uselist=uselist
+        )
+    relationship_artifacts = types.RelationshipArtifacts(
+        model_name=ref_logical_name,
+        back_reference=back_reference_artifacts,
+        secondary=secondary,
     )
+    return ObjectArtifacts(spec, fk_column, relationship_artifacts)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:

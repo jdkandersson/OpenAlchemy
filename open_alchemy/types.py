@@ -67,3 +67,25 @@ class ColumnArtifacts:
     index: typing.Optional[bool] = None
     unique: typing.Optional[bool] = None
     foreign_key: typing.Optional[str] = None
+
+
+@dataclasses.dataclass
+class BackReferenceArtifacts:
+    """Information required to construct a back reference."""
+
+    # The name of the model being referenced
+    model_name: str
+    # Whether to use a list
+    uselist: typing.Optional[bool] = None
+
+
+@dataclasses.dataclass
+class RelationshipArtifacts:
+    """Information required to construct a relationship to another model."""
+
+    # The name of the referenced model
+    model_name: str
+    # Information for the optional back reference
+    back_reference: typing.Optional[BackReferenceArtifacts] = None
+    # The name of the optional secondary table to use
+    secondary: typing.Optional[str] = None
