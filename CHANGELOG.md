@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Add support for _date_
+- Move SQLAlchemy relationship construction behind facade
 
 ## Version 0.10.4 - 2019-12-18
 
