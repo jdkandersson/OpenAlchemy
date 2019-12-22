@@ -10,9 +10,9 @@ from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
-from ..utility_base import TOptUtilityBase
-from . import column
-from . import object_ref
+from ...utility_base import TOptUtilityBase
+from .. import column
+from .. import object_ref
 
 
 def handle_array(
