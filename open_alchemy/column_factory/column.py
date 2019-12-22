@@ -272,7 +272,7 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
         raise exceptions.MalformedSchemaError(
             "The string type does not support autoincrement."
         )
-    if artifacts.format in {None, "byte"}:
+    if artifacts.format in {None, "byte", "password"}:
         if artifacts.max_length is None:
             return sqlalchemy.String
         return sqlalchemy.String(length=artifacts.max_length)
