@@ -20,7 +20,7 @@ import open_alchemy
             "2000-01-01T01:01:01",
         ),
     ],
-    ids=["integer", "byte", "date", "date-time"],
+    ids=["integer", "binary", "date", "date-time"],
 )
 @pytest.mark.integration
 def test_basic_types(engine, sessionmaker, column_schema, value):
