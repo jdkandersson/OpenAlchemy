@@ -3,6 +3,7 @@
 import datetime
 import functools
 import json
+import sys
 import typing
 
 import jsonschema
@@ -11,6 +12,12 @@ from . import exceptions
 from . import facades
 from . import helpers
 from . import types
+
+if sys.version_info[1] < 7:
+    # pylint: disable=import-error
+    from backports.datetime_fromisoformat import MonkeyPatch
+
+    MonkeyPatch.patch_fromisoformat()
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
 TOptUtilityBase = typing.Optional[TUtilityBase]
@@ -182,6 +189,9 @@ class UtilityBase:
                 continue
 
             # Handle other types
+            if format_ == "date":
+                model_dict[name] = datetime.date.fromisoformat(value)
+                continue
             if format_ == "date-time":
                 model_dict[name] = datetime.datetime.fromisoformat(value)
                 continue
@@ -235,6 +245,28 @@ class UtilityBase:
             return cls._object_to_dict_relationship(value=value, name=name)
         return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
 
+    @staticmethod
+    def _simple_type_to_dict(
+        *, format_: typing.Optional[str], value: typing.Any
+    ) -> typing.Any:
+        """
+        Convert values with basic types to dictionary keys.
+
+        Args:
+            format_: The format of the value.
+            value: The value to convert.
+
+        Returns:
+            The value converted to the expected dictionary key.
+
+        """
+        # Handle other types
+        if format_ == "date":
+            return value.isoformat()
+        if format_ == "date-time":
+            return value.isoformat()
+        return value
+
     @classmethod
     def _to_dict_property(
         cls,
@@ -261,15 +293,15 @@ class UtilityBase:
         """
         if not read_only:
             read_only = spec.get("readOnly", read_only)
-        type_ = spec.get("type")
-        format_ = spec.get("format")
-
-        if type_ is None:
+        try:
+            type_ = helpers.peek.type_(schema=spec, schemas={})
+        except exceptions.TypeMissingError:
             schema_descriptor = "array item" if array_context else "property"
             raise exceptions.TypeMissingError(
                 f"The {schema_descriptor} schema for the {name} property does not have "
                 f"a type. The {schema_descriptor} schema is {json.dumps(spec)}."
             )
+        format_ = helpers.peek.format_(schema=spec, schemas={})
 
         # Handle array
         if type_ == "array":
@@ -304,9 +336,7 @@ class UtilityBase:
             )
 
         # Handle other types
-        if format_ == "date-time":
-            return value.isoformat()
-        return value
+        return cls._simple_type_to_dict(format_=format_, value=value)
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """

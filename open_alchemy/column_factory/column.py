@@ -276,6 +276,8 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
         if artifacts.max_length is None:
             return sqlalchemy.String
         return sqlalchemy.String(length=artifacts.max_length)
+    if artifacts.format == "date":
+        return sqlalchemy.Date
     if artifacts.format == "date-time":
         return sqlalchemy.DateTime
     raise exceptions.FeatureNotImplementedError(

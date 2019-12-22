@@ -57,6 +57,9 @@ setuptools.setup(
             "PyYAML",
             "connexion[swagger-ui]",
         ],
-        ":python_version<'3.7'": ["dataclasses>=0.7"],
+        ":python_version<'3.7'": [
+            "dataclasses>=0.7",
+            "backports-datetime-fromisoformat>=1.0.0",
+        ],
     },
 )
