@@ -517,8 +517,12 @@ def test_handle_string_invalid_format():
 
 @pytest.mark.parametrize(
     "format_, expected_type",
-    [(None, sqlalchemy.String), ("date-time", sqlalchemy.DateTime)],
-    ids=["None", "date-time"],
+    [
+        (None, sqlalchemy.String),
+        ("date", sqlalchemy.Date),
+        ("date-time", sqlalchemy.DateTime),
+    ],
+    ids=["None", "date", "date-time"],
 )
 @pytest.mark.column
 def test_handle_string(format_, expected_type):
