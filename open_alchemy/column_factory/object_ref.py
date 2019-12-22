@@ -48,7 +48,7 @@ def handle_object(
     )
 
     # Check for secondary
-    if obj_artifacts.secondary is not None:
+    if obj_artifacts.relationship.secondary is not None:
         raise exceptions.MalformedRelationshipError(
             "Many to one and one to one relationships do not support x-secondary."
         )
@@ -85,7 +85,6 @@ class ObjectArtifacts:
     backref: typing.Optional[str]
     fk_column: str
     uselist: typing.Optional[bool]
-    secondary: typing.Optional[str]
     relationship: types.RelationshipArtifacts
 
 
@@ -194,13 +193,7 @@ def gather_object_artifacts(
         secondary=secondary,
     )
     return ObjectArtifacts(
-        spec,
-        ref_logical_name,
-        backref,
-        fk_column,
-        uselist,
-        secondary,
-        relationship_artifacts,
+        spec, ref_logical_name, backref, fk_column, uselist, relationship_artifacts
     )
 
 

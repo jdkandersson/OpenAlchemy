@@ -507,7 +507,6 @@ def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
         spec=spec, logical_name="", schemas=schemas
     )
 
-    assert obj_artifacts.secondary == expected_secondary
     assert obj_artifacts.relationship.secondary == expected_secondary
 
 
