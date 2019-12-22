@@ -19,7 +19,11 @@ following mappings:
 +--------------+----------------+-----------------+
 | string       | *undefined*    | String          |
 +--------------+----------------+-----------------+
+|              | password       | String          |
++--------------+----------------+-----------------+
 |              | byte           | String          |
++--------------+----------------+-----------------+
+|              | binary         | LargeBinary     |
 +--------------+----------------+-----------------+
 |              | date           | Date            |
 +--------------+----------------+-----------------+
@@ -34,6 +38,26 @@ String
 *OpenAPI* optionally allows the *maxLength* property for *strings*. This is
 translated to the *length* argument for the *SQLAlchemy* *String*, which is set
 to *None* if *maxLength* is *undefined*.
+
+Password
+--------
+
+The same *maxLength* information as for *String* also applies.
+
+.. note:: The *password* format under the hood is the same as *String*. No
+    special protection (such as encryption) is added.
+
+Byte
+------
+
+This format is for *base64* encoded binary data. The same *maxLength*
+information as for *String* also applies.
+
+Binary
+------
+
+The same *maxLength* information as for *String* also applies. The codec is
+assumed to be *utf-8*.
 
 DateTime
 --------
