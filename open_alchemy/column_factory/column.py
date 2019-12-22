@@ -276,6 +276,10 @@ def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
         if artifacts.max_length is None:
             return sqlalchemy.String
         return sqlalchemy.String(length=artifacts.max_length)
+    if artifacts.format == "binary":
+        if artifacts.max_length is None:
+            return sqlalchemy.Binary
+        return sqlalchemy.Binary(length=artifacts.max_length)
     if artifacts.format == "date":
         return sqlalchemy.Date
     if artifacts.format == "date-time":
