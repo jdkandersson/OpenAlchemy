@@ -82,7 +82,6 @@ class ObjectArtifacts:
 
     spec: types.Schema
     ref_logical_name: str
-    backref: typing.Optional[str]
     fk_column: str
     relationship: types.RelationshipArtifacts
 
@@ -191,9 +190,7 @@ def gather_object_artifacts(
         back_reference=back_reference_artifacts,
         secondary=secondary,
     )
-    return ObjectArtifacts(
-        spec, ref_logical_name, backref, fk_column, relationship_artifacts
-    )
+    return ObjectArtifacts(spec, ref_logical_name, fk_column, relationship_artifacts)
 
 
 def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:

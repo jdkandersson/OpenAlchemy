@@ -296,7 +296,6 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
         spec=spec, logical_name="", schemas=schemas
     )
 
-    assert obj_artifacts.backref == expected_backref
     if expected_backref is None:
         assert obj_artifacts.relationship.back_reference is None
     else:
