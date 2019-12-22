@@ -1,0 +1,28 @@
+"""Tests for _calculate_schema."""
+# pylint: disable=protected-access
+
+import pytest
+
+from open_alchemy import types
+from open_alchemy.column_factory import array_ref
+from open_alchemy.column_factory import object_ref
+
+
+@pytest.mark.column
+def test_calculate_schema():
+    """
+    GIVEN array artifacts
+    WHEN _calculate_schema is called with the artifacts
+    THEN the schema for the array reference is returned.
+    """
+    relationship = types.RelationshipArtifacts("RefSchema")
+    artifacts = object_ref.ObjectArtifacts(
+        spec={}, fk_column="fk_column", relationship=relationship
+    )
+
+    schema = array_ref._calculate_schema.calculate_schema(artifacts=artifacts)
+
+    assert schema == {
+        "type": "array",
+        "items": {"type": "object", "x-de-$ref": "RefSchema"},
+    }

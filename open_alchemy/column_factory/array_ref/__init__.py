@@ -13,6 +13,7 @@ from open_alchemy import types
 from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
+from . import calculate_schema as _calculate_schema
 
 
 def handle_array(
@@ -80,10 +81,7 @@ def handle_array(
         facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship),
     )
     # Construct entry for the addition for the model schema
-    spec_return = {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": obj_artifacts.relationship.model_name},
-    }
+    return_schema = _calculate_schema.calculate_schema(artifacts=obj_artifacts)
     # Add foreign key to referenced schema
     if obj_artifacts.relationship.secondary is None:
         _set_foreign_key(
@@ -103,7 +101,7 @@ def handle_array(
             table=table, name=obj_artifacts.relationship.secondary
         )
 
-    return [relationship_return], spec_return
+    return [relationship_return], return_schema
 
 
 def _set_foreign_key(
