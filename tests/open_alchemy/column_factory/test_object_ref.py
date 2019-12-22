@@ -412,7 +412,6 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
         spec=spec, logical_name="", schemas=schemas
     )
 
-    assert obj_artifacts.uselist == expected_uselist
     if expected_uselist is None:
         assert obj_artifacts.relationship.back_reference is None
     else:

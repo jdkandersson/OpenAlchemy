@@ -52,7 +52,10 @@ def handle_array(
     )
 
     # Check for uselist
-    if obj_artifacts.uselist is not None:
+    if (
+        obj_artifacts.relationship.back_reference is not None
+        and obj_artifacts.relationship.back_reference.uselist is not None
+    ):
         raise exceptions.MalformedRelationshipError(
             "x-uselist is not supported for one to many relationships."
         )

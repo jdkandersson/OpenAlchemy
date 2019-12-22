@@ -84,7 +84,6 @@ class ObjectArtifacts:
     ref_logical_name: str
     backref: typing.Optional[str]
     fk_column: str
-    uselist: typing.Optional[bool]
     relationship: types.RelationshipArtifacts
 
 
@@ -193,7 +192,7 @@ def gather_object_artifacts(
         secondary=secondary,
     )
     return ObjectArtifacts(
-        spec, ref_logical_name, backref, fk_column, uselist, relationship_artifacts
+        spec, ref_logical_name, backref, fk_column, relationship_artifacts
     )
 
 
