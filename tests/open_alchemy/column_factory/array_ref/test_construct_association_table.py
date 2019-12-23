@@ -266,7 +266,7 @@ class TestManyToManyColumn:
         WHEN _construct_column is called with the artifacts
         THEN a column is returned.
         """
-        artifacts = array_ref._construct_association_table._ManyToManyColumnArtifacts(
+        artifacts = array_ref._construct_association_table._ColumnArtifacts(
             "integer", "int64", "table_1", "column_1", None
         )
 
@@ -311,7 +311,7 @@ class TestManyToManyColumn:
         WHEN artifacts are constructed and _construct_column is called
         THEN a column with the expected type is returned.
         """
-        artifacts = array_ref._construct_association_table._ManyToManyColumnArtifacts(
+        artifacts = array_ref._construct_association_table._ColumnArtifacts(
             type_, format_, "table_1", "column_1", max_length
         )
 

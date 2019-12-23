@@ -14,7 +14,7 @@ from .. import column
 
 
 @dataclasses.dataclass
-class _ManyToManyColumnArtifacts:
+class _ColumnArtifacts:
     """Artifacts for constructing a many to many column of a secondary table."""
 
     # The type of the column
@@ -31,7 +31,7 @@ class _ManyToManyColumnArtifacts:
 
 def _gather_column_artifacts(
     *, model_schema: types.Schema, schemas: types.Schemas
-) -> _ManyToManyColumnArtifacts:
+) -> _ColumnArtifacts:
     """
     Retrieve column artifacts of a secondary table for a many to many relationship.
 
@@ -123,7 +123,7 @@ def _gather_column_artifacts(
             "primary key to be of type object nor array."
         )
 
-    return _ManyToManyColumnArtifacts(
+    return _ColumnArtifacts(
         type=type_,
         format=format_,
         tablename=tablename,
@@ -132,7 +132,7 @@ def _gather_column_artifacts(
     )
 
 
-def _construct_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy.Column:
+def _construct_column(*, artifacts: _ColumnArtifacts) -> sqlalchemy.Column:
     """
     Construct many to many column.
 
