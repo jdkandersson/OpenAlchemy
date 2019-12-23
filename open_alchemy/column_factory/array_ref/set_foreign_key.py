@@ -72,18 +72,18 @@ def set_foreign_key(
     # Handle model already constructed by altering the model on open_aclehmy.model
     ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
-        # Construct foreign key
         _, fk_column = column.handle_column(schema=fk_schema)
         setattr(ref_model, fk_logical_name, fk_column)
         return
 
     # Handle model not constructed by adding the foreign key schema to the model schema
-    schemas[ref_model_name] = {
-        "allOf": [
-            schemas[ref_model_name],
-            {
-                "type": "object",
-                "properties": {fk_logical_name: {**fk_schema, "x-dict-ignore": True}},
-            },
-        ]
+    fk_object_schema = {
+        "type": "object",
+        "properties": {fk_logical_name: {**fk_schema, "x-dict-ignore": True}},
     }
+    if "allOf" not in schemas[ref_model_name]:
+        # Add new top level allOf
+        schemas[ref_model_name] = {"allOf": [schemas[ref_model_name], fk_object_schema]}
+        return
+    # Append to existing allOf
+    schemas[ref_model_name]["allOf"].append(fk_object_schema)

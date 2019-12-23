@@ -29,8 +29,16 @@ def test_set_foreign_key_schemas_missing():
         )
 
 
+@pytest.mark.parametrize(
+    "schemas",
+    [
+        {"RefSchema": {"type": "object", "properties": {}}},
+        {"RefSchema": {"allOf": [{"type": "object", "properties": {}}]}},
+    ],
+    ids=["plain", "allOf exists"],
+)
 @pytest.mark.column
-def test_set_foreign_key_schemas():
+def test_set_foreign_key_schemas(schemas):
     """
     GIVEN referenced model is not in models, model schema, schemas and foreign key
         column
@@ -46,7 +54,6 @@ def test_set_foreign_key_schemas():
         "x-tablename": tablename,
         "properties": {fk_column: {"type": "integer"}},
     }
-    schemas = {ref_model_name: {"type": "object", "properties": {}}}
 
     array_ref._set_foreign_key.set_foreign_key(
         ref_model_name=ref_model_name,
