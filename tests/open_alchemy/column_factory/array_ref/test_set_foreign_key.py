@@ -18,11 +18,7 @@ def test_set_foreign_key_schemas_missing():
     THEN MalformedRelationshipError is raised.
     """
     fk_column = "column_1"
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {fk_column: {"type": "integer"}},
-    }
+    model_schema = {"properties": {fk_column: {"type": "integer"}}}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
         array_ref._set_foreign_key.set_foreign_key(

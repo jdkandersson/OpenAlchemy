@@ -44,7 +44,7 @@ def gather_array_artifacts(
         and artifacts.relationship.back_reference.uselist is not None
     ):
         raise exceptions.MalformedRelationshipError(
-            "x-uselist is not supported for one to many relationships."
+            "x-uselist is not supported for one to many nor many to many relationships."
         )
 
     # Check referenced specification
