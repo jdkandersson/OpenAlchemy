@@ -132,6 +132,9 @@ def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy
     """
     Construct many to many column.
 
+    Take the artifacts gathered for a foreign key reference for an association table
+    and construct the corresponding column.
+
     Args:
         artifacts: The artifacts based on which to construct the column
 
@@ -139,16 +142,19 @@ def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy
         The column.
 
     """
-    spec: types.Schema = {
-        "type": artifacts.type_,
-        "x-foreign-key": f"{artifacts.tablename}.{artifacts.column_name}",
-    }
-    if artifacts.format_ is not None:
-        spec["format"] = artifacts.format_
-    if artifacts.max_length is not None:
-        spec["maxLength"] = artifacts.max_length
-    _, return_column = column.handle_column(schema=spec)
+    # Convert to column artifacts
+    column_artifacts = types.ColumnArtifacts(
+        type=artifacts.type_,
+        format=artifacts.format_,
+        max_length=artifacts.max_length,
+        foreign_key=f"{artifacts.tablename}.{artifacts.column_name}",
+    )
+
+    # Construct column
+    return_column = column.construct_column(artifacts=column_artifacts)
+    # Set column name for the table
     return_column.name = f"{artifacts.tablename}_{artifacts.column_name}"
+
     return return_column
 
 
