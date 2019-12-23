@@ -8,7 +8,7 @@ from open_alchemy.column_factory import array_ref
 
 
 class TestManyToManyColumnArtifacts:
-    """Tests for _many_to_many_column_artifacts."""
+    """Tests for _gather_column_artifacts."""
 
     # pylint: disable=protected-access
 
@@ -77,11 +77,11 @@ class TestManyToManyColumnArtifacts:
     def test_invalid(schema):
         """
         GIVEN invalid schema
-        WHEN _many_to_many_column_artifacts is called with the schema
+        WHEN _gather_column_artifacts is called with the schema
         THEN MalformedSchemaError is raised.
         """
         with pytest.raises(exceptions.MalformedSchemaError):
-            array_ref._construct_association_table._many_to_many_column_artifacts(
+            array_ref._construct_association_table._gather_column_artifacts(
                 model_schema=schema, schemas={}
             )
 
@@ -235,19 +235,19 @@ class TestManyToManyColumnArtifacts:
     def test_valid(schema, schemas, expected_format, expected_max_length):
         """
         GIVEN schema, schemas and expected format, type, tablename and column name
-        WHEN _many_to_many_column_artifacts is called with the schema and schemas
+        WHEN _gather_column_artifacts is called with the schema and schemas
         THEN the expected format, type, tablename and column name are returned.
         """
         expected_type = "simple_type_1"
         expected_tablename = "table 1"
         expected_column_name = "key_1"
 
-        column = array_ref._construct_association_table._many_to_many_column_artifacts(
+        column = array_ref._construct_association_table._gather_column_artifacts(
             model_schema=schema, schemas=schemas
         )
 
-        assert column.type_ == expected_type
-        assert column.format_ == expected_format
+        assert column.type == expected_type
+        assert column.format == expected_format
         assert column.tablename == expected_tablename
         assert column.column_name == expected_column_name
         assert column.max_length == expected_max_length

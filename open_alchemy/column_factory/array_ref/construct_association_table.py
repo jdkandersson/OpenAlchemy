@@ -18,9 +18,9 @@ class _ManyToManyColumnArtifacts:
     """Artifacts for constructing a many to many column of a secondary table."""
 
     # The type of the column
-    type_: str
+    type: str
     # The format of the column
-    format_: typing.Optional[str]
+    format: typing.Optional[str]
     # The table name with the foreign key
     tablename: str
     # The column name for the foreign key
@@ -29,7 +29,7 @@ class _ManyToManyColumnArtifacts:
     max_length: typing.Optional[int]
 
 
-def _many_to_many_column_artifacts(
+def _gather_column_artifacts(
     *, model_schema: types.Schema, schemas: types.Schemas
 ) -> _ManyToManyColumnArtifacts:
     """
@@ -124,7 +124,11 @@ def _many_to_many_column_artifacts(
         )
 
     return _ManyToManyColumnArtifacts(
-        type_, format_, tablename, column_name, max_length
+        type=type_,
+        format=format_,
+        tablename=tablename,
+        column_name=column_name,
+        max_length=max_length,
     )
 
 
@@ -144,8 +148,8 @@ def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy
     """
     # Convert to column artifacts
     column_artifacts = types.ColumnArtifacts(
-        type=artifacts.type_,
-        format=artifacts.format_,
+        type=artifacts.type,
+        format=artifacts.format,
         max_length=artifacts.max_length,
         foreign_key=f"{artifacts.tablename}.{artifacts.column_name}",
     )
@@ -182,10 +186,10 @@ def construct_association_table(
 
     """
     # Gather artifacts for parent and child model
-    parent_artifacts = _many_to_many_column_artifacts(
+    parent_artifacts = _gather_column_artifacts(
         model_schema=parent_schema, schemas=schemas
     )
-    child_artifacts = _many_to_many_column_artifacts(
+    child_artifacts = _gather_column_artifacts(
         model_schema=child_schema, schemas=schemas
     )
 
