@@ -254,7 +254,7 @@ class TestManyToManyColumnArtifacts:
 
 
 class TestManyToManyColumn:
-    """Tests for _many_to_many_column."""
+    """Tests for _construct_column."""
 
     # pylint: disable=protected-access
 
@@ -263,14 +263,14 @@ class TestManyToManyColumn:
     def test_column():
         """
         GIVEN many to many column artifacts
-        WHEN _many_to_many_column is called with the artifacts
+        WHEN _construct_column is called with the artifacts
         THEN a column is returned.
         """
         artifacts = array_ref._construct_association_table._ManyToManyColumnArtifacts(
             "integer", "int64", "table_1", "column_1", None
         )
 
-        column = array_ref._construct_association_table._many_to_many_column(
+        column = array_ref._construct_association_table._construct_column(
             artifacts=artifacts
         )
 
@@ -308,14 +308,14 @@ class TestManyToManyColumn:
     def test_types(type_, format_, max_length, expected_type):
         """
         GIVEN type, format, maxLength and expected type
-        WHEN artifacts are constructed and _many_to_many_column is called
+        WHEN artifacts are constructed and _construct_column is called
         THEN a column with the expected type is returned.
         """
         artifacts = array_ref._construct_association_table._ManyToManyColumnArtifacts(
             type_, format_, "table_1", "column_1", max_length
         )
 
-        column = array_ref._construct_association_table._many_to_many_column(
+        column = array_ref._construct_association_table._construct_column(
             artifacts=artifacts
         )
 

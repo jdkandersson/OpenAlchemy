@@ -132,7 +132,7 @@ def _gather_column_artifacts(
     )
 
 
-def _many_to_many_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy.Column:
+def _construct_column(*, artifacts: _ManyToManyColumnArtifacts) -> sqlalchemy.Column:
     """
     Construct many to many column.
 
@@ -194,8 +194,8 @@ def construct_association_table(
     )
 
     # Construct columns for parent and child models
-    parent_column = _many_to_many_column(artifacts=parent_artifacts)
-    child_column = _many_to_many_column(artifacts=child_artifacts)
+    parent_column = _construct_column(artifacts=parent_artifacts)
+    child_column = _construct_column(artifacts=child_artifacts)
 
     # Construct table
     base = facades.models.get_base()
