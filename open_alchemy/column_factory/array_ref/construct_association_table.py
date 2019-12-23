@@ -168,6 +168,9 @@ def construct_association_table(
     """
     Construct many to many association table.
 
+    Gather artifacts for both models, construct foreign key column for models and
+    combine into a table.
+
     Args:
         parent_schema: The schema for the many to many parent.
         child_schema: The schema for the many to many child.
@@ -178,13 +181,18 @@ def construct_association_table(
         The association table.
 
     """
+    # Gather artifacts for parent and child model
     parent_artifacts = _many_to_many_column_artifacts(
         model_schema=parent_schema, schemas=schemas
     )
     child_artifacts = _many_to_many_column_artifacts(
         model_schema=child_schema, schemas=schemas
     )
+
+    # Construct columns for parent and child models
     parent_column = _many_to_many_column(artifacts=parent_artifacts)
     child_column = _many_to_many_column(artifacts=child_artifacts)
+
+    # Construct table
     base = facades.models.get_base()
     return sqlalchemy.Table(tablename, base.metadata, parent_column, child_column)
