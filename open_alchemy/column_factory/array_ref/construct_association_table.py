@@ -17,10 +17,15 @@ from .. import column
 class _ManyToManyColumnArtifacts:
     """Artifacts for constructing a many to many column of a secondary table."""
 
+    # The type of the column
     type_: str
+    # The format of the column
     format_: typing.Optional[str]
+    # The table name with the foreign key
     tablename: str
+    # The column name for the foreign key
     column_name: str
+    # The max length of the column
     max_length: typing.Optional[int]
 
 
@@ -29,6 +34,15 @@ def _many_to_many_column_artifacts(
 ) -> _ManyToManyColumnArtifacts:
     """
     Retrieve column artifacts of a secondary table for a many to many relationship.
+
+    The model primary key is used as the base of the foreign key column in the
+    secondary table for the model. It is assumed that the model has a single primary key
+    column.
+
+    Raise MalformedSchemaError if the model schema does not have a type, has a type but
+    is not an object, does not have the x-tablename property, does not have any
+    properties, does not have exactly 1 primary key, the primary key column doesn't
+    define a type or the type is an object or array.
 
     Args:
         model_schema: The schema for one side of the many to many relationship.
@@ -75,11 +89,14 @@ def _many_to_many_column_artifacts(
     format_ = None
     for property_name, property_schema in properties.items():
         if helpers.peek.primary_key(schema=property_schema, schemas=schemas):
+            # Check whether this is the first primary key that has been encountered
             if type_ is not None:
                 raise exceptions.MalformedSchemaError(
                     "A schema that is part of a many to many relationship must have "
                     "exactly 1 primary key."
                 )
+
+            # Gather artifacts for constructing the foreign key column
             try:
                 type_ = helpers.peek.type_(schema=property_schema, schemas=schemas)
             except exceptions.TypeMissingError:
@@ -92,11 +109,14 @@ def _many_to_many_column_artifacts(
                 schema=property_schema, schemas=schemas
             )
             column_name = property_name
+
+    # Check whether at least 1 primary key column has been found
     if type_ is None:
         raise exceptions.MalformedSchemaError(
             "A schema that is part of a many to many relationship must have "
             "exactly 1 primary key."
         )
+    # Check that the type is for a column
     if type_ in {"object", "array"}:
         raise exceptions.MalformedSchemaError(
             "A schema that is part of a many to many relationship cannot define it's "
