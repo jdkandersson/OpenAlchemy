@@ -15,6 +15,7 @@ from .. import column
 from .. import object_ref
 from . import calculate_schema as _calculate_schema
 from . import gather_array_artifacts as _gather_array_artifacts
+from . import set_foreign_key as _set_foreign_key
 
 
 def handle_array(
@@ -40,103 +41,35 @@ def handle_array(
         The logical name and the relationship for the referenced object.
 
     """
-    obj_artifacts = _gather_array_artifacts.gather_array_artifacts(
+    artifacts = _gather_array_artifacts.gather_array_artifacts(
         schema=spec, schemas=schemas, logical_name=logical_name
     )
 
-    # Construct relationship
-    relationship_return = (
-        logical_name,
-        facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship),
-    )
-    # Construct entry for the addition for the model schema
-    return_schema = _calculate_schema.calculate_schema(artifacts=obj_artifacts)
     # Add foreign key to referenced schema
-    if obj_artifacts.relationship.secondary is None:
-        _set_foreign_key(
-            ref_model_name=obj_artifacts.relationship.model_name,
+    if artifacts.relationship.secondary is None:
+        _set_foreign_key.set_foreign_key(
+            ref_model_name=artifacts.relationship.model_name,
             model_schema=model_schema,
             schemas=schemas,
-            fk_column=obj_artifacts.fk_column,
+            fk_column=artifacts.fk_column,
         )
     else:
         table = _construct_association_table(
             parent_schema=model_schema,
-            child_schema=obj_artifacts.spec,
+            child_schema=artifacts.spec,
             schemas=schemas,
-            tablename=obj_artifacts.relationship.secondary,
+            tablename=artifacts.relationship.secondary,
         )
         facades.models.set_association(
-            table=table, name=obj_artifacts.relationship.secondary
+            table=table, name=artifacts.relationship.secondary
         )
 
-    return [relationship_return], return_schema
+    # Construct relationship
+    relationship = facades.sqlalchemy.relationship(artifacts=artifacts.relationship)
+    # Construct entry for the addition for the model schema
+    return_schema = _calculate_schema.calculate_schema(artifacts=artifacts)
 
-
-def _set_foreign_key(
-    *,
-    ref_model_name: str,
-    model_schema: types.Schema,
-    schemas: types.Schemas,
-    fk_column: str,
-) -> None:
-    """
-    Set the foreign key on an existing model or add it to the schemas.
-
-    Args:
-        ref_model_name: The name of the referenced model.
-        model_schema: The schema of the one to many parent.
-        schemas: All the model schemas.
-        fk_column: The name of the foreign key column.
-
-    """
-    # Check that model is in schemas
-    if ref_model_name not in schemas:
-        raise exceptions.MalformedRelationshipError(
-            f"{ref_model_name} referenced in relationship was not found in the "
-            "schemas."
-        )
-
-    # Calculate foreign key specification
-    fk_spec = object_ref.handle_object_reference(
-        spec=model_schema, schemas=schemas, fk_column=fk_column
-    )
-
-    # Calculate values for foreign key
-    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
-    fk_logical_name = f"{tablename}_{fk_column}"
-
-    # Gather referenced schema
-    ref_schema = schemas[ref_model_name]
-    # Any top level $ref must already be resolved
-    ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
-    fk_required = object_ref.check_foreign_key_required(
-        fk_spec=fk_spec,
-        fk_logical_name=fk_logical_name,
-        model_schema=ref_schema,
-        schemas=schemas,
-    )
-    if not fk_required:
-        return
-
-    # Handle model already constructed
-    ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
-    if ref_model is not None:
-        # Construct foreign key
-        _, fk_column = column.handle_column(schema=fk_spec)
-        setattr(ref_model, fk_logical_name, fk_column)
-        return
-
-    # Handle model not constructed
-    schemas[ref_model_name] = {
-        "allOf": [
-            schemas[ref_model_name],
-            {
-                "type": "object",
-                "properties": {fk_logical_name: {**fk_spec, "x-dict-ignore": True}},
-            },
-        ]
-    }
+    return [(logical_name, relationship)], return_schema
 
 
 @dataclasses.dataclass
