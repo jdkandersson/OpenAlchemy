@@ -14,6 +14,7 @@ from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
 from . import calculate_schema as _calculate_schema
+from . import gather_array_artifacts as _gather_array_artifacts
 
 
 def handle_array(
@@ -39,41 +40,9 @@ def handle_array(
         The logical name and the relationship for the referenced object.
 
     """
-    # Resolve any allOf and $ref
-    spec = helpers.prepare_schema(schema=spec, schemas=schemas)
-
-    # Get item specification
-    item_spec = spec.get("items")
-    if item_spec is None:
-        raise exceptions.MalformedRelationshipError(
-            "An array property must include items property."
-        )
-    obj_artifacts = object_ref.gather_object_artifacts(
-        spec=item_spec, logical_name=logical_name, schemas=schemas
+    obj_artifacts = _gather_array_artifacts.gather_array_artifacts(
+        schema=spec, schemas=schemas, logical_name=logical_name
     )
-
-    # Check for uselist
-    if (
-        obj_artifacts.relationship.back_reference is not None
-        and obj_artifacts.relationship.back_reference.uselist is not None
-    ):
-        raise exceptions.MalformedRelationshipError(
-            "x-uselist is not supported for one to many relationships."
-        )
-
-    # Check referenced specification
-    ref_spec = helpers.prepare_schema(schema=obj_artifacts.spec, schemas=schemas)
-    ref_type = ref_spec.get("type")
-    if ref_type != "object":
-        raise exceptions.MalformedRelationshipError(
-            "One to many relationships must reference an object type schema."
-        )
-    ref_tablename = helpers.get_ext_prop(source=ref_spec, name="x-tablename")
-    if ref_tablename is None:
-        raise exceptions.MalformedRelationshipError(
-            "One to many relationships must reference a schema with "
-            "x-tablename defined."
-        )
 
     # Construct relationship
     relationship_return = (
