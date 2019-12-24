@@ -50,13 +50,11 @@ def test_calculate_type(type_, format_, nullable, required, de_ref, expected_typ
     WHEN _calculate_type is called with the type, format, nullable and required
     THEN the expected type is returned.
     """
-    returned_type = models_file._model._calculate_type(
-        type_=type_,
-        format_=format_,
-        nullable=nullable,
-        required=required,
-        de_ref=de_ref,
+    artifacts = models_file.types.ColumnSchemaArtifacts(
+        type=type_, format=format_, nullable=nullable, required=required, de_ref=de_ref
     )
+
+    returned_type = models_file._model._calculate_type(artifacts=artifacts)
 
     assert returned_type == expected_type
 

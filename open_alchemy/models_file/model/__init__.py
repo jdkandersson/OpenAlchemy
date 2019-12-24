@@ -18,7 +18,9 @@ with open(_TEMPLATE_FILE) as in_file:
     _TEMPLATE = in_file.read()
 
 
-# def gather_artifacts(*, schema: oa_types.Schema) -> types.ModelArtifacts:
+# def gather_column_artifacts(
+#     *, schema: oa_types.Schema
+# ) -> types.ColumnSchemaArtifacts:
 #     """
 #     Gather artifacts for generating the class of a models.
 
@@ -35,22 +37,12 @@ with open(_TEMPLATE_FILE) as in_file:
 #     """
 
 
-def _calculate_type(
-    *,
-    type_: str,
-    format_: typing.Optional[str] = None,
-    nullable: typing.Optional[bool] = None,
-    required: typing.Optional[bool] = None,
-    de_ref: typing.Optional[str] = None,
-):
+def _calculate_type(*, artifacts: types.ColumnSchemaArtifacts):
     """
     Calculate the python type of a column.
 
     Args:
-        type_: The OpenAPI type.
-        format_: The OpenAPI format.
-        nullable: Whether the property is nullable.
-        required: Whether the property is required.
+        artifacts: The artifacts from the schema of the column.
 
     Returns:
         The equivalent Python type.
@@ -58,27 +50,29 @@ def _calculate_type(
     """
     # Determine underlying type
     return_type = "str"
-    if type_ == "integer":
+    if artifacts.type == "integer":
         return_type = "int"
-    if type_ == "number":
+    if artifacts.type == "number":
         return_type = "float"
-    if type_ == "boolean":
+    if artifacts.type == "boolean":
         return_type = "bool"
-    if type_ == "object":
-        assert de_ref is not None
-        return_type = de_ref
-    if type_ == "array":
-        assert de_ref is not None
-        return_type = f"typing.Sequence[{de_ref}]"
-    if format_ == "binary":
+    if artifacts.type == "object":
+        assert artifacts.de_ref is not None
+        return_type = artifacts.de_ref
+    if artifacts.type == "array":
+        assert artifacts.de_ref is not None
+        return_type = f"typing.Sequence[{artifacts.de_ref}]"
+    if artifacts.format == "binary":
         return_type = "bytes"
-    if format_ == "date":
+    if artifacts.format == "date":
         return_type = "datetime.date"
-    if format_ == "date-time":
+    if artifacts.format == "date-time":
         return_type = "datetime.datetime"
 
     # Determine whether the type is optional
-    optional = helpers.calculate_nullable(nullable=nullable, required=required)
+    optional = helpers.calculate_nullable(
+        nullable=artifacts.nullable, required=artifacts.required
+    )
     if optional:
         return f"typing.Optional[{return_type}]"
     return return_type
