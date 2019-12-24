@@ -162,7 +162,7 @@ def _construct_column(*, artifacts: _ColumnArtifacts) -> sqlalchemy.Column:
     return return_column
 
 
-def construct_association_table(
+def construct(
     *,
     parent_schema: types.Schema,
     child_schema: types.Schema,

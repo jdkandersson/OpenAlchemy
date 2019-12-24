@@ -81,7 +81,7 @@ class TestManyToManyColumnArtifacts:
         THEN MalformedSchemaError is raised.
         """
         with pytest.raises(exceptions.MalformedSchemaError):
-            array_ref._construct_association_table._gather_column_artifacts(
+            array_ref._association_table._gather_column_artifacts(
                 model_schema=schema, schemas={}
             )
 
@@ -242,7 +242,7 @@ class TestManyToManyColumnArtifacts:
         expected_tablename = "table 1"
         expected_column_name = "key_1"
 
-        column = array_ref._construct_association_table._gather_column_artifacts(
+        column = array_ref._association_table._gather_column_artifacts(
             model_schema=schema, schemas=schemas
         )
 
@@ -266,13 +266,11 @@ class TestManyToManyColumn:
         WHEN _construct_column is called with the artifacts
         THEN a column is returned.
         """
-        artifacts = array_ref._construct_association_table._ColumnArtifacts(
+        artifacts = array_ref._association_table._ColumnArtifacts(
             "integer", "int64", "table_1", "column_1", None
         )
 
-        column = array_ref._construct_association_table._construct_column(
-            artifacts=artifacts
-        )
+        column = array_ref._association_table._construct_column(artifacts=artifacts)
 
         assert column.name == "table_1_column_1"
         assert isinstance(column.type, sqlalchemy.BigInteger)
@@ -298,13 +296,11 @@ class TestManyToManyColumn:
         WHEN artifacts are constructed and _construct_column is called
         THEN a column with the expected type is returned.
         """
-        artifacts = array_ref._construct_association_table._ColumnArtifacts(
+        artifacts = array_ref._association_table._ColumnArtifacts(
             type_, format_, "table_1", "column_1", max_length
         )
 
-        column = array_ref._construct_association_table._construct_column(
-            artifacts=artifacts
-        )
+        column = array_ref._association_table._construct_column(artifacts=artifacts)
 
         assert isinstance(column.type, expected_type)
         if max_length is not None:
@@ -312,10 +308,10 @@ class TestManyToManyColumn:
 
 
 @pytest.mark.column
-def test_construct_association_table(mocked_facades_models):
+def test_construct(mocked_facades_models):
     """
     GIVEN parent and child schema and tablename
-    WHEN _construct_association_table is called with the parent and child schema and
+    WHEN construct is called with the parent and child schema and
         tablename
     THEN a table with the correct name, columns and metadata is constructed.
     """
@@ -332,7 +328,7 @@ def test_construct_association_table(mocked_facades_models):
     }
     tablename = "association"
 
-    returned_table = array_ref._construct_association_table.construct_association_table(
+    returned_table = array_ref._association_table.construct(
         parent_schema=parent_schema,
         child_schema=child_schema,
         schemas={},

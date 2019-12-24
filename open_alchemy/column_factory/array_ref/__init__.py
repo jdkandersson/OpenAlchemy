@@ -13,8 +13,8 @@ from open_alchemy import types
 from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
+from . import association_table as _association_table
 from . import calculate_schema as _calculate_schema
-from . import construct_association_table as _construct_association_table
 from . import gather_array_artifacts as _gather_array_artifacts
 from . import set_foreign_key as _set_foreign_key
 
@@ -55,7 +55,7 @@ def handle_array(
             fk_column=artifacts.fk_column,
         )
     else:
-        table = _construct_association_table.construct_association_table(
+        table = _association_table.construct(
             parent_schema=model_schema,
             child_schema=artifacts.spec,
             schemas=schemas,
