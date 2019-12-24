@@ -13,13 +13,18 @@ from open_alchemy import types as oa_types
 from . import exceptions
 from . import helpers as _helpers
 from . import model_factory as _model_factory
+from . import models_file as _models_file
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["open_alchemy.models"] = models
 
 
 def init_model_factory(
-    *, base: typing.Type, spec: oa_types.Schema, define_all: bool = False
+    *,
+    base: typing.Type,
+    spec: oa_types.Schema,
+    define_all: bool = False,
+    models_filename: typing.Optional[str] = None,
 ) -> oa_types.ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
@@ -56,7 +61,7 @@ def init_model_factory(
     # Making Base importable
     setattr(models, "Base", base)
 
-    # Intercepting factory calls to make models available
+    # Intercept factory calls to make models available
     def _register_model(*, name: str) -> typing.Type:
         """Intercept calls to model factory and register model on models."""
         model = cached_model_factories(name=name)
@@ -64,6 +69,26 @@ def init_model_factory(
         return model
 
     if define_all:
+        # Write the schemas file
+        if models_filename is not None:
+            models_file = _models_file.ModelsFile()
+
+            # Intercept factory calls to record the schema
+            def _record_schema(*, name: str) -> typing.Type:
+                """Intercept calls to model factory and record schema."""
+                model = _register_model(name=name)
+                models_file.add_model(
+                    schema=model._schema, name=name  # pylint: disable=protected-access
+                )
+                return model
+
+            _helpers.define_all(model_factory=_record_schema, schemas=schemas)
+
+            with open(models_filename, "w") as out_file:
+                out_file.write(models_file.generate_models())
+
+            return _record_schema
+
         _helpers.define_all(model_factory=_register_model, schemas=schemas)
 
     return _register_model
@@ -73,12 +98,21 @@ BaseAndModelFactory = typing.Tuple[typing.Type, oa_types.ModelFactory]
 
 
 def _init_optional_base(
-    *, base: typing.Optional[typing.Type], spec: oa_types.Schema, define_all: bool
+    *,
+    base: typing.Optional[typing.Type],
+    spec: oa_types.Schema,
+    define_all: bool,
+    models_filename: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
         base = declarative.declarative_base()
-    return base, init_model_factory(base=base, spec=spec, define_all=define_all)
+    return (
+        base,
+        init_model_factory(
+            base=base, spec=spec, define_all=define_all, models_filename=models_filename
+        ),
+    )
 
 
 def init_json(
@@ -86,6 +120,7 @@ def init_json(
     *,
     base: typing.Optional[typing.Type] = None,
     define_all: bool = True,
+    models_filename: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a JSON file.
@@ -93,6 +128,8 @@ def init_json(
     Args:
         spec_filename: filename of an OpenAPI spec in JSON format
         base: The declarative base for the models.
+        models_filename: (optional) The path to write the models file to. If it is not
+            provided, the models file is not created.
 
     Returns:
         A tuple (Base, model_factory), where:
@@ -110,7 +147,9 @@ def init_json(
     with open(spec_filename) as spec_file:
         spec = json.load(spec_file)
 
-    return _init_optional_base(base=base, spec=spec, define_all=define_all)
+    return _init_optional_base(
+        base=base, spec=spec, define_all=define_all, models_filename=models_filename
+    )
 
 
 def init_yaml(
@@ -118,6 +157,7 @@ def init_yaml(
     *,
     base: typing.Optional[typing.Type] = None,
     define_all: bool = True,
+    models_filename: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """
     Create SQLAlchemy models factory based on an OpenAPI specification as a YAML file.
@@ -129,6 +169,8 @@ def init_yaml(
         base: (optional) The declarative base for the models.
               If base=None, construct a new SQLAlchemy declarative base.
         define_all: (optional) Whether to define all the models during initialization.
+        models_filename: (optional) The path to write the models file to. If it is not
+            provided, the models file is not created.
 
     Returns:
         A tuple (Base, model_factory), where:
@@ -150,7 +192,9 @@ def init_yaml(
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
 
-    return _init_optional_base(base=base, spec=spec, define_all=define_all)
+    return _init_optional_base(
+        base=base, spec=spec, define_all=define_all, models_filename=models_filename
+    )
 
 
 __all__ = ["init_model_factory", "init_json", "init_yaml"]

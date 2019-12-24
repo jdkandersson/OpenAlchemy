@@ -59,6 +59,8 @@ The *init_yaml* interface requires the *PyYAML* library to be installed. The
   keyword only argument. If it is *True*, all schemas with the *x-tablename*
   property are constructed as a part of the initialization. Defaults to
   *True*.
+* *models_filename*: The name of the file where the SQLAlchemy models will be
+  written as an optional keyword only argument.
 
 The return value is a tuple consisting of:
 
@@ -96,9 +98,30 @@ does not construct a declarative base. It accepts the following parameters:
   keyword only argument. If it is *True*, all schemas with the *x-tablename*
   property are constructed as a part of the initialization. Defaults to
   *False*.
+* *models_filename*: The name of the file where the SQLAlchemy models will be
+  written as an optional keyword only argument.
 
 The return value is the *model_factory* as defined as part of the return value
 of :ref:`init-yaml`.
+
+.. _models-file:
+
+Models File
+-----------
+
+*OpenAlchemy* can optionally generate a file with all the SQLAlchemy models.
+Each model is constructed based on the *OpenApi* schema. The class inherits
+from the SQLAlchemy model defined on *open_alchemy.models*. The generated
+classes contain type information only, they do not provide any additional
+functionality on top of what the SQLAlchemy model provides. They are primarily
+used to enable IDE auto-complete and type hint support. The models can be used
+in the same way as the models that can be imported from *open_alchemy.models*
+and provide the full functionality of *SQLAlchemy* models. The following is a
+sample file generated for the above example:
+
+.. literalinclude:: ../../examples/simple_models_auto.py
+    :language: python
+    :linenos:
 
 .. _model-utilities:
 

@@ -96,6 +96,7 @@ An example API has been defined using connexion and Flask here:
 ## Features
 - initializing from JSON,
 - initializing from YAML,
+- automatically generate a models file,
 - `integer` (32 and 64 bit),
 - `number` (float only),
 - `boolean`,

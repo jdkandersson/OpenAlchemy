@@ -81,7 +81,7 @@ def check_schema(
         return_schema["x-dict-ignore"] = dict_ignore
 
     # Construct return artifacts
-    nullable_artefact = _calculate_nullable(nullable=nullable, required=required)
+    nullable_artefact = helpers.calculate_nullable(nullable=nullable, required=required)
     return_artifacts = types.ColumnArtifacts(
         type_,
         format=format_,
@@ -95,45 +95,6 @@ def check_schema(
     )
 
     return return_schema, return_artifacts
-
-
-def _calculate_nullable(
-    *, nullable: typing.Optional[bool], required: typing.Optional[bool]
-) -> bool:
-    """
-    Calculate the value of the nullable field.
-
-    The following is the truth table for the nullable property.
-    required  | schema nullable | returned nullable
-    --------------------------------------------------------
-    None      | not given       | True
-    None      | False           | False
-    None      | True            | True
-    False     | not given       | True
-    False     | False           | False
-    False     | True            | True
-    True      | not given       | False
-    True      | False           | False
-    True      | True            | True
-
-    To summarize, if nullable is the schema the value for it is used. Otherwise True
-    is returned unless required is True.
-
-    Args:
-        nullable: Whether the property is nullable.
-        required: Whether the property is required.
-
-    Returns:
-        The nullable value for the column.
-
-    """
-    if nullable is None:
-        if required:
-            return False
-        return True
-    if nullable:
-        return True
-    return False
 
 
 def construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:

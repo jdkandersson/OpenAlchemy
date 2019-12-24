@@ -40,7 +40,7 @@ def nullable(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional
     Raises MalformedSchemaError if the nullable value is not a boolean.
 
     Args:
-        schema: The schema got get the nullable from.
+        schema: The schema to get the nullable from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -64,7 +64,7 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
     Raises MalformedSchemaError if the format value is not a string.
 
     Args:
-        schema: The schema got get the format from.
+        schema: The schema to get the format from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -86,7 +86,7 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
     Raises MalformedSchemaError if the maxLength value is not an integer.
 
     Args:
-        schema: The schema got get the maxLength from.
+        schema: The schema to get the maxLength from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -134,7 +134,7 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     Raises MalformedSchemaError if the x-primary-key value is not a boolean.
 
     Args:
-        schema: The schema got get x-primary-key from.
+        schema: The schema to get x-primary-key from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -147,6 +147,30 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if not isinstance(value, bool):
         raise exceptions.MalformedSchemaError(
             "The x-primary-key property must be of type boolean."
+        )
+    return value
+
+
+def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the tablename of the schema.
+
+    Raises MalformedSchemaError if the tablename value is not a string.
+
+    Args:
+        schema: The schema to get tablename from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The tablename or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-tablename property must be of type string."
         )
     return value
 
