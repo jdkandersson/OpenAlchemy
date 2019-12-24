@@ -1,7 +1,7 @@
 """Functions handling API endpoints."""
 
+import database
 import models
-from database import db
 
 
 def search():
@@ -16,8 +16,8 @@ def post(body):
     if models.Employee.query.filter_by(id=body["id"]).first() is not None:
         return ("Employee already exists.", 400)
     employee = models.Employee.from_dict(**body)
-    db.session.add(employee)
-    db.session.commit()
+    database.db.session.add(employee)
+    database.db.session.commit()
 
 
 def get(id):
@@ -36,7 +36,7 @@ def patch(body, id):
     employee.name = body["name"]
     employee.division = body["division"]
     employee.salary = body["salary"]
-    db.session.commit()
+    database.db.session.commit()
     return 200
 
 
@@ -45,5 +45,5 @@ def delete(id):
     result = models.Employee.query.filter_by(id=id).delete()
     if not result:
         return ("Employee not found.", 404)
-    db.session.commit()
+    database.db.session.commit()
     return 200
