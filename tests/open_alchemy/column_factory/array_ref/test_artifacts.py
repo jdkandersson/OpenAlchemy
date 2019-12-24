@@ -76,16 +76,61 @@ def test_invalid(schema, schemas):
         )
 
 
+@pytest.mark.parametrize(
+    "schema, schemas",
+    [
+        (
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        ),
+        (
+            {"$ref": "#/components/schemas/Schema"},
+            {
+                "Schema": {
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                },
+                "RefSchema": {"type": "object", "x-tablename": "ref_schema"},
+            },
+        ),
+        (
+            {
+                "allOf": [
+                    {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema"},
+                    }
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        ),
+        (
+            {
+                "type": "array",
+                "items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            },
+            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        ),
+        (
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"allOf": [{"type": "object", "x-tablename": "ref_schema"}]}},
+        ),
+    ],
+    ids=[
+        "array items $ref",
+        "$ref array items $ref",
+        "allOf array items $ref",
+        "array items allOf $ref",
+        "array items $ref allOf",
+    ],
+)
 @pytest.mark.column
-def test_valid():
+def test_valid(schema, schemas):
     """
     GIVEN array schema and schemas
     WHEN gather is called with the schema and schemas
     THEN artifacts from the array schema are returned.
     """
-    schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}}
-
     artifacts = array_ref._artifacts.gather(
         schema=schema, schemas=schemas, logical_name="ref_schema"
     )
