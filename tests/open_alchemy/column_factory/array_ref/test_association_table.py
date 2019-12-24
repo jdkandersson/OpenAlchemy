@@ -1,4 +1,4 @@
-"""Tests for array references."""
+"""Tests for array association table."""
 
 import pytest
 import sqlalchemy
@@ -7,7 +7,7 @@ from open_alchemy import exceptions
 from open_alchemy.column_factory import array_ref
 
 
-class TestManyToManyColumnArtifacts:
+class TestGatherColumnArtifacts:
     """Tests for _gather_column_artifacts."""
 
     # pylint: disable=protected-access
@@ -253,7 +253,7 @@ class TestManyToManyColumnArtifacts:
         assert column.max_length == expected_max_length
 
 
-class TestManyToManyColumn:
+class TestConstructColumn:
     """Tests for _construct_column."""
 
     # pylint: disable=protected-access

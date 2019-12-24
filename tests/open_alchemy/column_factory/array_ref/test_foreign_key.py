@@ -1,4 +1,4 @@
-"""Tests for set_foreign_key."""
+"""Tests for foreign key."""
 # pylint: disable=protected-access
 
 from unittest import mock
@@ -11,7 +11,7 @@ from open_alchemy.column_factory import array_ref
 
 
 @pytest.mark.column
-def test_set_foreign_key_schemas_missing():
+def test_schemas_missing():
     """
     GIVEN referenced model is not in models and not in schemas
     WHEN set_ is called with the referenced model name
@@ -38,7 +38,7 @@ def test_set_foreign_key_schemas_missing():
     ids=["plain", "allOf exists"],
 )
 @pytest.mark.column
-def test_set_foreign_key_schemas(schemas):
+def test_schemas(schemas):
     """
     GIVEN referenced model is not in models, model schema, schemas and foreign key
         column
@@ -82,7 +82,7 @@ def test_set_foreign_key_schemas(schemas):
 
 
 @pytest.mark.column
-def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
+def test_models(mocked_facades_models: mock.MagicMock):
     """
     GIVEN mocked models, referenced model is in models, model schema, schemas and
         foreign key column
@@ -117,7 +117,7 @@ def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
 
 
 @pytest.mark.column
-def test_handle_array_schemas_fk_def():
+def test_fk_def():
     """
     GIVEN schema with array referencing another schema which already has foreign key
         and schemas

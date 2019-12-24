@@ -1,4 +1,4 @@
-"""Tests for gather."""
+"""Tests for artifacts."""
 # pylint: disable=protected-access
 
 import pytest

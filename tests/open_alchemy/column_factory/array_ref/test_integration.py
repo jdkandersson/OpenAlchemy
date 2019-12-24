@@ -1,4 +1,4 @@
-"""Tests for array references."""
+"""Integration tests for array references."""
 
 import pytest
 

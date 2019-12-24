@@ -1,4 +1,4 @@
-"""Tests for calculate."""
+"""Tests for schema."""
 # pylint: disable=protected-access
 
 import pytest
