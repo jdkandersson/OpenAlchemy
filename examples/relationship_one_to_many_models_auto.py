@@ -11,7 +11,7 @@ class Division(models.Division):
 
     id: typing.Optional[int]
     name: typing.Optional[str]
-    employees: typing.Optional[typing.Sequence["Employee"]]
+    employees: typing.Sequence["Employee"]
 
 
 class Employee(models.Employee):

@@ -69,7 +69,7 @@ def _calculate_type(*, artifacts: types.ColumnSchemaArtifacts):
     if artifacts.type == "object":
         return_type = f'"{artifacts.de_ref}"'
     if artifacts.type == "array":
-        return_type = f'typing.Sequence["{artifacts.de_ref}"]'
+        return f'typing.Sequence["{artifacts.de_ref}"]'
     if artifacts.format == "binary":
         return_type = "bytes"
     if artifacts.format == "date":

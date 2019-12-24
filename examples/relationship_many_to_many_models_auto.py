@@ -18,4 +18,4 @@ class Employee(models.Employee):
 
     id: typing.Optional[int]
     name: typing.Optional[str]
-    projects: typing.Optional[typing.Sequence["Project"]]
+    projects: typing.Sequence["Project"]
