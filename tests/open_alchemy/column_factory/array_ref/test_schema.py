@@ -1,4 +1,4 @@
-"""Tests for _calculate_schema."""
+"""Tests for schema."""
 # pylint: disable=protected-access
 
 import pytest
@@ -8,10 +8,10 @@ from open_alchemy.column_factory import array_ref
 
 
 @pytest.mark.column
-def test_calculate_schema():
+def test_calculate():
     """
     GIVEN array artifacts
-    WHEN _calculate_schema is called with the artifacts
+    WHEN calculate is called with the artifacts
     THEN the schema for the array reference is returned.
     """
     relationship = types.RelationshipArtifacts("RefSchema")
@@ -19,7 +19,7 @@ def test_calculate_schema():
         spec={}, fk_column="fk_column", relationship=relationship
     )
 
-    schema = array_ref._calculate_schema.calculate_schema(artifacts=artifacts)
+    schema = array_ref._schema.calculate(artifacts=artifacts)
 
     assert schema == {
         "type": "array",

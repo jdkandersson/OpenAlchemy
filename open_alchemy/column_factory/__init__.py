@@ -60,7 +60,7 @@ def column_factory(
     if type_ == "array":
         # Handle arrays
         return array_ref.handle_array(
-            spec=spec,
+            schema=spec,
             model_schema=model_schema,
             schemas=schemas,
             logical_name=logical_name,

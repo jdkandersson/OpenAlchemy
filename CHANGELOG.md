@@ -8,6 +8,7 @@
 - Add support for _date_
 - Move SQLAlchemy relationship construction behind facade
 - Move schema calculations into separate files
+- Refactor handling array references to reduce scope of individual tests and make them easier to understand.
 
 ## Version 0.10.4 - 2019-12-18
 
