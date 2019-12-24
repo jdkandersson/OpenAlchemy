@@ -189,6 +189,7 @@ def construct(
     parent_artifacts = _gather_column_artifacts(
         model_schema=parent_schema, schemas=schemas
     )
+    print(child_schema)
     child_artifacts = _gather_column_artifacts(
         model_schema=child_schema, schemas=schemas
     )
