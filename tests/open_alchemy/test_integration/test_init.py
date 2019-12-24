@@ -25,7 +25,10 @@ def test_init_optional_base_none_call(
     open_alchemy._init_optional_base(base=None, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
-        base=mocked_declarative_base.return_value, spec=spec, define_all=True
+        base=mocked_declarative_base.return_value,
+        spec=spec,
+        define_all=True,
+        models_filename=None,
     )
 
 
@@ -60,7 +63,7 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     open_alchemy._init_optional_base(base=base, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
-        base=base, spec=spec, define_all=True
+        base=base, spec=spec, define_all=True, models_filename=None
     )
 
 
@@ -385,3 +388,46 @@ def test_import_many_to_many_association(engine, sessionmaker, tmp_path):
     # Querying session
     queried_association = session.query(association).first()
     assert queried_association == (12, 11)
+
+
+@pytest.mark.integration
+def test_models_file(tmp_path):
+    """
+    GIVEN specification stored in a YAML file
+    WHEN init_yaml is called with the file and a models file path
+    THEN the models are written to the models file.
+    """
+    # pylint: disable=import-error,import-outside-toplevel
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.yaml"
+    spec_file.write_text(yaml.dump(BASIC_SPEC))
+
+    # Create models file
+    models_file = directory / "models.py"
+
+    # Creating model factory
+    open_alchemy.init_yaml(
+        str(spec_file), define_all=True, models_filename=str(models_file)
+    )
+
+    # Check models file contents
+    models_file_contents = models_file.read_text()
+    docstring = '"""SQLAlchemy models based on models constructed by OpenAlchemy."""'
+    assert (
+        models_file_contents
+        == f'''{docstring}
+# pylint: disable=no-member
+
+import typing
+
+from open_alchemy import models
+
+
+class Table(models.Table):
+    """Table SQLAlchemy model."""
+
+    column: typing.Optional[int]
+'''
+    )
