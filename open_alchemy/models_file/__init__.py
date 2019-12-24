@@ -41,9 +41,8 @@ class ModelsFile:
         """
         raw_source = _models.generate(models=self._models)
         try:
-            formatted_source = black.format_file_contents(
+            return black.format_file_contents(
                 src_contents=raw_source, fast=False, mode=black.FileMode()
             )
         except black.NothingChanged:
             return raw_source
-        return formatted_source
