@@ -67,11 +67,9 @@ def _calculate_type(*, artifacts: types.ColumnSchemaArtifacts):
     if artifacts.type == "boolean":
         return_type = "bool"
     if artifacts.type == "object":
-        assert artifacts.de_ref is not None
-        return_type = artifacts.de_ref
+        return_type = f'"{artifacts.de_ref}"'
     if artifacts.type == "array":
-        assert artifacts.de_ref is not None
-        return_type = f"typing.Sequence[{artifacts.de_ref}]"
+        return_type = f'typing.Sequence["{artifacts.de_ref}"]'
     if artifacts.format == "binary":
         return_type = "bytes"
     if artifacts.format == "date":

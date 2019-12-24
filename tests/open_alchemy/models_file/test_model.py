@@ -78,8 +78,8 @@ def test_gather_column_artifacts(schema, required, expected_artifacts):
         ("string", "date", False, None, None, "datetime.date"),
         ("string", "date-time", False, None, None, "datetime.datetime"),
         ("boolean", None, False, None, None, "bool"),
-        ("object", None, False, None, "RefModel", "RefModel"),
-        ("array", None, False, None, "RefModel", "typing.Sequence[RefModel]"),
+        ("object", None, False, None, "RefModel", '"RefModel"'),
+        ("array", None, False, None, "RefModel", 'typing.Sequence["RefModel"]'),
         ("integer", None, None, None, None, "typing.Optional[int]"),
     ],
     ids=[
