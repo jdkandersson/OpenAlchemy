@@ -53,7 +53,7 @@ model 1 datetime.
 """,
         ),
         (
-            ["model 1 typing. datetime."],
+            ["model 1 typing. datetime.", "model 2 typing. datetime."],
             f"""{DOCSTRING}
 # pylint: disable=no-member
 
@@ -62,6 +62,19 @@ import typing
 
 from open_alchemy import models
 model 1 typing. datetime.
+model 2 typing. datetime.
+""",
+        ),
+        (
+            ["model 1 typing.", "model 2 typing."],
+            f"""{DOCSTRING}
+# pylint: disable=no-member
+
+import typing
+
+from open_alchemy import models
+model 1 typing.
+model 2 typing.
 """,
         ),
     ],
@@ -71,6 +84,7 @@ model 1 typing. datetime.
         "contains typing",
         "contains datetime",
         "contains multiple imports",
+        "contains duplicate imports",
     ],
 )
 @pytest.mark.models_file

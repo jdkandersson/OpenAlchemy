@@ -128,7 +128,7 @@ def test_calculate_type(type_, format_, nullable, required, de_ref, expected_typ
             ),
             '''
 
-class Model(open_alchemy.Model):
+class Model(models.Model):
     """Model SQLAlchemy model."""
 
     column_1: type_1''',
@@ -143,7 +143,7 @@ class Model(open_alchemy.Model):
             ),
             '''
 
-class Model(open_alchemy.Model):
+class Model(models.Model):
     """Model SQLAlchemy model."""
 
     column_1: type_1
@@ -171,7 +171,7 @@ def test_generate_source(artifacts, expected_source):
             {"properties": {"id": {"type": "integer"}}},
             '''
 
-class Model(open_alchemy.Model):
+class Model(models.Model):
     """Model SQLAlchemy model."""
 
     id: typing.Optional[int]''',
@@ -180,7 +180,7 @@ class Model(open_alchemy.Model):
             {"properties": {"id": {"type": "integer"}}, "required": ["id"]},
             '''
 
-class Model(open_alchemy.Model):
+class Model(models.Model):
     """Model SQLAlchemy model."""
 
     id: int''',
@@ -189,7 +189,7 @@ class Model(open_alchemy.Model):
             {"properties": {"id": {"type": "integer"}}, "required": []},
             '''
 
-class Model(open_alchemy.Model):
+class Model(models.Model):
     """Model SQLAlchemy model."""
 
     id: typing.Optional[int]''',

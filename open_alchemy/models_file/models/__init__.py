@@ -15,6 +15,8 @@ _TEMPLATE_FILE = os.path.join(_DIRECTORY, "template.j2")
 with open(_TEMPLATE_FILE) as in_file:
     _TEMPLATE = in_file.read()
 
+_ALL_IMPORTS = {"typing", "datetime"}
+
 
 def generate(*, models: typing.List[str]) -> str:
     """
@@ -29,10 +31,12 @@ def generate(*, models: typing.List[str]) -> str:
     """
     imports: typing.Set[str] = set()
     for model in models:
+        if imports == _ALL_IMPORTS:
+            break
         if "typing." in model:
             imports.add("typing")
         if "datetime." in model:
             imports.add("datetime")
 
     template = jinja2.Template(_TEMPLATE, trim_blocks=True)
-    return template.render(imports=imports, models=models)
+    return template.render(imports=sorted(list(imports)), models=models)
