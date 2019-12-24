@@ -5,6 +5,8 @@ import typing
 
 import jinja2
 
+from open_alchemy import helpers
+
 from .. import types
 
 # from open_alchemy import types as oa_types
@@ -33,16 +35,46 @@ with open(_TEMPLATE_FILE) as in_file:
 #     """
 
 
-# def _calculate_type(
-#     *,
-#     type str,
-#     format_: typing.Optional[str],
-#     nullable: typing.Optional[bool],
-#     required: bool,
-# ):
-#     """
-#     Calculate the python type of a column.
-#     """
+def _calculate_type(
+    *,
+    type_: str,
+    format_: typing.Optional[str],
+    nullable: typing.Optional[bool],
+    required: typing.Optional[bool],
+):
+    """
+    Calculate the python type of a column.
+
+    Args:
+        type_: The OpenAPI type.
+        format_: The OpenAPI format.
+        nullable: Whether the property is nullable.
+        required: Whether the property is required.
+
+    Returns:
+        The equivalent Python type.
+
+    """
+    # Determine underlying type
+    return_type = "str"
+    if type_ == "integer":
+        return_type = "int"
+    if type_ == "number":
+        return_type = "float"
+    if type_ == "boolean":
+        return_type = "bool"
+    if format_ == "binary":
+        return_type = "bytes"
+    if format_ == "date":
+        return_type = "datetime.date"
+    if format_ == "date-time":
+        return_type = "datetime.datetime"
+
+    # Determine whether the type is optional
+    optional = helpers.calculate_nullable(nullable=nullable, required=required)
+    if optional:
+        return f"typing.Optional[{return_type}]"
+    return return_type
 
 
 def generate(*, artifacts: types.ModelArtifacts) -> str:
