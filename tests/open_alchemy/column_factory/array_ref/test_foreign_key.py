@@ -114,3 +114,47 @@ def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
     mocked_facades_models.get_model.assert_called_once_with(name=ref_model_name)
+
+
+@pytest.mark.column
+def test_handle_array_schemas_fk_def():
+    """
+    GIVEN schema with array referencing another schema which already has foreign key
+        and schemas
+    WHEN handle_array is called
+    THEN foreign key is not added to the referenced schema.
+    """
+    ref_model_name = "RefSchema"
+    fk_column = "id"
+    tablename = "schema"
+    model_schema = {
+        "type": "object",
+        "x-tablename": tablename,
+        "properties": {"id": {"type": "integer"}},
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+            },
+        }
+    }
+
+    array_ref._foreign_key.set_(
+        ref_model_name=ref_model_name,
+        model_schema=model_schema,
+        schemas=schemas,
+        fk_column=fk_column,
+    )
+
+    assert schemas == {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {
+                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"}
+            },
+        }
+    }
