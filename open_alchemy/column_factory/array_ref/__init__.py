@@ -16,6 +16,7 @@ from .. import object_ref
 from . import artifacts as _artifacts
 from . import association_table as _association_table
 from . import foreign_key as _foreign_key
+from . import link as _link
 from . import schema as _schema
 
 
@@ -46,24 +47,8 @@ def handle_array(
         schema=spec, schemas=schemas, logical_name=logical_name
     )
 
-    # Add foreign key to referenced schema
-    if artifacts.relationship.secondary is None:
-        _foreign_key.set_(
-            ref_model_name=artifacts.relationship.model_name,
-            model_schema=model_schema,
-            schemas=schemas,
-            fk_column=artifacts.fk_column,
-        )
-    else:
-        table = _association_table.construct(
-            parent_schema=model_schema,
-            child_schema=artifacts.spec,
-            schemas=schemas,
-            tablename=artifacts.relationship.secondary,
-        )
-        facades.models.set_association(
-            table=table, name=artifacts.relationship.secondary
-        )
+    # Construct link between the models
+    _link.construct(artifacts=artifacts, model_schema=model_schema, schemas=schemas)
 
     # Construct relationship
     relationship = facades.sqlalchemy.relationship(artifacts=artifacts.relationship)
