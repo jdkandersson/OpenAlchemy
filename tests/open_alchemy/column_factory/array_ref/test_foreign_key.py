@@ -14,14 +14,14 @@ from open_alchemy.column_factory import array_ref
 def test_set_foreign_key_schemas_missing():
     """
     GIVEN referenced model is not in models and not in schemas
-    WHEN _set_foreign_key is called with the referenced model name
+    WHEN set_ is called with the referenced model name
     THEN MalformedRelationshipError is raised.
     """
     fk_column = "column_1"
     model_schema = {"properties": {fk_column: {"type": "integer"}}}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
-        array_ref._set_foreign_key.set_foreign_key(
+        array_ref._foreign_key.set_(
             ref_model_name="RefSchema",
             model_schema=model_schema,
             schemas={},
@@ -42,7 +42,7 @@ def test_set_foreign_key_schemas(schemas):
     """
     GIVEN referenced model is not in models, model schema, schemas and foreign key
         column
-    WHEN _set_foreign_key is called with the model schema, schemas and foreign key
+    WHEN set_ is called with the model schema, schemas and foreign key
         column
     THEN the foreign key column is added to the referenced model using allOf.
     """
@@ -55,7 +55,7 @@ def test_set_foreign_key_schemas(schemas):
         "properties": {fk_column: {"type": "integer"}},
     }
 
-    array_ref._set_foreign_key.set_foreign_key(
+    array_ref._foreign_key.set_(
         ref_model_name=ref_model_name,
         model_schema=model_schema,
         schemas=schemas,
@@ -86,7 +86,7 @@ def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
     """
     GIVEN mocked models, referenced model is in models, model schema, schemas and
         foreign key column
-    WHEN _set_foreign_key is called with the model schema, schemas and foreign key
+    WHEN set_ is called with the model schema, schemas and foreign key
         column
     THEN the foreign key is added to the model.
     """
@@ -102,7 +102,7 @@ def test_set_foreign_key_models(mocked_facades_models: mock.MagicMock):
     mock_ref_model = mock.MagicMock()
     mocked_facades_models.get_model.return_value = mock_ref_model
 
-    array_ref._set_foreign_key.set_foreign_key(
+    array_ref._foreign_key.set_(
         ref_model_name=ref_model_name,
         model_schema=model_schema,
         schemas=schemas,

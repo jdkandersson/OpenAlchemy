@@ -10,7 +10,7 @@ from .. import column
 from .. import object_ref
 
 
-def set_foreign_key(
+def set_(
     *,
     ref_model_name: str,
     model_schema: types.Schema,

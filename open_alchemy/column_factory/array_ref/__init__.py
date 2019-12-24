@@ -15,8 +15,8 @@ from .. import column
 from .. import object_ref
 from . import artifacts as _artifacts
 from . import association_table as _association_table
+from . import foreign_key as _foreign_key
 from . import schema as _schema
-from . import set_foreign_key as _set_foreign_key
 
 
 def handle_array(
@@ -48,7 +48,7 @@ def handle_array(
 
     # Add foreign key to referenced schema
     if artifacts.relationship.secondary is None:
-        _set_foreign_key.set_foreign_key(
+        _foreign_key.set_(
             ref_model_name=artifacts.relationship.model_name,
             model_schema=model_schema,
             schemas=schemas,
