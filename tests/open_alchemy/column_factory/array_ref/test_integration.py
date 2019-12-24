@@ -13,7 +13,7 @@ def test_handle_array():
     THEN relationship is returned pointing to the referenced schema.
     """
     tablename = "schema"
-    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
         "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }
@@ -24,15 +24,18 @@ def test_handle_array():
         "properties": {"id": {"type": "integer"}},
     }
 
-    ([(tbl_logical_name, relationship)], schema_spec) = array_ref.handle_array(
-        spec=spec, model_schema=model_schema, schemas=schemas, logical_name=logical_name
+    ([(tbl_logical_name, relationship)], return_schema) = array_ref.handle_array(
+        schema=schema,
+        model_schema=model_schema,
+        schemas=schemas,
+        logical_name=logical_name,
     )
 
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert relationship.secondary is None
     assert tbl_logical_name == logical_name
-    assert schema_spec == {
+    assert return_schema == {
         "type": "array",
         "items": {"type": "object", "x-de-$ref": "RefSchema"},
     }

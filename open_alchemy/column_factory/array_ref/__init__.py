@@ -22,7 +22,7 @@ from . import schema as _schema
 
 def handle_array(
     *,
-    spec: types.Schema,
+    schema: types.Schema,
     model_schema: types.Schema,
     schemas: types.Schemas,
     logical_name: str,
@@ -34,7 +34,7 @@ def handle_array(
     array.
 
     Args:
-        spec: The schema for the column.
+        schema: The schema for the column.
         model_schema: The schema of the one to many parent.
         schemas: Used to resolve any $ref.
         logical_name: The logical name in the specification for the schema.
@@ -44,7 +44,7 @@ def handle_array(
 
     """
     artifacts = _artifacts.gather(
-        schema=spec, schemas=schemas, logical_name=logical_name
+        schema=schema, schemas=schemas, logical_name=logical_name
     )
 
     # Construct link between the models
