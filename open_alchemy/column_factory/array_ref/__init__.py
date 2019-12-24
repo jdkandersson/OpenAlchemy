@@ -13,8 +13,8 @@ from open_alchemy import types
 from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
+from . import artifacts as _artifacts
 from . import association_table as _association_table
-from . import gather_array_artifacts as _gather_array_artifacts
 from . import schema as _schema
 from . import set_foreign_key as _set_foreign_key
 
@@ -42,7 +42,7 @@ def handle_array(
         The logical name and the relationship for the referenced object.
 
     """
-    artifacts = _gather_array_artifacts.gather_array_artifacts(
+    artifacts = _artifacts.gather(
         schema=spec, schemas=schemas, logical_name=logical_name
     )
 

@@ -1,4 +1,4 @@
-"""Tests for gather_array_artifacts."""
+"""Tests for gather."""
 # pylint: disable=protected-access
 
 import pytest
@@ -67,11 +67,11 @@ from open_alchemy.column_factory import array_ref
 def test_invalid(schema, schemas):
     """
     GIVEN array schema that is not valid and schemas
-    WHEN gather_array_artifacts is called
+    WHEN gather is called
     THEN MalformedRelationshipError is raised.
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
-        array_ref._gather_array_artifacts.gather_array_artifacts(
+        array_ref._artifacts.gather(
             schema=schema, schemas=schemas, logical_name="ref_schema"
         )
 
@@ -80,13 +80,13 @@ def test_invalid(schema, schemas):
 def test_valid():
     """
     GIVEN array schema and schemas
-    WHEN gather_array_artifacts is called with the schema and schemas
+    WHEN gather is called with the schema and schemas
     THEN artifacts from the array schema are returned.
     """
     schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}}
 
-    artifacts = array_ref._gather_array_artifacts.gather_array_artifacts(
+    artifacts = array_ref._artifacts.gather(
         schema=schema, schemas=schemas, logical_name="ref_schema"
     )
 

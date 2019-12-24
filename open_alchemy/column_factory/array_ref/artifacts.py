@@ -7,7 +7,7 @@ from open_alchemy import types
 from .. import object_ref
 
 
-def gather_array_artifacts(
+def gather(
     *, schema: types.Schema, schemas: types.Schemas, logical_name: str
 ) -> types.ObjectArtifacts:
     """
