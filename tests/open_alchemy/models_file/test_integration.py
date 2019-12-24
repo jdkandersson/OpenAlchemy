@@ -85,7 +85,4 @@ def test_integration(schemas, expected_source):
         models.add_model(schema=schema, name=name)
     source = models.generate_models()
 
-    print(repr(source))
-    print(repr(expected_source))
-
     assert source == expected_source
