@@ -38,9 +38,10 @@ with open(_TEMPLATE_FILE) as in_file:
 def _calculate_type(
     *,
     type_: str,
-    format_: typing.Optional[str],
-    nullable: typing.Optional[bool],
-    required: typing.Optional[bool],
+    format_: typing.Optional[str] = None,
+    nullable: typing.Optional[bool] = None,
+    required: typing.Optional[bool] = None,
+    de_ref: typing.Optional[str] = None,
 ):
     """
     Calculate the python type of a column.
@@ -63,6 +64,12 @@ def _calculate_type(
         return_type = "float"
     if type_ == "boolean":
         return_type = "bool"
+    if type_ == "object":
+        assert de_ref is not None
+        return_type = de_ref
+    if type_ == "array":
+        assert de_ref is not None
+        return_type = f"typing.Sequence[{de_ref}]"
     if format_ == "binary":
         return_type = "bytes"
     if format_ == "date":
