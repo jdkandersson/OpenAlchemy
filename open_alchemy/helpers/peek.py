@@ -151,6 +151,30 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     return value
 
 
+def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the tablename of the schema..
+
+    Raises MalformedSchemaError if the tablename value is not a string.
+
+    Args:
+        schema: The schema got get tablename from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The tablename or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-tablename property must be of type string."
+        )
+    return value
+
+
 def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
     """Recursive type lookup."""
     # Base case, look for type key

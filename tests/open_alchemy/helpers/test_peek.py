@@ -188,6 +188,36 @@ def test_primary_key(schema, expected_primary_key):
     assert returned_primary_key == expected_primary_key
 
 
+@pytest.mark.helper
+def test_tablename_wrong_type():
+    """
+    GIVEN schema with tablename defined as a boolean
+    WHEN tablename is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-tablename": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.tablename(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_tablename",
+    [({}, None), ({"x-tablename": "table 1"}, "table 1")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_tablename(schema, expected_tablename):
+    """
+    GIVEN schema and expected tablename
+    WHEN tablename is called with the schema
+    THEN the expected tablename is returned.
+    """
+    returned_tablename = helpers.peek.tablename(schema=schema, schemas={})
+
+    assert returned_tablename == expected_tablename
+
+
 @pytest.mark.parametrize(
     "schema, schemas, expected_value",
     [

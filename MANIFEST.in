@@ -1,4 +1,4 @@
-recursive-include *.json
+recursive-include open_alchemy *.json *.j2
 prune docs
 prune examples
 prune tests
