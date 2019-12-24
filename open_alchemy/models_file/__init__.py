@@ -45,5 +45,5 @@ class ModelsFile:
                 src_contents=raw_source, fast=False, mode=black.FileMode()
             )
         except black.NothingChanged:
-            formatted_source = raw_source
+            return raw_source
         return formatted_source
