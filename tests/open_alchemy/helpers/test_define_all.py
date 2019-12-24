@@ -14,6 +14,13 @@ from open_alchemy import helpers
         ({"Table": {}}, []),
         ({"Table": {"x-tablename": "table"}}, ["Table"]),
         ({"Table": {"allOf": [{"x-tablename": "table"}]}}, ["Table"]),
+        (
+            {
+                "Table": {"x-tablename": "table"},
+                "RefTable": {"$ref": "#/components/schemas/Table"},
+            },
+            ["Table"],
+        ),
         ({"Table1": {}, "Table2": {}}, []),
         ({"Table1": {"x-tablename": "table1"}, "Table2": {}}, ["Table1"]),
         ({"Table1": {}, "Table2": {"x-tablename": "table2"}}, ["Table2"]),
@@ -27,6 +34,7 @@ from open_alchemy import helpers
         "single no x-tablename,          zero",
         "single x-tablename,             one",
         "allOf single x-tablename,       one",
+        "$ref single x-tablename,        one",
         "multiple no x-tablename,        multiple",
         "multiple one first x-tablename, multiple",
         "multiple one last x-tablename, multiple",

@@ -14,6 +14,10 @@ def define_all(*, model_factory: types.ModelFactory, schemas: types.Schemas) -> 
 
     """
     for name, schema in schemas.items():
+        # Skip models that do not have a x-tablename defined
         if helpers.peek.tablename(schema=schema, schemas=schemas) is None:
+            continue
+        # Skip models that just reference other models
+        if schema.get("$ref") is not None:
             continue
         model_factory(name=name)
