@@ -285,27 +285,14 @@ class TestManyToManyColumn:
         "type_, format_, max_length, expected_type",
         [
             ("integer", None, None, sqlalchemy.Integer),
-            ("integer", "int32", None, sqlalchemy.Integer),
             ("integer", "int64", None, sqlalchemy.BigInteger),
-            ("number", None, None, sqlalchemy.Float),
-            ("number", "float", None, sqlalchemy.Float),
             ("string", None, None, sqlalchemy.String),
             ("string", None, 10, sqlalchemy.String),
-            ("boolean", None, None, sqlalchemy.Boolean),
         ],
-        ids=[
-            "integer no format",
-            "integer 32 bit format",
-            "integer 64 bit format",
-            "number no format",
-            "number format",
-            "string no maxLength",
-            "string maxLength",
-            "boolean",
-        ],
+        ids=["no format", "with format", "string no maxLength", "string maxLength"],
     )
     @pytest.mark.column
-    def test_types(type_, format_, max_length, expected_type):
+    def test_artifacts(type_, format_, max_length, expected_type):
         """
         GIVEN type, format, maxLength and expected type
         WHEN artifacts are constructed and _construct_column is called
@@ -320,6 +307,8 @@ class TestManyToManyColumn:
         )
 
         assert isinstance(column.type, expected_type)
+        if max_length is not None:
+            assert column.type.length == max_length
 
 
 @pytest.mark.column
