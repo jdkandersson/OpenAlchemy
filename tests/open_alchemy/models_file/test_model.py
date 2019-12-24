@@ -153,12 +153,57 @@ class Model(open_alchemy.Model):
     ids=["single column", "multiple column"],
 )
 @pytest.mark.models_file
-def test_generate(artifacts, expected_source):
+def test_generate_source(artifacts, expected_source):
     """
     GIVEN model artifacts
-    WHEN generate is called with the artifacts
+    WHEN generate_source is called with the artifacts
     THEN the source code for the model class is returned.
     """
-    source = models_file._model.generate(artifacts=artifacts)
+    source = models_file._model.generate_source(artifacts=artifacts)
+
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "schema, expected_source",
+    [
+        (
+            {"properties": {"id": {"type": "integer"}}},
+            '''
+
+class Model(open_alchemy.Model):
+    """Model SQLAlchemy model."""
+
+    id: typing.Optional[int]''',
+        ),
+        (
+            {"properties": {"id": {"type": "integer"}}, "required": ["id"]},
+            '''
+
+class Model(open_alchemy.Model):
+    """Model SQLAlchemy model."""
+
+    id: int''',
+        ),
+        (
+            {"properties": {"id": {"type": "integer"}}, "required": []},
+            '''
+
+class Model(open_alchemy.Model):
+    """Model SQLAlchemy model."""
+
+    id: typing.Optional[int]''',
+        ),
+    ],
+    ids=["single property", "single required property", "single not required property"],
+)
+@pytest.mark.models_file
+def test_generate(schema, expected_source):
+    """
+    GIVEN schema and name
+    WHEN generate is called with the schema and name
+    THEN the model source code is returned.
+    """
+    source = models_file._model.generate(schema=schema, name="Model")
 
     assert source == expected_source
