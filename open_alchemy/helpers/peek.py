@@ -158,7 +158,7 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     Raises MalformedSchemaError if the tablename value is not a string.
 
     Args:
-        schema: The schema got get tablename from.
+        schema: The schema to get tablename from.
         schemas: The schemas for $ref lookup.
 
     Returns:
