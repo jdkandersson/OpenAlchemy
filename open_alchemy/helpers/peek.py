@@ -153,7 +153,7 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
 
 def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the tablename of the schema..
+    Retrieve the tablename of the schema.
 
     Raises MalformedSchemaError if the tablename value is not a string.
 
