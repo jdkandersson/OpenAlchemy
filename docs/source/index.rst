@@ -114,8 +114,10 @@ Each model is constructed based on the *OpenApi* schema. The class inherits
 from the SQLAlchemy model defined on *open_alchemy.models*. The generated
 classes contain type information only, they do not provide any additional
 functionality on top of what the SQLAlchemy model provides. They are primarily
-used to enable IDE auto-complete and type hint support. The following is a
-sample file generated for the example above:
+used to enable IDE auto-complete and type hint support. The models can be used
+in the same way as the models that can be imported from *open_alchemy.models*
+and provide the full functionality of *SQLAlchemy* models. The following is a
+sample file generated for the above example:
 
 .. literalinclude:: ../../examples/simple_models_auto.py
     :language: python
