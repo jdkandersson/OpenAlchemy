@@ -32,6 +32,7 @@ setuptools.setup(
         "typing-extensions>=3.5",
         "jsonschema>=3",
         "Jinja2>=2",
+        "black",
     ],
     include_package_data=True,
     extras_require={

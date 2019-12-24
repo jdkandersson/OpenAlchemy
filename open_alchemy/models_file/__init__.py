@@ -3,6 +3,8 @@
 
 import typing
 
+import black
+
 from open_alchemy import types as oa_types
 
 from . import model as _model
@@ -37,4 +39,11 @@ class ModelsFile:
             The source code for the models file.
 
         """
-        return _models.generate(models=self._models)
+        raw_source = _models.generate(models=self._models)
+        try:
+            formatted_source = black.format_file_contents(
+                src_contents=raw_source, fast=False, mode=black.FileMode()
+            )
+        except black.NothingChanged:
+            formatted_source = raw_source
+        return formatted_source
