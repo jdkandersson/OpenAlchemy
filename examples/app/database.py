@@ -10,4 +10,5 @@ from open_alchemy import init_yaml
 db = SQLAlchemy()
 SPEC_DIR = os.path.dirname(__file__)
 SPEC_FILE = os.path.join(SPEC_DIR, "api.yaml")
-init_yaml(SPEC_FILE, base=db.Model)
+MODELS_FILENAME = os.path.join(SPEC_DIR, "models.py")
+init_yaml(SPEC_FILE, base=db.Model, models_filename=MODELS_FILENAME)

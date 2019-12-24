@@ -1,28 +1,28 @@
 """Functions handling API endpoints."""
 
+import models
 from database import db
-from open_alchemy.models import Employee
 
 
 def search():
     """Get all employees from the database."""
-    employees = Employee.query.all()
+    employees = models.Employee.query.all()
     employee_dicts = map(lambda employee: employee.to_dict(), employees)
     return list(employee_dicts)
 
 
 def post(body):
     """Save an employee to the database."""
-    if Employee.query.filter_by(id=body["id"]).first() is not None:
+    if models.Employee.query.filter_by(id=body["id"]).first() is not None:
         return ("Employee already exists.", 400)
-    employee = Employee.from_dict(**body)
+    employee = models.Employee.from_dict(**body)
     db.session.add(employee)
     db.session.commit()
 
 
 def get(id):
     """Get an employee from the database."""
-    employee = Employee.query.filter_by(id=id).first()
+    employee = models.Employee.query.filter_by(id=id).first()
     if employee is None:
         return ("Employee not found.", 404)
     return employee.to_dict()
@@ -30,7 +30,7 @@ def get(id):
 
 def patch(body, id):
     """Update an employee in the dayabase."""
-    employee = Employee.query.filter_by(id=id).first()
+    employee = models.Employee.query.filter_by(id=id).first()
     if employee is None:
         return ("Employee not found.", 404)
     employee.name = body["name"]
@@ -42,7 +42,7 @@ def patch(body, id):
 
 def delete(id):
     """Delete an employee from the database."""
-    result = Employee.query.filter_by(id=id).delete()
+    result = models.Employee.query.filter_by(id=id).delete()
     if not result:
         return ("Employee not found.", 404)
     db.session.commit()
