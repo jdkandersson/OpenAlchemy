@@ -1,0 +1,8 @@
+"""SQLAlchemy models based on models constructed by OpenAlchemy."""
+# pylint: disable=no-member
+
+from open_alchemy import models
+
+{% for model in models %}
+{{ model }}
+{% endfor %}
