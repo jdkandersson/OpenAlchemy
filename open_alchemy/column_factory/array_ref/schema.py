@@ -3,7 +3,7 @@
 from open_alchemy import types
 
 
-def calculate_schema(*, artifacts: types.ObjectArtifacts) -> types.Schema:
+def calculate(*, artifacts: types.ObjectArtifacts) -> types.Schema:
     """
     Calculate the array schema from the artifacts.
 

@@ -14,8 +14,8 @@ from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
 from . import association_table as _association_table
-from . import calculate_schema as _calculate_schema
 from . import gather_array_artifacts as _gather_array_artifacts
+from . import schema as _schema
 from . import set_foreign_key as _set_foreign_key
 
 
@@ -68,6 +68,6 @@ def handle_array(
     # Construct relationship
     relationship = facades.sqlalchemy.relationship(artifacts=artifacts.relationship)
     # Construct entry for the addition for the model schema
-    return_schema = _calculate_schema.calculate_schema(artifacts=artifacts)
+    return_schema = _schema.calculate(artifacts=artifacts)
 
     return [(logical_name, relationship)], return_schema
