@@ -1,6 +1,7 @@
 """Generate models files based on individual models."""
 
 import os
+import sys
 import typing
 
 import jinja2
@@ -37,4 +38,8 @@ def generate(*, models: typing.List[str]) -> str:
             imports.add("datetime")
 
     template = jinja2.Template(_TEMPLATE, trim_blocks=True)
-    return template.render(imports=sorted(list(imports)), models=models)
+    return template.render(
+        imports=sorted(list(imports)),
+        models=models,
+        python_minor_version=sys.version_info[1],
+    )

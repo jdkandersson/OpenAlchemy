@@ -3,6 +3,8 @@
 
 import typing
 
+import typing_extensions
+
 from open_alchemy import models
 
 
