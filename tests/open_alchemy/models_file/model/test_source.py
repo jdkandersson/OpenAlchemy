@@ -26,11 +26,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()''',
+        return super().to_dict()''',
         ),
         (
             models_file.types.SQLAlchemyModelArtifacts(
@@ -51,11 +51,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()''',
+        return super().to_dict()''',
         ),
     ],
     ids=["single column", "multiple column"],
@@ -260,11 +260,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()''',
+        return super().to_dict()''',
         ),
         (
             models_file.types.ModelArtifacts(
@@ -325,11 +325,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()''',
+        return super().to_dict()''',
         ),
     ],
     ids=["required empty", "full"],

@@ -13,11 +13,3 @@ class Employee(models.Employee):
     name: str
     division: str
     salary: typing.Optional[float]
-
-    def from_dict(self, **kwargs: typing.Any) -> "Employee":
-        """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
-
-    def to_dict(self) -> "EmployeeDict":
-        """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()

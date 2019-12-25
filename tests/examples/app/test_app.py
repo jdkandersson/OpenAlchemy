@@ -57,6 +57,7 @@ def test_post_duplicate(client):
 
 
 @pytest.mark.app
+@pytest.mark.only_this
 def test_get(client, db_session):
     """
     GIVEN database with employee
@@ -114,7 +115,7 @@ def test_get_id_hit(client, db_session):
 
     response = client.get(f"/employee/{db_employee.id}")
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     employee = response.json
     assert employee["id"] == db_employee.id
     assert employee["name"] == db_employee.name

@@ -31,8 +31,8 @@ class Employee(models.Employee):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> EmployeeDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()

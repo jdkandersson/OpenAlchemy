@@ -438,10 +438,10 @@ class Table(models.Table):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Table":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> TableDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()
 '''
     assert models_file_contents == expected_contents

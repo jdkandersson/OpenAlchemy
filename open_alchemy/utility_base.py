@@ -131,6 +131,7 @@ class UtilityBase:
             An instance of the model constructed using the dictionary.
 
         """
+        print(kwargs)
         # Check dictionary
         schema = cls._get_schema()
         try:

@@ -35,11 +35,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()
 ''',
         ),
         (
@@ -69,11 +69,11 @@ class Model1(models.Model1):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model1":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> Model1Dict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()
 
 
 class Model2Dict(typing.TypedDict, total=False):
@@ -90,11 +90,11 @@ class Model2(models.Model2):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model2":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> Model2Dict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()
 ''',
         ),
         (
@@ -125,11 +125,11 @@ class Model(models.Model):
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        super().from_dict(**kwargs)
+        return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        super().to_dict()
+        return super().to_dict()
 ''',
         ),
     ],
