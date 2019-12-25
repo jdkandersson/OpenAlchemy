@@ -1,5 +1,6 @@
 """Functions for model artifacts."""
 
+import sys
 import typing
 
 from open_alchemy import helpers
@@ -85,7 +86,11 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     td_required_name = None
     td_not_required_name: typing.Optional[str] = f"{name}Dict"
     td_required_parent_class = None
-    td_not_required_parent_class: typing.Optional[str] = "typing.TypedDict"
+    td_not_required_parent_class: typing.Optional[str]
+    if sys.version_info[1] < 8:
+        td_not_required_parent_class = "typing_extensions.TypedDict"
+    else:
+        td_not_required_parent_class = "typing.TypedDict"
     if not td_required_empty and not td_not_required_empty:
         td_required_parent_class = td_not_required_parent_class
         td_required_name = f"_{name}DictBase"

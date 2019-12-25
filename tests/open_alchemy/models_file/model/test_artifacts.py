@@ -1,6 +1,8 @@
 """Tests for artifacts."""
 # pylint: disable=protected-access
 
+import sys
+
 import pytest
 
 from open_alchemy import models_file
@@ -394,6 +396,11 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
 # +----------------+--------------------+------------------+-----------------------+
 
 
+_EXPECTED_BASE = "typing.TypedDict"
+if sys.version_info[1] < 8:
+    _EXPECTED_BASE = "typing_extensions.TypedDict"
+
+
 @pytest.mark.parametrize(
     "schema, expected_required_parent, expected_not_required_parent",
     [
@@ -405,20 +412,20 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
                 },
                 "required": ["column_1"],
             },
-            "typing.TypedDict",
+            _EXPECTED_BASE,
             "_ModelDictBase",
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": ["column_1"]},
-            "typing.TypedDict",
+            _EXPECTED_BASE,
             None,
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": []},
             None,
-            "typing.TypedDict",
+            _EXPECTED_BASE,
         ),
-        ({"properties": {}}, None, "typing.TypedDict"),
+        ({"properties": {}}, None, _EXPECTED_BASE),
     ],
     ids=[
         "required empty: False, not required empty: False",

@@ -6,7 +6,7 @@ import typing
 from open_alchemy import models
 
 
-class _EmployeeDictBase(typing.TypedDict, total=True):
+class _EmployeeDictBase(typing_extensions.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
     id: int
