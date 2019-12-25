@@ -21,7 +21,15 @@ from open_alchemy import models_file
 class Model(models.Model):
     """Model SQLAlchemy model."""
 
-    column_1: type_1''',
+    column_1: type_1
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()''',
         ),
         (
             models_file.types.SQLAlchemyModelArtifacts(
@@ -37,7 +45,15 @@ class Model(models.Model):
     """Model SQLAlchemy model."""
 
     column_1: type_1
-    column_2: type_2''',
+    column_2: type_2
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()''',
         ),
     ],
     ids=["single column", "multiple column"],
@@ -243,7 +259,15 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """Model SQLAlchemy model."""
 
-    column_1: type_1''',
+    column_1: type_1
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()''',
         ),
         (
             models_file.types.ModelArtifacts(
@@ -300,7 +324,15 @@ class Model(models.Model):
     """Model SQLAlchemy model."""
 
     column_1: type_1
-    column_2: type_2''',
+    column_2: type_2
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()''',
         ),
     ],
     ids=["required empty", "full"],

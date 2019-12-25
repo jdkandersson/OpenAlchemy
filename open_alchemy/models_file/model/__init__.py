@@ -22,4 +22,4 @@ def generate(*, schema: oa_types.Schema, name: str) -> str:
 
     """
     artifacts = _artifacts.calculate(schema=schema, name=name)
-    return _source.sqlalchemy(artifacts=artifacts.sqlalchemy)
+    return _source.generate(artifacts=artifacts)

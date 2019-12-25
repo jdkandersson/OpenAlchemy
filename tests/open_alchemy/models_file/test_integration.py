@@ -21,10 +21,24 @@ import typing
 from open_alchemy import models
 
 
+class ModelDict(typing.TypedDict, total=False):
+    """Model TypedDict for properties that are not required."""
+
+    id: typing.Optional[int]
+
+
 class Model(models.Model):
     """Model SQLAlchemy model."""
 
     id: typing.Optional[int]
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()
 ''',
         ),
         (
@@ -40,16 +54,44 @@ import typing
 from open_alchemy import models
 
 
+class Model1Dict(typing.TypedDict, total=False):
+    """Model1 TypedDict for properties that are not required."""
+
+    id: typing.Optional[int]
+
+
 class Model1(models.Model1):
     """Model1 SQLAlchemy model."""
 
     id: typing.Optional[int]
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model1":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> Model1Dict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()
+
+
+class Model2Dict(typing.TypedDict, total=False):
+    """Model2 TypedDict for properties that are not required."""
+
+    id: typing.Optional[str]
 
 
 class Model2(models.Model2):
     """Model2 SQLAlchemy model."""
 
     id: typing.Optional[str]
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model2":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> Model2Dict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()
 ''',
         ),
         (
@@ -62,18 +104,35 @@ import typing
 from open_alchemy import models
 
 
+class ModelDict(typing.TypedDict, total=False):
+    """Model TypedDict for properties that are not required."""
+
+    extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[
+        int
+    ]
+
+
 class Model(models.Model):
     """Model SQLAlchemy model."""
 
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[
         int
     ]
+
+    def from_dict(self, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        super().to_dict()
 ''',
         ),
     ],
     ids=["single", "multiple", "black formatting"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_integration(schemas, expected_source):
     """
     GIVEN schema and name
@@ -84,5 +143,8 @@ def test_integration(schemas, expected_source):
     for schema, name in schemas:
         models.add_model(schema=schema, name=name)
     source = models.generate_models()
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source
