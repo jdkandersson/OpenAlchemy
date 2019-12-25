@@ -126,7 +126,7 @@ def test_calculate_column(schema, expected_columns):
     """
     GIVEN schema
     WHEN calculate is called with the schema
-    THEN the artifacts for the columns are gathered.
+    THEN the given expected columns are added to the artifacts.
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
@@ -178,7 +178,7 @@ def test_calculate_td_required_props(schema, expected_props):
     """
     GIVEN schema
     WHEN calculate is called with the schema
-    THEN the artifacts for the required properties are gathered.
+    THEN the given expected td required properties are added to the artifacts.
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
@@ -252,8 +252,38 @@ def test_calculate_td_not_required_props(schema, expected_props):
     """
     GIVEN schema
     WHEN calculate is called with the schema
-    THEN the artifacts for the not required properties are gathered.
+    THEN the given expected td not required properties are added to the artifacts.
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.td_not_required_props == expected_props
+
+
+@pytest.mark.parametrize(
+    "schema, expected_required_empty",
+    [
+        ({"properties": {}}, True),
+        ({"properties": {"column_1": {"type": "integer"}}}, True),
+        ({"properties": {"column_1": {"type": "integer"}}, "required": []}, True),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
+            False,
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required not given",
+        "single not required",
+        "single required",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_td_required_empty(schema, expected_required_empty):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected td required empty is added to the artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.td_required_empty == expected_required_empty

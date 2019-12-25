@@ -84,4 +84,5 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         columns=columns,
         td_required_props=td_required_props,
         td_not_required_props=td_not_required_props,
+        td_required_empty=not td_required_props,
     )
