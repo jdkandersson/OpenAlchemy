@@ -79,7 +79,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         else:
             td_not_required_props.append(prop_artifacts)
 
-    # Calculate whether property lists are empty and their names
+    # Calculate whether property lists are empty, their names and parent class
     td_required_empty = not td_required_props
     td_not_required_empty = not td_not_required_props
     td_required_name = None

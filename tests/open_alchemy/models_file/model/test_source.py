@@ -43,12 +43,78 @@ class Model(models.Model):
     ids=["single column", "multiple column"],
 )
 @pytest.mark.models_file
-def test_generate_source(artifacts, expected_source):
+def test_sqlalchemy(artifacts, expected_source):
     """
     GIVEN model artifacts
-    WHEN generate_source is called with the artifacts
+    WHEN sqlalchemy is called with the artifacts
     THEN the source code for the model class is returned.
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
+
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_source",
+    [
+        (
+            models_file.types.TypedDictArtifacts(
+                model_name="Model",
+                required=models_file.types.TypedDictClassArtifacts(
+                    props=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                    name="ModelRequiredDict",
+                    parent_class="RequiredParentClass",
+                ),
+                not_required=None,  # type: ignore
+            ),
+            '''
+
+class ModelRequiredDict(RequiredParentClass, total=True):
+    """Model TypedDict for properties that are required."""
+
+    column_1: type_1''',
+        ),
+        (
+            models_file.types.TypedDictArtifacts(
+                model_name="Model",
+                required=models_file.types.TypedDictClassArtifacts(
+                    props=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                    empty=False,
+                    name="ModelRequiredDict",
+                    parent_class="RequiredParentClass",
+                ),
+                not_required=None,  # type: ignore
+            ),
+            '''
+
+class ModelRequiredDict(RequiredParentClass, total=True):
+    """Model TypedDict for properties that are required."""
+
+    column_1: type_1
+    column_2: type_2''',
+        ),
+    ],
+    ids=["single property", "multiple properties"],
+)
+@pytest.mark.models_file
+def test_typed_dict_required(artifacts, expected_source):
+    """
+    GIVEN model artifacts
+    WHEN typed_dict_required is called with the artifacts
+    THEN the source code for the model class is returned.
+    """
+    source = models_file._model._source.typed_dict_required(artifacts=artifacts)
 
     assert source == expected_source
