@@ -1,7 +1,7 @@
 
 
 class {{ artifacts.name }}(models.{{ artifacts.name }}):
-    """{{ artifacts.name }} SQLAlchemy model."""
+    """SQLAlchemy model."""
 {% for column in artifacts.columns %}
     {{ column.name }}: {{ column.type }}{% endfor %}
 

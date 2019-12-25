@@ -19,7 +19,7 @@ from open_alchemy import models_file
             '''
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     column_1: type_1
 
@@ -42,7 +42,7 @@ class Model(models.Model):
             '''
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     column_1: type_1
     column_2: type_2
@@ -91,7 +91,7 @@ def test_sqlalchemy(artifacts, expected_source):
             '''
 
 class ModelRequiredDict(RequiredParentClass, total=True):
-    """Model TypedDict for properties that are required."""
+    """TypedDict for properties that are required."""
 
     column_1: type_1''',
         ),
@@ -116,7 +116,7 @@ class ModelRequiredDict(RequiredParentClass, total=True):
             '''
 
 class ModelRequiredDict(RequiredParentClass, total=True):
-    """Model TypedDict for properties that are required."""
+    """TypedDict for properties that are required."""
 
     column_1: type_1
     column_2: type_2''',
@@ -153,7 +153,7 @@ def test_typed_dict_required(artifacts, expected_source):
             '''
 
 class ModelNotRequiredDict(NotRequiredParentClass, total=False):
-    """Model TypedDict for properties that are not required."""''',
+    """TypedDict for properties that are not required."""''',
         ),
         (
             models_file.types.TypedDictArtifacts(
@@ -173,7 +173,7 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
             '''
 
 class ModelNotRequiredDict(NotRequiredParentClass, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     column_1: type_1''',
         ),
@@ -198,7 +198,7 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
             '''
 
 class ModelNotRequiredDict(NotRequiredParentClass, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     column_1: type_1
     column_2: type_2''',
@@ -251,13 +251,13 @@ def test_typed_dict_not_required(artifacts, expected_source):
             '''
 
 class ModelDict(typing.TypedDict, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     column_1: type_1
 
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     column_1: type_1
 
@@ -309,19 +309,19 @@ class Model(models.Model):
             '''
 
 class _ModelDictBase(typing.TypedDict, total=True):
-    """Model TypedDict for properties that are required."""
+    """TypedDict for properties that are required."""
 
     column_1: type_1
 
 
 class ModelDict(_ModelDictBase, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     column_2: type_2
 
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     column_1: type_1
     column_2: type_2

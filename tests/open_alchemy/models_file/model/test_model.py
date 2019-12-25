@@ -20,13 +20,13 @@ def test_generate():
     expected_source = '''
 
 class ModelDict(typing.TypedDict, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
 
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     id: typing.Optional[int]
 

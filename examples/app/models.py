@@ -7,7 +7,7 @@ from open_alchemy import models
 
 
 class _EmployeeDictBase(typing.TypedDict, total=True):
-    """Employee TypedDict for properties that are required."""
+    """TypedDict for properties that are required."""
 
     id: int
     name: str
@@ -15,13 +15,13 @@ class _EmployeeDictBase(typing.TypedDict, total=True):
 
 
 class EmployeeDict(_EmployeeDictBase, total=False):
-    """Employee TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     salary: typing.Optional[float]
 
 
 class Employee(models.Employee):
-    """Employee SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     id: int
     name: str

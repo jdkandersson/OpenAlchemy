@@ -22,13 +22,13 @@ from open_alchemy import models
 
 
 class ModelDict(typing.TypedDict, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
 
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     id: typing.Optional[int]
 
@@ -55,13 +55,13 @@ from open_alchemy import models
 
 
 class Model1Dict(typing.TypedDict, total=False):
-    """Model1 TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
 
 
 class Model1(models.Model1):
-    """Model1 SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     id: typing.Optional[int]
 
@@ -75,13 +75,13 @@ class Model1(models.Model1):
 
 
 class Model2Dict(typing.TypedDict, total=False):
-    """Model2 TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     id: typing.Optional[str]
 
 
 class Model2(models.Model2):
-    """Model2 SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     id: typing.Optional[str]
 
@@ -105,7 +105,7 @@ from open_alchemy import models
 
 
 class ModelDict(typing.TypedDict, total=False):
-    """Model TypedDict for properties that are not required."""
+    """TypedDict for properties that are not required."""
 
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[
         int
@@ -113,7 +113,7 @@ class ModelDict(typing.TypedDict, total=False):
 
 
 class Model(models.Model):
-    """Model SQLAlchemy model."""
+    """SQLAlchemy model."""
 
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[
         int
