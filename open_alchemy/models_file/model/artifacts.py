@@ -79,11 +79,24 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         else:
             td_not_required_props.append(prop_artifacts)
 
+    # Calculate whether property lists are empty and their names
+    td_required_empty = not td_required_props
+    td_not_required_empty = not td_not_required_props
+    td_required_name = None
+    td_not_required_name: typing.Optional[str] = f"{name}Dict"
+    if not td_required_empty and not td_not_required_empty:
+        td_required_name = f"_{name}DictBase"
+    if not td_required_empty and td_not_required_empty:
+        td_required_name = td_not_required_name
+        td_not_required_name = None
+
     return types.ModelArtifacts(
         name=name,
         columns=columns,
         td_required_props=td_required_props,
         td_not_required_props=td_not_required_props,
-        td_required_empty=not td_required_props,
-        td_not_required_empty=not td_not_required_props,
+        td_required_empty=td_required_empty,
+        td_not_required_empty=td_not_required_empty,
+        td_required_name=td_required_name,
+        td_not_required_name=td_not_required_name,
     )

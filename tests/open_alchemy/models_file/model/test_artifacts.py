@@ -317,3 +317,64 @@ def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.td_not_required_empty == expected_not_required_empty
+
+
+# Table for the name of the required and not required TypedDict names
+# +----------------+--------------------+-----------------------+-------------------+
+# | required empty | not required empty | required name         | not required name |
+# +================+====================+=======================+===================+
+# | False          | False              | _<model name>DictBase | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+# | False          | True               | <model name>Dict      | None              |
+# +----------------+--------------------+-----------------------+-------------------+
+# | True           | False              | None                  | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+# | True           | True               | None                  | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+
+
+@pytest.mark.parametrize(
+    "schema, expected_required_name, expected_not_required_name",
+    [
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "string"},
+                    "column_2": {"type": "string"},
+                },
+                "required": ["column_1"],
+            },
+            "_ModelDictBase",
+            "ModelDict",
+        ),
+        (
+            {"properties": {"column_1": {"type": "string"}}, "required": ["column_1"]},
+            "ModelDict",
+            None,
+        ),
+        (
+            {"properties": {"column_1": {"type": "string"}}, "required": []},
+            None,
+            "ModelDict",
+        ),
+        ({"properties": {}}, None, "ModelDict"),
+    ],
+    ids=[
+        "required empty: False, not required empty: False",
+        "required empty: False, not required empty: True",
+        "required empty: True,  not required empty: False",
+        "required empty: True,  not required empty: True",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_td_names(schema, expected_required_name, expected_not_required_name):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected td required and not required names are added to the
+        artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.td_required_name == expected_required_name
+    assert artifacts.td_not_required_name == expected_not_required_name
