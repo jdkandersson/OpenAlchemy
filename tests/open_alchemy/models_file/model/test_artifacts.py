@@ -131,3 +131,55 @@ def test_calculate_column(schema, expected_columns):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.columns == expected_columns
+
+
+@pytest.mark.parametrize(
+    "schema, expected_props",
+    [
+        ({"properties": {}}, []),
+        ({"properties": {"column_1": {"type": "integer"}}}, []),
+        ({"properties": {"column_1": {"type": "integer"}}, "required": []}, []),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
+            [models_file.types.ColumnArtifacts(name="column_1", type="int")],
+        ),
+        (
+            {
+                "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
+                "required": ["column_1"],
+            },
+            [models_file.types.ColumnArtifacts(name="column_1", type='"RefModelDict"')],
+        ),
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "integer"},
+                    "column_2": {"type": "str"},
+                },
+                "required": ["column_1", "column_2"],
+            },
+            [
+                models_file.types.ColumnArtifacts(name="column_1", type="int"),
+                models_file.types.ColumnArtifacts(name="column_2", type="str"),
+            ],
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required not given",
+        "single not required",
+        "single required",
+        "single required object",
+        "multiple required",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_td_required_props(schema, expected_props):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the artifacts for the required properties are gathered.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.td_required_props == expected_props

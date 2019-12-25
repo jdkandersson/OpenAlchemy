@@ -54,14 +54,29 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     """
     required = set(schema.get("required", []))
 
+    # Initialize lists
     columns: typing.List[types.ColumnArtifacts] = []
+    td_required_props: typing.List[types.ColumnArtifacts] = []
+
+    # Calculate artifacts for properties
     for property_name, property_schema in schema["properties"].items():
+        # Gather artifacts
+        property_required = property_name in required
         column_artifacts = gather_column_artifacts(
-            schema=property_schema, required=property_name in required
+            schema=property_schema, required=property_required
         )
 
+        # Calculate the type
         column_type = _type.model(artifacts=column_artifacts)
+        td_prop_type = _type.typed_dict(artifacts=column_artifacts)
 
+        # Add artifacts to the lists
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
+        if property_required:
+            td_required_props.append(
+                types.ColumnArtifacts(type=td_prop_type, name=property_name)
+            )
 
-    return types.ModelArtifacts(name=name, columns=columns)
+    return types.ModelArtifacts(
+        name=name, columns=columns, td_required_props=td_required_props
+    )
