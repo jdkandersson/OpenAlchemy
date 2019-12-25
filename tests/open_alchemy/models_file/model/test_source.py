@@ -80,7 +80,6 @@ class Model(models.Model):
     ],
     ids=["empty", "single column", "multiple column"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
