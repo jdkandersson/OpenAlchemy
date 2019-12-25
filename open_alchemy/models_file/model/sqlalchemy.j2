@@ -5,7 +5,8 @@ class {{ artifacts.name }}(models.{{ artifacts.name }}):
 {% for column in artifacts.columns %}
     {{ column.name }}: {{ column.type }}{% endfor %}
 
-    def from_dict(self, **kwargs: typing.Any) -> "{{ artifacts.name }}":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "{{ artifacts.name }}":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 

@@ -32,7 +32,8 @@ class Model(models.Model):
 
     id: typing.Optional[int]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -65,7 +66,8 @@ class Model1(models.Model1):
 
     id: typing.Optional[int]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model1":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model1":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -85,7 +87,8 @@ class Model2(models.Model2):
 
     id: typing.Optional[str]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model2":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model2":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -119,7 +122,8 @@ class Model(models.Model):
         int
     ]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 

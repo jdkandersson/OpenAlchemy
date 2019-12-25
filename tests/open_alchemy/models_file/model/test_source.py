@@ -23,7 +23,8 @@ class Model(models.Model):
 
     column_1: type_1
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -47,7 +48,8 @@ class Model(models.Model):
     column_1: type_1
     column_2: type_2
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -255,7 +257,8 @@ class Model(models.Model):
 
     column_1: type_1
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -319,7 +322,8 @@ class Model(models.Model):
     column_1: type_1
     column_2: type_2
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
@@ -330,6 +334,7 @@ class Model(models.Model):
     ],
     ids=["required empty", "full"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
     """
@@ -338,5 +343,8 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source

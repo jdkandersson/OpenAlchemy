@@ -28,7 +28,8 @@ class Employee(models.Employee):
     division: str
     salary: typing.Optional[float]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Employee":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 

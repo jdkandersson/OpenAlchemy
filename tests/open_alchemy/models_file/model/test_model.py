@@ -30,7 +30,8 @@ class Model(models.Model):
 
     id: typing.Optional[int]
 
-    def from_dict(self, **kwargs: typing.Any) -> "Model":
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         super().from_dict(**kwargs)
 
