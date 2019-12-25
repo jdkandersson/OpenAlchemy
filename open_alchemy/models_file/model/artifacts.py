@@ -84,20 +84,29 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     td_not_required_empty = not td_not_required_props
     td_required_name = None
     td_not_required_name: typing.Optional[str] = f"{name}Dict"
+    td_required_parent_class = None
+    td_not_required_parent_class: typing.Optional[str] = "typing.TypedDict"
     if not td_required_empty and not td_not_required_empty:
+        td_required_parent_class = td_not_required_parent_class
         td_required_name = f"_{name}DictBase"
+        td_not_required_parent_class = td_required_name
     if not td_required_empty and td_not_required_empty:
         td_required_name = td_not_required_name
         td_not_required_name = None
+        td_required_parent_class = td_not_required_parent_class
+        td_not_required_parent_class = None
 
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(name=name, columns=columns),
         typed_dict=types.TypedDictArtifacts(
+            model_name=name,
             required_props=td_required_props,
             not_required_props=td_not_required_props,
             required_empty=td_required_empty,
             not_required_empty=td_not_required_empty,
             required_name=td_required_name,
             not_required_name=td_not_required_name,
+            required_parent_class=td_required_parent_class,
+            not_required_parent_class=td_not_required_parent_class,
         ),
     )

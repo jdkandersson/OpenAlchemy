@@ -76,6 +76,7 @@ def test_calculate_name():
     artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
 
     assert artifacts.sqlalchemy.name == name
+    assert artifacts.typed_dict.model_name == name
 
 
 @pytest.mark.parametrize(
@@ -319,7 +320,7 @@ def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
     assert artifacts.typed_dict.not_required_empty == expected_not_required_empty
 
 
-# Table for the name of the required and not required TypedDict names
+# Table for the name of the required and not required TypedDicts
 # +----------------+--------------------+-----------------------+-------------------+
 # | required empty | not required empty | required name         | not required name |
 # +================+====================+=======================+===================+
@@ -378,3 +379,67 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
 
     assert artifacts.typed_dict.required_name == expected_required_name
     assert artifacts.typed_dict.not_required_name == expected_not_required_name
+
+
+# Table for the parent class of the required and not required TypedDicts
+# +----------------+--------------------+------------------+-----------------------+
+# | required empty | not required empty | required parent  | not required parent   |
+# +================+====================+==================+=======================+
+# | False          | False              | typing.TypedDict | _<model name>DictBase |
+# +----------------+--------------------+------------------+-----------------------+
+# | False          | True               | typing.TypedDict | None                  |
+# +----------------+--------------------+------------------+-----------------------+
+# | True           | False              | None             | typing.TypedDict      |
+# +----------------+--------------------+------------------+-----------------------+
+# | True           | True               | None             | typing.TypedDict      |
+# +----------------+--------------------+------------------+-----------------------+
+
+
+@pytest.mark.parametrize(
+    "schema, expected_required_parent, expected_not_required_parent",
+    [
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "string"},
+                    "column_2": {"type": "string"},
+                },
+                "required": ["column_1"],
+            },
+            "typing.TypedDict",
+            "_ModelDictBase",
+        ),
+        (
+            {"properties": {"column_1": {"type": "string"}}, "required": ["column_1"]},
+            "typing.TypedDict",
+            None,
+        ),
+        (
+            {"properties": {"column_1": {"type": "string"}}, "required": []},
+            None,
+            "typing.TypedDict",
+        ),
+        ({"properties": {}}, None, "typing.TypedDict"),
+    ],
+    ids=[
+        "required empty: False, not required empty: False",
+        "required empty: False, not required empty: True",
+        "required empty: True,  not required empty: False",
+        "required empty: True,  not required empty: True",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_td_parent(
+    schema, expected_required_parent, expected_not_required_parent
+):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected td required and not required parents are added to the
+        artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.typed_dict.required_parent_class == expected_required_parent
+    artifacts_not_required_parent = artifacts.typed_dict.not_required_parent_class
+    assert artifacts_not_required_parent == expected_not_required_parent
