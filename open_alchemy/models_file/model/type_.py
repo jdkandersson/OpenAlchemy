@@ -7,7 +7,7 @@ from .. import types
 
 def model(*, artifacts: types.ColumnSchemaArtifacts):
     """
-    Calculate the python type of a column.
+    Calculate the Python type of a column.
 
     Args:
         artifacts: The artifacts from the schema of the column.
@@ -46,7 +46,7 @@ def model(*, artifacts: types.ColumnSchemaArtifacts):
 
 def typed_dict(*, artifacts: types.ColumnSchemaArtifacts):
     """
-    Calculate the python type of a column for a TypedDict.
+    Calculate the Python type of a column for a TypedDict.
 
     Args:
         artifacts: The artifacts from the schema of the column.
