@@ -9,6 +9,7 @@ from open_alchemy import helpers
 from open_alchemy import types as oa_types
 
 from .. import types
+from . import type_ as _type
 
 _DIRECTORY = os.path.dirname(__file__)
 _TEMPLATE_FILE = os.path.join(_DIRECTORY, "template.j2")
@@ -47,45 +48,6 @@ def gather_column_artifacts(
     )
 
 
-def _calculate_type(*, artifacts: types.ColumnSchemaArtifacts):
-    """
-    Calculate the python type of a column.
-
-    Args:
-        artifacts: The artifacts from the schema of the column.
-
-    Returns:
-        The equivalent Python type.
-
-    """
-    # Determine underlying type
-    return_type = "str"
-    if artifacts.type == "integer":
-        return_type = "int"
-    if artifacts.type == "number":
-        return_type = "float"
-    if artifacts.type == "boolean":
-        return_type = "bool"
-    if artifacts.type == "object":
-        return_type = f'"{artifacts.de_ref}"'
-    if artifacts.type == "array":
-        return f'typing.Sequence["{artifacts.de_ref}"]'
-    if artifacts.format == "binary":
-        return_type = "bytes"
-    if artifacts.format == "date":
-        return_type = "datetime.date"
-    if artifacts.format == "date-time":
-        return_type = "datetime.datetime"
-
-    # Determine whether the type is optional
-    optional = helpers.calculate_nullable(
-        nullable=artifacts.nullable, required=artifacts.required
-    )
-    if optional:
-        return f"typing.Optional[{return_type}]"
-    return return_type
-
-
 def generate_source(*, artifacts: types.ModelArtifacts) -> str:
     """
     Generate python class for a model.
@@ -121,7 +83,7 @@ def generate(*, schema: oa_types.Schema, name: str) -> str:
             schema=property_schema, required=property_name in required
         )
 
-        column_type = _calculate_type(artifacts=column_artifacts)
+        column_type = _type.model(artifacts=column_artifacts)
 
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
 
