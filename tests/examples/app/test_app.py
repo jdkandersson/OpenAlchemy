@@ -57,7 +57,6 @@ def test_post_duplicate(client):
 
 
 @pytest.mark.app
-@pytest.mark.only_this
 def test_get(client, db_session):
     """
     GIVEN database with employee

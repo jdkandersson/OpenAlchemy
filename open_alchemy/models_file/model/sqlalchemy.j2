@@ -1,9 +1,9 @@
 
 
 class {{ artifacts.name }}(models.{{ artifacts.name }}):
-    """SQLAlchemy model."""
+    """SQLAlchemy model."""{% if not artifacts.empty %}
 {% for column in artifacts.columns %}
-    {{ column.name }}: {{ column.type }}{% endfor %}
+    {{ column.name }}: {{ column.type }}{% endfor %}{% endif %}
 
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "{{ artifacts.name }}":

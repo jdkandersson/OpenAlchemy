@@ -11,10 +11,29 @@ from open_alchemy import models_file
     [
         (
             models_file.types.SQLAlchemyModelArtifacts(
+                name="Model", columns=[], empty=True
+            ),
+            '''
+
+class Model(models.Model):
+    """SQLAlchemy model."""
+
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        return super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        return super().to_dict()''',
+        ),
+        (
+            models_file.types.SQLAlchemyModelArtifacts(
                 name="Model",
                 columns=[
                     models_file.types.ColumnArtifacts(name="column_1", type="type_1")
                 ],
+                empty=False,
             ),
             '''
 
@@ -39,6 +58,7 @@ class Model(models.Model):
                     models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
                     models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
                 ],
+                empty=False,
             ),
             '''
 
@@ -58,8 +78,9 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
     ],
-    ids=["single column", "multiple column"],
+    ids=["empty", "single column", "multiple column"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
@@ -68,6 +89,9 @@ def test_sqlalchemy(artifacts, expected_source):
     THEN the source code for the model class is returned.
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source
 
@@ -418,7 +442,6 @@ class Model(models.Model):
     ],
     ids=["empty", "required empty", "not required empty", "full"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
     """
@@ -427,8 +450,5 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source
