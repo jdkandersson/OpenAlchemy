@@ -1,5 +1,7 @@
 {% if not artifacts.typed_dict.required.empty %}
 {{ typed_dict_required }}
 {% endif %}
+{% if not artifacts.typed_dict.not_required.empty or (artifacts.typed_dict.required.empty and artifacts.typed_dict.not_required.empty) %}
 {{ typed_dict_not_required }}
+{% endif %}
 {{ sqlalchemy }}

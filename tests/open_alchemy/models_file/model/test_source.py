@@ -221,6 +221,42 @@ def test_typed_dict_not_required(artifacts, expected_source):
         (
             models_file.types.ModelArtifacts(
                 sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+                    name="Model", columns=[]
+                ),
+                typed_dict=models_file.types.TypedDictArtifacts(
+                    required=models_file.types.TypedDictClassArtifacts(
+                        props=[], empty=True, name=None, parent_class=None
+                    ),
+                    not_required=models_file.types.TypedDictClassArtifacts(
+                        props=[],
+                        empty=True,
+                        name="ModelDict",
+                        parent_class="typing.TypedDict",
+                    ),
+                ),
+            ),
+            '''
+
+class ModelDict(typing.TypedDict, total=False):
+    """TypedDict for properties that are not required."""
+
+
+class Model(models.Model):
+    """SQLAlchemy model."""
+
+
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        return super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        return super().to_dict()''',
+        ),
+        (
+            models_file.types.ModelArtifacts(
+                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
                     name="Model",
                     columns=[
                         models_file.types.ColumnArtifacts(
@@ -248,6 +284,54 @@ def test_typed_dict_not_required(artifacts, expected_source):
 
 class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
+
+    column_1: type_1
+
+
+class Model(models.Model):
+    """SQLAlchemy model."""
+
+    column_1: type_1
+
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        return super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        return super().to_dict()''',
+        ),
+        (
+            models_file.types.ModelArtifacts(
+                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+                    name="Model",
+                    columns=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                ),
+                typed_dict=models_file.types.TypedDictArtifacts(
+                    required=models_file.types.TypedDictClassArtifacts(
+                        props=[
+                            models_file.types.ColumnArtifacts(
+                                name="column_1", type="type_1"
+                            )
+                        ],
+                        empty=False,
+                        name="ModelDict",
+                        parent_class="typing.TypedDict",
+                    ),
+                    not_required=models_file.types.TypedDictClassArtifacts(
+                        props=[], empty=True, name=None, parent_class=None
+                    ),
+                ),
+            ),
+            '''
+
+class ModelDict(typing.TypedDict, total=True):
+    """TypedDict for properties that are required."""
 
     column_1: type_1
 
@@ -332,7 +416,7 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
     ],
-    ids=["required empty", "full"],
+    ids=["empty", "required empty", "not required empty", "full"],
 )
 @pytest.mark.only_this
 @pytest.mark.models_file
