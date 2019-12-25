@@ -6,6 +6,7 @@ from open_alchemy import helpers
 from open_alchemy import types as oa_types
 
 from .. import types
+from . import type_ as _type
 
 
 def gather_column_artifacts(
@@ -39,15 +40,28 @@ def gather_column_artifacts(
     )
 
 
-# def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
-#     """
-#     Calculate the model artifacts from the schema.
+def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
+    """
+    Calculate the model artifacts from the schema.
 
-#     Args:
-#         schema: The schema of the model
-#         name: The name of the model.
+    Args:
+        schema: The schema of the model
+        name: The name of the model.
 
-#     Returns:
-#         The artifacts for the model.
+    Returns:
+        The artifacts for the model.
 
-#     """
+    """
+    required = set(schema.get("required", []))
+
+    columns: typing.List[types.ColumnArtifacts] = []
+    for property_name, property_schema in schema["properties"].items():
+        column_artifacts = gather_column_artifacts(
+            schema=property_schema, required=property_name in required
+        )
+
+        column_type = _type.model(artifacts=column_artifacts)
+
+        columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
+
+    return types.ModelArtifacts(name=name, columns=columns)
