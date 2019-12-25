@@ -99,7 +99,6 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(name=name, columns=columns),
         typed_dict=types.TypedDictArtifacts(
-            model_name=name,
             required=types.TypedDictClassArtifacts(
                 props=td_required_props,
                 empty=td_required_empty,

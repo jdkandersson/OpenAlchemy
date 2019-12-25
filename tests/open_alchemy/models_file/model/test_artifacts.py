@@ -76,7 +76,6 @@ def test_calculate_name():
     artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
 
     assert artifacts.sqlalchemy.name == name
-    assert artifacts.typed_dict.model_name == name
 
 
 @pytest.mark.parametrize(

@@ -58,8 +58,6 @@ class TypedDictClassArtifacts:
 class TypedDictArtifacts:
     """Artifacts for the TypedDicts for a model."""
 
-    # The name of the model
-    model_name: str
     # The artifacts for the required TypedDict
     required: TypedDictClassArtifacts
     # The artifacts for the required TypedDict

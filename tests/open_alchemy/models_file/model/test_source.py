@@ -75,7 +75,6 @@ def test_sqlalchemy(artifacts, expected_source):
     [
         (
             models_file.types.TypedDictArtifacts(
-                model_name="Model",
                 required=models_file.types.TypedDictClassArtifacts(
                     props=[
                         models_file.types.ColumnArtifacts(
@@ -97,7 +96,6 @@ class ModelRequiredDict(RequiredParentClass, total=True):
         ),
         (
             models_file.types.TypedDictArtifacts(
-                model_name="Model",
                 required=models_file.types.TypedDictClassArtifacts(
                     props=[
                         models_file.types.ColumnArtifacts(
@@ -141,7 +139,6 @@ def test_typed_dict_required(artifacts, expected_source):
     [
         (
             models_file.types.TypedDictArtifacts(
-                model_name="Model",
                 required=None,  # type: ignore
                 not_required=models_file.types.TypedDictClassArtifacts(
                     props=[],
@@ -157,7 +154,6 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
         ),
         (
             models_file.types.TypedDictArtifacts(
-                model_name="Model",
                 required=None,  # type: ignore
                 not_required=models_file.types.TypedDictClassArtifacts(
                     props=[
@@ -179,7 +175,6 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
         ),
         (
             models_file.types.TypedDictArtifacts(
-                model_name="Model",
                 required=None,  # type: ignore
                 not_required=models_file.types.TypedDictClassArtifacts(
                     props=[
@@ -232,7 +227,6 @@ def test_typed_dict_not_required(artifacts, expected_source):
                     ],
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
-                    model_name="Model",
                     required=models_file.types.TypedDictClassArtifacts(
                         props=[], empty=True, name=None, parent_class=None
                     ),
@@ -283,7 +277,6 @@ class Model(models.Model):
                     ],
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
-                    model_name="Model",
                     required=models_file.types.TypedDictClassArtifacts(
                         props=[
                             models_file.types.ColumnArtifacts(
