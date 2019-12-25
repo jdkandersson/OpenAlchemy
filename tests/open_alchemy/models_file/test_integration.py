@@ -14,7 +14,7 @@ LONG_NAME = "extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa"
         (
             [({"properties": {"id": {"type": "integer"}}}, "Model")],
             f'''{DOCSTRING}
-# pylint: disable=no-member
+# pylint: disable=no-member,useless-super-delegation
 
 import typing
 
@@ -47,7 +47,7 @@ class Model(models.Model):
                 ({"properties": {"id": {"type": "string"}}}, "Model2"),
             ],
             f'''{DOCSTRING}
-# pylint: disable=no-member
+# pylint: disable=no-member,useless-super-delegation
 
 import typing
 
@@ -97,7 +97,7 @@ class Model2(models.Model2):
         (
             [({"properties": {LONG_NAME: {"type": "integer"}}}, "Model")],
             f'''{DOCSTRING}
-# pylint: disable=no-member
+# pylint: disable=no-member,useless-super-delegation
 
 import typing
 
@@ -132,7 +132,6 @@ class Model(models.Model):
     ids=["single", "multiple", "black formatting"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_integration(schemas, expected_source):
     """
     GIVEN schema and name
@@ -143,8 +142,5 @@ def test_integration(schemas, expected_source):
     for schema, name in schemas:
         models.add_model(schema=schema, name=name)
     source = models.generate_models()
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source
