@@ -1,0 +1,15 @@
+
+
+class {{ artifacts.name }}(models.{{ artifacts.name }}):
+    """SQLAlchemy model."""{% if not artifacts.empty %}
+{% for column in artifacts.columns %}
+    {{ column.name }}: {{ column.type }}{% endfor %}{% endif %}
+
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "{{ artifacts.name }}":
+        """Construct from a dictionary (eg. a POST payload)."""
+        return super().from_dict(**kwargs)
+
+    def to_dict(self) -> {{ artifacts.name }}Dict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        return super().to_dict()

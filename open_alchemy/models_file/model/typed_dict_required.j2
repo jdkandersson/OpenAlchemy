@@ -1,0 +1,6 @@
+
+
+class {{ artifacts.required.name }}({{ artifacts.required.parent_class }}, total=True):
+    """TypedDict for properties that are required."""
+{% for prop in artifacts.required.props %}
+    {{ prop.name }}: {{ prop.type }}{% endfor %}

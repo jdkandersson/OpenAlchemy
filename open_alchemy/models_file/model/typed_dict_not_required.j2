@@ -1,0 +1,6 @@
+
+
+class {{ artifacts.not_required.name }}({{ artifacts.not_required.parent_class }}, total=False):
+    """TypedDict for properties that are not required."""{% if not artifacts.not_required.empty %}
+{% for prop in artifacts.not_required.props %}
+    {{ prop.name }}: {{ prop.type }}{% endfor %}{% endif %}
