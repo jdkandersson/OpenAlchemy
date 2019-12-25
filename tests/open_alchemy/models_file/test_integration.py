@@ -11,6 +11,11 @@ _LONG_NAME = "extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa"
 _EXPECTED_BASE = "typing.TypedDict"
 if sys.version_info[1] < 8:
     _EXPECTED_BASE = "typing_extensions.TypedDict"
+_ADDITIONAL_IMPORT = ""
+if sys.version_info[1] < 8:
+    _ADDITIONAL_IMPORT = """
+
+import typing_extensions"""
 
 
 @pytest.mark.parametrize(
@@ -21,7 +26,7 @@ if sys.version_info[1] < 8:
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing
+import typing{_ADDITIONAL_IMPORT}
 
 from open_alchemy import models
 
@@ -55,7 +60,7 @@ class Model(models.Model):
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing
+import typing{_ADDITIONAL_IMPORT}
 
 from open_alchemy import models
 
@@ -107,7 +112,7 @@ class Model2(models.Model2):
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing
+import typing{_ADDITIONAL_IMPORT}
 
 from open_alchemy import models
 

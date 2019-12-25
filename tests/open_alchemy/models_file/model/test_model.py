@@ -1,9 +1,15 @@
 """Tests for model."""
 # pylint: disable=protected-access
 
+import sys
+
 import pytest
 
 from open_alchemy import models_file
+
+_EXPECTED_BASE = "typing.TypedDict"
+if sys.version_info[1] < 8:
+    _EXPECTED_BASE = "typing_extensions.TypedDict"
 
 
 @pytest.mark.models_file
@@ -17,9 +23,9 @@ def test_generate():
 
     source = models_file._model.generate(schema=schema, name="Model")
 
-    expected_source = '''
+    expected_source = f'''
 
-class ModelDict(typing.TypedDict, total=False):
+class ModelDict({_EXPECTED_BASE}, total=False):
     """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
