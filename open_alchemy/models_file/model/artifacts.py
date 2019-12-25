@@ -102,7 +102,9 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         td_not_required_parent_class = None
 
     return types.ModelArtifacts(
-        sqlalchemy=types.SQLAlchemyModelArtifacts(name=name, columns=columns),
+        sqlalchemy=types.SQLAlchemyModelArtifacts(
+            name=name, columns=columns, empty=not columns
+        ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(
                 props=td_required_props,

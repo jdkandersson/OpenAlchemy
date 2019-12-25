@@ -90,9 +90,6 @@ def test_sqlalchemy(artifacts, expected_source):
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
 
-    print(repr(source))
-    print(repr(expected_source))
-
     assert source == expected_source
 
 

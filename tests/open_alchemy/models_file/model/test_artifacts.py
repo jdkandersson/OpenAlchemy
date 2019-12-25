@@ -136,6 +136,26 @@ def test_calculate_column(schema, expected_columns):
 
 
 @pytest.mark.parametrize(
+    "schema, expected_empty",
+    [
+        ({"properties": {}}, True),
+        ({"properties": {"column_1": {"type": "integer"}}}, False),
+    ],
+    ids=["empty", "single"],
+)
+@pytest.mark.models_file
+def test_calculate_empty(schema, expected_empty):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected empty is added to the artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.sqlalchemy.empty == expected_empty
+
+
+@pytest.mark.parametrize(
     "schema, expected_props",
     [
         ({"properties": {}}, []),
