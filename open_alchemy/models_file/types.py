@@ -36,10 +36,10 @@ class SQLAlchemyModelArtifacts:
 
     # The name of the model
     name: str
+    # Whether the columns are empty
+    empty: bool
     # The columns for the model
     columns: typing.List[ColumnArtifacts]
-    # Whether the columns are empty
-    empty: bool = False
 
 
 @dataclasses.dataclass

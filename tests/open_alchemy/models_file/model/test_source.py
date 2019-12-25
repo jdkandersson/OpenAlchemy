@@ -242,7 +242,7 @@ def test_typed_dict_not_required(artifacts, expected_source):
         (
             models_file.types.ModelArtifacts(
                 sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
-                    name="Model", columns=[]
+                    name="Model", columns=[], empty=True
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
                     required=models_file.types.TypedDictClassArtifacts(
@@ -265,7 +265,6 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
-
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -284,6 +283,7 @@ class Model(models.Model):
                             name="column_1", type="type_1"
                         )
                     ],
+                    empty=False,
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
                     required=models_file.types.TypedDictClassArtifacts(
@@ -332,6 +332,7 @@ class Model(models.Model):
                             name="column_1", type="type_1"
                         )
                     ],
+                    empty=False,
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
                     required=models_file.types.TypedDictClassArtifacts(
@@ -383,6 +384,7 @@ class Model(models.Model):
                             name="column_2", type="type_2"
                         ),
                     ],
+                    empty=False,
                 ),
                 typed_dict=models_file.types.TypedDictArtifacts(
                     required=models_file.types.TypedDictClassArtifacts(
