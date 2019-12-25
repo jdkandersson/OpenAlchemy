@@ -115,7 +115,7 @@ def test_get_id_hit(client, db_session):
 
     response = client.get(f"/employee/{db_employee.id}")
 
-    assert response.status_code == 204
+    assert response.status_code == 200
     employee = response.json
     assert employee["id"] == db_employee.id
     assert employee["name"] == db_employee.name
