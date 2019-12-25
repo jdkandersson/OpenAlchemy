@@ -44,7 +44,7 @@ class ModelArtifacts:
         default_factory=list
     )
     # The properties that are not required for the TypedDict for the model
-    td_not_required_propos: typing.List[ColumnArtifacts] = dataclasses.field(
+    td_not_required_props: typing.List[ColumnArtifacts] = dataclasses.field(
         default_factory=list
     )
     # Whether the required list is empty

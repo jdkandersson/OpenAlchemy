@@ -57,6 +57,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     # Initialize lists
     columns: typing.List[types.ColumnArtifacts] = []
     td_required_props: typing.List[types.ColumnArtifacts] = []
+    td_not_required_props: typing.List[types.ColumnArtifacts] = []
 
     # Calculate artifacts for properties
     for property_name, property_schema in schema["properties"].items():
@@ -72,11 +73,15 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
         # Add artifacts to the lists
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
+        prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
         if property_required:
-            td_required_props.append(
-                types.ColumnArtifacts(type=td_prop_type, name=property_name)
-            )
+            td_required_props.append(prop_artifacts)
+        else:
+            td_not_required_props.append(prop_artifacts)
 
     return types.ModelArtifacts(
-        name=name, columns=columns, td_required_props=td_required_props
+        name=name,
+        columns=columns,
+        td_required_props=td_required_props,
+        td_not_required_props=td_not_required_props,
     )

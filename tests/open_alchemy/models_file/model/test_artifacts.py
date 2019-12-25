@@ -183,3 +183,77 @@ def test_calculate_td_required_props(schema, expected_props):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.td_required_props == expected_props
+
+
+@pytest.mark.parametrize(
+    "schema, expected_props",
+    [
+        ({"properties": {}}, []),
+        (
+            {"properties": {"column_1": {"type": "integer"}}},
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                )
+            ],
+        ),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": []},
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                )
+            ],
+        ),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
+            [],
+        ),
+        (
+            {
+                "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
+                "required": [],
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type='typing.Optional["RefModelDict"]'
+                )
+            ],
+        ),
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "integer"},
+                    "column_2": {"type": "str"},
+                },
+                "required": [],
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                ),
+                models_file.types.ColumnArtifacts(
+                    name="column_2", type="typing.Optional[str]"
+                ),
+            ],
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required not given",
+        "single not required",
+        "single required",
+        "single not required object",
+        "multiple not required",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_td_not_required_props(schema, expected_props):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the artifacts for the not required properties are gathered.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.td_not_required_props == expected_props
