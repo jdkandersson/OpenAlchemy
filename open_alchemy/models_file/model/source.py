@@ -53,3 +53,18 @@ def typed_dict_required(*, artifacts: types.TypedDictArtifacts) -> str:
     """
     template = jinja2.Template(_TYPED_DICT_REQUIRED_TEMPLATE)
     return template.render(artifacts=artifacts)
+
+
+def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
+    """
+    Generate the TypedDict for not required properties source code.
+
+    Args:
+        artifacts: The artifacts required for the TypedDict source code.
+
+    Returns:
+        The TypedDict for not required properties source code.
+
+    """
+    template = jinja2.Template(_TYPED_DICT_NOT_REQUIRED_TEMPLATE)
+    return template.render(artifacts=artifacts)
