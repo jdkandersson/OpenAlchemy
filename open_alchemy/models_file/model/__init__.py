@@ -45,17 +45,5 @@ def generate(*, schema: oa_types.Schema, name: str) -> str:
         The source code for the model class.
 
     """
-    required = set(schema.get("required", []))
-
-    columns: typing.List[types.ColumnArtifacts] = []
-    for property_name, property_schema in schema["properties"].items():
-        column_artifacts = _artifacts.gather_column_artifacts(
-            schema=property_schema, required=property_name in required
-        )
-
-        column_type = _type.model(artifacts=column_artifacts)
-
-        columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
-
-    artifacts = types.ModelArtifacts(name=name, columns=columns)
+    artifacts = _artifacts.calculate(schema=schema, name=name)
     return generate_source(artifacts=artifacts)
