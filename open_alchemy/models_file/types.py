@@ -49,6 +49,8 @@ class ModelArtifacts:
     )
     # Whether the required list is empty
     td_required_empty: bool = False
+    # Whether the not required list is empty
+    td_not_required_empty: bool = False
     # The name of the TypedDict for required properties
     td_required_name: typing.Optional[str] = None
     # The name of the TypedDict for properties that are not required
