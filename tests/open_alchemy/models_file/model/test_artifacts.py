@@ -75,7 +75,7 @@ def test_calculate_name():
 
     artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
 
-    assert artifacts.name == name
+    assert artifacts.sqlalchemy.name == name
 
 
 @pytest.mark.parametrize(
@@ -130,7 +130,7 @@ def test_calculate_column(schema, expected_columns):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.columns == expected_columns
+    assert artifacts.sqlalchemy.columns == expected_columns
 
 
 @pytest.mark.parametrize(
@@ -182,7 +182,7 @@ def test_calculate_td_required_props(schema, expected_props):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.td_required_props == expected_props
+    assert artifacts.typed_dict.required_props == expected_props
 
 
 @pytest.mark.parametrize(
@@ -256,7 +256,7 @@ def test_calculate_td_not_required_props(schema, expected_props):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.td_not_required_props == expected_props
+    assert artifacts.typed_dict.not_required_props == expected_props
 
 
 @pytest.mark.parametrize(
@@ -286,7 +286,7 @@ def test_calculate_td_required_empty(schema, expected_required_empty):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.td_required_empty == expected_required_empty
+    assert artifacts.typed_dict.required_empty == expected_required_empty
 
 
 @pytest.mark.parametrize(
@@ -316,7 +316,7 @@ def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.td_not_required_empty == expected_not_required_empty
+    assert artifacts.typed_dict.not_required_empty == expected_not_required_empty
 
 
 # Table for the name of the required and not required TypedDict names
@@ -376,5 +376,5 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.td_required_name == expected_required_name
-    assert artifacts.td_not_required_name == expected_not_required_name
+    assert artifacts.typed_dict.required_name == expected_required_name
+    assert artifacts.typed_dict.not_required_name == expected_not_required_name

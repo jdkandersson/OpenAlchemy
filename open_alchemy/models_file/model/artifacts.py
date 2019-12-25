@@ -91,12 +91,13 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         td_not_required_name = None
 
     return types.ModelArtifacts(
-        name=name,
-        columns=columns,
-        td_required_props=td_required_props,
-        td_not_required_props=td_not_required_props,
-        td_required_empty=td_required_empty,
-        td_not_required_empty=td_not_required_empty,
-        td_required_name=td_required_name,
-        td_not_required_name=td_not_required_name,
+        sqlalchemy=types.SQLAlchemyModelArtifacts(name=name, columns=columns),
+        typed_dict=types.TypedDictArtifacts(
+            required_props=td_required_props,
+            not_required_props=td_not_required_props,
+            required_empty=td_required_empty,
+            not_required_empty=td_not_required_empty,
+            required_name=td_required_name,
+            not_required_name=td_not_required_name,
+        ),
     )

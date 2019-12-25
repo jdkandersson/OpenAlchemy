@@ -1,6 +1,6 @@
 
 
-class {{ model.name }}(models.{{ model.name }}):
-    """{{ model.name }} SQLAlchemy model."""
-{% for column in model.columns %}
+class {{ model.sqlalchemy.name }}(models.{{ model.sqlalchemy.name }}):
+    """{{ model.sqlalchemy.name }} SQLAlchemy model."""
+{% for column in model.sqlalchemy.columns %}
     {{ column.name }}: {{ column.type }}{% endfor %}
