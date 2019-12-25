@@ -28,6 +28,7 @@ exclude_lines =
     typing_extension
     # Don't complain about compatibility code
     sys.version_info
+    version compatibility
 skip_covered=true
 show_missing=true
 fail_under=100

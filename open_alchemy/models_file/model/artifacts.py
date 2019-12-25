@@ -89,7 +89,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     td_not_required_parent_class: typing.Optional[str]
     if sys.version_info[1] < 8:
         td_not_required_parent_class = "typing_extensions.TypedDict"
-    else:
+    else:  # version compatibility
         td_not_required_parent_class = "typing.TypedDict"
     if not td_required_empty and not td_not_required_empty:
         td_required_parent_class = td_not_required_parent_class
