@@ -244,9 +244,66 @@ class Model(models.Model):
     """Model SQLAlchemy model."""
 
     column_1: type_1''',
-        )
+        ),
+        (
+            models_file.types.ModelArtifacts(
+                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+                    name="Model",
+                    columns=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                ),
+                typed_dict=models_file.types.TypedDictArtifacts(
+                    model_name="Model",
+                    required=models_file.types.TypedDictClassArtifacts(
+                        props=[
+                            models_file.types.ColumnArtifacts(
+                                name="column_1", type="type_1"
+                            )
+                        ],
+                        empty=False,
+                        name="_ModelDictBase",
+                        parent_class="typing.TypedDict",
+                    ),
+                    not_required=models_file.types.TypedDictClassArtifacts(
+                        props=[
+                            models_file.types.ColumnArtifacts(
+                                name="column_2", type="type_2"
+                            )
+                        ],
+                        empty=False,
+                        name="ModelDict",
+                        parent_class="_ModelDictBase",
+                    ),
+                ),
+            ),
+            '''
+
+class _ModelDictBase(typing.TypedDict, total=True):
+    """Model TypedDict for properties that are required."""
+
+    column_1: type_1
+
+
+class ModelDict(_ModelDictBase, total=False):
+    """Model TypedDict for properties that are not required."""
+
+    column_2: type_2
+
+
+class Model(models.Model):
+    """Model SQLAlchemy model."""
+
+    column_1: type_1
+    column_2: type_2''',
+        ),
     ],
-    ids=["required empty"],
+    ids=["required empty", "full"],
 )
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
@@ -256,8 +313,5 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source
