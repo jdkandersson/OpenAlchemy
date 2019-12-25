@@ -199,6 +199,64 @@ def test_typed_dict_not_required(artifacts, expected_source):
     """
     source = models_file._model._source.typed_dict_not_required(artifacts=artifacts)
 
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_source",
+    [
+        (
+            models_file.types.ModelArtifacts(
+                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+                    name="Model",
+                    columns=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                ),
+                typed_dict=models_file.types.TypedDictArtifacts(
+                    model_name="Model",
+                    required=models_file.types.TypedDictClassArtifacts(
+                        props=[], empty=True, name=None, parent_class=None
+                    ),
+                    not_required=models_file.types.TypedDictClassArtifacts(
+                        props=[
+                            models_file.types.ColumnArtifacts(
+                                name="column_1", type="type_1"
+                            )
+                        ],
+                        empty=False,
+                        name="ModelDict",
+                        parent_class="typing.TypedDict",
+                    ),
+                ),
+            ),
+            '''
+
+class ModelDict(typing.TypedDict, total=False):
+    """Model TypedDict for properties that are not required."""
+
+    column_1: type_1
+
+
+class Model(models.Model):
+    """Model SQLAlchemy model."""
+
+    column_1: type_1''',
+        )
+    ],
+    ids=["required empty"],
+)
+@pytest.mark.models_file
+def test_generate(artifacts, expected_source):
+    """
+    GIVEN artifacts
+    WHEN generate is called with the artifacts
+    THEN the expected source is returned.
+    """
+    source = models_file._model._source.generate(artifacts=artifacts)
+
     print(repr(source))
     print(repr(expected_source))
 
