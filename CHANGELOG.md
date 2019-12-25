@@ -10,6 +10,7 @@
 - Move schema calculations into separate files
 - Refactor handling array references to reduce scope of individual tests and make them easier to understand
 - Add optional parameter that can be used to generate a models file for IDE auto complete and type hinting
+- Add _from_dict_ and _to_dict_ to the type models file
 
 ## Version 0.10.4 - 2019-12-18
 
