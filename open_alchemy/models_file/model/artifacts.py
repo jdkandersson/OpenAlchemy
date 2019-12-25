@@ -100,13 +100,17 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         sqlalchemy=types.SQLAlchemyModelArtifacts(name=name, columns=columns),
         typed_dict=types.TypedDictArtifacts(
             model_name=name,
-            required_props=td_required_props,
-            not_required_props=td_not_required_props,
-            required_empty=td_required_empty,
-            not_required_empty=td_not_required_empty,
-            required_name=td_required_name,
-            not_required_name=td_not_required_name,
-            required_parent_class=td_required_parent_class,
-            not_required_parent_class=td_not_required_parent_class,
+            required=types.TypedDictClassArtifacts(
+                props=td_required_props,
+                empty=td_required_empty,
+                name=td_required_name,
+                parent_class=td_required_parent_class,
+            ),
+            not_required=types.TypedDictClassArtifacts(
+                props=td_not_required_props,
+                empty=td_not_required_empty,
+                name=td_not_required_name,
+                parent_class=td_not_required_parent_class,
+            ),
         ),
     )

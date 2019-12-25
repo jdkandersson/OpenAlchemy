@@ -183,7 +183,7 @@ def test_calculate_td_required_props(schema, expected_props):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.required_props == expected_props
+    assert artifacts.typed_dict.required.props == expected_props
 
 
 @pytest.mark.parametrize(
@@ -257,7 +257,7 @@ def test_calculate_td_not_required_props(schema, expected_props):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.not_required_props == expected_props
+    assert artifacts.typed_dict.not_required.props == expected_props
 
 
 @pytest.mark.parametrize(
@@ -287,7 +287,7 @@ def test_calculate_td_required_empty(schema, expected_required_empty):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.required_empty == expected_required_empty
+    assert artifacts.typed_dict.required.empty == expected_required_empty
 
 
 @pytest.mark.parametrize(
@@ -317,7 +317,7 @@ def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.not_required_empty == expected_not_required_empty
+    assert artifacts.typed_dict.not_required.empty == expected_not_required_empty
 
 
 # Table for the name of the required and not required TypedDicts
@@ -377,8 +377,8 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.required_name == expected_required_name
-    assert artifacts.typed_dict.not_required_name == expected_not_required_name
+    assert artifacts.typed_dict.required.name == expected_required_name
+    assert artifacts.typed_dict.not_required.name == expected_not_required_name
 
 
 # Table for the parent class of the required and not required TypedDicts
@@ -440,6 +440,6 @@ def test_calculate_td_parent(
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.typed_dict.required_parent_class == expected_required_parent
-    artifacts_not_required_parent = artifacts.typed_dict.not_required_parent_class
+    assert artifacts.typed_dict.required.parent_class == expected_required_parent
+    artifacts_not_required_parent = artifacts.typed_dict.not_required.parent_class
     assert artifacts_not_required_parent == expected_not_required_parent

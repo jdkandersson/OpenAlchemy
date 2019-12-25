@@ -41,27 +41,29 @@ class SQLAlchemyModelArtifacts:
 
 
 @dataclasses.dataclass
+class TypedDictClassArtifacts:
+    """Artifacts for a TypedDict class."""
+
+    # The properties for the TypedDict
+    props: typing.List[ColumnArtifacts]
+    # Whether the properties list is empty
+    empty: bool
+    # The name of the TypedDict
+    name: typing.Optional[str]
+    # The name of the parent class
+    parent_class: typing.Optional[str]
+
+
+@dataclasses.dataclass
 class TypedDictArtifacts:
     """Artifacts for the TypedDicts for a model."""
 
     # The name of the model
     model_name: str
-    # The properties that are required
-    required_props: typing.List[ColumnArtifacts]
-    # The properties that are not required
-    not_required_props: typing.List[ColumnArtifacts]
-    # Whether the required list is empty
-    required_empty: bool
-    # Whether the not required list is empty
-    not_required_empty: bool
-    # The name of the TypedDict for properties that are required
-    required_name: typing.Optional[str]
-    # The name of the TypedDict for properties that are not required
-    not_required_name: typing.Optional[str]
-    # The parent class for the TypedDict for properties that are required
-    required_parent_class: typing.Optional[str]
-    # The parent class for the TypedDict for properties that are not required
-    not_required_parent_class: typing.Optional[str]
+    # The artifacts for the required TypedDict
+    required: TypedDictClassArtifacts
+    # The artifacts for the required TypedDict
+    not_required: TypedDictClassArtifacts
 
 
 @dataclasses.dataclass
