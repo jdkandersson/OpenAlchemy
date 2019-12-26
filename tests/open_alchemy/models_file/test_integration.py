@@ -43,7 +43,7 @@ class Model(models.Model):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 
@@ -86,7 +86,7 @@ class Model1(models.Model1):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 
@@ -113,7 +113,7 @@ class Model2(models.Model2):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 
@@ -155,7 +155,7 @@ class Model(models.Model):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 

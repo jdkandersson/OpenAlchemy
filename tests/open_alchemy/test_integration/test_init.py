@@ -444,7 +444,7 @@ class Table(models.Table):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 

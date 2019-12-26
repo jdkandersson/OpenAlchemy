@@ -4,7 +4,7 @@ class {{ artifacts.name }}(models.{{ artifacts.name }}):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query{% if not artifacts.empty %}
 

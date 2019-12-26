@@ -27,7 +27,7 @@ class Employee(models.Employee):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 
@@ -58,7 +58,7 @@ class Division(models.Division):
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
-    __table__: sqlalchemy.schema.Table
+    __table__: sqlalchemy.Table
     __tablename__: str
     query: orm.query.Query
 
