@@ -29,7 +29,7 @@ class RefEmployee(models.RefEmployee):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: int

@@ -446,7 +446,7 @@ class Table(models.Table):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column: typing.Optional[int]

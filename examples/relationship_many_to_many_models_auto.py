@@ -22,7 +22,7 @@ class Project(models.Project):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[int]
@@ -52,7 +52,7 @@ class Employee(models.Employee):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[int]

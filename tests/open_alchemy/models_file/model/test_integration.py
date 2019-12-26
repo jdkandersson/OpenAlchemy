@@ -37,7 +37,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[int]

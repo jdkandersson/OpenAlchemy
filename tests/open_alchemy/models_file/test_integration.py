@@ -45,7 +45,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[int]
@@ -88,7 +88,7 @@ class Model1(models.Model1):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[int]
@@ -115,7 +115,7 @@ class Model2(models.Model2):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     id: typing.Optional[str]
@@ -157,7 +157,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[

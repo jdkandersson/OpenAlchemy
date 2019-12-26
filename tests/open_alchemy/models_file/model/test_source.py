@@ -21,7 +21,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
@@ -48,7 +48,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column_1: type_1
@@ -79,7 +79,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column_1: type_1
@@ -284,7 +284,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
@@ -336,7 +336,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column_1: type_1
@@ -391,7 +391,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column_1: type_1
@@ -462,7 +462,7 @@ class Model(models.Model):
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
     __tablename__: str
-    query: orm.query.Query
+    query: orm.Query
 
     # Model properties
     column_1: type_1
