@@ -34,6 +34,12 @@ class ModelDict({_EXPECTED_BASE}, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: typing.Optional[int]
 
     @classmethod

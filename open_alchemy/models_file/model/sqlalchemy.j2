@@ -1,8 +1,14 @@
 
 
 class {{ artifacts.name }}(models.{{ artifacts.name }}):
-    """SQLAlchemy model."""{% if not artifacts.empty %}
-{% for column in artifacts.columns %}
+    """SQLAlchemy model."""
+
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query{% if not artifacts.empty %}
+
+    # Model properties{% for column in artifacts.columns %}
     {{ column.name }}: {{ column.type }}{% endfor %}{% endif %}
 
     @classmethod

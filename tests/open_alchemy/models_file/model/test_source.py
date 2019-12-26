@@ -18,6 +18,11 @@ from open_alchemy import models_file
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -40,6 +45,12 @@ class Model(models.Model):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -65,6 +76,12 @@ class Model(models.Model):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column_1: type_1
     column_2: type_2
 
@@ -264,6 +281,11 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -311,6 +333,12 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -360,6 +388,12 @@ class ModelDict(typing.TypedDict, total=True):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -425,6 +459,12 @@ class ModelDict(_ModelDictBase, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column_1: type_1
     column_2: type_2
 

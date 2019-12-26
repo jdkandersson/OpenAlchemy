@@ -3,6 +3,9 @@
 
 import typing
 
+import sqlalchemy
+from sqlalchemy import orm
+
 from open_alchemy import models
 
 
@@ -23,6 +26,12 @@ class RefEmployeeDict(_RefEmployeeDictBase, total=False):
 class RefEmployee(models.RefEmployee):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: int
     name: str
     division: str

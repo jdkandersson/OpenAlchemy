@@ -14,7 +14,6 @@ if sys.version_info[1] < 8:
 _ADDITIONAL_IMPORT = ""
 if sys.version_info[1] < 8:
     _ADDITIONAL_IMPORT = """
-
 import typing_extensions"""
 
 
@@ -26,7 +25,10 @@ import typing_extensions"""
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing{_ADDITIONAL_IMPORT}
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
 
 from open_alchemy import models
 
@@ -40,6 +42,12 @@ class ModelDict({_EXPECTED_BASE}, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: typing.Optional[int]
 
     @classmethod
@@ -60,7 +68,10 @@ class Model(models.Model):
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing{_ADDITIONAL_IMPORT}
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
 
 from open_alchemy import models
 
@@ -74,6 +85,12 @@ class Model1Dict({_EXPECTED_BASE}, total=False):
 class Model1(models.Model1):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: typing.Optional[int]
 
     @classmethod
@@ -95,6 +112,12 @@ class Model2Dict({_EXPECTED_BASE}, total=False):
 class Model2(models.Model2):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: typing.Optional[str]
 
     @classmethod
@@ -112,7 +135,10 @@ class Model2(models.Model2):
             f'''{_DOCSTRING}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing{_ADDITIONAL_IMPORT}
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
 
 from open_alchemy import models
 
@@ -128,6 +154,12 @@ class ModelDict({_EXPECTED_BASE}, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaaa: typing.Optional[
         int
     ]

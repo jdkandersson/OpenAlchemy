@@ -419,7 +419,6 @@ def test_models_file(tmp_path):
     additional_import = ""
     if sys.version_info[1] < 8:
         additional_import = """
-
 import typing_extensions"""
     expected_base = "typing.TypedDict"
     if sys.version_info[1] < 8:
@@ -427,7 +426,10 @@ import typing_extensions"""
     expected_contents = f'''{docstring}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing{additional_import}
+import typing
+
+import sqlalchemy{additional_import}
+from sqlalchemy import orm
 
 from open_alchemy import models
 
@@ -441,6 +443,12 @@ class TableDict({expected_base}, total=False):
 class Table(models.Table):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     column: typing.Optional[int]
 
     @classmethod

@@ -3,6 +3,9 @@
 
 import typing
 
+import sqlalchemy
+from sqlalchemy import orm
+
 from open_alchemy import models
 
 
@@ -17,6 +20,12 @@ class DivisionDict(typing.TypedDict, total=False):
 class Division(models.Division):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: typing.Optional[int]
     name: typing.Optional[str]
     employees: typing.Sequence["Employee"]
@@ -41,6 +50,12 @@ class EmployeeDict(typing.TypedDict, total=True):
 class Employee(models.Employee):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
     id: int
     name: str
 
