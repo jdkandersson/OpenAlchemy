@@ -3,6 +3,9 @@
 
 import typing
 
+import sqlalchemy
+from sqlalchemy import orm
+
 from open_alchemy import models
 
 
@@ -16,6 +19,12 @@ class PayInfoDict(typing.TypedDict, total=False):
 class PayInfo(models.PayInfo):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     id: typing.Optional[int]
     account_number: typing.Optional[str]
 
@@ -40,6 +49,12 @@ class EmployeeDict(typing.TypedDict, total=True):
 class Employee(models.Employee):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     id: int
     name: str
     pay_info: "PayInfo"
