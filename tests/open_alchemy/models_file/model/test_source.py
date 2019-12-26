@@ -97,7 +97,6 @@ class Model(models.Model):
     ],
     ids=["empty", "single column", "multiple column"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
@@ -282,6 +281,11 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -329,6 +333,12 @@ class ModelDict(typing.TypedDict, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -378,6 +388,12 @@ class ModelDict(typing.TypedDict, total=True):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -443,6 +459,12 @@ class ModelDict(_ModelDictBase, total=False):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column_1: type_1
     column_2: type_2
 
@@ -458,6 +480,7 @@ class Model(models.Model):
     ],
     ids=["empty", "required empty", "not required empty", "full"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
     """
@@ -466,5 +489,8 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source

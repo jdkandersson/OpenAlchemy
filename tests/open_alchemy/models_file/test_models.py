@@ -85,7 +85,6 @@ model 2 datetime.
         "contains duplicate imports",
     ],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(models, expected_source):
     """
