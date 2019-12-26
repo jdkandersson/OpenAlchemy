@@ -11,8 +11,9 @@ import sqlalchemy
 {% if python_minor_version < 8 %}
 import typing_extensions
 {% endif %}
-from open_alchemy import models
 from sqlalchemy import orm
+
+from open_alchemy import models
 {% for model in models %}
 {{ model }}
 {% endfor %}

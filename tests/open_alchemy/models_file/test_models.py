@@ -25,8 +25,9 @@ import typing_extensions"""
 import typing
 
 import sqlalchemy{_ADDITIONAL_IMPORT}
-from open_alchemy import models
 from sqlalchemy import orm
+
+from open_alchemy import models
 model 1
 """,
         ),
@@ -38,8 +39,9 @@ model 1
 import typing
 
 import sqlalchemy{_ADDITIONAL_IMPORT}
-from open_alchemy import models
 from sqlalchemy import orm
+
+from open_alchemy import models
 model 1
 model 2
 """,
@@ -53,8 +55,9 @@ import datetime
 import typing
 
 import sqlalchemy{_ADDITIONAL_IMPORT}
-from open_alchemy import models
 from sqlalchemy import orm
+
+from open_alchemy import models
 model 1 datetime.
 """,
         ),
@@ -67,8 +70,9 @@ import datetime
 import typing
 
 import sqlalchemy{_ADDITIONAL_IMPORT}
-from open_alchemy import models
 from sqlalchemy import orm
+
+from open_alchemy import models
 model 1 datetime.
 model 2 datetime.
 """,
@@ -81,6 +85,7 @@ model 2 datetime.
         "contains duplicate imports",
     ],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(models, expected_source):
     """
