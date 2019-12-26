@@ -480,7 +480,6 @@ class Model(models.Model):
     ],
     ids=["empty", "required empty", "not required empty", "full"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
     """
@@ -489,8 +488,5 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source

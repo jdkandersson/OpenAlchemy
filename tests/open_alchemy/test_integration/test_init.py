@@ -427,7 +427,10 @@ import typing_extensions"""
     expected_contents = f'''{docstring}
 # pylint: disable=no-member,useless-super-delegation
 
-import typing{additional_import}
+import typing
+
+import sqlalchemy{additional_import}
+from sqlalchemy import orm
 
 from open_alchemy import models
 
@@ -441,6 +444,12 @@ class TableDict({expected_base}, total=False):
 class Table(models.Table):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column: typing.Optional[int]
 
     @classmethod
