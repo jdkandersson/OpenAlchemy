@@ -6,12 +6,13 @@
 import {{ import_ }}
 {% endfor %}
 {% endif %}
-{% if python_minor_version < 8 %}
 
+import sqlalchemy
+{% if python_minor_version < 8 %}
 import typing_extensions
 {% endif %}
-
 from open_alchemy import models
+from sqlalchemy import orm
 {% for model in models %}
 {{ model }}
 {% endfor %}
