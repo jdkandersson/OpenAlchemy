@@ -4,13 +4,12 @@
 import typing
 
 import sqlalchemy
-import typing_extensions
 from sqlalchemy import orm
 
 from open_alchemy import models
 
 
-class _EmployeeDictBase(typing_extensions.TypedDict, total=True):
+class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
     id: int
@@ -27,6 +26,12 @@ class EmployeeDict(_EmployeeDictBase, total=False):
 class Employee(models.Employee):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     id: int
     name: str
     division: str

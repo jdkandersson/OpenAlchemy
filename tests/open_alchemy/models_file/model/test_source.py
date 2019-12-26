@@ -18,6 +18,11 @@ from open_alchemy import models_file
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -40,6 +45,12 @@ class Model(models.Model):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column_1: type_1
 
     @classmethod
@@ -65,6 +76,12 @@ class Model(models.Model):
 class Model(models.Model):
     """SQLAlchemy model."""
 
+    # SQLAlchemy properties
+    __table__: sqlalchemy.schema.Table
+    __tablename__: str
+    query: orm.query.Query
+
+    # Model properties
     column_1: type_1
     column_2: type_2
 
@@ -80,6 +97,7 @@ class Model(models.Model):
     ],
     ids=["empty", "single column", "multiple column"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
