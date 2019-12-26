@@ -419,7 +419,6 @@ def test_models_file(tmp_path):
     additional_import = ""
     if sys.version_info[1] < 8:
         additional_import = """
-
 import typing_extensions"""
     expected_base = "typing.TypedDict"
     if sys.version_info[1] < 8:
