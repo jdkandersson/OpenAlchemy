@@ -9,6 +9,7 @@ from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
 
+from ..utility_base import TOptUtilityBase
 from ..utility_base import TUtilityBase
 
 
@@ -36,7 +37,7 @@ def set_association(*, table: sqlalchemy.Table, name: str) -> None:
     setattr(open_alchemy.models, name, table)
 
 
-def get_model(*, name: str) -> typing.Optional[typing.Type[TUtilityBase]]:
+def get_model(*, name: str) -> TOptUtilityBase:
     """
     Get a model by name from models.
 
@@ -119,3 +120,26 @@ def _add_backref_to_schemas(
         schemas[name] = {"allOf": [schemas[name], backref_schema]}
         return
     all_of.append(backref_schema)
+
+
+def add_backref(*, name: str, schemas: types.Schemas, backref: types.Schema) -> None:
+    """
+    Add backref to model if it exists or to schemas.
+
+    Args:
+        name: The name of the model to add the backref to.
+        schemas: All model schemas.
+        backref: The backref schema to add.
+
+    """
+    model: TOptUtilityBase = get_model(name=name)
+
+    # Handle model not defined
+    if model is None:
+        _add_backref_to_schemas(name=name, schemas=schemas, backref=backref)
+        return
+
+    # Handle model defined
+    _add_backref_to_model(
+        schema=model._schema, backref=backref  # pylint: disable=protected-access
+    )

@@ -201,3 +201,47 @@ class TestAddBackrefToSchemas:
                 ]
             }
         }
+
+
+@pytest.mark.facade
+def test_add_backref_model_defined(mocked_models):
+    """
+    GIVEN mocked models with model defined and backref schema
+    WHEN add_backref is called
+    THEN the backref schema is added to the model.
+    """
+    model = mocked_models.RefModel
+    model._schema = {}  # pylint: disable=protected-access
+    backref = {"type": "object", "x-de-$ref": "Model"}
+
+    models.add_backref(name="RefModel", schemas={}, backref=backref)
+
+    assert model._schema == {  # pylint: disable=protected-access
+        "x-backrefs": [{"type": "object", "x-de-$ref": "Model"}]
+    }
+
+
+@pytest.mark.facade
+def test_add_backref_model_not_defined(mocked_models):
+    """
+    GIVEN mocked models with model not defined and backref schema
+    WHEN add_backref is called
+    THEN the backref schema is added to the model.
+    """
+    del mocked_models.RefModel
+    schemas = {"RefModel": {"type": "object", "properties": {}}}
+    backref = {"type": "object", "x-de-$ref": "Model"}
+
+    models.add_backref(name="RefModel", schemas=schemas, backref=backref)
+
+    assert schemas == {
+        "RefModel": {
+            "allOf": [
+                {"type": "object", "properties": {}},
+                {
+                    "type": "object",
+                    "x-backrefs": [{"type": "object", "x-de-$ref": "Model"}],
+                },
+            ]
+        }
+    }
