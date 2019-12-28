@@ -5,6 +5,8 @@ import typing
 import sqlalchemy
 
 import open_alchemy
+from open_alchemy import helpers
+from open_alchemy import types
 
 from ..utility_base import TUtilityBase
 
@@ -57,3 +59,36 @@ def set_model(*, name: str, model: TUtilityBase) -> None:
 
     """
     setattr(open_alchemy.models, name, model)
+
+
+# def _set_relationship_backref(
+#     *, model: typing.Type[TUtilityBase], backref: types.Schema
+# ) -> None:
+#     """
+#     Add a backref record to a model.
+
+#     Args:
+#         model: The model to add the backref to.
+
+#     """
+
+
+def _add_backref_to_schema(*, schema: types.Schema, backref: types.Schema) -> None:
+    """
+    Add backref schema to a schema using the x-backrefs key.
+
+    Args:
+        schema: The schema to add the backref schema to.
+        backref: The backref schema to add.
+
+    """
+    # Check format of x-backrefs
+    backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
+
+    # Check whether key exists
+    if backrefs is None:
+        schema["x-backrefs"] = [backref]
+        return
+
+    # Add backref to existing
+    schema["x-backrefs"].append(backref)

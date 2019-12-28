@@ -74,7 +74,7 @@
     "description": "Define the name of a table.",
     "type": "string"
   },
-  "x-relationship-backrefs": {
+  "x-backrefs": {
     "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",
     "type": "array",
     "items": {

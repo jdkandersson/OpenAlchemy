@@ -298,11 +298,11 @@ def test_composite_index_valid(value):
 @pytest.mark.helper
 def test_relationship_backrefs_invalid(value):
     """
-    GIVEN value for x-relationship-backrefs with an invalid format
-    WHEN get_ext_prop is called with x-relationship-backrefs and the value
+    GIVEN value for x-backrefs with an invalid format
+    WHEN get_ext_prop is called with x-backrefs and the value
     THEN MalformedExtensionPropertyError is raised.
     """
-    name = "x-relationship-backrefs"
+    name = "x-backrefs"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
@@ -325,11 +325,11 @@ def test_relationship_backrefs_invalid(value):
 @pytest.mark.helper
 def test_relationship_backrefs_valid(value):
     """
-    GIVEN value for x-relationship-backrefs with a valid format
-    WHEN get_ext_prop is called with x-relationship-backrefs and the value
+    GIVEN value for x-backrefs with a valid format
+    WHEN get_ext_prop is called with x-backrefs and the value
     THEN value is returned.
     """
-    name = "x-relationship-backrefs"
+    name = "x-backrefs"
     source = {name: value}
 
     return_value = helpers.get_ext_prop(source=source, name=name)

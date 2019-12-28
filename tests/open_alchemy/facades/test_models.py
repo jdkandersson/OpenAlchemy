@@ -76,3 +76,58 @@ def test_set_model(mocked_models):
     models.set_model(model=model, name=name)
 
     assert getattr(mocked_models, name) == model
+
+
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        ({}, {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema"}]}),
+        (
+            {"x-backrefs": []},
+            {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema"}]},
+        ),
+        (
+            {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema1"}]},
+            {
+                "x-backrefs": [
+                    {"type": "object", "x-de-$ref": "RefSchema1"},
+                    {"type": "object", "x-de-$ref": "RefSchema"},
+                ]
+            },
+        ),
+        (
+            {
+                "x-backrefs": [
+                    {"type": "object", "x-de-$ref": "RefSchema1"},
+                    {"type": "object", "x-de-$ref": "RefSchema2"},
+                ]
+            },
+            {
+                "x-backrefs": [
+                    {"type": "object", "x-de-$ref": "RefSchema1"},
+                    {"type": "object", "x-de-$ref": "RefSchema2"},
+                    {"type": "object", "x-de-$ref": "RefSchema"},
+                ]
+            },
+        ),
+    ],
+    ids=[
+        "x-backrefs missing",
+        "x-backrefs empty",
+        "x-backrefs single",
+        "x-backrefs multiple",
+    ],
+)
+@pytest.mark.facade
+def test_add_backref_to_schema(schema, expected_schema):
+    """
+    GIVEN given schema and backref to add
+    WHEN _add_backref_to_schema is called with the schema and backref to add
+    THEN the backref is added to the schema.
+    """
+    # pylint: disable=protected-access
+    backref = {"type": "object", "x-de-$ref": "RefSchema"}
+
+    models._add_backref_to_schema(schema=schema, backref=backref)
+
+    assert schema == expected_schema
