@@ -2,62 +2,91 @@
   "ColumnList": {
     "type": "array",
     "items": {
-      "type": "string"
+      "type": "string",
+      "nullable": false
     },
-    "minItems": 1
+    "minItems": 1,
+    "nullable": false
   },
   "ColumnListList": {
     "type": "array",
     "items": {
       "$ref": "#/ColumnList"
     },
-    "minItems": 1
+    "minItems": 1,
+    "nullable": false
   },
   "Unique": {
     "type": "object",
     "properties": {
       "name": {
-        "type": "string"
+        "type": "string",
+        "nullable": false
       },
       "columns": {
         "$ref": "#/ColumnList"
       }
     },
-    "required": ["columns"]
+    "required": ["columns"],
+    "nullable": false
   },
   "UniqueList": {
     "type": "array",
     "items": {
       "$ref": "#/Unique"
     },
-    "minItems": 1
+    "minItems": 1,
+    "nullable": false
   },
   "Index": {
     "type": "object",
     "properties": {
       "name": {
-        "type": "string"
+        "type": "string",
+        "nullable": false
       },
       "expressions": {
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "nullable": false
         },
-        "minItems": 1
+        "minItems": 1,
+        "nullable": false
       },
       "unique": {
-        "type": "boolean"
+        "type": "boolean",
+        "nullable": false
       }
     },
     "required": [
       "expressions"
-    ]
+    ],
+    "nullable": false
   },
   "IndexList": {
     "type": "array",
     "items": {
       "$ref": "#/Index"
     },
-    "minItems": 1
+    "minItems": 1,
+    "nullable": false
+  },
+  "ObjectRef": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "type": "string",
+        "nullable": false
+      },
+      "x-de-$ref": {
+        "$ref": "#/x-de-$ref"
+      }
+    },
+    "required": [
+      "type",
+      "x-de-$ref"
+    ],
+    "nullable": false
   }
 }

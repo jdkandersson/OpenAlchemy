@@ -1,29 +1,36 @@
 {
   "x-backref": {
     "description": "Add a back reference to a relationship.",
-    "type": "string"
+    "type": "string",
+    "nullable": false
   },
   "x-uselist": {
     "description": "Turn a many to one into a one to one relationship.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   },
   "x-secondary": {
     "description": "Turn a one to many into a many to many relationship. The value of x-secondary is used as the name of the association table.",
-    "type": "string"
+    "type": "string",
+    "nullable": false
   },
   "x-primary-key": {
     "description": "Make a column a primary key.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   },
   "x-autoincrement": {
     "description": "Make an integer primary key column auto increment.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   },
   "x-index": {
     "description": "Add index to a column.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   },
   "x-composite-index": {
+    "description": "Add composite index to a table.",
     "oneOf": [
       {
         "$ref": "#/ColumnList"
@@ -41,9 +48,11 @@
   },
   "x-unique": {
     "description": "Add unique constraint to a column.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   },
   "x-composite-unique": {
+    "description": "Add composite unique constraint to a table.",
     "oneOf": [
       {
         "$ref": "#/ColumnList"
@@ -57,27 +66,62 @@
       {
         "$ref": "#/UniqueList"
       }
-    ]
+    ],
+    "nullable": false
   },
   "x-foreign-key": {
     "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
     "type": "string",
-    "pattern": "^.+\\..+$"
+    "pattern": "^.+\\..+$",
+    "nullable": false
   },
   "x-foreign-key-column": {
     "description": "Customize the column used for the foreign key constraint of a relationship.",
-    "type": "string"
+    "type": "string",
+    "nullable": false
   },
   "x-tablename": {
     "description": "Define the name of a table.",
-    "type": "string"
+    "type": "string",
+    "nullable": false
+  },
+  "x-relationship-backrefs": {
+    "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",
+    "type": "array",
+    "items": {
+      "onOf": [
+        {
+          "$ref": "#/ObjectRef"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "nullable": false
+            },
+            "items": {
+              "$ref": "#/ObjectRef"
+            }
+          },
+          "required": [
+            "type",
+            "items"
+          ],
+          "nullable": false
+        }
+      ]
+    },
+    "nullable": false
   },
   "x-de-$ref": {
     "description": "INTERNAL USE ONLY: Track the name of a constructed model for a property referencing an object.",
-    "type": "string"
+    "type": "string",
+    "nullable": false
   },
   "x-dict-ignore": {
     "description": "INTERNAL USE ONLY: Do not add to the schema record used by from_- and to_dict functions.",
-    "type": "boolean"
+    "type": "boolean",
+    "nullable": false
   }
 }
