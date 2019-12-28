@@ -151,3 +151,53 @@ class TestAddBackrefToModel:
 
         with pytest.raises(exceptions.MalformedExtensionPropertyError):
             models._add_backref_to_model(schema=schema, backref={})
+
+
+class TestAddBackrefToSchemas:
+    """Tests for _add_backref_to_schemas."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.facade
+    def test_miss():
+        """
+        GIVEN empty schemas
+        WHEN _add_backref_to_schemas is called
+        THEN SchemaNotFoundError is raised.
+        """
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            models._add_backref_to_schemas(name="Schema", schemas={}, backref={})
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas",
+        [
+            {"RefSchema": {"type": "object", "properties": {}}},
+            {"RefSchema": {"allOf": [{"type": "object", "properties": {}}]}},
+        ],
+        ids=["plain", "allOf exists"],
+    )
+    @pytest.mark.facade
+    def test_valid(schemas):
+        """
+        GIVEN given given name, schemas and backref
+        WHEN _add_backref_to_schemas is called with the name, schemas and backref
+        THEN the backref is added to the schemas.
+        """
+        backref = {"type": "object", "x-de-$ref": "Schema"}
+        name = "RefSchema"
+
+        models._add_backref_to_schemas(name=name, schemas=schemas, backref=backref)
+
+        assert schemas == {
+            "RefSchema": {
+                "allOf": [
+                    {"type": "object", "properties": {}},
+                    {
+                        "type": "object",
+                        "x-backrefs": [{"type": "object", "x-de-$ref": "Schema"}],
+                    },
+                ]
+            }
+        }
