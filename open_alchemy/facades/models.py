@@ -61,21 +61,9 @@ def set_model(*, name: str, model: TUtilityBase) -> None:
     setattr(open_alchemy.models, name, model)
 
 
-# def _set_relationship_backref(
-#     *, model: typing.Type[TUtilityBase], backref: types.Schema
-# ) -> None:
-#     """
-#     Add a backref record to a model.
-
-#     Args:
-#         model: The model to add the backref to.
-
-#     """
-
-
-def _add_backref_to_schema(*, schema: types.Schema, backref: types.Schema) -> None:
+def _add_backref_to_model(*, schema: types.Schema, backref: types.Schema) -> None:
     """
-    Add backref schema to a schema using the x-backrefs key.
+    Add backref schema for a model that exists to its schema using the x-backrefs key.
 
     Args:
         schema: The schema to add the backref schema to.
