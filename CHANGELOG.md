@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 0.11.0 - 2019-12-29
 
 - Add support for _password_
 - Add support for _binary_
