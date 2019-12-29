@@ -1,6 +1,7 @@
 """Generate the models file."""
 # pylint: disable=useless-import-alias
 
+import dataclasses
 import typing
 
 import black
@@ -12,12 +13,20 @@ from . import models as _models
 from . import types as types
 
 
+@dataclasses.dataclass
+class _Model:
+    """Records a model to be processed."""
+
+    name: str
+    schema: oa_types.Schema
+
+
 class ModelsFile:
     """Keeps track of models and writes them as output."""
 
     def __init__(self):
         """Construct."""
-        self._models: typing.List[str] = []
+        self._models: typing.List[_Model] = []
 
     def add_model(self, schema: oa_types.Schema, name: str) -> None:
         """
@@ -28,8 +37,8 @@ class ModelsFile:
             name: The name of the model.
 
         """
-        model_source = _model.generate(schema=schema, name=name)
-        self._models.append(model_source)
+        # model_source = _model.generate(schema=schema, name=name)
+        self._models.append(_Model(name=name, schema=schema))
 
     def generate_models(self) -> str:
         """
@@ -39,7 +48,14 @@ class ModelsFile:
             The source code for the models file.
 
         """
-        raw_source = _models.generate(models=self._models)
+        # Generate source code for each model
+        model_sources: typing.List[str] = []
+        for model in self._models:
+            model_source = _model.generate(schema=model.schema, name=model.name)
+            model_sources.append(model_source)
+
+        # Generate source code for models file
+        raw_source = _models.generate(models=model_sources)
         try:
             return black.format_file_contents(
                 src_contents=raw_source, fast=False, mode=black.FileMode()
