@@ -38,6 +38,9 @@ def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schem
         # Capturing properties
         merged_properties = merged_schema.get("properties")
         sub_properties = merged_sub_schema.get("properties")
+        # Capturing backrefs
+        merged_backrefs = merged_schema.get("x-backrefs")
+        sub_backrefs = merged_sub_schema.get("x-backrefs")
 
         # Combining sub into merged specification
         merged_schema = {**merged_schema, **merged_sub_schema}
@@ -52,5 +55,10 @@ def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schem
         if merged_properties is not None and sub_properties is not None:
             # Both have properties, merge properties
             merged_schema["properties"] = {**merged_properties, **sub_properties}
+
+        # Checking whether backrefs was present on both specs
+        if merged_backrefs is not None and sub_backrefs is not None:
+            # Both have backrefs, merge backrefs
+            merged_schema["x-backrefs"] = {**merged_backrefs, **sub_backrefs}
 
     return merged_schema
