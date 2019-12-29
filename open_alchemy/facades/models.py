@@ -70,7 +70,7 @@ def _add_backref_to_model(
     Add backref schema for a model that exists to its schema using the x-backrefs key.
 
     Retrieve and check the existing backrefs format. If backrefs already exists, then
-    add backref schema to it, otherwise start a new backrefs. under the x-backrefs key.
+    add backref schema to it, otherwise start a new backrefs under the x-backrefs key.
 
     Args:
         schema: The schema to add the backref schema to.
