@@ -456,9 +456,27 @@ def test_schema(schemas, expected_schema):
         name="Schema", base=mock.MagicMock, schemas=schemas
     )
 
-    print(model._schema)
-    print(expected_schema)
     assert model._schema == expected_schema
+
+
+@pytest.mark.model
+def test_schema_relationship_invalid():
+    """
+    GIVEN schema with x-backrefs with invalid schema
+    WHEN model_factory is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schemas = {
+        "Schema": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+            "x-backrefs": {"ref_schema": "RefSchema"},
+        }
+    }
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        model_factory.model_factory(name="Schema", base=mock.MagicMock, schemas=schemas)
 
 
 @pytest.mark.model

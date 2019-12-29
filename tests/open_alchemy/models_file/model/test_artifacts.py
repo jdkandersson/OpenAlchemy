@@ -120,8 +120,46 @@ def test_calculate_name():
                 )
             ],
         ),
+        ({"properties": {}, "x-backrefs": {}}, []),
+        (
+            {
+                "properties": {},
+                "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}},
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="model", type='typing.Optional["Model"]'
+                )
+            ],
+        ),
+        (
+            {
+                "properties": {},
+                "x-backrefs": {
+                    "model1": {"type": "object", "x-de-$ref": "Model1"},
+                    "model2": {"type": "object", "x-de-$ref": "Model2"},
+                },
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="model1", type='typing.Optional["Model1"]'
+                ),
+                models_file.types.ColumnArtifacts(
+                    name="model2", type='typing.Optional["Model2"]'
+                ),
+            ],
+        ),
     ],
-    ids=["empty", "single", "multiple", "single in required", "single not in required"],
+    ids=[
+        "empty",
+        "single",
+        "multiple",
+        "single in required",
+        "single not in required",
+        "empty x-backrefs",
+        "single x-backrefs",
+        "multiple x-backrefs",
+    ],
 )
 @pytest.mark.models_file
 def test_calculate_column(schema, expected_columns):
