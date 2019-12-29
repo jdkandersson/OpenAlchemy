@@ -120,11 +120,13 @@ def test_record_backref_none():
             model_name="RefModel", back_reference=None, secondary=None
         ),
     )
+    schemas = {"RefModel": {"type": "object", "properties": {}}}
 
-    with pytest.raises(exceptions.MissingArgumentError):
-        backref.record(
-            artifacts=artifacts, ref_from_array=False, model_name="Model", schemas={}
-        )
+    backref.record(
+        artifacts=artifacts, ref_from_array=False, model_name="Model", schemas={}
+    )
+
+    assert schemas == {"RefModel": {"type": "object", "properties": {}}}
 
 
 @pytest.mark.helper

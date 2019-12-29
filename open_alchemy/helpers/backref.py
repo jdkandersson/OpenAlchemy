@@ -58,12 +58,9 @@ def record(
 
     """
     back_reference = artifacts.relationship.back_reference
-    # Handle where back reference is None, this should not happen
+    # Check whether backref is required
     if back_reference is None:
-        raise exceptions.MissingArgumentError(
-            "To construct the back reference schema, back reference artifacts cannot "
-            "be None"
-        )
+        return
 
     backref_schema = _calculate_schema(
         artifacts=artifacts, ref_from_array=ref_from_array, model_name=model_name

@@ -13,11 +13,20 @@ def test_handle_array():
     THEN relationship is returned pointing to the referenced schema.
     """
     tablename = "schema"
-    schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schema = {
+        "type": "array",
+        "items": {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-backref": "schema"},
+            ]
+        },
+    }
     schemas = {
         "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }
     logical_name = "ref_schema"
+    model_name = "Schema"
     model_schema = {
         "type": "object",
         "x-tablename": tablename,
@@ -32,7 +41,7 @@ def test_handle_array():
     )
 
     assert relationship.argument == "RefSchema"
-    assert relationship.backref is None
+    assert relationship.backref == ("schema", {"uselist": None})
     assert relationship.secondary is None
     assert tbl_logical_name == logical_name
     assert return_schema == {
@@ -53,6 +62,14 @@ def test_handle_array():
                         }
                     },
                 },
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "schema": {"type": "object", "x-de-$ref": model_name}
+                    },
+                },
             ]
         }
     }
+
+    assert False
