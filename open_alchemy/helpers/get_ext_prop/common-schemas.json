@@ -60,6 +60,38 @@
     },
     "minItems": 1
   },
+  "CompositeIndex": {
+    "oneOf": [
+      {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
+        "$ref": "#/Index"
+      },
+      {
+        "$ref": "#/IndexList"
+      }
+    ]
+  },
+  "CompositeUnique": {
+    "oneOf": [
+      {
+        "$ref": "#/ColumnList"
+      },
+      {
+        "$ref": "#/ColumnListList"
+      },
+      {
+        "$ref": "#/Unique"
+      },
+      {
+        "$ref": "#/UniqueList"
+      }
+    ]
+  },
   "ObjectRef": {
     "type": "object",
     "properties": {
@@ -74,5 +106,30 @@
       "type",
       "x-de-$ref"
     ]
+  },
+  "BackRef": {
+    "type": "object",
+    "additionalProperties": {
+      "oneOf": [
+        {
+          "$ref": "#/ObjectRef"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "items": {
+              "$ref": "#/ObjectRef"
+            }
+          },
+          "required": [
+            "type",
+            "items"
+          ]
+        }
+      ]
+    }
   }
 }
