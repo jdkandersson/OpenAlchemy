@@ -123,6 +123,23 @@ sample file generated for the above example:
     :language: python
     :linenos:
 
+The following information is recorded in the models file:
+
+* The name and type of each property of a schema.
+* The :ref:`from-dict` and :ref:`to-dict` function signatures, including
+  the type of the arguments and return values.
+* The properties created on instance objects due to any :ref:`backref`.
+
+.. _backrefs:
+
+.. note:: To be able to add relationships created by *x-backrefs* to the type
+    annotations of the models file, the schema stored alongside a model, which
+    is accessible at the *_schema* class variable (not a public interface so it
+    should not be used or relied upon), will use the *x-backrefs* extension
+    property to record the schema for all back references for the model.
+    *x-backrefs* is not a public interface and should not be relied upon as it
+    is subject to change.
+
 .. _model-utilities:
 
 Model Utilities
@@ -242,6 +259,8 @@ the documentation:
 | x-tablename         | :ref:`how-does-it-work`               |
 +---------------------+---------------------------------------+
 | x-foreign-key-colum | :ref:`custom-foreign-key`             |
++---------------------+---------------------------------------+
+| x-backrefs          | :ref:`Models File Note <backrefs>`    |
 +---------------------+---------------------------------------+
 | x-de-$ref           | :ref:`from_dict Note <de-ref>`        |
 +---------------------+---------------------------------------+
