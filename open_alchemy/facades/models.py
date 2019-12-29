@@ -130,7 +130,7 @@ def add_backref(
     *, name: str, schemas: types.Schemas, backref: types.Schema, property_name: str
 ) -> None:
     """
-    Add backref to model if it exists or to schemas.
+    Add backref to model if it exists or to schemas otherwise.
 
     Args:
         name: The name of the model to add the backref to.
