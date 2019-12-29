@@ -80,25 +80,20 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         else:
             td_not_required_props.append(prop_artifacts)
 
-    # # Calculate artifacts for back references
-    # for backref_name, backref_schema in schema["x-backrefs"].items():
-    #     # Gather artifacts
-    #     property_required = property_name in required
-    #     column_artifacts = gather_column_artifacts(
-    #         schema=property_schema, required=property_required
-    #     )
+    # Calculate artifacts for back references
+    backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
+    if backrefs is not None:
+        for backref_name, backref_schema in backrefs.items():
+            # Gather artifacts
+            column_artifacts = gather_column_artifacts(
+                schema=backref_schema, required=None
+            )
 
-    #     # Calculate the type
-    #     column_type = _type.model(artifacts=column_artifacts)
-    #     td_prop_type = _type.typed_dict(artifacts=column_artifacts)
+            # Calculate the type
+            column_type = _type.model(artifacts=column_artifacts)
 
-    #     # Add artifacts to the lists
-    #     columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
-    #     prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
-    #     if property_required:
-    #         td_required_props.append(prop_artifacts)
-    #     else:
-    #         td_not_required_props.append(prop_artifacts)
+            # Add artifacts to the lists
+            columns.append(types.ColumnArtifacts(type=column_type, name=backref_name))
 
     # Calculate whether property lists are empty, their names and parent class
     td_required_empty = not td_required_props
