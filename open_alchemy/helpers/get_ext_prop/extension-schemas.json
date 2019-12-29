@@ -76,8 +76,8 @@
   },
   "x-backrefs": {
     "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",
-    "type": "array",
-    "items": {
+    "type": "object",
+    "additionalProperties": {
       "oneOf": [
         {
           "$ref": "#/ObjectRef"

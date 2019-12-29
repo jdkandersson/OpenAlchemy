@@ -272,27 +272,27 @@ def test_composite_index_valid(value):
     "value",
     [
         "RefSchema",
-        ["RefSchema"],
-        [{"x-de-$ref": "RefSchema"}],
-        [{"type": "object"}],
-        [{"type": "object", "x-de-$ref": True}],
-        [{"type": "object", "x-de-$ref": None}],
-        [{"type": True, "x-de-$ref": "RefSchem"}],
-        [{"type": None, "x-de-$ref": "RefSchem"}],
-        [{"type": "array"}],
-        [{"type": "array", "items": {}}],
+        {"ref_schema": "RefSchema"},
+        {"ref_schema": {"x-de-$ref": "RefSchema"}},
+        {"ref_schema": {"type": "object"}},
+        {"ref_schema": {"type": "object", "x-de-$ref": True}},
+        {"ref_schema": {"type": "object", "x-de-$ref": None}},
+        {"ref_schema": {"type": True, "x-de-$ref": "RefSchem"}},
+        {"ref_schema": {"type": None, "x-de-$ref": "RefSchem"}},
+        {"ref_schema": {"type": "array"}},
+        {"ref_schema": {"type": "array", "items": {}}},
     ],
     ids=[
-        "not array",
-        "array not of object",
-        "array object object type type missing",
-        "array object object type x-de-$ref missing",
-        "array object object type x-de-$ref wrong type",
-        "array object object type x-de-$ref null",
-        "array object object type type wrong type",
-        "array object object type type null",
-        "array object array type  items missing",
-        "array object array type  items empty",
+        "not object",
+        "object not of object",
+        "object object object type type missing",
+        "object object object type x-de-$ref missing",
+        "object object object type x-de-$ref wrong type",
+        "object object object type x-de-$ref null",
+        "object object object type type wrong type",
+        "object object object type type null",
+        "object object array type  items missing",
+        "object object array type  items empty",
     ],
 )
 @pytest.mark.helper
@@ -312,13 +312,18 @@ def test_relationship_backrefs_invalid(value):
 @pytest.mark.parametrize(
     "value",
     [
-        [],
-        [{"type": "object", "x-de-$ref": "RefSchema"}],
-        [{"type": "array", "items": {"type": "object", "x-de-$ref": "RefSchema"}}],
-        [
-            {"type": "object", "x-de-$ref": "RefSchema1"},
-            {"type": "object", "x-de-$ref": "RefSchema2"},
-        ],
+        {},
+        {"ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}},
+        {
+            "ref_schema": {
+                "type": "array",
+                "items": {"type": "object", "x-de-$ref": "RefSchema"},
+            }
+        },
+        {
+            "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"},
+            "ref_schema2": {"type": "object", "x-de-$ref": "RefSchema2"},
+        },
     ],
     ids=["empty", "single object type", "single array type", "multiple"],
 )

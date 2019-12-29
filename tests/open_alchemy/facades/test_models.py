@@ -88,33 +88,48 @@ class TestAddBackrefToModel:
     @pytest.mark.parametrize(
         "schema, expected_schema",
         [
-            ({}, {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema"}]}),
             (
-                {"x-backrefs": []},
-                {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema"}]},
+                {},
+                {
+                    "x-backrefs": {
+                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
+                    }
+                },
             ),
             (
-                {"x-backrefs": [{"type": "object", "x-de-$ref": "RefSchema1"}]},
+                {"x-backrefs": {}},
                 {
-                    "x-backrefs": [
-                        {"type": "object", "x-de-$ref": "RefSchema1"},
-                        {"type": "object", "x-de-$ref": "RefSchema"},
-                    ]
+                    "x-backrefs": {
+                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
+                    }
                 },
             ),
             (
                 {
-                    "x-backrefs": [
-                        {"type": "object", "x-de-$ref": "RefSchema1"},
-                        {"type": "object", "x-de-$ref": "RefSchema2"},
-                    ]
+                    "x-backrefs": {
+                        "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"}
+                    }
                 },
                 {
-                    "x-backrefs": [
-                        {"type": "object", "x-de-$ref": "RefSchema1"},
-                        {"type": "object", "x-de-$ref": "RefSchema2"},
-                        {"type": "object", "x-de-$ref": "RefSchema"},
-                    ]
+                    "x-backrefs": {
+                        "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"},
+                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"},
+                    }
+                },
+            ),
+            (
+                {
+                    "x-backrefs": {
+                        "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"},
+                        "ref_schema2": {"type": "object", "x-de-$ref": "RefSchema2"},
+                    }
+                },
+                {
+                    "x-backrefs": {
+                        "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"},
+                        "ref_schema2": {"type": "object", "x-de-$ref": "RefSchema2"},
+                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"},
+                    }
                 },
             ),
         ],
@@ -134,8 +149,11 @@ class TestAddBackrefToModel:
         """
         # pylint: disable=protected-access
         backref = {"type": "object", "x-de-$ref": "RefSchema"}
+        property_name = "ref_schema"
 
-        models._add_backref_to_model(schema=schema, backref=backref)
+        models._add_backref_to_model(
+            schema=schema, backref=backref, property_name=property_name
+        )
 
         assert schema == expected_schema
 
@@ -150,7 +168,9 @@ class TestAddBackrefToModel:
         schema = {"x-backrefs": ["invalid"]}
 
         with pytest.raises(exceptions.MalformedExtensionPropertyError):
-            models._add_backref_to_model(schema=schema, backref={})
+            models._add_backref_to_model(
+                schema=schema, backref={}, property_name="ref_schema"
+            )
 
 
 class TestAddBackrefToSchemas:
@@ -167,7 +187,9 @@ class TestAddBackrefToSchemas:
         THEN SchemaNotFoundError is raised.
         """
         with pytest.raises(exceptions.SchemaNotFoundError):
-            models._add_backref_to_schemas(name="Schema", schemas={}, backref={})
+            models._add_backref_to_schemas(
+                name="Schema", schemas={}, backref={}, property_name="ref_schema"
+            )
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -188,7 +210,9 @@ class TestAddBackrefToSchemas:
         backref = {"type": "object", "x-de-$ref": "Schema"}
         name = "RefSchema"
 
-        models._add_backref_to_schemas(name=name, schemas=schemas, backref=backref)
+        models._add_backref_to_schemas(
+            name=name, schemas=schemas, backref=backref, property_name="ref_schema"
+        )
 
         assert schemas == {
             "RefSchema": {
@@ -196,7 +220,9 @@ class TestAddBackrefToSchemas:
                     {"type": "object", "properties": {}},
                     {
                         "type": "object",
-                        "x-backrefs": [{"type": "object", "x-de-$ref": "Schema"}],
+                        "x-backrefs": {
+                            "ref_schema": {"type": "object", "x-de-$ref": "Schema"}
+                        },
                     },
                 ]
             }
@@ -214,10 +240,12 @@ def test_add_backref_model_defined(mocked_models):
     model._schema = {}  # pylint: disable=protected-access
     backref = {"type": "object", "x-de-$ref": "Model"}
 
-    models.add_backref(name="RefModel", schemas={}, backref=backref)
+    models.add_backref(
+        name="RefModel", schemas={}, backref=backref, property_name="model"
+    )
 
     assert model._schema == {  # pylint: disable=protected-access
-        "x-backrefs": [{"type": "object", "x-de-$ref": "Model"}]
+        "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}}
     }
 
 
@@ -232,7 +260,9 @@ def test_add_backref_model_not_defined(mocked_models):
     schemas = {"RefModel": {"type": "object", "properties": {}}}
     backref = {"type": "object", "x-de-$ref": "Model"}
 
-    models.add_backref(name="RefModel", schemas=schemas, backref=backref)
+    models.add_backref(
+        name="RefModel", schemas=schemas, backref=backref, property_name="model"
+    )
 
     assert schemas == {
         "RefModel": {
@@ -240,7 +270,7 @@ def test_add_backref_model_not_defined(mocked_models):
                 {"type": "object", "properties": {}},
                 {
                     "type": "object",
-                    "x-backrefs": [{"type": "object", "x-de-$ref": "Model"}],
+                    "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}},
                 },
             ]
         }

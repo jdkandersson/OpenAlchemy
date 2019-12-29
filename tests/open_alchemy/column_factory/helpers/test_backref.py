@@ -104,3 +104,63 @@ class TestCalculateSchema:
         )
 
         assert returned_schema == expected_schema
+
+
+@pytest.mark.helper
+def test_record_backref_none():
+    """
+    GIVEN artifacts with None backref
+    WHEN record is called with the artifacts
+    THEN MissingArgumentError is raised.
+    """
+    artifacts = types.ObjectArtifacts(
+        spec={},
+        fk_column="fk_column",
+        relationship=types.RelationshipArtifacts(
+            model_name="RefModel", back_reference=None, secondary=None
+        ),
+    )
+
+    with pytest.raises(exceptions.MissingArgumentError):
+        backref.record(
+            artifacts=artifacts, ref_from_array=False, model_name="Model", schemas={}
+        )
+
+
+@pytest.mark.helper
+def test_record():
+    """
+    GIVEN artifacts, schemas, whether the reference is from an array and the model name
+    WHEN record is called with the arguments
+    THEN the back reference schema is recorded on the references model.
+    """
+    artifacts = types.ObjectArtifacts(
+        spec={},
+        fk_column="fk_column",
+        relationship=types.RelationshipArtifacts(
+            model_name="RefModel",
+            back_reference=types.BackReferenceArtifacts(property_name="model"),
+        ),
+    )
+    schemas = {"RefModel": {"type": "object", "properties": {}}}
+
+    backref.record(
+        artifacts=artifacts, ref_from_array=False, model_name="Model", schemas=schemas
+    )
+
+    assert schemas == {
+        "RefModel": {
+            "allOf": [
+                {"type": "object", "properties": {}},
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "model": {
+                            "type": "array",
+                            "items": {"type": "object", "x-de-$ref": "Model"},
+                        }
+                    },
+                },
+            ]
+        }
+    }
