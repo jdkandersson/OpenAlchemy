@@ -102,7 +102,6 @@ def gather_object_artifacts(
         key column.
 
     """
-    print(spec)
     # Default backref
     backref = None
     # Default uselist

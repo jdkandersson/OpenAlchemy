@@ -18,7 +18,11 @@ def test_integration():
     spec = {"type": "boolean"}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="model",
     )
 
     assert logical_name == "column_1"
@@ -37,7 +41,11 @@ def test_integration_all_of():
     spec = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="model",
     )
 
     assert logical_name == "column_1"
@@ -56,7 +64,11 @@ def test_integration_ref():
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="model",
     )
 
     assert logical_name == "column_1"
@@ -89,6 +101,7 @@ def test_integration_object_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
+        model_name="model",
     )
 
     assert fk_logical_name == "ref_schema_id"
@@ -125,7 +138,11 @@ def test_integration_object_ref_fk_def():
     logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], _) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
     )
 
     assert tbl_logical_name == logical_name
@@ -156,7 +173,11 @@ def test_integration_array_ref():
     logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
     )
 
     assert tbl_logical_name == logical_name
@@ -215,7 +236,11 @@ def test_integration_array_ref_fk_def():
     logical_name = "ref_schema"
 
     column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
     )
 
     assert schemas == {

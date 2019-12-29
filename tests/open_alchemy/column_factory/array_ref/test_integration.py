@@ -36,6 +36,7 @@ def test_handle_array():
     ([(tbl_logical_name, relationship)], return_schema) = array_ref.handle_array(
         schema=schema,
         model_schema=model_schema,
+        model_name=model_name,
         schemas=schemas,
         logical_name=logical_name,
     )
@@ -54,6 +55,12 @@ def test_handle_array():
                 {"type": "object", "x-tablename": "ref_schema", "properties": {}},
                 {
                     "type": "object",
+                    "x-backrefs": {
+                        "schema": {"type": "object", "x-de-$ref": model_name}
+                    },
+                },
+                {
+                    "type": "object",
                     "properties": {
                         f"{tablename}_id": {
                             "type": "integer",
@@ -62,14 +69,6 @@ def test_handle_array():
                         }
                     },
                 },
-                {
-                    "type": "object",
-                    "x-backrefs": {
-                        "schema": {"type": "object", "x-de-$ref": model_name}
-                    },
-                },
             ]
         }
     }
-
-    assert False

@@ -23,6 +23,7 @@ def column_factory(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
+    model_name: str,
     model_schema: types.Schema,
 ) -> typing.Tuple[typing.List[typing.Tuple[str, sqlalchemy.Column]], types.Schema]:
     """
@@ -33,6 +34,7 @@ def column_factory(
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
+        model_schema: The name for the model.
         model_schema: The schema for the model.
 
     Returns:
@@ -61,6 +63,7 @@ def column_factory(
         # Handle arrays
         return array_ref.handle_array(
             schema=spec,
+            model_name=model_name,
             model_schema=model_schema,
             schemas=schemas,
             logical_name=logical_name,
