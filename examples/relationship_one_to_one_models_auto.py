@@ -27,6 +27,7 @@ class PayInfo(models.PayInfo):
     # Model properties
     id: typing.Optional[int]
     account_number: typing.Optional[str]
+    employee: typing.Optional["Employee"]
 
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "PayInfo":
