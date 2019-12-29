@@ -56,6 +56,7 @@ def column_factory(
             schemas=schemas,
             required=required,
             logical_name=logical_name,
+            model_name=model_name,
             model_schema=model_schema,
         )
 

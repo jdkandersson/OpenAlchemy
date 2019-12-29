@@ -20,6 +20,7 @@ def handle_object(
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
+    model_name: str,
     model_schema: types.Schema,
 ) -> typing.Tuple[
     typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
@@ -53,6 +54,14 @@ def handle_object(
         raise exceptions.MalformedRelationshipError(
             "Many to one and one to one relationships do not support x-secondary."
         )
+
+    # Record any backref
+    helpers.backref.record(
+        artifacts=obj_artifacts,
+        ref_from_array=False,
+        model_name=model_name,
+        schemas=schemas,
+    )
 
     # Construct foreign key
     foreign_key_spec = handle_object_reference(

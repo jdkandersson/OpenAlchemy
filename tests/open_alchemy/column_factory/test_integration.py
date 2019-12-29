@@ -22,7 +22,7 @@ def test_integration():
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
-        model_name="model",
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -45,7 +45,7 @@ def test_integration_all_of():
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
-        model_name="model",
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -68,7 +68,7 @@ def test_integration_ref():
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
-        model_name="model",
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -101,7 +101,7 @@ def test_integration_object_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="model",
+        model_name="schema",
     )
 
     assert fk_logical_name == "ref_schema_id"
@@ -112,6 +112,59 @@ def test_integration_object_ref():
     assert relationship.backref is None
     assert relationship.uselist is None
     assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_backref():
+    """
+    GIVEN schema that references another object schema with a back reference and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN the a relationship with a back reference is returned and the back reference is
+        recorded on the referenced schema.
+    """
+    spec = {
+        "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-backref": "schema"}]
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+    model_schema = {"properties": {}}
+    model_name = "Schema"
+
+    ([_, (_, relationship)], spec) = column_factory.column_factory(
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name=model_name,
+    )
+
+    assert relationship.backref == ("schema", {"uselist": None})
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"type": "object", "x-de-$ref": model_name},
+                        }
+                    },
+                },
+            ]
+        }
+    }
 
 
 @pytest.mark.column

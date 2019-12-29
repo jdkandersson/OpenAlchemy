@@ -38,6 +38,7 @@ def test_handle_object_error(spec, schemas):
             schemas=schemas,
             required=True,
             logical_name="name 1",
+            model_name="schema",
             model_schema={},
         )
 
