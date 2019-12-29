@@ -80,6 +80,21 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         else:
             td_not_required_props.append(prop_artifacts)
 
+    # Calculate artifacts for back references
+    backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
+    if backrefs is not None:
+        for backref_name, backref_schema in backrefs.items():
+            # Gather artifacts
+            column_artifacts = gather_column_artifacts(
+                schema=backref_schema, required=None
+            )
+
+            # Calculate the type
+            column_type = _type.model(artifacts=column_artifacts)
+
+            # Add artifacts to the lists
+            columns.append(types.ColumnArtifacts(type=column_type, name=backref_name))
+
     # Calculate whether property lists are empty, their names and parent class
     td_required_empty = not td_required_props
     td_not_required_empty = not td_not_required_props

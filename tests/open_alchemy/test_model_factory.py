@@ -170,9 +170,10 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
         "type": "object",
         "properties": {"id": {"type": "integer"}},
     }
-    schemas = {"SingleProperty": model_schema}
+    model_name = "SingleProperty"
+    schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -180,6 +181,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
         schemas=schemas,
         logical_name="id",
         required=None,
+        model_name=model_name,
         model_schema=model_schema,
     )
 
@@ -198,9 +200,10 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
         "properties": {"id": {"type": "integer"}},
         "required": [],
     }
-    schemas = {"SingleProperty": model_schema}
+    model_name = "SingleProperty"
+    schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -208,6 +211,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
         schemas=schemas,
         logical_name="id",
         required=False,
+        model_name=model_name,
         model_schema=model_schema,
     )
 
@@ -226,9 +230,10 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
         "properties": {"id": {"type": "integer"}},
         "required": ["id"],
     }
-    schemas = {"SingleProperty": model_schema}
+    model_name = "SingleProperty"
+    schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name="SingleProperty", base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -236,6 +241,7 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
         schemas=schemas,
         logical_name="id",
         required=True,
+        model_name=model_name,
         model_schema=model_schema,
     )
 
@@ -345,6 +351,25 @@ def test_all_of():
         ),
         (
             {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                    "x-backrefs": {
+                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
+                    },
+                }
+            },
+            {
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "x-backrefs": {
+                    "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
+                },
+            },
+        ),
+        (
+            {
                 "RefSchema": {"type": "integer"},
                 "Schema": {
                     "x-tablename": "table 1",
@@ -411,12 +436,13 @@ def test_all_of():
     ids=[
         "single x-dict-ignore true",
         "single x-dict-ignore false",
-        "single no required",
+        "single no required, backrefs",
         "single required",
+        "single x-backrefs",
         "single ref",
         "single ref object",
         "single allOf",
-        "multiple",
+        "multiple properties",
     ],
 )
 @pytest.mark.model
@@ -431,6 +457,26 @@ def test_schema(schemas, expected_schema):
     )
 
     assert model._schema == expected_schema
+
+
+@pytest.mark.model
+def test_schema_relationship_invalid():
+    """
+    GIVEN schema with x-backrefs with invalid schema
+    WHEN model_factory is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schemas = {
+        "Schema": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+            "x-backrefs": {"ref_schema": "RefSchema"},
+        }
+    }
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        model_factory.model_factory(name="Schema", base=mock.MagicMock, schemas=schemas)
 
 
 @pytest.mark.model

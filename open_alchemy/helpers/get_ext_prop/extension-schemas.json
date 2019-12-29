@@ -24,40 +24,16 @@
     "type": "boolean"
   },
   "x-composite-index": {
-    "oneOf": [
-      {
-        "$ref": "#/ColumnList"
-      },
-      {
-        "$ref": "#/ColumnListList"
-      },
-      {
-        "$ref": "#/Index"
-      },
-      {
-        "$ref": "#/IndexList"
-      }
-    ]
+    "description": "Add composite index to a table.",
+    "$ref": "#/CompositeIndex"
   },
   "x-unique": {
     "description": "Add unique constraint to a column.",
     "type": "boolean"
   },
   "x-composite-unique": {
-    "oneOf": [
-      {
-        "$ref": "#/ColumnList"
-      },
-      {
-        "$ref": "#/ColumnListList"
-      },
-      {
-        "$ref": "#/Unique"
-      },
-      {
-        "$ref": "#/UniqueList"
-      }
-    ]
+    "description": "Add composite unique constraint to a table.",
+    "$ref": "#/CompositeUnique"
   },
   "x-foreign-key": {
     "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
@@ -71,6 +47,10 @@
   "x-tablename": {
     "description": "Define the name of a table.",
     "type": "string"
+  },
+  "x-backrefs": {
+    "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",
+    "$ref": "#/BackRef"
   },
   "x-de-$ref": {
     "description": "INTERNAL USE ONLY: Track the name of a constructed model for a property referencing an object.",

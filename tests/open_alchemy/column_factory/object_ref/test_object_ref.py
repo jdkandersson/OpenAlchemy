@@ -38,6 +38,7 @@ def test_handle_object_error(spec, schemas):
             schemas=schemas,
             required=True,
             logical_name="name 1",
+            model_name="schema",
             model_schema={},
         )
 
@@ -298,7 +299,8 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     if expected_backref is None:
         assert obj_artifacts.relationship.back_reference is None
     else:
-        assert obj_artifacts.relationship.back_reference.model_name == expected_backref
+        returned_backref = obj_artifacts.relationship.back_reference.property_name
+        assert returned_backref == expected_backref
 
 
 @pytest.mark.column

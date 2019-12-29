@@ -16,7 +16,7 @@ _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, "common-schemas.json")
 with open(_COMMON_SCHEMAS_FILE) as in_file:
     _COMMON_SCHEMAS = json.load(in_file)
 _resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
-    _COMMON_SCHEMAS
+    {**_COMMON_SCHEMAS, **_SCHEMAS}
 )
 
 

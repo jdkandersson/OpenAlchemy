@@ -27,6 +27,7 @@ class Division(models.Division):
     # Model properties
     id: typing.Optional[int]
     name: typing.Optional[str]
+    employees: typing.Sequence["Employee"]
 
     @classmethod
     def from_dict(cls, **kwargs: typing.Any) -> "Division":

@@ -18,7 +18,11 @@ def test_integration():
     spec = {"type": "boolean"}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -37,7 +41,11 @@ def test_integration_all_of():
     spec = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -56,7 +64,11 @@ def test_integration_ref():
     spec = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name="column_1", model_schema={}
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="schema",
     )
 
     assert logical_name == "column_1"
@@ -89,6 +101,7 @@ def test_integration_object_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
+        model_name="schema",
     )
 
     assert fk_logical_name == "ref_schema_id"
@@ -99,6 +112,59 @@ def test_integration_object_ref():
     assert relationship.backref is None
     assert relationship.uselist is None
     assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_backref():
+    """
+    GIVEN schema that references another object schema with a back reference and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN the a relationship with a back reference is returned and the back reference is
+        recorded on the referenced schema.
+    """
+    spec = {
+        "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-backref": "schema"}]
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+    model_schema = {"properties": {}}
+    model_name = "Schema"
+
+    ([_, (_, relationship)], spec) = column_factory.column_factory(
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name=model_name,
+    )
+
+    assert relationship.backref == ("schema", {"uselist": None})
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"type": "object", "x-de-$ref": model_name},
+                        }
+                    },
+                },
+            ]
+        }
+    }
 
 
 @pytest.mark.column
@@ -125,7 +191,11 @@ def test_integration_object_ref_fk_def():
     logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], _) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
     )
 
     assert tbl_logical_name == logical_name
@@ -156,7 +226,11 @@ def test_integration_array_ref():
     logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], spec) = column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
     )
 
     assert tbl_logical_name == logical_name
@@ -184,47 +258,5 @@ def test_integration_array_ref():
                     },
                 },
             ]
-        }
-    }
-
-
-@pytest.mark.column
-def test_integration_array_ref_fk_def():
-    """
-    GIVEN schema that references another object schema with a foreign key already
-        defined from an array and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN schemas is not modified and relationship is returned with the spec.
-    """
-    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {
-                "id": {"type": "integer"},
-                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"},
-            },
-        }
-    }
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {"id": {"type": "integer"}},
-    }
-    logical_name = "ref_schema"
-
-    column_factory.column_factory(
-        spec=spec, schemas=schemas, logical_name=logical_name, model_schema=model_schema
-    )
-
-    assert schemas == {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {
-                "id": {"type": "integer"},
-                "schema_id": {"type": "integer", "x-foreign-key": "schema.id"},
-            },
         }
     }

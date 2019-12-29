@@ -30,7 +30,7 @@ class UtilityBase:
     # columns any $ref must be resolved an allOf must be merged for all. Objects must
     # be recorded as a free-form object and have a x-de-$ref extension property with
     # the de-referenced name of the schema.
-    _schema: types.Schema
+    _schema: typing.ClassVar[types.Schema]
 
     def __init__(self, **kwargs: typing.Any) -> None:
         """Construct."""

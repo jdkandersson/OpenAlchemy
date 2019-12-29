@@ -179,3 +179,51 @@ def test_properties(all_of_schema, expected_properties):
     return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
 
     assert return_schema["properties"] == expected_properties
+
+
+@pytest.mark.parametrize(
+    "all_of_schema, expected_backrefs",
+    [
+        ([{"x-backrefs": {"key_1": "value 1"}}], {"key_1": "value 1"}),
+        (
+            [{"x-backrefs": {"key_1": "value 1", "key_2": "value 2"}}],
+            {"key_1": "value 1", "key_2": "value 2"},
+        ),
+        ([{"x-backrefs": {"key_1": "value 1"}}, {}], {"key_1": "value 1"}),
+        (
+            [
+                {"x-backrefs": {"key_1": "value 1"}},
+                {"x-backrefs": {"key_2": "value 2"}},
+            ],
+            {"key_1": "value 1", "key_2": "value 2"},
+        ),
+        (
+            [
+                {"x-backrefs": {"key_1": "value 1"}},
+                {"x-backrefs": {"key_1": "value 2"}},
+            ],
+            {"key_1": "value 2"},
+        ),
+    ],
+    ids=[
+        "single all of single property",
+        "single all of multiple backrefs",
+        "multiple all of one property",
+        "multiple all of all backrefs",
+        "multiple all of all backrefs duplicates",
+    ],
+)
+@pytest.mark.helper
+def test_backrefs(all_of_schema, expected_backrefs):
+    """
+    GIVEN schema that has allOf with schemas with given backrefs and expected
+        backrefs
+    WHEN merge_all_of is called with the schema
+    THEN the returned schema has the expected backrefs.
+    """
+    schema = {"allOf": all_of_schema}
+    schemas = {}
+
+    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+
+    assert return_schema["x-backrefs"] == expected_backrefs

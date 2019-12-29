@@ -257,7 +257,7 @@ def test_composite_index_invalid(value):
 def test_composite_index_valid(value):
     """
     GIVEN value for x-composite-index that has a valid format
-    WHEN get_ext_prop with x-composite-index and the value
+    WHEN get_ext_prop is called with x-composite-index and the value
     THEN the value is returned.
     """
     name = "x-composite-index"
@@ -266,3 +266,77 @@ def test_composite_index_valid(value):
     returned_value = helpers.get_ext_prop(source=source, name=name)
 
     assert returned_value == value
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "RefSchema",
+        {"ref_schema": "RefSchema"},
+        {"ref_schema": {"x-de-$ref": "RefSchema"}},
+        {"ref_schema": {"type": "object"}},
+        {"ref_schema": {"type": "object", "x-de-$ref": True}},
+        {"ref_schema": {"type": "object", "x-de-$ref": None}},
+        {"ref_schema": {"type": True, "x-de-$ref": "RefSchem"}},
+        {"ref_schema": {"type": None, "x-de-$ref": "RefSchem"}},
+        {"ref_schema": {"type": "array"}},
+        {"ref_schema": {"type": "array", "items": {}}},
+    ],
+    ids=[
+        "not object",
+        "object not of object",
+        "object object object type type missing",
+        "object object object type x-de-$ref missing",
+        "object object object type x-de-$ref wrong type",
+        "object object object type x-de-$ref null",
+        "object object object type type wrong type",
+        "object object object type type null",
+        "object object array type  items missing",
+        "object object array type  items empty",
+    ],
+)
+@pytest.mark.helper
+def test_relationship_backrefs_invalid(value):
+    """
+    GIVEN value for x-backrefs with an invalid format
+    WHEN get_ext_prop is called with x-backrefs and the value
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    name = "x-backrefs"
+    source = {name: value}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.get_ext_prop(source=source, name=name)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {},
+        {"ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}},
+        {
+            "ref_schema": {
+                "type": "array",
+                "items": {"type": "object", "x-de-$ref": "RefSchema"},
+            }
+        },
+        {
+            "ref_schema1": {"type": "object", "x-de-$ref": "RefSchema1"},
+            "ref_schema2": {"type": "object", "x-de-$ref": "RefSchema2"},
+        },
+    ],
+    ids=["empty", "single object type", "single array type", "multiple"],
+)
+@pytest.mark.helper
+def test_relationship_backrefs_valid(value):
+    """
+    GIVEN value for x-backrefs with a valid format
+    WHEN get_ext_prop is called with x-backrefs and the value
+    THEN value is returned.
+    """
+    name = "x-backrefs"
+    source = {name: value}
+
+    return_value = helpers.get_ext_prop(source=source, name=name)
+
+    assert return_value == value

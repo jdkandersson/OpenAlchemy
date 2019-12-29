@@ -57,6 +57,10 @@ def model_factory(
     model_schema: types.Schema = {"type": "object", "properties": {}}
     if required_exists:
         model_schema["required"] = required_array
+    if "x-backrefs" in schema:
+        model_schema["x-backrefs"] = helpers.get_ext_prop(
+            source=schema, name="x-backrefs"
+        )
     for prop_name, prop_spec in schema.get("properties", []).items():
         prop_class_vars, prop_final_spec = column_factory.column_factory(
             spec=prop_spec,
@@ -64,6 +68,7 @@ def model_factory(
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,
             model_schema=schema,
+            model_name=name,
         )
         model_class_vars.append(prop_class_vars)
         dict_ignore = helpers.get_ext_prop(

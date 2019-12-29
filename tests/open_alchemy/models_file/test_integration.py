@@ -190,3 +190,59 @@ def test_integration(schemas, expected_source):
     source = models.generate_models()
 
     assert source == expected_source
+
+
+@pytest.mark.models_file
+def test_schema_change():
+    """
+    GIVEN schema and name
+    WHEN schema is added to the models file, changed and then the models file is
+        generated
+    THEN the change is reflected in the models file.
+    """
+    schema = {"properties": {}}
+    name = "Model"
+    models = models_file.ModelsFile()
+
+    models.add_model(schema=schema, name=name)
+    schema["properties"]["id"] = {"type": "integer"}
+    source = models.generate_models()
+
+    expected_source = f'''{_DOCSTRING}
+# pylint: disable=no-member,useless-super-delegation
+
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
+
+from open_alchemy import models
+
+
+class ModelDict({_EXPECTED_BASE}, total=False):
+    """TypedDict for properties that are not required."""
+
+    id: typing.Optional[int]
+
+
+class Model(models.Model):
+    """SQLAlchemy model."""
+
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
+    id: typing.Optional[int]
+
+    @classmethod
+    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+        """Construct from a dictionary (eg. a POST payload)."""
+        return super().from_dict(**kwargs)
+
+    def to_dict(self) -> ModelDict:
+        """Convert to a dictionary (eg. to send back for a GET request)."""
+        return super().to_dict()
+'''
+    assert source == expected_source
