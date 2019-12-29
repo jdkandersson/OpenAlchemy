@@ -37,7 +37,6 @@ class ModelsFile:
             name: The name of the model.
 
         """
-        # model_source = _model.generate(schema=schema, name=name)
         self._models.append(_Model(name=name, schema=schema))
 
     def generate_models(self) -> str:
