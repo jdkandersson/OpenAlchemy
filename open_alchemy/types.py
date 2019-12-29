@@ -73,8 +73,8 @@ class ColumnArtifacts:
 class BackReferenceArtifacts:
     """Information required to construct a back reference."""
 
-    # The name of the model being referenced
-    model_name: str
+    # The property name under which to make the back reference available
+    property_name: str
     # Whether to use a list
     uselist: typing.Optional[bool] = None
 

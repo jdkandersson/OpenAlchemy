@@ -175,7 +175,7 @@ def gather_object_artifacts(
     back_reference_artifacts = None
     if backref is not None:
         back_reference_artifacts = types.BackReferenceArtifacts(
-            model_name=backref, uselist=uselist
+            property_name=backref, uselist=uselist
         )
     relationship_artifacts = types.RelationshipArtifacts(
         model_name=ref_logical_name,

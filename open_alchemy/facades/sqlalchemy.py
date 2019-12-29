@@ -20,7 +20,7 @@ def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipP
     backref = None
     if artifacts.back_reference is not None:
         backref = orm.backref(
-            artifacts.back_reference.model_name,
+            artifacts.back_reference.property_name,
             uselist=artifacts.back_reference.uselist,
         )
 
