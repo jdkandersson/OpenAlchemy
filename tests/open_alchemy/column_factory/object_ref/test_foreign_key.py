@@ -3,6 +3,7 @@
 import pytest
 
 from open_alchemy import exceptions
+from open_alchemy import types
 from open_alchemy.column_factory.object_ref import foreign_key
 
 
@@ -41,12 +42,12 @@ def test_check_required_invalid_schema(model_schema):
     WHEN check_required is called
     THEN MalformedRelationshipError is raised.
     """
-    fk_spec = {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}
+    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key="ref_table.fk_column")
     fk_logical_name = "ref_table_fk_column"
 
     with pytest.raises(exceptions.MalformedRelationshipError):
         foreign_key.check_required(
-            fk_spec=fk_spec,
+            artifacts=artifacts,
             fk_logical_name=fk_logical_name,
             model_schema=model_schema,
             schemas={},
@@ -107,11 +108,11 @@ def test_check_required(model_schema, schemas, expected_required):
     WHEN check_required is called
     THEN the expected required is returned.
     """
-    fk_spec = {"type": "fk_type", "x-foreign-key": "ref_table.fk_column"}
+    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key="ref_table.fk_column")
     fk_logical_name = "ref_table_fk_column"
 
     required = foreign_key.check_required(
-        fk_spec=fk_spec,
+        artifacts=artifacts,
         fk_logical_name=fk_logical_name,
         model_schema=model_schema,
         schemas=schemas,

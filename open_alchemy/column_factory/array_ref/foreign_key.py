@@ -54,13 +54,10 @@ def set_(
     fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(
         model_schema=model_schema, schemas=schemas, fk_column=fk_column
     )
-    fk_schema = object_ref.handle_object_reference(
-        spec=model_schema, schemas=schemas, fk_column=fk_column
-    )
 
     # Check whether the foreign key has already been defined in the referenced model
     fk_required = object_ref.foreign_key.check_required(
-        fk_spec=fk_schema,
+        artifacts=fk_artifacts,
         fk_logical_name=fk_logical_name,
         model_schema=ref_schema,
         schemas=schemas,
@@ -78,7 +75,13 @@ def set_(
     # Handle model not constructed by adding the foreign key schema to the model schema
     fk_object_schema = {
         "type": "object",
-        "properties": {fk_logical_name: {**fk_schema, "x-dict-ignore": True}},
+        "properties": {
+            fk_logical_name: {
+                "type": fk_artifacts.type,
+                "x-foreign-key": fk_artifacts.foreign_key,
+                "x-dict-ignore": True,
+            }
+        },
     }
     if "allOf" not in schemas[ref_model_name]:
         # Add new top level allOf

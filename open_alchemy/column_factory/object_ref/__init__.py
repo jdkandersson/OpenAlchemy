@@ -71,11 +71,8 @@ def handle_object(
         schemas=schemas,
         fk_column=obj_artifacts.fk_column,
     )
-    foreign_key_spec = handle_object_reference(
-        spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
-    )
     fk_required = foreign_key.check_required(
-        fk_spec=foreign_key_spec,
+        artifacts=fk_artifacts,
         fk_logical_name=fk_logical_name,
         model_schema=model_schema,
         schemas=schemas,
@@ -248,45 +245,3 @@ def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
         raise exceptions.MalformedRelationshipError(
             "Relationships may have at most 1 x-secondary defined."
         )
-
-
-def handle_object_reference(
-    *, spec: types.Schema, schemas: types.Schemas, fk_column: str
-) -> types.Schema:
-    """
-    Determine the foreign key schema for an object reference.
-
-    Args:
-        spec: The schema of the object reference.
-        schemas: All defined schemas.
-        fk_column: The foreign column name to use.
-
-    Returns:
-        The foreign key schema.
-
-    """
-    tablename = helpers.get_ext_prop(source=spec, name="x-tablename")
-    if not tablename:
-        raise exceptions.MalformedSchemaError(
-            "Referenced object is missing x-tablename property."
-        )
-    properties = spec.get("properties")
-    if properties is None:
-        raise exceptions.MalformedSchemaError(
-            "Referenced object does not have any properties."
-        )
-    fk_logical_name = fk_column if fk_column is not None else "id"
-    fk_spec = properties.get(fk_logical_name)
-    if fk_spec is None:
-        raise exceptions.MalformedSchemaError(
-            f"Referenced object does not have {fk_logical_name} property."
-        )
-    # Preparing specification
-    prepared_fk_spec = helpers.prepare_schema(schema=fk_spec, schemas=schemas)
-    fk_type = prepared_fk_spec.get("type")
-    if fk_type is None:
-        raise exceptions.MalformedSchemaError(
-            f"Referenced object {fk_logical_name} property does not have a type."
-        )
-
-    return {"type": fk_type, "x-foreign-key": f"{tablename}.{fk_logical_name}"}

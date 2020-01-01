@@ -82,62 +82,6 @@ def test_check_object_all_of_error(spec):
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, fk_column",
-    [
-        ({"properties": {"id": {}}}, {}, "id"),
-        ({"x-tablename": "table 1"}, {}, "id"),
-        ({"x-tablename": "table 1", "properties": {}}, {}, "id"),
-        (
-            {"x-tablename": "table 1", "properties": {"id": {"type": "integer"}}},
-            {},
-            "column_1",
-        ),
-        ({"x-tablename": "table 1", "properties": {"id": {}}}, {}, "id"),
-    ],
-    ids=[
-        "no tablename",
-        "no properties",
-        "no id property",
-        "custom foreign key property missing",
-        "id property no type",
-    ],
-)
-@pytest.mark.column
-def test_handle_object_reference_malformed_schema(spec, schemas, fk_column):
-    """
-    GIVEN spec, schemas and foreign key column
-    WHEN handle_object_reference is called with the spec, schemas and foreign key
-        column
-    THEN a MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        object_ref.handle_object_reference(
-            spec=spec, schemas=schemas, fk_column=fk_column
-        )
-
-
-@pytest.mark.column
-def test_handle_object_reference_fk_return():
-    """
-    GIVEN foreign key column and object schema with x-tablename and id and foreign key
-        property with a type
-    WHEN handle_object_reference is called with the schema
-    THEN a schema with the type of the foreign key property and x-foreign-key property.
-    """
-    spec = {
-        "x-tablename": "table 1",
-        "properties": {"id": {"type": "idType"}, "fk": {"type": "fkType"}},
-    }
-    schemas = {}
-
-    return_value = object_ref.handle_object_reference(
-        spec=spec, schemas=schemas, fk_column="fk"
-    )
-
-    assert return_value == {"type": "fkType", "x-foreign-key": "table 1.fk"}
-
-
-@pytest.mark.parametrize(
     "spec, schemas, expected_spec",
     [
         (

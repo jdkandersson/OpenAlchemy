@@ -9,7 +9,7 @@ from open_alchemy import types
 
 def check_required(
     *,
-    fk_spec: types.Schema,
+    artifacts: types.ColumnArtifacts,
     fk_logical_name: str,
     model_schema: types.Schema,
     schemas: types.Schemas,
@@ -29,6 +29,7 @@ def check_required(
     define the correct foreign key constraint.
 
     Args:
+        artifacts: The artifacts of the foreign key.
         fk_spec: The proposed foreign key specification.
         fk_logical_name: The proposed name for the foreign key property.
         model_schema: The schema for the model on which the foreign key is proposed to
@@ -51,29 +52,27 @@ def check_required(
         raise exceptions.MalformedRelationshipError(
             f"{fk_logical_name} does not have a type. "
         )
-    fk_type = fk_spec["type"]
-    if model_fk_type != fk_type:
+    if model_fk_type != artifacts.type:
         raise exceptions.MalformedRelationshipError(
             "The foreign key required for the relationship has a different type than "
             "the property already defined under that name. "
-            f"The required type is {fk_type}. "
+            f"The required type is {artifacts.type}. "
             f"The {fk_logical_name} property has the {model_fk_type} type."
         )
 
     # Check foreign key constraint
     model_foreign_key = helpers.get_ext_prop(source=model_fk_spec, name="x-foreign-key")
-    foreign_key = fk_spec["x-foreign-key"]
     if model_foreign_key is None:
         raise exceptions.MalformedRelationshipError(
             f"The property already defined under {fk_logical_name} does not define a "
             'foreign key constraint. Use the "x-foreign-key" extension property to '
-            f'define a foreign key constraint, for example: "{foreign_key}".'
+            f'define a foreign key constraint, for example: "{artifacts.foreign_key}".'
         )
-    if model_foreign_key != foreign_key:
+    if model_foreign_key != artifacts.foreign_key:
         raise exceptions.MalformedRelationshipError(
             "The foreign key required for the relationship has a different foreign "
             "key constraint than the property already defined under that name. "
-            f"The required constraint is {foreign_key}. "
+            f"The required constraint is {artifacts.foreign_key}. "
             f"The {fk_logical_name} property has the {model_foreign_key} constraint."
         )
 
