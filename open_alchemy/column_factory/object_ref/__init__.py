@@ -11,7 +11,7 @@ from open_alchemy import helpers
 from open_alchemy import types
 
 from .. import column
-from . import calculate_schema as _calculate_schema
+from . import schema as _schema
 
 
 def handle_object(
@@ -80,7 +80,7 @@ def handle_object(
     else:
         return_value = []
 
-    return_schema = _calculate_schema.calculate_schema(artifacts=obj_artifacts)
+    return_schema = _schema.calculate(artifacts=obj_artifacts)
     # Create relationship
     relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
     return_value.append((logical_name, relationship))
