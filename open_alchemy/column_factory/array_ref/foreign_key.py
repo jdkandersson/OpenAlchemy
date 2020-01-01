@@ -60,7 +60,7 @@ def set_(
     fk_logical_name = f"{tablename}_{fk_column}"
 
     # Check whether the foreign key has already been defined in the referenced model
-    fk_required = object_ref.check_foreign_key_required(
+    fk_required = object_ref.foreign_key.check_required(
         fk_spec=fk_schema,
         fk_logical_name=fk_logical_name,
         model_schema=ref_schema,
