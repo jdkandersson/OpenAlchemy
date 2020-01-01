@@ -50,14 +50,13 @@ def set_(
     # Prepare schema for construction. Note any top level $ref must already be resolved.
     ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
 
-    # Calculate foreign key schema
+    # Calculate foreign key artifacts
+    fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(
+        model_schema=model_schema, schemas=schemas, fk_column=fk_column
+    )
     fk_schema = object_ref.handle_object_reference(
         spec=model_schema, schemas=schemas, fk_column=fk_column
     )
-
-    # Calculate artifacts for the foreign key
-    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
-    fk_logical_name = f"{tablename}_{fk_column}"
 
     # Check whether the foreign key has already been defined in the referenced model
     fk_required = object_ref.foreign_key.check_required(
@@ -72,7 +71,7 @@ def set_(
     # Handle model already constructed by altering the model on open_aclehmy.model
     ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
-        _, fk_column = column.handle_column(schema=fk_schema)
+        fk_column = column.construct_column(artifacts=fk_artifacts)
         setattr(ref_model, fk_logical_name, fk_column)
         return
 

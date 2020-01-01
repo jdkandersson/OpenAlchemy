@@ -20,7 +20,7 @@ def handle_object(
     *,
     spec: types.Schema,
     schemas: types.Schemas,
-    required: typing.Optional[bool] = None,
+    required: typing.Optional[bool] = None,  # pylint: disable=unused-argument
     logical_name: str,
     model_name: str,
     model_schema: types.Schema,
@@ -66,10 +66,14 @@ def handle_object(
     )
 
     # Construct foreign key
+    fk_logical_name, fk_artifacts = foreign_key.gather_artifacts(
+        model_schema=obj_artifacts.spec,
+        schemas=schemas,
+        fk_column=obj_artifacts.fk_column,
+    )
     foreign_key_spec = handle_object_reference(
         spec=obj_artifacts.spec, schemas=schemas, fk_column=obj_artifacts.fk_column
     )
-    fk_logical_name = f"{logical_name}_{obj_artifacts.fk_column}"
     fk_required = foreign_key.check_required(
         fk_spec=foreign_key_spec,
         fk_logical_name=fk_logical_name,
@@ -77,7 +81,7 @@ def handle_object(
         schemas=schemas,
     )
     if fk_required:
-        _, fk_column = column.handle_column(schema=foreign_key_spec, required=required)
+        fk_column = column.construct_column(artifacts=fk_artifacts)
         return_value = [(fk_logical_name, fk_column)]
     else:
         return_value = []

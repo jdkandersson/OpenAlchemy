@@ -12,7 +12,7 @@ from open_alchemy import types
 def handle_column(
     *,
     schema: types.Schema,
-    schemas: typing.Optional[types.Schemas] = None,
+    schemas: types.Schemas,
     required: typing.Optional[bool] = None,
 ) -> sqlalchemy.Column:
     """
@@ -29,8 +29,6 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    if schemas is None:
-        schemas = {}
     schema = helpers.prepare_schema(schema=schema, schemas=schemas)
     column_schema, artifacts = check_schema(schema=schema, required=required)
     column = construct_column(artifacts=artifacts)
