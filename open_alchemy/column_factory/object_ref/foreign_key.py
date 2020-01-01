@@ -1,5 +1,7 @@
 """Functions for handling foreign keys."""
 
+import typing
+
 from open_alchemy import exceptions
 from open_alchemy import helpers
 from open_alchemy import types
@@ -76,3 +78,53 @@ def check_required(
         )
 
     return False
+
+
+def gather_artifacts(
+    *, model_schema: types.Schema, schemas: types.Schemas, fk_column: str
+) -> typing.Tuple[str, types.ColumnArtifacts]:
+    """
+    Gather artifacts for a foreign key to implement an object reference.
+
+    Assume any object schema level allOf and $ref have already been resolved.
+
+    Raise MalformedSchemaError if x-tablename or properties are missing. Also raise if
+    the foreign key column is not found in the model schema or it does not have a type.
+
+    Args:
+        model_schema: The schema of the referenced model.
+        schemas: All model schemas used to resolve any $ref.
+        fk_column: The name of the foreign key column.
+
+    Returns:
+        The logical name of the foreign key and the artifacts required to construct it.
+
+    """
+    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
+    if not tablename:
+        raise exceptions.MalformedSchemaError(
+            "Referenced object is missing x-tablename property."
+        )
+    properties = model_schema.get("properties")
+    if properties is None:
+        raise exceptions.MalformedSchemaError(
+            "Referenced object does not have any properties."
+        )
+    fk_spec = properties.get(fk_column)
+    if fk_spec is None:
+        raise exceptions.MalformedSchemaError(
+            f"Referenced object does not have {fk_column} property."
+        )
+    # Preparing specification
+    prepared_fk_spec = helpers.prepare_schema(schema=fk_spec, schemas=schemas)
+    fk_type = prepared_fk_spec.get("type")
+    if fk_type is None:
+        raise exceptions.MalformedSchemaError(
+            f"Referenced object {fk_column} property does not have a type."
+        )
+
+    logical_name = f"{tablename}_{fk_column}"
+    artifacts = types.ColumnArtifacts(
+        type=fk_type, foreign_key=f"{tablename}.{fk_column}"
+    )
+    return logical_name, artifacts
