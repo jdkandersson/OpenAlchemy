@@ -1,98 +1,11 @@
-"""Functions relating to object references."""
-# pylint: disable=useless-import-alias
-
-import dataclasses
-import typing
-
-import sqlalchemy
+"""Functions for object reference artifacts."""
 
 from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
-from .. import column
-from . import artifacts as _artifacts
-from . import foreign_key as foreign_key
-from . import schema as _schema
 
-
-def handle_object(
-    *,
-    spec: types.Schema,
-    schemas: types.Schemas,
-    required: typing.Optional[bool],
-    logical_name: str,
-    model_name: str,
-    model_schema: types.Schema,
-) -> typing.Tuple[
-    typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
-    types.Schema,
-]:
-    """
-    Generate properties for a reference to another object.
-
-    Assume that, when any $ref and allOf are resolved, the schema is an object.
-
-    Args:
-        spec: The schema for the column.
-        schemas: Used to resolve any $ref.
-        required: Whether the object property is required.
-        logical_name: The logical name in the specification for the schema.
-        model_schema: The schema of the model.
-
-    Returns:
-        The logical name, the SQLAlchemy column for the foreign key and the logical
-        name and relationship for the reference to the object and the specification to
-        record for the object reference.
-
-    """
-    # Retrieve artifacts required for object
-    obj_artifacts = gather_object_artifacts(
-        spec=spec, logical_name=logical_name, schemas=schemas
-    )
-
-    # Check for secondary
-    if obj_artifacts.relationship.secondary is not None:
-        raise exceptions.MalformedRelationshipError(
-            "Many to one and one to one relationships do not support x-secondary."
-        )
-
-    # Record any backref
-    helpers.backref.record(
-        artifacts=obj_artifacts,
-        ref_from_array=False,
-        model_name=model_name,
-        schemas=schemas,
-    )
-
-    # Construct foreign key
-    fk_logical_name, fk_artifacts = foreign_key.gather_artifacts(
-        model_schema=obj_artifacts.spec,
-        schemas=schemas,
-        fk_column=obj_artifacts.fk_column,
-        required=required,
-    )
-    fk_required = foreign_key.check_required(
-        artifacts=fk_artifacts,
-        fk_logical_name=fk_logical_name,
-        model_schema=model_schema,
-        schemas=schemas,
-    )
-    if fk_required:
-        fk_column = column.construct_column(artifacts=fk_artifacts)
-        return_value = [(fk_logical_name, fk_column)]
-    else:
-        return_value = []
-
-    return_schema = _schema.calculate(artifacts=obj_artifacts)
-    # Create relationship
-    relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
-    return_value.append((logical_name, relationship))
-    return (return_value, return_schema)
-
-
-def gather_object_artifacts(
+def gather(
     *, spec: types.Schema, logical_name: str, schemas: types.Schemas
 ) -> types.ObjectArtifacts:
     """
@@ -136,7 +49,7 @@ def gather_object_artifacts(
         )
     elif all_of is not None:
         # Checking for $ref, and x-backref and x-foreign-key-column counts
-        _check_object_all_of(all_of_spec=all_of)
+        _check_all_of(all_of_spec=all_of)
 
         # Handle allOf
         for sub_spec in all_of:
@@ -199,7 +112,7 @@ def gather_object_artifacts(
     return types.ObjectArtifacts(spec, fk_column, relationship_artifacts)
 
 
-def _check_object_all_of(*, all_of_spec: types.AllOfSpec) -> None:
+def _check_all_of(*, all_of_spec: types.AllOfSpec) -> None:
     """
     Check format of allOf for an object reference.
 
