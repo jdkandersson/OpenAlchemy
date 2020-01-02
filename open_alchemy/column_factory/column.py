@@ -30,14 +30,15 @@ def handle_column(
 
     """
     schema = helpers.prepare_schema(schema=schema, schemas=schemas)
-    column_schema, artifacts = check_schema(schema=schema, required=required)
+    artifacts = check_schema(schema=schema, required=required)
+    column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
     column = construct_column(artifacts=artifacts)
     return column_schema, column
 
 
 def check_schema(
     *, schema: types.Schema, required: typing.Optional[bool] = None
-) -> typing.Tuple[types.ColumnSchema, types.ColumnArtifacts]:
+) -> types.ColumnArtifacts:
     """
     Check schema and transform into consistent schema and get the column artifacts.
 
@@ -65,18 +66,6 @@ def check_schema(
     index = helpers.get_ext_prop(source=schema, name="x-index")
     unique = helpers.get_ext_prop(source=schema, name="x-unique")
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
-    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
-
-    # Construct schema to return
-    return_schema: types.ColumnSchema = {"type": type_}
-    if format_ is not None:
-        return_schema["format"] = format_
-    if max_length is not None:
-        return_schema["maxLength"] = max_length
-    if nullable is not None:
-        return_schema["nullable"] = nullable
-    if dict_ignore is not None:
-        return_schema["x-dict-ignore"] = dict_ignore
 
     # Construct return artifacts
     nullable_artefact = helpers.calculate_nullable(nullable=nullable, required=required)
@@ -92,7 +81,7 @@ def check_schema(
         foreign_key=foreign_key,
     )
 
-    return return_schema, return_artifacts
+    return return_artifacts
 
 
 def calculate_schema(*, artifacts: types.ColumnArtifacts) -> types.ColumnSchema:
@@ -138,6 +127,9 @@ def _calculate_column_schema(
     dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
     if dict_ignore is not None:
         return_schema["x-dict-ignore"] = dict_ignore
+    nullable = helpers.peek.nullable(schema=schema, schemas={})
+    if nullable is None:
+        del return_schema["nullable"]
     return return_schema
 
 
