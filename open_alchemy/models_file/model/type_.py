@@ -37,7 +37,9 @@ def model(*, artifacts: types.ColumnSchemaArtifacts):
 
     # Determine whether the type is optional
     optional = helpers.calculate_nullable(
-        nullable=artifacts.nullable, generated=False, required=artifacts.required
+        nullable=artifacts.nullable,
+        generated=artifacts.generated is True,
+        required=artifacts.required,
     )
     if optional:
         return f"typing.Optional[{return_type}]"
