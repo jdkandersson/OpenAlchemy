@@ -1,5 +1,10 @@
 # Release Notes
 
+## Version _next_
+
+- Fix bug where format and maxLength was not considered for the foreign key constructed for an object reference.
+- Refactor object reference handling to be easier to understand.
+
 ## Version 0.11.0 - 2019-12-29
 
 - Add support for _password_

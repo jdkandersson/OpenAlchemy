@@ -16,9 +16,14 @@ from open_alchemy.column_factory import array_ref
         (
             {
                 "type": "array",
-                "items": {"allOf": [{"$ref": "ref 1"}, {"$ref": "ref 2"}]},
+                "items": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Ref1"},
+                        {"$ref": "#/Components/schemas/Ref2"},
+                    ]
+                },
             },
-            {},
+            {"Ref1": {"type": "object"}, "Ref2": {"type": "object"}},
         ),
         (
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},

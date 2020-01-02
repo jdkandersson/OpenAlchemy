@@ -12,7 +12,7 @@ from open_alchemy import types
 def handle_column(
     *,
     schema: types.Schema,
-    schemas: typing.Optional[types.Schemas] = None,
+    schemas: types.Schemas,
     required: typing.Optional[bool] = None,
 ) -> sqlalchemy.Column:
     """
@@ -29,17 +29,16 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    if schemas is None:
-        schemas = {}
     schema = helpers.prepare_schema(schema=schema, schemas=schemas)
-    column_schema, artifacts = check_schema(schema=schema, required=required)
+    artifacts = check_schema(schema=schema, required=required)
+    column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
     column = construct_column(artifacts=artifacts)
     return column_schema, column
 
 
 def check_schema(
     *, schema: types.Schema, required: typing.Optional[bool] = None
-) -> typing.Tuple[types.ColumnSchema, types.ColumnArtifacts]:
+) -> types.ColumnArtifacts:
     """
     Check schema and transform into consistent schema and get the column artifacts.
 
@@ -67,18 +66,6 @@ def check_schema(
     index = helpers.get_ext_prop(source=schema, name="x-index")
     unique = helpers.get_ext_prop(source=schema, name="x-unique")
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
-    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
-
-    # Construct schema to return
-    return_schema: types.ColumnSchema = {"type": type_}
-    if format_ is not None:
-        return_schema["format"] = format_
-    if max_length is not None:
-        return_schema["maxLength"] = max_length
-    if nullable is not None:
-        return_schema["nullable"] = nullable
-    if dict_ignore is not None:
-        return_schema["x-dict-ignore"] = dict_ignore
 
     # Construct return artifacts
     nullable_artefact = helpers.calculate_nullable(nullable=nullable, required=required)
@@ -94,7 +81,62 @@ def check_schema(
         foreign_key=foreign_key,
     )
 
-    return return_schema, return_artifacts
+    return return_artifacts
+
+
+def calculate_schema(
+    *,
+    artifacts: types.ColumnArtifacts,
+    nullable: typing.Optional[bool] = None,
+    dict_ignore: typing.Optional[bool] = None,
+) -> types.ColumnSchema:
+    """
+    Calculate the schema to return based on column artifacts.
+
+    Args:
+        artifacts: The artifacts for the column construction.
+
+    Returns:
+        The schema to be recorded for the column.
+
+    """
+    schema: types.ColumnSchema = {"type": artifacts.type}
+    if artifacts.format is not None:
+        schema["format"] = artifacts.format
+    if artifacts.max_length is not None:
+        schema["maxLength"] = artifacts.max_length
+    if dict_ignore is not None:
+        schema["x-dict-ignore"] = dict_ignore
+    if nullable is not None:
+        schema["nullable"] = nullable
+    return schema
+
+
+def _calculate_column_schema(
+    *, artifacts: types.ColumnArtifacts, schema: types.Schema
+) -> types.ColumnSchema:
+    """
+    Calculate the schema to be returned for a column.
+
+    Similar to calculate_schema with the addition of checking the schema for
+    x-dict-ignore.
+
+    Assume that any $ref and allOf for the schema has already been resolved.
+
+    Args:
+        artifacts: The artifacts for the column construction.
+        schema: The schema for the column.
+
+    Returns:
+        The schema to be recorded for the column.
+
+    """
+    nullable = helpers.peek.nullable(schema=schema, schemas={})
+    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
+    return_schema = calculate_schema(
+        artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
+    )
+    return return_schema
 
 
 def construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:

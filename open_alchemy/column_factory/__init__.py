@@ -52,7 +52,7 @@ def column_factory(
     if type_ == "object":
         # Handle objects
         return object_ref.handle_object(
-            spec=spec,
+            schema=spec,
             schemas=schemas,
             required=required,
             logical_name=logical_name,

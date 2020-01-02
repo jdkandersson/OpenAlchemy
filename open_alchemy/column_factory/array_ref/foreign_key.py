@@ -50,18 +50,14 @@ def set_(
     # Prepare schema for construction. Note any top level $ref must already be resolved.
     ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
 
-    # Calculate foreign key schema
-    fk_schema = object_ref.handle_object_reference(
-        spec=model_schema, schemas=schemas, fk_column=fk_column
+    # Calculate foreign key artifacts
+    fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(
+        model_schema=model_schema, schemas=schemas, fk_column=fk_column
     )
 
-    # Calculate artifacts for the foreign key
-    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
-    fk_logical_name = f"{tablename}_{fk_column}"
-
     # Check whether the foreign key has already been defined in the referenced model
-    fk_required = object_ref.check_foreign_key_required(
-        fk_spec=fk_schema,
+    fk_required = object_ref.foreign_key.check_required(
+        artifacts=fk_artifacts,
         fk_logical_name=fk_logical_name,
         model_schema=ref_schema,
         schemas=schemas,
@@ -72,14 +68,19 @@ def set_(
     # Handle model already constructed by altering the model on open_aclehmy.model
     ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
-        _, fk_column = column.handle_column(schema=fk_schema)
+        fk_column = column.construct_column(artifacts=fk_artifacts)
         setattr(ref_model, fk_logical_name, fk_column)
         return
 
     # Handle model not constructed by adding the foreign key schema to the model schema
+    fk_schema: types.Schema = column.calculate_schema(  # type: ignore
+        artifacts=fk_artifacts, dict_ignore=True
+    )
     fk_object_schema = {
         "type": "object",
-        "properties": {fk_logical_name: {**fk_schema, "x-dict-ignore": True}},
+        "properties": {
+            fk_logical_name: {**fk_schema, "x-foreign-key": fk_artifacts.foreign_key}
+        },
     }
     if "allOf" not in schemas[ref_model_name]:
         # Add new top level allOf

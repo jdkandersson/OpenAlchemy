@@ -39,10 +39,6 @@ from open_alchemy.column_factory import column
             {"type": "type 1", "x-foreign-key": True},
             exceptions.MalformedExtensionPropertyError,
         ),
-        (
-            {"type": "type 1", "x-dict-ignore": "True"},
-            exceptions.MalformedExtensionPropertyError,
-        ),
     ],
     ids=[
         "type missing",
@@ -55,7 +51,6 @@ from open_alchemy.column_factory import column
         "index not boolean",
         "unique not boolean",
         "foreign key not string",
-        "x-dict-ignore not boolean",
     ],
 )
 @pytest.mark.column
@@ -63,53 +58,108 @@ def test_check_schema_invalid(schema, expected_exception):
     """
     GIVEN invalid schema
     WHEN check_schema is called with the schema
-    THEN MalformedSchemaError is raised.
+    THEN given exception is raised.
     """
     with pytest.raises(expected_exception):
         column.check_schema(schema=schema)
 
 
 @pytest.mark.parametrize(
-    "schema",
+    "artifacts, nullable, dict_ignore, expected_schema",
     [
-        {"type": "type 1"},
-        {"type": "type 1", "format": "format 1"},
-        {"type": "type 1", "maxLength": 1},
-        {"type": "type 1", "nullable": True},
-        {"type": "type 1", "x-dict-ignore": True},
+        (types.ColumnArtifacts(type="type 1"), None, None, {"type": "type 1"}),
+        (
+            types.ColumnArtifacts(type="type 1", format="format 1"),
+            None,
+            None,
+            {"type": "type 1", "format": "format 1"},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1", max_length=1),
+            None,
+            None,
+            {"type": "type 1", "maxLength": 1},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1", nullable=False),
+            None,
+            None,
+            {"type": "type 1"},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1"),
+            False,
+            None,
+            {"type": "type 1", "nullable": False},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1"),
+            None,
+            True,
+            {"type": "type 1", "x-dict-ignore": True},
+        ),
     ],
     ids=[
         "type only",
         "type with format",
         "type with maxLength",
         "type with nullable",
-        "type with x-dict-ignore",
+        "nullable input not None",
+        "dict_ignore input not None",
     ],
 )
 @pytest.mark.column
-def test_check_schema_schema(schema):
+def test_calculate_schema(artifacts, expected_schema, nullable, dict_ignore):
     """
     GIVEN schema
     WHEN check_schema is called with the schema
     THEN the schema is returned.
     """
-    returned_schema, _ = column.check_schema(schema=copy.deepcopy(schema))
+    returned_schema = column.calculate_schema(
+        artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
+    )
 
-    assert returned_schema == schema
+    assert returned_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_schema",
+    [
+        (types.ColumnArtifacts(type="type 1"), {"type": "type 1"}),
+        (types.ColumnArtifacts(type="type 1"), {"type": "type 1", "nullable": True}),
+        (
+            types.ColumnArtifacts(type="type 1"),
+            {"type": "type 1", "x-dict-ignore": True},
+        ),
+    ],
+    ids=["type only", "type with nullable", "type with x-dict-ignore"],
+)
+@pytest.mark.column
+def test_calculate_column_schema(artifacts, expected_schema):
+    """
+    GIVEN schema
+    WHEN _calculate_column_schema is called with the schema
+    THEN the schema is returned.
+    """
+    returned_schema = column._calculate_column_schema(
+        artifacts=artifacts, schema=copy.deepcopy(expected_schema)
+    )
+
+    assert returned_schema == expected_schema
 
 
 @pytest.mark.column
-def test_check_schema_schema_other():
+def test_calculate_column_schema_dict_ignore_invalid():
     """
-    GIVEN schema with an extra key
-    WHEN check_schema is called with the schema
-    THEN the schema without the extra key is returned.
+    GIVEN schema with invalid x-dict-ignore
+    WHEN _calculate_column_schema is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
     """
-    schema = {"type": "type 1", "extra_key": "extra value"}
-
-    returned_schema, _ = column.check_schema(schema=copy.deepcopy(schema))
-
-    assert returned_schema == {"type": "type 1"}
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        column._calculate_column_schema(
+            artifacts=types.ColumnArtifacts("type 1"),
+            schema={"type": "type 1", "x-dict-ignore": "True"},
+        )
 
 
 @pytest.mark.parametrize(
@@ -168,7 +218,7 @@ def test_check_schema_artifacts(schema, expected_artifacts):
     WHEN check_schema is called with the schema
     THEN the expected artifacts are returned.
     """
-    _, artifacts = column.check_schema(schema=schema)
+    artifacts = column.check_schema(schema=schema)
 
     assert artifacts == expected_artifacts
 
@@ -182,11 +232,8 @@ def test_check_schema_required():
     """
     schema = {"type": "type 1"}
 
-    returned_schema, artifacts = column.check_schema(
-        schema=copy.deepcopy(schema), required=True
-    )
+    artifacts = column.check_schema(schema=copy.deepcopy(schema), required=True)
 
-    assert returned_schema == schema
     assert artifacts.nullable is False
 
 
