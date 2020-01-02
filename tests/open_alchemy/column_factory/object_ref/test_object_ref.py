@@ -2,6 +2,7 @@
 # pylint: disable=protected-access
 
 import pytest
+import sqlalchemy
 
 from open_alchemy import exceptions
 from open_alchemy.column_factory import object_ref
@@ -542,3 +543,126 @@ def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
     )
 
     assert obj_artifacts.fk_column == expected_fk_column
+
+
+@pytest.mark.column
+def test_integration_object_ref():
+    """
+    GIVEN schema that references another object schema and schemas
+    WHEN handle_object is called with the schema and schemas
+    THEN foreign key reference and relationship is returned with the spec.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+
+    (
+        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        spec,
+    ) = object_ref.handle_object(
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema={"properties": {}},
+        model_name="schema",
+        required=False,
+    )
+
+    assert fk_logical_name == "ref_schema_id"
+    assert isinstance(fk_column.type, sqlalchemy.Integer)
+    assert fk_column.nullable is True
+    assert len(fk_column.foreign_keys) == 1
+    assert tbl_logical_name == logical_name
+    assert relationship.argument == "RefSchema"
+    assert relationship.backref is None
+    assert relationship.uselist is None
+    assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_required():
+    """
+    GIVEN schema that is required and references another object schema and schemas
+    WHEN handle_object is called with the schema and schemas
+    THEN foreign key which is not nullable is returned.
+    """
+    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+
+    ([(_, fk_column), _], spec) = object_ref.handle_object(
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema={"properties": {}},
+        model_name="schema",
+        required=True,
+    )
+
+    assert fk_column.nullable is False
+
+
+@pytest.mark.column
+def test_integration_object_ref_backref():
+    """
+    GIVEN schema that references another object schema with a back reference and schemas
+    WHEN handle_object is called with the schema and schemas
+    THEN the a relationship with a back reference is returned and the back reference is
+        recorded on the referenced schema.
+    """
+    spec = {
+        "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-backref": "schema"}]
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    logical_name = "ref_schema"
+    model_schema = {"properties": {}}
+    model_name = "Schema"
+
+    ([_, (_, relationship)], spec) = object_ref.handle_object(
+        spec=spec,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name=model_name,
+        required=False,
+    )
+
+    assert relationship.backref == ("schema", {"uselist": None})
+    assert schemas == {
+        "RefSchema": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                },
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "schema": {
+                            "type": "array",
+                            "items": {"type": "object", "x-de-$ref": model_name},
+                        }
+                    },
+                },
+            ]
+        }
+    }

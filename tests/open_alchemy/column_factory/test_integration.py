@@ -115,59 +115,6 @@ def test_integration_object_ref():
 
 
 @pytest.mark.column
-def test_integration_object_ref_backref():
-    """
-    GIVEN schema that references another object schema with a back reference and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN the a relationship with a back reference is returned and the back reference is
-        recorded on the referenced schema.
-    """
-    spec = {
-        "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-backref": "schema"}]
-    }
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    logical_name = "ref_schema"
-    model_schema = {"properties": {}}
-    model_name = "Schema"
-
-    ([_, (_, relationship)], spec) = column_factory.column_factory(
-        spec=spec,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-        model_name=model_name,
-    )
-
-    assert relationship.backref == ("schema", {"uselist": None})
-    assert schemas == {
-        "RefSchema": {
-            "allOf": [
-                {
-                    "type": "object",
-                    "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
-                },
-                {
-                    "type": "object",
-                    "x-backrefs": {
-                        "schema": {
-                            "type": "array",
-                            "items": {"type": "object", "x-de-$ref": model_name},
-                        }
-                    },
-                },
-            ]
-        }
-    }
-
-
-@pytest.mark.column
 def test_integration_object_ref_fk_def():
     """
     GIVEN schema that references another object schema which already has the foreign
