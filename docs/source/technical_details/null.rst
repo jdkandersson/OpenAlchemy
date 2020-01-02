@@ -9,8 +9,9 @@ There are 3 methods used to determine the value of *nullable* for a
 *SQLAlchemy* column. The first is the *required* property of the schema, the
 second is whether the column value is generated (using, for example,
 *x-autoincrement*) and the third is the *nullable* property of an object
-property. *nullable* overrides *required*. The following truth table shows the
-logic:
+property. *nullable* overrides *required*. If *required* would indicate that
+the column is nullable but the value is generated, then it is not nullable. The
+following truth table shows the logic:
 
 +-------------+-----------+-------------------+-----------------+
 | required    | generated | property nullable | column nullable |
