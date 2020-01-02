@@ -7,7 +7,7 @@ from open_alchemy.column_factory.object_ref import artifacts
 
 
 @pytest.mark.parametrize(
-    "spec",
+    "all_of_spec",
     [
         [{"type": "object"}],
         [{"$ref": "ref 1"}, {"$ref": "ref 2"}],
@@ -34,15 +34,16 @@ from open_alchemy.column_factory.object_ref import artifacts
     ],
 )
 @pytest.mark.column
-def test_check_object_all_of_error(spec):
+def test_check_object_all_of_error(all_of_spec):
     """
     GIVEN spec
     WHEN _check_object_all_of is called with the spec
     THEN MalformedRelationshipError is raised.
     """
-    # pylint: disable=protected-access
+    spec = {"allOf": all_of_spec}
+
     with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts._check_all_of(all_of_spec=spec)
+        artifacts.gather(spec=spec, logical_name="", schemas={})
 
 
 @pytest.mark.column
