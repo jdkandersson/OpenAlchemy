@@ -17,19 +17,15 @@ def calculate_nullable(
     +------------+-----------+-----------------+-------------------+
     | None/False | True      | not given       | False             |
     +------------+-----------+-----------------+-------------------+
-    | True       | X         | not given       | True              |
+    | True       | X         | not given       | False             |
     +------------+-----------+-----------------+-------------------+
-    | False      |           | not given       | True              |
+    | X          | X         | False           | False             |
     +------------+-----------+-----------------+-------------------+
-    | True       |           | not given       | False             |
-    +------------+-----------+-----------------+-------------------+
-    | X          |           | False           | False             |
-    +------------+-----------+-----------------+-------------------+
-    | X          |           | True            | True              |
+    | X          | X         | True            | True              |
     +------------+-----------+-----------------+-------------------+
 
     To summarize, if nullable is the schema the value for it is used. Otherwise True
-    is returned unless required is True.
+    is returned unless required is True or generated is True.
 
     Args:
         nullable: Whether the property is nullable.
