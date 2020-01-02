@@ -5,7 +5,6 @@ import sys
 import types as py_types
 import typing
 
-import typing_extensions
 from sqlalchemy.ext import declarative
 
 from open_alchemy import types as oa_types

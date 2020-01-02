@@ -5,6 +5,7 @@
 - Fix bug where format and maxLength was not considered for the foreign key constructed for an object reference.
 - Refactor object reference handling to be easier to understand.
 - Add checking whether the column is automatically generated to determining the type of a column.
+- Remove typing_extensions dependency for Python version 3.8 and later.
 
 ## Version 0.11.0 - 2019-12-29
 

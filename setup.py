@@ -27,13 +27,7 @@ setuptools.setup(
         "Topic :: Database",
     ],
     python_requires=">=3.6",
-    install_requires=[
-        "SQLAlchemy>=1.0",
-        "typing-extensions>=3.5",
-        "jsonschema>=3",
-        "Jinja2>=2",
-        "black",
-    ],
+    install_requires=["SQLAlchemy>=1.0", "jsonschema>=3", "Jinja2>=2", "black"],
     include_package_data=True,
     extras_require={
         "yaml": ["PyYAML"],
@@ -67,5 +61,6 @@ setuptools.setup(
             "dataclasses>=0.7",
             "backports-datetime-fromisoformat>=1.0.0",
         ],
+        ":python_version<'3.8'": ["typing_extensions>=3.7.4"],
     },
 )
