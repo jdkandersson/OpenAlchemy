@@ -100,7 +100,6 @@ def calculate_schema(*, artifacts: types.ColumnArtifacts) -> types.ColumnSchema:
         schema["format"] = artifacts.format
     if artifacts.max_length is not None:
         schema["maxLength"] = artifacts.max_length
-    schema["nullable"] = artifacts.nullable
     return schema
 
 
@@ -128,8 +127,8 @@ def _calculate_column_schema(
     if dict_ignore is not None:
         return_schema["x-dict-ignore"] = dict_ignore
     nullable = helpers.peek.nullable(schema=schema, schemas={})
-    if nullable is None:
-        del return_schema["nullable"]
+    if nullable is not None:
+        return_schema["nullable"] = nullable
     return return_schema
 
 

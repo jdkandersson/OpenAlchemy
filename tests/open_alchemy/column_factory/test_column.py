@@ -67,19 +67,16 @@ def test_check_schema_invalid(schema, expected_exception):
 @pytest.mark.parametrize(
     "artifacts, expected_schema",
     [
-        (types.ColumnArtifacts(type="type 1"), {"type": "type 1", "nullable": True}),
+        (types.ColumnArtifacts(type="type 1"), {"type": "type 1"}),
         (
             types.ColumnArtifacts(type="type 1", format="format 1"),
-            {"type": "type 1", "format": "format 1", "nullable": True},
+            {"type": "type 1", "format": "format 1"},
         ),
         (
             types.ColumnArtifacts(type="type 1", max_length=1),
-            {"type": "type 1", "maxLength": 1, "nullable": True},
+            {"type": "type 1", "maxLength": 1},
         ),
-        (
-            types.ColumnArtifacts(type="type 1", nullable=False),
-            {"type": "type 1", "nullable": False},
-        ),
+        (types.ColumnArtifacts(type="type 1", nullable=False), {"type": "type 1"}),
     ],
     ids=["type only", "type with format", "type with maxLength", "type with nullable"],
 )
@@ -102,7 +99,7 @@ def test_calculate_schema(artifacts, expected_schema):
         (types.ColumnArtifacts(type="type 1"), {"type": "type 1", "nullable": True}),
         (
             types.ColumnArtifacts(type="type 1"),
-            {"type": "type 1", "x-dict-ignore": True, "nullable": True},
+            {"type": "type 1", "x-dict-ignore": True},
         ),
     ],
     ids=["type only", "type with nullable", "type with x-dict-ignore"],
