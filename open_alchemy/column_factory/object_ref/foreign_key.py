@@ -88,7 +88,11 @@ def check_required(
 
 
 def gather_artifacts(
-    *, model_schema: types.Schema, schemas: types.Schemas, fk_column: str
+    *,
+    model_schema: types.Schema,
+    schemas: types.Schemas,
+    fk_column: str,
+    required: typing.Optional[bool] = None,
 ) -> typing.Tuple[str, types.ColumnArtifacts]:
     """
     Gather artifacts for a foreign key to implement an object reference.
@@ -122,16 +126,25 @@ def gather_artifacts(
         raise exceptions.MalformedSchemaError(
             f"Referenced object does not have {fk_column} property."
         )
-    # Preparing specification
-    prepared_fk_schema = helpers.prepare_schema(schema=fk_schema, schemas=schemas)
-    fk_type = prepared_fk_schema.get("type")
-    if fk_type is None:
+
+    # Gather artifacts
+    try:
+        fk_type = helpers.peek.type_(schema=fk_schema, schemas=schemas)
+    except exceptions.TypeMissingError:
         raise exceptions.MalformedSchemaError(
             f"Referenced object {fk_column} property does not have a type."
         )
+    fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
+    fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
+    nullable = helpers.calculate_nullable(nullable=None, required=required)
 
+    # Construct return values
     logical_name = f"{tablename}_{fk_column}"
     artifacts = types.ColumnArtifacts(
-        type=fk_type, foreign_key=f"{tablename}.{fk_column}"
+        type=fk_type,
+        format=fk_format,
+        nullable=nullable,
+        foreign_key=f"{tablename}.{fk_column}",
+        max_length=fk_max_length,
     )
     return logical_name, artifacts

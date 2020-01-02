@@ -183,24 +183,74 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
         )
 
 
+@pytest.mark.parametrize(
+    "prop_schema, schemas, required, expected_artifacts",
+    [
+        (
+            {"type": "fkType"},
+            {},
+            None,
+            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+        ),
+        (
+            {"$ref": "#/components/schemas/RefFk"},
+            {"RefFk": {"type": "fkType"}},
+            None,
+            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+        ),
+        (
+            {"allOf": [{"type": "fkType"}]},
+            {},
+            None,
+            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+        ),
+        (
+            {"type": "fkType", "format": "fkFormat"},
+            {},
+            None,
+            types.ColumnArtifacts(
+                type="fkType", format="fkFormat", foreign_key="table 1.fk"
+            ),
+        ),
+        (
+            {"type": "fkType", "maxLength": 1},
+            {},
+            None,
+            types.ColumnArtifacts(
+                type="fkType", max_length=1, foreign_key="table 1.fk"
+            ),
+        ),
+        (
+            {"type": "fkType"},
+            {},
+            True,
+            types.ColumnArtifacts(
+                type="fkType", nullable=False, foreign_key="table 1.fk"
+            ),
+        ),
+    ],
+    ids=[
+        "plain property",
+        "property $ref",
+        "property allOf",
+        "property has format",
+        "property has maxLength",
+        "required True",
+    ],
+)
 @pytest.mark.column
-def test_gather_artifacts_return():
+def test_gather_artifacts_return(prop_schema, schemas, required, expected_artifacts):
     """
     GIVEN foreign key column and object schema with x-tablename and id and foreign key
         property with a type
     WHEN gather_artifacts is called with the schema
     THEN artifacts with the type of the foreign key property and x-foreign-key property.
     """
-    schema = {
-        "x-tablename": "table 1",
-        "properties": {"id": {"type": "idType"}, "fk": {"type": "fkType"}},
-    }
-    schemas = {}
+    schema = {"x-tablename": "table 1", "properties": {"fk": prop_schema}}
 
     logical_name, artifacts = foreign_key.gather_artifacts(
-        model_schema=schema, schemas=schemas, fk_column="fk"
+        model_schema=schema, schemas=schemas, fk_column="fk", required=required
     )
 
     assert logical_name == "table 1_fk"
-    assert artifacts.type == "fkType"
-    assert artifacts.foreign_key == "table 1.fk"
+    assert artifacts == expected_artifacts
