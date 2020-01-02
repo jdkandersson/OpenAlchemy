@@ -73,14 +73,13 @@ def set_(
         return
 
     # Handle model not constructed by adding the foreign key schema to the model schema
+    fk_schema: types.Schema = column.calculate_schema(  # type: ignore
+        artifacts=fk_artifacts, dict_ignore=True
+    )
     fk_object_schema = {
         "type": "object",
         "properties": {
-            fk_logical_name: {
-                "type": fk_artifacts.type,
-                "x-foreign-key": fk_artifacts.foreign_key,
-                "x-dict-ignore": True,
-            }
+            fk_logical_name: {**fk_schema, "x-foreign-key": fk_artifacts.foreign_key}
         },
     }
     if "allOf" not in schemas[ref_model_name]:
