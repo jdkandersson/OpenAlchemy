@@ -115,41 +115,6 @@ def test_integration_object_ref():
 
 
 @pytest.mark.column
-def test_integration_object_ref_fk_def():
-    """
-    GIVEN schema that references another object schema which already has the foreign
-        key defined and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN no foreign key column is returned.
-    """
-    model_schema = {
-        "properties": {
-            "ref_schema_id": {"type": "integer", "x-foreign-key": "ref_schema.id"}
-        }
-    }
-    spec = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    logical_name = "ref_schema"
-
-    ([(tbl_logical_name, relationship)], _) = column_factory.column_factory(
-        spec=spec,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-        model_name="model",
-    )
-
-    assert tbl_logical_name == logical_name
-    assert relationship.argument == "RefSchema"
-
-
-@pytest.mark.column
 def test_integration_array_ref():
     """
     GIVEN schema that references another object schema from an array and schemas
