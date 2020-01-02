@@ -49,7 +49,7 @@ def handle_object(
     """
     # Retrieve artifacts required for object
     obj_artifacts = artifacts.gather(
-        spec=spec, logical_name=logical_name, schemas=schemas
+        schema=spec, logical_name=logical_name, schemas=schemas
     )
 
     # Check for secondary

@@ -9,7 +9,7 @@ from open_alchemy import types
 
 
 def gather(
-    *, spec: types.Schema, logical_name: str, schemas: types.Schemas
+    *, schema: types.Schema, logical_name: str, schemas: types.Schemas
 ) -> types.ObjectArtifacts:
     """
     Collect artifacts from a specification for constructing an object reference.
@@ -23,7 +23,7 @@ def gather(
     x-foreign-key-column or x-uselist are found.
 
     Args:
-        spec: The schema for the column.
+        schema: The schema for the column.
         schemas: Used to resolve any $ref.
         logical_name: The logical name in the specification for the schema.
 
@@ -32,7 +32,6 @@ def gather(
         key column.
 
     """
-    schema = spec
     intermediary_obj_artifacts = _handle_schema(
         logical_name=logical_name, schema=schema, schemas=schemas
     )

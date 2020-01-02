@@ -7,7 +7,7 @@ from open_alchemy.column_factory.object_ref import artifacts
 
 
 @pytest.mark.parametrize(
-    "all_of_spec",
+    "all_of_schema",
     [
         [{"type": "object"}],
         [{"$ref": "#/components/schemas/Ref1"}, {"$ref": "#/comonents/schemas/Ref2"}],
@@ -43,17 +43,17 @@ from open_alchemy.column_factory.object_ref import artifacts
 )
 @pytest.mark.only_this
 @pytest.mark.column
-def test_check_object_all_of_error(all_of_spec):
+def test_check_object_all_of_error(all_of_schema):
     """
-    GIVEN spec
-    WHEN _check_object_all_of is called with the spec
+    GIVEN schema
+    WHEN _check_object_all_of is called with the schema
     THEN MalformedRelationshipError is raised.
     """
-    spec = {"allOf": all_of_spec}
+    schema = {"allOf": all_of_schema}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
         artifacts.gather(
-            spec=spec,
+            schema=schema,
             logical_name="",
             schemas={"Ref1": {"type": "object"}, "Ref2": {"type": "object"}},
         )
@@ -68,11 +68,11 @@ def test_gather_no_ref_all_of():
     THEN MalformedRelationshipError is raised.
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts.gather(spec={}, logical_name="", schemas={})
+        artifacts.gather(schema={}, logical_name="", schemas={})
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, expected_spec",
+    "schema, schemas, expected_spec",
     [
         (
             {"$ref": "#/components/schemas/RefSchema"},
@@ -94,19 +94,19 @@ def test_gather_no_ref_all_of():
 )
 @pytest.mark.only_this
 @pytest.mark.column
-def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
+def test_gather_object_artifacts_spec(schema, schemas, expected_spec):
     """
-    GIVEN specification, schemas and expected specification
-    WHEN gather_object_artifacts is called with the specification and schemas
-    THEN the expected specification is returned.
+    GIVEN schema, schemas and expected schema
+    WHEN gather_object_artifacts is called with the schema and schemas
+    THEN the expected schema is returned.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.spec == expected_spec
 
 
 @pytest.mark.parametrize(
-    "spec, schemas",
+    "schema, schemas",
     [
         ({"$ref": "#/components/schemas/RefSchema"}, {"RefSchema": {"type": "object"}}),
         (
@@ -118,19 +118,19 @@ def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
 )
 @pytest.mark.only_this
 @pytest.mark.column
-def test_gather_object_artifacts_ref_logical_name(spec, schemas):
+def test_gather_object_artifacts_ref_logical_name(schema, schemas):
     """
-    GIVEN specification and schemas
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema and schemas
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN the referenced schema name is returned as the ref logical name.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.relationship.model_name == "RefSchema"
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, expected_backref",
+    "schema, schemas, expected_backref",
     [
         (
             {"$ref": "#/components/schemas/RefSchema"},
@@ -219,13 +219,13 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
 )
 @pytest.mark.column
 @pytest.mark.only_this
-def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
+def test_gather_object_artifacts_backref(schema, schemas, expected_backref):
     """
-    GIVEN specification and schemas and expected backref
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema and schemas and expected backref
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN the expected backref is returned.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     if expected_backref is None:
         assert obj_artifacts.relationship.back_reference is None
@@ -238,19 +238,19 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
 @pytest.mark.only_this
 def test_gather_object_artifacts_uselist_no_backref():
     """
-    GIVEN specification with uselist but not backref and schemas
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema with uselist but not backref and schemas
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN MalformedRelationshipError is raised.
     """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "object", "x-uselist": False}}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+        artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, expected_uselist",
+    "schema, schemas, expected_uselist",
     [
         (
             {"$ref": "#/components/schemas/RefSchema"},
@@ -335,13 +335,13 @@ def test_gather_object_artifacts_uselist_no_backref():
 )
 @pytest.mark.column
 @pytest.mark.only_this
-def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
+def test_gather_object_artifacts_uselist(schema, schemas, expected_uselist):
     """
-    GIVEN specification and schemas and expected uselist
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema and schemas and expected uselist
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN the expected uselist is returned.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     if expected_uselist is None:
         assert obj_artifacts.relationship.back_reference is None
@@ -350,7 +350,7 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, expected_secondary",
+    "schema, schemas, expected_secondary",
     [
         (
             {"$ref": "#/components/schemas/RefSchema"},
@@ -428,19 +428,19 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
 )
 @pytest.mark.column
 @pytest.mark.only_this
-def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
+def test_gather_object_artifacts_secondary(schema, schemas, expected_secondary):
     """
-    GIVEN specification and schemas and expected secondary
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema and schemas and expected secondary
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN the expected secondary is returned.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.relationship.secondary == expected_secondary
 
 
 @pytest.mark.parametrize(
-    "spec, schemas, expected_fk_column",
+    "schema, schemas, expected_fk_column",
     [
         (
             {"$ref": "#/components/schemas/RefSchema"},
@@ -518,12 +518,12 @@ def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
 )
 @pytest.mark.column
 @pytest.mark.only_this
-def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
+def test_gather_object_artifacts_fk_column(schema, schemas, expected_fk_column):
     """
-    GIVEN specification and schemas and expected foreign key column
-    WHEN gather_object_artifacts is called with the specification and schemas
+    GIVEN schema and schemas and expected foreign key column
+    WHEN gather_object_artifacts is called with the schema and schemas
     THEN the expected foreign key column is returned.
     """
-    obj_artifacts = artifacts.gather(spec=spec, logical_name="", schemas=schemas)
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.fk_column == expected_fk_column
