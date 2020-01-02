@@ -136,7 +136,9 @@ def gather_artifacts(
         )
     fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
     fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
-    nullable = helpers.calculate_nullable(nullable=None, required=required)
+    nullable = helpers.calculate_nullable(
+        nullable=None, generated=False, required=required
+    )
 
     # Construct return values
     logical_name = f"{tablename}_{fk_column}"

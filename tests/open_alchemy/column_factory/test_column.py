@@ -184,7 +184,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         ),
         (
             {"type": "type 1", "x-autoincrement": True},
-            types.ColumnArtifacts("type 1", autoincrement=True),
+            types.ColumnArtifacts("type 1", autoincrement=True, nullable=False),
         ),
         (
             {"type": "type 1", "x-index": True},

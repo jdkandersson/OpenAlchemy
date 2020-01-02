@@ -68,7 +68,9 @@ def check_schema(
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
 
     # Construct return artifacts
-    nullable_artefact = helpers.calculate_nullable(nullable=nullable, required=required)
+    nullable_artefact = helpers.calculate_nullable(
+        nullable=nullable, generated=autoincrement is True, required=required
+    )
     return_artifacts = types.ColumnArtifacts(
         type_,
         format=format_,
