@@ -27,9 +27,10 @@ def gather_column_artifacts(
         The artifacts for generating the class of a model.
 
     """
-    type_ = schema["type"]
-    format_ = schema.get("format")
-    nullable = schema.get("nullable")
+    type_ = helpers.peek.type_(schema=schema, schemas={})
+    format_ = helpers.peek.format_(schema=schema, schemas={})
+    nullable = helpers.peek.nullable(schema=schema, schemas={})
+    generated = helpers.get_ext_prop(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":
         de_ref = helpers.get_ext_prop(source=schema, name="x-de-$ref")
@@ -37,7 +38,12 @@ def gather_column_artifacts(
         de_ref = helpers.get_ext_prop(source=schema["items"], name="x-de-$ref")
 
     return types.ColumnSchemaArtifacts(
-        type=type_, format=format_, nullable=nullable, required=required, de_ref=de_ref
+        type=type_,
+        format=format_,
+        nullable=nullable,
+        required=required,
+        de_ref=de_ref,
+        generated=generated,
     )
 
 
