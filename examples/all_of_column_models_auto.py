@@ -50,7 +50,7 @@ class Employee(models.Employee):
 class DivisionDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
-    id: typing.Optional[int]
+    id: int
     name: typing.Optional[str]
 
 
@@ -63,7 +63,7 @@ class Division(models.Division):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: int
     name: typing.Optional[str]
 
     @classmethod
