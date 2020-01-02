@@ -41,7 +41,6 @@ from open_alchemy.column_factory.object_ref import artifacts
         "multiple x-uselist",
     ],
 )
-@pytest.mark.only_this
 @pytest.mark.column
 def test_check_object_all_of_error(all_of_schema):
     """
@@ -60,7 +59,6 @@ def test_check_object_all_of_error(all_of_schema):
 
 
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_no_ref_all_of():
     """
     GIVEN empty schema
@@ -92,7 +90,6 @@ def test_gather_no_ref_all_of():
     ],
     ids=["$ref", "$ref to allOf", "allOf"],
 )
-@pytest.mark.only_this
 @pytest.mark.column
 def test_gather_object_artifacts_spec(schema, schemas, expected_spec):
     """
@@ -116,7 +113,6 @@ def test_gather_object_artifacts_spec(schema, schemas, expected_spec):
     ],
     ids=["$ref", "allOf"],
 )
-@pytest.mark.only_this
 @pytest.mark.column
 def test_gather_object_artifacts_ref_logical_name(schema, schemas):
     """
@@ -218,7 +214,6 @@ def test_gather_object_artifacts_ref_logical_name(schema, schemas):
     ],
 )
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_object_artifacts_backref(schema, schemas, expected_backref):
     """
     GIVEN schema and schemas and expected backref
@@ -235,7 +230,6 @@ def test_gather_object_artifacts_backref(schema, schemas, expected_backref):
 
 
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_object_artifacts_uselist_no_backref():
     """
     GIVEN schema with uselist but not backref and schemas
@@ -334,7 +328,6 @@ def test_gather_object_artifacts_uselist_no_backref():
     ],
 )
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_object_artifacts_uselist(schema, schemas, expected_uselist):
     """
     GIVEN schema and schemas and expected uselist
@@ -427,7 +420,6 @@ def test_gather_object_artifacts_uselist(schema, schemas, expected_uselist):
     ],
 )
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_object_artifacts_secondary(schema, schemas, expected_secondary):
     """
     GIVEN schema and schemas and expected secondary
@@ -517,7 +509,6 @@ def test_gather_object_artifacts_secondary(schema, schemas, expected_secondary):
     ],
 )
 @pytest.mark.column
-@pytest.mark.only_this
 def test_gather_object_artifacts_fk_column(schema, schemas, expected_fk_column):
     """
     GIVEN schema and schemas and expected foreign key column

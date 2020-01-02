@@ -19,7 +19,7 @@ from . import schema as _schema
 
 def handle_object(
     *,
-    spec: types.Schema,
+    schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool],
     logical_name: str,
@@ -35,7 +35,7 @@ def handle_object(
     Assume that, when any $ref and allOf are resolved, the schema is an object.
 
     Args:
-        spec: The schema for the column.
+        schema: The schema for the column.
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
@@ -49,7 +49,7 @@ def handle_object(
     """
     # Retrieve artifacts required for object
     obj_artifacts = artifacts.gather(
-        schema=spec, logical_name=logical_name, schemas=schemas
+        schema=schema, logical_name=logical_name, schemas=schemas
     )
 
     # Check for secondary

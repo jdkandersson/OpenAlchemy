@@ -9,7 +9,7 @@ from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.parametrize(
-    "spec, schemas",
+    "schema, schemas",
     [
         ({"type": "object"}, {}),
         ({"allOf": [{"type": "object"}]}, {}),
@@ -27,15 +27,15 @@ from open_alchemy.column_factory import object_ref
     ids=["object", "allOf with object", "secondary defined"],
 )
 @pytest.mark.column
-def test_handle_object_error(spec, schemas):
+def test_handle_object_error(schema, schemas):
     """
-    GIVEN spec
-    WHEN handle_object is called with the spec
+    GIVEN schema
+    WHEN handle_object is called with the schema
     THEN MalformedRelationshipError is raised.
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
-            spec=spec,
+            schema=schema,
             schemas=schemas,
             required=True,
             logical_name="name 1",
@@ -51,7 +51,7 @@ def test_integration_object_ref():
     WHEN handle_object is called with the schema and schemas
     THEN foreign key reference and relationship is returned with the spec.
     """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
         "RefSchema": {
             "type": "object",
@@ -63,9 +63,9 @@ def test_integration_object_ref():
 
     (
         [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        spec,
+        returned_schema,
     ) = object_ref.handle_object(
-        spec=spec,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
@@ -81,7 +81,7 @@ def test_integration_object_ref():
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert relationship.uselist is None
-    assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+    assert returned_schema == {"type": "object", "x-de-$ref": "RefSchema"}
 
 
 @pytest.mark.column
@@ -91,7 +91,7 @@ def test_integration_object_ref_required():
     WHEN handle_object is called with the schema and schemas
     THEN foreign key which is not nullable is returned.
     """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
         "RefSchema": {
             "type": "object",
@@ -101,8 +101,8 @@ def test_integration_object_ref_required():
     }
     logical_name = "ref_schema"
 
-    ([(_, fk_column), _], spec) = object_ref.handle_object(
-        spec=spec,
+    ([(_, fk_column), _], _) = object_ref.handle_object(
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
@@ -121,7 +121,7 @@ def test_integration_object_ref_backref():
     THEN the a relationship with a back reference is returned and the back reference is
         recorded on the referenced schema.
     """
-    spec = {
+    schema = {
         "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-backref": "schema"}]
     }
     schemas = {
@@ -135,8 +135,8 @@ def test_integration_object_ref_backref():
     model_schema = {"properties": {}}
     model_name = "Schema"
 
-    ([_, (_, relationship)], spec) = object_ref.handle_object(
-        spec=spec,
+    ([_, (_, relationship)], _) = object_ref.handle_object(
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
