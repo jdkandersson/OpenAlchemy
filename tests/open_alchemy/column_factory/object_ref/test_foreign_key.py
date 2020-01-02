@@ -54,6 +54,33 @@ def test_check_required_invalid_schema(model_schema):
         )
 
 
+@pytest.mark.column
+def test_check_required_foreign_key_none():
+    """
+    GIVEN artifacts with None foreign_key
+    WHEN check_required is called
+    THEN MalformedRelationshipError is raised.
+    """
+    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key=None)
+    fk_logical_name = "ref_table_fk_column"
+    model_schema = {
+        "properties": {
+            "ref_table_fk_column": {
+                "type": "fk_type",
+                "x-foreign-key": "ref_table.fk_column",
+            }
+        }
+    }
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        foreign_key.check_required(
+            artifacts=artifacts,
+            fk_logical_name=fk_logical_name,
+            model_schema=model_schema,
+            schemas={},
+        )
+
+
 @pytest.mark.parametrize(
     "model_schema, schemas, expected_required",
     [

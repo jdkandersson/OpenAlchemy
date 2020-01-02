@@ -30,7 +30,6 @@ def check_required(
 
     Args:
         artifacts: The artifacts of the foreign key.
-        fk_spec: The proposed foreign key specification.
         fk_logical_name: The proposed name for the foreign key property.
         model_schema: The schema for the model on which the foreign key is proposed to
             be added.
@@ -41,13 +40,13 @@ def check_required(
 
     """
     properties = model_schema["properties"]
-    model_fk_spec = properties.get(fk_logical_name)
-    if model_fk_spec is None:
+    model_fk_schema = properties.get(fk_logical_name)
+    if model_fk_schema is None:
         return True
-    model_fk_spec = helpers.prepare_schema(schema=model_fk_spec, schemas=schemas)
+    model_fk_schema = helpers.prepare_schema(schema=model_fk_schema, schemas=schemas)
 
     # Check type
-    model_fk_type = model_fk_spec.get("type")
+    model_fk_type = model_fk_schema.get("type")
     if model_fk_type is None:
         raise exceptions.MalformedRelationshipError(
             f"{fk_logical_name} does not have a type. "
@@ -61,12 +60,21 @@ def check_required(
         )
 
     # Check foreign key constraint
-    model_foreign_key = helpers.get_ext_prop(source=model_fk_spec, name="x-foreign-key")
+    model_foreign_key = helpers.get_ext_prop(
+        source=model_fk_schema, name="x-foreign-key"
+    )
     if model_foreign_key is None:
         raise exceptions.MalformedRelationshipError(
             f"The property already defined under {fk_logical_name} does not define a "
             'foreign key constraint. Use the "x-foreign-key" extension property to '
             f'define a foreign key constraint, for example: "{artifacts.foreign_key}".'
+        )
+    foreign_key = artifacts.foreign_key
+    # Should not happen
+    if foreign_key is None:
+        raise exceptions.MalformedRelationshipError(
+            "Artifacts for constructing a foreign key does not include a foreign key "
+            "constraint."
         )
     if model_foreign_key != artifacts.foreign_key:
         raise exceptions.MalformedRelationshipError(
@@ -109,14 +117,14 @@ def gather_artifacts(
         raise exceptions.MalformedSchemaError(
             "Referenced object does not have any properties."
         )
-    fk_spec = properties.get(fk_column)
-    if fk_spec is None:
+    fk_schema = properties.get(fk_column)
+    if fk_schema is None:
         raise exceptions.MalformedSchemaError(
             f"Referenced object does not have {fk_column} property."
         )
     # Preparing specification
-    prepared_fk_spec = helpers.prepare_schema(schema=fk_spec, schemas=schemas)
-    fk_type = prepared_fk_spec.get("type")
+    prepared_fk_schema = helpers.prepare_schema(schema=fk_schema, schemas=schemas)
+    fk_type = prepared_fk_schema.get("type")
     if fk_type is None:
         raise exceptions.MalformedSchemaError(
             f"Referenced object {fk_column} property does not have a type."
