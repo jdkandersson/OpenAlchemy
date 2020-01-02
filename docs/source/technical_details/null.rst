@@ -17,47 +17,29 @@ logic:
 +=============+===========+===================+=================+
 | undefined   | false     | undefined         | True            |
 +-------------+-----------+-------------------+-----------------+
-| undefined   | false     | false             | False           |
-+-------------+-----------+-------------------+-----------------+
-| undefined   | false     | true              | True            |
-+-------------+-----------+-------------------+-----------------+
 | undefined   | true      | undefined         | False           |
-+-------------+-----------+-------------------+-----------------+
-| undefined   | true      | false             | False           |
-+-------------+-----------+-------------------+-----------------+
-| undefined   | true      | true              | True            |
 +-------------+-----------+-------------------+-----------------+
 | not in list | false     | undefined         | True            |
 +-------------+-----------+-------------------+-----------------+
-| not in list | false     | false             | False           |
-+-------------+-----------+-------------------+-----------------+
-| not in list | false     | true              | True            |
-+-------------+-----------+-------------------+-----------------+
 | not in list | true      | undefined         | False           |
 +-------------+-----------+-------------------+-----------------+
-| not in list | true      | false             | False           |
+| in list     | *X*       | undefined         | False           |
 +-------------+-----------+-------------------+-----------------+
-| not in list | true      | true              | True            |
+| *X*         | *X*       | false             | False           |
 +-------------+-----------+-------------------+-----------------+
-| in list     | false     | undefined         | False           |
-+-------------+-----------+-------------------+-----------------+
-| in list     | false     | false             | False           |
-+-------------+-----------+-------------------+-----------------+
-| in list     | false     | true              | True            |
-+-------------+-----------+-------------------+-----------------+
-| in list     | true      | undefined         | False           |
-+-------------+-----------+-------------------+-----------------+
-| in list     | true      | false             | False           |
-+-------------+-----------+-------------------+-----------------+
-| in list     | true      | true              | True            |
+| *X*         | *X*       | true              | True            |
 +-------------+-----------+-------------------+-----------------+
 
 *required* *undefined* means that the *required* property is not defined for
-the schema, *not in list* means that the *property* is not in the *required*
-list and *in list* means that the *property* is in the list.
+the schema, *not in list* means that the property is not in the *required*
+list and *in list* means that the property is in the list.
 *property nullable* *undefined* means that the *nullable* property is not
-defined for the *property*, *false* and *true* mean that *nullable* is set to
-*false* or *true*, respectively.
+defined for the property, *false* and *true* mean that *nullable* is set to
+*false* or *true*, respectively. *generated* *false* means that the column
+does not get automatically generated and *true* means that it does. Any value
+marked as *X* means that another value takes precedence over the value in
+that case (for example, if *property nullable* is not *undefined*, it takes
+precedence over both *required* and *generated*.
 
 .. _generated:
 
@@ -84,6 +66,27 @@ columns have *nullable* set to *True*.
       properties:
         id:
           type: integer
+        name:
+          type: string
+
+generated
+^^^^^^^^^
+
+The following schema does not have the *required* property but the *id*
+property is the primary key which is autoincremented. This means that the *id*
+column is not nullable but the *name* column is nullable.
+
+.. code-block:: yaml
+   :linenos:
+
+   Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          x-primary-key: true
+          x-autoincrement: true
         name:
           type: string
 
