@@ -84,7 +84,12 @@ def check_schema(
     return return_artifacts
 
 
-def calculate_schema(*, artifacts: types.ColumnArtifacts) -> types.ColumnSchema:
+def calculate_schema(
+    *,
+    artifacts: types.ColumnArtifacts,
+    nullable: typing.Optional[bool] = None,
+    dict_ignore: typing.Optional[bool] = None,
+) -> types.ColumnSchema:
     """
     Calculate the schema to return based on column artifacts.
 
@@ -100,6 +105,10 @@ def calculate_schema(*, artifacts: types.ColumnArtifacts) -> types.ColumnSchema:
         schema["format"] = artifacts.format
     if artifacts.max_length is not None:
         schema["maxLength"] = artifacts.max_length
+    if dict_ignore is not None:
+        schema["x-dict-ignore"] = dict_ignore
+    if nullable is not None:
+        schema["nullable"] = nullable
     return schema
 
 
@@ -122,13 +131,11 @@ def _calculate_column_schema(
         The schema to be recorded for the column.
 
     """
-    return_schema = calculate_schema(artifacts=artifacts)
-    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
-    if dict_ignore is not None:
-        return_schema["x-dict-ignore"] = dict_ignore
     nullable = helpers.peek.nullable(schema=schema, schemas={})
-    if nullable is not None:
-        return_schema["nullable"] = nullable
+    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
+    return_schema = calculate_schema(
+        artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
+    )
     return return_schema
 
 

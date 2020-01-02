@@ -65,29 +65,59 @@ def test_check_schema_invalid(schema, expected_exception):
 
 
 @pytest.mark.parametrize(
-    "artifacts, expected_schema",
+    "artifacts, nullable, dict_ignore, expected_schema",
     [
-        (types.ColumnArtifacts(type="type 1"), {"type": "type 1"}),
+        (types.ColumnArtifacts(type="type 1"), None, None, {"type": "type 1"}),
         (
             types.ColumnArtifacts(type="type 1", format="format 1"),
+            None,
+            None,
             {"type": "type 1", "format": "format 1"},
         ),
         (
             types.ColumnArtifacts(type="type 1", max_length=1),
+            None,
+            None,
             {"type": "type 1", "maxLength": 1},
         ),
-        (types.ColumnArtifacts(type="type 1", nullable=False), {"type": "type 1"}),
+        (
+            types.ColumnArtifacts(type="type 1", nullable=False),
+            None,
+            None,
+            {"type": "type 1"},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1"),
+            False,
+            None,
+            {"type": "type 1", "nullable": False},
+        ),
+        (
+            types.ColumnArtifacts(type="type 1"),
+            None,
+            True,
+            {"type": "type 1", "x-dict-ignore": True},
+        ),
     ],
-    ids=["type only", "type with format", "type with maxLength", "type with nullable"],
+    ids=[
+        "type only",
+        "type with format",
+        "type with maxLength",
+        "type with nullable",
+        "nullable input not None",
+        "dict_ignore input not None",
+    ],
 )
 @pytest.mark.column
-def test_calculate_schema(artifacts, expected_schema):
+def test_calculate_schema(artifacts, expected_schema, nullable, dict_ignore):
     """
     GIVEN schema
     WHEN check_schema is called with the schema
     THEN the schema is returned.
     """
-    returned_schema = column.calculate_schema(artifacts=artifacts)
+    returned_schema = column.calculate_schema(
+        artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
+    )
 
     assert returned_schema == expected_schema
 
