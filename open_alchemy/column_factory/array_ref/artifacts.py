@@ -49,11 +49,6 @@ def gather(
 
     # Check referenced specification
     ref_schema = helpers.prepare_schema(schema=artifacts.spec, schemas=schemas)
-    ref_type = ref_schema.get("type")
-    if ref_type != "object":
-        raise exceptions.MalformedRelationshipError(
-            "One to many relationships must reference an object type schema."
-        )
     ref_tablename = helpers.get_ext_prop(source=ref_schema, name="x-tablename")
     if ref_tablename is None:
         raise exceptions.MalformedRelationshipError(

@@ -52,7 +52,11 @@ def test_check_object_all_of_error(all_of_spec):
     spec = {"allOf": all_of_spec}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts.gather(spec=spec, logical_name="", schemas={"Ref1": {}, "Ref2": {}})
+        artifacts.gather(
+            spec=spec,
+            logical_name="",
+            schemas={"Ref1": {"type": "object"}, "Ref2": {"type": "object"}},
+        )
 
 
 @pytest.mark.column
