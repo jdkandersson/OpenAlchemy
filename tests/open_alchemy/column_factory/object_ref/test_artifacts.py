@@ -10,19 +10,27 @@ from open_alchemy.column_factory.object_ref import artifacts
     "all_of_spec",
     [
         [{"type": "object"}],
-        [{"$ref": "ref 1"}, {"$ref": "ref 2"}],
-        [{"$ref": "ref 1"}, {"x-backref": "backref 1"}, {"x-backref": "backref 2"}],
+        [{"$ref": "#/components/schemas/Ref1"}, {"$ref": "#/comonents/schemas/Ref2"}],
         [
-            {"$ref": "ref 1"},
+            {"$ref": "#/components/schemas/Ref1"},
+            {"x-backref": "backref 1"},
+            {"x-backref": "backref 2"},
+        ],
+        [
+            {"$ref": "#/components/schemas/Ref1"},
             {"x-secondary": "secondary 1"},
             {"x-secondary": "secondary 2"},
         ],
         [
-            {"$ref": "ref 1"},
+            {"$ref": "#/components/schemas/Ref1"},
             {"x-foreign-key-column": "column 1"},
             {"x-foreign-key-column": "column 2"},
         ],
-        [{"$ref": "ref 1"}, {"x-uselist": True}, {"x-uselist": False}],
+        [
+            {"$ref": "#/components/schemas/Ref1"},
+            {"x-uselist": True},
+            {"x-uselist": False},
+        ],
     ],
     ids=[
         "object",
@@ -33,6 +41,7 @@ from open_alchemy.column_factory.object_ref import artifacts
         "multiple x-uselist",
     ],
 )
+@pytest.mark.only_this
 @pytest.mark.column
 def test_check_object_all_of_error(all_of_spec):
     """
@@ -43,10 +52,11 @@ def test_check_object_all_of_error(all_of_spec):
     spec = {"allOf": all_of_spec}
 
     with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts.gather(spec=spec, logical_name="", schemas={})
+        artifacts.gather(spec=spec, logical_name="", schemas={"Ref1": {}, "Ref2": {}})
 
 
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_no_ref_all_of():
     """
     GIVEN empty schema
@@ -78,6 +88,7 @@ def test_gather_no_ref_all_of():
     ],
     ids=["$ref", "$ref to allOf", "allOf"],
 )
+@pytest.mark.only_this
 @pytest.mark.column
 def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     """
@@ -101,6 +112,7 @@ def test_gather_object_artifacts_spec(spec, schemas, expected_spec):
     ],
     ids=["$ref", "allOf"],
 )
+@pytest.mark.only_this
 @pytest.mark.column
 def test_gather_object_artifacts_ref_logical_name(spec, schemas):
     """
@@ -202,6 +214,7 @@ def test_gather_object_artifacts_ref_logical_name(spec, schemas):
     ],
 )
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
     """
     GIVEN specification and schemas and expected backref
@@ -218,6 +231,7 @@ def test_gather_object_artifacts_backref(spec, schemas, expected_backref):
 
 
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_object_artifacts_uselist_no_backref():
     """
     GIVEN specification with uselist but not backref and schemas
@@ -316,6 +330,7 @@ def test_gather_object_artifacts_uselist_no_backref():
     ],
 )
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
     """
     GIVEN specification and schemas and expected uselist
@@ -408,6 +423,7 @@ def test_gather_object_artifacts_uselist(spec, schemas, expected_uselist):
     ],
 )
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
     """
     GIVEN specification and schemas and expected secondary
@@ -497,6 +513,7 @@ def test_gather_object_artifacts_secondary(spec, schemas, expected_secondary):
     ],
 )
 @pytest.mark.column
+@pytest.mark.only_this
 def test_gather_object_artifacts_fk_column(spec, schemas, expected_fk_column):
     """
     GIVEN specification and schemas and expected foreign key column
