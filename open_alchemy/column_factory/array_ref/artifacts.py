@@ -34,7 +34,7 @@ def gather(
         )
 
     # Retrieve artifacts for the object reference within the array
-    artifacts = object_ref.gather_object_artifacts(
+    artifacts = object_ref.artifacts.gather(
         spec=item_schema, logical_name=logical_name, schemas=schemas
     )
 
