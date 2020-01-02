@@ -20,7 +20,7 @@ def handle_object(
     *,
     spec: types.Schema,
     schemas: types.Schemas,
-    required: typing.Optional[bool] = None,  # pylint: disable=unused-argument
+    required: typing.Optional[bool],
     logical_name: str,
     model_name: str,
     model_schema: types.Schema,
@@ -70,6 +70,7 @@ def handle_object(
         model_schema=obj_artifacts.spec,
         schemas=schemas,
         fk_column=obj_artifacts.fk_column,
+        required=required,
     )
     fk_required = foreign_key.check_required(
         artifacts=fk_artifacts,
