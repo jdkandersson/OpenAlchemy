@@ -7,6 +7,92 @@ from open_alchemy.column_factory.object_ref import artifacts
 
 
 @pytest.mark.parametrize(
+    "schemas",
+    [
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+        {
+            "RefSchema": {
+                "type": "notObject",
+                "x-tablename": "ref_schema",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+    ],
+    ids=["no type", "not object type"],
+)
+@pytest.mark.column
+def test_ref_error(schemas):
+    """
+    GIVEN referenced schema that is not valid and schema
+    WHEN _handle_schema is called with the schema and schemas
+    THEN MalformedRelationshipError is raised.
+    """
+    # pylint: disable=protected-access
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        artifacts._handle_schema(logical_name="", schema=schema, schemas=schemas)
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [
+        [{"type": "object"}],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"$ref": "#/components/schemas/Schema2"},
+        ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"x-backref": "backSchema1"},
+            {"x-backref": "backSchema2"},
+        ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"x-secondary": "secondary 1"},
+            {"x-secondary": "secondary 2"},
+        ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"x-foreign-key-column": "column 1"},
+            {"x-foreign-key-column": "column 2"},
+        ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"x-uselist": True},
+            {"x-uselist": False},
+        ],
+    ],
+    ids=[
+        "object",
+        "multiple ref",
+        "multiple x-backref",
+        "multiple x-secondary",
+        "multiple x-foreign-key-column",
+        "multiple x-uselist",
+    ],
+)
+@pytest.mark.column
+def test_all_of_error(schema):
+    """
+    GIVEN schema
+    WHEN _handle_schema is called with the schema
+    THEN MalformedRelationshipError is raised.
+    """
+    # pylint: disable=protected-access
+    schema = {"allOf": schema}
+    schemas = {"Schema1": {"type": "object"}, "Schema2": {"type": "object"}}
+
+    with pytest.raises(exceptions.MalformedRelationshipError):
+        artifacts._handle_schema(logical_name="", schema=schema, schemas=schemas)
+
+
+@pytest.mark.parametrize(
     "all_of_schema",
     [
         [{"type": "object"}],
