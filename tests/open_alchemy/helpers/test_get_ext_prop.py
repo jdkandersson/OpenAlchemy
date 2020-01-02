@@ -46,6 +46,7 @@ def test_miss_default():
         ("x-tablename", True),
         ("x-de-$ref", True),
         ("x-dict-ignore", "True"),
+        ("x-generated", "True"),
     ],
     ids=[
         "x-backref",
@@ -61,6 +62,7 @@ def test_miss_default():
         "x-tablename",
         "x-de-$ref",
         "x-dict-ignore",
+        "x-generated",
     ],
 )
 @pytest.mark.helper
@@ -91,6 +93,7 @@ def test_invalid(name, value):
         ("x-tablename", "table 1"),
         ("x-de-$ref", "Table1"),
         ("x-dict-ignore", True),
+        ("x-generated", True),
     ],
     ids=[
         "x-backref",
@@ -105,6 +108,7 @@ def test_invalid(name, value):
         "x-tablename",
         "x-de-$ref",
         "x-dict-ignore",
+        "x-generated",
     ],
 )
 @pytest.mark.helper

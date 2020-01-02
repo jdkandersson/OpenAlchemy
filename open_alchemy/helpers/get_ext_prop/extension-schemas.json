@@ -59,5 +59,9 @@
   "x-dict-ignore": {
     "description": "INTERNAL USE ONLY: Do not add to the schema record used by from_- and to_dict functions.",
     "type": "boolean"
+  },
+  "x-generated": {
+    "description": "INTERNAL USE ONLY: The property is generated automatically (eg. auto incremented or has a default value) which is used to help determine whether the column is nullable.",
+    "type": "boolean"
   }
 }
