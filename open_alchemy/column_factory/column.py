@@ -95,6 +95,52 @@ def check_schema(
     return return_schema, return_artifacts
 
 
+def calculate_schema(*, artifacts: types.ColumnArtifacts) -> types.ColumnSchema:
+    """
+    Calculate the schema to return based on column artifacts.
+
+    Args:
+        artifacts: The artifacts for the column construction.
+
+    Returns:
+        The schema to be recorded for the column.
+
+    """
+    schema: types.ColumnSchema = {"type": artifacts.type}
+    if artifacts.format is not None:
+        schema["format"] = artifacts.format
+    if artifacts.max_length is not None:
+        schema["maxLength"] = artifacts.max_length
+    schema["nullable"] = artifacts.nullable
+    return schema
+
+
+def _calculate_column_schema(
+    *, artifacts: types.ColumnArtifacts, schema: types.Schema
+) -> types.ColumnSchema:
+    """
+    Calculate the schema to be returned for a column.
+
+    Similar to calculate_schema with the addition of checking the schema for
+    x-dict-ignore.
+
+    Assume that any $ref and allOf for the schema has already been resolved.
+
+    Args:
+        artifacts: The artifacts for the column construction.
+        schema: The schema for the column.
+
+    Returns:
+        The schema to be recorded for the column.
+
+    """
+    return_schema = calculate_schema(artifacts=artifacts)
+    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
+    if dict_ignore is not None:
+        return_schema["x-dict-ignore"] = dict_ignore
+    return return_schema
+
+
 def construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
     """
     Construct column from artifacts.
