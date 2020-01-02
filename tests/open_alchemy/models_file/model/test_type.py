@@ -7,23 +7,26 @@ from open_alchemy import models_file
 
 
 @pytest.mark.parametrize(
-    "type_, format_, nullable, required, de_ref, expected_type",
+    "type_, format_, nullable, required, generated, de_ref, expected_type",
     [
-        ("integer", None, False, None, None, "int"),
-        ("integer", "int32", False, None, None, "int"),
-        ("integer", "int64", False, None, None, "int"),
-        ("number", None, False, None, None, "float"),
-        ("number", "float", False, None, None, "float"),
-        ("string", None, False, None, None, "str"),
-        ("string", "password", False, None, None, "str"),
-        ("string", "byte", False, None, None, "str"),
-        ("string", "binary", False, None, None, "bytes"),
-        ("string", "date", False, None, None, "datetime.date"),
-        ("string", "date-time", False, None, None, "datetime.datetime"),
-        ("boolean", None, False, None, None, "bool"),
-        ("object", None, False, None, "RefModel", '"RefModel"'),
-        ("array", None, None, None, "RefModel", 'typing.Sequence["RefModel"]'),
-        ("integer", None, None, None, None, "typing.Optional[int]"),
+        ("integer", None, False, None, None, None, "int"),
+        ("integer", "int32", False, None, None, None, "int"),
+        ("integer", "int64", False, None, None, None, "int"),
+        ("number", None, False, None, None, None, "float"),
+        ("number", "float", False, None, None, None, "float"),
+        ("string", None, False, None, None, None, "str"),
+        ("string", "password", False, None, None, None, "str"),
+        ("string", "byte", False, None, None, None, "str"),
+        ("string", "binary", False, None, None, None, "bytes"),
+        ("string", "date", False, None, None, None, "datetime.date"),
+        ("string", "date-time", False, None, None, None, "datetime.datetime"),
+        ("boolean", None, False, None, None, None, "bool"),
+        ("object", None, False, None, None, "RefModel", '"RefModel"'),
+        ("array", None, None, None, None, "RefModel", 'typing.Sequence["RefModel"]'),
+        ("integer", None, None, None, None, None, "typing.Optional[int]"),
+        ("integer", None, None, True, None, None, "int"),
+        ("integer", None, None, None, True, None, "int"),
+        ("integer", None, None, None, False, None, "typing.Optional[int]"),
     ],
     ids=[
         "integer no format",
@@ -41,17 +44,25 @@ from open_alchemy import models_file
         "object",
         "array",
         "nullable and required None",
+        "nullable None required True",
+        "nullable None generated True",
+        "nullable None generated False",
     ],
 )
 @pytest.mark.models_file
-def test_model(type_, format_, nullable, required, de_ref, expected_type):
+def test_model(type_, format_, nullable, required, generated, de_ref, expected_type):
     """
     GIVEN type, format, nullable and required
     WHEN model is called with the type, format, nullable and required
     THEN the expected type is returned.
     """
     artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_, format=format_, nullable=nullable, required=required, de_ref=de_ref
+        type=type_,
+        format=format_,
+        nullable=nullable,
+        required=required,
+        de_ref=de_ref,
+        generated=generated,
     )
 
     returned_type = models_file._model._type.model(artifacts=artifacts)

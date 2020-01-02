@@ -27,6 +27,11 @@ from open_alchemy import models_file
             models_file.types.ColumnSchemaArtifacts(type="type 1", nullable=True),
         ),
         (
+            {"type": "type 1", "x-generated": True},
+            None,
+            models_file.types.ColumnSchemaArtifacts(type="type 1", generated=True),
+        ),
+        (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             models_file.types.ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
@@ -46,6 +51,7 @@ from open_alchemy import models_file
         "type only",
         "type with format",
         "type with nullable",
+        "type with x-generated",
         "object",
         "array",
         "required given",

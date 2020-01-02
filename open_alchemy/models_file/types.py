@@ -18,6 +18,8 @@ class ColumnSchemaArtifacts:
     required: typing.Optional[bool] = None
     # The model being reference for an object/array type
     de_ref: typing.Optional[str] = None
+    # Whether the value of the column is generated (eg. through auto increment)
+    generated: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass

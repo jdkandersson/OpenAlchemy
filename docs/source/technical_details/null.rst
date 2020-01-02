@@ -1,41 +1,53 @@
 .. contents::
 
+.. _null:
+
 Setting the *Nullable* Property
 ===============================
 
-There are 2 methods used to determine the value of *nullable* for a
-*SQLAlchemy* column. The first is the *required* property of the schema and the
-second is *nullable* property of an object property. *nullable* overrides
-*required*. The following truth table shows the logic:
+There are 3 methods used to determine the value of *nullable* for a
+*SQLAlchemy* column. The first is the *required* property of the schema, the
+second is whether the column value is generated (using, for example,
+*x-autoincrement*) and the third is the *nullable* property of an object
+property. *nullable* overrides *required*. If *required* would indicate that
+the column is nullable but the value is generated, then it is not nullable. The
+following truth table shows the logic:
 
-+-------------+-------------------+-----------------+
-| required    | property nullable | column nullable |
-+=============+===================+=================+
-| undefined   | undefined         | True            |
-+-------------+-------------------+-----------------+
-| undefined   | false             | False           |
-+-------------+-------------------+-----------------+
-| undefined   | true              | True            |
-+-------------+-------------------+-----------------+
-| not in list | undefined         | True            |
-+-------------+-------------------+-----------------+
-| not in list | false             | False           |
-+-------------+-------------------+-----------------+
-| not in list | true              | True            |
-+-------------+-------------------+-----------------+
-| in list     | undefined         | False           |
-+-------------+-------------------+-----------------+
-| in list     | false             | False           |
-+-------------+-------------------+-----------------+
-| in list     | true              | True            |
-+-------------+-------------------+-----------------+
++-------------+-----------+-------------------+-----------------+
+| required    | generated | property nullable | column nullable |
++=============+===========+===================+=================+
+| undefined   | false     | undefined         | True            |
++-------------+-----------+-------------------+-----------------+
+| undefined   | true      | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| not in list | false     | undefined         | True            |
++-------------+-----------+-------------------+-----------------+
+| not in list | true      | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| in list     | *X*       | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| *X*         | *X*       | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| *X*         | *X*       | true              | True            |
++-------------+-----------+-------------------+-----------------+
 
 *required* *undefined* means that the *required* property is not defined for
-the schema, *not in list* means that the *property* is not in the *required*
-list and *in list* means that the *property* is in the list.
+the schema, *not in list* means that the property is not in the *required*
+list and *in list* means that the property is in the list.
 *property nullable* *undefined* means that the *nullable* property is not
-defined for the *property*, *false* and *true* mean that *nullable* is set to
-*false* or *true*, respectively.
+defined for the property, *false* and *true* mean that *nullable* is set to
+*false* or *true*, respectively. *generated* *false* means that the column
+does not get automatically generated and *true* means that it does. Any value
+marked as *X* means that another value takes precedence over the value in
+that case (for example, if *property nullable* is not *undefined*, it takes
+precedence over both *required* and *generated*.
+
+.. _generated:
+
+.. note:: To be able to include whether the column is generated in determining
+    the type in the generated models file, the *x-generated* extension property
+    is recorded in the schema recorded with a model. *x-generated* is for
+    internal use only and should not be relied upon as it is subject to change.
 
 Examples
 --------
@@ -55,6 +67,27 @@ columns have *nullable* set to *True*.
       properties:
         id:
           type: integer
+        name:
+          type: string
+
+generated
+^^^^^^^^^
+
+The following schema does not have the *required* property but the *id*
+property is the primary key which is autoincremented. This means that the *id*
+column is not nullable but the *name* column is nullable.
+
+.. code-block:: yaml
+   :linenos:
+
+   Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          x-primary-key: true
+          x-autoincrement: true
         name:
           type: string
 

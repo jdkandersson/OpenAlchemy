@@ -68,7 +68,9 @@ def check_schema(
     foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
 
     # Construct return artifacts
-    nullable_artefact = helpers.calculate_nullable(nullable=nullable, required=required)
+    nullable_artefact = helpers.calculate_nullable(
+        nullable=nullable, generated=autoincrement is True, required=required
+    )
     return_artifacts = types.ColumnArtifacts(
         type_,
         format=format_,
@@ -105,6 +107,8 @@ def calculate_schema(
         schema["format"] = artifacts.format
     if artifacts.max_length is not None:
         schema["maxLength"] = artifacts.max_length
+    if artifacts.autoincrement is not None:
+        schema["x-generated"] = artifacts.autoincrement
     if dict_ignore is not None:
         schema["x-dict-ignore"] = dict_ignore
     if nullable is not None:

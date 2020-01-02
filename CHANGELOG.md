@@ -4,6 +4,7 @@
 
 - Fix bug where format and maxLength was not considered for the foreign key constructed for an object reference.
 - Refactor object reference handling to be easier to understand.
+- Add checking whether the column is automatically generated to determining the type of a column.
 
 ## Version 0.11.0 - 2019-12-29
 

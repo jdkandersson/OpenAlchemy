@@ -87,6 +87,12 @@ def test_check_schema_invalid(schema, expected_exception):
             {"type": "type 1"},
         ),
         (
+            types.ColumnArtifacts(type="type 1", autoincrement=True),
+            None,
+            None,
+            {"type": "type 1", "x-generated": True},
+        ),
+        (
             types.ColumnArtifacts(type="type 1"),
             False,
             None,
@@ -104,6 +110,7 @@ def test_check_schema_invalid(schema, expected_exception):
         "type with format",
         "type with maxLength",
         "type with nullable",
+        "type with autoincrement",
         "nullable input not None",
         "dict_ignore input not None",
     ],
@@ -184,7 +191,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         ),
         (
             {"type": "type 1", "x-autoincrement": True},
-            types.ColumnArtifacts("type 1", autoincrement=True),
+            types.ColumnArtifacts("type 1", autoincrement=True, nullable=False),
         ),
         (
             {"type": "type 1", "x-index": True},
