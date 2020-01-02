@@ -1,34 +1,56 @@
 .. contents::
 
+.. _null:
+
 Setting the *Nullable* Property
 ===============================
 
-There are 2 methods used to determine the value of *nullable* for a
-*SQLAlchemy* column. The first is the *required* property of the schema and the
-second is *nullable* property of an object property. *nullable* overrides
-*required*. The following truth table shows the logic:
+There are 3 methods used to determine the value of *nullable* for a
+*SQLAlchemy* column. The first is the *required* property of the schema, the
+second is whether the column value is generated (using, for example,
+*x-autoincrement*) and the third is the *nullable* property of an object
+property. *nullable* overrides *required*. The following truth table shows the
+logic:
 
-+-------------+-------------------+-----------------+
-| required    | property nullable | column nullable |
-+=============+===================+=================+
-| undefined   | undefined         | True            |
-+-------------+-------------------+-----------------+
-| undefined   | false             | False           |
-+-------------+-------------------+-----------------+
-| undefined   | true              | True            |
-+-------------+-------------------+-----------------+
-| not in list | undefined         | True            |
-+-------------+-------------------+-----------------+
-| not in list | false             | False           |
-+-------------+-------------------+-----------------+
-| not in list | true              | True            |
-+-------------+-------------------+-----------------+
-| in list     | undefined         | False           |
-+-------------+-------------------+-----------------+
-| in list     | false             | False           |
-+-------------+-------------------+-----------------+
-| in list     | true              | True            |
-+-------------+-------------------+-----------------+
++-------------+-----------+-------------------+-----------------+
+| required    | generated | property nullable | column nullable |
++=============+===========+===================+=================+
+| undefined   | false     | undefined         | True            |
++-------------+-----------+-------------------+-----------------+
+| undefined   | false     | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| undefined   | false     | true              | True            |
++-------------+-----------+-------------------+-----------------+
+| undefined   | true      | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| undefined   | true      | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| undefined   | true      | true              | True            |
++-------------+-----------+-------------------+-----------------+
+| not in list | false     | undefined         | True            |
++-------------+-----------+-------------------+-----------------+
+| not in list | false     | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| not in list | false     | true              | True            |
++-------------+-----------+-------------------+-----------------+
+| not in list | true      | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| not in list | true      | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| not in list | true      | true              | True            |
++-------------+-----------+-------------------+-----------------+
+| in list     | false     | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| in list     | false     | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| in list     | false     | true              | True            |
++-------------+-----------+-------------------+-----------------+
+| in list     | true      | undefined         | False           |
++-------------+-----------+-------------------+-----------------+
+| in list     | true      | false             | False           |
++-------------+-----------+-------------------+-----------------+
+| in list     | true      | true              | True            |
++-------------+-----------+-------------------+-----------------+
 
 *required* *undefined* means that the *required* property is not defined for
 the schema, *not in list* means that the *property* is not in the *required*
@@ -36,6 +58,13 @@ list and *in list* means that the *property* is in the list.
 *property nullable* *undefined* means that the *nullable* property is not
 defined for the *property*, *false* and *true* mean that *nullable* is set to
 *false* or *true*, respectively.
+
+.. _generated:
+
+.. note:: To be able to include whether the column is generated in determining
+    the type in the generated models file, the *x-generated* extension property
+    is recorded in the schema recorded with a model. *x-generated* is for
+    internal use only and should not be relied upon as it is subject to change.
 
 Examples
 --------

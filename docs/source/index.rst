@@ -266,6 +266,8 @@ the documentation:
 +---------------------+---------------------------------------+
 | x-dict-ignore       | :ref:`One to Many Note <dict-ignore>` |
 +---------------------+---------------------------------------+
+| x-generated         | :ref:`Nullable Note <generated>`      |
++---------------------+---------------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
 to the *models* module that is available from OpenAlchemy.
