@@ -40,7 +40,13 @@ AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
 
 _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
     "_ColumnSchemaBase",
-    {"x-dict-ignore": bool, "format": str, "maxLength": int, "nullable": bool},
+    {
+        "x-dict-ignore": bool,
+        "format": str,
+        "maxLength": int,
+        "nullable": bool,
+        "x-generated": bool,
+    },
     total=False,
 )
 

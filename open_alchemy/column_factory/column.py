@@ -107,6 +107,8 @@ def calculate_schema(
         schema["format"] = artifacts.format
     if artifacts.max_length is not None:
         schema["maxLength"] = artifacts.max_length
+    if artifacts.autoincrement is not None:
+        schema["x-generated"] = artifacts.autoincrement
     if dict_ignore is not None:
         schema["x-dict-ignore"] = dict_ignore
     if nullable is not None:
