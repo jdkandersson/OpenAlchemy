@@ -5,6 +5,7 @@ python simple_models.py
 python ref_column_models.py
 python ref_model_models.py
 python relationship_many_to_one_models.py
+python relationship_many_to_one_not_nullable_models.py
 python relationship_many_to_one_models_traditional.py
 python relationship_many_to_one_custom_foreign_key_models.py
 python relationship_many_to_one_backref_models.py
