@@ -179,7 +179,7 @@ def test_database_type_simple(
     engine, sessionmaker, type_, format_, nullable, required, generated, value
 ):
     """
-    GIVEN simple type, format, nullable, required and a value
+    GIVEN simple type, format, nullable, required, generated and a value
     WHEN a specification is written for the combination and a model created and
         initialized with the value
     THEN the queried value complies with the type calculated by type_.model.
@@ -232,3 +232,57 @@ def test_database_type_simple(
     queried_model = session.query(model).first()
     assert queried_model.column == value
     typeguard.check_type("queried_model.column", queried_model.column, calculated_type)
+
+
+@pytest.mark.parametrize(
+    "nullable, required, generated",
+    [(False, None, None), (None, True, None), (None, None, True)],
+    ids=[
+        "nullable False value not None",
+        "required False value None",
+        "generated False value None",
+    ],
+)
+@pytest.mark.models_file
+def test_database_type_simple_nullable_fail(
+    engine, sessionmaker, nullable, required, generated
+):
+    """
+    GIVEN simple type, format, nullable, required, generated and a None value
+    WHEN a specification is written for the combination and a model created and
+        initialized with the value
+    THEN sqlalchemy.exc.IntegrityError is raised.
+    """
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {
+                            "type": "integer",
+                            "x-primary-key": True,
+                            "x-autoincrement": True,
+                        },
+                        "column": {"type": "integer", "nullable": nullable},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                    # Use required to implement generated
+                    "required": ["column"] if required or generated else [],
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(column=None)
+    session = sessionmaker()
+    session.add(model_instance)
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        session.flush()
