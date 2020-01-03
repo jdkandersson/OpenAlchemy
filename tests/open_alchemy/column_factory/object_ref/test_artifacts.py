@@ -67,6 +67,11 @@ def test_ref_error(schemas):
             {"x-uselist": True},
             {"x-uselist": False},
         ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"nullable": True},
+            {"nullable": False},
+        ],
     ],
     ids=[
         "object",
@@ -75,6 +80,7 @@ def test_ref_error(schemas):
         "multiple x-secondary",
         "multiple x-foreign-key-column",
         "multiple x-uselist",
+        "multiple nullable",
     ],
 )
 @pytest.mark.column
@@ -90,58 +96,6 @@ def test_all_of_error(schema):
 
     with pytest.raises(exceptions.MalformedRelationshipError):
         artifacts._handle_schema(logical_name="", schema=schema, schemas=schemas)
-
-
-@pytest.mark.parametrize(
-    "all_of_schema",
-    [
-        [{"type": "object"}],
-        [{"$ref": "#/components/schemas/Ref1"}, {"$ref": "#/comonents/schemas/Ref2"}],
-        [
-            {"$ref": "#/components/schemas/Ref1"},
-            {"x-backref": "backref 1"},
-            {"x-backref": "backref 2"},
-        ],
-        [
-            {"$ref": "#/components/schemas/Ref1"},
-            {"x-secondary": "secondary 1"},
-            {"x-secondary": "secondary 2"},
-        ],
-        [
-            {"$ref": "#/components/schemas/Ref1"},
-            {"x-foreign-key-column": "column 1"},
-            {"x-foreign-key-column": "column 2"},
-        ],
-        [
-            {"$ref": "#/components/schemas/Ref1"},
-            {"x-uselist": True},
-            {"x-uselist": False},
-        ],
-    ],
-    ids=[
-        "object",
-        "multiple ref",
-        "multiple x-backref",
-        "multiple x-secondary",
-        "multiple x-foreign-key-column",
-        "multiple x-uselist",
-    ],
-)
-@pytest.mark.column
-def test_check_object_all_of_error(all_of_schema):
-    """
-    GIVEN schema
-    WHEN _check_object_all_of is called with the schema
-    THEN MalformedRelationshipError is raised.
-    """
-    schema = {"allOf": all_of_schema}
-
-    with pytest.raises(exceptions.MalformedRelationshipError):
-        artifacts.gather(
-            schema=schema,
-            logical_name="",
-            schemas={"Ref1": {"type": "object"}, "Ref2": {"type": "object"}},
-        )
 
 
 @pytest.mark.column
@@ -604,3 +558,92 @@ def test_gather_object_artifacts_fk_column(schema, schemas, expected_fk_column):
     obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.fk_column == expected_fk_column
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_nullable",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "nullable": True}},
+            True,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"nullable": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"nullable": False},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"nullable": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "nullable": True}},
+            True,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"nullable": False},
+                ]
+            },
+            {"RefSchema": {"type": "object", "nullable": True}},
+            False,
+        ),
+    ],
+    ids=[
+        "$ref no fk",
+        "$ref fk",
+        "allOf no fk",
+        "allOf fk",
+        "allOf fk before other",
+        "allOf fk after other",
+        "allOf $ref fk",
+        "allOf fk $ref fk",
+    ],
+)
+@pytest.mark.column
+def test_gather_object_artifacts_nullable(schema, schemas, expected_nullable):
+    """
+    GIVEN schema and schemas and expected foreign key column
+    WHEN gather_object_artifacts is called with the schema and schemas
+    THEN the expected foreign key column is returned.
+    """
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
+
+    assert obj_artifacts.nullable == expected_nullable

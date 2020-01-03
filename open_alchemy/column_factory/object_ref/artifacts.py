@@ -61,6 +61,7 @@ def gather(
             back_reference=back_reference,
             secondary=intermediary_obj_artifacts.secondary,
         ),
+        nullable=intermediary_obj_artifacts.nullable,
     )
 
 
@@ -80,6 +81,8 @@ class _IntermediaryObjectArtifacts:
     uselist: typing.Optional[bool] = None
     # The name of the secondary table to use for the relationship
     secondary: typing.Optional[str] = None
+    # Whether the foreign key is nullable
+    nullable: typing.Optional[bool] = None
 
 
 def _handle_schema(
@@ -158,14 +161,16 @@ def _handle_ref(
     )
     if fk_column_name is None:
         fk_column_name = "id"
+    nullable = helpers.peek.nullable(schema=ref_schema, schemas={})
 
     return _IntermediaryObjectArtifacts(
-        ref_model_name,
-        fk_column_name,
-        ref_schema,
+        ref_model_name=ref_model_name,
+        fk_column_name=fk_column_name,
+        ref_schema=ref_schema,
         backref=backref,
         uselist=uselist,
         secondary=secondary,
+        nullable=nullable,
     )
 
 
@@ -195,6 +200,7 @@ def _handle_all_of(
     backref: typing.Optional[str] = None
     uselist: typing.Optional[bool] = None
     fk_column_name: typing.Optional[str] = None
+    nullable: typing.Optional[bool] = None
 
     # Exceptions with their messages
     incorrect_number_of_ref = exceptions.MalformedRelationshipError(
@@ -243,6 +249,13 @@ def _handle_all_of(
                 "Relationships may have at most 1 x-foreign-key-column defined."
             ),
         )
+        # Handle nullable
+        nullable = _handle_key_single(
+            key="nullable",
+            schema=sub_schema,
+            default=nullable,
+            exception_message="Relationships may have at most 1 nullable defined.",
+        )
 
     # Check that $ref was found once
     if obj_artifacts is None:
@@ -255,6 +268,8 @@ def _handle_all_of(
         obj_artifacts.secondary = secondary
     if fk_column_name is not None:
         obj_artifacts.fk_column_name = fk_column_name
+    if nullable is not None:
+        obj_artifacts.nullable = nullable
 
     return obj_artifacts
 
@@ -281,7 +296,10 @@ def _handle_key_single(
         The value of the key or the default value,
 
     """
-    sub_value = helpers.get_ext_prop(source=schema, name=key)
+    if key.startswith("x-"):
+        sub_value = helpers.get_ext_prop(source=schema, name=key)
+    else:
+        sub_value = schema.get("nullable")
     if sub_value is not None:
         if default is not None:
             raise exceptions.MalformedRelationshipError(exception_message)

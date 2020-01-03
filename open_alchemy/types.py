@@ -104,3 +104,4 @@ class ObjectArtifacts:
     spec: Schema
     fk_column: str
     relationship: RelationshipArtifacts
+    nullable: typing.Optional[bool] = None
