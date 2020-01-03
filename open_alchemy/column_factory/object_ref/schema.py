@@ -14,4 +14,10 @@ def calculate(*, artifacts: types.ObjectArtifacts) -> types.Schema:
         The schema for the array to store with the model.
 
     """
-    return {"type": "object", "x-de-$ref": artifacts.relationship.model_name}
+    schema: types.Schema = {
+        "type": "object",
+        "x-de-$ref": artifacts.relationship.model_name,
+    }
+    if artifacts.nullable is not None:
+        schema["nullable"] = artifacts.nullable
+    return schema

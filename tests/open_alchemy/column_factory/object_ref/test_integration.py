@@ -131,7 +131,7 @@ def test_integration_object_ref_nullable():
     }
     logical_name = "ref_schema"
 
-    ([(_, fk_column), _], _) = object_ref.handle_object(
+    ([(_, fk_column), _], returned_schema) = object_ref.handle_object(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
@@ -141,6 +141,11 @@ def test_integration_object_ref_nullable():
     )
 
     assert fk_column.nullable is False
+    assert returned_schema == {
+        "type": "object",
+        "x-de-$ref": "RefSchema",
+        "nullable": False,
+    }
 
 
 @pytest.mark.column

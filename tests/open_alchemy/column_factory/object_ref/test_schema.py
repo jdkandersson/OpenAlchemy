@@ -7,18 +7,45 @@ from open_alchemy import types
 from open_alchemy.column_factory import object_ref
 
 
+@pytest.mark.parametrize(
+    "artifacts, expected_schema",
+    [
+        (
+            types.ObjectArtifacts(
+                spec={},
+                fk_column="fk_column",
+                relationship=types.RelationshipArtifacts("RefSchema"),
+            ),
+            {"type": "object", "x-de-$ref": "RefSchema"},
+        ),
+        (
+            types.ObjectArtifacts(
+                spec={},
+                fk_column="fk_column",
+                relationship=types.RelationshipArtifacts("RefSchema"),
+                nullable=True,
+            ),
+            {"type": "object", "x-de-$ref": "RefSchema", "nullable": True},
+        ),
+        (
+            types.ObjectArtifacts(
+                spec={},
+                fk_column="fk_column",
+                relationship=types.RelationshipArtifacts("RefSchema"),
+                nullable=False,
+            ),
+            {"type": "object", "x-de-$ref": "RefSchema", "nullable": False},
+        ),
+    ],
+    ids=["plain", "nullable True", "nullable False"],
+)
 @pytest.mark.column
-def test_calculate_schema():
+def test_calculate_schema(artifacts, expected_schema):
     """
-    GIVEN array artifacts
+    GIVEN object reference artifacts
     WHEN _calculate_schema is called with the artifacts
     THEN the calculate for the array reference is returned.
     """
-    relationship = types.RelationshipArtifacts("RefSchema")
-    artifacts = types.ObjectArtifacts(
-        spec={}, fk_column="fk_column", relationship=relationship
-    )
-
     schema = object_ref._schema.calculate(artifacts=artifacts)
 
-    assert schema == {"type": "object", "x-de-$ref": "RefSchema"}
+    assert schema == expected_schema
