@@ -10,6 +10,7 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
+from open_alchemy import exceptions
 from open_alchemy import models_file
 
 
@@ -98,6 +99,50 @@ def test_dict(type_, expected_type):
     )
 
     returned_type = models_file._model._type.typed_dict(artifacts=artifacts)
+
+    assert returned_type == expected_type
+
+
+@pytest.mark.models_file
+def test_dict_de_ref_none():
+    """
+    GIVEN object artifacts where de_ref is None
+    WHEN typed_dict is called with the artifacts
+    THEN MissingArgumentError is raised.
+    """
+    artifacts = models_file.types.ColumnSchemaArtifacts(type="object", de_ref=None)
+
+    with pytest.raises(exceptions.MissingArgumentError):
+        models_file._model._type.typed_dict(artifacts=artifacts)
+
+
+@pytest.mark.parametrize(
+    "nullable, required, expected_type",
+    [
+        (False, True, "int"),
+        (False, False, "typing.Optional[int]"),
+        (True, True, "typing.Optional[int]"),
+        (True, False, "typing.Optional[int]"),
+    ],
+    ids=[
+        "not nullable required",
+        "not nullable not required",
+        "nullable required",
+        "nullable not required",
+    ],
+)
+@pytest.mark.models_file
+def test_args(nullable, required, expected_type):
+    """
+    GIVEN nullable and required
+    WHEN args is called with the nullable and required
+    THEN the expected type is returned.
+    """
+    artifacts = models_file.types.ColumnSchemaArtifacts(
+        type="integer", nullable=nullable, required=required
+    )
+
+    returned_type = models_file._model._type.args(artifacts=artifacts)
 
     assert returned_type == expected_type
 
