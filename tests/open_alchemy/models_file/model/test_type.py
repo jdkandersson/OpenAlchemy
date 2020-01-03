@@ -12,6 +12,8 @@ from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import models_file
+from open_alchemy import types
+from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.parametrize(
@@ -175,7 +177,7 @@ def test_dict(type_, expected_type):
     ],
 )
 @pytest.mark.models_file
-def test_database_type_simple(
+def test_model_database_type_simple(
     engine, sessionmaker, type_, format_, nullable, required, generated, value
 ):
     """
@@ -244,7 +246,7 @@ def test_database_type_simple(
     ],
 )
 @pytest.mark.models_file
-def test_database_type_simple_nullable_fail(
+def test_model_database_type_simple_nullable_fail(
     engine, sessionmaker, nullable, required, generated
 ):
     """
@@ -286,3 +288,77 @@ def test_database_type_simple_nullable_fail(
     session.add(model_instance)
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         session.flush()
+
+
+@pytest.mark.models_file
+def test_model_database_type_many_to_one(engine, sessionmaker):
+    """
+
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "tables",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Calculate the type through model factory operations
+    artifacts = types.ObjectArtifacts(
+        spec={},
+        fk_column="id",
+        relationship=types.RelationshipArtifacts(
+            model_name="RefTable",
+            back_reference=types.BackReferenceArtifacts(property_name="table"),
+        ),
+    )
+    schema = object_ref._schema.calculate(artifacts=artifacts)
+    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=schema, required=None
+    )
+    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance = ref_model(id=11, name="ref table name 1")
+    model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance)
+    session = sessionmaker()
+    session.add(ref_model_instance)
+    session.add(model_instance1)
+    session.flush()
+    # Creating instance of model with None ref_model
+    model_instance2 = model(id=22, name="table name 2", ref_table=None)
+    session.add(model_instance2)
+    session.flush()
+
+    # Querying session
+    queried_models = session.query(model).all()
+    assert queried_models[0].ref_table is not None
+    assert queried_models[1].ref_table is None
+
+    # Check that returned type is correct
+    assert calculated_type_str == 'typing.Optional["RefTable"]'
