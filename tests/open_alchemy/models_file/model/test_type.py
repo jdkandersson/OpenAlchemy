@@ -342,10 +342,11 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
 
     # Creating models
     base.metadata.create_all(engine)
+    session = sessionmaker()
+
     # Creating instance of model and ref_model
     ref_model_instance1 = ref_model(id=11, name="ref table name 1")
     model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance1)
-    session = sessionmaker()
     session.add(ref_model_instance1)
     session.add(model_instance1)
     session.flush()
@@ -363,16 +364,16 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert calculated_type_str == 'typing.Optional["RefTable"]'
 
     # Creating instance of ref_model without models
-    ref_model_instance2 = ref_model(id=21, name="ref table name 2")
-    session.add(ref_model_instance2)
-    # Creating instance of ref_model without empty models
-    ref_model_instance3 = ref_model(id=31, name="ref table name 3", tables=[])
+    ref_model_instance3 = ref_model(id=31, name="ref table name 3")
     session.add(ref_model_instance3)
-    # Creating instance of ref_model with single model
-    ref_model_instance4 = ref_model(
-        id=41, name="ref table name 4", tables=[model(id=42, name="table name 4")]
-    )
+    # Creating instance of ref_model without empty models
+    ref_model_instance4 = ref_model(id=41, name="ref table name 4", tables=[])
     session.add(ref_model_instance4)
+    # Creating instance of ref_model with single model
+    ref_model_instance5 = ref_model(
+        id=51, name="ref table name 5", tables=[model(id=52, name="table name 5")]
+    )
+    session.add(ref_model_instance5)
     session.flush()
 
     # Querying session
@@ -436,9 +437,10 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
 
     # Creating models
     base.metadata.create_all(engine)
+    session = sessionmaker()
+
     # Creating instance of model with None ref_model
     model_instance = model(id=12, name="table name 1", ref_table=None)
-    session = sessionmaker()
     session.add(model_instance)
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         session.flush()
@@ -503,10 +505,11 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
 
     # Creating models
     base.metadata.create_all(engine)
+    session = sessionmaker()
+
     # Creating instance of model and ref_model
     ref_model_instance1 = ref_model(id=11, name="ref table name 1")
     model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance1)
-    session = sessionmaker()
     session.add(ref_model_instance1)
     session.add(model_instance1)
     session.flush()
@@ -524,8 +527,8 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     assert calculated_type_str == 'typing.Optional["RefTable"]'
 
     # Creating instance of ref_model without model
-    ref_model_instance2 = ref_model(id=21, name="ref table name 2")
-    session.add(ref_model_instance2)
+    ref_model_instance3 = ref_model(id=31, name="ref table name 3")
+    session.add(ref_model_instance3)
     # Creating instance of ref_model with model
     ref_model_instance4 = ref_model(
         id=41, name="ref table name 4", table=model(id=42, name="table name 4")
@@ -546,7 +549,8 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     """
     GIVEN spec with one to one relationship that is not nullable
     WHEN models are constructed and None is passed for the object reference
-    THEN sqlalchemy.exc.IntegrityError is raised.
+    THEN sqlalchemy.exc.IntegrityError is raised for the relationship and not
+        for the back reference which is still a single object that is nullable.
     """
     # Defining specification
     spec = {
@@ -619,7 +623,7 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     # Creating models
     base.metadata.create_all(engine)
     # Creating instance of model with None ref_model
-    model_instance = model(id=12, name="table name 1", ref_table=None)
+    model_instance = model(id=32, name="table name 3", ref_table=None)
     session = sessionmaker()
     session.add(model_instance)
     with pytest.raises(sqlalchemy.exc.IntegrityError):
@@ -739,7 +743,7 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     """
     GIVEN spec for a many to many relationship
     WHEN spec is constructed with model factory and queried
-    THEN the referenced  and back reference type is an array that is not nullable.
+    THEN the referenced and back reference type is an array that is not nullable.
     """
     # Defining specification
     spec = {
