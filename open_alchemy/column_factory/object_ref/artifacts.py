@@ -299,7 +299,7 @@ def _handle_key_single(
     if key.startswith("x-"):
         sub_value = helpers.get_ext_prop(source=schema, name=key)
     else:
-        sub_value = schema.get("nullable")
+        sub_value = schema.get(key)
     if sub_value is not None:
         if default is not None:
             raise exceptions.MalformedRelationshipError(exception_message)
