@@ -38,11 +38,16 @@ class Division(models.Division):
         return super().to_dict()
 
 
-class EmployeeDict(typing.TypedDict, total=True):
+class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
     id: int
     name: str
+
+
+class EmployeeDict(_EmployeeDictBase, total=False):
+    """TypedDict for properties that are not required."""
+
     division: "DivisionDict"
 
 

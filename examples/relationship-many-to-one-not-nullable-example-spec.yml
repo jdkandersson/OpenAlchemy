@@ -57,4 +57,3 @@ components:
       required:
         - id
         - name
-        - division
