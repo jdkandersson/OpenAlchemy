@@ -114,6 +114,36 @@ def test_integration_object_ref_required():
 
 
 @pytest.mark.column
+def test_integration_object_ref_nullable():
+    """
+    GIVEN schema that is not nullable and references another object schema and schemas
+    WHEN handle_object is called with the schema and schemas
+    THEN foreign key which is not nullable is returned.
+    """
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+            "nullable": False,
+        }
+    }
+    logical_name = "ref_schema"
+
+    ([(_, fk_column), _], _) = object_ref.handle_object(
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema={"properties": {}},
+        model_name="schema",
+        required=None,
+    )
+
+    assert fk_column.nullable is False
+
+
+@pytest.mark.column
 def test_integration_object_ref_backref():
     """
     GIVEN schema that references another object schema with a back reference and schemas

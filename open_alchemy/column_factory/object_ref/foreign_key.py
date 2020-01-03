@@ -155,3 +155,32 @@ def gather_artifacts(
         max_length=fk_max_length,
     )
     return logical_name, artifacts
+
+
+def gather_artifacts_helper(
+    obj_artifacts: types.ObjectArtifacts,
+    schemas: types.Schemas,
+    required: typing.Optional[bool],
+):
+    """
+    Gather foreign key artifacts based on object reference artifacts.
+
+    Intended for use for the object reference handler.
+
+    Args:
+        obj_artifacts: The artifacts for the object reference.
+        schemas: All model schemas used to resolve any $ref.
+        required: Whether the foreign key is constructed for a property that is
+            required.
+
+    Returns:
+        The artifacts for the foreign key.
+
+    """
+    return gather_artifacts(
+        model_schema=obj_artifacts.spec,
+        schemas=schemas,
+        fk_column=obj_artifacts.fk_column,
+        required=required,
+        nullable=obj_artifacts.nullable,
+    )
