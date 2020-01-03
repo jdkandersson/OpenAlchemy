@@ -294,7 +294,10 @@ def test_model_database_type_simple_nullable_fail(
 @pytest.mark.models_file
 def test_model_database_type_many_to_one(engine, sessionmaker):
     """
-
+    GIVEN spec for a many to one relationship
+    WHEN spec is constructed with model factory and queried
+    THEN the referenced type is a single object that is nullable and the back reference
+        is an array that is not nullable.
     """
     # Defining specification
     spec = {
@@ -393,3 +396,56 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert len(queried_ref_models[3].tables) == 1
 
     assert calculated_backref_type_str == 'typing.Sequence["Table"]'
+
+    # Try constructing null for models
+    with pytest.raises(TypeError):
+        ref_model(id=41, name="ref table name 4", tables=None)
+
+
+@pytest.mark.models_file
+def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
+    """
+    GIVEN spec with many to one relationship that is not nullable
+    WHEN models are constructed and None is passed for the object reference
+    THEN sqlalchemy.exc.IntegrityError is raised.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "tables",
+                    "type": "object",
+                    "nullable": False,
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    model_factory(name="RefTable")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model with None ref_model
+    model_instance = model(id=12, name="table name 1", ref_table=None)
+    session = sessionmaker()
+    session.add(model_instance)
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        session.flush()
