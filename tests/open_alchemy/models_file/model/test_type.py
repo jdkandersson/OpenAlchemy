@@ -385,11 +385,11 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert len(queried_ref_models[2].tables) == 0
     assert len(queried_ref_models[3].tables) == 1
 
-    assert calculated_backref_type_str == 'typing.Sequence["Table"]'
-
     # Try constructing null for models
     with pytest.raises(TypeError):
         ref_model(id=41, name="ref table name 4", tables=None)
+
+    assert calculated_backref_type_str == 'typing.Sequence["Table"]'
 
 
 @pytest.mark.models_file
@@ -631,3 +631,108 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
 
     # Check that returned type is correct
     assert calculated_type_str == '"RefTable"'
+
+
+@pytest.mark.models_file
+def test_model_database_type_onr_to_many(engine, sessionmaker):
+    """
+    GIVEN spec for a one to many relationship
+    WHEN spec is constructed with model factory and queried
+    THEN the referenced type is an array that is not nullable and the back reference
+        is an object that is nullable.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "table",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_tables": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/RefTable"},
+                        },
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Calculate the type through model factory operations
+    schema = model._schema["properties"]["ref_tables"]
+    backref_schema = ref_model._schema["x-backrefs"]["table"]
+    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=schema, required=None
+    )
+    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=backref_schema, required=None
+    )
+    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+    calculated_backref_type_str = models_file._model._type.model(
+        artifacts=model_backref_artifacts
+    )
+
+    # Creating models
+    base.metadata.create_all(engine)
+    session = sessionmaker()
+
+    # Creating instance of model without ref_models
+    model_instance1 = model(id=11, name="ref table name 1")
+    session.add(model_instance1)
+    # Creating instance of model without empty ref_models
+    model_instance2 = model(id=21, name="ref table name 2", ref_tables=[])
+    session.add(model_instance2)
+    # Creating instance of model with single ref_model
+    model_instance3 = model(
+        id=31,
+        name="ref table name 3",
+        ref_tables=[ref_model(id=32, name="table name 3")],
+    )
+    session.add(model_instance3)
+    session.flush()
+
+    # Querying session
+    queried_models = session.query(model).all()
+    assert len(queried_models[0].ref_tables) == 0
+    assert len(queried_models[1].ref_tables) == 0
+    assert len(queried_models[2].ref_tables) == 1
+
+    # Try constructing null for models
+    with pytest.raises(TypeError):
+        model(id=41, name="ref table name 4", ref_tables=None)
+
+    assert calculated_type_str == 'typing.Sequence["RefTable"]'
+
+    # Creating instance of ref_model with model
+    ref_model_instance4 = ref_model(
+        id=41, name="ref table name 4", table=model(id=42, name="table name 4")
+    )
+    session.add(ref_model_instance4)
+    # Creating instance of ref_model with None model
+    ref_model_instance5 = ref_model(id=51, name="ref table name 5", table=None)
+    session.add(ref_model_instance5)
+    session.flush()
+
+    # Querying session
+    queried_models = session.query(ref_model).all()
+    assert queried_models[1].table is not None
+    assert queried_models[2].table is None
+
+    assert calculated_backref_type_str == 'typing.Optional["Table"]'
