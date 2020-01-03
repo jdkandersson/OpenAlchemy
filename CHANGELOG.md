@@ -6,6 +6,7 @@
 - Refactor object reference handling to be easier to understand.
 - Add checking whether the column is automatically generated to determining the type of a column.
 - Remove typing_extensions dependency for Python version 3.8 and later.
+- Add support for _nullable_ for object references.
 
 ## Version 0.11.0 - 2019-12-29
 
