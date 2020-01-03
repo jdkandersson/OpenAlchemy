@@ -1,0 +1,10 @@
+Division:
+  ...
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      allOf:
+        - "$ref": "#/components/schemas/Division"
+        - nullable: false
