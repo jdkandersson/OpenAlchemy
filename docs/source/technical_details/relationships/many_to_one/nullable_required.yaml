@@ -1,0 +1,10 @@
+Division:
+  ...
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      "$ref": "#/components/schemas/Division"
+  required:
+    - division

@@ -19,4 +19,4 @@ class Employee(Base):
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String, nullable=False)
     division = sa.orm.relationship("Division")
-    division_id = sa.Column(sa.Integer, sa.ForeignKey("division.id"), nullable=False)
+    division_id = sa.Column(sa.Integer, sa.ForeignKey("division.id"))

@@ -67,11 +67,8 @@ def handle_object(
     )
 
     # Construct foreign key
-    fk_logical_name, fk_artifacts = foreign_key.gather_artifacts(
-        model_schema=obj_artifacts.spec,
-        schemas=schemas,
-        fk_column=obj_artifacts.fk_column,
-        required=required,
+    fk_logical_name, fk_artifacts = foreign_key.gather_artifacts_helper(
+        obj_artifacts=obj_artifacts, schemas=schemas, required=required
     )
     fk_required = foreign_key.check_required(
         artifacts=fk_artifacts,

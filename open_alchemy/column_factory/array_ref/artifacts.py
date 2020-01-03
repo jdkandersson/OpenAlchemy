@@ -46,6 +46,11 @@ def gather(
         raise exceptions.MalformedRelationshipError(
             "x-uselist is not supported for one to many nor many to many relationships."
         )
+    # Check for nullable
+    if artifacts.nullable is not None:
+        raise exceptions.MalformedRelationshipError(
+            "nullable is not supported for one to many nor many to many relationships."
+        )
 
     # Check referenced specification
     ref_schema = helpers.prepare_schema(schema=artifacts.spec, schemas=schemas)

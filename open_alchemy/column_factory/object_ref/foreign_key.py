@@ -93,6 +93,7 @@ def gather_artifacts(
     schemas: types.Schemas,
     fk_column: str,
     required: typing.Optional[bool] = None,
+    nullable: typing.Optional[bool] = None,
 ) -> typing.Tuple[str, types.ColumnArtifacts]:
     """
     Gather artifacts for a foreign key to implement an object reference.
@@ -106,6 +107,10 @@ def gather_artifacts(
         model_schema: The schema of the referenced model.
         schemas: All model schemas used to resolve any $ref.
         fk_column: The name of the foreign key column.
+        required: Whether the foreign key is constructed for a property that is
+            required.
+        nullable: Whether the foreign key is constructed for a property that is
+            nullable.
 
     Returns:
         The logical name of the foreign key and the artifacts required to construct it.
@@ -137,7 +142,7 @@ def gather_artifacts(
     fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
     fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
     nullable = helpers.calculate_nullable(
-        nullable=None, generated=False, required=required
+        nullable=nullable, generated=False, required=required
     )
 
     # Construct return values
@@ -150,3 +155,32 @@ def gather_artifacts(
         max_length=fk_max_length,
     )
     return logical_name, artifacts
+
+
+def gather_artifacts_helper(
+    obj_artifacts: types.ObjectArtifacts,
+    schemas: types.Schemas,
+    required: typing.Optional[bool],
+):
+    """
+    Gather foreign key artifacts based on object reference artifacts.
+
+    Intended for use for the object reference handler.
+
+    Args:
+        obj_artifacts: The artifacts for the object reference.
+        schemas: All model schemas used to resolve any $ref.
+        required: Whether the foreign key is constructed for a property that is
+            required.
+
+    Returns:
+        The artifacts for the foreign key.
+
+    """
+    return gather_artifacts(
+        model_schema=obj_artifacts.spec,
+        schemas=schemas,
+        fk_column=obj_artifacts.fk_column,
+        required=required,
+        nullable=obj_artifacts.nullable,
+    )

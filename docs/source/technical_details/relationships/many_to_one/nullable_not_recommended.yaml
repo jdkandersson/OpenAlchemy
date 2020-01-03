@@ -1,0 +1,9 @@
+Division:
+  ...
+  nullable: false
+Employee:
+  ...
+  properties:
+    ...
+    division:
+      "$ref": "#/components/schemas/Division"

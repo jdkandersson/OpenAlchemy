@@ -56,6 +56,7 @@ setuptools.setup(
             "pytest-bandit",
             "PyYAML",
             "connexion[swagger-ui]",
+            "typeguard",
         ],
         ":python_version<'3.7'": [
             "dataclasses>=0.7",

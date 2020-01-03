@@ -50,6 +50,57 @@ OpenAlchemy defined relationships are equivalent to the following traditional
     :language: python
     :linenos:
 
+.. _many-to-one-nullable:
+
+Nullable
+^^^^^^^^
+
+Similar to simple value columns (such as *integer*), many to one relationships
+are also nullable. This is supported using the *nullable* key or by including
+the property in the *required* array of the schema. There are 2 places where
+the *nullable* key can be defined. The recommended implementation adds it using
+*allOf*:
+
+.. literalinclude:: ./relationships/many_to_one/nullable_recommended.yaml
+    :language: yaml
+    :linenos:
+
+Note that, when *allOf* is used, there must be exactly one *$ref* in the list
+and at most one *nullable* in the list.
+
+The other way, which is not recommended, adds *nullable* to the object being
+referenced:
+
+.. literalinclude:: ./relationships/many_to_one/nullable_not_recommended.yaml
+    :language: yaml
+    :linenos:
+
+The reason it is not recommended is because this only allows a *nullable* per
+table, whereas the other allows for many. Also, some relationships do not
+support *nullable* which means an error is raised when that type of
+relationship refers to the same schema. If *nullable* is both in the *allOf*
+list and the referenced object, the value from the *allOf* list will be used.
+
+The following example makes the relationship not nullable using the required
+array:
+
+.. literalinclude:: ./relationships/many_to_one/nullable_required.yaml
+    :language: yaml
+    :linenos:
+
+Note that if you use both the nullable and required method, nullable takes
+precedence over required.
+
+Setting *nullable* to *false* is equivalent to the following traditional
+*models.py*:
+
+.. literalinclude:: ../../../examples/relationship_many_to_one_not_nullable_models_traditional.py
+    :language: python
+    :linenos:
+
+.. seealso::
+    :ref:`null` shows how nullable works for simple values such as integers.
+
 .. _backref:
 
 Backref
@@ -162,19 +213,20 @@ The one to one relationship is defined in the same way as the
 :ref:`many to one <many-to-one>` relationship except that it requires the
 *x-uselist* extension property to be set to *False* and
 :ref:`x-backref <backref>` to be defined.
-:ref:`Custom foreign keys <custom-foreign-key>` are also supported. The
-*x-uselist* property can be defined along with the *x-backref* extension
-property using *allOf* or on the object being referenced. To define it on
-*allOf*:
+:ref:`Custom foreign keys <custom-foreign-key>` and
+:ref:`nullable <many-to-one-nullable>` are also supported. The *x-uselist*
+property can be defined along with the *x-backref* extension property using
+*allOf* or on the object being referenced. To define it on *allOf*:
 
 .. literalinclude:: ./relationships/one_to_one/example_recommended.yaml
     :language: yaml
     :linenos:
 
 This is the recommended approach as it allows for other relationships to the
-referenced object to be, for example, many to one relationships. To default
-relationships to an object to one to one, the *x-uselist* property can be set
-on the referenced object:
+referenced object to be, for example, many to one relationships. For some types
+of relationships the inclusion of *x-uselist* causes an error to be raised. To
+default relationships to an object to one to one, the *x-uselist* property can
+be set on the referenced object:
 
 .. literalinclude:: ./relationships/one_to_one/example_not_recommended.yaml
     :language: yaml
@@ -212,7 +264,13 @@ relationships. For back references see :ref:`many to one backref <backref>`
 and for custom foreign keys see
 :ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
 *x-uselist* is not supported as it does not make sense to turn a one to many
-relationship defined as an OpenAPI array into a one to one relationship.
+relationship defined as an OpenAPI array into a one to one relationship. Also
+note that :ref:`nullable <many-to-one-nullable>` is not supported because the
+foreign key is defined on the referenced schema. If the foreign key was not
+nullable by default, then that schema cannot be constructed without the foreign
+key. If you need to define a foreign key that is not nullable, add it as a
+property on the referenced schema and refer to that property using
+:ref:`many to one custom foreign keys <custom-foreign-key>`.
 
 .. _dict-ignore:
 
