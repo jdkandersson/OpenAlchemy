@@ -11,6 +11,7 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
+from open_alchemy import helpers
 from open_alchemy import models_file
 from open_alchemy import types
 from open_alchemy.column_factory import object_ref
@@ -336,18 +337,27 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
         ),
     )
     schema = object_ref._schema.calculate(artifacts=artifacts)
+    backref_schema = helpers.backref._calculate_schema(
+        artifacts=artifacts, ref_from_array=False, model_name="Table"
+    )
     model_artifacts = models_file._model._artifacts.gather_column_artifacts(
         schema=schema, required=None
     )
+    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=backref_schema, required=None
+    )
     calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+    calculated_backref_type_str = models_file._model._type.model(
+        artifacts=model_backref_artifacts
+    )
 
     # Creating models
     base.metadata.create_all(engine)
     # Creating instance of model and ref_model
-    ref_model_instance = ref_model(id=11, name="ref table name 1")
-    model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance)
+    ref_model_instance1 = ref_model(id=11, name="ref table name 1")
+    model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance1)
     session = sessionmaker()
-    session.add(ref_model_instance)
+    session.add(ref_model_instance1)
     session.add(model_instance1)
     session.flush()
     # Creating instance of model with None ref_model
@@ -362,3 +372,24 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
 
     # Check that returned type is correct
     assert calculated_type_str == 'typing.Optional["RefTable"]'
+
+    # Creating instance of ref_model without models
+    ref_model_instance2 = ref_model(id=21, name="ref table name 2")
+    session.add(ref_model_instance2)
+    # Creating instance of ref_model without empty models
+    ref_model_instance3 = ref_model(id=31, name="ref table name 3", tables=[])
+    session.add(ref_model_instance3)
+    # Creating instance of ref_model without single model
+    ref_model_instance4 = ref_model(
+        id=41, name="ref table name 4", tables=[model(id=42, name="table name 4")]
+    )
+    session.add(ref_model_instance4)
+    session.flush()
+
+    # Querying session
+    queried_ref_models = session.query(ref_model).all()
+    assert len(queried_ref_models[1].tables) == 0
+    assert len(queried_ref_models[2].tables) == 0
+    assert len(queried_ref_models[3].tables) == 1
+
+    assert calculated_backref_type_str == 'typing.Sequence["Table"]'
