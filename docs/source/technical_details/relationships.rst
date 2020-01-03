@@ -68,8 +68,8 @@ the *nullable* key can be defined. The recommended implementation adds it using
 Note that, when *allOf* is used, there must be exactly one *$ref* in the list
 and at most one *nullable* in the list.
 
-The other way, which is not recommended, adds the *nullable* to the object
-being referenced:
+The other way, which is not recommended, adds *nullable* to the object being
+referenced:
 
 .. literalinclude:: ./relationships/many_to_one/nullable_not_recommended.yaml
     :language: yaml
