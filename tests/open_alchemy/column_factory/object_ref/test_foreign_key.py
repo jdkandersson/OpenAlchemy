@@ -184,11 +184,12 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
 
 
 @pytest.mark.parametrize(
-    "prop_schema, schemas, required, expected_artifacts",
+    "prop_schema, schemas, required, nullable, expected_artifacts",
     [
         (
             {"type": "fkType"},
             {},
+            None,
             None,
             types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
         ),
@@ -196,17 +197,20 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {"$ref": "#/components/schemas/RefFk"},
             {"RefFk": {"type": "fkType"}},
             None,
+            None,
             types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
         ),
         (
             {"allOf": [{"type": "fkType"}]},
             {},
             None,
+            None,
             types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
         ),
         (
             {"type": "fkType", "format": "fkFormat"},
             {},
+            None,
             None,
             types.ColumnArtifacts(
                 type="fkType", format="fkFormat", foreign_key="table 1.fk"
@@ -216,6 +220,7 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {"type": "fkType", "maxLength": 1},
             {},
             None,
+            None,
             types.ColumnArtifacts(
                 type="fkType", max_length=1, foreign_key="table 1.fk"
             ),
@@ -224,6 +229,16 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {"type": "fkType"},
             {},
             True,
+            None,
+            types.ColumnArtifacts(
+                type="fkType", nullable=False, foreign_key="table 1.fk"
+            ),
+        ),
+        (
+            {"type": "fkType"},
+            {},
+            None,
+            False,
             types.ColumnArtifacts(
                 type="fkType", nullable=False, foreign_key="table 1.fk"
             ),
@@ -236,10 +251,13 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
         "property has format",
         "property has maxLength",
         "required True",
+        "nullable False",
     ],
 )
 @pytest.mark.column
-def test_gather_artifacts_return(prop_schema, schemas, required, expected_artifacts):
+def test_gather_artifacts_return(
+    prop_schema, schemas, required, nullable, expected_artifacts
+):
     """
     GIVEN foreign key column and object schema with x-tablename and id and foreign key
         property with a type
@@ -249,7 +267,11 @@ def test_gather_artifacts_return(prop_schema, schemas, required, expected_artifa
     schema = {"x-tablename": "table 1", "properties": {"fk": prop_schema}}
 
     logical_name, artifacts = foreign_key.gather_artifacts(
-        model_schema=schema, schemas=schemas, fk_column="fk", required=required
+        model_schema=schema,
+        schemas=schemas,
+        fk_column="fk",
+        required=required,
+        nullable=nullable,
     )
 
     assert logical_name == "table 1_fk"
