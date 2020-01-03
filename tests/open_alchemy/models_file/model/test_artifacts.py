@@ -344,7 +344,7 @@ def test_calculate_td_not_required_props(schema, expected_props):
     ],
 )
 @pytest.mark.models_file
-def test_calculate_td_required_empty(schema, expected_required_empty):
+def test_calculate_required_empty(schema, expected_required_empty):
     """
     GIVEN schema
     WHEN calculate is called with the schema
@@ -353,6 +353,7 @@ def test_calculate_td_required_empty(schema, expected_required_empty):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.typed_dict.required.empty == expected_required_empty
+    assert artifacts.arg.required.empty == expected_required_empty
 
 
 @pytest.mark.parametrize(
@@ -374,7 +375,7 @@ def test_calculate_td_required_empty(schema, expected_required_empty):
     ],
 )
 @pytest.mark.models_file
-def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
+def test_calculate_not_required_empty(schema, expected_not_required_empty):
     """
     GIVEN schema
     WHEN calculate is called with the schema
@@ -383,6 +384,7 @@ def test_calculate_td_not_required_empty(schema, expected_not_required_empty):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.typed_dict.not_required.empty == expected_not_required_empty
+    assert artifacts.arg.not_required.empty == expected_not_required_empty
 
 
 # Table for the name of the required and not required TypedDicts
