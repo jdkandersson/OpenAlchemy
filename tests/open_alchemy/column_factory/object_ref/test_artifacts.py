@@ -640,9 +640,9 @@ def test_gather_object_artifacts_fk_column(schema, schemas, expected_fk_column):
 @pytest.mark.column
 def test_gather_object_artifacts_nullable(schema, schemas, expected_nullable):
     """
-    GIVEN schema and schemas and expected foreign key column
+    GIVEN schema and schemas and expected nullable value
     WHEN gather_object_artifacts is called with the schema and schemas
-    THEN the expected foreign key column is returned.
+    THEN the expected nullable value is returned.
     """
     obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
