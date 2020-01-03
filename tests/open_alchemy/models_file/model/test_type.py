@@ -2,8 +2,7 @@
 # pylint: disable=protected-access,unused-import
 
 import datetime
-import sys
-import typing
+import typing  # noqa: F401
 
 import pytest
 import sqlalchemy
@@ -11,10 +10,7 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import helpers
 from open_alchemy import models_file
-from open_alchemy import types
-from open_alchemy.column_factory import object_ref
 
 
 @pytest.mark.parametrize(
