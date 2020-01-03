@@ -513,3 +513,141 @@ def test_calculate_td_parent(
     assert artifacts.typed_dict.required.parent_class == expected_required_parent
     artifacts_not_required_parent = artifacts.typed_dict.not_required.parent_class
     assert artifacts_not_required_parent == expected_not_required_parent
+
+
+@pytest.mark.parametrize(
+    "schema, expected_args",
+    [
+        ({"properties": {}}, []),
+        ({"properties": {"column_1": {"type": "integer"}}}, []),
+        ({"properties": {"column_1": {"type": "integer"}}, "required": []}, []),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
+            [models_file.types.ColumnArtifacts(name="column_1", type="int")],
+        ),
+        (
+            {
+                "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
+                "required": ["column_1"],
+            },
+            [models_file.types.ColumnArtifacts(name="column_1", type='"RefModel"')],
+        ),
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "integer"},
+                    "column_2": {"type": "str"},
+                },
+                "required": ["column_1", "column_2"],
+            },
+            [
+                models_file.types.ColumnArtifacts(name="column_1", type="int"),
+                models_file.types.ColumnArtifacts(name="column_2", type="str"),
+            ],
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required not given",
+        "single not required",
+        "single required",
+        "single required object",
+        "multiple required",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_required_args(schema, expected_args):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected required arguments are added to the artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.arg.required.args == expected_args
+
+
+@pytest.mark.parametrize(
+    "schema, expected_args",
+    [
+        ({"properties": {}}, []),
+        (
+            {"properties": {"column_1": {"type": "integer"}}},
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                )
+            ],
+        ),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": []},
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                )
+            ],
+        ),
+        (
+            {
+                "properties": {"column_1": {"type": "integer", "nullable": False}},
+                "required": [],
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                )
+            ],
+        ),
+        (
+            {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
+            [],
+        ),
+        (
+            {
+                "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
+                "required": [],
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type='typing.Optional["RefModel"]'
+                )
+            ],
+        ),
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "integer"},
+                    "column_2": {"type": "str"},
+                },
+                "required": [],
+            },
+            [
+                models_file.types.ColumnArtifacts(
+                    name="column_1", type="typing.Optional[int]"
+                ),
+                models_file.types.ColumnArtifacts(
+                    name="column_2", type="typing.Optional[str]"
+                ),
+            ],
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required not given",
+        "single not required",
+        "single not nullable not required",
+        "single required",
+        "single not required object",
+        "multiple not required",
+    ],
+)
+@pytest.mark.models_file
+def test_calculate_not_required_args(schema, expected_args):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the given expected td not required properties are added to the artifacts.
+    """
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.arg.not_required.args == expected_args

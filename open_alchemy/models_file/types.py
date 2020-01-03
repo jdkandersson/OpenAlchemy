@@ -69,7 +69,7 @@ class TypedDictArtifacts:
 
 
 @dataclasses.dataclass
-class ArgsSectionArtifacts:
+class ArgSectionArtifacts:
     """Artifacts for a section of the __init__ and from_dict args for a model."""
 
     # The arguments for the section
@@ -79,13 +79,13 @@ class ArgsSectionArtifacts:
 
 
 @dataclasses.dataclass
-class ArgsArtifacts:
+class ArgArtifacts:
     """Artifacts for the __init__ and from_dict args for a model."""
 
     # The artifacts for the arguments that are required
-    required: ArgsSectionArtifacts
+    required: ArgSectionArtifacts
     # The artifacts for the arguments that are not required
-    not_required: ArgsSectionArtifacts
+    not_required: ArgSectionArtifacts
 
 
 @dataclasses.dataclass
@@ -97,4 +97,4 @@ class ModelArtifacts:
     # The artifacts for the TypedDicts
     typed_dict: TypedDictArtifacts
     # The artifacts for the arguments for __init__ and from_dict
-    args: typing.Optional[ArgsArtifacts] = None
+    arg: typing.Optional[ArgArtifacts] = None

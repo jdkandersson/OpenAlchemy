@@ -65,6 +65,8 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     columns: typing.List[types.ColumnArtifacts] = []
     td_required_props: typing.List[types.ColumnArtifacts] = []
     td_not_required_props: typing.List[types.ColumnArtifacts] = []
+    required_args: typing.List[types.ColumnArtifacts] = []
+    not_required_args: typing.List[types.ColumnArtifacts] = []
 
     # Calculate artifacts for properties
     for property_name, property_schema in schema["properties"].items():
@@ -77,14 +79,18 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         # Calculate the type
         column_type = _type.model(artifacts=column_artifacts)
         td_prop_type = _type.typed_dict(artifacts=column_artifacts)
+        arg_type = _type.arg(artifacts=column_artifacts)
 
         # Add artifacts to the lists
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
         prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
+        arg_artifacts = types.ColumnArtifacts(type=arg_type, name=property_name)
         if property_required:
             td_required_props.append(prop_artifacts)
+            required_args.append(arg_artifacts)
         else:
             td_not_required_props.append(prop_artifacts)
+            not_required_args.append(arg_artifacts)
 
     # Calculate artifacts for back references
     backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
@@ -122,6 +128,10 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         td_required_parent_class = td_not_required_parent_class
         td_not_required_parent_class = None
 
+    # Calculate whether the arguments are empty
+    required_args_empty = not required_args
+    not_required_args_empty = not not_required_args
+
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(
             name=name, columns=columns, empty=not columns
@@ -138,6 +148,14 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 empty=td_not_required_empty,
                 name=td_not_required_name,
                 parent_class=td_not_required_parent_class,
+            ),
+        ),
+        arg=types.ArgArtifacts(
+            required=types.ArgSectionArtifacts(
+                args=required_args, empty=required_args_empty
+            ),
+            not_required=types.ArgSectionArtifacts(
+                args=not_required_args, empty=not_required_args_empty
             ),
         ),
     )

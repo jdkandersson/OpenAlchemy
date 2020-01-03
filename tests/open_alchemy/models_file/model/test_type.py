@@ -132,17 +132,17 @@ def test_dict_de_ref_none():
     ],
 )
 @pytest.mark.models_file
-def test_args(nullable, required, expected_type):
+def test_arg(nullable, required, expected_type):
     """
     GIVEN nullable and required
-    WHEN args is called with the nullable and required
+    WHEN arg is called with the nullable and required
     THEN the expected type is returned.
     """
     artifacts = models_file.types.ColumnSchemaArtifacts(
         type="integer", nullable=nullable, required=required
     )
 
-    returned_type = models_file._model._type.args(artifacts=artifacts)
+    returned_type = models_file._model._type.arg(artifacts=artifacts)
 
     assert returned_type == expected_type
 

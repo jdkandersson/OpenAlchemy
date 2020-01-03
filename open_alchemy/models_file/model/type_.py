@@ -73,7 +73,7 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     return model_type
 
 
-def args(*, artifacts: types.ColumnSchemaArtifacts) -> str:
+def arg(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     """
     Calculate the Python type of a column for the arguments of __init__ and from_dict.
 
