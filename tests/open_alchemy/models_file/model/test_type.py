@@ -331,18 +331,8 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the type through model factory operations
-    artifacts = types.ObjectArtifacts(
-        spec={},
-        fk_column="id",
-        relationship=types.RelationshipArtifacts(
-            model_name="RefTable",
-            back_reference=types.BackReferenceArtifacts(property_name="table"),
-        ),
-    )
-    schema = object_ref._schema.calculate(artifacts=artifacts)
-    backref_schema = helpers.backref._calculate_schema(
-        artifacts=artifacts, ref_from_array=False, model_name="Table"
-    )
+    schema = model._schema["properties"]["ref_table"]
+    backref_schema = ref_model._schema["x-backrefs"]["tables"]
     model_artifacts = models_file._model._artifacts.gather_column_artifacts(
         schema=schema, required=None
     )
@@ -382,7 +372,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     # Creating instance of ref_model without empty models
     ref_model_instance3 = ref_model(id=31, name="ref table name 3", tables=[])
     session.add(ref_model_instance3)
-    # Creating instance of ref_model without single model
+    # Creating instance of ref_model with single model
     ref_model_instance4 = ref_model(
         id=41, name="ref table name 4", tables=[model(id=42, name="table name 4")]
     )
@@ -441,6 +431,13 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     model = model_factory(name="Table")
     model_factory(name="RefTable")
 
+    # Calculate the type through model factory operations
+    schema = model._schema["properties"]["ref_table"]
+    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=schema, required=None
+    )
+    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+
     # Creating models
     base.metadata.create_all(engine)
     # Creating instance of model with None ref_model
@@ -449,3 +446,188 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     session.add(model_instance)
     with pytest.raises(sqlalchemy.exc.IntegrityError):
         session.flush()
+
+    # Check that returned type is correct
+    assert calculated_type_str == '"RefTable"'
+
+
+@pytest.mark.models_file
+def test_model_database_type_one_to_one(engine, sessionmaker):
+    """
+    GIVEN spec for a one to one relationship
+    WHEN spec is constructed with model factory and queried
+    THEN the referenced type is a single object that is nullable and the back reference
+        is an single object that is nullable.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "table",
+                    "x-uselist": False,
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Calculate the type through model factory operations
+    schema = model._schema["properties"]["ref_table"]
+    backref_schema = ref_model._schema["x-backrefs"]["table"]
+    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=schema, required=None
+    )
+    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=backref_schema, required=None
+    )
+    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+    calculated_backref_type_str = models_file._model._type.model(
+        artifacts=model_backref_artifacts
+    )
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance1 = ref_model(id=11, name="ref table name 1")
+    model_instance1 = model(id=12, name="table name 1", ref_table=ref_model_instance1)
+    session = sessionmaker()
+    session.add(ref_model_instance1)
+    session.add(model_instance1)
+    session.flush()
+    # Creating instance of model with None ref_model
+    model_instance2 = model(id=22, name="table name 2", ref_table=None)
+    session.add(model_instance2)
+    session.flush()
+
+    # Querying session
+    queried_models = session.query(model).all()
+    assert queried_models[0].ref_table is not None
+    assert queried_models[1].ref_table is None
+
+    # Check that returned type is correct
+    assert calculated_type_str == 'typing.Optional["RefTable"]'
+
+    # Creating instance of ref_model without model
+    ref_model_instance2 = ref_model(id=21, name="ref table name 2")
+    session.add(ref_model_instance2)
+    # Creating instance of ref_model with model
+    ref_model_instance4 = ref_model(
+        id=41, name="ref table name 4", table=model(id=42, name="table name 4")
+    )
+    session.add(ref_model_instance4)
+    session.flush()
+
+    # Querying session
+    queried_ref_models = session.query(ref_model).all()
+    assert queried_ref_models[1].table is None
+    assert queried_ref_models[2].table is not None
+
+    assert calculated_backref_type_str == 'typing.Optional["Table"]'
+
+
+@pytest.mark.models_file
+def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
+    """
+    GIVEN spec with one to one relationship that is not nullable
+    WHEN models are constructed and None is passed for the object reference
+    THEN sqlalchemy.exc.IntegrityError is raised.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "table",
+                    "type": "object",
+                    "x-uselist": False,
+                    "nullable": False,
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Calculate the type through model factory operations
+    schema = model._schema["properties"]["ref_table"]
+    backref_schema = ref_model._schema["x-backrefs"]["table"]
+    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=schema, required=None
+    )
+    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
+        schema=backref_schema, required=None
+    )
+    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+    calculated_backref_type_str = models_file._model._type.model(
+        artifacts=model_backref_artifacts
+    )
+
+    # Creating models
+    base.metadata.create_all(engine)
+    session = sessionmaker()
+
+    # Creating instance of ref_model without model
+    ref_model_instance1 = ref_model(id=11, name="ref table name 1")
+    session.add(ref_model_instance1)
+    # Creating instance of ref_model with model
+    ref_model_instance2 = ref_model(
+        id=21, name="ref table name 2", table=model(id=22, name="table name 2")
+    )
+    session.add(ref_model_instance2)
+    session.flush()
+
+    # Querying session
+    queried_ref_models = session.query(ref_model).all()
+    assert queried_ref_models[0].table is None
+    assert queried_ref_models[1].table is not None
+
+    assert calculated_backref_type_str == 'typing.Optional["Table"]'
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model with None ref_model
+    model_instance = model(id=12, name="table name 1", ref_table=None)
+    session = sessionmaker()
+    session.add(model_instance)
+    with pytest.raises(sqlalchemy.exc.IntegrityError):
+        session.flush()
+
+    # Check that returned type is correct
+    assert calculated_type_str == '"RefTable"'
