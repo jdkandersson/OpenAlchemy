@@ -577,12 +577,16 @@ class Model(models.Model):  # type: ignore
             _ModelArtifacts(
                 sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
-                    columns=[_ColumnArtifacts(name="column_1", type="model_type_1")],
+                    columns=[_ColumnArtifacts(name="col_1", type="model_type_1")],
                     empty=False,
                     arg=_ArgArtifacts(
                         required=[],
                         not_required=[
-                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
+                            _ColumnArgArtifacts(
+                                name="col_1",
+                                init_type="arg_i_type_1",
+                                from_dict_type="arg_fd_type_1",
+                            )
                         ],
                     ),
                 ),
@@ -591,7 +595,7 @@ class Model(models.Model):  # type: ignore
                         props=[], empty=True, name=None, parent_class=None
                     ),
                     not_required=_TypedDictClassArtifacts(
-                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
+                        props=[_ColumnArtifacts(name="col_1", type="td_type_1")],
                         empty=False,
                         name="ModelDict",
                         parent_class="typing.TypedDict",
@@ -603,7 +607,7 @@ class Model(models.Model):  # type: ignore
 class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
-    column_1: td_type_1
+    col_1: td_type_1
 
 
 class Model(models.Model):  # type: ignore
@@ -615,22 +619,22 @@ class Model(models.Model):  # type: ignore
     query: orm.Query
 
     # Model properties
-    column_1: model_type_1
+    col_1: model_type_1
 
-    def __init__(self, column_1: arg_type_1 = None) -> None:
+    def __init__(self, col_1: arg_i_type_1 = None) -> None:
         """Construct."""
         kwargs = {}
-        if column_1 is not None:
-            kwargs["column_1"] = column_1
+        if col_1 is not None:
+            kwargs["col_1"] = col_1
 
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: arg_type_1 = None) -> "Model":
+    def from_dict(cls, col_1: arg_i_type_1 = None) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {}
-        if column_1 is not None:
-            kwargs["column_1"] = column_1
+        if col_1 is not None:
+            kwargs["col_1"] = col_1
 
         return super().from_dict(**kwargs)
 
@@ -642,18 +646,22 @@ class Model(models.Model):  # type: ignore
             _ModelArtifacts(
                 sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
-                    columns=[_ColumnArtifacts(name="column_1", type="model_type_1")],
+                    columns=[_ColumnArtifacts(name="col_1", type="model_type_1")],
                     empty=False,
                     arg=_ArgArtifacts(
                         required=[
-                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
+                            _ColumnArgArtifacts(
+                                name="col_1",
+                                init_type="arg_i_type_1",
+                                from_dict_type="arg_fd_type_1",
+                            )
                         ],
                         not_required=[],
                     ),
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
-                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
+                        props=[_ColumnArtifacts(name="col_1", type="td_type_1")],
                         empty=False,
                         name="ModelDict",
                         parent_class="typing.TypedDict",
@@ -668,7 +676,7 @@ class Model(models.Model):  # type: ignore
 class ModelDict(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
-    column_1: td_type_1
+    col_1: td_type_1
 
 
 class Model(models.Model):  # type: ignore
@@ -680,18 +688,18 @@ class Model(models.Model):  # type: ignore
     query: orm.Query
 
     # Model properties
-    column_1: model_type_1
+    col_1: model_type_1
 
-    def __init__(self, column_1: arg_type_1) -> None:
+    def __init__(self, col_1: arg_i_type_1) -> None:
         """Construct."""
-        kwargs = {"column_1": column_1}
+        kwargs = {"col_1": col_1}
 
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: arg_type_1) -> "Model":
+    def from_dict(cls, col_1: arg_i_type_1) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"column_1": column_1}
+        kwargs = {"col_1": col_1}
 
         return super().from_dict(**kwargs)
 
@@ -704,28 +712,36 @@ class Model(models.Model):  # type: ignore
                 sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
                     columns=[
-                        _ColumnArtifacts(name="column_1", type="model_type_1"),
-                        _ColumnArtifacts(name="column_2", type="model_type_2"),
+                        _ColumnArtifacts(name="col_1", type="model_type_1"),
+                        _ColumnArtifacts(name="col_2", type="model_type_2"),
                     ],
                     empty=False,
                     arg=_ArgArtifacts(
                         required=[
-                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
+                            _ColumnArgArtifacts(
+                                name="col_1",
+                                init_type="arg_i_type_1",
+                                from_dict_type="arg_fd_type_1",
+                            )
                         ],
                         not_required=[
-                            _ColumnArgArtifacts(name="column_2", init_type="arg_type_2")
+                            _ColumnArgArtifacts(
+                                name="col_2",
+                                init_type="arg_i_type_2",
+                                from_dict_type="arg_fd_type_2",
+                            )
                         ],
                     ),
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
-                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
+                        props=[_ColumnArtifacts(name="col_1", type="td_type_1")],
                         empty=False,
                         name="_ModelDictBase",
                         parent_class="typing.TypedDict",
                     ),
                     not_required=_TypedDictClassArtifacts(
-                        props=[_ColumnArtifacts(name="column_2", type="td_type_2")],
+                        props=[_ColumnArtifacts(name="col_2", type="td_type_2")],
                         empty=False,
                         name="ModelDict",
                         parent_class="_ModelDictBase",
@@ -737,13 +753,13 @@ class Model(models.Model):  # type: ignore
 class _ModelDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
-    column_1: td_type_1
+    col_1: td_type_1
 
 
 class ModelDict(_ModelDictBase, total=False):
     """TypedDict for properties that are not required."""
 
-    column_2: td_type_2
+    col_2: td_type_2
 
 
 class Model(models.Model):  # type: ignore
@@ -755,23 +771,23 @@ class Model(models.Model):  # type: ignore
     query: orm.Query
 
     # Model properties
-    column_1: model_type_1
-    column_2: model_type_2
+    col_1: model_type_1
+    col_2: model_type_2
 
-    def __init__(self, column_1: arg_type_1, column_2: arg_type_2 = None) -> None:
+    def __init__(self, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> None:
         """Construct."""
-        kwargs = {"column_1": column_1}
-        if column_2 is not None:
-            kwargs["column_2"] = column_2
+        kwargs = {"col_1": col_1}
+        if col_2 is not None:
+            kwargs["col_2"] = col_2
 
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: arg_type_1, column_2: arg_type_2 = None) -> "Model":
+    def from_dict(cls, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"column_1": column_1}
-        if column_2 is not None:
-            kwargs["column_2"] = column_2
+        kwargs = {"col_1": col_1}
+        if col_2 is not None:
+            kwargs["col_2"] = col_2
 
         return super().from_dict(**kwargs)
 

@@ -41,7 +41,7 @@ class ColumnArgArtifacts:
     # The type of the argument for __init__
     init_type: str
     # The type of the argument for from_dict
-    from_dict_type: typing.Optional[str] = None
+    from_dict_type: str
 
 
 @dataclasses.dataclass
