@@ -140,7 +140,6 @@ class Model(models.Model):
     ],
     ids=["empty", "single column", "multiple column"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
@@ -523,7 +522,7 @@ class Model(models.Model):
     # Model properties
     column_1: model_type_1
 
-    def __init__(self, , column_1: arg_type_1 = None) -> None:
+    def __init__(self, column_1: arg_type_1 = None) -> None:
         """Construct."""
         kwargs = {}
         if column_1 is not None:
@@ -692,8 +691,5 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source
