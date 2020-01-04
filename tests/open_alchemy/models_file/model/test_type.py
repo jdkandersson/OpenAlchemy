@@ -142,7 +142,7 @@ def test_arg(nullable, required, expected_type):
         type="integer", nullable=nullable, required=required
     )
 
-    returned_type = models_file._model._type.arg(artifacts=artifacts)
+    returned_type = models_file._model._type.arg_init(artifacts=artifacts)
 
     assert returned_type == expected_type
 

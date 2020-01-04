@@ -8,6 +8,7 @@ from open_alchemy import models_file
 _SQLAlchemyModelArtifacts = models_file.types.SQLAlchemyModelArtifacts
 _ArgArtifacts = models_file.types.ArgArtifacts
 _ColumnArtifacts = models_file.types.ColumnArtifacts
+_ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
 _TypedDictArtifacts = models_file.types.TypedDictArtifacts
 _TypedDictClassArtifacts = models_file.types.TypedDictClassArtifacts
 _ModelArtifacts = models_file.types.ModelArtifacts
@@ -56,7 +57,7 @@ class Model(models.Model):  # type: ignore
                 columns=[_ColumnArtifacts(name="column_1", type="type_1")],
                 empty=False,
                 arg=_ArgArtifacts(
-                    required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                    required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
                     not_required=[],
                 ),
             ),
@@ -100,8 +101,8 @@ class Model(models.Model):  # type: ignore
                 empty=False,
                 arg=_ArgArtifacts(
                     required=[
-                        _ColumnArtifacts(name="column_1", type="type_1"),
-                        _ColumnArtifacts(name="column_2", type="type_2"),
+                        _ColumnArgArtifacts(name="column_1", init_type="type_1"),
+                        _ColumnArgArtifacts(name="column_2", init_type="type_2"),
                     ],
                     not_required=[],
                 ),
@@ -288,7 +289,7 @@ def test_typed_dict_not_required(artifacts, expected_source):
         (_ArgArtifacts(required=[], not_required=[]), ""),
         (
             _ArgArtifacts(
-                required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
                 not_required=[],
             ),
             ", column_1: type_1",
@@ -296,15 +297,15 @@ def test_typed_dict_not_required(artifacts, expected_source):
         (
             _ArgArtifacts(
                 required=[],
-                not_required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                not_required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
             ),
             ", column_1: type_1 = None",
         ),
         (
             _ArgArtifacts(
                 required=[
-                    _ColumnArtifacts(name="column_1", type="type_1"),
-                    _ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
+                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
                 ],
                 not_required=[],
             ),
@@ -312,8 +313,8 @@ def test_typed_dict_not_required(artifacts, expected_source):
         ),
         (
             _ArgArtifacts(
-                required=[_ColumnArtifacts(name="column_1", type="type_1")],
-                not_required=[_ColumnArtifacts(name="column_2", type="type_2")],
+                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
+                not_required=[_ColumnArgArtifacts(name="column_2", init_type="type_2")],
             ),
             ", column_1: type_1, column_2: type_2 = None",
         ),
@@ -321,8 +322,8 @@ def test_typed_dict_not_required(artifacts, expected_source):
             _ArgArtifacts(
                 required=[],
                 not_required=[
-                    _ColumnArtifacts(name="column_1", type="type_1"),
-                    _ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
+                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
                 ],
             ),
             ", column_1: type_1 = None, column_2: type_2 = None",
@@ -355,7 +356,7 @@ def test_arg_input(artifacts, expected_source):
         (_ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
         (
             _ArgArtifacts(
-                required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
                 not_required=[],
             ),
             'kwargs = {"column_1": column_1}',
@@ -363,7 +364,7 @@ def test_arg_input(artifacts, expected_source):
         (
             _ArgArtifacts(
                 required=[],
-                not_required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                not_required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
             ),
             """kwargs = {}
         if column_1 is not None:
@@ -372,8 +373,8 @@ def test_arg_input(artifacts, expected_source):
         (
             _ArgArtifacts(
                 required=[
-                    _ColumnArtifacts(name="column_1", type="type_1"),
-                    _ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
+                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
                 ],
                 not_required=[],
             ),
@@ -381,8 +382,8 @@ def test_arg_input(artifacts, expected_source):
         ),
         (
             _ArgArtifacts(
-                required=[_ColumnArtifacts(name="column_1", type="type_1")],
-                not_required=[_ColumnArtifacts(name="column_2", type="type_2")],
+                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
+                not_required=[_ColumnArgArtifacts(name="column_2", init_type="type_2")],
             ),
             """kwargs = {"column_1": column_1}
         if column_2 is not None:
@@ -392,8 +393,8 @@ def test_arg_input(artifacts, expected_source):
             _ArgArtifacts(
                 required=[],
                 not_required=[
-                    _ColumnArtifacts(name="column_1", type="type_1"),
-                    _ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
+                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
                 ],
             ),
             """kwargs = {}
@@ -487,7 +488,7 @@ class Model(models.Model):  # type: ignore
                     arg=_ArgArtifacts(
                         required=[],
                         not_required=[
-                            _ColumnArtifacts(name="column_1", type="arg_type_1")
+                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
                         ],
                     ),
                 ),
@@ -550,7 +551,9 @@ class Model(models.Model):  # type: ignore
                     columns=[_ColumnArtifacts(name="column_1", type="model_type_1")],
                     empty=False,
                     arg=_ArgArtifacts(
-                        required=[_ColumnArtifacts(name="column_1", type="arg_type_1")],
+                        required=[
+                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
+                        ],
                         not_required=[],
                     ),
                 ),
@@ -612,9 +615,11 @@ class Model(models.Model):  # type: ignore
                     ],
                     empty=False,
                     arg=_ArgArtifacts(
-                        required=[_ColumnArtifacts(name="column_1", type="arg_type_1")],
+                        required=[
+                            _ColumnArgArtifacts(name="column_1", init_type="arg_type_1")
+                        ],
                         not_required=[
-                            _ColumnArtifacts(name="column_2", type="arg_type_2")
+                            _ColumnArgArtifacts(name="column_2", init_type="arg_type_2")
                         ],
                     ),
                 ),

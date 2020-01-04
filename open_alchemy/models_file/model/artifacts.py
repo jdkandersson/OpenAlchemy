@@ -65,8 +65,8 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     columns: typing.List[types.ColumnArtifacts] = []
     td_required_props: typing.List[types.ColumnArtifacts] = []
     td_not_required_props: typing.List[types.ColumnArtifacts] = []
-    required_args: typing.List[types.ColumnArtifacts] = []
-    not_required_args: typing.List[types.ColumnArtifacts] = []
+    required_args: typing.List[types.ColumnArgArtifacts] = []
+    not_required_args: typing.List[types.ColumnArgArtifacts] = []
 
     # Calculate artifacts for properties
     for property_name, property_schema in schema["properties"].items():
@@ -79,12 +79,14 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         # Calculate the type
         column_type = _type.model(artifacts=column_artifacts)
         td_prop_type = _type.typed_dict(artifacts=column_artifacts)
-        arg_type = _type.arg(artifacts=column_artifacts)
+        arg_init_type = _type.arg_init(artifacts=column_artifacts)
 
         # Add artifacts to the lists
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
         prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
-        arg_artifacts = types.ColumnArtifacts(type=arg_type, name=property_name)
+        arg_artifacts = types.ColumnArgArtifacts(
+            init_type=arg_init_type, name=property_name
+        )
         if property_required:
             td_required_props.append(prop_artifacts)
             required_args.append(arg_artifacts)
