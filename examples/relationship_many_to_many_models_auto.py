@@ -16,7 +16,7 @@ class ProjectDict(typing.TypedDict, total=False):
     name: typing.Optional[str]
 
 
-class Project(models.Project):
+class Project(models.Project):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -28,9 +28,29 @@ class Project(models.Project):
     id: typing.Optional[int]
     name: typing.Optional[str]
 
+    def __init__(
+        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> None:
+        """Construct."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Project":
+    def from_dict(
+        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> "Project":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> ProjectDict:
@@ -46,7 +66,7 @@ class EmployeeDict(typing.TypedDict, total=False):
     projects: typing.Sequence["ProjectDict"]
 
 
-class Employee(models.Employee):
+class Employee(models.Employee):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -59,9 +79,39 @@ class Employee(models.Employee):
     name: typing.Optional[str]
     projects: typing.Sequence["Project"]
 
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        projects: typing.Optional[typing.Sequence["Project"]] = None,
+    ) -> None:
+        """Construct."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+        if projects is not None:
+            kwargs["projects"] = projects
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Employee":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        projects: typing.Optional[typing.Sequence["ProjectDict"]] = None,
+    ) -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+        if projects is not None:
+            kwargs["projects"] = projects
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> EmployeeDict:
