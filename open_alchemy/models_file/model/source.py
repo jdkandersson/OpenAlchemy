@@ -84,9 +84,7 @@ def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
     return template.render(artifacts=artifacts)
 
 
-def _arg_input_single_required(
-    *, artifacts: types.ColumnArgArtifacts, name: str
-) -> str:
+def _arg_input_single_required(artifacts: types.ColumnArgArtifacts, name: str) -> str:
     """
     Transform the name and type of a single required argument to the input source.
 
@@ -102,7 +100,7 @@ def _arg_input_single_required(
 
 
 def _arg_input_single_not_required(
-    *, artifacts: types.ColumnArgArtifacts, name: str
+    artifacts: types.ColumnArgArtifacts, name: str
 ) -> str:
     """
     Transform the name and type of a single not required argument to the input source.
@@ -115,7 +113,7 @@ def _arg_input_single_not_required(
         The source for the argument for the column.
 
     """
-    required_source = _arg_input_single_required(artifacts=artifacts, name=name)
+    required_source = _arg_input_single_required(artifacts, name)
     return f"{required_source} = None"
 
 
@@ -132,13 +130,11 @@ def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
 
     """
     required_sources = map(
-        lambda artifacts: _arg_input_single_required(artifacts=artifacts, name=name),
+        lambda artifacts: _arg_input_single_required(artifacts, name),
         artifacts.required,
     )
     not_required_sources = map(
-        lambda artifacts: _arg_input_single_not_required(
-            artifacts=artifacts, name=name
-        ),
+        lambda artifacts: _arg_input_single_not_required(artifacts, name),
         artifacts.not_required,
     )
     return f'{"".join(required_sources)}{"".join(not_required_sources)}'
