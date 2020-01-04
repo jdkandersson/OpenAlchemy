@@ -42,7 +42,7 @@ def sqlalchemy(*, artifacts: types.SQLAlchemyModelArtifacts) -> str:
     """
     template = jinja2.Template(_SQLALCHEMY_TEMPLATE)
 
-    arg_input_source = arg_input(artifacts=artifacts.arg)
+    arg_input_source = arg_input_init(artifacts=artifacts.arg)
     arg_kwargs_source = arg_kwargs(artifacts=artifacts.arg)
 
     return template.render(
@@ -111,7 +111,7 @@ def _arg_input_single_arg_not_required(artifacts: types.ColumnArgArtifacts) -> s
     return f"{required_source} = None"
 
 
-def arg_input(*, artifacts: types.ArgArtifacts) -> str:
+def arg_input_init(*, artifacts: types.ArgArtifacts) -> str:
     """
     Generate the arguments for the signature of __init__ and from_dict for a model.
 

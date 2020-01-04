@@ -57,7 +57,13 @@ class Model(models.Model):  # type: ignore
                 columns=[_ColumnArtifacts(name="column_1", type="type_1")],
                 empty=False,
                 arg=_ArgArtifacts(
-                    required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
+                    required=[
+                        _ColumnArgArtifacts(
+                            name="column_1",
+                            init_type="init_type_1",
+                            from_dict_type="fd_type_1",
+                        )
+                    ],
                     not_required=[],
                 ),
             ),
@@ -74,14 +80,14 @@ class Model(models.Model):  # type: ignore
     # Model properties
     column_1: type_1
 
-    def __init__(self, column_1: type_1) -> None:
+    def __init__(self, column_1: init_type_1) -> None:
         """Construct."""
         kwargs = {"column_1": column_1}
 
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: type_1) -> "Model":
+    def from_dict(cls, column_1: init_type_1) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"column_1": column_1}
 
@@ -101,8 +107,16 @@ class Model(models.Model):  # type: ignore
                 empty=False,
                 arg=_ArgArtifacts(
                     required=[
-                        _ColumnArgArtifacts(name="column_1", init_type="type_1"),
-                        _ColumnArgArtifacts(name="column_2", init_type="type_2"),
+                        _ColumnArgArtifacts(
+                            name="column_1",
+                            init_type="init_type_1",
+                            from_dict_type="fd_type_1",
+                        ),
+                        _ColumnArgArtifacts(
+                            name="column_2",
+                            init_type="init_type_2",
+                            from_dict_type="fd_type_2",
+                        ),
                     ],
                     not_required=[],
                 ),
@@ -121,14 +135,14 @@ class Model(models.Model):  # type: ignore
     column_1: type_1
     column_2: type_2
 
-    def __init__(self, column_1: type_1, column_2: type_2) -> None:
+    def __init__(self, column_1: init_type_1, column_2: init_type_2) -> None:
         """Construct."""
         kwargs = {"column_1": column_1, "column_2": column_2}
 
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: type_1, column_2: type_2) -> "Model":
+    def from_dict(cls, column_1: init_type_1, column_2: init_type_2) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"column_1": column_1, "column_2": column_2}
 
@@ -289,44 +303,84 @@ def test_typed_dict_not_required(artifacts, expected_source):
         (_ArgArtifacts(required=[], not_required=[]), ""),
         (
             _ArgArtifacts(
-                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
-                not_required=[],
-            ),
-            ", column_1: type_1",
-        ),
-        (
-            _ArgArtifacts(
-                required=[],
-                not_required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
-            ),
-            ", column_1: type_1 = None",
-        ),
-        (
-            _ArgArtifacts(
                 required=[
-                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
-                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
                 ],
                 not_required=[],
             ),
-            ", column_1: type_1, column_2: type_2",
-        ),
-        (
-            _ArgArtifacts(
-                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
-                not_required=[_ColumnArgArtifacts(name="column_2", init_type="type_2")],
-            ),
-            ", column_1: type_1, column_2: type_2 = None",
+            ", column_1: init_type_1",
         ),
         (
             _ArgArtifacts(
                 required=[],
                 not_required=[
-                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
-                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
                 ],
             ),
-            ", column_1: type_1 = None, column_2: type_2 = None",
+            ", column_1: init_type_1 = None",
+        ),
+        (
+            _ArgArtifacts(
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
+                ],
+                not_required=[],
+            ),
+            ", column_1: init_type_1, column_2: init_type_2",
+        ),
+        (
+            _ArgArtifacts(
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    )
+                ],
+            ),
+            ", column_1: init_type_1, column_2: init_type_2 = None",
+        ),
+        (
+            _ArgArtifacts(
+                required=[],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
+                ],
+            ),
+            ", column_1: init_type_1 = None, column_2: init_type_2 = None",
         ),
     ],
     ids=[
@@ -339,13 +393,13 @@ def test_typed_dict_not_required(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-def test_arg_input(artifacts, expected_source):
+def test_arg_input_init(artifacts, expected_source):
     """
     GIVEN artifacts
-    WHEN arg_input is called with the artifacts
+    WHEN arg_input_init is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_input(artifacts=artifacts)
+    source = models_file._model._source.arg_input_init(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -356,7 +410,13 @@ def test_arg_input(artifacts, expected_source):
         (_ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
         (
             _ArgArtifacts(
-                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
                 not_required=[],
             ),
             'kwargs = {"column_1": column_1}',
@@ -364,7 +424,13 @@ def test_arg_input(artifacts, expected_source):
         (
             _ArgArtifacts(
                 required=[],
-                not_required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
             ),
             """kwargs = {}
         if column_1 is not None:
@@ -373,8 +439,16 @@ def test_arg_input(artifacts, expected_source):
         (
             _ArgArtifacts(
                 required=[
-                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
-                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
                 ],
                 not_required=[],
             ),
@@ -382,8 +456,20 @@ def test_arg_input(artifacts, expected_source):
         ),
         (
             _ArgArtifacts(
-                required=[_ColumnArgArtifacts(name="column_1", init_type="type_1")],
-                not_required=[_ColumnArgArtifacts(name="column_2", init_type="type_2")],
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    )
+                ],
             ),
             """kwargs = {"column_1": column_1}
         if column_2 is not None:
@@ -393,8 +479,16 @@ def test_arg_input(artifacts, expected_source):
             _ArgArtifacts(
                 required=[],
                 not_required=[
-                    _ColumnArgArtifacts(name="column_1", init_type="type_1"),
-                    _ColumnArgArtifacts(name="column_2", init_type="type_2"),
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
                 ],
             ),
             """kwargs = {}
