@@ -82,51 +82,94 @@ def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
     return template.render(artifacts=artifacts)
 
 
-def _arg_input_single_arg_required(artifacts: types.ColumnArgArtifacts) -> str:
+def _arg_input_single_arg_required(
+    *, artifacts: types.ColumnArgArtifacts, name: str
+) -> str:
     """
     Transform the name and type of a single required argument to the input source.
 
     Args:
         artifacts: The artifacts for generating the argument for a column.
+        name: The attribute name to use for the type.
 
     Returns:
         The source for the argument for the column.
 
     """
-    return f", {artifacts.name}: {artifacts.init_type}"
+    return f", {artifacts.name}: {getattr(artifacts, name)}"
 
 
-def _arg_input_single_arg_not_required(artifacts: types.ColumnArgArtifacts) -> str:
+def _arg_input_single_arg_not_required(
+    *, artifacts: types.ColumnArgArtifacts, name: str
+) -> str:
     """
     Transform the name and type of a single not required argument to the input source.
 
     Args:
         artifacts: The artifacts for generating the argument for a column.
+        name: The attribute name to use for the type.
 
     Returns:
         The source for the argument for the column.
 
     """
-    required_source = _arg_input_single_arg_required(artifacts=artifacts)
+    required_source = _arg_input_single_arg_required(artifacts=artifacts, name=name)
     return f"{required_source} = None"
+
+
+def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
+    """
+    Generate the arguments for the signature of __init__ for a model.
+
+    Args:
+        artifacts: The artifacts for the arguments.
+        name: The attribute name to use for the type.
+
+    Returns:
+        The argument signature for the __init__ functions.
+
+    """
+    required_sources = map(
+        lambda artifacts: _arg_input_single_arg_required(
+            artifacts=artifacts, name=name
+        ),
+        artifacts.required,
+    )
+    not_required_sources = map(
+        lambda artifacts: _arg_input_single_arg_not_required(
+            artifacts=artifacts, name=name
+        ),
+        artifacts.not_required,
+    )
+    return f'{"".join(required_sources)}{"".join(not_required_sources)}'
 
 
 def arg_input_init(*, artifacts: types.ArgArtifacts) -> str:
     """
-    Generate the arguments for the signature of __init__ and from_dict for a model.
+    Generate the arguments for the signature of __init__ for a model.
 
     Args:
         artifacts: The artifacts for the arguments.
 
     Returns:
-        The argument signature for the __init__ and from_dict functions.
+        The argument signature for the __init__ functions.
 
     """
-    required_sources = map(_arg_input_single_arg_required, artifacts.required)
-    not_required_sources = map(
-        _arg_input_single_arg_not_required, artifacts.not_required
-    )
-    return f'{"".join(required_sources)}{"".join(not_required_sources)}'
+    return _arg_input(artifacts=artifacts, name="init_type")
+
+
+def arg_input_from_dict(*, artifacts: types.ArgArtifacts) -> str:
+    """
+    Generate the arguments for the signature of from_dict for a model.
+
+    Args:
+        artifacts: The artifacts for the arguments.
+
+    Returns:
+        The argument signature for the from_dict functions.
+
+    """
+    return _arg_input(artifacts=artifacts, name="from_dict_type")
 
 
 def _arg_kwargs_single_arg_required(artifacts: types.ColumnArgArtifacts) -> str:

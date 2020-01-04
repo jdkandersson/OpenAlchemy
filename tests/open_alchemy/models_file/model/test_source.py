@@ -407,6 +407,113 @@ def test_arg_input_init(artifacts, expected_source):
 @pytest.mark.parametrize(
     "artifacts, expected_source",
     [
+        (_ArgArtifacts(required=[], not_required=[]), ""),
+        (
+            _ArgArtifacts(
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
+                not_required=[],
+            ),
+            ", column_1: fd_type_1",
+        ),
+        (
+            _ArgArtifacts(
+                required=[],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
+            ),
+            ", column_1: fd_type_1 = None",
+        ),
+        (
+            _ArgArtifacts(
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
+                ],
+                not_required=[],
+            ),
+            ", column_1: fd_type_1, column_2: fd_type_2",
+        ),
+        (
+            _ArgArtifacts(
+                required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    )
+                ],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    )
+                ],
+            ),
+            ", column_1: fd_type_1, column_2: fd_type_2 = None",
+        ),
+        (
+            _ArgArtifacts(
+                required=[],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                    ),
+                    _ColumnArgArtifacts(
+                        name="column_2",
+                        init_type="init_type_2",
+                        from_dict_type="fd_type_2",
+                    ),
+                ],
+            ),
+            ", column_1: fd_type_1 = None, column_2: fd_type_2 = None",
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required",
+        "single not required",
+        "multiple required",
+        "multiple required and not required",
+        "multiple not required",
+    ],
+)
+@pytest.mark.models_file
+def test_arg_input_from_dict(artifacts, expected_source):
+    """
+    GIVEN artifacts
+    WHEN arg_input_from_dict is called with the artifacts
+    THEN the expected source is returned.
+    """
+    source = models_file._model._source.arg_input_from_dict(artifacts=artifacts)
+
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_source",
+    [
         (_ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
         (
             _ArgArtifacts(
