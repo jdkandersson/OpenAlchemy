@@ -210,6 +210,17 @@ For example::
 .. seealso::
     :ref:`child-parent-reference`
 
+.. _alembic:
+
+Alembic
+-------
+
+The standard method for automatically generating database migrations for
+alembic is supported. The following instructions show how to get started:
+
+.. literalinclude:: ../../examples/alembic/readme.md
+    :language: md
+
 .. _how-does-it-work:
 
 How Does It Work?
