@@ -1,7 +1,7 @@
 """Add emplpoyee table
 
 Revision ID: 4b764d30002d
-Revises: 
+Revises:
 Create Date: 2020-01-04 16:55:34.543585
 
 """
