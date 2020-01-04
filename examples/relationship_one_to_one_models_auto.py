@@ -16,7 +16,7 @@ class PayInfoDict(typing.TypedDict, total=False):
     account_number: typing.Optional[str]
 
 
-class PayInfo(models.PayInfo):
+class PayInfo(models.PayInfo):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -29,9 +29,33 @@ class PayInfo(models.PayInfo):
     account_number: typing.Optional[str]
     employee: typing.Optional["Employee"]
 
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        account_number: typing.Optional[str] = None,
+    ) -> None:
+        """Construct."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if account_number is not None:
+            kwargs["account_number"] = account_number
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "PayInfo":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        account_number: typing.Optional[str] = None,
+    ) -> "PayInfo":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if account_number is not None:
+            kwargs["account_number"] = account_number
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> PayInfoDict:
@@ -47,7 +71,7 @@ class EmployeeDict(typing.TypedDict, total=True):
     pay_info: "PayInfoDict"
 
 
-class Employee(models.Employee):
+class Employee(models.Employee):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -60,9 +84,17 @@ class Employee(models.Employee):
     name: str
     pay_info: "PayInfo"
 
+    def __init__(self, id: int, name: str, pay_info: "PayInfo") -> None:
+        """Construct."""
+        kwargs = {"id": id, "name": name, "pay_info": pay_info}
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Employee":
+    def from_dict(cls, id: int, name: str, pay_info: "PayInfoDict") -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {"id": id, "name": name, "pay_info": pay_info}
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> EmployeeDict:

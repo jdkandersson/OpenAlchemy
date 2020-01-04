@@ -65,6 +65,8 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     columns: typing.List[types.ColumnArtifacts] = []
     td_required_props: typing.List[types.ColumnArtifacts] = []
     td_not_required_props: typing.List[types.ColumnArtifacts] = []
+    required_args: typing.List[types.ColumnArgArtifacts] = []
+    not_required_args: typing.List[types.ColumnArgArtifacts] = []
 
     # Calculate artifacts for properties
     for property_name, property_schema in schema["properties"].items():
@@ -77,14 +79,23 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         # Calculate the type
         column_type = _type.model(artifacts=column_artifacts)
         td_prop_type = _type.typed_dict(artifacts=column_artifacts)
+        arg_init_type = _type.arg_init(artifacts=column_artifacts)
+        arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
 
         # Add artifacts to the lists
         columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
         prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
+        arg_artifacts = types.ColumnArgArtifacts(
+            init_type=arg_init_type,
+            from_dict_type=arg_from_dict_type,
+            name=property_name,
+        )
         if property_required:
             td_required_props.append(prop_artifacts)
+            required_args.append(arg_artifacts)
         else:
             td_not_required_props.append(prop_artifacts)
+            not_required_args.append(arg_artifacts)
 
     # Calculate artifacts for back references
     backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
@@ -124,7 +135,12 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(
-            name=name, columns=columns, empty=not columns
+            name=name,
+            columns=columns,
+            empty=not columns,
+            arg=types.ArgArtifacts(
+                required=required_args, not_required=not_required_args
+            ),
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(

@@ -1,11 +1,12 @@
 """Functions for calculating the type."""
 
+from open_alchemy import exceptions
 from open_alchemy import helpers
 
 from .. import types
 
 
-def model(*, artifacts: types.ColumnSchemaArtifacts):
+def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     """
     Calculate the Python type of a column.
 
@@ -46,7 +47,7 @@ def model(*, artifacts: types.ColumnSchemaArtifacts):
     return return_type
 
 
-def typed_dict(*, artifacts: types.ColumnSchemaArtifacts):
+def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     """
     Calculate the Python type of a column for a TypedDict.
 
@@ -62,6 +63,56 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts):
 
     # Modify the type in case of object or array
     if artifacts.type in {"object", "array"}:
+        if artifacts.de_ref is None:
+            raise exceptions.MissingArgumentError(
+                "The schema for the property of an object reference must include "
+                "x-de-$ref with the name of the model being referenced."
+            )
         model_type = model_type.replace(artifacts.de_ref, f"{artifacts.de_ref}Dict")
 
     return model_type
+
+
+def arg_init(*, artifacts: types.ColumnSchemaArtifacts) -> str:
+    """
+    Calculate the Python type of a column for the arguments of __init__.
+
+    Args:
+        artifacts: The artifacts from the schema of the column.
+
+    Returns:
+        The equivalent Python type for the argument for the column.
+
+    """
+    model_type = model(artifacts=artifacts)
+
+    # Add optional if not required unless already optional
+    if not artifacts.required and not model_type.startswith("typing.Optional["):
+        return f"typing.Optional[{model_type}]"
+    return model_type
+
+
+def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
+    """
+    Calculate the Python type of a column for the arguments of from_dict.
+
+    Args:
+        artifacts: The artifacts from the schema of the column.
+
+    Returns:
+        The equivalent Python type for the argument for the column.
+
+    """
+    # Calculate type the same way as for the model
+    init_type = arg_init(artifacts=artifacts)
+
+    # Modify the type in case of object or array
+    if artifacts.type in {"object", "array"}:
+        if artifacts.de_ref is None:
+            raise exceptions.MissingArgumentError(
+                "The schema for the property of an object reference must include "
+                "x-de-$ref with the name of the model being referenced."
+            )
+        init_type = init_type.replace(artifacts.de_ref, f"{artifacts.de_ref}Dict")
+
+    return init_type

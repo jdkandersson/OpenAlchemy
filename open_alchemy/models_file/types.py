@@ -33,6 +33,28 @@ class ColumnArtifacts:
 
 
 @dataclasses.dataclass
+class ColumnArgArtifacts:
+    """Artifacts for the __init__ and from_dict signatures of a model template."""
+
+    # The name of the argument
+    name: str
+    # The type of the argument for __init__
+    init_type: str
+    # The type of the argument for from_dict
+    from_dict_type: str
+
+
+@dataclasses.dataclass
+class ArgArtifacts:
+    """Artifacts for the __init__ and from_dict args for a model."""
+
+    # The artifacts for the arguments that are required
+    required: typing.List[ColumnArgArtifacts]
+    # The artifacts for the arguments that are not required
+    not_required: typing.List[ColumnArgArtifacts]
+
+
+@dataclasses.dataclass
 class SQLAlchemyModelArtifacts:
     """Artifacts for the SQLAlchemy model."""
 
@@ -42,6 +64,8 @@ class SQLAlchemyModelArtifacts:
     empty: bool
     # The columns for the model
     columns: typing.List[ColumnArtifacts]
+    # The artifacts for the arguments for __init__ and from_dict
+    arg: ArgArtifacts
 
 
 @dataclasses.dataclass

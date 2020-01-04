@@ -440,7 +440,7 @@ class TableDict({expected_base}, total=False):
     column: typing.Optional[int]
 
 
-class Table(models.Table):
+class Table(models.Table):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -451,9 +451,21 @@ class Table(models.Table):
     # Model properties
     column: typing.Optional[int]
 
+    def __init__(self, column: typing.Optional[int] = None) -> None:
+        """Construct."""
+        kwargs = {{}}
+        if column is not None:
+            kwargs["column"] = column
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Table":
+    def from_dict(cls, column: typing.Optional[int] = None) -> "Table":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {{}}
+        if column is not None:
+            kwargs["column"] = column
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> TableDict:

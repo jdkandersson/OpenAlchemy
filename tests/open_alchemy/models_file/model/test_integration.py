@@ -31,7 +31,7 @@ class ModelDict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[int]
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -42,9 +42,21 @@ class Model(models.Model):
     # Model properties
     id: typing.Optional[int]
 
+    def __init__(self, id: typing.Optional[int] = None) -> None:
+        """Construct."""
+        kwargs = {{}}
+        if id is not None:
+            kwargs["id"] = id
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+    def from_dict(cls, id: typing.Optional[int] = None) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {{}}
+        if id is not None:
+            kwargs["id"] = id
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:

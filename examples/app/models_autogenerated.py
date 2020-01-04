@@ -23,7 +23,7 @@ class EmployeeDict(_EmployeeDictBase, total=False):
     salary: typing.Optional[float]
 
 
-class Employee(models.Employee):
+class Employee(models.Employee):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -37,9 +37,25 @@ class Employee(models.Employee):
     division: str
     salary: typing.Optional[float]
 
+    def __init__(
+        self, id: int, name: str, division: str, salary: typing.Optional[float] = None
+    ) -> None:
+        """Construct."""
+        kwargs = {"id": id, "name": name, "division": division}
+        if salary is not None:
+            kwargs["salary"] = salary
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Employee":
+    def from_dict(
+        cls, id: int, name: str, division: str, salary: typing.Optional[float] = None
+    ) -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {"id": id, "name": name, "division": division}
+        if salary is not None:
+            kwargs["salary"] = salary
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> EmployeeDict:

@@ -17,7 +17,7 @@ class DivisionDict(typing.TypedDict, total=False):
     employees: typing.Sequence["EmployeeDict"]
 
 
-class Division(models.Division):
+class Division(models.Division):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -30,9 +30,39 @@ class Division(models.Division):
     name: typing.Optional[str]
     employees: typing.Sequence["Employee"]
 
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        employees: typing.Optional[typing.Sequence["Employee"]] = None,
+    ) -> None:
+        """Construct."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+        if employees is not None:
+            kwargs["employees"] = employees
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Division":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        employees: typing.Optional[typing.Sequence["EmployeeDict"]] = None,
+    ) -> "Division":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {}
+        if id is not None:
+            kwargs["id"] = id
+        if name is not None:
+            kwargs["name"] = name
+        if employees is not None:
+            kwargs["employees"] = employees
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> DivisionDict:
@@ -47,7 +77,7 @@ class EmployeeDict(typing.TypedDict, total=True):
     name: str
 
 
-class Employee(models.Employee):
+class Employee(models.Employee):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -59,9 +89,17 @@ class Employee(models.Employee):
     id: int
     name: str
 
+    def __init__(self, id: int, name: str) -> None:
+        """Construct."""
+        kwargs = {"id": id, "name": name}
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Employee":
+    def from_dict(cls, id: int, name: str) -> "Employee":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {"id": id, "name": name}
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> EmployeeDict:

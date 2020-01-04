@@ -7,6 +7,7 @@
 - Add checking whether the column is automatically generated to determining the type of a column.
 - Remove typing_extensions dependency for Python version 3.8 and later.
 - Add support for _nullable_ for object references.
+- Add type hints for _\_\_init\_\__ and _from_dict_.
 
 ## Version 0.11.0 - 2019-12-29
 
