@@ -45,6 +45,7 @@ setuptools.setup(
             "doc8",
             "connexion[swagger-ui]",
             "Flask-SQLAlchemy",
+            "alembic",
         ],
         "test": [
             "pytest",
