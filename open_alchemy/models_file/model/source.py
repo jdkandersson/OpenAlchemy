@@ -121,14 +121,14 @@ def _arg_input_single_not_required(
 
 def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
     """
-    Generate the arguments for the signature of __init__ for a model.
+    Generate the arguments for a function signature of a model.
 
     Args:
         artifacts: The artifacts for the arguments.
         name: The attribute name to use for the type.
 
     Returns:
-        The argument signature for the __init__ functions.
+        The argument signature for the functions.
 
     """
     required_sources = map(
