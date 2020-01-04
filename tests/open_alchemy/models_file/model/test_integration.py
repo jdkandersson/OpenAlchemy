@@ -13,7 +13,6 @@ if sys.version_info[1] < 8:
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_generate():
     """
     GIVEN schema and name
