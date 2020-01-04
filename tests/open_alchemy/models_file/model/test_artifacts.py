@@ -7,44 +7,44 @@ import pytest
 
 from open_alchemy import models_file
 
+_ColumnSchemaArtifacts = models_file.types.ColumnSchemaArtifacts
+_ColumnArtifacts = models_file.types.ColumnArtifacts
+_ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
+
 
 @pytest.mark.parametrize(
     "schema, required, expected_artifacts",
     [
-        (
-            {"type": "type 1"},
-            None,
-            models_file.types.ColumnSchemaArtifacts(type="type 1"),
-        ),
+        ({"type": "type 1"}, None, _ColumnSchemaArtifacts(type="type 1")),
         (
             {"type": "type 1", "format": "format 1"},
             None,
-            models_file.types.ColumnSchemaArtifacts(type="type 1", format="format 1"),
+            _ColumnSchemaArtifacts(type="type 1", format="format 1"),
         ),
         (
             {"type": "type 1", "nullable": True},
             None,
-            models_file.types.ColumnSchemaArtifacts(type="type 1", nullable=True),
+            _ColumnSchemaArtifacts(type="type 1", nullable=True),
         ),
         (
             {"type": "type 1", "x-generated": True},
             None,
-            models_file.types.ColumnSchemaArtifacts(type="type 1", generated=True),
+            _ColumnSchemaArtifacts(type="type 1", generated=True),
         ),
         (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
-            models_file.types.ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
+            _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
         ),
         (
             {"type": "array", "items": {"x-de-$ref": "RefModel"}},
             None,
-            models_file.types.ColumnSchemaArtifacts(type="array", de_ref="RefModel"),
+            _ColumnSchemaArtifacts(type="array", de_ref="RefModel"),
         ),
         (
             {"type": "type 1"},
             True,
-            models_file.types.ColumnSchemaArtifacts(type="type 1", required=True),
+            _ColumnSchemaArtifacts(type="type 1", required=True),
         ),
     ],
     ids=[
@@ -92,11 +92,7 @@ def test_calculate_name():
         ({"properties": {}}, []),
         (
             {"properties": {"column_1": {"type": "integer"}}},
-            [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                )
-            ],
+            [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
         ),
         (
             {
@@ -106,25 +102,17 @@ def test_calculate_name():
                 }
             },
             [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                ),
-                models_file.types.ColumnArtifacts(
-                    name="column_2", type="typing.Optional[str]"
-                ),
+                _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
+                _ColumnArtifacts(name="column_2", type="typing.Optional[str]"),
             ],
         ),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
-            [models_file.types.ColumnArtifacts(name="column_1", type="int")],
+            [_ColumnArtifacts(name="column_1", type="int")],
         ),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
-            [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                )
-            ],
+            [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
         ),
         ({"properties": {}, "x-backrefs": {}}, []),
         (
@@ -132,11 +120,7 @@ def test_calculate_name():
                 "properties": {},
                 "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}},
             },
-            [
-                models_file.types.ColumnArtifacts(
-                    name="model", type='typing.Optional["Model"]'
-                )
-            ],
+            [_ColumnArtifacts(name="model", type='typing.Optional["Model"]')],
         ),
         (
             {
@@ -147,12 +131,8 @@ def test_calculate_name():
                 },
             },
             [
-                models_file.types.ColumnArtifacts(
-                    name="model1", type='typing.Optional["Model1"]'
-                ),
-                models_file.types.ColumnArtifacts(
-                    name="model2", type='typing.Optional["Model2"]'
-                ),
+                _ColumnArtifacts(name="model1", type='typing.Optional["Model1"]'),
+                _ColumnArtifacts(name="model2", type='typing.Optional["Model2"]'),
             ],
         ),
     ],
@@ -207,14 +187,14 @@ def test_calculate_empty(schema, expected_empty):
         ({"properties": {"column_1": {"type": "integer"}}, "required": []}, []),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
-            [models_file.types.ColumnArtifacts(name="column_1", type="int")],
+            [_ColumnArtifacts(name="column_1", type="int")],
         ),
         (
             {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": ["column_1"],
             },
-            [models_file.types.ColumnArtifacts(name="column_1", type='"RefModelDict"')],
+            [_ColumnArtifacts(name="column_1", type='"RefModelDict"')],
         ),
         (
             {
@@ -225,8 +205,8 @@ def test_calculate_empty(schema, expected_empty):
                 "required": ["column_1", "column_2"],
             },
             [
-                models_file.types.ColumnArtifacts(name="column_1", type="int"),
-                models_file.types.ColumnArtifacts(name="column_2", type="str"),
+                _ColumnArtifacts(name="column_1", type="int"),
+                _ColumnArtifacts(name="column_2", type="str"),
             ],
         ),
     ],
@@ -257,19 +237,11 @@ def test_calculate_td_required_props(schema, expected_props):
         ({"properties": {}}, []),
         (
             {"properties": {"column_1": {"type": "integer"}}},
-            [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                )
-            ],
+            [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
         ),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
-            [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                )
-            ],
+            [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
         ),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
@@ -280,11 +252,7 @@ def test_calculate_td_required_props(schema, expected_props):
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": [],
             },
-            [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type='typing.Optional["RefModelDict"]'
-                )
-            ],
+            [_ColumnArtifacts(name="column_1", type='typing.Optional["RefModelDict"]')],
         ),
         (
             {
@@ -295,12 +263,8 @@ def test_calculate_td_required_props(schema, expected_props):
                 "required": [],
             },
             [
-                models_file.types.ColumnArtifacts(
-                    name="column_1", type="typing.Optional[int]"
-                ),
-                models_file.types.ColumnArtifacts(
-                    name="column_2", type="typing.Optional[str]"
-                ),
+                _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
+                _ColumnArtifacts(name="column_2", type="typing.Optional[str]"),
             ],
         ),
     ],
@@ -523,7 +487,11 @@ def test_calculate_td_parent(
         ({"properties": {"column_1": {"type": "integer"}}, "required": []}, []),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
-            [models_file.types.ColumnArgArtifacts(name="column_1", init_type="int")],
+            [
+                _ColumnArgArtifacts(
+                    name="column_1", init_type="int", from_dict_type="int"
+                )
+            ],
         ),
         (
             {
@@ -531,8 +499,10 @@ def test_calculate_td_parent(
                 "required": ["column_1"],
             },
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type='"RefModel"'
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type='"RefModel"',
+                    from_dict_type='"RefModelDict"',
                 )
             ],
         ),
@@ -545,8 +515,12 @@ def test_calculate_td_parent(
                 "required": ["column_1", "column_2"],
             },
             [
-                models_file.types.ColumnArgArtifacts(name="column_1", init_type="int"),
-                models_file.types.ColumnArgArtifacts(name="column_2", init_type="str"),
+                _ColumnArgArtifacts(
+                    name="column_1", init_type="int", from_dict_type="int"
+                ),
+                _ColumnArgArtifacts(
+                    name="column_2", init_type="str", from_dict_type="str"
+                ),
             ],
         ),
     ],
@@ -578,16 +552,20 @@ def test_calculate_required_args(schema, expected_args):
         (
             {"properties": {"column_1": {"type": "integer"}}},
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type="typing.Optional[int]"
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="typing.Optional[int]",
+                    from_dict_type="typing.Optional[int]",
                 )
             ],
         ),
         (
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type="typing.Optional[int]"
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="typing.Optional[int]",
+                    from_dict_type="typing.Optional[int]",
                 )
             ],
         ),
@@ -597,8 +575,10 @@ def test_calculate_required_args(schema, expected_args):
                 "required": [],
             },
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type="typing.Optional[int]"
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="typing.Optional[int]",
+                    from_dict_type="typing.Optional[int]",
                 )
             ],
         ),
@@ -612,8 +592,10 @@ def test_calculate_required_args(schema, expected_args):
                 "required": [],
             },
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type='typing.Optional["RefModel"]'
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type='typing.Optional["RefModel"]',
+                    from_dict_type='typing.Optional["RefModelDict"]',
                 )
             ],
         ),
@@ -626,11 +608,15 @@ def test_calculate_required_args(schema, expected_args):
                 "required": [],
             },
             [
-                models_file.types.ColumnArgArtifacts(
-                    name="column_1", init_type="typing.Optional[int]"
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="typing.Optional[int]",
+                    from_dict_type="typing.Optional[int]",
                 ),
-                models_file.types.ColumnArgArtifacts(
-                    name="column_2", init_type="typing.Optional[str]"
+                _ColumnArgArtifacts(
+                    name="column_2",
+                    init_type="typing.Optional[str]",
+                    from_dict_type="typing.Optional[str]",
                 ),
             ],
         ),
