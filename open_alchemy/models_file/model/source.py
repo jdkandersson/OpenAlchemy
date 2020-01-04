@@ -114,9 +114,9 @@ def arg_input(*, artifacts: types.ArgArtifacts) -> str:
         The argument signature for the __init__ and from_dict functions.
 
     """
-    required_sources = map(_arg_input_single_arg_required, artifacts.required.args)
+    required_sources = map(_arg_input_single_arg_required, artifacts.required)
     not_required_sources = map(
-        _arg_input_single_arg_not_required, artifacts.not_required.args
+        _arg_input_single_arg_not_required, artifacts.not_required
     )
     return f'{"".join(required_sources)}{"".join(not_required_sources)}'
 
@@ -162,10 +162,10 @@ def arg_kwargs(*, artifacts: types.ArgArtifacts) -> str:
         The source code for generating the kwargs.
 
     """
-    required_sources = map(_arg_kwargs_single_arg_required, artifacts.required.args)
+    required_sources = map(_arg_kwargs_single_arg_required, artifacts.required)
     required_source = ", ".join(required_sources)
     not_required_sources = map(
-        _arg_kwargs_single_arg_not_required, artifacts.not_required.args
+        _arg_kwargs_single_arg_not_required, artifacts.not_required
     )
     not_required_source = "".join(not_required_sources)
     return f"""kwargs = {{{required_source}}}{not_required_source}"""

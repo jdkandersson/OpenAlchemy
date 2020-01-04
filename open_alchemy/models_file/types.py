@@ -33,6 +33,16 @@ class ColumnArtifacts:
 
 
 @dataclasses.dataclass
+class ArgArtifacts:
+    """Artifacts for the __init__ and from_dict args for a model."""
+
+    # The artifacts for the arguments that are required
+    required: typing.List[ColumnArtifacts]
+    # The artifacts for the arguments that are not required
+    not_required: typing.List[ColumnArtifacts]
+
+
+@dataclasses.dataclass
 class SQLAlchemyModelArtifacts:
     """Artifacts for the SQLAlchemy model."""
 
@@ -42,6 +52,8 @@ class SQLAlchemyModelArtifacts:
     empty: bool
     # The columns for the model
     columns: typing.List[ColumnArtifacts]
+    # The artifacts for the arguments for __init__ and from_dict
+    arg: typing.Optional[ArgArtifacts] = None
 
 
 @dataclasses.dataclass
@@ -69,26 +81,6 @@ class TypedDictArtifacts:
 
 
 @dataclasses.dataclass
-class ArgSectionArtifacts:
-    """Artifacts for a section of the __init__ and from_dict args for a model."""
-
-    # The arguments for the section
-    args: typing.List[ColumnArtifacts]
-    # Whether the args are empty
-    empty: bool
-
-
-@dataclasses.dataclass
-class ArgArtifacts:
-    """Artifacts for the __init__ and from_dict args for a model."""
-
-    # The artifacts for the arguments that are required
-    required: ArgSectionArtifacts
-    # The artifacts for the arguments that are not required
-    not_required: ArgSectionArtifacts
-
-
-@dataclasses.dataclass
 class ModelArtifacts:
     """Artifacts for a model template."""
 
@@ -96,5 +88,3 @@ class ModelArtifacts:
     sqlalchemy: SQLAlchemyModelArtifacts
     # The artifacts for the TypedDicts
     typed_dict: TypedDictArtifacts
-    # The artifacts for the arguments for __init__ and from_dict
-    arg: typing.Optional[ArgArtifacts] = None

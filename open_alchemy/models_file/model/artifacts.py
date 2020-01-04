@@ -128,13 +128,14 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         td_required_parent_class = td_not_required_parent_class
         td_not_required_parent_class = None
 
-    # Calculate whether the arguments are empty
-    required_args_empty = not required_args
-    not_required_args_empty = not not_required_args
-
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(
-            name=name, columns=columns, empty=not columns
+            name=name,
+            columns=columns,
+            empty=not columns,
+            arg=types.ArgArtifacts(
+                required=required_args, not_required=not_required_args
+            ),
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(
@@ -148,14 +149,6 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 empty=td_not_required_empty,
                 name=td_not_required_name,
                 parent_class=td_not_required_parent_class,
-            ),
-        ),
-        arg=types.ArgArtifacts(
-            required=types.ArgSectionArtifacts(
-                args=required_args, empty=required_args_empty
-            ),
-            not_required=types.ArgSectionArtifacts(
-                args=not_required_args, empty=not_required_args_empty
             ),
         ),
     )

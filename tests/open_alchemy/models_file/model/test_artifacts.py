@@ -353,7 +353,6 @@ def test_calculate_required_empty(schema, expected_required_empty):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.typed_dict.required.empty == expected_required_empty
-    assert artifacts.arg.required.empty == expected_required_empty
 
 
 @pytest.mark.parametrize(
@@ -384,7 +383,6 @@ def test_calculate_not_required_empty(schema, expected_not_required_empty):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.typed_dict.not_required.empty == expected_not_required_empty
-    assert artifacts.arg.not_required.empty == expected_not_required_empty
 
 
 # Table for the name of the required and not required TypedDicts
@@ -566,7 +564,7 @@ def test_calculate_required_args(schema, expected_args):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.arg.required.args == expected_args
+    assert artifacts.sqlalchemy.arg.required == expected_args
 
 
 @pytest.mark.parametrize(
@@ -652,4 +650,4 @@ def test_calculate_not_required_args(schema, expected_args):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
-    assert artifacts.arg.not_required.args == expected_args
+    assert artifacts.sqlalchemy.arg.not_required == expected_args
