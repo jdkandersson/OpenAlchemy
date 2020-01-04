@@ -84,7 +84,7 @@ def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
     return template.render(artifacts=artifacts)
 
 
-def _arg_input_single_arg_required(
+def _arg_input_single_required(
     *, artifacts: types.ColumnArgArtifacts, name: str
 ) -> str:
     """
@@ -101,7 +101,7 @@ def _arg_input_single_arg_required(
     return f", {artifacts.name}: {getattr(artifacts, name)}"
 
 
-def _arg_input_single_arg_not_required(
+def _arg_input_single_not_required(
     *, artifacts: types.ColumnArgArtifacts, name: str
 ) -> str:
     """
@@ -115,7 +115,7 @@ def _arg_input_single_arg_not_required(
         The source for the argument for the column.
 
     """
-    required_source = _arg_input_single_arg_required(artifacts=artifacts, name=name)
+    required_source = _arg_input_single_required(artifacts=artifacts, name=name)
     return f"{required_source} = None"
 
 
@@ -132,13 +132,11 @@ def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
 
     """
     required_sources = map(
-        lambda artifacts: _arg_input_single_arg_required(
-            artifacts=artifacts, name=name
-        ),
+        lambda artifacts: _arg_input_single_required(artifacts=artifacts, name=name),
         artifacts.required,
     )
     not_required_sources = map(
-        lambda artifacts: _arg_input_single_arg_not_required(
+        lambda artifacts: _arg_input_single_not_required(
             artifacts=artifacts, name=name
         ),
         artifacts.not_required,
@@ -174,7 +172,7 @@ def arg_input_from_dict(*, artifacts: types.ArgArtifacts) -> str:
     return _arg_input(artifacts=artifacts, name="from_dict_type")
 
 
-def _arg_kwargs_single_arg_required(artifacts: types.ColumnArgArtifacts) -> str:
+def _arg_kwargs_single_required(artifacts: types.ColumnArgArtifacts) -> str:
     """
     Transform the name of a single required argument to the kwargs source.
 
@@ -188,7 +186,7 @@ def _arg_kwargs_single_arg_required(artifacts: types.ColumnArgArtifacts) -> str:
     return f'"{artifacts.name}": {artifacts.name}'
 
 
-def _arg_kwargs_single_arg_not_required(artifacts: types.ColumnArgArtifacts) -> str:
+def _arg_kwargs_single_not_required(artifacts: types.ColumnArgArtifacts) -> str:
     """
     Transform the name of a single not required argument to the kwargs source.
 
@@ -215,11 +213,9 @@ def arg_kwargs(*, artifacts: types.ArgArtifacts) -> str:
         The source code for generating the kwargs.
 
     """
-    required_sources = map(_arg_kwargs_single_arg_required, artifacts.required)
+    required_sources = map(_arg_kwargs_single_required, artifacts.required)
     required_source = ", ".join(required_sources)
-    not_required_sources = map(
-        _arg_kwargs_single_arg_not_required, artifacts.not_required
-    )
+    not_required_sources = map(_arg_kwargs_single_not_required, artifacts.not_required)
     not_required_source = "".join(not_required_sources)
     return f"""kwargs = {{{required_source}}}{not_required_source}"""
 
