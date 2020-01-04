@@ -256,6 +256,121 @@ def test_typed_dict_not_required(artifacts, expected_source):
     "artifacts, expected_source",
     [
         (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            "",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            ", column_1: type_1",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+            ),
+            ", column_1: type_1 = None",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            ", column_1: type_1, column_2: type_2",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        )
+                    ],
+                    empty=False,
+                ),
+            ),
+            ", column_1: type_1, column_2: type_2 = None",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                    empty=False,
+                ),
+            ),
+            ", column_1: type_1 = None, column_2: type_2 = None",
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required",
+        "single not required",
+        "multiple required",
+        "multiple required and not required",
+        "multiple not required",
+    ],
+)
+@pytest.mark.models_file
+def test_arg_input(artifacts, expected_source):
+    """
+    GIVEN artifacts
+    WHEN arg_input is called with the artifacts
+    THEN the expected source is returned.
+    """
+    source = models_file._model._source.arg_input(artifacts=artifacts)
+
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_source",
+    [
+        (
             models_file.types.ModelArtifacts(
                 sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
                     name="Model", columns=[], empty=True
