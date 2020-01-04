@@ -76,7 +76,7 @@ def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
 
 def _arg_input_single_arg_required(artifacts: types.ColumnArtifacts) -> str:
     """
-    Transform the name and type of a single required argument to the source.
+    Transform the name and type of a single required argument to the input source.
 
     Args:
         artifacts: The artifacts for generating the argument for a column.
@@ -90,7 +90,7 @@ def _arg_input_single_arg_required(artifacts: types.ColumnArtifacts) -> str:
 
 def _arg_input_single_arg_not_required(artifacts: types.ColumnArtifacts) -> str:
     """
-    Transform the name and type of a single not required argument to the source.
+    Transform the name and type of a single not required argument to the input source.
 
     Args:
         artifacts: The artifacts for generating the argument for a column.
@@ -119,6 +119,56 @@ def arg_input(*, artifacts: types.ArgArtifacts) -> str:
         _arg_input_single_arg_not_required, artifacts.not_required.args
     )
     return f'{"".join(required_sources)}{"".join(not_required_sources)}'
+
+
+def _arg_kwargs_single_arg_required(artifacts: types.ColumnArtifacts) -> str:
+    """
+    Transform the name of a single required argument to the kwargs source.
+
+    Args:
+        artifacts: The artifacts for generating the kwarg for a column.
+
+    Returns:
+        The source for the kwargs for the column.
+
+    """
+    return f'"{artifacts.name}": {artifacts.name}'
+
+
+def _arg_kwargs_single_arg_not_required(artifacts: types.ColumnArtifacts) -> str:
+    """
+    Transform the name of a single not required argument to the kwargs source.
+
+    Args:
+        artifacts: The artifacts for generating the kwarg for a column.
+
+    Returns:
+        The source for the kwargs for the column.
+
+    """
+    return f"""
+        if {artifacts.name} is not None:
+            kwargs["{artifacts.name}"] = {artifacts.name}"""
+
+
+def arg_kwargs(*, artifacts: types.ArgArtifacts) -> str:
+    """
+    Generate the kwargs generation code for __init__ and from_dict for a model.
+
+    Args:
+        artifacts: The artifacts for the argument.
+
+    Returns:
+        The source code for generating the kwargs.
+
+    """
+    required_sources = map(_arg_kwargs_single_arg_required, artifacts.required.args)
+    required_source = ", ".join(required_sources)
+    not_required_sources = map(
+        _arg_kwargs_single_arg_not_required, artifacts.not_required.args
+    )
+    not_required_source = "".join(not_required_sources)
+    return f"""kwargs = {{{required_source}}}{not_required_source}"""
 
 
 def generate(*, artifacts: types.ModelArtifacts) -> str:

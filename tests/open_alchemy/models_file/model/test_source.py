@@ -371,6 +371,129 @@ def test_arg_input(artifacts, expected_source):
     "artifacts, expected_source",
     [
         (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            "kwargs = {}",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            'kwargs = {"column_1": column_1}',
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+            ),
+            """kwargs = {}
+        if column_1 is not None:
+            kwargs["column_1"] = column_1""",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+            ),
+            'kwargs = {"column_1": column_1, "column_2": column_2}',
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        )
+                    ],
+                    empty=False,
+                ),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        )
+                    ],
+                    empty=False,
+                ),
+            ),
+            """kwargs = {"column_1": column_1}
+        if column_2 is not None:
+            kwargs["column_2"] = column_2""",
+        ),
+        (
+            models_file.types.ArgArtifacts(
+                required=models_file.types.ArgSectionArtifacts(args=[], empty=True),
+                not_required=models_file.types.ArgSectionArtifacts(
+                    args=[
+                        models_file.types.ColumnArtifacts(
+                            name="column_1", type="type_1"
+                        ),
+                        models_file.types.ColumnArtifacts(
+                            name="column_2", type="type_2"
+                        ),
+                    ],
+                    empty=False,
+                ),
+            ),
+            """kwargs = {}
+        if column_1 is not None:
+            kwargs["column_1"] = column_1
+        if column_2 is not None:
+            kwargs["column_2"] = column_2""",
+        ),
+    ],
+    ids=[
+        "empty",
+        "single required",
+        "single not required",
+        "multiple required",
+        "multiple required and not required",
+        "multiple not required",
+    ],
+)
+@pytest.mark.models_file
+def test_arg_kwargs(artifacts, expected_source):
+    """
+    GIVEN artifacts
+    WHEN arg_kwargs is called with the artifacts
+    THEN the expected source is returned.
+    """
+    source = models_file._model._source.arg_kwargs(artifacts=artifacts)
+
+    assert source == expected_source
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_source",
+    [
+        (
             models_file.types.ModelArtifacts(
                 sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
                     name="Model", columns=[], empty=True
