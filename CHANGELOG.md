@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 0.12.0 - 2020-01-04
 
 - Fix bug where format and maxLength was not considered for the foreign key constructed for an object reference.
 - Refactor object reference handling to be easier to understand.
