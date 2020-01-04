@@ -5,13 +5,23 @@ import pytest
 
 from open_alchemy import models_file
 
+_SQLAlchemyModelArtifacts = models_file.types.SQLAlchemyModelArtifacts
+_ArgArtifacts = models_file.types.ArgArtifacts
+_ColumnArtifacts = models_file.types.ColumnArtifacts
+_TypedDictArtifacts = models_file.types.TypedDictArtifacts
+_TypedDictClassArtifacts = models_file.types.TypedDictClassArtifacts
+_ModelArtifacts = models_file.types.ModelArtifacts
+
 
 @pytest.mark.parametrize(
     "artifacts, expected_source",
     [
         (
-            models_file.types.SQLAlchemyModelArtifacts(
-                name="Model", columns=[], empty=True
+            _SQLAlchemyModelArtifacts(
+                name="Model",
+                columns=[],
+                empty=True,
+                arg=_ArgArtifacts(required=[], not_required=[]),
             ),
             '''
 
@@ -23,9 +33,17 @@ class Model(models.Model):
     __tablename__: str
     query: orm.Query
 
+    def __init__(self) -> None:
+        """Construct."""
+        kwargs = {}
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+    def from_dict(cls) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {}
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
@@ -33,12 +51,14 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
         (
-            models_file.types.SQLAlchemyModelArtifacts(
+            _SQLAlchemyModelArtifacts(
                 name="Model",
-                columns=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
+                columns=[_ColumnArtifacts(name="column_1", type="type_1")],
                 empty=False,
+                arg=_ArgArtifacts(
+                    required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                    not_required=[],
+                ),
             ),
             '''
 
@@ -53,9 +73,17 @@ class Model(models.Model):
     # Model properties
     column_1: type_1
 
+    def __init__(self, column_1: type_1) -> None:
+        """Construct."""
+        kwargs = {"column_1": column_1}
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+    def from_dict(cls, column_1: type_1) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {"column_1": column_1}
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
@@ -63,13 +91,20 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
         (
-            models_file.types.SQLAlchemyModelArtifacts(
+            _SQLAlchemyModelArtifacts(
                 name="Model",
                 columns=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArtifacts(name="column_1", type="type_1"),
+                    _ColumnArtifacts(name="column_2", type="type_2"),
                 ],
                 empty=False,
+                arg=_ArgArtifacts(
+                    required=[
+                        _ColumnArtifacts(name="column_1", type="type_1"),
+                        _ColumnArtifacts(name="column_2", type="type_2"),
+                    ],
+                    not_required=[],
+                ),
             ),
             '''
 
@@ -85,9 +120,17 @@ class Model(models.Model):
     column_1: type_1
     column_2: type_2
 
+    def __init__(self, column_1: type_1, column_2: type_2) -> None:
+        """Construct."""
+        kwargs = {"column_1": column_1, "column_2": column_2}
+
+        super().__init__(**kwargs)
+
     @classmethod
-    def from_dict(cls, **kwargs: typing.Any) -> "Model":
+    def from_dict(cls, column_1: type_1, column_2: type_2) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
+        kwargs = {"column_1": column_1, "column_2": column_2}
+
         return super().from_dict(**kwargs)
 
     def to_dict(self) -> ModelDict:
@@ -107,6 +150,9 @@ def test_sqlalchemy(artifacts, expected_source):
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
 
+    print(repr(source))
+    print(repr(expected_source))
+
     assert source == expected_source
 
 
@@ -114,13 +160,9 @@ def test_sqlalchemy(artifacts, expected_source):
     "artifacts, expected_source",
     [
         (
-            models_file.types.TypedDictArtifacts(
-                required=models_file.types.TypedDictClassArtifacts(
-                    props=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="type_1"
-                        )
-                    ],
+            _TypedDictArtifacts(
+                required=_TypedDictClassArtifacts(
+                    props=[_ColumnArtifacts(name="column_1", type="type_1")],
                     empty=False,
                     name="ModelRequiredDict",
                     parent_class="RequiredParentClass",
@@ -135,15 +177,11 @@ class ModelRequiredDict(RequiredParentClass, total=True):
     column_1: type_1''',
         ),
         (
-            models_file.types.TypedDictArtifacts(
-                required=models_file.types.TypedDictClassArtifacts(
+            _TypedDictArtifacts(
+                required=_TypedDictClassArtifacts(
                     props=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="type_1"
-                        ),
-                        models_file.types.ColumnArtifacts(
-                            name="column_2", type="type_2"
-                        ),
+                        _ColumnArtifacts(name="column_1", type="type_1"),
+                        _ColumnArtifacts(name="column_2", type="type_2"),
                     ],
                     empty=False,
                     name="ModelRequiredDict",
@@ -178,9 +216,9 @@ def test_typed_dict_required(artifacts, expected_source):
     "artifacts, expected_source",
     [
         (
-            models_file.types.TypedDictArtifacts(
+            _TypedDictArtifacts(
                 required=None,  # type: ignore
-                not_required=models_file.types.TypedDictClassArtifacts(
+                not_required=_TypedDictClassArtifacts(
                     props=[],
                     empty=True,
                     name="ModelNotRequiredDict",
@@ -193,14 +231,10 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
     """TypedDict for properties that are not required."""''',
         ),
         (
-            models_file.types.TypedDictArtifacts(
+            _TypedDictArtifacts(
                 required=None,  # type: ignore
-                not_required=models_file.types.TypedDictClassArtifacts(
-                    props=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="type_1"
-                        )
-                    ],
+                not_required=_TypedDictClassArtifacts(
+                    props=[_ColumnArtifacts(name="column_1", type="type_1")],
                     empty=False,
                     name="ModelNotRequiredDict",
                     parent_class="NotRequiredParentClass",
@@ -214,16 +248,12 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
     column_1: type_1''',
         ),
         (
-            models_file.types.TypedDictArtifacts(
+            _TypedDictArtifacts(
                 required=None,  # type: ignore
-                not_required=models_file.types.TypedDictClassArtifacts(
+                not_required=_TypedDictClassArtifacts(
                     props=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="type_1"
-                        ),
-                        models_file.types.ColumnArtifacts(
-                            name="column_2", type="type_2"
-                        ),
+                        _ColumnArtifacts(name="column_1", type="type_1"),
+                        _ColumnArtifacts(name="column_2", type="type_2"),
                     ],
                     empty=False,
                     name="ModelNotRequiredDict",
@@ -256,52 +286,44 @@ def test_typed_dict_not_required(artifacts, expected_source):
 @pytest.mark.parametrize(
     "artifacts, expected_source",
     [
-        (models_file.types.ArgArtifacts(required=[], not_required=[]), ""),
+        (_ArgArtifacts(required=[], not_required=[]), ""),
         (
-            models_file.types.ArgArtifacts(
-                required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
+            _ArgArtifacts(
+                required=[_ColumnArtifacts(name="column_1", type="type_1")],
                 not_required=[],
             ),
             ", column_1: type_1",
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[],
-                not_required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
+                not_required=[_ColumnArtifacts(name="column_1", type="type_1")],
             ),
             ", column_1: type_1 = None",
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArtifacts(name="column_1", type="type_1"),
+                    _ColumnArtifacts(name="column_2", type="type_2"),
                 ],
                 not_required=[],
             ),
             ", column_1: type_1, column_2: type_2",
         ),
         (
-            models_file.types.ArgArtifacts(
-                required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
-                not_required=[
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2")
-                ],
+            _ArgArtifacts(
+                required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                not_required=[_ColumnArtifacts(name="column_2", type="type_2")],
             ),
             ", column_1: type_1, column_2: type_2 = None",
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[],
                 not_required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArtifacts(name="column_1", type="type_1"),
+                    _ColumnArtifacts(name="column_2", type="type_2"),
                 ],
             ),
             ", column_1: type_1 = None, column_2: type_2 = None",
@@ -331,56 +353,48 @@ def test_arg_input(artifacts, expected_source):
 @pytest.mark.parametrize(
     "artifacts, expected_source",
     [
-        (models_file.types.ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
+        (_ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
         (
-            models_file.types.ArgArtifacts(
-                required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
+            _ArgArtifacts(
+                required=[_ColumnArtifacts(name="column_1", type="type_1")],
                 not_required=[],
             ),
             'kwargs = {"column_1": column_1}',
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[],
-                not_required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
+                not_required=[_ColumnArtifacts(name="column_1", type="type_1")],
             ),
             """kwargs = {}
         if column_1 is not None:
             kwargs["column_1"] = column_1""",
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArtifacts(name="column_1", type="type_1"),
+                    _ColumnArtifacts(name="column_2", type="type_2"),
                 ],
                 not_required=[],
             ),
             'kwargs = {"column_1": column_1, "column_2": column_2}',
         ),
         (
-            models_file.types.ArgArtifacts(
-                required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1")
-                ],
-                not_required=[
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2")
-                ],
+            _ArgArtifacts(
+                required=[_ColumnArtifacts(name="column_1", type="type_1")],
+                not_required=[_ColumnArtifacts(name="column_2", type="type_2")],
             ),
             """kwargs = {"column_1": column_1}
         if column_2 is not None:
             kwargs["column_2"] = column_2""",
         ),
         (
-            models_file.types.ArgArtifacts(
+            _ArgArtifacts(
                 required=[],
                 not_required=[
-                    models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                    models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                    _ColumnArtifacts(name="column_1", type="type_1"),
+                    _ColumnArtifacts(name="column_2", type="type_2"),
                 ],
             ),
             """kwargs = {}
@@ -415,18 +429,18 @@ def test_arg_kwargs(artifacts, expected_source):
     "artifacts, expected_source",
     [
         (
-            models_file.types.ModelArtifacts(
-                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+            _ModelArtifacts(
+                sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
                     columns=[],
                     empty=True,
-                    arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+                    arg=_ArgArtifacts(required=[], not_required=[]),
                 ),
-                typed_dict=models_file.types.TypedDictArtifacts(
-                    required=models_file.types.TypedDictClassArtifacts(
+                typed_dict=_TypedDictArtifacts(
+                    required=_TypedDictClassArtifacts(
                         props=[], empty=True, name=None, parent_class=None
                     ),
-                    not_required=models_file.types.TypedDictClassArtifacts(
+                    not_required=_TypedDictClassArtifacts(
                         props=[],
                         empty=True,
                         name="ModelDict",
@@ -452,7 +466,7 @@ class Model(models.Model):
         """Construct."""
         kwargs = {}
 
-        return super().__init__(**kwargs)
+        super().__init__(**kwargs)
 
     @classmethod
     def from_dict(cls) -> "Model":
@@ -466,34 +480,24 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
         (
-            models_file.types.ModelArtifacts(
-                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+            _ModelArtifacts(
+                sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
-                    columns=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="model_type_1"
-                        )
-                    ],
+                    columns=[_ColumnArtifacts(name="column_1", type="model_type_1")],
                     empty=False,
-                    arg=models_file.types.ArgArtifacts(
+                    arg=_ArgArtifacts(
                         required=[],
                         not_required=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="arg_type_1"
-                            )
+                            _ColumnArtifacts(name="column_1", type="arg_type_1")
                         ],
                     ),
                 ),
-                typed_dict=models_file.types.TypedDictArtifacts(
-                    required=models_file.types.TypedDictClassArtifacts(
+                typed_dict=_TypedDictArtifacts(
+                    required=_TypedDictClassArtifacts(
                         props=[], empty=True, name=None, parent_class=None
                     ),
-                    not_required=models_file.types.TypedDictClassArtifacts(
-                        props=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="td_type_1"
-                            )
-                        ],
+                    not_required=_TypedDictClassArtifacts(
+                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
                         empty=False,
                         name="ModelDict",
                         parent_class="typing.TypedDict",
@@ -541,36 +545,24 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
         (
-            models_file.types.ModelArtifacts(
-                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+            _ModelArtifacts(
+                sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
-                    columns=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="model_type_1"
-                        )
-                    ],
+                    columns=[_ColumnArtifacts(name="column_1", type="model_type_1")],
                     empty=False,
-                    arg=models_file.types.ArgArtifacts(
-                        required=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="arg_type_1"
-                            )
-                        ],
+                    arg=_ArgArtifacts(
+                        required=[_ColumnArtifacts(name="column_1", type="arg_type_1")],
                         not_required=[],
                     ),
                 ),
-                typed_dict=models_file.types.TypedDictArtifacts(
-                    required=models_file.types.TypedDictClassArtifacts(
-                        props=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="td_type_1"
-                            )
-                        ],
+                typed_dict=_TypedDictArtifacts(
+                    required=_TypedDictClassArtifacts(
+                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
                         empty=False,
                         name="ModelDict",
                         parent_class="typing.TypedDict",
                     ),
-                    not_required=models_file.types.TypedDictClassArtifacts(
+                    not_required=_TypedDictClassArtifacts(
                         props=[], empty=True, name=None, parent_class=None
                     ),
                 ),
@@ -612,48 +604,30 @@ class Model(models.Model):
         return super().to_dict()''',
         ),
         (
-            models_file.types.ModelArtifacts(
-                sqlalchemy=models_file.types.SQLAlchemyModelArtifacts(
+            _ModelArtifacts(
+                sqlalchemy=_SQLAlchemyModelArtifacts(
                     name="Model",
                     columns=[
-                        models_file.types.ColumnArtifacts(
-                            name="column_1", type="model_type_1"
-                        ),
-                        models_file.types.ColumnArtifacts(
-                            name="column_2", type="model_type_2"
-                        ),
+                        _ColumnArtifacts(name="column_1", type="model_type_1"),
+                        _ColumnArtifacts(name="column_2", type="model_type_2"),
                     ],
                     empty=False,
-                    arg=models_file.types.ArgArtifacts(
-                        required=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="arg_type_1"
-                            )
-                        ],
+                    arg=_ArgArtifacts(
+                        required=[_ColumnArtifacts(name="column_1", type="arg_type_1")],
                         not_required=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_2", type="arg_type_2"
-                            )
+                            _ColumnArtifacts(name="column_2", type="arg_type_2")
                         ],
                     ),
                 ),
-                typed_dict=models_file.types.TypedDictArtifacts(
-                    required=models_file.types.TypedDictClassArtifacts(
-                        props=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_1", type="td_type_1"
-                            )
-                        ],
+                typed_dict=_TypedDictArtifacts(
+                    required=_TypedDictClassArtifacts(
+                        props=[_ColumnArtifacts(name="column_1", type="td_type_1")],
                         empty=False,
                         name="_ModelDictBase",
                         parent_class="typing.TypedDict",
                     ),
-                    not_required=models_file.types.TypedDictClassArtifacts(
-                        props=[
-                            models_file.types.ColumnArtifacts(
-                                name="column_2", type="td_type_2"
-                            )
-                        ],
+                    not_required=_TypedDictClassArtifacts(
+                        props=[_ColumnArtifacts(name="column_2", type="td_type_2")],
                         empty=False,
                         name="ModelDict",
                         parent_class="_ModelDictBase",
@@ -692,7 +666,7 @@ class Model(models.Model):
         if column_2 is not None:
             kwargs["column_2"] = column_2
 
-        return super().__init__(**kwargs)
+        super().__init__(**kwargs)
 
     @classmethod
     def from_dict(cls, column_1: arg_type_1, column_2: arg_type_2 = None) -> "Model":

@@ -53,7 +53,7 @@ class SQLAlchemyModelArtifacts:
     # The columns for the model
     columns: typing.List[ColumnArtifacts]
     # The artifacts for the arguments for __init__ and from_dict
-    arg: typing.Optional[ArgArtifacts] = None
+    arg: ArgArtifacts
 
 
 @dataclasses.dataclass

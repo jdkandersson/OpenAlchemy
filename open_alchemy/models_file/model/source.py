@@ -41,7 +41,15 @@ def sqlalchemy(*, artifacts: types.SQLAlchemyModelArtifacts) -> str:
 
     """
     template = jinja2.Template(_SQLALCHEMY_TEMPLATE)
-    return template.render(artifacts=artifacts)
+
+    arg_input_source = arg_input(artifacts=artifacts.arg)
+    arg_kwargs_source = arg_kwargs(artifacts=artifacts.arg)
+
+    return template.render(
+        artifacts=artifacts,
+        arg_input_source=arg_input_source,
+        arg_kwargs_source=arg_kwargs_source,
+    )
 
 
 def typed_dict_required(*, artifacts: types.TypedDictArtifacts) -> str:
