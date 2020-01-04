@@ -42,12 +42,14 @@ def sqlalchemy(*, artifacts: types.SQLAlchemyModelArtifacts) -> str:
     """
     template = jinja2.Template(_SQLALCHEMY_TEMPLATE)
 
-    arg_input_source = arg_input_init(artifacts=artifacts.arg)
+    arg_input_init_source = arg_input_init(artifacts=artifacts.arg)
+    arg_input_from_dict_source = arg_input_from_dict(artifacts=artifacts.arg)
     arg_kwargs_source = arg_kwargs(artifacts=artifacts.arg)
 
     return template.render(
         artifacts=artifacts,
-        arg_input_source=arg_input_source,
+        arg_input_init_source=arg_input_init_source,
+        arg_input_from_dict_source=arg_input_from_dict_source,
         arg_kwargs_source=arg_kwargs_source,
     )
 

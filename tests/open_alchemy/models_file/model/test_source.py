@@ -87,7 +87,7 @@ class Model(models.Model):  # type: ignore
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: init_type_1) -> "Model":
+    def from_dict(cls, column_1: fd_type_1) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"column_1": column_1}
 
@@ -142,7 +142,7 @@ class Model(models.Model):  # type: ignore
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, column_1: init_type_1, column_2: init_type_2) -> "Model":
+    def from_dict(cls, column_1: fd_type_1, column_2: fd_type_2) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"column_1": column_1, "column_2": column_2}
 
@@ -737,7 +737,7 @@ class Model(models.Model):  # type: ignore
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, col_1: arg_i_type_1 = None) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1 = None) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {}
         if col_1 is not None:
@@ -804,7 +804,7 @@ class Model(models.Model):  # type: ignore
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, col_1: arg_i_type_1) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"col_1": col_1}
 
@@ -890,7 +890,7 @@ class Model(models.Model):  # type: ignore
         super().__init__(**kwargs)
 
     @classmethod
-    def from_dict(cls, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1, col_2: arg_fd_type_2 = None) -> "Model":
         """Construct from a dictionary (eg. a POST payload)."""
         kwargs = {"col_1": col_1}
         if col_2 is not None:
