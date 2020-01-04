@@ -23,7 +23,7 @@ class EmployeeDict(_EmployeeDictBase, total=False):
     salary: typing.Optional[float]
 
 
-class Employee(models.Employee):
+class Employee(models.Employee):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties

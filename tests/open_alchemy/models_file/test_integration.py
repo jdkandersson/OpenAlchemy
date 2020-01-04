@@ -39,7 +39,7 @@ class ModelDict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[int]
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -94,7 +94,7 @@ class Model1Dict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[int]
 
 
-class Model1(models.Model1):
+class Model1(models.Model1):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -133,7 +133,7 @@ class Model2Dict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[str]
 
 
-class Model2(models.Model2):
+class Model2(models.Model2):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -185,7 +185,7 @@ class ModelDict({_EXPECTED_BASE}, total=False):
     extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: typing.Optional[int]
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -285,7 +285,7 @@ class ModelDict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[int]
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties

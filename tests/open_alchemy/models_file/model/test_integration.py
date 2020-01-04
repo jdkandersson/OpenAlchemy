@@ -31,7 +31,7 @@ class ModelDict({_EXPECTED_BASE}, total=False):
     id: typing.Optional[int]
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties

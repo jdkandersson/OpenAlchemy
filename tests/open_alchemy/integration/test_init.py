@@ -440,7 +440,7 @@ class TableDict({expected_base}, total=False):
     column: typing.Optional[int]
 
 
-class Table(models.Table):
+class Table(models.Table):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties

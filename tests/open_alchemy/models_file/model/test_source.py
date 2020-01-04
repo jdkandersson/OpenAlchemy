@@ -25,7 +25,7 @@ _ModelArtifacts = models_file.types.ModelArtifacts
             ),
             '''
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -62,7 +62,7 @@ class Model(models.Model):
             ),
             '''
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -108,7 +108,7 @@ class Model(models.Model):
             ),
             '''
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -453,7 +453,7 @@ class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -511,7 +511,7 @@ class ModelDict(typing.TypedDict, total=False):
     column_1: td_type_1
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -574,7 +574,7 @@ class ModelDict(typing.TypedDict, total=True):
     column_1: td_type_1
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties
@@ -647,7 +647,7 @@ class ModelDict(_ModelDictBase, total=False):
     column_2: td_type_2
 
 
-class Model(models.Model):
+class Model(models.Model):  # type: ignore
     """SQLAlchemy model."""
 
     # SQLAlchemy properties

@@ -44,3 +44,15 @@ def cleanup(db_session):
 
     db_session.query(models.Employee).delete()
     db_session.commit()
+
+
+@pytest.fixture(
+    params=[
+        {"id": 1, "name": "name 1", "division": "division 1"},
+        {"id": 1, "name": "name 1", "division": "division 1", "salary": 1.0},
+    ],
+    ids=["not required not given", "not required given"],
+)
+def employee_kwargs(request):
+    """Generate kwargs for constructing employees"""
+    return request.param
