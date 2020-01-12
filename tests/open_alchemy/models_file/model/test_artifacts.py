@@ -139,7 +139,7 @@ def test_calculate_parent():
                 "properties": {},
                 "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}},
             },
-            [_ColumnArtifacts(name="model", type='typing.Optional["Model"]')],
+            [_ColumnArtifacts(name="model", type='typing.Optional["TModel"]')],
         ),
         (
             {
@@ -150,8 +150,8 @@ def test_calculate_parent():
                 },
             },
             [
-                _ColumnArtifacts(name="model1", type='typing.Optional["Model1"]'),
-                _ColumnArtifacts(name="model2", type='typing.Optional["Model2"]'),
+                _ColumnArtifacts(name="model1", type='typing.Optional["TModel1"]'),
+                _ColumnArtifacts(name="model2", type='typing.Optional["TModel2"]'),
             ],
         ),
     ],
@@ -520,7 +520,7 @@ def test_calculate_td_parent(
             [
                 _ColumnArgArtifacts(
                     name="column_1",
-                    init_type='"RefModel"',
+                    init_type='"TRefModel"',
                     from_dict_type='"RefModelDict"',
                 )
             ],
@@ -613,7 +613,7 @@ def test_calculate_required_args(schema, expected_args):
             [
                 _ColumnArgArtifacts(
                     name="column_1",
-                    init_type='typing.Optional["RefModel"]',
+                    init_type='typing.Optional["TRefModel"]',
                     from_dict_type='typing.Optional["RefModelDict"]',
                 )
             ],

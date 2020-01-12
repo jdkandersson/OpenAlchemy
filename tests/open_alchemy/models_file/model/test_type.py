@@ -58,7 +58,6 @@ from open_alchemy import models_file
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model(type_, format_, nullable, required, generated, de_ref, expected_type):
     """
     GIVEN type, format, nullable and required
@@ -89,7 +88,6 @@ def test_model(type_, format_, nullable, required, generated, de_ref, expected_t
     ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_dict(type_, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
@@ -106,7 +104,6 @@ def test_dict(type_, expected_type):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_dict_de_ref_none():
     """
     GIVEN object artifacts where de_ref is None
@@ -135,7 +132,6 @@ def test_dict_de_ref_none():
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_arg_init(nullable, required, expected_type):
     """
     GIVEN nullable and required
@@ -161,7 +157,6 @@ def test_arg_init(nullable, required, expected_type):
     ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_arg_from_dict(type_, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
@@ -178,7 +173,6 @@ def test_arg_from_dict(type_, expected_type):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_arg_from_dict_de_ref_none():
     """
     GIVEN object artifacts where de_ref is None
@@ -263,7 +257,6 @@ def test_arg_from_dict_de_ref_none():
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_simple(
     engine, sessionmaker, type_, format_, nullable, required, generated, value
 ):
@@ -333,7 +326,6 @@ def test_model_database_type_simple(
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_simple_nullable_fail(
     engine, sessionmaker, nullable, required, generated
 ):
@@ -379,7 +371,6 @@ def test_model_database_type_simple_nullable_fail(
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_many_to_one(engine, sessionmaker):
     """
     GIVEN spec for a many to one relationship
@@ -482,7 +473,6 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     """
     GIVEN spec with many to one relationship that is not nullable
@@ -543,7 +533,6 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_one_to_one(engine, sessionmaker):
     """
     GIVEN spec for a one to one relationship
@@ -639,7 +628,6 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     """
     GIVEN spec with one to one relationship that is not nullable
@@ -729,7 +717,6 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_one_to_many(engine, sessionmaker):
     """
     GIVEN spec for a one to many relationship
@@ -835,7 +822,6 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_many_to_many(engine, sessionmaker):
     """
     GIVEN spec for a many to many relationship
