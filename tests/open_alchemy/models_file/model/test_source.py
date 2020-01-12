@@ -163,7 +163,6 @@ Model : TModel = models.Model  # type: ignore''',
     ids=["empty", "single column", "multiple column"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_sqlalchemy(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -220,7 +219,6 @@ class ModelRequiredDict(RequiredParentClass, total=True):
     ids=["single property", "multiple properties"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_typed_dict_required(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -292,7 +290,6 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
     ids=["empty", "single property", "multiple properties"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_typed_dict_not_required(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -400,7 +397,6 @@ def test_typed_dict_not_required(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_arg_init(artifacts, expected_source):
     """
     GIVEN artifacts
@@ -508,7 +504,6 @@ def test_arg_init(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_arg_from_dict(artifacts, expected_source):
     """
     GIVEN artifacts
@@ -792,7 +787,6 @@ Model : TModel = models.Model  # type: ignore''',
     ids=["empty", "required empty", "not required empty", "full"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_generate(artifacts, expected_source):
     """
     GIVEN artifacts
