@@ -42,13 +42,13 @@ def sqlalchemy(*, artifacts: types.SQLAlchemyModelArtifacts) -> str:
     """
     template = jinja2.Template(_SQLALCHEMY_TEMPLATE)
 
-    arg_input_init_source = arg_input_init(artifacts=artifacts.arg)
-    arg_input_from_dict_source = arg_input_from_dict(artifacts=artifacts.arg)
+    arg_init_source = arg_init(artifacts=artifacts.arg)
+    arg_from_dict_source = arg_from_dict(artifacts=artifacts.arg)
 
     return template.render(
         artifacts=artifacts,
-        arg_input_init_source=arg_input_init_source,
-        arg_input_from_dict_source=arg_input_from_dict_source,
+        arg_init_source=arg_init_source,
+        arg_from_dict_source=arg_from_dict_source,
     )
 
 
@@ -82,7 +82,7 @@ def typed_dict_not_required(*, artifacts: types.TypedDictArtifacts) -> str:
     return template.render(artifacts=artifacts)
 
 
-def _arg_input_single_required(artifacts: types.ColumnArgArtifacts, name: str) -> str:
+def _arg_single_required(artifacts: types.ColumnArgArtifacts, name: str) -> str:
     """
     Transform the name and type of a single required argument to the input source.
 
@@ -97,9 +97,7 @@ def _arg_input_single_required(artifacts: types.ColumnArgArtifacts, name: str) -
     return f", {artifacts.name}: {getattr(artifacts, name)}"
 
 
-def _arg_input_single_not_required(
-    artifacts: types.ColumnArgArtifacts, name: str
-) -> str:
+def _arg_single_not_required(artifacts: types.ColumnArgArtifacts, name: str) -> str:
     """
     Transform the name and type of a single not required argument to the input source.
 
@@ -111,11 +109,11 @@ def _arg_input_single_not_required(
         The source for the argument for the column.
 
     """
-    required_source = _arg_input_single_required(artifacts, name)
+    required_source = _arg_single_required(artifacts, name)
     return f"{required_source} = None"
 
 
-def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
+def _arg(*, artifacts: types.ArgArtifacts, name: str) -> str:
     """
     Generate the arguments for a function signature of a model.
 
@@ -128,17 +126,16 @@ def _arg_input(*, artifacts: types.ArgArtifacts, name: str) -> str:
 
     """
     required_sources = map(
-        lambda artifacts: _arg_input_single_required(artifacts, name),
-        artifacts.required,
+        lambda artifacts: _arg_single_required(artifacts, name), artifacts.required
     )
     not_required_sources = map(
-        lambda artifacts: _arg_input_single_not_required(artifacts, name),
+        lambda artifacts: _arg_single_not_required(artifacts, name),
         artifacts.not_required,
     )
     return f'{"".join(required_sources)}{"".join(not_required_sources)}'
 
 
-def arg_input_init(*, artifacts: types.ArgArtifacts) -> str:
+def arg_init(*, artifacts: types.ArgArtifacts) -> str:
     """
     Generate the arguments for the signature of __init__ for a model.
 
@@ -149,10 +146,10 @@ def arg_input_init(*, artifacts: types.ArgArtifacts) -> str:
         The argument signature for the __init__ functions.
 
     """
-    return _arg_input(artifacts=artifacts, name="init_type")
+    return _arg(artifacts=artifacts, name="init_type")
 
 
-def arg_input_from_dict(*, artifacts: types.ArgArtifacts) -> str:
+def arg_from_dict(*, artifacts: types.ArgArtifacts) -> str:
     """
     Generate the arguments for the signature of from_dict for a model.
 
@@ -163,7 +160,7 @@ def arg_input_from_dict(*, artifacts: types.ArgArtifacts) -> str:
         The argument signature for the from_dict functions.
 
     """
-    return _arg_input(artifacts=artifacts, name="from_dict_type")
+    return _arg(artifacts=artifacts, name="from_dict_type")
 
 
 def generate(*, artifacts: types.ModelArtifacts) -> str:

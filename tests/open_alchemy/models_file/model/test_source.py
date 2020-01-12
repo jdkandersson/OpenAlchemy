@@ -163,6 +163,7 @@ Model : TModel = models.Model  # type: ignore''',
     ids=["empty", "single column", "multiple column"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_sqlalchemy(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -219,6 +220,7 @@ class ModelRequiredDict(RequiredParentClass, total=True):
     ids=["single property", "multiple properties"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_typed_dict_required(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -290,6 +292,7 @@ class ModelNotRequiredDict(NotRequiredParentClass, total=False):
     ids=["empty", "single property", "multiple properties"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_typed_dict_not_required(artifacts, expected_source):
     """
     GIVEN model artifacts
@@ -397,13 +400,14 @@ def test_typed_dict_not_required(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-def test_arg_input_init(artifacts, expected_source):
+@pytest.mark.only_this
+def test_arg_init(artifacts, expected_source):
     """
     GIVEN artifacts
-    WHEN arg_input_init is called with the artifacts
+    WHEN arg_init is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_input_init(artifacts=artifacts)
+    source = models_file._model._source.arg_init(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -504,13 +508,14 @@ def test_arg_input_init(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-def test_arg_input_from_dict(artifacts, expected_source):
+@pytest.mark.only_this
+def test_arg_from_dict(artifacts, expected_source):
     """
     GIVEN artifacts
-    WHEN arg_input_from_dict is called with the artifacts
+    WHEN arg_from_dict is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_input_from_dict(artifacts=artifacts)
+    source = models_file._model._source.arg_from_dict(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -786,8 +791,8 @@ Model : TModel = models.Model  # type: ignore''',
     ],
     ids=["empty", "required empty", "not required empty", "full"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_generate(artifacts, expected_source):
     """
     GIVEN artifacts
