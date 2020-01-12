@@ -1,9 +1,12 @@
 """Facade for SQLAlchemy."""
+# pylint: disable=useless-import-alias
 
 import sqlalchemy
 from sqlalchemy import orm
 
 from open_alchemy import types
+
+from . import column as column
 
 # Mapping from SQLAlchemy
 Column: sqlalchemy.Column = sqlalchemy.Column
