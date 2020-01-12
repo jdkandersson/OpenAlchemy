@@ -1,6 +1,6 @@
 
 
-class T{{ artifacts.name }}(typing.Protocol):
+class T{{ artifacts.name }}({{ artifacts.parent_cls }}):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties

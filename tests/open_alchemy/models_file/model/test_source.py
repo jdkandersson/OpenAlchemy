@@ -1,8 +1,6 @@
 """Tests for model."""
 # pylint: disable=protected-access
 
-import sys
-
 import pytest
 
 from open_alchemy import models_file
@@ -16,11 +14,6 @@ _TypedDictClassArtifacts = models_file.types.TypedDictClassArtifacts
 _ModelArtifacts = models_file.types.ModelArtifacts
 
 
-_EXPECTED_MODEL_BASE = "typing.Protocol"
-if sys.version_info[1] < 8:
-    _EXPECTED_MODEL_BASE = "typing_extensions.Protocol"
-
-
 @pytest.mark.parametrize(
     "artifacts, expected_source",
     [
@@ -32,9 +25,9 @@ if sys.version_info[1] < 8:
                 arg=_ArgArtifacts(required=[], not_required=[]),
                 parent_cls="Parent",
             ),
-            f'''
+            '''
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -75,9 +68,9 @@ Model: TModel = models.Model  # type: ignore''',
                 ),
                 parent_cls="Parent",
             ),
-            f'''
+            '''
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -129,9 +122,9 @@ Model: TModel = models.Model  # type: ignore''',
                 ),
                 parent_cls="Parent",
             ),
-            f'''
+            '''
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -539,13 +532,13 @@ def test_arg_from_dict(artifacts, expected_source):
                     ),
                 ),
             ),
-            f'''
+            '''
 
 class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -599,7 +592,7 @@ Model: TModel = models.Model  # type: ignore''',
                     ),
                 ),
             ),
-            f'''
+            '''
 
 class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
@@ -607,7 +600,7 @@ class ModelDict(typing.TypedDict, total=False):
     col_1: td_type_1
 
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -664,7 +657,7 @@ Model: TModel = models.Model  # type: ignore''',
                     ),
                 ),
             ),
-            f'''
+            '''
 
 class ModelDict(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
@@ -672,7 +665,7 @@ class ModelDict(typing.TypedDict, total=True):
     col_1: td_type_1
 
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -741,7 +734,7 @@ Model: TModel = models.Model  # type: ignore''',
                     ),
                 ),
             ),
-            f'''
+            '''
 
 class _ModelDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
@@ -755,7 +748,7 @@ class ModelDict(_ModelDictBase, total=False):
     col_2: td_type_2
 
 
-class TModel({_EXPECTED_MODEL_BASE}):
+class TModel(Parent):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
