@@ -7,7 +7,7 @@ trigger:
 - master
 
 jobs:
-  - job: 'Test'
+  - job: 'pytest'
     pool:
       vmImage: 'ubuntu-latest'
     strategy:
@@ -34,3 +34,25 @@ jobs:
         pip install pytest pytest-azurepipelines
         pytest
       displayName: 'pytest'
+  - job: 'pylint'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      matrix:
+        Python38:
+          python.version: '3.8'
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(python.version)'
+      displayName: 'Use Python $(python.version)'
+
+    - script: |
+        python -m pip install --upgrade pip
+        python -m pip install -e .[dev]
+      displayName: 'Install dependencies'
+
+    - script: |
+        pyline tests examples open_alchemy
+      displayName: 'pylint'
