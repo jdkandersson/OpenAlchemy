@@ -12,3 +12,4 @@ build/
 dist/
 htmlcov/
 venv
+coverage.xml
