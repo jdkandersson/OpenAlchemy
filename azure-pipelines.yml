@@ -54,5 +54,5 @@ jobs:
       displayName: 'Install dependencies'
 
     - script: |
-        pyline tests examples open_alchemy
+        pylint tests examples open_alchemy
       displayName: 'pylint'
