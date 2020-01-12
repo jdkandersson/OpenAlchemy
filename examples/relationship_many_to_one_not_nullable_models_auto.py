@@ -73,10 +73,10 @@ class TEmployee(typing.Protocol):
     # Model properties
     id: int
     name: str
-    division: "Division"
+    division: "TDivision"
 
     def __init__(
-        self, id: int, name: str, division: typing.Optional["Division"] = None
+        self, id: int, name: str, division: typing.Optional["TDivision"] = None
     ) -> None:
         """Construct."""
         ...

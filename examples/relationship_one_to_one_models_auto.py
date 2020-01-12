@@ -27,7 +27,7 @@ class TPayInfo(typing.Protocol):
     # Model properties
     id: typing.Optional[int]
     account_number: typing.Optional[str]
-    employee: typing.Optional["Employee"]
+    employee: typing.Optional["TEmployee"]
 
     def __init__(
         self,
@@ -73,9 +73,9 @@ class TEmployee(typing.Protocol):
     # Model properties
     id: int
     name: str
-    pay_info: "PayInfo"
+    pay_info: "TPayInfo"
 
-    def __init__(self, id: int, name: str, pay_info: "PayInfo") -> None:
+    def __init__(self, id: int, name: str, pay_info: "TPayInfo") -> None:
         """Construct."""
         ...
 

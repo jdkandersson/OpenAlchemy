@@ -28,13 +28,13 @@ class TDivision(typing.Protocol):
     # Model properties
     id: typing.Optional[int]
     name: typing.Optional[str]
-    employees: typing.Sequence["Employee"]
+    employees: typing.Sequence["TEmployee"]
 
     def __init__(
         self,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
-        employees: typing.Optional[typing.Sequence["Employee"]] = None,
+        employees: typing.Optional[typing.Sequence["TEmployee"]] = None,
     ) -> None:
         """Construct."""
         ...

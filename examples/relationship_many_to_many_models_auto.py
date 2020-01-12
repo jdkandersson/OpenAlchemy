@@ -68,13 +68,13 @@ class TEmployee(typing.Protocol):
     # Model properties
     id: typing.Optional[int]
     name: typing.Optional[str]
-    projects: typing.Sequence["Project"]
+    projects: typing.Sequence["TProject"]
 
     def __init__(
         self,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
-        projects: typing.Optional[typing.Sequence["Project"]] = None,
+        projects: typing.Optional[typing.Sequence["TProject"]] = None,
     ) -> None:
         """Construct."""
         ...

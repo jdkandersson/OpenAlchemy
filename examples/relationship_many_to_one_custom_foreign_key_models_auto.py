@@ -68,9 +68,9 @@ class TEmployee(typing.Protocol):
     # Model properties
     id: int
     name: str
-    division: "Division"
+    division: "TDivision"
 
-    def __init__(self, id: int, name: str, division: "Division") -> None:
+    def __init__(self, id: int, name: str, division: "TDivision") -> None:
         """Construct."""
         ...
 
