@@ -8,8 +8,6 @@ from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
-from .. import column
-
 
 @dataclasses.dataclass
 class _ColumnArtifacts:
@@ -153,7 +151,7 @@ def _construct_column(*, artifacts: _ColumnArtifacts) -> facades.sqlalchemy.Colu
     )
 
     # Construct column
-    return_column = column.construct_column(artifacts=column_artifacts)
+    return_column = facades.sqlalchemy.column.construct(artifacts=column_artifacts)
     # Set column name for the table
     return_column.name = f"{artifacts.tablename}_{artifacts.column_name}"
 

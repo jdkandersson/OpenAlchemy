@@ -77,7 +77,7 @@ def handle_object(
         schemas=schemas,
     )
     if fk_required:
-        fk_column = column.construct_column(artifacts=fk_artifacts)
+        fk_column = facades.sqlalchemy.column.construct(artifacts=fk_artifacts)
         return_value = [(fk_logical_name, fk_column)]
     else:
         return_value = []
