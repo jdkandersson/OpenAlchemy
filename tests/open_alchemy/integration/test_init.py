@@ -470,6 +470,4 @@ class TTable({expected_model_base}):
 
 Table: TTable = models.Table  # type: ignore
 '''
-    print(repr(models_file_contents))
-    print(repr(expected_contents))
     assert models_file_contents == expected_contents

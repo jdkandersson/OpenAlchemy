@@ -215,7 +215,6 @@ Model: TModel = models.Model  # type: ignore
     ids=["single", "multiple", "black"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_integration(schemas, expected_source):
     """
     GIVEN schema and name
@@ -227,14 +226,10 @@ def test_integration(schemas, expected_source):
         models.add_model(schema=schema, name=name)
     source = models.generate_models()
 
-    print(repr(source))
-    print(repr(expected_source))
-
     assert source == expected_source
 
 
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_schema_change():
     """
     GIVEN schema and name
