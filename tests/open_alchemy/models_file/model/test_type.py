@@ -29,8 +29,8 @@ from open_alchemy import models_file
         ("string", "date", False, None, None, None, "datetime.date"),
         ("string", "date-time", False, None, None, None, "datetime.datetime"),
         ("boolean", None, False, None, None, None, "bool"),
-        ("object", None, False, None, None, "RefModel", '"RefModel"'),
-        ("array", None, None, None, None, "RefModel", 'typing.Sequence["RefModel"]'),
+        ("object", None, False, None, None, "RefModel", '"TRefModel"'),
+        ("array", None, None, None, None, "RefModel", 'typing.Sequence["TRefModel"]'),
         ("integer", None, None, None, None, None, "typing.Optional[int]"),
         ("integer", None, None, True, None, None, "int"),
         ("integer", None, None, None, True, None, "int"),
@@ -58,6 +58,7 @@ from open_alchemy import models_file
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model(type_, format_, nullable, required, generated, de_ref, expected_type):
     """
     GIVEN type, format, nullable and required
@@ -88,6 +89,7 @@ def test_model(type_, format_, nullable, required, generated, de_ref, expected_t
     ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_dict(type_, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
@@ -104,6 +106,7 @@ def test_dict(type_, expected_type):
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_dict_de_ref_none():
     """
     GIVEN object artifacts where de_ref is None
@@ -132,6 +135,7 @@ def test_dict_de_ref_none():
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_arg_init(nullable, required, expected_type):
     """
     GIVEN nullable and required
@@ -157,6 +161,7 @@ def test_arg_init(nullable, required, expected_type):
     ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_arg_from_dict(type_, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
@@ -173,6 +178,7 @@ def test_arg_from_dict(type_, expected_type):
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_arg_from_dict_de_ref_none():
     """
     GIVEN object artifacts where de_ref is None
@@ -257,6 +263,7 @@ def test_arg_from_dict_de_ref_none():
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_simple(
     engine, sessionmaker, type_, format_, nullable, required, generated, value
 ):
@@ -326,6 +333,7 @@ def test_model_database_type_simple(
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_simple_nullable_fail(
     engine, sessionmaker, nullable, required, generated
 ):
@@ -371,6 +379,7 @@ def test_model_database_type_simple_nullable_fail(
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_many_to_one(engine, sessionmaker):
     """
     GIVEN spec for a many to one relationship
@@ -444,7 +453,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert queried_models[1].ref_table is None
 
     # Check that returned type is correct
-    assert calculated_type_str == 'typing.Optional["RefTable"]'
+    assert calculated_type_str == 'typing.Optional["TRefTable"]'
 
     # Creating instance of ref_model without models
     ref_model_instance3 = ref_model(id=31, name="ref table name 3")
@@ -469,10 +478,11 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     with pytest.raises(TypeError):
         ref_model(id=41, name="ref table name 4", tables=None)
 
-    assert calculated_backref_type_str == 'typing.Sequence["Table"]'
+    assert calculated_backref_type_str == 'typing.Sequence["TTable"]'
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     """
     GIVEN spec with many to one relationship that is not nullable
@@ -529,10 +539,11 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
         session.flush()
 
     # Check that returned type is correct
-    assert calculated_type_str == '"RefTable"'
+    assert calculated_type_str == '"TRefTable"'
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_one_to_one(engine, sessionmaker):
     """
     GIVEN spec for a one to one relationship
@@ -607,7 +618,7 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     assert queried_models[1].ref_table is None
 
     # Check that returned type is correct
-    assert calculated_type_str == 'typing.Optional["RefTable"]'
+    assert calculated_type_str == 'typing.Optional["TRefTable"]'
 
     # Creating instance of ref_model without model
     ref_model_instance3 = ref_model(id=31, name="ref table name 3")
@@ -624,10 +635,11 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     assert queried_ref_models[1].table is None
     assert queried_ref_models[2].table is not None
 
-    assert calculated_backref_type_str == 'typing.Optional["Table"]'
+    assert calculated_backref_type_str == 'typing.Optional["TTable"]'
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     """
     GIVEN spec with one to one relationship that is not nullable
@@ -701,7 +713,7 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     assert queried_ref_models[0].table is None
     assert queried_ref_models[1].table is not None
 
-    assert calculated_backref_type_str == 'typing.Optional["Table"]'
+    assert calculated_backref_type_str == 'typing.Optional["TTable"]'
 
     # Creating models
     base.metadata.create_all(engine)
@@ -713,10 +725,11 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
         session.flush()
 
     # Check that returned type is correct
-    assert calculated_type_str == '"RefTable"'
+    assert calculated_type_str == '"TRefTable"'
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_one_to_many(engine, sessionmaker):
     """
     GIVEN spec for a one to many relationship
@@ -801,7 +814,7 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     with pytest.raises(TypeError):
         model(id=41, name="ref table name 4", ref_tables=None)
 
-    assert calculated_type_str == 'typing.Sequence["RefTable"]'
+    assert calculated_type_str == 'typing.Sequence["TRefTable"]'
 
     # Creating instance of ref_model with model
     ref_model_instance5 = ref_model(
@@ -818,10 +831,11 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     assert queried_models[1].table is not None
     assert queried_models[2].table is None
 
-    assert calculated_backref_type_str == 'typing.Optional["Table"]'
+    assert calculated_backref_type_str == 'typing.Optional["TTable"]'
 
 
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_many_to_many(engine, sessionmaker):
     """
     GIVEN spec for a many to many relationship
@@ -906,7 +920,7 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     with pytest.raises(TypeError):
         model(id=41, name="ref table name 4", ref_tables=None)
 
-    assert calculated_type_str == 'typing.Sequence["RefTable"]'
+    assert calculated_type_str == 'typing.Sequence["TRefTable"]'
 
     # Creating instance of ref_model without models
     ref_model_instance5 = ref_model(id=51, name="ref table name 5")
@@ -931,4 +945,4 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     with pytest.raises(TypeError):
         ref_model(id=81, name="ref table name 8", tables=None)
 
-    assert calculated_backref_type_str == 'typing.Sequence["Table"]'
+    assert calculated_backref_type_str == 'typing.Sequence["TTable"]'
