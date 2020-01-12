@@ -44,13 +44,11 @@ def sqlalchemy(*, artifacts: types.SQLAlchemyModelArtifacts) -> str:
 
     arg_input_init_source = arg_input_init(artifacts=artifacts.arg)
     arg_input_from_dict_source = arg_input_from_dict(artifacts=artifacts.arg)
-    arg_kwargs_source = arg_kwargs(artifacts=artifacts.arg)
 
     return template.render(
         artifacts=artifacts,
         arg_input_init_source=arg_input_init_source,
         arg_input_from_dict_source=arg_input_from_dict_source,
-        arg_kwargs_source=arg_kwargs_source,
     )
 
 
@@ -166,54 +164,6 @@ def arg_input_from_dict(*, artifacts: types.ArgArtifacts) -> str:
 
     """
     return _arg_input(artifacts=artifacts, name="from_dict_type")
-
-
-def _arg_kwargs_single_required(artifacts: types.ColumnArgArtifacts) -> str:
-    """
-    Transform the name of a single required argument to the kwargs source.
-
-    Args:
-        artifacts: The artifacts for generating the kwarg for a column.
-
-    Returns:
-        The source for the kwargs for the column.
-
-    """
-    return f'"{artifacts.name}": {artifacts.name}'
-
-
-def _arg_kwargs_single_not_required(artifacts: types.ColumnArgArtifacts) -> str:
-    """
-    Transform the name of a single not required argument to the kwargs source.
-
-    Args:
-        artifacts: The artifacts for generating the kwarg for a column.
-
-    Returns:
-        The source for the kwargs for the column.
-
-    """
-    return f"""
-        if {artifacts.name} is not None:
-            kwargs["{artifacts.name}"] = {artifacts.name}"""
-
-
-def arg_kwargs(*, artifacts: types.ArgArtifacts) -> str:
-    """
-    Generate the kwargs generation code for __init__ and from_dict for a model.
-
-    Args:
-        artifacts: The artifacts for the argument.
-
-    Returns:
-        The source code for generating the kwargs.
-
-    """
-    required_sources = map(_arg_kwargs_single_required, artifacts.required)
-    required_source = ", ".join(required_sources)
-    not_required_sources = map(_arg_kwargs_single_not_required, artifacts.not_required)
-    not_required_source = "".join(not_required_sources)
-    return f"""kwargs = {{{required_source}}}{not_required_source}"""
 
 
 def generate(*, artifacts: types.ModelArtifacts) -> str:

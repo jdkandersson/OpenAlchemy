@@ -1,6 +1,6 @@
 
 
-class T{{ artifacts.name }}(typing.Protocol):  # type: ignore
+class T{{ artifacts.name }}(typing.Protocol):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -16,7 +16,7 @@ class T{{ artifacts.name }}(typing.Protocol):  # type: ignore
         ...
 
     @classmethod
-    def from_dict(cls{{ arg_input_from_dict_source }}) -> "_T{{ artifacts.name }}":
+    def from_dict(cls{{ arg_input_from_dict_source }}) -> "T{{ artifacts.name }}":
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
@@ -25,4 +25,4 @@ class T{{ artifacts.name }}(typing.Protocol):  # type: ignore
         ...
 
 
-{{ artifacts.name }} : T{{ artifacts.name }} = models.{{ artifacts.name }}
+{{ artifacts.name }} : T{{ artifacts.name }} = models.{{ artifacts.name }}  # type: ignore

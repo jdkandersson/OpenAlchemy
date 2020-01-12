@@ -23,7 +23,7 @@ class EmployeeDict(_EmployeeDictBase, total=False):
     salary: typing.Optional[float]
 
 
-class TEmployee(typing.Protocol):  # type: ignore
+class TEmployee(typing.Protocol):
     """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
@@ -46,7 +46,7 @@ class TEmployee(typing.Protocol):  # type: ignore
     @classmethod
     def from_dict(
         cls, id: int, name: str, division: str, salary: typing.Optional[float] = None
-    ) -> "_TEmployee":
+    ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
@@ -55,4 +55,4 @@ class TEmployee(typing.Protocol):  # type: ignore
         ...
 
 
-Employee: TEmployee = models.Employee
+Employee: TEmployee = models.Employee  # type: ignore
