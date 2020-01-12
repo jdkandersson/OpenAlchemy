@@ -3,9 +3,8 @@
 import re
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
@@ -25,7 +24,9 @@ def column_factory(
     logical_name: str,
     model_name: str,
     model_schema: types.Schema,
-) -> typing.Tuple[typing.List[typing.Tuple[str, sqlalchemy.Column]], types.Schema]:
+) -> typing.Tuple[
+    typing.List[typing.Tuple[str, facades.sqlalchemy.Column]], types.Schema
+]:
     """
     Generate column based on OpenAPI schema property.
 

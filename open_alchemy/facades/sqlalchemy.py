@@ -1,8 +1,13 @@
 """Facade for SQLAlchemy."""
 
+import sqlalchemy
 from sqlalchemy import orm
 
 from open_alchemy import types
+
+# Mapping from SQLAlchemy
+Column: sqlalchemy.Column = sqlalchemy.Column
+Table: sqlalchemy.Table = sqlalchemy.Table
 
 
 def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipProperty:
