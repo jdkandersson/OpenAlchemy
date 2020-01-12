@@ -420,11 +420,14 @@ def test_models_file(tmp_path):
     if sys.version_info[1] < 8:
         additional_import = """
 import typing_extensions"""
-    expected_base = "typing.TypedDict"
+    expected_td_base = "typing.TypedDict"
     if sys.version_info[1] < 8:
-        expected_base = "typing_extensions.TypedDict"
+        expected_td_base = "typing_extensions.TypedDict"
+    expected_model_base = "typing.Protocol"
+    if sys.version_info[1] < 8:
+        expected_model_base = "typing_extensions.Protocol"
     expected_contents = f'''{docstring}
-# pylint: disable=no-member,useless-super-delegation
+# pylint: disable=no-member,super-init-not-called,unused-argument
 
 import typing
 
@@ -434,14 +437,14 @@ from sqlalchemy import orm
 from open_alchemy import models
 
 
-class TableDict({expected_base}, total=False):
+class TableDict({expected_td_base}, total=False):
     """TypedDict for properties that are not required."""
 
     column: typing.Optional[int]
 
 
-class Table(models.Table):  # type: ignore
-    """SQLAlchemy model."""
+class TTable({expected_model_base}):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -453,23 +456,20 @@ class Table(models.Table):  # type: ignore
 
     def __init__(self, column: typing.Optional[int] = None) -> None:
         """Construct."""
-        kwargs = {{}}
-        if column is not None:
-            kwargs["column"] = column
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, column: typing.Optional[int] = None) -> "Table":
+    def from_dict(cls, column: typing.Optional[int] = None) -> "TTable":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {{}}
-        if column is not None:
-            kwargs["column"] = column
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> TableDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()
+        ...
+
+
+Table: TTable = models.Table  # type: ignore
 '''
+    print(repr(models_file_contents))
+    print(repr(expected_contents))
     assert models_file_contents == expected_contents
