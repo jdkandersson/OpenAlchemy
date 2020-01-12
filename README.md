@@ -1,3 +1,4 @@
+[![Build Status](https://dev.azure.com/anderssonpublic/anderssonpublic/_apis/build/status/jdkandersson.OpenAlchemy?branchName=master)](https://dev.azure.com/anderssonpublic/anderssonpublic/_build/latest?definitionId=1&branchName=master)
 # OpenAlchemy
 Translates an OpenAPI schema to SQLAlchemy models.
 
