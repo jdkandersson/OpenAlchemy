@@ -23,6 +23,7 @@ _ModelArtifacts = models_file.types.ModelArtifacts
                 columns=[],
                 empty=True,
                 arg=_ArgArtifacts(required=[], not_required=[]),
+                parent_cls="Parent",
             ),
             '''
 
@@ -66,6 +67,7 @@ class Model(models.Model):  # type: ignore
                     ],
                     not_required=[],
                 ),
+                parent_cls="Parent",
             ),
             '''
 
@@ -120,6 +122,7 @@ class Model(models.Model):  # type: ignore
                     ],
                     not_required=[],
                 ),
+                parent_cls="Parent",
             ),
             '''
 
@@ -633,6 +636,7 @@ def test_arg_kwargs(artifacts, expected_source):
                     columns=[],
                     empty=True,
                     arg=_ArgArtifacts(required=[], not_required=[]),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -693,6 +697,7 @@ class Model(models.Model):  # type: ignore
                             )
                         ],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -762,6 +767,7 @@ class Model(models.Model):  # type: ignore
                         ],
                         not_required=[],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -836,6 +842,7 @@ class Model(models.Model):  # type: ignore
                             )
                         ],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(

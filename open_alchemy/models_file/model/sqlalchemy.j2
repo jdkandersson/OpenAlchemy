@@ -1,7 +1,7 @@
 
 
-class {{ artifacts.name }}(models.{{ artifacts.name }}):  # type: ignore
-    """SQLAlchemy model."""
+class T{{ artifacts.name }}(typing.Protocol):  # type: ignore
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -13,17 +13,16 @@ class {{ artifacts.name }}(models.{{ artifacts.name }}):  # type: ignore
 
     def __init__(self{{ arg_input_init_source }}) -> None:
         """Construct."""
-        {{ arg_kwargs_source }}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls{{ arg_input_from_dict_source }}) -> "{{ artifacts.name }}":
+    def from_dict(cls{{ arg_input_from_dict_source }}) -> "_T{{ artifacts.name }}":
         """Construct from a dictionary (eg. a POST payload)."""
-        {{ arg_kwargs_source }}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> {{ artifacts.name }}Dict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()
+        ...
+
+
+{{ artifacts.name }} : T{{ artifacts.name }} = models.{{ artifacts.name }}

@@ -71,6 +71,7 @@ def test_gather_column_artifacts(schema, required, expected_artifacts):
     assert artifacts == expected_artifacts
 
 
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_calculate_name():
     """
@@ -84,6 +85,26 @@ def test_calculate_name():
     artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
 
     assert artifacts.sqlalchemy.name == name
+
+
+_EXPECTED_CLS_BASE = "typing.Protocol"
+if sys.version_info[1] < 8:
+    _EXPECTED_CLS_BASE = "typing_extensions.Protocol"
+
+
+@pytest.mark.models_file
+@pytest.mark.only_this
+def test_calculate_parent():
+    """
+    GIVEN
+    WHEN calculate is called
+    THEN the correct parent class is set.
+    """
+    schema = {"properties": {}}
+
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.sqlalchemy.parent_cls == _EXPECTED_CLS_BASE
 
 
 @pytest.mark.parametrize(
@@ -148,6 +169,7 @@ def test_calculate_name():
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_column(schema, expected_columns):
     """
     GIVEN schema
@@ -168,6 +190,7 @@ def test_calculate_column(schema, expected_columns):
     ids=["empty", "single"],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_empty(schema, expected_empty):
     """
     GIVEN schema
@@ -220,6 +243,7 @@ def test_calculate_empty(schema, expected_empty):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_td_required_props(schema, expected_props):
     """
     GIVEN schema
@@ -278,6 +302,7 @@ def test_calculate_td_required_props(schema, expected_props):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_td_not_required_props(schema, expected_props):
     """
     GIVEN schema
@@ -308,6 +333,7 @@ def test_calculate_td_not_required_props(schema, expected_props):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_required_empty(schema, expected_required_empty):
     """
     GIVEN schema
@@ -338,6 +364,7 @@ def test_calculate_required_empty(schema, expected_required_empty):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_not_required_empty(schema, expected_not_required_empty):
     """
     GIVEN schema
@@ -397,6 +424,7 @@ def test_calculate_not_required_empty(schema, expected_not_required_empty):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_td_names(schema, expected_required_name, expected_not_required_name):
     """
     GIVEN schema
@@ -424,9 +452,9 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
 # +----------------+--------------------+------------------+-----------------------+
 
 
-_EXPECTED_BASE = "typing.TypedDict"
+_EXPECTED_TD_BASE = "typing.TypedDict"
 if sys.version_info[1] < 8:
-    _EXPECTED_BASE = "typing_extensions.TypedDict"
+    _EXPECTED_TD_BASE = "typing_extensions.TypedDict"
 
 
 @pytest.mark.parametrize(
@@ -440,20 +468,20 @@ if sys.version_info[1] < 8:
                 },
                 "required": ["column_1"],
             },
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
             "_ModelDictBase",
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": ["column_1"]},
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
             None,
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": []},
             None,
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
         ),
-        ({"properties": {}}, None, _EXPECTED_BASE),
+        ({"properties": {}}, None, _EXPECTED_TD_BASE),
     ],
     ids=[
         "required empty: False, not required empty: False",
@@ -463,6 +491,7 @@ if sys.version_info[1] < 8:
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_td_parent(
     schema, expected_required_parent, expected_not_required_parent
 ):
@@ -534,6 +563,7 @@ def test_calculate_td_parent(
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_required_args(schema, expected_args):
     """
     GIVEN schema
@@ -632,6 +662,7 @@ def test_calculate_required_args(schema, expected_args):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_calculate_not_required_args(schema, expected_args):
     """
     GIVEN schema

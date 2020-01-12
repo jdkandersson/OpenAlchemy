@@ -235,7 +235,6 @@ class Model(models.Model):  # type: ignore
     ],
     ids=["single", "multiple", "black"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_integration(schemas, expected_source):
     """
@@ -251,7 +250,6 @@ def test_integration(schemas, expected_source):
     assert source == expected_source
 
 
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_schema_change():
     """
