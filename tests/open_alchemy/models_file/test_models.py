@@ -86,7 +86,6 @@ model 2 datetime.
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_generate(models, expected_source):
     """
     GIVEN single model
