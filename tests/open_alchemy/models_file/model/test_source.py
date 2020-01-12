@@ -56,7 +56,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -102,7 +102,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -157,7 +157,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "single column", "multiple column"],
@@ -567,7 +567,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -632,7 +632,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -697,7 +697,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -781,7 +781,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model : TModel = models.Model  # type: ignore''',
+Model: TModel = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "required empty", "not required empty", "full"],
