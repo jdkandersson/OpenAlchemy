@@ -180,7 +180,6 @@ def init_yaml(
         define_all: Whether to define all the models during initialization.
 
     """
-
     try:
         import yaml  # pylint: disable=import-outside-toplevel
     except ImportError:
