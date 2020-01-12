@@ -20,7 +20,7 @@ import typing_extensions"""
         (
             ["model 1"],
             f"""{_DOCSTRING}
-# pylint: disable=no-member,useless-super-delegation
+# pylint: disable=no-member,super-init-not-called,unused-argument
 
 import typing
 
@@ -34,7 +34,7 @@ model 1
         (
             ["model 1", "model 2"],
             f"""{_DOCSTRING}
-# pylint: disable=no-member,useless-super-delegation
+# pylint: disable=no-member,super-init-not-called,unused-argument
 
 import typing
 
@@ -49,7 +49,7 @@ model 2
         (
             ["model 1 datetime."],
             f"""{_DOCSTRING}
-# pylint: disable=no-member,useless-super-delegation
+# pylint: disable=no-member,super-init-not-called,unused-argument
 
 import datetime
 import typing
@@ -64,7 +64,7 @@ model 1 datetime.
         (
             ["model 1 datetime.", "model 2 datetime."],
             f"""{_DOCSTRING}
-# pylint: disable=no-member,useless-super-delegation
+# pylint: disable=no-member,super-init-not-called,unused-argument
 
 import datetime
 import typing

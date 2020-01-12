@@ -112,6 +112,13 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             # Add artifacts to the lists
             columns.append(types.ColumnArtifacts(type=column_type, name=backref_name))
 
+    # Calculate model parent class
+    parent_cls: str
+    if sys.version_info[1] < 8:
+        parent_cls = "typing_extensions.Protocol"
+    else:  # version compatibility
+        parent_cls = "typing.Protocol"
+
     # Calculate whether property lists are empty, their names and parent class
     td_required_empty = not td_required_props
     td_not_required_empty = not td_not_required_props
@@ -141,6 +148,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             arg=types.ArgArtifacts(
                 required=required_args, not_required=not_required_args
             ),
+            parent_cls=parent_cls,
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(

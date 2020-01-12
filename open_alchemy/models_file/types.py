@@ -66,6 +66,8 @@ class SQLAlchemyModelArtifacts:
     columns: typing.List[ColumnArtifacts]
     # The artifacts for the arguments for __init__ and from_dict
     arg: ArgArtifacts
+    # The parent class
+    parent_cls: str
 
 
 @dataclasses.dataclass

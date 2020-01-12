@@ -86,6 +86,25 @@ def test_calculate_name():
     assert artifacts.sqlalchemy.name == name
 
 
+_EXPECTED_CLS_BASE = "typing.Protocol"
+if sys.version_info[1] < 8:
+    _EXPECTED_CLS_BASE = "typing_extensions.Protocol"
+
+
+@pytest.mark.models_file
+def test_calculate_parent():
+    """
+    GIVEN
+    WHEN calculate is called
+    THEN the correct parent class is set.
+    """
+    schema = {"properties": {}}
+
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    assert artifacts.sqlalchemy.parent_cls == _EXPECTED_CLS_BASE
+
+
 @pytest.mark.parametrize(
     "schema, expected_columns",
     [
@@ -120,7 +139,7 @@ def test_calculate_name():
                 "properties": {},
                 "x-backrefs": {"model": {"type": "object", "x-de-$ref": "Model"}},
             },
-            [_ColumnArtifacts(name="model", type='typing.Optional["Model"]')],
+            [_ColumnArtifacts(name="model", type='typing.Optional["TModel"]')],
         ),
         (
             {
@@ -131,8 +150,8 @@ def test_calculate_name():
                 },
             },
             [
-                _ColumnArtifacts(name="model1", type='typing.Optional["Model1"]'),
-                _ColumnArtifacts(name="model2", type='typing.Optional["Model2"]'),
+                _ColumnArtifacts(name="model1", type='typing.Optional["TModel1"]'),
+                _ColumnArtifacts(name="model2", type='typing.Optional["TModel2"]'),
             ],
         ),
     ],
@@ -424,9 +443,9 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
 # +----------------+--------------------+------------------+-----------------------+
 
 
-_EXPECTED_BASE = "typing.TypedDict"
+_EXPECTED_TD_BASE = "typing.TypedDict"
 if sys.version_info[1] < 8:
-    _EXPECTED_BASE = "typing_extensions.TypedDict"
+    _EXPECTED_TD_BASE = "typing_extensions.TypedDict"
 
 
 @pytest.mark.parametrize(
@@ -440,20 +459,20 @@ if sys.version_info[1] < 8:
                 },
                 "required": ["column_1"],
             },
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
             "_ModelDictBase",
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": ["column_1"]},
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
             None,
         ),
         (
             {"properties": {"column_1": {"type": "string"}}, "required": []},
             None,
-            _EXPECTED_BASE,
+            _EXPECTED_TD_BASE,
         ),
-        ({"properties": {}}, None, _EXPECTED_BASE),
+        ({"properties": {}}, None, _EXPECTED_TD_BASE),
     ],
     ids=[
         "required empty: False, not required empty: False",
@@ -501,7 +520,7 @@ def test_calculate_td_parent(
             [
                 _ColumnArgArtifacts(
                     name="column_1",
-                    init_type='"RefModel"',
+                    init_type='"TRefModel"',
                     from_dict_type='"RefModelDict"',
                 )
             ],
@@ -594,7 +613,7 @@ def test_calculate_required_args(schema, expected_args):
             [
                 _ColumnArgArtifacts(
                     name="column_1",
-                    init_type='typing.Optional["RefModel"]',
+                    init_type='typing.Optional["TRefModel"]',
                     from_dict_type='typing.Optional["RefModelDict"]',
                 )
             ],

@@ -26,9 +26,9 @@ def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     if artifacts.type == "boolean":
         return_type = "bool"
     if artifacts.type == "object":
-        return_type = f'"{artifacts.de_ref}"'
+        return_type = f'"T{artifacts.de_ref}"'
     if artifacts.type == "array":
-        return f'typing.Sequence["{artifacts.de_ref}"]'
+        return f'typing.Sequence["T{artifacts.de_ref}"]'
     if artifacts.format == "binary":
         return_type = "bytes"
     if artifacts.format == "date":
@@ -68,7 +68,9 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
                 "The schema for the property of an object reference must include "
                 "x-de-$ref with the name of the model being referenced."
             )
-        model_type = model_type.replace(artifacts.de_ref, f"{artifacts.de_ref}Dict")
+        model_type = model_type.replace(
+            f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict"
+        )
 
     return model_type
 
@@ -113,6 +115,6 @@ def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
                 "The schema for the property of an object reference must include "
                 "x-de-$ref with the name of the model being referenced."
             )
-        init_type = init_type.replace(artifacts.de_ref, f"{artifacts.de_ref}Dict")
+        init_type = init_type.replace(f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict")
 
     return init_type

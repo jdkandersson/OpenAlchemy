@@ -23,11 +23,12 @@ _ModelArtifacts = models_file.types.ModelArtifacts
                 columns=[],
                 empty=True,
                 arg=_ArgArtifacts(required=[], not_required=[]),
+                parent_cls="Parent",
             ),
             '''
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -36,20 +37,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self) -> None:
         """Construct."""
-        kwargs = {}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls) -> "Model":
+    def from_dict(cls) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -66,11 +66,12 @@ class Model(models.Model):  # type: ignore
                     ],
                     not_required=[],
                 ),
+                parent_cls="Parent",
             ),
             '''
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -82,20 +83,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self, column_1: init_type_1) -> None:
         """Construct."""
-        kwargs = {"column_1": column_1}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, column_1: fd_type_1) -> "Model":
+    def from_dict(cls, column_1: fd_type_1) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"column_1": column_1}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -120,11 +120,12 @@ class Model(models.Model):  # type: ignore
                     ],
                     not_required=[],
                 ),
+                parent_cls="Parent",
             ),
             '''
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -137,20 +138,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self, column_1: init_type_1, column_2: init_type_2) -> None:
         """Construct."""
-        kwargs = {"column_1": column_1, "column_2": column_2}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, column_1: fd_type_1, column_2: fd_type_2) -> "Model":
+    def from_dict(cls, column_1: fd_type_1, column_2: fd_type_2) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"column_1": column_1, "column_2": column_2}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "single column", "multiple column"],
@@ -390,13 +390,13 @@ def test_typed_dict_not_required(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-def test_arg_input_init(artifacts, expected_source):
+def test_arg_init(artifacts, expected_source):
     """
     GIVEN artifacts
-    WHEN arg_input_init is called with the artifacts
+    WHEN arg_init is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_input_init(artifacts=artifacts)
+    source = models_file._model._source.arg_init(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -497,128 +497,13 @@ def test_arg_input_init(artifacts, expected_source):
     ],
 )
 @pytest.mark.models_file
-def test_arg_input_from_dict(artifacts, expected_source):
+def test_arg_from_dict(artifacts, expected_source):
     """
     GIVEN artifacts
-    WHEN arg_input_from_dict is called with the artifacts
+    WHEN arg_from_dict is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_input_from_dict(artifacts=artifacts)
-
-    assert source == expected_source
-
-
-@pytest.mark.parametrize(
-    "artifacts, expected_source",
-    [
-        (_ArgArtifacts(required=[], not_required=[]), "kwargs = {}"),
-        (
-            _ArgArtifacts(
-                required=[
-                    _ColumnArgArtifacts(
-                        name="column_1",
-                        init_type="init_type_1",
-                        from_dict_type="fd_type_1",
-                    )
-                ],
-                not_required=[],
-            ),
-            'kwargs = {"column_1": column_1}',
-        ),
-        (
-            _ArgArtifacts(
-                required=[],
-                not_required=[
-                    _ColumnArgArtifacts(
-                        name="column_1",
-                        init_type="init_type_1",
-                        from_dict_type="fd_type_1",
-                    )
-                ],
-            ),
-            """kwargs = {}
-        if column_1 is not None:
-            kwargs["column_1"] = column_1""",
-        ),
-        (
-            _ArgArtifacts(
-                required=[
-                    _ColumnArgArtifacts(
-                        name="column_1",
-                        init_type="init_type_1",
-                        from_dict_type="fd_type_1",
-                    ),
-                    _ColumnArgArtifacts(
-                        name="column_2",
-                        init_type="init_type_2",
-                        from_dict_type="fd_type_2",
-                    ),
-                ],
-                not_required=[],
-            ),
-            'kwargs = {"column_1": column_1, "column_2": column_2}',
-        ),
-        (
-            _ArgArtifacts(
-                required=[
-                    _ColumnArgArtifacts(
-                        name="column_1",
-                        init_type="init_type_1",
-                        from_dict_type="fd_type_1",
-                    )
-                ],
-                not_required=[
-                    _ColumnArgArtifacts(
-                        name="column_2",
-                        init_type="init_type_2",
-                        from_dict_type="fd_type_2",
-                    )
-                ],
-            ),
-            """kwargs = {"column_1": column_1}
-        if column_2 is not None:
-            kwargs["column_2"] = column_2""",
-        ),
-        (
-            _ArgArtifacts(
-                required=[],
-                not_required=[
-                    _ColumnArgArtifacts(
-                        name="column_1",
-                        init_type="init_type_1",
-                        from_dict_type="fd_type_1",
-                    ),
-                    _ColumnArgArtifacts(
-                        name="column_2",
-                        init_type="init_type_2",
-                        from_dict_type="fd_type_2",
-                    ),
-                ],
-            ),
-            """kwargs = {}
-        if column_1 is not None:
-            kwargs["column_1"] = column_1
-        if column_2 is not None:
-            kwargs["column_2"] = column_2""",
-        ),
-    ],
-    ids=[
-        "empty",
-        "single required",
-        "single not required",
-        "multiple required",
-        "multiple required and not required",
-        "multiple not required",
-    ],
-)
-@pytest.mark.models_file
-def test_arg_kwargs(artifacts, expected_source):
-    """
-    GIVEN artifacts
-    WHEN arg_kwargs is called with the artifacts
-    THEN the expected source is returned.
-    """
-    source = models_file._model._source.arg_kwargs(artifacts=artifacts)
+    source = models_file._model._source.arg_from_dict(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -633,6 +518,7 @@ def test_arg_kwargs(artifacts, expected_source):
                     columns=[],
                     empty=True,
                     arg=_ArgArtifacts(required=[], not_required=[]),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -652,8 +538,8 @@ class ModelDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -662,20 +548,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self) -> None:
         """Construct."""
-        kwargs = {}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls) -> "Model":
+    def from_dict(cls) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -693,6 +578,7 @@ class Model(models.Model):  # type: ignore
                             )
                         ],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -714,8 +600,8 @@ class ModelDict(typing.TypedDict, total=False):
     col_1: td_type_1
 
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -727,24 +613,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self, col_1: arg_i_type_1 = None) -> None:
         """Construct."""
-        kwargs = {}
-        if col_1 is not None:
-            kwargs["col_1"] = col_1
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, col_1: arg_fd_type_1 = None) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1 = None) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {}
-        if col_1 is not None:
-            kwargs["col_1"] = col_1
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -762,6 +643,7 @@ class Model(models.Model):  # type: ignore
                         ],
                         not_required=[],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -783,8 +665,8 @@ class ModelDict(typing.TypedDict, total=True):
     col_1: td_type_1
 
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -796,20 +678,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self, col_1: arg_i_type_1) -> None:
         """Construct."""
-        kwargs = {"col_1": col_1}
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, col_1: arg_fd_type_1) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"col_1": col_1}
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -836,6 +717,7 @@ class Model(models.Model):  # type: ignore
                             )
                         ],
                     ),
+                    parent_cls="Parent",
                 ),
                 typed_dict=_TypedDictArtifacts(
                     required=_TypedDictClassArtifacts(
@@ -866,8 +748,8 @@ class ModelDict(_ModelDictBase, total=False):
     col_2: td_type_2
 
 
-class Model(models.Model):  # type: ignore
-    """SQLAlchemy model."""
+class TModel(Parent):
+    """SQLAlchemy model protocol."""
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -880,24 +762,19 @@ class Model(models.Model):  # type: ignore
 
     def __init__(self, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> None:
         """Construct."""
-        kwargs = {"col_1": col_1}
-        if col_2 is not None:
-            kwargs["col_2"] = col_2
-
-        super().__init__(**kwargs)
+        ...
 
     @classmethod
-    def from_dict(cls, col_1: arg_fd_type_1, col_2: arg_fd_type_2 = None) -> "Model":
+    def from_dict(cls, col_1: arg_fd_type_1, col_2: arg_fd_type_2 = None) -> "TModel":
         """Construct from a dictionary (eg. a POST payload)."""
-        kwargs = {"col_1": col_1}
-        if col_2 is not None:
-            kwargs["col_2"] = col_2
-
-        return super().from_dict(**kwargs)
+        ...
 
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
-        return super().to_dict()''',
+        ...
+
+
+Model: TModel = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "required empty", "not required empty", "full"],

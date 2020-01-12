@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Fix bug where auto generating models file meant that multiple classes with the same name were registered with the base.
+
 ## Version 0.12.0 - 2020-01-04
 
 - Fix bug where format and maxLength was not considered for the foreign key constructed for an object reference.
