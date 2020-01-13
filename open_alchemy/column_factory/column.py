@@ -4,6 +4,7 @@ import typing
 
 import sqlalchemy
 
+from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
@@ -141,3 +142,46 @@ def _calculate_column_schema(
         artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
     )
     return return_schema
+
+
+def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
+    """
+    Check that the artifacts comply with overall rules.
+
+    Raise MalformedSchemaError for:
+        1. maxLength with
+            a. integer
+            b. number
+            c. boolean
+            d. string with the format of
+                i. date
+                ii. date-time
+        2. autoincrement with
+            a. number
+            b. string
+            c. boolean
+        3. format with
+            a. boolean
+
+    Args:
+        artifacts: The artifacts to check.
+
+    """
+    if artifacts.max_length is not None:
+        if artifacts.type in {"integer", "number", "boolean"}:
+            raise exceptions.MalformedSchemaError(
+                f"maxLength is not supported for {artifacts.type}"
+            )
+        if artifacts.type == "string":
+            if artifacts.format in {"date", "date-time"}:
+                raise exceptions.MalformedSchemaError(
+                    "maxLength is not supported for string with the format "
+                    f"{artifacts.format}"
+                )
+    if artifacts.autoincrement is not None:
+        if artifacts.type in {"number", "string", "boolean"}:
+            raise exceptions.MalformedSchemaError(
+                f"autoincrement is not supported for {artifacts.type}"
+            )
+    if artifacts.type == "boolean" and artifacts.format is not None:
+        raise exceptions.MalformedSchemaError("format is not supported for boolean")

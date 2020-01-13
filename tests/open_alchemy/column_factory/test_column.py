@@ -259,3 +259,63 @@ def test_integration():
     assert isinstance(returned_column, sqlalchemy.Column)
     assert isinstance(returned_column.type, sqlalchemy.Float)
     assert returned_schema == {"type": "number"}
+
+
+class TestCheckArtifacts:
+    """Tests for _check_artifacts."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "type_, format_, max_length, autoincrement",
+        [
+            ("integer", None, 1, None),
+            ("number", None, 1, None),
+            ("boolean", None, 1, None),
+            ("string", "date", 1, None),
+            ("string", "date-time", 1, None),
+            ("number", None, None, True),
+            ("string", None, None, True),
+            ("boolean", None, None, True),
+            ("boolean", "format1", None, None),
+        ],
+        ids=[
+            "maxLength     integer",
+            "maxLength     number",
+            "maxLength     boolean",
+            "maxLength     string  date",
+            "maxLength     string  date-time",
+            "autoincrement number",
+            "autoincrement string",
+            "autoincrement boolean",
+            "format        boolean",
+        ],
+    )
+    @pytest.mark.column
+    def test_invalid(type_, format_, max_length, autoincrement):
+        """
+        GIVEN type, format, maxLength and autoincrement
+        WHEN _check_artifacts is called with the artifacts
+        THEN MalformedSchemaError is raised.
+        """
+        artifacts = types.ColumnArtifacts(
+            type=type_,
+            format=format_,
+            max_length=max_length,
+            autoincrement=autoincrement,
+        )
+
+        with pytest.raises(exceptions.MalformedSchemaError):
+            column._check_artifacts(artifacts=artifacts)
+
+    @staticmethod
+    def test_valid():
+        """
+        GIVEN valid artifacts
+        WHEN _check_artifacts is called
+        THEN MalformedSchemaError is not raised.
+        """
+        artifacts = types.ColumnArtifacts(type="integer")
+
+        column._check_artifacts(artifacts=artifacts)
