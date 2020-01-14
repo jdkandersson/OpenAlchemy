@@ -5,10 +5,10 @@ import sys
 from unittest import mock
 
 import pytest
-import sqlalchemy
 import yaml
 
 import open_alchemy
+from open_alchemy import facades
 
 
 @pytest.mark.integration
@@ -170,7 +170,7 @@ def test_schema():
     # Checking model
     assert model.__tablename__ == "table"
     assert hasattr(model, "column")
-    assert isinstance(model.column.type, sqlalchemy.Integer)
+    assert isinstance(model.column.type, facades.sqlalchemy.column.Integer)
 
 
 BASIC_SPEC = {

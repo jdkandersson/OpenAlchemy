@@ -4,7 +4,6 @@
 import copy
 
 import pytest
-import sqlalchemy
 
 from open_alchemy import exceptions
 from open_alchemy import facades
@@ -257,8 +256,8 @@ def test_integration():
         schemas={"Column": {"type": "number"}},
     )
 
-    assert isinstance(returned_column, sqlalchemy.Column)
-    assert isinstance(returned_column.type, sqlalchemy.Float)
+    assert isinstance(returned_column, facades.sqlalchemy.Column)
+    assert isinstance(returned_column.type, facades.sqlalchemy.column.Number)
     assert returned_schema == {"type": "number"}
 
 

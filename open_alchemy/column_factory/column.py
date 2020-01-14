@@ -2,8 +2,6 @@
 
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
@@ -15,7 +13,7 @@ def handle_column(
     schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> sqlalchemy.Column:
+) -> facades.sqlalchemy.Column:
     """
     Generate column based on OpenAPI schema property.
 

@@ -2,9 +2,9 @@
 # pylint: disable=protected-access
 
 import pytest
-import sqlalchemy
 
 from open_alchemy import column_factory
+from open_alchemy import facades
 
 
 @pytest.mark.column
@@ -26,7 +26,7 @@ def test_integration():
     )
 
     assert logical_name == "column_1"
-    assert isinstance(column.type, sqlalchemy.Boolean)
+    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
     assert spec == {"type": "boolean"}
 
 
@@ -49,7 +49,7 @@ def test_integration_all_of():
     )
 
     assert logical_name == "column_1"
-    assert isinstance(column.type, sqlalchemy.Boolean)
+    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
     assert spec == {"type": "boolean"}
 
 
@@ -72,7 +72,7 @@ def test_integration_ref():
     )
 
     assert logical_name == "column_1"
-    assert isinstance(column.type, sqlalchemy.Boolean)
+    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
     assert spec == {"type": "boolean"}
 
 
@@ -105,7 +105,7 @@ def test_integration_object_ref():
     )
 
     assert fk_logical_name == "ref_schema_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
+    assert isinstance(fk_column.type, facades.sqlalchemy.column.Integer)
     assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"

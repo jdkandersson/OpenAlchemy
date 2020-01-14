@@ -4,8 +4,6 @@
 import dataclasses
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
@@ -26,7 +24,9 @@ def handle_object(
     model_name: str,
     model_schema: types.Schema,
 ) -> typing.Tuple[
-    typing.List[typing.Tuple[str, typing.Union[sqlalchemy.Column, typing.Type]]],
+    typing.List[
+        typing.Tuple[str, typing.Union[facades.sqlalchemy.Column, typing.Type]]
+    ],
     types.Schema,
 ]:
     """

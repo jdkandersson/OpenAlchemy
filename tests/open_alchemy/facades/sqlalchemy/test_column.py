@@ -9,6 +9,47 @@ from open_alchemy.facades.sqlalchemy import column
 
 
 @pytest.mark.parametrize(
+    "name, expected_value",
+    [
+        ("Column", sqlalchemy.Column),
+        ("Type", sqlalchemy.sql.type_api.TypeEngine),
+        ("ForeignKey", sqlalchemy.ForeignKey),
+        ("Integer", sqlalchemy.Integer),
+        ("BigInteger", sqlalchemy.BigInteger),
+        ("Number", sqlalchemy.Float),
+        ("String", sqlalchemy.String),
+        ("Binary", sqlalchemy.LargeBinary),
+        ("Date", sqlalchemy.Date),
+        ("DateTime", sqlalchemy.DateTime),
+        ("Boolean", sqlalchemy.Boolean),
+    ],
+    ids=[
+        "Column",
+        "Type",
+        "ForeignKey",
+        "Integer",
+        "BigInteger",
+        "Number",
+        "String",
+        "Binary",
+        "Date",
+        "DateTime",
+        "Boolean",
+    ],
+)
+@pytest.mark.facade
+def test_mapping(name, expected_value):
+    """
+    GIVEN name and expected value
+    WHEN the name is retrieved from column
+    THEN the expected value is returned.
+    """
+    returned_value = getattr(column, name)
+
+    assert returned_value == expected_value
+
+
+@pytest.mark.parametrize(
     "type_, expected_type",
     [
         ("integer", sqlalchemy.Integer),

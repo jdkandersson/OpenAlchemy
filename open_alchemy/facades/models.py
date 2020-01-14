@@ -2,8 +2,6 @@
 
 import typing
 
-import sqlalchemy
-
 import open_alchemy
 from open_alchemy import exceptions
 from open_alchemy import helpers
@@ -11,6 +9,7 @@ from open_alchemy import types
 
 from ..utility_base import TOptUtilityBase
 from ..utility_base import TUtilityBase
+from . import sqlalchemy
 
 
 def get_base() -> typing.Any:
