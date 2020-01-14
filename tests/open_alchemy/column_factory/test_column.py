@@ -311,13 +311,42 @@ class TestCheckArtifacts:
             column._check_artifacts(artifacts=artifacts)
 
     @staticmethod
-    def test_valid():
+    @pytest.mark.parametrize(
+        "type_, format_, max_length, autoincrement",
+        [
+            ("string", None, 1, None),
+            ("string", "byte", 1, None),
+            ("string", "password", 1, None),
+            ("string", "binary", 1, None),
+            ("integer", None, None, True),
+            ("integer", "int32", None, None),
+            ("number", "float", None, None),
+            ("string", "password", None, None),
+        ],
+        ids=[
+            "maxLength     string",
+            "maxLength     string  byte",
+            "maxLength     string  password",
+            "maxLength     string  binary",
+            "autoincrement integer",
+            "format        integer",
+            "format        number",
+            "format        string",
+        ],
+    )
+    @pytest.mark.column
+    def test_valid(type_, format_, max_length, autoincrement):
         """
         GIVEN valid artifacts
         WHEN _check_artifacts is called
         THEN MalformedSchemaError is not raised.
         """
-        artifacts = types.ColumnArtifacts(type="integer")
+        artifacts = types.ColumnArtifacts(
+            type=type_,
+            format=format_,
+            max_length=max_length,
+            autoincrement=autoincrement,
+        )
 
         column._check_artifacts(artifacts=artifacts)
 

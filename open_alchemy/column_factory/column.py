@@ -192,12 +192,12 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
             raise exceptions.MalformedSchemaError(
                 f"maxLength is not supported for {artifacts.type}"
             )
-        if artifacts.type == "string":
-            if artifacts.format in {"date", "date-time"}:
-                raise exceptions.MalformedSchemaError(
-                    "maxLength is not supported for string with the format "
-                    f"{artifacts.format}"
-                )
+        # Must be string type
+        if artifacts.format in {"date", "date-time"}:
+            raise exceptions.MalformedSchemaError(
+                "maxLength is not supported for string with the format "
+                f"{artifacts.format}"
+            )
     if artifacts.autoincrement is not None:
         if artifacts.type in {"number", "string", "boolean"}:
             raise exceptions.MalformedSchemaError(
