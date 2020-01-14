@@ -1,9 +1,27 @@
 """Tests for the SQLAlchemy facade."""
 
 import pytest
+import sqlalchemy
 
+from open_alchemy import facades
 from open_alchemy import types
-from open_alchemy.facades import sqlalchemy
+
+
+@pytest.mark.parametrize(
+    "name, expected_value",
+    [("Column", sqlalchemy.Column), ("Table", sqlalchemy.Table)],
+    ids=["Column", "Table"],
+)
+@pytest.mark.facade
+def test_mapping(name, expected_value):
+    """
+    GIVEN name and expected value
+    WHEN the name is retrieved from facades.sqlalchemy
+    THEN the expected value is returned.
+    """
+    returned_value = getattr(facades.sqlalchemy, name)
+
+    assert returned_value == expected_value
 
 
 @pytest.mark.parametrize(
@@ -49,7 +67,7 @@ def test_construct_relationship_plain(
     THEN a relationship with the given expected argument, backref, uselist and secondary
         is returned.
     """
-    relationship = sqlalchemy.relationship(artifacts=artifacts)
+    relationship = facades.sqlalchemy.relationship(artifacts=artifacts)
 
     assert relationship.argument == exp_argument
     if exp_backref is None:
