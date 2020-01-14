@@ -33,7 +33,7 @@ def handle_column(
     schema = helpers.prepare_schema(schema=schema, schemas=schemas)
     artifacts = check_schema(schema=schema, required=required)
     column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
-    column = facades.sqlalchemy.column.construct(artifacts=artifacts)
+    column = construct_column(artifacts=artifacts)
     return column_schema, column
 
 
