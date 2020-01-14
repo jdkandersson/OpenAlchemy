@@ -13,7 +13,7 @@ def handle_column(
     schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> facades.sqlalchemy.Column:
+) -> facades.sqlalchemy.column.Column:
     """
     Generate column based on OpenAPI schema property.
 
@@ -142,7 +142,9 @@ def _calculate_column_schema(
     return return_schema
 
 
-def construct_column(*, artifacts: types.ColumnArtifacts) -> facades.sqlalchemy.Column:
+def construct_column(
+    *, artifacts: types.ColumnArtifacts
+) -> facades.sqlalchemy.column.Column:
     """
     Construct column based on artifacts.
 

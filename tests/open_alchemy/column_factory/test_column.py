@@ -256,7 +256,7 @@ def test_integration():
         schemas={"Column": {"type": "number"}},
     )
 
-    assert isinstance(returned_column, facades.sqlalchemy.Column)
+    assert isinstance(returned_column, facades.sqlalchemy.column.Column)
     assert isinstance(returned_column.type, facades.sqlalchemy.column.Number)
     assert returned_schema == {"type": "number"}
 
@@ -374,5 +374,5 @@ def test_construct_column_valid():
 
     return_column = column.construct_column(artifacts=artifacts)
 
-    assert isinstance(return_column, facades.sqlalchemy.Column)
+    assert isinstance(return_column, facades.sqlalchemy.column.Column)
     assert isinstance(return_column.type, facades.sqlalchemy.column.String)

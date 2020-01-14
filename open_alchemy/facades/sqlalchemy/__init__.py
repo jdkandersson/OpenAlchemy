@@ -9,7 +9,6 @@ from open_alchemy import types
 from . import column as column
 
 # Mapping from SQLAlchemy
-Column: sqlalchemy.Column = sqlalchemy.Column
 Table: sqlalchemy.Table = sqlalchemy.Table
 
 

@@ -130,7 +130,9 @@ def _gather_column_artifacts(
     )
 
 
-def _construct_column(*, artifacts: _ColumnArtifacts) -> facades.sqlalchemy.Column:
+def _construct_column(
+    *, artifacts: _ColumnArtifacts
+) -> facades.sqlalchemy.column.Column:
     """
     Construct many to many column.
 

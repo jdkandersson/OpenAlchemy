@@ -8,9 +8,7 @@ from open_alchemy import types
 
 
 @pytest.mark.parametrize(
-    "name, expected_value",
-    [("Column", sqlalchemy.Column), ("Table", sqlalchemy.Table)],
-    ids=["Column", "Table"],
+    "name, expected_value", [("Table", sqlalchemy.Table)], ids=["Table"]
 )
 @pytest.mark.facade
 def test_mapping(name, expected_value):

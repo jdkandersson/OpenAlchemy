@@ -25,7 +25,7 @@ def handle_object(
     model_schema: types.Schema,
 ) -> typing.Tuple[
     typing.List[
-        typing.Tuple[str, typing.Union[facades.sqlalchemy.Column, typing.Type]]
+        typing.Tuple[str, typing.Union[facades.sqlalchemy.column.Column, typing.Type]]
     ],
     types.Schema,
 ]:
