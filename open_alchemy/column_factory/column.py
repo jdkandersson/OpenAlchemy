@@ -144,6 +144,26 @@ def _calculate_column_schema(
     return return_schema
 
 
+def construct_column(*, artifacts: types.ColumnArtifacts) -> facades.sqlalchemy.Column:
+    """
+    Construct column based on artifacts.
+
+    Artifacts are checked for rule compliance and passed to the SQLAlchemy facade for
+    construction.
+
+    Args:
+        artifacts: The artifacts required to construct the column.
+
+    Returns:
+        The constructed column.
+
+    """
+    # Check artifacts for rule compliance
+    _check_artifacts(artifacts=artifacts)
+    # Construct column
+    return facades.sqlalchemy.column.construct(artifacts=artifacts)
+
+
 def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
     """
     Check that the artifacts comply with overall rules.

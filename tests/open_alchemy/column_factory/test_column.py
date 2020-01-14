@@ -7,6 +7,7 @@ import pytest
 import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import types
 from open_alchemy.column_factory import column
 
@@ -319,3 +320,31 @@ class TestCheckArtifacts:
         artifacts = types.ColumnArtifacts(type="integer")
 
         column._check_artifacts(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_construct_column_invalid():
+    """
+    GIVEN artifacts that are not valid
+    WHEN construct_column is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts(type="string", autoincrement=True)
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        column.construct_column(artifacts=artifacts)
+
+
+@pytest.mark.column
+def test_construct_column_valid():
+    """
+    GIVEN artifacts that are not valid
+    WHEN construct_column is called with the artifacts
+    THEN MalformedSchemaError is raised.
+    """
+    artifacts = types.ColumnArtifacts(type="string")
+
+    return_column = column.construct_column(artifacts=artifacts)
+
+    assert isinstance(return_column, facades.sqlalchemy.Column)
+    assert isinstance(return_column.type, facades.sqlalchemy.column.String)
