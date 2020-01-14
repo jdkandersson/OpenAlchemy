@@ -95,10 +95,6 @@ def _handle_integer(
         The SQLAlchemy integer type of the column.
 
     """
-    if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The integer type does not support a maximum length."
-        )
     if artifacts.format is None or artifacts.format == "int32":
         return Integer
     if artifacts.format == "int64":
@@ -122,14 +118,6 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> Number:
         The SQLAlchemy number type of the column.
 
     """
-    if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The number type does not support a maximum length."
-        )
-    if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The number type does not support autoincrement."
-        )
     if artifacts.format is None or artifacts.format == "float":
         return Number
     raise exceptions.FeatureNotImplementedError(
@@ -153,10 +141,6 @@ def _handle_string(
         The SQLAlchemy string type of the column.
 
     """
-    if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The string type does not support autoincrement."
-        )
     if artifacts.format in {None, "byte", "password"}:
         if artifacts.max_length is None:
             return String
@@ -174,7 +158,9 @@ def _handle_string(
     )
 
 
-def _handle_boolean(*, artifacts: types.ColumnArtifacts) -> Boolean:
+def _handle_boolean(
+    *, artifacts: types.ColumnArtifacts  # pylint: disable=unused-argument
+) -> Boolean:
     """
     Handle artifacts for an boolean type.
 
@@ -187,16 +173,4 @@ def _handle_boolean(*, artifacts: types.ColumnArtifacts) -> Boolean:
         The SQLAlchemy boolean type of the column.
 
     """
-    if artifacts.format is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support format."
-        )
-    if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support autoincrement."
-        )
-    if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support a maximum length."
-        )
     return Boolean

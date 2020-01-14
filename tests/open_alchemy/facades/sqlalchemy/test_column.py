@@ -18,7 +18,7 @@ from open_alchemy.facades.sqlalchemy import column
     ],
     ids=["integer", "number", "string", "boolean"],
 )
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct(type_, expected_type):
     """
     GIVEN artifacts for a type
@@ -35,7 +35,7 @@ def test_construct(type_, expected_type):
     assert returned_column.nullable is True
 
 
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_foreign_key():
     """
     GIVEN artifacts with foreign key
@@ -52,7 +52,7 @@ def test_construct_foreign_key():
 
 
 @pytest.mark.parametrize("nullable", [True, False], ids=["true", "false"])
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_nullable(nullable):
     """
     GIVEN value for nullable
@@ -69,7 +69,7 @@ def test_construct_nullable(nullable):
 @pytest.mark.parametrize(
     "primary_key", [None, True, False], ids=["none", "true", "false"]
 )
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_primary_key(primary_key):
     """
     GIVEN value for primary_key
@@ -86,7 +86,7 @@ def test_construct_primary_key(primary_key):
 @pytest.mark.parametrize(
     "autoincrement", [None, True, False], ids=["none", "true", "false"]
 )
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_autoincrement(autoincrement):
     """
     GIVEN value for autoincrement
@@ -101,7 +101,7 @@ def test_construct_autoincrement(autoincrement):
 
 
 @pytest.mark.parametrize("index", [None, True, False], ids=["none", "true", "false"])
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_index(index):
     """
     GIVEN value for index
@@ -116,7 +116,7 @@ def test_construct_index(index):
 
 
 @pytest.mark.parametrize("unique", [None, True, False], ids=["none", "true", "false"])
-@pytest.mark.column
+@pytest.mark.facade
 def test_construct_unique(unique):
     """
     GIVEN value for unique
@@ -136,7 +136,7 @@ class TestDetermineType:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_unsupported():
         """
         GIVEN artifacts with an unsupported type
@@ -159,7 +159,7 @@ class TestDetermineType:
         ],
         ids=["integer", "number", "string", "boolean"],
     )
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_supported(type_, expected_type):
         """
         GIVEN type
@@ -179,23 +179,7 @@ class TestHandleInteger:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "artifacts_kwargs", [{"max_length": 1}], ids=["max_length"]
-    )
-    @pytest.mark.column
-    def test_invalid(artifacts_kwargs):
-        """
-        GIVEN artifacts with an artifact that is not supported
-        WHEN _handle_integer is called with the artifacts
-        THEN MalformedSchemaError is raised.
-        """
-        artifacts = types.ColumnArtifacts("integer", **artifacts_kwargs)
-
-        with pytest.raises(exceptions.MalformedSchemaError):
-            column._handle_integer(artifacts=artifacts)
-
-    @staticmethod
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -217,7 +201,7 @@ class TestHandleInteger:
         ],
         ids=["None", "int32", "int64"],
     )
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_valid(format_, expected_integer):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -237,25 +221,7 @@ class TestHandleNumber:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "artifacts_kwargs",
-        [{"max_length": 1}, {"autoincrement": True}],
-        ids=["max_length", "autoincrement"],
-    )
-    @pytest.mark.column
-    def test_invalid(artifacts_kwargs):
-        """
-        GIVEN artifacts with an artifact that is not supported
-        WHEN _handle_number is called with the artifacts
-        THEN MalformedSchemaError is raised.
-        """
-        artifacts = types.ColumnArtifacts("number", **artifacts_kwargs)
-
-        with pytest.raises(exceptions.MalformedSchemaError):
-            column._handle_number(artifacts=artifacts)
-
-    @staticmethod
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -273,7 +239,7 @@ class TestHandleNumber:
         [(None, sqlalchemy.Float), ("float", sqlalchemy.Float)],
         ids=["None", "float"],
     )
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_valid(format_, expected_number):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -293,23 +259,7 @@ class TestHandleString:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "artifacts_kwargs", [{"autoincrement": True}], ids=["autoincrement"]
-    )
-    @pytest.mark.column
-    def test_invalid(artifacts_kwargs):
-        """
-        GIVEN artifacts with an artifact that is not supported
-        WHEN _handle_string is called with the artifacts
-        THEN MalformedSchemaError is raised.
-        """
-        artifacts = types.ColumnArtifacts("string", **artifacts_kwargs)
-
-        with pytest.raises(exceptions.MalformedSchemaError):
-            column._handle_string(artifacts=artifacts)
-
-    @staticmethod
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -334,7 +284,7 @@ class TestHandleString:
         ],
         ids=["None", "date", "date-time", "byte", "password", "binary"],
     )
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_valid(format_, expected_type):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -353,7 +303,7 @@ class TestHandleString:
         [(None, sqlalchemy.String), ("binary", sqlalchemy.LargeBinary)],
         ids=["string", "binary"],
     )
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_valid_max_length(format_, expected_type):
         """
         GIVEN artifacts with max_length and given format
@@ -375,29 +325,11 @@ class TestHandleBoolean:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "artifacts_kwargs",
-        [{"format": "format 1"}, {"max_length": 1}, {"autoincrement": True}],
-        ids=["format", "max_length", "autoincrement"],
-    )
-    @pytest.mark.column
-    def test_invalid(artifacts_kwargs):
-        """
-        GIVEN artifacts with an artifact that is not supported
-        WHEN _handle_boolean is called with the artifacts
-        THEN MalformedSchemaError is raised.
-        """
-        artifacts = types.ColumnArtifacts("boolean", **artifacts_kwargs)
-
-        with pytest.raises(exceptions.MalformedSchemaError):
-            column._handle_boolean(artifacts=artifacts)
-
-    @staticmethod
-    @pytest.mark.column
+    @pytest.mark.facade
     def test_valid():
         """
         GIVEN artifacts
-        WHEN _handle_integer is called with the artifacts
+        WHEN _handle_boolean is called with the artifacts
         THEN the boolean type is returned.
         """
         artifacts = types.ColumnArtifacts("boolean")
