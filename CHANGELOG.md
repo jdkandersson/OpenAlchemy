@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Ring fence SQLAlchemy dependency to a facade and integration tests.
+
 ## Version 0.12.1 - 2020-01-12
 
 - Fix bug where auto generating models file meant that multiple classes with the same name were registered with the base.
