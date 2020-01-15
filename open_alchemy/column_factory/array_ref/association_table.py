@@ -199,6 +199,6 @@ def construct(
 
     # Construct table
     base = facades.models.get_base()
-    return facades.sqlalchemy.Table(
-        tablename, base.metadata, parent_column, child_column
+    return facades.sqlalchemy.table(
+        tablename=tablename, base=base, columns=(parent_column, child_column)
     )

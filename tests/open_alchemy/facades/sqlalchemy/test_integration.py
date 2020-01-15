@@ -1,5 +1,7 @@
 """Tests for the SQLAlchemy facade."""
 
+from unittest import mock
+
 import pytest
 import sqlalchemy
 
@@ -73,3 +75,29 @@ def test_construct_relationship_plain(
     else:
         assert relationship.backref == (exp_backref, {"uselist": exp_uselist})
     assert relationship.secondary == exp_secondary
+
+
+@pytest.mark.facade
+def test_construct():
+    """
+    GIVEN tablename, mock base and 2 columns
+    WHEN construct is called with the columns and base
+    THEN a table with the correct name, columns and metadata is constructed.
+    """
+    # pylint: disable=unsubscriptable-object
+    tablename = "association"
+    mock_base = mock.MagicMock()
+    columns = (
+        sqlalchemy.Column(sqlalchemy.Integer, name="column_1"),
+        sqlalchemy.Column(sqlalchemy.String, name="column_2"),
+    )
+
+    returned_table = facades.sqlalchemy.table(
+        tablename=tablename, base=mock_base, columns=columns
+    )
+
+    assert returned_table.name == tablename
+    assert returned_table.metadata == (mock_base.metadata)
+    assert len(returned_table.columns) == 2
+    assert isinstance(returned_table.columns["column_1"].type, sqlalchemy.Integer)
+    assert isinstance(returned_table.columns["column_2"].type, sqlalchemy.String)

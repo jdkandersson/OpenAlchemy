@@ -1,6 +1,8 @@
 """Facade for SQLAlchemy."""
 # pylint: disable=useless-import-alias
 
+import typing
+
 import sqlalchemy
 from sqlalchemy import orm
 
@@ -35,3 +37,21 @@ def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipP
     return orm.relationship(
         artifacts.model_name, backref=backref, secondary=artifacts.secondary
     )
+
+
+def table(
+    *, tablename: str, base: typing.Any, columns: typing.Tuple[column.Column, ...]
+) -> Table:
+    """
+    Construct table.
+
+    Args:
+        tablename: The name of the table to construct.
+        base: The base class for the table containing metadata.
+        columns: The columns of the table.
+
+    Returns:
+        The SQLAlchemy table.
+
+    """
+    return Table(tablename, base.metadata, *columns)
