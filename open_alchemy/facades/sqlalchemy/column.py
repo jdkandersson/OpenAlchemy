@@ -85,7 +85,6 @@ def _handle_integer(
     """
     Handle artifacts for an integer type.
 
-    Raises MalformedSchemaError if max length is defined.
     Raise FeatureNotImplementedError if a format that is not supported is defined.
 
     Args:
@@ -108,8 +107,7 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> Number:
     """
     Handle artifacts for an number type.
 
-    Raises MalformedSchemaError if max length or autoincrement is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
+    Raise FeatureNotImplementedError if a format that is not supported is defined.
 
     Args:
         artifacts: The artifacts for the column.
@@ -131,8 +129,7 @@ def _handle_string(
     """
     Handle artifacts for an string type.
 
-    Raises MalformedSchemaError if autoincrement is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
+    Raise FeatureNotImplementedError if a format that is not supported is defined.
 
     Args:
         artifacts: The artifacts for the column.
@@ -163,8 +160,6 @@ def _handle_boolean(
 ) -> Boolean:
     """
     Handle artifacts for an boolean type.
-
-    Raises MalformedSchemaError if format, autoincrement or max length is defined.
 
     Args:
         artifacts: The artifacts for the column.
