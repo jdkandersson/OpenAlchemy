@@ -183,3 +183,11 @@ def mocked_facades_models(monkeypatch):
 def _mocked_facades_models(mocked_facades_models):
     """Suppress unused argument error."""
     return mocked_facades_models
+
+
+@pytest.fixture
+def mocked_facades_sqlalchemy(monkeypatch):
+    """Monkeypatch open_alchemy.facades.sqlalchemy."""
+    mock_sqlalchemy = mock.MagicMock()
+    monkeypatch.setattr(open_alchemy.facades, "sqlalchemy", mock_sqlalchemy)
+    return mock_sqlalchemy

@@ -308,7 +308,7 @@ class TestConstructColumn:
 
 
 @pytest.mark.column
-def test_construct(mocked_facades_models):
+def test_construct(mocked_facades_models, mocked_facades_sqlalchemy):
     """
     GIVEN parent and child schema and tablename
     WHEN construct is called with the parent and child schema and
@@ -335,12 +335,24 @@ def test_construct(mocked_facades_models):
         tablename=tablename,
     )
 
-    assert returned_table.name == tablename
-    assert returned_table.metadata == (
-        mocked_facades_models.get_base.return_value.metadata
+    # Check call
+    assert mocked_facades_sqlalchemy.table.call_count == 1
+    assert returned_table == mocked_facades_sqlalchemy.table.return_value
+    # Check table call args
+    kwargs = mocked_facades_sqlalchemy.table.call_args.kwargs
+    assert kwargs["tablename"] == tablename
+    assert kwargs["base"] == mocked_facades_models.get_base.return_value
+    assert len(kwargs["columns"]) == 2
+    assert kwargs["columns"][0] == (
+        mocked_facades_sqlalchemy.column.construct.return_value
     )
-    assert len(returned_table.columns) == 2
-    assert isinstance(
-        returned_table.columns["parent_parent_id"].type, sqlalchemy.Integer
+    assert kwargs["columns"][1] == (
+        mocked_facades_sqlalchemy.column.construct.return_value
     )
-    assert isinstance(returned_table.columns["child_child_id"].type, sqlalchemy.String)
+    # Check column calls
+    assert mocked_facades_sqlalchemy.column.construct.call_count == 2
+    call_args_list = mocked_facades_sqlalchemy.column.construct.call_args_list
+    kwargs = call_args_list[0].kwargs
+    assert kwargs["artifacts"].type == "integer"
+    kwargs = call_args_list[1].kwargs
+    assert kwargs["artifacts"].type == "string"
