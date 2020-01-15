@@ -1,5 +1,7 @@
 """Tests for array association table."""
 
+import sys
+
 import pytest
 
 from open_alchemy import exceptions
@@ -277,7 +279,10 @@ class TestConstructColumn:
         assert column == mocked_facades_sqlalchemy.column.construct.return_value
         assert column.name == "table_1_column_1"
         # Check call arguments
-        kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        if sys.version_info[1] == 8:
+            kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        else:
+            _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
         assert kwargs["artifacts"].type == "integer"
         assert kwargs["artifacts"].format == "int64"
         assert kwargs["artifacts"].foreign_key == "table_1.column_1"
@@ -309,7 +314,10 @@ class TestConstructColumn:
         # Check call
         assert mocked_facades_sqlalchemy.column.construct.call_count == 1
         # Check call arguments
-        kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        if sys.version_info[1] == 8:
+            kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        else:
+            _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
         assert kwargs["artifacts"].type == type_
         assert kwargs["artifacts"].format == format_
         assert kwargs["artifacts"].max_length == max_length
@@ -347,7 +355,10 @@ def test_construct(mocked_facades_models, mocked_facades_sqlalchemy):
     assert mocked_facades_sqlalchemy.table.call_count == 1
     assert returned_table == mocked_facades_sqlalchemy.table.return_value
     # Check table call args
-    kwargs = mocked_facades_sqlalchemy.table.call_args.kwargs
+    if sys.version_info[1] == 8:
+        kwargs = mocked_facades_sqlalchemy.table.call_args.kwargs
+    else:
+        _, kwargs = mocked_facades_sqlalchemy.table.call_args
     assert kwargs["tablename"] == tablename
     assert kwargs["base"] == mocked_facades_models.get_base.return_value
     assert len(kwargs["columns"]) == 2
@@ -360,7 +371,13 @@ def test_construct(mocked_facades_models, mocked_facades_sqlalchemy):
     # Check column calls
     assert mocked_facades_sqlalchemy.column.construct.call_count == 2
     call_args_list = mocked_facades_sqlalchemy.column.construct.call_args_list
-    kwargs = call_args_list[0].kwargs
+    if sys.version_info[1] == 8:
+        kwargs = call_args_list[0].kwargs
+    else:
+        _, kwargs = call_args_list[0]
     assert kwargs["artifacts"].type == "integer"
-    kwargs = call_args_list[1].kwargs
+    if sys.version_info[1] == 8:
+        kwargs = call_args_list[1].kwargs
+    else:
+        _, kwargs = call_args_list[1]
     assert kwargs["artifacts"].type == "string"
