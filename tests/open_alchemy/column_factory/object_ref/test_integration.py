@@ -2,9 +2,9 @@
 # pylint: disable=protected-access
 
 import pytest
-import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy.column_factory import object_ref
 
 
@@ -74,7 +74,7 @@ def test_integration_object_ref():
     )
 
     assert fk_logical_name == "ref_schema_id"
-    assert isinstance(fk_column.type, sqlalchemy.Integer)
+    assert isinstance(fk_column.type, facades.sqlalchemy.column.Integer)
     assert fk_column.nullable is True
     assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name

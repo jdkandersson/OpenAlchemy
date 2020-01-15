@@ -3,8 +3,6 @@
 import dataclasses
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers

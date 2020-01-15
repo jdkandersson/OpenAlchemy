@@ -3,8 +3,6 @@
 import dataclasses
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
@@ -132,7 +130,9 @@ def _gather_column_artifacts(
     )
 
 
-def _construct_column(*, artifacts: _ColumnArtifacts) -> sqlalchemy.Column:
+def _construct_column(
+    *, artifacts: _ColumnArtifacts
+) -> facades.sqlalchemy.column.Column:
     """
     Construct many to many column.
 
@@ -168,7 +168,7 @@ def construct(
     child_schema: types.Schema,
     schemas: types.Schemas,
     tablename: str,
-) -> sqlalchemy.Table:
+) -> facades.sqlalchemy.Table:
     """
     Construct many to many association table.
 
@@ -199,4 +199,6 @@ def construct(
 
     # Construct table
     base = facades.models.get_base()
-    return sqlalchemy.Table(tablename, base.metadata, parent_column, child_column)
+    return facades.sqlalchemy.table(
+        tablename=tablename, base=base, columns=(parent_column, child_column)
+    )

@@ -4,9 +4,9 @@
 from unittest import mock
 
 import pytest
-import sqlalchemy
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy.column_factory import array_ref
 
 
@@ -110,7 +110,7 @@ def test_models(mocked_facades_models: mock.MagicMock):
     )
 
     added_fk_column = getattr(mock_ref_model, f"{tablename}_{fk_column}")
-    assert isinstance(added_fk_column.type, sqlalchemy.Integer)
+    assert isinstance(added_fk_column.type, facades.sqlalchemy.column.Integer)
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
     mocked_facades_models.get_model.assert_called_once_with(name=ref_model_name)

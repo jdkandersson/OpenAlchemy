@@ -1,7 +1,8 @@
 """Tests for array association table."""
 
+import sys
+
 import pytest
-import sqlalchemy
 
 from open_alchemy import exceptions
 from open_alchemy.column_factory import array_ref
@@ -260,11 +261,12 @@ class TestConstructColumn:
 
     @staticmethod
     @pytest.mark.column
-    def test_column():
+    def test_column(mocked_facades_sqlalchemy):
         """
         GIVEN many to many column artifacts
         WHEN _construct_column is called with the artifacts
-        THEN a column is returned.
+        THEN sqlalchemy facade is called with the artifacts with the calculated foreign
+            key.
         """
         artifacts = array_ref._association_table._ColumnArtifacts(
             "integer", "int64", "table_1", "column_1", None
@@ -272,48 +274,62 @@ class TestConstructColumn:
 
         column = array_ref._association_table._construct_column(artifacts=artifacts)
 
+        # Check column construct call
+        assert mocked_facades_sqlalchemy.column.construct.call_count == 1
+        assert column == mocked_facades_sqlalchemy.column.construct.return_value
         assert column.name == "table_1_column_1"
-        assert isinstance(column.type, sqlalchemy.BigInteger)
-        assert len(column.foreign_keys) == 1
-        foreign_key = column.foreign_keys.pop()
-        assert str(foreign_key) == "ForeignKey('table_1.column_1')"
+        # Check call arguments
+        if sys.version_info[1] == 8:
+            kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        else:
+            _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
+        assert kwargs["artifacts"].type == "integer"
+        assert kwargs["artifacts"].format == "int64"
+        assert kwargs["artifacts"].foreign_key == "table_1.column_1"
 
     @staticmethod
     @pytest.mark.parametrize(
-        "type_, format_, max_length, expected_type",
+        "type_, format_, max_length",
         [
-            ("integer", None, None, sqlalchemy.Integer),
-            ("integer", "int64", None, sqlalchemy.BigInteger),
-            ("string", None, None, sqlalchemy.String),
-            ("string", None, 10, sqlalchemy.String),
+            ("integer", None, None),
+            ("integer", "int64", None),
+            ("string", None, None),
+            ("string", None, 10),
         ],
         ids=["no format", "with format", "string no maxLength", "string maxLength"],
     )
     @pytest.mark.column
-    def test_artifacts(type_, format_, max_length, expected_type):
+    def test_artifacts(type_, format_, max_length, mocked_facades_sqlalchemy):
         """
-        GIVEN type, format, maxLength and expected type
+        GIVEN type, format, maxLength
         WHEN artifacts are constructed and _construct_column is called
-        THEN a column with the expected type is returned.
+        THEN the SQLAlchemy facade is called with the artifacts.
         """
         artifacts = array_ref._association_table._ColumnArtifacts(
             type_, format_, "table_1", "column_1", max_length
         )
 
-        column = array_ref._association_table._construct_column(artifacts=artifacts)
+        array_ref._association_table._construct_column(artifacts=artifacts)
 
-        assert isinstance(column.type, expected_type)
-        if max_length is not None:
-            assert column.type.length == max_length
+        # Check call
+        assert mocked_facades_sqlalchemy.column.construct.call_count == 1
+        # Check call arguments
+        if sys.version_info[1] == 8:
+            kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
+        else:
+            _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
+        assert kwargs["artifacts"].type == type_
+        assert kwargs["artifacts"].format == format_
+        assert kwargs["artifacts"].max_length == max_length
 
 
 @pytest.mark.column
-def test_construct(mocked_facades_models):
+def test_construct(mocked_facades_models, mocked_facades_sqlalchemy):
     """
     GIVEN parent and child schema and tablename
     WHEN construct is called with the parent and child schema and
         tablename
-    THEN a table with the correct name, columns and metadata is constructed.
+    THEN the SQLAlchemy facade is called with the artifacts extracted from the schema.
     """
     # pylint: disable=protected-access,unsubscriptable-object
     parent_schema = {
@@ -335,12 +351,33 @@ def test_construct(mocked_facades_models):
         tablename=tablename,
     )
 
-    assert returned_table.name == tablename
-    assert returned_table.metadata == (
-        mocked_facades_models.get_base.return_value.metadata
+    # Check call
+    assert mocked_facades_sqlalchemy.table.call_count == 1
+    assert returned_table == mocked_facades_sqlalchemy.table.return_value
+    # Check table call args
+    if sys.version_info[1] == 8:
+        kwargs = mocked_facades_sqlalchemy.table.call_args.kwargs
+    else:
+        _, kwargs = mocked_facades_sqlalchemy.table.call_args
+    assert kwargs["tablename"] == tablename
+    assert kwargs["base"] == mocked_facades_models.get_base.return_value
+    assert len(kwargs["columns"]) == 2
+    assert kwargs["columns"][0] == (
+        mocked_facades_sqlalchemy.column.construct.return_value
     )
-    assert len(returned_table.columns) == 2
-    assert isinstance(
-        returned_table.columns["parent_parent_id"].type, sqlalchemy.Integer
+    assert kwargs["columns"][1] == (
+        mocked_facades_sqlalchemy.column.construct.return_value
     )
-    assert isinstance(returned_table.columns["child_child_id"].type, sqlalchemy.String)
+    # Check column calls
+    assert mocked_facades_sqlalchemy.column.construct.call_count == 2
+    call_args_list = mocked_facades_sqlalchemy.column.construct.call_args_list
+    if sys.version_info[1] == 8:
+        kwargs = call_args_list[0].kwargs
+    else:
+        _, kwargs = call_args_list[0]
+    assert kwargs["artifacts"].type == "integer"
+    if sys.version_info[1] == 8:
+        kwargs = call_args_list[1].kwargs
+    else:
+        _, kwargs = call_args_list[1]
+    assert kwargs["artifacts"].type == "string"

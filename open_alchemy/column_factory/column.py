@@ -2,9 +2,8 @@
 
 import typing
 
-import sqlalchemy
-
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types
 
@@ -14,7 +13,7 @@ def handle_column(
     schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> sqlalchemy.Column:
+) -> facades.sqlalchemy.column.Column:
     """
     Generate column based on OpenAPI schema property.
 
@@ -143,182 +142,66 @@ def _calculate_column_schema(
     return return_schema
 
 
-def construct_column(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Column:
-    """
-    Construct column from artifacts.
-
-    Args:
-        artifacts: The artifacts of the column.
-
-    Returns:
-        The SQLAlchemy column.
-
-    """
-    type_ = _determine_type(artifacts=artifacts)
-    foreign_key: typing.Optional[sqlalchemy.ForeignKey] = None
-    if artifacts.foreign_key is not None:
-        foreign_key = sqlalchemy.ForeignKey(artifacts.foreign_key)
-    return sqlalchemy.Column(
-        type_,
-        foreign_key,
-        nullable=artifacts.nullable,
-        primary_key=artifacts.primary_key,
-        autoincrement=artifacts.autoincrement,
-        index=artifacts.index,
-        unique=artifacts.unique,
-    )
-
-
-def _determine_type(
+def construct_column(
     *, artifacts: types.ColumnArtifacts
-) -> sqlalchemy.sql.type_api.TypeEngine:
+) -> facades.sqlalchemy.column.Column:
     """
-    Determine the type for a specification.
+    Construct column based on artifacts.
 
-    Raise FeatureNotImplementedError for unsupported types.
+    Artifacts are checked for rule compliance and passed to the SQLAlchemy facade for
+    construction.
 
     Args:
-        artifacts: The artifacts for the column.
+        artifacts: The artifacts required to construct the column.
 
     Returns:
-        The type for the column.
+        The constructed column.
 
     """
-    # Determining the type
-    type_: typing.Optional[sqlalchemy.sql.type_api.TypeEngine] = None
-    if artifacts.type == "integer":
-        type_ = _handle_integer(artifacts=artifacts)
-    elif artifacts.type == "number":
-        type_ = _handle_number(artifacts=artifacts)
-    elif artifacts.type == "string":
-        type_ = _handle_string(artifacts=artifacts)
-    elif artifacts.type == "boolean":
-        type_ = _handle_boolean(artifacts=artifacts)
-
-    if type_ is None:
-        raise exceptions.FeatureNotImplementedError(
-            f"{artifacts.type} has not been implemented"
-        )
-
-    return type_
+    # Check artifacts for rule compliance
+    _check_artifacts(artifacts=artifacts)
+    # Construct column
+    return facades.sqlalchemy.column.construct(artifacts=artifacts)
 
 
-def _handle_integer(
-    *, artifacts: types.ColumnArtifacts
-) -> typing.Union[sqlalchemy.Integer, sqlalchemy.BigInteger]:
+def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
     """
-    Handle artifacts for an integer type.
+    Check that the artifacts comply with overall rules.
 
-    Raises MalformedSchemaError if max length is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
+    Raise MalformedSchemaError for:
+        1. maxLength with
+            a. integer
+            b. number
+            c. boolean
+            d. string with the format of
+                i. date
+                ii. date-time
+        2. autoincrement with
+            a. number
+            b. string
+            c. boolean
+        3. format with
+            a. boolean
 
     Args:
-        artifacts: The artifacts for the column.
-
-    Returns:
-        The SQLAlchemy integer type of the column.
+        artifacts: The artifacts to check.
 
     """
     if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The integer type does not support a maximum length."
-        )
-    if artifacts.format is None or artifacts.format == "int32":
-        return sqlalchemy.Integer
-    if artifacts.format == "int64":
-        return sqlalchemy.BigInteger
-    raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for integer is not supported."
-    )
-
-
-def _handle_number(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Float:
-    """
-    Handle artifacts for an number type.
-
-    Raises MalformedSchemaError if max length or autoincrement is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
-
-    Args:
-        artifacts: The artifacts for the column.
-
-    Returns:
-        The SQLAlchemy number type of the column.
-
-    """
-    if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The number type does not support a maximum length."
-        )
+        if artifacts.type in {"integer", "number", "boolean"}:
+            raise exceptions.MalformedSchemaError(
+                f"maxLength is not supported for {artifacts.type}"
+            )
+        # Must be string type
+        if artifacts.format in {"date", "date-time"}:
+            raise exceptions.MalformedSchemaError(
+                "maxLength is not supported for string with the format "
+                f"{artifacts.format}"
+            )
     if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The number type does not support autoincrement."
-        )
-    if artifacts.format is None or artifacts.format == "float":
-        return sqlalchemy.Float
-    raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for number is not supported."
-    )
-
-
-def _handle_string(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.String:
-    """
-    Handle artifacts for an string type.
-
-    Raises MalformedSchemaError if autoincrement is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
-
-    Args:
-        artifacts: The artifacts for the column.
-
-    Returns:
-        The SQLAlchemy string type of the column.
-
-    """
-    if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The string type does not support autoincrement."
-        )
-    if artifacts.format in {None, "byte", "password"}:
-        if artifacts.max_length is None:
-            return sqlalchemy.String
-        return sqlalchemy.String(length=artifacts.max_length)
-    if artifacts.format == "binary":
-        if artifacts.max_length is None:
-            return sqlalchemy.LargeBinary
-        return sqlalchemy.LargeBinary(length=artifacts.max_length)
-    if artifacts.format == "date":
-        return sqlalchemy.Date
-    if artifacts.format == "date-time":
-        return sqlalchemy.DateTime
-    raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for string is not supported."
-    )
-
-
-def _handle_boolean(*, artifacts: types.ColumnArtifacts) -> sqlalchemy.Boolean:
-    """
-    Handle artifacts for an boolean type.
-
-    Raises MalformedSchemaError if format, autoincrement or max length is defined.
-
-    Args:
-        artifacts: The artifacts for the column.
-
-    Returns:
-        The SQLAlchemy boolean type of the column.
-
-    """
-    if artifacts.format is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support format."
-        )
-    if artifacts.autoincrement is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support autoincrement."
-        )
-    if artifacts.max_length is not None:
-        raise exceptions.MalformedSchemaError(
-            "The boolean type does not support a maximum length."
-        )
-    return sqlalchemy.Boolean
+        if artifacts.type in {"number", "string", "boolean"}:
+            raise exceptions.MalformedSchemaError(
+                f"autoincrement is not supported for {artifacts.type}"
+            )
+    if artifacts.type == "boolean" and artifacts.format is not None:
+        raise exceptions.MalformedSchemaError("format is not supported for boolean")

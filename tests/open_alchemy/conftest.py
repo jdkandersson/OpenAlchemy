@@ -16,30 +16,6 @@ from open_alchemy import models
 
 
 @pytest.fixture
-def mocked_sqlalchemy_column(monkeypatch):
-    """Monkeypatches sqlalchemy.Column."""
-    mock_column = mock.MagicMock()
-    monkeypatch.setattr(sqlalchemy, "Column", mock_column)
-    return mock_column
-
-
-@pytest.fixture
-def mocked_sqlalchemy_string(monkeypatch):
-    """Monkeypatches sqlalchemy.String."""
-    mock_string = mock.MagicMock()
-    monkeypatch.setattr(sqlalchemy, "String", mock_string)
-    return mock_string
-
-
-@pytest.fixture
-def mocked_sqlalchemy_relationship(monkeypatch):
-    """Monkeypatches sqlalchemy.orm.relationship."""
-    mock_relationship = mock.MagicMock()
-    monkeypatch.setattr(sqlalchemy.orm, "relationship", mock_relationship)
-    return mock_relationship
-
-
-@pytest.fixture
 def mocked_column_factory(monkeypatch):
     """Monkeypatches column_factory.column_factory."""
     mock_column_factory = mock.MagicMock()
@@ -183,3 +159,11 @@ def mocked_facades_models(monkeypatch):
 def _mocked_facades_models(mocked_facades_models):
     """Suppress unused argument error."""
     return mocked_facades_models
+
+
+@pytest.fixture
+def mocked_facades_sqlalchemy(monkeypatch):
+    """Monkeypatch open_alchemy.facades.sqlalchemy."""
+    mock_sqlalchemy = mock.MagicMock()
+    monkeypatch.setattr(open_alchemy.facades, "sqlalchemy", mock_sqlalchemy)
+    return mock_sqlalchemy
