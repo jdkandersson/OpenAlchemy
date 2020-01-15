@@ -86,7 +86,7 @@ def _handle_integer(
     Handle artifacts for an integer type.
 
     Raises MalformedSchemaError if max length is defined.
-    Raise FeatureNotImplementedError is a format that is not supported is defined.
+    Raise FeatureNotImplementedError if a format that is not supported is defined.
 
     Args:
         artifacts: The artifacts for the column.
