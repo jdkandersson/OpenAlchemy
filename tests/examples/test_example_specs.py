@@ -1,11 +1,30 @@
 """Test for simple-example-spec.yaml."""
 
 import pytest
-from sqlalchemy.ext import declarative
 
-import open_alchemy
+from open_alchemy import models
 
 from . import helpers
+
+
+@pytest.fixture(autouse=True)
+def cleanup_models():
+    """Remove any new attributes on open_alchemy.models."""
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)
+
+    yield
+
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)
 
 
 @pytest.mark.parametrize(
@@ -62,14 +81,12 @@ def test_single_model(
     THEN the attrs modified with given delta attrs is returned when the database is
         queried.
     """
-    spec = helpers.read_spec(filename=filename)
-    # Creating model factory
-    base = declarative.declarative_base()
-    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
-    model = model_factory(name=model_name)
-    # Initialise database
-    base.metadata.create_all(engine)
-    session = sessionmaker()
+    model, session = helpers.create_model_session(
+        filename=filename,
+        model_name=model_name,
+        engine=engine,
+        sessionmaker=sessionmaker,
+    )
 
     # Create instance
     model_instance = model(**attrs)

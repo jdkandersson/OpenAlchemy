@@ -10,6 +10,7 @@ import open_alchemy
 from open_alchemy import column_factory
 from open_alchemy import helpers
 from open_alchemy import model_factory
+from open_alchemy import models
 
 
 @pytest.fixture
@@ -132,3 +133,23 @@ def mocked_facades_sqlalchemy(monkeypatch):
     mock_sqlalchemy = mock.MagicMock()
     monkeypatch.setattr(open_alchemy.facades, "sqlalchemy", mock_sqlalchemy)
     return mock_sqlalchemy
+
+
+@pytest.fixture(autouse=True)
+def cleanup_models():
+    """Remove any new attributes on open_alchemy.models."""
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)
+
+    yield
+
+    for key in set(models.__dict__.keys()):
+        if key.startswith("__"):
+            continue
+        if key.endswith("__"):
+            continue
+        delattr(models, key)
