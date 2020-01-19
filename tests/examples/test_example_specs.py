@@ -2,29 +2,7 @@
 
 import pytest
 
-from open_alchemy import models
-
 from . import helpers
-
-
-@pytest.fixture(autouse=True)
-def cleanup_models():
-    """Remove any new attributes on open_alchemy.models."""
-    for key in set(models.__dict__.keys()):
-        if key.startswith("__"):
-            continue
-        if key.endswith("__"):
-            continue
-        delattr(models, key)
-
-    yield
-
-    for key in set(models.__dict__.keys()):
-        if key.startswith("__"):
-            continue
-        if key.endswith("__"):
-            continue
-        delattr(models, key)
 
 
 @pytest.mark.parametrize(
@@ -33,8 +11,8 @@ def cleanup_models():
         (
             "simple-example-spec.yml",
             "Employee",
-            {"id": 1, "name": "name 1", "division": "division 1"},
-            {"salary": None},
+            {"name": "name 1", "division": "division 1"},
+            {"id": 1, "salary": None},
         ),
         (
             "simple-example-spec.yml",
@@ -97,3 +75,41 @@ def test_single_model(
     expected_attrs = {**attrs, **expected_delta_attrs}
     for name, value in expected_attrs.items():
         assert getattr(queried_instances, name) == value, f"{name} != {value}"
+
+
+@pytest.mark.parametrize(
+    "filename, model_name, sql, expected_contents",
+    [
+        (
+            "simple-example-spec.yml",
+            "Employee",
+            "SELECT sql FROM sqlite_master WHERE name='employee'",
+            ["PRIMARY KEY (id)"],
+        ),
+        (
+            "simple-example-spec.yml",
+            "Employee",
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            [
+                "INDEX ix_employee_name ON employee (name)",
+                "INDEX ix_employee_division ON employee (division)",
+            ],
+        ),
+    ],
+    ids=["simple        Employee primary key", "simple        Employee indexes"],
+)
+@pytest.mark.example
+def test_table_args(engine, filename, model_name, sql, expected_contents):
+    """
+    GIVEN spec, model name, sql to execute and expected contents
+    WHEN models are constructed
+    THEN when sql is executed the expected contents are in the result.
+    """
+    helpers.create_model(filename=filename, model_name=model_name, engine=engine)
+
+    # Query schema
+    results_list = list(str(result) for result in engine.execute(sql))
+    results = "\n".join(results_list)
+    print(results)
+    for expected_content in expected_contents:
+        assert expected_content in results

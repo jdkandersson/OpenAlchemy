@@ -29,20 +29,19 @@ def read_spec(*, filename: str) -> typing.Dict:
     return spec
 
 
-def create_model_session(
-    *,
-    filename: str,
-    model_name: str,
-    engine: typing.Any,
-    sessionmaker: typing.Callable[[], typing.Any]
-) -> typing.Tuple[typing.Any, typing.Any]:
+def create_model(*, filename: str, model_name: str, engine: typing.Any) -> typing.Any:
     """
-    Create model and session for a test.
+    Create model for a test.
 
     Args:
+        filename: The name of the spec file where examples/ is treated as the base
+            folder.
+        model_name: The name of the model to create.
+        engine: The engine to connect to the database.
 
     Returns:
-        The model and session as a tuple.
+        The model.
+
     """
     spec = read_spec(filename=filename)
     # Creating model factory
@@ -51,6 +50,32 @@ def create_model_session(
     model = model_factory(name=model_name)
     # Initialise database
     base.metadata.create_all(engine)
+
+    return model
+
+
+def create_model_session(
+    *,
+    filename: str,
+    model_name: str,
+    engine: typing.Any,
+    sessionmaker: typing.Callable[[], typing.Any],
+) -> typing.Tuple[typing.Any, typing.Any]:
+    """
+    Create model and session for a test.
+
+    Args:
+        filename: The name of the spec file where examples/ is treated as the base
+            folder.
+        model_name: The name of the model to create.
+        engine: The engine to connect to the database.
+        sessionmaker: Session factory.
+
+    Returns:
+        The model and session as a tuple.
+
+    """
+    model = create_model(filename=filename, model_name=model_name, engine=engine)
     session = sessionmaker()
 
     return model, session
