@@ -4,15 +4,12 @@
 from unittest import mock
 
 import pytest
-import sqlalchemy
-from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import column_factory
 from open_alchemy import helpers
 from open_alchemy import model_factory
-from open_alchemy import models
 
 
 @pytest.fixture
@@ -69,18 +66,6 @@ def _mocked_handle_column(mocked_handle_column):
     return mocked_handle_column
 
 
-@pytest.fixture(scope="function", params=["sqlite:///:memory:"])
-def engine(request):
-    """Creates a sqlite engine."""
-    return sqlalchemy.create_engine(request.param)
-
-
-@pytest.fixture(scope="function")
-def sessionmaker(engine):
-    """Creates a sqlite session."""
-    return orm.sessionmaker(bind=engine)
-
-
 @pytest.fixture(scope="function")
 def args():
     """Arguments."""
@@ -125,26 +110,6 @@ def mocked_declarative_base(monkeypatch):
     mock_declarative_base = mock.MagicMock()
     monkeypatch.setattr(declarative, "declarative_base", mock_declarative_base)
     return mock_declarative_base
-
-
-@pytest.fixture(autouse=True)
-def cleanup_models():
-    """Remove any new attributes on open_alchemy.models."""
-    for key in set(models.__dict__.keys()):
-        if key.startswith("__"):
-            continue
-        if key.endswith("__"):
-            continue
-        delattr(models, key)
-
-    yield
-
-    for key in set(models.__dict__.keys()):
-        if key.startswith("__"):
-            continue
-        if key.endswith("__"):
-            continue
-        delattr(models, key)
 
 
 @pytest.fixture

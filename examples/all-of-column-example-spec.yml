@@ -47,16 +47,10 @@ components:
             - "$ref": "#/components/schemas/NameBase"
             - description: The name of the employee.
               example: David Andersson
-        division:
-          "$ref": "#/components/schemas/Division"
         salary:
           type: number
           description: The amount of money the employee is paid.
           example: 1000000.00
-      required:
-        - id
-        - name
-        - division
     Division:
       description: A part of a company.
       type: object
