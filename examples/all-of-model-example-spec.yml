@@ -60,3 +60,9 @@ components:
         - "$ref": "#/components/schemas/IdNameBase"
         - description: Person that works for a company.
           x-tablename: employee
+          type: object
+          properties:
+            salary:
+              type: number
+              description: The amount of money the employee is paid.
+              example: 1000000.00

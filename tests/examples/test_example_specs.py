@@ -35,12 +35,21 @@ from . import helpers
             {"id": 11, "name": "name 1"},
             {},
         ),
+        (
+            "all-of-model-example-spec.yml",
+            "Employee",
+            {"id": 11, "name": "name 1", "salary": 12},
+            {},
+        ),
+        ("all-of-model-example-spec.yml", "Division", {"id": 11, "name": "name 1"}, {}),
     ],
     ids=[
         "simple        Employee required only",
         "simple        Employee all",
         "all-of-column Employee",
         "all-of-column Division",
+        "all-of-model  Employee",
+        "all-of-model  Division",
     ],
 )
 @pytest.mark.example
