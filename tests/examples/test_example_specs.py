@@ -39,14 +39,21 @@ from . import helpers
             {},
         ),
         ("all-of-model-example-spec.yml", "Division", {"id": 11, "name": "name 1"}, {}),
+        (
+            "composite-index-example-spec.yml",
+            "Employee",
+            {"id": 1, "name": "name 1", "division": "division 1"},
+            {},
+        ),
     ],
     ids=[
-        "simple        Employee required only",
-        "simple        Employee all",
-        "all-of-column Employee",
-        "all-of-column Division",
-        "all-of-model  Employee",
-        "all-of-model  Division",
+        "simple          Employee required only",
+        "simple          Employee all",
+        "all-of-column   Employee",
+        "all-of-column   Division",
+        "all-of-model    Employee",
+        "all-of-model    Division",
+        "composite-index Employee",
     ],
 )
 @pytest.mark.example
@@ -95,8 +102,18 @@ def test_single_model(
                 "INDEX ix_employee_division ON employee (division)",
             ],
         ),
+        (
+            "composite-index-example-spec.yml",
+            "Employee",
+            "SELECT sql FROM sqlite_master WHERE type='index'",
+            ["INDEX ix_employee_name ON employee (name, division)"],
+        ),
     ],
-    ids=["simple        Employee primary key", "simple        Employee indexes"],
+    ids=[
+        "simple          Employee primary key",
+        "simple          Employee indexes",
+        "composite-index Employee indexes",
+    ],
 )
 @pytest.mark.example
 def test_table_args(engine, filename, model_name, sql, expected_contents):

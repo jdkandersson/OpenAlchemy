@@ -32,7 +32,6 @@ components:
           description: Unique identifier for the employee.
           example: 0
           x-primary-key: true
-          x-autoincrement: true
         name:
           type: string
           description: The name of the employee.
@@ -41,14 +40,6 @@ components:
           type: string
           description: The part of the company the employee works in.
           example: Engineering
-        salary:
-          type: number
-          description: The amount of money the employee is paid.
-          example: 1000000.00
-      required:
-        - id
-        - name
-        - division
       x-composite-index:
         - name
         - division
