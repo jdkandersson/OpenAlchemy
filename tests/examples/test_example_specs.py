@@ -45,6 +45,18 @@ from . import helpers
             {"id": 1, "name": "name 1", "division": "division 1"},
             {},
         ),
+        (
+            "ref-column-example-spec.yml",
+            "Employee",
+            {"id": 1, "name": "name 1", "division": "division 1"},
+            {},
+        ),
+        (
+            "ref-model-example-spec.yml",
+            "RefEmployee",
+            {"id": 1, "name": "name 1", "division": "division 1"},
+            {},
+        ),
     ],
     ids=[
         "simple          Employee required only",
@@ -54,6 +66,8 @@ from . import helpers
         "all-of-model    Employee",
         "all-of-model    Division",
         "composite-index Employee",
+        "ref-column      Employee",
+        "ref-model       Employee",
     ],
 )
 @pytest.mark.example

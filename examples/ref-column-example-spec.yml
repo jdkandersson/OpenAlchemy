@@ -27,21 +27,14 @@ components:
       description: Unique identifier for the employee.
       example: 0
       x-primary-key: true
-      x-autoincrement: true
     Name:
       type: string
       description: The name of the employee.
       example: David Andersson
-      x-index: true
     Division:
       type: string
       description: The part of the company the employee works in.
       example: Engineering
-      x-index: true
-    Salary:
-      type: number
-      description: The amount of money the employee is paid.
-      example: 1000000.00
     Employee:
       description: Person that works for a company.
       type: object
@@ -53,9 +46,3 @@ components:
           $ref: "#/components/schemas/Name"
         division:
           $ref: "#/components/schemas/Division"
-        salary:
-          $ref: "#/components/schemas/Salary"
-      required:
-        - id
-        - name
-        - division
