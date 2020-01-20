@@ -155,6 +155,6 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
     # Query schema
     results_list = list(str(result) for result in engine.execute(sql))
     results = "\n".join(results_list)
-    print(results)
+
     for expected_content in expected_contents:
         assert expected_content in results
