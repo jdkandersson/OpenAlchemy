@@ -49,16 +49,11 @@ class TDivision(typing.Protocol):
 Division: TDivision = models.Division  # type: ignore
 
 
-class _EmployeeDictBase(typing.TypedDict, total=True):
-    """TypedDict for properties that are required."""
-
-    id: int
-    name: str
-
-
-class EmployeeDict(_EmployeeDictBase, total=False):
+class EmployeeDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
+    id: typing.Optional[int]
+    name: typing.Optional[str]
     division: "DivisionDict"
 
 
@@ -71,19 +66,25 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
+    id: typing.Optional[int]
+    name: typing.Optional[str]
     division: "TDivision"
 
     def __init__(
-        self, id: int, name: str, division: typing.Optional["TDivision"] = None
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        division: typing.Optional["TDivision"] = None,
     ) -> None:
         """Construct."""
         ...
 
     @classmethod
     def from_dict(
-        cls, id: int, name: str, division: typing.Optional["DivisionDict"] = None
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        division: typing.Optional["DivisionDict"] = None,
     ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
         ...

@@ -9,11 +9,11 @@ from sqlalchemy import orm
 from open_alchemy import models
 
 
-class DivisionDict(typing.TypedDict, total=True):
-    """TypedDict for properties that are required."""
+class DivisionDict(typing.TypedDict, total=False):
+    """TypedDict for properties that are not required."""
 
-    id: int
-    name: str
+    id: typing.Optional[int]
+    name: typing.Optional[str]
 
 
 class TDivision(typing.Protocol):
@@ -25,15 +25,19 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
+    id: typing.Optional[int]
+    name: typing.Optional[str]
 
-    def __init__(self, id: int, name: str) -> None:
+    def __init__(
+        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> None:
         """Construct."""
         ...
 
     @classmethod
-    def from_dict(cls, id: int, name: str) -> "TDivision":
+    def from_dict(
+        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> "TDivision":
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
@@ -45,11 +49,12 @@ class TDivision(typing.Protocol):
 Division: TDivision = models.Division  # type: ignore
 
 
-class EmployeeDict(typing.TypedDict, total=True):
-    """TypedDict for properties that are required."""
+class EmployeeDict(typing.TypedDict, total=False):
+    """TypedDict for properties that are not required."""
 
-    id: int
-    name: str
+    id: typing.Optional[int]
+    name: typing.Optional[str]
+    salary: typing.Optional[float]
 
 
 class TEmployee(typing.Protocol):
@@ -61,15 +66,26 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
+    id: typing.Optional[int]
+    name: typing.Optional[str]
+    salary: typing.Optional[float]
 
-    def __init__(self, id: int, name: str) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        salary: typing.Optional[float] = None,
+    ) -> None:
         """Construct."""
         ...
 
     @classmethod
-    def from_dict(cls, id: int, name: str) -> "TEmployee":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        salary: typing.Optional[float] = None,
+    ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
