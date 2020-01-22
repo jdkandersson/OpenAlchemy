@@ -143,6 +143,32 @@ def test_to_dict_object(__init__):
     assert returned_dict == {"key": mock_model.to_dict.return_value}
 
 
+@pytest.mark.utility_base
+def test_to_dict_backrefs_object(__init__):
+    """
+    GIVEN class that derives from UtilityBase with a schema with an object backref
+    WHEN to_dict is called
+    THEN the backref value is not returned.
+    """
+    mock_model = mock.MagicMock()
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key_1": {"type": "integer"}},
+                "x-backrefs": {"key_2": {"type": "object", "x-de-$ref": "RefModel"}},
+            },
+            "__init__": __init__,
+        },
+    )
+    instance = model(**{"key_1": 1, "key_2": mock_model})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key_1": 1}
+
+
 @pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
 @pytest.mark.utility_base
 def test_to_dict_array_none(init_kwargs, __init__):

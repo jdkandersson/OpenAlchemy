@@ -279,6 +279,30 @@ def test_from_dict_object_return(mocked_facades_models, __init__):
 
 
 @pytest.mark.utility_base
+def test_from_dict_backref(__init__):
+    """
+    GIVEN schema with backref which references a model that has been mocked and
+        dictionary
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is not called.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key_1": {"type": "integer"}},
+                "x-backrefs": {"key_2": {"type": "object", "x-de-$ref": "RefModel"}},
+            },
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.MalformedModelDictionaryError):
+        model.from_dict(**{"key_1": 1, "key_2": {"obj_key": "obj value"}})
+
+
+@pytest.mark.utility_base
 def test_from_dict_array_no_items(__init__):
     """
     GIVEN schema with array which does not define items

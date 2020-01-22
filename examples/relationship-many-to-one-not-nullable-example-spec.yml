@@ -54,6 +54,3 @@ components:
           allOf:
             - "$ref": "#/components/schemas/Division"
             - nullable: False
-      required:
-        - id
-        - name

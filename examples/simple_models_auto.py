@@ -12,7 +12,6 @@ from open_alchemy import models
 class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
-    id: int
     name: str
     division: str
 
@@ -20,6 +19,7 @@ class _EmployeeDictBase(typing.TypedDict, total=True):
 class EmployeeDict(_EmployeeDictBase, total=False):
     """TypedDict for properties that are not required."""
 
+    id: int
     salary: typing.Optional[float]
 
 
@@ -38,14 +38,22 @@ class TEmployee(typing.Protocol):
     salary: typing.Optional[float]
 
     def __init__(
-        self, id: int, name: str, division: str, salary: typing.Optional[float] = None
+        self,
+        name: str,
+        division: str,
+        id: typing.Optional[int] = None,
+        salary: typing.Optional[float] = None,
     ) -> None:
         """Construct."""
         ...
 
     @classmethod
     def from_dict(
-        cls, id: int, name: str, division: str, salary: typing.Optional[float] = None
+        cls,
+        name: str,
+        division: str,
+        id: typing.Optional[int] = None,
+        salary: typing.Optional[float] = None,
     ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
         ...

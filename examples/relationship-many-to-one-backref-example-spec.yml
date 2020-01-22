@@ -54,7 +54,3 @@ components:
           allOf:
             - "$ref": "#/components/schemas/Division"
             - x-backref: employees
-      required:
-        - id
-        - name
-        - division

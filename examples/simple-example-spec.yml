@@ -48,6 +48,5 @@ components:
           description: The amount of money the employee is paid.
           example: 1000000.00
       required:
-        - id
         - name
         - division

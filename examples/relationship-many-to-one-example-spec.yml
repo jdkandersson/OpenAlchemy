@@ -52,7 +52,3 @@ components:
           example: David Andersson
         division:
           "$ref": "#/components/schemas/Division"
-      required:
-        - id
-        - name
-        - division

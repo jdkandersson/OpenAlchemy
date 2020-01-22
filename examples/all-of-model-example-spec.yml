@@ -47,9 +47,6 @@ components:
           type: string
           description: The name of the object.
           example: Object 1.
-      required:
-        - id
-        - name
     Division:
       allOf:
         - "$ref": "#/components/schemas/IdNameBase"
@@ -60,3 +57,9 @@ components:
         - "$ref": "#/components/schemas/IdNameBase"
         - description: Person that works for a company.
           x-tablename: employee
+          type: object
+          properties:
+            salary:
+              type: number
+              description: The amount of money the employee is paid.
+              example: 1000000.00

@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Ring fence SQLAlchemy dependency to a facade and integration tests.
+- Add tests for examples.
 
 ## Version 0.12.1 - 2020-01-12
 

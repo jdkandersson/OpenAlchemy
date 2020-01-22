@@ -9,17 +9,11 @@ from sqlalchemy import orm
 from open_alchemy import models
 
 
-class _EmployeeDictBase(typing.TypedDict, total=True):
-    """TypedDict for properties that are required."""
-
-    id: int
-    name: str
-    division: "DivisionDict"
-
-
-class EmployeeDict(_EmployeeDictBase, total=False):
+class EmployeeDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
+    id: typing.Optional[int]
+    name: typing.Optional[str]
     salary: typing.Optional[float]
 
 
@@ -32,16 +26,14 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
-    division: "TDivision"
+    id: typing.Optional[int]
+    name: typing.Optional[str]
     salary: typing.Optional[float]
 
     def __init__(
         self,
-        id: int,
-        name: str,
-        division: "TDivision",
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
         salary: typing.Optional[float] = None,
     ) -> None:
         """Construct."""
@@ -50,9 +42,8 @@ class TEmployee(typing.Protocol):
     @classmethod
     def from_dict(
         cls,
-        id: int,
-        name: str,
-        division: "DivisionDict",
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
         salary: typing.Optional[float] = None,
     ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
@@ -69,7 +60,7 @@ Employee: TEmployee = models.Employee  # type: ignore
 class DivisionDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
-    id: int
+    id: typing.Optional[int]
     name: typing.Optional[str]
 
 
@@ -82,7 +73,7 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
+    id: typing.Optional[int]
     name: typing.Optional[str]
 
     def __init__(

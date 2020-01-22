@@ -9,18 +9,12 @@ from sqlalchemy import orm
 from open_alchemy import models
 
 
-class _EmployeeDictBase(typing.TypedDict, total=True):
-    """TypedDict for properties that are required."""
-
-    id: int
-    name: str
-    division: str
-
-
-class EmployeeDict(_EmployeeDictBase, total=False):
+class EmployeeDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
-    salary: typing.Optional[float]
+    id: typing.Optional[int]
+    name: typing.Optional[str]
+    division: typing.Optional[str]
 
 
 class TEmployee(typing.Protocol):
@@ -32,20 +26,25 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
-    division: str
-    salary: typing.Optional[float]
+    id: typing.Optional[int]
+    name: typing.Optional[str]
+    division: typing.Optional[str]
 
     def __init__(
-        self, id: int, name: str, division: str, salary: typing.Optional[float] = None
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        division: typing.Optional[str] = None,
     ) -> None:
         """Construct."""
         ...
 
     @classmethod
     def from_dict(
-        cls, id: int, name: str, division: str, salary: typing.Optional[float] = None
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        division: typing.Optional[str] = None,
     ) -> "TEmployee":
         """Construct from a dictionary (eg. a POST payload)."""
         ...
