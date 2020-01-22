@@ -27,7 +27,6 @@ class TProject(typing.Protocol):
     # Model properties
     id: typing.Optional[int]
     name: typing.Optional[str]
-    employees: typing.Sequence["TEmployee"]
 
     def __init__(
         self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
