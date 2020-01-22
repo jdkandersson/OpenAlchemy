@@ -56,4 +56,5 @@ components:
             allOf:
               - "$ref": "#/components/schemas/Project"
               - x-secondary: employee_project
+                x-backref: employees
           description: The projects the employee is working on.

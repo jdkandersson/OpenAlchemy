@@ -253,6 +253,15 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "projects": [{"id": 12, "name": "project 1"}],
             },
         ),
+        (
+            "relationship-many-to-many-example-spec.yml",
+            ("Project", "Employee"),
+            {
+                "id": 11,
+                "name": "project 1",
+                "employees": [{"id": 12, "name": "employee 1"}],
+            },
+        ),
     ],
     ids=[
         "relationship-many-to-one",
@@ -261,7 +270,8 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
         "relationship-many-to-one-not-nullable",
         "relationship-one-to-many",
         "relationship-one-to-one",
-        "relationship-many-to-many",
+        "relationship-many-to-many                   Employee",
+        "relationship-many-to-many                   Project",
     ],
 )
 @pytest.mark.example
