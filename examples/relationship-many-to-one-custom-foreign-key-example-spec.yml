@@ -54,7 +54,3 @@ components:
           allOf:
             - "$ref": "#/components/schemas/Division"
             - x-foreign-key-column: name
-      required:
-        - id
-        - name
-        - division

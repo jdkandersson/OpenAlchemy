@@ -55,7 +55,3 @@ components:
             - "$ref": "#/components/schemas/PayInfo"
             - x-backref: employee
               x-uselist: false
-      required:
-        - id
-        - name
-        - pay_info

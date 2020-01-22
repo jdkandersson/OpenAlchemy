@@ -79,3 +79,57 @@ def create_model_session(
     session = sessionmaker()
 
     return model, session
+
+
+def create_models(
+    *, filename: str, model_names: typing.Tuple[str], engine: typing.Any
+) -> typing.Tuple[typing.Any, ...]:
+    """
+    Create model for a test.
+
+    Args:
+        filename: The name of the spec file where examples/ is treated as the base
+            folder.
+        model_name:s The names of the models to create.
+        engine: The engine to connect to the database.
+
+    Returns:
+        The models.
+
+    """
+    spec = read_spec(filename=filename)
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    models = tuple(map(lambda name: model_factory(name=name), model_names))
+    # Initialise database
+    base.metadata.create_all(engine)
+
+    return models
+
+
+def create_models_session(
+    *,
+    filename: str,
+    model_names: typing.Tuple[str],
+    engine: typing.Any,
+    sessionmaker: typing.Callable[[], typing.Any],
+) -> typing.Tuple[typing.Any, typing.Any]:
+    """
+    Create model and session for a test.
+
+    Args:
+        filename: The name of the spec file where examples/ is treated as the base
+            folder.
+        model_names: The names of the models to create.
+        engine: The engine to connect to the database.
+        sessionmaker: Session factory.
+
+    Returns:
+        The models and session as a tuple.
+
+    """
+    models = create_models(filename=filename, model_names=model_names, engine=engine)
+    session = sessionmaker()
+
+    return models, session
