@@ -74,9 +74,6 @@ class UtilityBase:
             raise exceptions.MalformedSchemaError(
                 "The model schema does not have any properties."
             )
-        backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
-        if backrefs is not None:
-            properties = {**backrefs, **properties}
         return properties
 
     @staticmethod

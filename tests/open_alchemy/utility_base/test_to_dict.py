@@ -147,9 +147,8 @@ def test_to_dict_object(__init__):
 def test_to_dict_backrefs_object(__init__):
     """
     GIVEN class that derives from UtilityBase with a schema with an object backref
-        that has a mock model
     WHEN to_dict is called
-    THEN the mock model to_dict return value is returned as the property value.
+    THEN the backref value is not returned.
     """
     mock_model = mock.MagicMock()
     model = type(
@@ -167,7 +166,7 @@ def test_to_dict_backrefs_object(__init__):
 
     returned_dict = instance.to_dict()
 
-    assert returned_dict == {"key_1": 1, "key_2": mock_model.to_dict.return_value}
+    assert returned_dict == {"key_1": 1}
 
 
 @pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
