@@ -206,6 +206,33 @@ class UtilityBase:
 
         return cls(**model_dict)
 
+    @classmethod
+    def from_str(cls: typing.Type[TUtilityBase], value: str) -> TUtilityBase:
+        """
+        Construct model instance from a JSON string.
+
+        Raise MalformedModelDictionaryError when the JSON does not satisfy the model
+        schema.
+
+        Args:
+            kwargs: The values to construct the class with.
+
+        Returns:
+            An instance of the model constructed using the dictionary.
+
+        """
+        try:
+            dict_value = json.loads(value)
+        except json.JSONDecodeError:
+            raise exceptions.MalformedModelDictionaryError(
+                "The string value is not valid JSON. " f"The value is {value}."
+            )
+        if not isinstance(dict_value, dict):
+            raise exceptions.MalformedModelDictionaryError(
+                "The string value is not a Python dictionary. " f"The value is {value}."
+            )
+        return cls.from_dict(**dict_value)
+
     @staticmethod
     def _object_to_dict_relationship(
         *, value: typing.Any, name: str

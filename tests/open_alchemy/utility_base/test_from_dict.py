@@ -148,6 +148,52 @@ def test_from_dict(schema, dictionary, __init__):
 
 
 @pytest.mark.parametrize(
+    "value",
+    ["hi", '"hi"', '{"key_2": 2}'],
+    ids=["invalid JSON", "not dictionary", "invalid dictionary"],
+)
+@pytest.mark.utility_base
+def test_from_str_invalid(__init__, value):
+    """
+    GIVEN schema and invalid JSON string
+    WHEN model is defined with the schema and constructed with from_str
+    THEN MalformedModelDictionaryError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key_1": {"type": "integer"}}},
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.MalformedModelDictionaryError):
+        model.from_str(value)
+
+
+@pytest.mark.utility_base
+def test_from_str(__init__):
+    """
+    GIVEN schema and JSON string
+    WHEN model is defined with the schema and constructed with from_str
+    THEN the instance has the properties from the JSON string.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key_1": {"type": "integer"}}},
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_str('{"key_1": 1}')
+
+    assert getattr(instance, "key_1") == 1
+
+
+@pytest.mark.parametrize(
     "format_, value, expected_value",
     [
         ("binary", "some binary file", b"some binary file"),
