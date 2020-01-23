@@ -62,8 +62,17 @@ class TModel({_EXPECTED_MODEL_BASE}):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TModel":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
@@ -112,8 +121,17 @@ class TModel1({_EXPECTED_MODEL_BASE}):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TModel1":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> Model1Dict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
@@ -146,8 +164,17 @@ class TModel2({_EXPECTED_MODEL_BASE}):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TModel2":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> Model2Dict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
@@ -203,8 +230,17 @@ class TModel({_EXPECTED_MODEL_BASE}):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TModel":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
@@ -282,8 +318,17 @@ class TModel({_EXPECTED_MODEL_BASE}):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TModel":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> ModelDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
