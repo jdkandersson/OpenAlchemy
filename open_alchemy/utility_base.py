@@ -211,8 +211,8 @@ class UtilityBase:
         """
         Construct model instance from a JSON string.
 
-        Raise MalformedModelDictionaryError when the JSON does not satisfy the model
-        schema.
+        Raise MalformedModelDictionaryError when the value is not a string, the string
+        is not valid JSON or the decoded JSON does not satisfy the model schema.
 
         Args:
             kwargs: The values to construct the class with.
