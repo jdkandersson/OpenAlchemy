@@ -83,6 +83,14 @@ from open_alchemy.models import Base
 from open_alchemy.models import Employee
 ```
 
+With the _models_filename_ parameter a file is auto generated with type hints for the SQLAlchemy models at the specified location, for example: [type hinted models example](examples/simple_models_auto.py). This adds support for IDE auto complete, for example for the model initialization:
+
+![autocomplete init](examples/simple_models_autocomplete_init.png)
+
+and for properties and methods available on an instance:
+
+![autocomplete instance](examples/simple_models_autocomplete_instance.png)
+
 An extensive set of examples with a range of features is here:
 
 [examples for main features](examples)
