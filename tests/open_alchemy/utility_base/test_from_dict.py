@@ -149,8 +149,8 @@ def test_from_dict(schema, dictionary, __init__):
 
 @pytest.mark.parametrize(
     "value",
-    ["hi", '"hi"', '{"key_2": 2}'],
-    ids=["invalid JSON", "not dictionary", "invalid dictionary"],
+    [1, "hi", '"hi"', '{"key_2": 2}'],
+    ids=["not string", "invalid JSON", "not dictionary", "invalid dictionary"],
 )
 @pytest.mark.utility_base
 def test_from_str_invalid(__init__, value):

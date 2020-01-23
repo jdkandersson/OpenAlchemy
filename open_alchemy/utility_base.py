@@ -221,15 +221,19 @@ class UtilityBase:
             An instance of the model constructed using the dictionary.
 
         """
+        if not isinstance(value, str):
+            raise exceptions.MalformedModelDictionaryError(
+                f"The value is not of type string. The value is {value}."
+            )
         try:
             dict_value = json.loads(value)
         except json.JSONDecodeError:
             raise exceptions.MalformedModelDictionaryError(
-                "The string value is not valid JSON. " f"The value is {value}."
+                f"The string value is not valid JSON. The value is {value}."
             )
         if not isinstance(dict_value, dict):
             raise exceptions.MalformedModelDictionaryError(
-                "The string value is not a Python dictionary. " f"The value is {value}."
+                f"The string value is not a Python dictionary. The value is {value}."
             )
         return cls.from_dict(**dict_value)
 
