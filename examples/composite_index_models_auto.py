@@ -49,8 +49,17 @@ class TEmployee(typing.Protocol):
         """Construct from a dictionary (eg. a POST payload)."""
         ...
 
+    @classmethod
+    def from_str(cls, value: str) -> "TEmployee":
+        """Construct from a JSON string (eg. a POST payload)."""
+        ...
+
     def to_dict(self) -> EmployeeDict:
         """Convert to a dictionary (eg. to send back for a GET request)."""
+        ...
+
+    def to_str(self) -> str:
+        """Convert to a JSON string (eg. to send back for a GET request)."""
         ...
 
 
