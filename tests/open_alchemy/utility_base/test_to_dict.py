@@ -101,6 +101,29 @@ def test_to_dict_simple_type(schema, init_args, expected_dict, __init__):
     assert returned_dict == expected_dict
 
 
+@pytest.mark.utility_base
+def test_to_str(__init__):
+    """
+    GIVEN class that derives from UtilityBase with a given schema with properties that
+        are not objects and expected object
+    WHEN to_dict is called
+    THEN the expected object is returned.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key_1": {"type": "type 1"}}},
+            "__init__": __init__,
+        },
+    )
+    instance = model(key_1=1)
+
+    returned_str = instance.to_str()
+
+    assert returned_str == '{"key_1": 1}'
+
+
 @pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
 @pytest.mark.utility_base
 def test_to_dict_object_none(init_kwargs, __init__):

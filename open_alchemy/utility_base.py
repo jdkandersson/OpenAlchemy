@@ -400,3 +400,14 @@ class UtilityBase:
             )
 
         return return_dict
+
+    def to_str(self) -> str:
+        """
+        Convert model instance to a string.
+
+        Returns:
+            The JSON string representation of the model.
+
+        """
+        instance_dict = self.to_dict()
+        return json.dumps(instance_dict)
