@@ -104,10 +104,9 @@ def test_to_dict_simple_type(schema, init_args, expected_dict, __init__):
 @pytest.mark.utility_base
 def test_to_str(__init__):
     """
-    GIVEN class that derives from UtilityBase with a given schema with properties that
-        are not objects and expected object
-    WHEN to_dict is called
-    THEN the expected object is returned.
+    GIVEN class that derives from UtilityBase with a given schema with properties
+    WHEN to_str is called
+    THEN the JSON representation of the properties is returned.
     """
     model = type(
         "model",
