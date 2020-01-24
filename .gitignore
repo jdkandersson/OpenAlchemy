@@ -13,3 +13,4 @@ dist/
 htmlcov/
 venv
 coverage.xml
+docs/source/_*

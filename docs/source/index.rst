@@ -185,10 +185,29 @@ For example::
     the property alongside the *x-de-$ref* extension property which stores the
     name of the referenced model.
 
+.. _from-str:
+
+*from_str*
+^^^^^^^^^^^
+
+The *from_str* function is available on all constructed models. It accepts a
+JSON formatted string and constructs a model instance by de-serializing the
+JSON string and then using :ref:`from-dict`. For example::
+
+    >>> employee_str = '''{
+        "id": 1,
+        "name": "David Andersson",
+        "division": "engineering",
+        "salary": 1000000
+    }'''
+    >>> employee = Employee.from_str(employee_str)
+    >>> employee.name
+    'David Andersson'
+
 .. _to-dict:
 
 *to_dict*
-^^^^^^^^^^^
+^^^^^^^^^
 
 The *to_dict* function is available on all constructed models. It converts a
 model instance into a dictionary based on the schema that was used to define
@@ -209,6 +228,27 @@ For example::
 
 .. seealso::
     :ref:`child-parent-reference`
+
+.. _to-str:
+
+*to_str*
+^^^^^^^^^
+
+The *to_str* function is available on all constructed models. It converts a
+model instance into a JSON formatted string by serializing the output of
+:ref:`to-dict`.
+
+For example::
+
+    >>> employee_str = '''{
+        "id": 1,
+        "name": "David Andersson",
+        "division": "engineering",
+        "salary": 1000000
+    }'''
+    >>> employee = Employee.from_str(employee_str)
+    >>> employee.to_str()
+    '{"id": 1, "name": "David Andersson", "division": "engineering", "salary": 1000000}'
 
 .. _alembic:
 
