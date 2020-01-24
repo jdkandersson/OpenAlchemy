@@ -131,7 +131,9 @@ An example API has been defined using connexion and Flask here:
 - custom foreign keys for relationships,
 - back references for relationships,
 - `allOf` inheritance for columns and models,
+- `from_str` model methods to construct from JSON string,
 - `from_dict` model methods to construct from dictionaries,
+- `to_str` model methods to convert instances to JSON string,
 - `to_dict` model methods to convert instances to dictionaries and
 - exposing created models under `open_alchemy.models` removing the need for `models.py` files.
 
