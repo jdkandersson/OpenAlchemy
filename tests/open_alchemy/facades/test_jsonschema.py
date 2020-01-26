@@ -31,7 +31,7 @@ def test_resolver_single(tmp_path):
     GIVEN single file with schema, schema that references that schema and instance of
         the schema
     WHEN resolver is created and used to validate the instance
-    THEN no exceptions are raised.
+    THEN no exceptions are raised and the referenced schema is returned as a dictionary.
     """
     # Create file
     directory = tmp_path / "json"
@@ -52,7 +52,8 @@ def test_resolver_multiple(tmp_path):
     GIVEN multiple files with schema, schema that references those schemas and instance
         of the schema
     WHEN resolver is created and used to validate the instance
-    THEN no exceptions are raised.
+    THEN no exceptions are raised and the referenced schemas are returned as
+        dictionaries.
     """
     # Create file
     directory = tmp_path / "json"
