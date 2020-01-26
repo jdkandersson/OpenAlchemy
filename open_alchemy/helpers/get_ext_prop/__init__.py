@@ -4,8 +4,6 @@ import json
 import os
 import typing
 
-import jsonschema
-
 from open_alchemy import exceptions
 from open_alchemy import facades
 
