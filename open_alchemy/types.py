@@ -66,6 +66,7 @@ class ColumnArtifacts:
     format: typing.Optional[str] = None
     max_length: typing.Optional[int] = None
     nullable: bool = True
+    description: typing.Optional[str] = None
 
     # Extension properties
     primary_key: typing.Optional[bool] = None

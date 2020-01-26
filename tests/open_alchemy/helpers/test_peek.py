@@ -159,6 +159,36 @@ def test_read_only(schema, expected_read_only):
 
 
 @pytest.mark.helper
+def test_description_wrong_type():
+    """
+    GIVEN schema with description defined as a boolean
+    WHEN description is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"description": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.description(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_description",
+    [({}, None), ({"description": "description 1"}, "description 1")],
+    ids=["missing", "present"],
+)
+@pytest.mark.helper
+def test_description(schema, expected_description):
+    """
+    GIVEN schema and expected description
+    WHEN description is called with the schema
+    THEN the expected description is returned.
+    """
+    returned_description = helpers.peek.description(schema=schema, schemas={})
+
+    assert returned_description == expected_description
+
+
+@pytest.mark.helper
 def test_primary_key_wrong_type():
     """
     GIVEN schema with primary key defined as a string
