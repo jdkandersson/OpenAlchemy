@@ -108,3 +108,15 @@ class ObjectArtifacts:
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+
+
+_ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ObjectRefSchemaBase", {"type": str, "x-de-$ref": str}, total=True
+)
+
+
+class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
+    """Schema for object reference definitions."""
+
+    nullable: bool
+    description: str
