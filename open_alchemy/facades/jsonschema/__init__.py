@@ -6,6 +6,10 @@ import typing
 
 import jsonschema
 
+# Re mapping values
+ValidationError = jsonschema.ValidationError
+validate = jsonschema.validate  # pylint: disable=invalid-name
+
 
 def _filename_to_dict(filename: str) -> typing.Dict:
     """

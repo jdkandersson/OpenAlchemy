@@ -48,8 +48,8 @@ def get_ext_prop(
 
     schema = _SCHEMAS.get(name)
     try:
-        jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
-    except jsonschema.ValidationError:
+        facades.jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
+    except facades.jsonschema.ValidationError:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "
             "valid. "
