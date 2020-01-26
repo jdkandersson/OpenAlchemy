@@ -13,13 +13,13 @@ validate = jsonschema.validate  # pylint: disable=invalid-name
 
 def _filename_to_dict(filename: str) -> typing.Dict:
     """
-    Map filename for a JSON file to the loaded dictionary.
+    Map filename for a JSON file to the de-serialized dictionary.
 
     Args:
         filename: The name of the JSON file.
 
     Returns:
-        The contents of the file loaded as a dictionary.
+        The de-serialized contents of the file as a dictionary.
 
     """
     with open(filename) as in_file:
@@ -33,7 +33,7 @@ def resolver(
     jsonschema.RefResolver, typing.Tuple[typing.Dict[str, typing.Any], ...]
 ]:
     """
-    Resolve references to schemas from another file.
+    Create resolver for references to schemas in another file.
 
     Args:
         filenames: The names for the files to add to the resolver.
