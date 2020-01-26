@@ -7,16 +7,15 @@ import typing
 import jsonschema
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 
 _DIRECTORY = os.path.dirname(__file__)
 _SCHEMAS_FILE = os.path.join(_DIRECTORY, "extension-schemas.json")
 with open(_SCHEMAS_FILE) as in_file:
     _SCHEMAS = json.load(in_file)
 _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, "common-schemas.json")
-with open(_COMMON_SCHEMAS_FILE) as in_file:
-    _COMMON_SCHEMAS = json.load(in_file)
-_resolver = jsonschema.RefResolver.from_schema(  # pylint: disable=invalid-name
-    {**_COMMON_SCHEMAS, **_SCHEMAS}
+_resolver = facades.jsonschema.resolver(  # pylint: disable=invalid-name
+    _SCHEMAS_FILE, _COMMON_SCHEMAS_FILE
 )
 
 
