@@ -60,6 +60,7 @@ def check_schema(
     format_ = helpers.peek.format_(schema=schema, schemas={})
     max_length = helpers.peek.max_length(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
+    description = helpers.peek.description(schema=schema, schemas={})
     primary_key = helpers.get_ext_prop(source=schema, name="x-primary-key")
     autoincrement = helpers.get_ext_prop(source=schema, name="x-autoincrement")
     index = helpers.get_ext_prop(source=schema, name="x-index")
@@ -75,6 +76,7 @@ def check_schema(
         format=format_,
         max_length=max_length,
         nullable=nullable_artefact,
+        description=description,
         primary_key=primary_key,
         autoincrement=autoincrement,
         index=index,
@@ -106,6 +108,8 @@ def calculate_schema(
         schema["format"] = artifacts.format
     if artifacts.max_length is not None:
         schema["maxLength"] = artifacts.max_length
+    if artifacts.description is not None:
+        schema["description"] = artifacts.description
     if artifacts.autoincrement is not None:
         schema["x-generated"] = artifacts.autoincrement
     if dict_ignore is not None:

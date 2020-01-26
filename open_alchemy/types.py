@@ -45,6 +45,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "format": str,
         "maxLength": int,
         "nullable": bool,
+        "description": str,
         "x-generated": bool,
     },
     total=False,

@@ -19,6 +19,7 @@ from open_alchemy.column_factory import column
         ({"type": "type 1", "format": 1}, exceptions.MalformedSchemaError),
         ({"type": "type 1", "maxLength": "1"}, exceptions.MalformedSchemaError),
         ({"type": "type 1", "nullable": "True"}, exceptions.MalformedSchemaError),
+        ({"type": "type 1", "description": True}, exceptions.MalformedSchemaError),
         (
             {"type": "type 1", "x-primary-key": "True"},
             exceptions.MalformedExtensionPropertyError,
@@ -46,6 +47,7 @@ from open_alchemy.column_factory import column
         "format not string",
         "maxLength not integer",
         "nullable not boolean",
+        "description not string",
         "primary key not boolean",
         "autoincrement not boolean",
         "index not boolean",
@@ -81,6 +83,12 @@ def test_check_schema_invalid(schema, expected_exception):
             {"type": "type 1", "maxLength": 1},
         ),
         (
+            types.ColumnArtifacts(type="type 1", description="description 1"),
+            None,
+            None,
+            {"type": "type 1", "description": "description 1"},
+        ),
+        (
             types.ColumnArtifacts(type="type 1", nullable=False),
             None,
             None,
@@ -109,6 +117,7 @@ def test_check_schema_invalid(schema, expected_exception):
         "type only",
         "type with format",
         "type with maxLength",
+        "type with description",
         "type with nullable",
         "type with autoincrement",
         "nullable input not None",
@@ -186,6 +195,10 @@ def test_calculate_column_schema_dict_ignore_invalid():
             types.ColumnArtifacts("type 1", nullable=True),
         ),
         (
+            {"type": "type 1", "description": "description 1"},
+            types.ColumnArtifacts("type 1", description="description 1"),
+        ),
+        (
             {"type": "type 1", "x-primary-key": True},
             types.ColumnArtifacts("type 1", primary_key=True),
         ),
@@ -211,6 +224,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         "type with format",
         "type with maxLength",
         "type with nullable",
+        "type with description",
         "type with primary key",
         "type with autoincrement",
         "type with index",
