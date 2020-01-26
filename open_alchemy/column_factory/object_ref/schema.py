@@ -20,4 +20,6 @@ def calculate(*, artifacts: types.ObjectArtifacts) -> types.Schema:
     }
     if artifacts.nullable is not None:
         schema["nullable"] = artifacts.nullable
+    if artifacts.description is not None:
+        schema["description"] = artifacts.description
     return schema
