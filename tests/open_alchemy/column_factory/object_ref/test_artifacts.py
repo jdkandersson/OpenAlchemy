@@ -72,6 +72,11 @@ def test_ref_error(schemas):
             {"nullable": True},
             {"nullable": False},
         ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"description": "description 1"},
+            {"description": "description 2"},
+        ],
     ],
     ids=[
         "object",
@@ -81,6 +86,7 @@ def test_ref_error(schemas):
         "multiple x-foreign-key-column",
         "multiple x-uselist",
         "multiple nullable",
+        "multiple description",
     ],
 )
 @pytest.mark.column
@@ -110,28 +116,22 @@ def test_gather_no_ref_all_of():
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_spec",
+    "schema, schemas",
     [
-        (
-            {"$ref": "#/components/schemas/RefSchema"},
-            {"RefSchema": {"type": "object"}},
-            {"type": "object"},
-        ),
+        ({"$ref": "#/components/schemas/RefSchema"}, {"RefSchema": {"type": "object"}}),
         (
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"allOf": [{"type": "object"}]}},
-            {"type": "object"},
         ),
         (
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"type": "object"}},
-            {"type": "object"},
         ),
     ],
     ids=["$ref", "$ref to allOf", "allOf"],
 )
 @pytest.mark.column
-def test_gather_object_artifacts_spec(schema, schemas, expected_spec):
+def test_gather_object_artifacts_spec(schema, schemas):
     """
     GIVEN schema, schemas and expected schema
     WHEN gather_object_artifacts is called with the schema and schemas
@@ -139,7 +139,7 @@ def test_gather_object_artifacts_spec(schema, schemas, expected_spec):
     """
     obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
-    assert obj_artifacts.spec == expected_spec
+    assert obj_artifacts.spec == {"type": "object"}
 
 
 @pytest.mark.parametrize(
@@ -627,14 +627,14 @@ def test_gather_object_artifacts_fk_column(schema, schemas, expected_fk_column):
         ),
     ],
     ids=[
-        "$ref no fk",
-        "$ref fk",
-        "allOf no fk",
-        "allOf fk",
-        "allOf fk before other",
-        "allOf fk after other",
-        "allOf $ref fk",
-        "allOf fk $ref fk",
+        "$ref no nullable",
+        "$ref nullable",
+        "allOf no nullable",
+        "allOf nullable",
+        "allOf nullable before other",
+        "allOf nullable after other",
+        "allOf $ref nullable",
+        "allOf nullable $ref nullable",
     ],
 )
 @pytest.mark.column
@@ -647,3 +647,92 @@ def test_gather_object_artifacts_nullable(schema, schemas, expected_nullable):
     obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.nullable == expected_nullable
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_description",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "description": "description 1"}},
+            None,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"description": "description 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "description 2",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"description": "description 2"},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "description 2",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"description": "description 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            "description 2",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "description": "description 1"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"description": "description 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object", "description": "description 1"}},
+            "description 2",
+        ),
+    ],
+    ids=[
+        "$ref no description",
+        "$ref description",
+        "allOf no description",
+        "allOf description",
+        "allOf description before other",
+        "allOf description after other",
+        "allOf $ref description",
+        "allOf description $ref description",
+    ],
+)
+@pytest.mark.column
+def test_gather_object_artifacts_description(schema, schemas, expected_description):
+    """
+    GIVEN schema and schemas and expected description value
+    WHEN gather_object_artifacts is called with the schema and schemas
+    THEN the expected description value is returned.
+    """
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
+
+    assert obj_artifacts.description == expected_description

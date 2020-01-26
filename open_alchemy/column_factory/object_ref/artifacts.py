@@ -62,6 +62,7 @@ def gather(
             secondary=intermediary_obj_artifacts.secondary,
         ),
         nullable=intermediary_obj_artifacts.nullable,
+        description=intermediary_obj_artifacts.description,
     )
 
 
@@ -83,6 +84,8 @@ class _IntermediaryObjectArtifacts:
     secondary: typing.Optional[str] = None
     # Whether the foreign key is nullable
     nullable: typing.Optional[bool] = None
+    # The description for the reference
+    description: typing.Optional[str] = None
 
 
 def _handle_schema(
@@ -201,6 +204,7 @@ def _handle_all_of(
     uselist: typing.Optional[bool] = None
     fk_column_name: typing.Optional[str] = None
     nullable: typing.Optional[bool] = None
+    description: typing.Optional[str] = None
 
     # Exceptions with their messages
     incorrect_number_of_ref = exceptions.MalformedRelationshipError(
@@ -256,6 +260,13 @@ def _handle_all_of(
             default=nullable,
             exception_message="Relationships may have at most 1 nullable defined.",
         )
+        # Handle description
+        description = _handle_key_single(
+            key="description",
+            schema=sub_schema,
+            default=description,
+            exception_message="Relationships may have at most 1 description defined.",
+        )
 
     # Check that $ref was found once
     if obj_artifacts is None:
@@ -270,6 +281,8 @@ def _handle_all_of(
         obj_artifacts.fk_column_name = fk_column_name
     if nullable is not None:
         obj_artifacts.nullable = nullable
+    if description is not None:
+        obj_artifacts.description = description
 
     return obj_artifacts
 
