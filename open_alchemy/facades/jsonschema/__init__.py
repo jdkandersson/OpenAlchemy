@@ -27,7 +27,11 @@ def _filename_to_dict(filename: str) -> typing.Dict:
     return json_dict
 
 
-def resolver(*filenames: str) -> jsonschema.RefResolver:
+def resolver(
+    *filenames: str,
+) -> typing.Tuple[
+    jsonschema.RefResolver, typing.Tuple[typing.Dict[str, typing.Any], ...]
+]:
     """
     Resolve references to schemas from another file.
 
@@ -35,10 +39,10 @@ def resolver(*filenames: str) -> jsonschema.RefResolver:
         filenames: The names for the files to add to the resolver.
 
     Returns:
-        The resolver.
+        The resolver and the underlying schemas as a dictionary.
 
     """
-    schema_dicts = map(_filename_to_dict, filenames)
-    initial: typing.Dict = {}
+    schema_dicts = tuple(map(_filename_to_dict, filenames))
+    initial: typing.Dict[str, typing.Any] = {}
     merged_schema = functools.reduce(lambda x, y: {**x, **y}, schema_dicts, initial)
-    return jsonschema.RefResolver.from_schema(merged_schema)
+    return jsonschema.RefResolver.from_schema(merged_schema), schema_dicts

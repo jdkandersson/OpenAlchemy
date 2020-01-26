@@ -41,8 +41,9 @@ def test_resolver_single(tmp_path):
     schema = {"$ref": "#/RefSchema"}
     instance = "test"
 
-    resolver = facades.jsonschema.resolver(str(json_file))
+    resolver, (schema_dict,) = facades.jsonschema.resolver(str(json_file))
     jsonschema.validate(instance, schema, resolver=resolver)
+    assert schema_dict == {"RefSchema": {"type": "string"}}
 
 
 @pytest.mark.facade
@@ -69,5 +70,9 @@ def test_resolver_multiple(tmp_path):
     }
     instance = {"key1": "value 1", "key2": 1}
 
-    resolver = facades.jsonschema.resolver(str(json_file1), str(json_file2))
+    resolver, (schema1_dict, schema2_dict) = facades.jsonschema.resolver(
+        str(json_file1), str(json_file2)
+    )
     jsonschema.validate(instance, schema, resolver=resolver)
+    assert schema1_dict == {"RefSchema1": {"type": "string"}}
+    assert schema2_dict == {"RefSchema2": {"type": "integer"}}

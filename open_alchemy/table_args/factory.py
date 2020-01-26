@@ -14,11 +14,10 @@ from open_alchemy import types
 _DIRECTORY = os.path.dirname(__file__)
 _PATHS = ("..", "helpers", "get_ext_prop")
 _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, *_PATHS, "common-schemas.json")
-with open(_COMMON_SCHEMAS_FILE) as in_file:
-    _COMMON_SCHEMAS = json.load(in_file)
-_resolver = facades.jsonschema.resolver(  # pylint: disable=invalid-name
-    _COMMON_SCHEMAS_FILE
-)
+(
+    _resolver,  # pylint: disable=invalid-name
+    (_COMMON_SCHEMAS,),
+) = facades.jsonschema.resolver(_COMMON_SCHEMAS_FILE)
 
 
 def _spec_to_schema_name(
@@ -39,7 +38,7 @@ def _spec_to_schema_name(
 
     """
     if schema_names is None:
-        schema_names = _COMMON_SCHEMAS.keys()
+        schema_names = list(_COMMON_SCHEMAS.keys())
 
     for name in schema_names:
         try:
