@@ -43,3 +43,31 @@ def test_resolver_single(tmp_path):
 
     resolver = facades.jsonschema.resolver(str(json_file))
     jsonschema.validate(instance, schema, resolver=resolver)
+
+
+@pytest.mark.facade
+def test_resolver_multiple(tmp_path):
+    """
+    GIVEN multiple files with schema, schema that references those schemas and instance
+        of the schema
+    WHEN resolver is created and used to validate the instance
+    THEN no exceptions are raised.
+    """
+    # Create file
+    directory = tmp_path / "json"
+    directory.mkdir()
+    json_file1 = directory / "dict1.json"
+    json_file1.write_text('{"RefSchema1": {"type": "string"}}')
+    json_file2 = directory / "dict2.json"
+    json_file2.write_text('{"RefSchema2": {"type": "integer"}}')
+    schema = {
+        "type": "object",
+        "properties": {
+            "key1": {"$ref": "#/RefSchema1"},
+            "key2": {"$ref": "#/RefSchema2"},
+        },
+    }
+    instance = {"key1": "value 1", "key2": 1}
+
+    resolver = facades.jsonschema.resolver(str(json_file1), str(json_file2))
+    jsonschema.validate(instance, schema, resolver=resolver)

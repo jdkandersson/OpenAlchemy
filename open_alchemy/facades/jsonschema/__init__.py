@@ -35,5 +35,6 @@ def resolver(*filenames: str) -> jsonschema.RefResolver:
 
     """
     schema_dicts = map(_filename_to_dict, filenames)
-    merged_schema = functools.reduce(lambda x, y: {**x, **y}, schema_dicts)
+    initial: typing.Dict = {}
+    merged_schema = functools.reduce(lambda x, y: {**x, **y}, schema_dicts, initial)
     return jsonschema.RefResolver.from_schema(merged_schema)
