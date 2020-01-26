@@ -6,8 +6,6 @@ import json
 import sys
 import typing
 
-import jsonschema
-
 from . import exceptions
 from . import facades
 from . import helpers
@@ -134,8 +132,8 @@ class UtilityBase:
         # Check dictionary
         schema = cls._get_schema()
         try:
-            jsonschema.validate(instance=kwargs, schema=schema)
-        except jsonschema.ValidationError:
+            facades.jsonschema.validate(instance=kwargs, schema=schema)
+        except facades.jsonschema.ValidationError:
             raise exceptions.MalformedModelDictionaryError(
                 "The dictionary passed to from_dict is not a valid instance of the "
                 "model schema. "
