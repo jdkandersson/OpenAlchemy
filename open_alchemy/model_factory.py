@@ -61,6 +61,9 @@ def model_factory(
         model_schema["x-backrefs"] = helpers.get_ext_prop(
             source=schema, name="x-backrefs"
         )
+    description = schema.get("description")
+    if description is not None:
+        model_schema["description"] = description
     for prop_name, prop_spec in schema.get("properties", []).items():
         prop_class_vars, prop_final_spec = column_factory.column_factory(
             spec=prop_spec,

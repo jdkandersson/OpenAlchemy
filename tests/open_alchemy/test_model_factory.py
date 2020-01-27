@@ -418,6 +418,36 @@ def test_all_of():
                 "Schema": {
                     "x-tablename": "table 1",
                     "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                    "description": "",
+                }
+            },
+            {
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "description": "",
+            },
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                    "description": "description 1",
+                }
+            },
+            {
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "description": "description 1",
+            },
+        ),
+        (
+            {
+                "Schema": {
+                    "x-tablename": "table 1",
+                    "type": "object",
                     "properties": {
                         "property_1": {"type": "integer"},
                         "property_2": {"type": "string"},
@@ -442,6 +472,8 @@ def test_all_of():
         "single ref",
         "single ref object",
         "single allOf",
+        "single description empty",
+        "single description",
         "multiple properties",
     ],
 )
