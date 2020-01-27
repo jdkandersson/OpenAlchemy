@@ -27,7 +27,10 @@ def column_factory(
 ) -> typing.Tuple[
     typing.List[typing.Tuple[str, facades.sqlalchemy.column.Column]],
     typing.Union[
-        types.ColumnSchema, types.ObjectRefSchema, types.ArrayRefSchema, types.Schema
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
+        types.ReadOnlySchema,
     ],
 ]:
     """

@@ -23,6 +23,7 @@ def get_ext_prop(
         types.ColumnSchema,
         types.ObjectRefSchema,
         types.ArrayRefSchema,
+        types.ReadOnlySchema,
     ],
     name: str,
     default: typing.Optional[typing.Any] = None,
