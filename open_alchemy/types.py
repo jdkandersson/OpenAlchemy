@@ -4,15 +4,9 @@ import dataclasses
 import typing
 
 try:
-    # noqa: F401
-    from typing import TypedDict, Literal  # pylint: disable=unused-import
+    from typing import TypedDict, Literal, Protocol
 except ImportError:  # pragma: no cover
-    from typing_extensions import TypedDict, Literal  # type: ignore  # noqa: F401
-
-try:
-    from typing import Protocol
-except ImportError:  # pragma: no cover
-    from typing_extensions import Protocol  # type: ignore
+    from typing_extensions import TypedDict, Literal, Protocol  # type: ignore
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
@@ -144,7 +138,7 @@ _ReadOnlySchemaBase = TypedDict(  # pylint: disable=invalid-name
 class ReadOnlySchemaObjectCommon(TypedDict, total=True):
     """Base class for object schema."""
 
-    type: typing.Literal["object"]
+    type: Literal["object"]
     properties: Schema
 
 
@@ -155,7 +149,7 @@ class ReadOnlyObjectSchema(ReadOnlySchemaObjectCommon, _ReadOnlySchemaBase):
 class ReadOnlyArraySchema(_ReadOnlySchemaBase):
     """Base class for object readOnly schema."""
 
-    type: typing.Literal["array"]
+    type: Literal["array"]
     items: ReadOnlySchemaObjectCommon
 
 
