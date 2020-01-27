@@ -62,6 +62,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
     """
     required = set(schema.get("required", []))
+    description = helpers.peek.description(schema=schema, schemas={})
 
     # Initialize lists
     columns: typing.List[types.ColumnArtifacts] = []
@@ -85,7 +86,13 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
 
         # Add artifacts to the lists
-        columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
+        columns.append(
+            types.ColumnArtifacts(
+                type=column_type,
+                name=property_name,
+                description=column_artifacts.description,
+            )
+        )
         prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
         arg_artifacts = types.ColumnArgArtifacts(
             init_type=arg_init_type,
@@ -151,6 +158,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 required=required_args, not_required=not_required_args
             ),
             parent_cls=parent_cls,
+            description=description,
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(

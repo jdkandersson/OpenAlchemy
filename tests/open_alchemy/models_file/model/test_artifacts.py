@@ -92,6 +92,28 @@ def test_calculate_name():
     assert artifacts.sqlalchemy.name == name
 
 
+@pytest.mark.parametrize(
+    "schema, expected_description",
+    [
+        ({"properties": {}}, None),
+        ({"description": "description 1", "properties": {}}, "description 1"),
+    ],
+    ids=["missing", "set"],
+)
+@pytest.mark.models_file
+def test_calculate_description(schema, expected_description):
+    """
+    GIVEN schema
+    WHEN calculate is called with the schema
+    THEN the description is added to the artifacts.
+    """
+    name = "Model"
+
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
+
+    assert artifacts.sqlalchemy.description == expected_description
+
+
 _EXPECTED_CLS_BASE = "typing.Protocol"
 if sys.version_info[1] < 8:
     _EXPECTED_CLS_BASE = "typing_extensions.Protocol"
@@ -139,6 +161,21 @@ def test_calculate_parent():
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
             [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
         ),
+        (
+            {
+                "properties": {
+                    "column_1": {"type": "integer", "description": "description 1"}
+                },
+                "required": [],
+            },
+            [
+                _ColumnArtifacts(
+                    name="column_1",
+                    type="typing.Optional[int]",
+                    description="description 1",
+                )
+            ],
+        ),
         ({"properties": {}, "x-backrefs": {}}, []),
         (
             {
@@ -167,6 +204,7 @@ def test_calculate_parent():
         "multiple",
         "single in required",
         "single not in required",
+        "single description",
         "empty x-backrefs",
         "single x-backrefs",
         "multiple x-backrefs",
