@@ -20,6 +20,8 @@ class ColumnSchemaArtifacts:
     de_ref: typing.Optional[str] = None
     # Whether the value of the column is generated (eg. through auto increment)
     generated: typing.Optional[bool] = None
+    # The description of the column
+    description: typing.Optional[str] = None
 
 
 @dataclasses.dataclass
@@ -30,6 +32,8 @@ class ColumnArtifacts:
     name: str
     # The type of the column
     type: str
+    # The description of the column
+    description: typing.Optional[str] = None
 
 
 @dataclasses.dataclass
@@ -68,6 +72,8 @@ class SQLAlchemyModelArtifacts:
     arg: ArgArtifacts
     # The parent class
     parent_cls: str
+    # The description of the model
+    description: typing.Optional[str] = None
 
 
 @dataclasses.dataclass
