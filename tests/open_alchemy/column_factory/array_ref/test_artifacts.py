@@ -75,6 +75,14 @@ from open_alchemy.column_factory import array_ref
                 }
             },
         ),
+        (
+            {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefSchema"},
+                "description": True,
+            },
+            {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        ),
     ],
     ids=[
         "no items",
@@ -88,6 +96,7 @@ from open_alchemy.column_factory import array_ref
         "backref and uselist defined",
         "nullable True",
         "nullable False",
+        "description not string",
     ],
 )
 @pytest.mark.column
@@ -165,3 +174,59 @@ def test_valid(schema, schemas):
     assert artifacts.relationship.model_name == "RefSchema"
     assert artifacts.spec == {"type": "object", "x-tablename": "ref_schema"}
     assert artifacts.fk_column == "id"
+
+
+@pytest.mark.parametrize(
+    "schema, expected_description",
+    [
+        ({"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}, None),
+        (
+            {
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"description": "description 1"},
+                    ]
+                },
+            },
+            "description 1",
+        ),
+        (
+            {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefSchema"},
+                "description": "description 2",
+            },
+            "description 2",
+        ),
+        (
+            {
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"description": "description 1"},
+                    ]
+                },
+                "description": "description 2",
+            },
+            "description 2",
+        ),
+    ],
+    ids=["not defined", "in allOf", "property level", "allOf and property level"],
+)
+@pytest.mark.column
+def test_description(schema, expected_description):
+    """
+    GIVEN schema and expected description
+    WHEN gather is called with the schema
+    THEN artifacts with the expected description are returned.
+    """
+    schemas = {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}}
+
+    artifacts = array_ref._artifacts.gather(
+        schema=schema, schemas=schemas, logical_name="ref_schema"
+    )
+
+    assert artifacts.description == expected_description

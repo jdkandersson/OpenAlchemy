@@ -61,4 +61,12 @@ def gather(
             "x-tablename defined."
         )
 
+    # Add description
+    try:
+        description = helpers.peek.description(schema=schema, schemas={})
+    except exceptions.MalformedSchemaError as exc:
+        raise exceptions.MalformedRelationshipError(str(exc))
+    if description is not None:
+        artifacts.description = description
+
     return artifacts
