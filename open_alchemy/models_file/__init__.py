@@ -8,6 +8,7 @@ import black
 
 from open_alchemy import types as oa_types
 
+from . import docs as docs
 from . import model as _model
 from . import models as _models
 from . import types as types

@@ -6,12 +6,7 @@ import typing
 
 @dataclasses.dataclass
 class ColumnSchemaArtifacts:
-    """
-    Artifacts from the OpenAPI schema.
-
-    Test.
-
-    """
+    """Artifacts from the OpenAPI schema."""
 
     # The type of the column
     type: str
