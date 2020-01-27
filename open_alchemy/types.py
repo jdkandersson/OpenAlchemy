@@ -115,19 +115,7 @@ _ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
 )
 
 
-_ObjectRefSchemaBase2 = TypedDict(  # pylint: disable=invalid-name
-    "_ObjectRefSchemaBase2", {"test": str}, total=True
-)
-
-
-_ObjectRefSchemaBase3 = TypedDict(  # pylint: disable=invalid-name
-    "_ObjectRefSchemaBase3", {"test2": str}, total=False
-)
-
-
-class ObjectRefSchema(
-    _ObjectRefSchemaBase, _ObjectRefSchemaBase2, _ObjectRefSchemaBase3, total=False
-):
+class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
     """Schema for object reference definitions."""
 
     nullable: bool
