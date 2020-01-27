@@ -26,7 +26,9 @@ def column_factory(
     model_schema: types.Schema,
 ) -> typing.Tuple[
     typing.List[typing.Tuple[str, facades.sqlalchemy.column.Column]],
-    typing.Union[types.ColumnSchema, types.ObjectRefSchema, types.Schema],
+    typing.Union[
+        types.ColumnSchema, types.ObjectRefSchema, types.ArrayRefSchema, types.Schema
+    ],
 ]:
     """
     Generate column based on OpenAPI schema property.

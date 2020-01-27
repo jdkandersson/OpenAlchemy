@@ -19,7 +19,10 @@ _resolver, (_SCHEMAS, _) = facades.jsonschema.resolver(  # pylint: disable=inval
 def get_ext_prop(
     *,
     source: typing.Union[
-        typing.Dict[str, typing.Any], types.ColumnSchema, types.ObjectRefSchema
+        typing.Dict[str, typing.Any],
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
     ],
     name: str,
     default: typing.Optional[typing.Any] = None,

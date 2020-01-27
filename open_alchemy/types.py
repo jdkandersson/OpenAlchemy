@@ -120,3 +120,16 @@ class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
 
     nullable: bool
     description: str
+    readOnly: bool
+
+
+_ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ArrayRefSchemaBase", {"description": str, "readOnly": bool}, total=False
+)
+
+
+class ArrayRefSchema(_ArrayRefSchemaBase, total=True):
+    """Schema for array reference definitions."""
+
+    type: str
+    items: _ObjectRefSchemaBase
