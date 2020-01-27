@@ -13,7 +13,7 @@ def handle_column(
     schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> facades.sqlalchemy.column.Column:
+) -> typing.Tuple[types.ColumnSchema, facades.sqlalchemy.column.Column]:
     """
     Generate column based on OpenAPI schema property.
 
