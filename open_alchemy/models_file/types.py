@@ -10,6 +10,7 @@ class ColumnSchemaArtifacts:
     Artifacts from the OpenAPI schema.
 
     Test.
+
     """
 
     # The type of the column
