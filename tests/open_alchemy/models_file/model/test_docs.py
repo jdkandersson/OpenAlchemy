@@ -6,47 +6,100 @@ from open_alchemy import models_file
 
 
 @pytest.mark.parametrize(
-    "description, expected_docstring",
+    "description, columns, expected_docstring",
     [
-        (None, "SQLAlchemy model protocol."),
+        (None, [], "SQLAlchemy model protocol."),
         (
             "description 1",
+            [],
             """
     SQLAlchemy model protocol.
 
     description 1
+
     """,
         ),
         (
             "description 1 that is very long and will cause line wrapping if its long "
             "enough",
+            [],
             """
     SQLAlchemy model protocol.
 
     description 1 that is very long and will cause line wrapping if its long
     enough
+
+    """,
+        ),
+        (
+            None,
+            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        column_1: The column_1 of the Model 1.
+
+    """,
+        ),
+        (
+            None,
+            [
+                models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
+                models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+            ],
+            """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        column_1: The column_1 of the Model 1.
+        column_2: The column_2 of the Model 1.
+
+    """,
+        ),
+        (
+            "description 1",
+            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            """
+    SQLAlchemy model protocol.
+
+    description 1
+
+    Attrs:
+        column_1: The column_1 of the Model 1.
+
     """,
         ),
     ],
-    ids=["None", "short", "long"],
+    ids=[
+        "description None  columns empty",
+        "description short columns empty",
+        "description long  columns empty",
+        "description None  single column",
+        "description None  multiple columns",
+        "description short single column",
+    ],
 )
 @pytest.mark.models_file
-def test_docstring(description, expected_docstring):
+def test_docstring(description, columns, expected_docstring):
     """
-    GIVEN description
+    GIVEN description and columns
     WHEN docstring is called with the description
     THEN the expected description is returned.
     """
     artifacts = models_file.types.SQLAlchemyModelArtifacts(
         name="Model 1",
-        empty=True,
-        columns=[],
+        empty=not columns,
+        columns=columns,
         arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
         parent_cls="Parent 1",
         description=description,
     )
 
     returned_description = models_file.docs.docstring(artifacts=artifacts)
+
+    print(repr(returned_description))
+    print(repr(expected_docstring))
 
     assert returned_description == expected_docstring
 

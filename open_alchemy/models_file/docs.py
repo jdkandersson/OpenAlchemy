@@ -1,5 +1,6 @@
 """Functions for generating documentation for a model."""
 
+import functools
 import textwrap
 
 from . import types
@@ -20,15 +21,35 @@ def docstring(artifacts: types.SQLAlchemyModelArtifacts) -> str:
         The docstring for the model.
 
     """
-    if artifacts.description is None:
+    if artifacts.description is None and artifacts.empty:
         return _DEFAULT_DOCSTRING
 
-    wrapped_description = _DocstringWrapper.wrap(artifacts.description)
-    joined_description = "\n    ".join(wrapped_description)
-    return f"""
+    # Calculate description
+    description: str
+    if artifacts.description is None:
+        description = f"""
+    {_DEFAULT_DOCSTRING}"""
+    else:
+        wrapped_description = _DocstringWrapper.wrap(artifacts.description)
+        joined_description = "\n    ".join(wrapped_description)
+        description = f"""
     {_DEFAULT_DOCSTRING}
 
-    {joined_description}
+    {joined_description}"""
+
+    # Calculate docs for the attributes
+    attr_docs = ""
+    if not artifacts.empty:
+        attr_model_name_set = functools.partial(attr, model_name=artifacts.name)
+        mapped_attrs = map(attr_model_name_set, artifacts.columns)
+        joined_attrs = "\n        ".join(mapped_attrs)
+        attr_docs = f"""
+
+    Attrs:
+        {joined_attrs}"""
+
+    return f"""{description}{attr_docs}
+
     """
 
 
