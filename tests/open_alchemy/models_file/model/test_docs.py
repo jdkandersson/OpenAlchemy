@@ -37,7 +37,16 @@ def test_docstring(description, expected_docstring):
     WHEN docstring is called with the description
     THEN the expected description is returned.
     """
-    returned_description = models_file.docs.docstring(description=description)
+    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+        name="Model 1",
+        empty=True,
+        columns=[],
+        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        parent_cls="Parent 1",
+        description=description,
+    )
+
+    returned_description = models_file.docs.docstring(artifacts=artifacts)
 
     assert returned_description == expected_docstring
 

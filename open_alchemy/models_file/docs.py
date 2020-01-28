@@ -1,7 +1,6 @@
 """Functions for generating documentation for a model."""
 
 import textwrap
-import typing
 
 from . import types
 
@@ -10,7 +9,7 @@ _AttrWrapper = textwrap.TextWrapper(width=70)  # pylint: disable=invalid-name
 _DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
 
 
-def docstring(description: typing.Optional[str]) -> str:
+def docstring(artifacts: types.SQLAlchemyModelArtifacts) -> str:
     """
     Create docstring from description.
 
@@ -21,10 +20,10 @@ def docstring(description: typing.Optional[str]) -> str:
         The docstring for the model.
 
     """
-    if description is None:
+    if artifacts.description is None:
         return _DEFAULT_DOCSTRING
 
-    wrapped_description = _DocstringWrapper.wrap(description)
+    wrapped_description = _DocstringWrapper.wrap(artifacts.description)
     joined_description = "\n    ".join(wrapped_description)
     return f"""
     {_DEFAULT_DOCSTRING}
