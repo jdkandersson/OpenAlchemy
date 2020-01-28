@@ -1,4 +1,4 @@
-"""Tests for creating documentation for a model."""
+"""Tests for types."""
 
 import pytest
 
@@ -84,7 +84,7 @@ from open_alchemy import models_file
 def test_docstring(description, columns, expected_docstring):
     """
     GIVEN description and columns
-    WHEN docstring is called with the description
+    WHEN model_docstring is called with the description
     THEN the expected description is returned.
     """
     artifacts = models_file.types.SQLAlchemyModelArtifacts(
@@ -96,10 +96,7 @@ def test_docstring(description, columns, expected_docstring):
         description=description,
     )
 
-    returned_description = models_file.docs.docstring(artifacts=artifacts)
-
-    print(repr(returned_description))
-    print(repr(expected_docstring))
+    returned_description = models_file.types.model_docstring(artifacts=artifacts)
 
     assert returned_description == expected_docstring
 
@@ -135,9 +132,41 @@ def test_docstring(description, columns, expected_docstring):
 def test_attr(artifacts, expected_docs):
     """
     GIVEN artifacts and name of a model
-    WHEN attr is called with the artifacts and name
+    WHEN model_attr_docs is called with the artifacts and name
     THEN the expected docs are returned.
     """
-    returned_docs = models_file.docs.attr(artifacts=artifacts, model_name="Model")
+    returned_docs = models_file.types.model_attr_docs(
+        artifacts=artifacts, model_name="Model"
+    )
 
     assert returned_docs == expected_docs
+
+
+@pytest.mark.models_file
+def test_sqlalchemy_model_artifacts_docstring():
+    """
+    GIVEN artifacts
+    WHEN .docstring is access
+    THEN a docstring is produced.
+    """
+    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+        name="Model 1",
+        empty=False,
+        columns=[models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        parent_cls="Parent 1",
+        description="description 1",
+    )
+
+    assert (
+        artifacts.docstring
+        == """
+    SQLAlchemy model protocol.
+
+    description 1
+
+    Attrs:
+        column_1: The column_1 of the Model 1.
+
+    """
+    )
