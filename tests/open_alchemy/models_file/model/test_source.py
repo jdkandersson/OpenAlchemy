@@ -195,7 +195,6 @@ Model: TModel = models.Model  # type: ignore''',
     ],
     ids=["empty", "single column", "multiple column"],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
@@ -204,9 +203,6 @@ def test_sqlalchemy(artifacts, expected_source):
     THEN the source code for the model class is returned.
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
-
-    print(repr(source))
-    print(repr(expected_source))
 
     assert source == expected_source
 
@@ -654,7 +650,13 @@ class ModelDict(typing.TypedDict, total=False):
 
 
 class TModel(Parent):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        col_1: The col_1 of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -728,7 +730,13 @@ class ModelDict(typing.TypedDict, total=True):
 
 
 class TModel(Parent):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        col_1: The col_1 of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -820,7 +828,14 @@ class ModelDict(_ModelDictBase, total=False):
 
 
 class TModel(Parent):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        col_1: The col_1 of the Model.
+        col_2: The col_2 of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -867,5 +882,8 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source

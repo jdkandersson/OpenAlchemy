@@ -20,14 +20,25 @@ from open_alchemy import models_file
     """,
         ),
         (
-            "description 1 that is very long and will cause line wrapping if its long "
-            "enough",
+            "description 1 that is very long and will cause line wrapping if its "
+            "longggg",
             [],
             """
     SQLAlchemy model protocol.
 
-    description 1 that is very long and will cause line wrapping if its long
-    enough
+    description 1 that is very long and will cause line wrapping if its longggg
+
+    """,
+        ),
+        (
+            "description 1 that is very long and will cause line wrapping if its "
+            "longgggg",
+            [],
+            """
+    SQLAlchemy model protocol.
+
+    description 1 that is very long and will cause line wrapping if its
+    longgggg
 
     """,
         ),
@@ -72,14 +83,16 @@ from open_alchemy import models_file
         ),
     ],
     ids=[
-        "description None  columns empty",
-        "description short columns empty",
-        "description long  columns empty",
-        "description None  single column",
-        "description None  multiple columns",
-        "description short single column",
+        "description None          columns empty",
+        "description short         columns empty",
+        "description long no wrap  columns empty",
+        "description long wrap     columns empty",
+        "description None          single column",
+        "description None          multiple columns",
+        "description short         single column",
     ],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_docstring(description, columns, expected_docstring):
     """

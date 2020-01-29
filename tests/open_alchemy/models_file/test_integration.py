@@ -43,7 +43,13 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -102,7 +108,13 @@ class Model1Dict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel1({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model1.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -145,7 +157,13 @@ class Model2Dict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel2({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model2.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -201,7 +219,15 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
+            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa of the
+            Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -262,6 +288,9 @@ def test_integration(schemas, expected_source):
         models.add_model(schema=schema, name=name)
     source = models.generate_models()
 
+    print(repr(source))
+    print(repr(expected_source))
+
     assert source == expected_source
 
 
@@ -299,7 +328,13 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table

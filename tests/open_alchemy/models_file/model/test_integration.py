@@ -35,7 +35,13 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table

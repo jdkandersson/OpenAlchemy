@@ -5,10 +5,6 @@ import functools
 import textwrap
 import typing
 
-_DocstringWrapper = textwrap.TextWrapper(width=74)  # pylint: disable=invalid-name
-_AttrWrapper = textwrap.TextWrapper(width=70)  # pylint: disable=invalid-name
-_DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
-
 
 @dataclasses.dataclass
 class ColumnSchemaArtifacts:
@@ -120,6 +116,11 @@ class ModelArtifacts:
     sqlalchemy: SQLAlchemyModelArtifacts
     # The artifacts for the TypedDicts
     typed_dict: TypedDictArtifacts
+
+
+_DocstringWrapper = textwrap.TextWrapper(width=75)  # pylint: disable=invalid-name
+_AttrWrapper = textwrap.TextWrapper(width=70)  # pylint: disable=invalid-name
+_DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
 
 
 def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
