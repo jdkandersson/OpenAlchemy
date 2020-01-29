@@ -32,6 +32,20 @@ from open_alchemy import models_file
         ),
         (
             "description 1 that is very long and will cause line wrapping if its "
+            "longggg enough and I can keep on thinking of more words to put here to "
+            "ensureeeeeee that",
+            [],
+            """
+    SQLAlchemy model protocol.
+
+    description 1 that is very long and will cause line wrapping if its longggg
+    enough and I can keep on thinking of more words to put here to ensureeeeeee
+    that
+
+    """,
+        ),
+        (
+            "description 1 that is very long and will cause line wrapping if its "
             "longgggg",
             [],
             """
@@ -83,16 +97,16 @@ from open_alchemy import models_file
         ),
     ],
     ids=[
-        "description None          columns empty",
-        "description short         columns empty",
-        "description long no wrap  columns empty",
-        "description long wrap     columns empty",
-        "description None          single column",
-        "description None          multiple columns",
-        "description short         single column",
+        "description None             columns empty",
+        "description short            columns empty",
+        "description long no wrap     columns empty",
+        "description long wrap single columns empty",
+        "description long wrap mult   columns empty",
+        "description None             single column",
+        "description None             multiple columns",
+        "description short            single column",
     ],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_docstring(description, columns, expected_docstring):
     """
@@ -132,16 +146,64 @@ def test_docstring(description, columns, expected_docstring):
                 name="column_1",
                 type="type_1",
                 description=(
-                    "description 1 that is very long and will cause line wrapping if"
+                    "description 1 that is very long and will cause line wrappingg"
                 ),
             ),
-            """column_1: description 1 that is very long and will cause line wrapping
-            if""",
+            "column_1: description 1 that is very long and will cause line wrappingg",
+        ),
+        (
+            models_file.types.ColumnArtifacts(
+                name="column_1",
+                type="type_1",
+                description=(
+                    "description 1 that is very long and will cause line wrappinggg"
+                ),
+            ),
+            """column_1: description 1 that is very long and will cause line
+            wrappinggg""",
+        ),
+        (
+            models_file.types.ColumnArtifacts(
+                name="column_1",
+                type="type_1",
+                description=(
+                    "description 1 that is very long and will cause line wrappingg if "
+                    "its long enough and I can keep on thinking of more words toooooo "
+                    "write"
+                ),
+            ),
+            """column_1: description 1 that is very long and will cause line wrappingg
+            if its long enough and I can keep on thinking of more words toooooo
+            write""",
+        ),
+        (
+            models_file.types.ColumnArtifacts(
+                name="column_1",
+                type="type_1",
+                description=(
+                    "description 1 that is very long and will cause line wrappingg if "
+                    "its long enough and I can keep on thinking of more words toooooo "
+                    "write ensure that even more lines will get wrapped to the next "
+                    "line hmm"
+                ),
+            ),
+            """column_1: description 1 that is very long and will cause line wrappingg
+            if its long enough and I can keep on thinking of more words toooooo
+            write ensure that even more lines will get wrapped to the next line
+            hmm""",
         ),
     ],
-    ids=["no description", "short description", "long description"],
+    ids=[
+        "no description",
+        "short description",
+        "long description no wrap",
+        "long description wrap single",
+        "long description wrap multiple",
+        "long description wrap even more",
+    ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_attr(artifacts, expected_docs):
     """
     GIVEN artifacts and name of a model
@@ -151,6 +213,9 @@ def test_attr(artifacts, expected_docs):
     returned_docs = models_file.types.model_attr_docs(
         artifacts=artifacts, model_name="Model"
     )
+
+    print(repr(returned_docs))
+    print(repr(expected_docs))
 
     assert returned_docs == expected_docs
 

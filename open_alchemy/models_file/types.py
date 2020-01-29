@@ -119,7 +119,8 @@ class ModelArtifacts:
 
 
 _DocstringWrapper = textwrap.TextWrapper(width=75)  # pylint: disable=invalid-name
-_AttrWrapper = textwrap.TextWrapper(width=70)  # pylint: disable=invalid-name
+_AttrFirstWrapper = textwrap.TextWrapper(width=71)  # pylint: disable=invalid-name
+_AttrRemainingWrapper = textwrap.TextWrapper(width=67)  # pylint: disable=invalid-name
 _DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
 
 
@@ -189,5 +190,9 @@ def model_attr_docs(artifacts: ColumnArtifacts, model_name: str) -> str:
     doc = f"{artifacts.name}: {description}"
 
     # Wrapping and joining
-    wrapped_doc = _AttrWrapper.wrap(doc)
+    wrapped_doc = _AttrFirstWrapper.wrap(doc)
+    if len(wrapped_doc) > 1:
+        remaining_doc = " ".join(wrapped_doc[1:])
+        remaining_doc_wrapped = _AttrRemainingWrapper.wrap(remaining_doc)
+        wrapped_doc = [wrapped_doc[0]] + remaining_doc_wrapped
     return "\n            ".join(wrapped_doc)
