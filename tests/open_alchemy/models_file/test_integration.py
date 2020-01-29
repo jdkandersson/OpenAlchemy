@@ -224,8 +224,8 @@ class TModel({_EXPECTED_MODEL_BASE}):
 
     Attrs:
         extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
-            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa of the
-            Model.
+            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa of
+            the Model.
 
     """
 
