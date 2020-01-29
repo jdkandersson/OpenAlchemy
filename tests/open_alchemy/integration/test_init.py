@@ -444,7 +444,13 @@ class TableDict({expected_td_base}, total=False):
 
 
 class TTable({expected_model_base}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        column: The column of the Table.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
