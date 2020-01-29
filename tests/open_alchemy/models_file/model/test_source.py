@@ -80,7 +80,13 @@ Model: TModel = models.Model  # type: ignore''',
             '''
 
 class TModel(Parent):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        column_1: The column_1 of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -143,7 +149,14 @@ Model: TModel = models.Model  # type: ignore''',
             '''
 
 class TModel(Parent):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        column_1: The column_1 of the Model.
+        column_2: The column_2 of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -182,6 +195,7 @@ Model: TModel = models.Model  # type: ignore''',
     ],
     ids=["empty", "single column", "multiple column"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_sqlalchemy(artifacts, expected_source):
     """
@@ -190,6 +204,9 @@ def test_sqlalchemy(artifacts, expected_source):
     THEN the source code for the model class is returned.
     """
     source = models_file._model._source.sqlalchemy(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source
 

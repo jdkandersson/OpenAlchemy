@@ -24,7 +24,18 @@ class EmployeeDict(_EmployeeDictBase, total=False):
 
 
 class TEmployee(typing.Protocol):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Person that works for a company.
+
+    Attrs:
+        id: Unique identifier for the employee.
+        name: The name of the employee.
+        division: The part of the company the employee works in.
+        salary: The amount of money the employee is paid.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
