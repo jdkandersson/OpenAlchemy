@@ -203,7 +203,6 @@ def test_docstring(description, columns, expected_docstring):
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_attr(artifacts, expected_docs):
     """
     GIVEN artifacts and name of a model
@@ -214,8 +213,59 @@ def test_attr(artifacts, expected_docs):
         artifacts=artifacts, model_name="Model"
     )
 
-    print(repr(returned_docs))
-    print(repr(expected_docs))
+    assert returned_docs == expected_docs
+
+
+@pytest.mark.parametrize(
+    "description, expected_docs",
+    [
+        (
+            "description 1 that is very long and will cause lineeeeeee",
+            "column_1: description 1 that is very long and will cause lineeeeeee",
+        ),
+        (
+            "description 1 that is very long and will cause lineeeeeeee",
+            """column_1: description 1 that is very long and will cause
+                lineeeeeeee""",
+        ),
+        (
+            "description 1 that is very long and will cause lineeeeeeee wrapping if "
+            "its long enough and I can keep onnnnnnn thinking",
+            """column_1: description 1 that is very long and will cause
+                lineeeeeeee wrapping if its long enough and I can keep onnnnnnn
+                thinking""",
+        ),
+        (
+            "description 1 that is very long and will cause lineeeeeeee wrapping if "
+            "its long enough and I can keep onnnnnnn thinking of more words to write "
+            "ensure that even more linesssss will",
+            """column_1: description 1 that is very long and will cause
+                lineeeeeeee wrapping if its long enough and I can keep onnnnnnn
+                thinking of more words to write ensure that even more linesssss
+                will""",
+        ),
+    ],
+    ids=[
+        "long description no wrap",
+        "long description wrap single",
+        "long description wrap multiple",
+        "long description wrap even more",
+    ],
+)
+@pytest.mark.models_file
+def test_arg(description, expected_docs):
+    """
+    GIVEN artifacts and name of a model
+    WHEN model_arg_docs is called with the artifacts and name
+    THEN the expected docs are returned.
+    """
+    artifacts = models_file.types.ColumnArtifacts(
+        name="column_1", type="type_1", description=description
+    )
+
+    returned_docs = models_file.types.model_arg_docs(
+        artifacts=artifacts, model_name="Model"
+    )
 
     assert returned_docs == expected_docs
 

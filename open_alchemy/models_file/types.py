@@ -195,6 +195,34 @@ def model_attr_docs(artifacts: ColumnArtifacts, model_name: str) -> str:
     )
 
 
+_ArgFirstWrapper = textwrap.TextWrapper(width=67)  # pylint: disable=invalid-name
+_ArgRemainingWrapper = textwrap.TextWrapper(width=63)  # pylint: disable=invalid-name
+
+
+def model_arg_docs(artifacts: ColumnArtifacts, model_name: str) -> str:
+    """
+    Calculate argument documentation.
+
+    Args:
+        artifacts: The artifacts for the column to produce argument documentation for.
+        model_name: The name of the model that contains the argument.
+
+    Returns:
+        The documentation for the argument.
+
+    """
+    # Calculating docs for the argument
+    doc = _calculate_column_doc(artifacts=artifacts, model_name=model_name)
+
+    # Wrapping and joining
+    return _wrap_column_doc(
+        doc=doc,
+        first_wrapper=_ArgFirstWrapper,
+        remaining_wrapper=_ArgRemainingWrapper,
+        line_separator="\n                ",
+    )
+
+
 def _calculate_column_doc(artifacts: ColumnArtifacts, model_name: str) -> str:
     """
     Calculate the documentation for the column.
