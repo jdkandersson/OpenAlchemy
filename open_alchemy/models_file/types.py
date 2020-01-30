@@ -83,6 +83,20 @@ class SQLAlchemyModelArtifacts:
         """Calculate docstring for model."""
         return model_docstring(self)
 
+    @property
+    def init_docstring(self):
+        """Calculate docstring for __init__ function of model."""
+        return model_function_docstring(self, "Construct.")
+
+    @property
+    def from_dict_docstring(self):
+        """Calculate docstring for from_dict function of model."""
+        return model_function_docstring(
+            self,
+            "Construct from a dictionary (eg. a POST payload).",
+            "Model instance based on the dictionary.",
+        )
+
 
 @dataclasses.dataclass
 class TypedDictClassArtifacts:

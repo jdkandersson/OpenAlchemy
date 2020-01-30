@@ -392,26 +392,26 @@ def test_sqlalchemy_model_artifacts_docs():
 
     """
     )
-    # assert (
-    #     artifacts.init_docstring
-    #     == """
-    #     Construct.
+    assert (
+        artifacts.init_docstring
+        == """
+        Construct.
 
-    #     Args:
-    #         column_1: The column_1 of the Model 1.
+        Args:
+            column_1: The column_1 of the Model 1.
 
-    #     """
-    # )
-    # assert (
-    #     artifacts.from_dict_docstring
-    #     == """
-    #     Construct from a dictionary (eg. a POST payload).
+        """
+    )
+    assert (
+        artifacts.from_dict_docstring
+        == """
+        Construct from a dictionary (eg. a POST payload).
 
-    #     Args:
-    #         column_1: The column_1 of the Model 1.
+        Args:
+            column_1: The column_1 of the Model 1.
 
-    #     Returns:
-    #         Model instance based on the dictionary.
+        Returns:
+            Model instance based on the dictionary.
 
-    #     """
-    # )
+        """
+    )
