@@ -24,7 +24,16 @@ class EmployeeDict(_EmployeeDictBase, total=False):
 
 
 class TEmployee(typing.Protocol):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Employee.
+        name: The name of the Employee.
+        division: The division of the Employee.
+        salary: The salary of the Employee.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -44,7 +53,16 @@ class TEmployee(typing.Protocol):
         id: typing.Optional[int] = None,
         salary: typing.Optional[float] = None,
     ) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: The id of the Employee.
+            name: The name of the Employee.
+            division: The division of the Employee.
+            salary: The salary of the Employee.
+
+        """
         ...
 
     @classmethod

@@ -119,8 +119,6 @@ class ModelArtifacts:
 
 
 _DocstringWrapper = textwrap.TextWrapper(width=75)  # pylint: disable=invalid-name
-_AttrFirstWrapper = textwrap.TextWrapper(width=71)  # pylint: disable=invalid-name
-_AttrRemainingWrapper = textwrap.TextWrapper(width=67)  # pylint: disable=invalid-name
 _DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
 
 
@@ -169,6 +167,10 @@ def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     """
 
 
+_AttrFirstWrapper = textwrap.TextWrapper(width=71)  # pylint: disable=invalid-name
+_AttrRemainingWrapper = textwrap.TextWrapper(width=67)  # pylint: disable=invalid-name
+
+
 def model_attr_docs(artifacts: ColumnArtifacts, model_name: str) -> str:
     """
     Calculate attribute documentation.
@@ -182,17 +184,61 @@ def model_attr_docs(artifacts: ColumnArtifacts, model_name: str) -> str:
 
     """
     # Calculating docs for the attribute
+    doc = _calculate_column_doc(artifacts=artifacts, model_name=model_name)
+
+    # Wrapping and joining
+    return _wrap_column_doc(
+        doc=doc,
+        first_wrapper=_AttrFirstWrapper,
+        remaining_wrapper=_AttrRemainingWrapper,
+        line_separator="\n            ",
+    )
+
+
+def _calculate_column_doc(artifacts: ColumnArtifacts, model_name: str) -> str:
+    """
+    Calculate the documentation for the column.
+
+    Args:
+        artifacts: The artifacts for the column.
+        model_name: The name of the model to which the column belongs.
+
+    Returns:
+        The documentation for the column.
+
+    """
     description: str
     if artifacts.description is not None:
         description = artifacts.description
     else:
         description = f"The {artifacts.name} of the {model_name}."
-    doc = f"{artifacts.name}: {description}"
+    return f"{artifacts.name}: {description}"
 
+
+def _wrap_column_doc(
+    *,
+    doc: str,
+    first_wrapper: textwrap.TextWrapper,
+    remaining_wrapper: textwrap.TextWrapper,
+    line_separator: str,
+) -> str:
+    """
+    Calculate the documentation for a column.
+
+    Args:
+        doc: The documentation string for the column.
+        first_wrapper: The text wrapper to use for the first line.
+        remaining_wrapper: The wrapper to use for all remaining lines.
+        line_separator: The string to use between lines.
+
+    Returns:
+        The documentation for the column.
+
+    """
     # Wrapping and joining
-    wrapped_doc = _AttrFirstWrapper.wrap(doc)
+    wrapped_doc = first_wrapper.wrap(doc)
     if len(wrapped_doc) > 1:
         remaining_doc = " ".join(wrapped_doc[1:])
-        remaining_doc_wrapped = _AttrRemainingWrapper.wrap(remaining_doc)
+        remaining_doc_wrapped = remaining_wrapper.wrap(remaining_doc)
         wrapped_doc = [wrapped_doc[0]] + remaining_doc_wrapped
-    return "\n            ".join(wrapped_doc)
+    return line_separator.join(wrapped_doc)
