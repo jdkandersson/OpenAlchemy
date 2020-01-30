@@ -167,8 +167,10 @@ def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     """
 
 
-def model_init_docstring(
-    artifacts: SQLAlchemyModelArtifacts, function_description: str
+def model_function_docstring(
+    artifacts: SQLAlchemyModelArtifacts,
+    function_description: str,
+    return_value_description: typing.Optional[str] = None,
 ) -> str:
     """
     Create docstring for a function from model artifacts.
@@ -176,13 +178,28 @@ def model_init_docstring(
     Args:
         artifacts: The artifacts of the model.
         function_description: The description for the function.
+        return_value_description: The description of the return value.
 
     Returns:
         The docstring for the model.
 
     """
-    if artifacts.empty:
+    if artifacts.empty and return_value_description is None:
         return function_description
+
+    # Calculate return value documentation
+    return_value_doc = ""
+    if return_value_description is not None:
+        return_value_doc = f"""Returns:
+            {return_value_description}
+
+        """
+
+    if artifacts.empty:
+        return f"""
+        {function_description}
+
+        {return_value_doc}"""
 
     # Calculate docs for the arguments
     model_arg_docs_model_name_set = functools.partial(
@@ -197,7 +214,7 @@ def model_init_docstring(
         Args:
             {joined_args}
 
-        """
+        {return_value_doc}"""
 
 
 _AttrFirstWrapper = textwrap.TextWrapper(width=71)  # pylint: disable=invalid-name

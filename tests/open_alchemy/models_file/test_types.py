@@ -129,11 +129,23 @@ def test_docstring(description, columns, expected_docstring):
 
 
 @pytest.mark.parametrize(
-    "columns, expected_docstring",
+    "columns, return_value_description, expected_docstring",
     [
-        ([], "function description 1"),
+        ([], None, "function description 1"),
+        (
+            [],
+            "return value description 1",
+            """
+        function description 1
+
+        Returns:
+            return value description 1
+
+        """,
+        ),
         (
             [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            None,
             """
         function description 1
 
@@ -143,10 +155,25 @@ def test_docstring(description, columns, expected_docstring):
         """,
         ),
         (
+            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            "return value description 1",
+            """
+        function description 1
+
+        Args:
+            column_1: The column_1 of the Model 1.
+
+        Returns:
+            return value description 1
+
+        """,
+        ),
+        (
             [
                 models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
                 models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
             ],
+            None,
             """
         function description 1
 
@@ -157,13 +184,21 @@ def test_docstring(description, columns, expected_docstring):
         """,
         ),
     ],
-    ids=["columns empty", "single column", "multiple columns"],
+    ids=[
+        "columns empty    rv description None",
+        "columns empty    rv defined",
+        "single column    rv description None",
+        "single column    rv description defined",
+        "multiple columns rv description None",
+    ],
 )
 @pytest.mark.models_file
-def test_init_docstring(columns, expected_docstring):
+def test_model_function_docstring(
+    columns, return_value_description, expected_docstring
+):
     """
     GIVEN columns
-    WHEN model_docstring is called with the artifacts with the columns
+    WHEN model_function_docstring is called with the artifacts with the columns
     THEN the expected docstring is returned.
     """
     artifacts = models_file.types.SQLAlchemyModelArtifacts(
@@ -175,8 +210,10 @@ def test_init_docstring(columns, expected_docstring):
         description=None,
     )
 
-    returned_description = models_file.types.model_init_docstring(
-        artifacts=artifacts, function_description="function description 1"
+    returned_description = models_file.types.model_function_docstring(
+        artifacts=artifacts,
+        function_description="function description 1",
+        return_value_description=return_value_description,
     )
 
     print(repr(returned_description))
@@ -328,11 +365,11 @@ def test_arg(description, expected_docs):
 
 
 @pytest.mark.models_file
-def test_sqlalchemy_model_artifacts_docstring():
+def test_sqlalchemy_model_artifacts_docs():
     """
     GIVEN artifacts
-    WHEN .docstring is access
-    THEN a docstring is produced.
+    WHEN documentation properties are accessed
+    THEN the documentation is produced.
     """
     artifacts = models_file.types.SQLAlchemyModelArtifacts(
         name="Model 1",
@@ -355,3 +392,26 @@ def test_sqlalchemy_model_artifacts_docstring():
 
     """
     )
+    # assert (
+    #     artifacts.init_docstring
+    #     == """
+    #     Construct.
+
+    #     Args:
+    #         column_1: The column_1 of the Model 1.
+
+    #     """
+    # )
+    # assert (
+    #     artifacts.from_dict_docstring
+    #     == """
+    #     Construct from a dictionary (eg. a POST payload).
+
+    #     Args:
+    #         column_1: The column_1 of the Model 1.
+
+    #     Returns:
+    #         Model instance based on the dictionary.
+
+    #     """
+    # )
