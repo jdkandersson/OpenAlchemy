@@ -124,10 +124,10 @@ _DEFAULT_DOCSTRING = "SQLAlchemy model protocol."
 
 def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     """
-    Create docstring from description.
+    Create docstring for model from model artifacts.
 
     Args:
-        description: The description of the model.
+        artifacts: The artifacts of the model.
 
     Returns:
         The docstring for the model.
@@ -165,6 +165,39 @@ def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     return f"""{description}{attr_docs}
 
     """
+
+
+_DEFAULT_INIT_DOCSTRING = "Construct."
+
+
+def model_init_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
+    """
+    Create docstring for __init__ from model artifacts.
+
+    Args:
+        artifacts: The artifacts of the model.
+
+    Returns:
+        The docstring for the model.
+
+    """
+    if artifacts.empty:
+        return _DEFAULT_INIT_DOCSTRING
+
+    # Calculate docs for the arguments
+    model_arg_docs_model_name_set = functools.partial(
+        model_arg_docs, model_name=artifacts.name
+    )
+    mapped_args = map(model_arg_docs_model_name_set, artifacts.columns)
+    joined_args = "\n            ".join(mapped_args)
+
+    return f"""
+        {_DEFAULT_INIT_DOCSTRING}
+
+        Args:
+            {joined_args}
+
+        """
 
 
 _AttrFirstWrapper = textwrap.TextWrapper(width=71)  # pylint: disable=invalid-name

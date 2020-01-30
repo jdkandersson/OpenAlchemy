@@ -111,8 +111,8 @@ from open_alchemy import models_file
 def test_docstring(description, columns, expected_docstring):
     """
     GIVEN description and columns
-    WHEN model_docstring is called with the description
-    THEN the expected description is returned.
+    WHEN model_docstring is called with the artifacts with the description and columns
+    THEN the expected docstring is returned.
     """
     artifacts = models_file.types.SQLAlchemyModelArtifacts(
         name="Model 1",
@@ -124,6 +124,61 @@ def test_docstring(description, columns, expected_docstring):
     )
 
     returned_description = models_file.types.model_docstring(artifacts=artifacts)
+
+    assert returned_description == expected_docstring
+
+
+@pytest.mark.parametrize(
+    "columns, expected_docstring",
+    [
+        ([], "Construct."),
+        (
+            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            """
+        Construct.
+
+        Args:
+            column_1: The column_1 of the Model 1.
+
+        """,
+        ),
+        (
+            [
+                models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
+                models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+            ],
+            """
+        Construct.
+
+        Args:
+            column_1: The column_1 of the Model 1.
+            column_2: The column_2 of the Model 1.
+
+        """,
+        ),
+    ],
+    ids=["columns empty", "single column", "multiple columns"],
+)
+@pytest.mark.models_file
+def test_init_docstring(columns, expected_docstring):
+    """
+    GIVEN columns
+    WHEN model_docstring is called with the artifacts with the columns
+    THEN the expected docstring is returned.
+    """
+    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+        name="Model 1",
+        empty=not columns,
+        columns=columns,
+        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        parent_cls="Parent 1",
+        description=None,
+    )
+
+    returned_description = models_file.types.model_init_docstring(artifacts=artifacts)
+
+    print(repr(returned_description))
+    print(repr(expected_docstring))
 
     assert returned_description == expected_docstring
 
