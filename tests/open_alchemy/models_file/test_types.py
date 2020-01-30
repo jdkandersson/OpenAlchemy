@@ -131,11 +131,11 @@ def test_docstring(description, columns, expected_docstring):
 @pytest.mark.parametrize(
     "columns, expected_docstring",
     [
-        ([], "Construct."),
+        ([], "function description 1"),
         (
             [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
             """
-        Construct.
+        function description 1
 
         Args:
             column_1: The column_1 of the Model 1.
@@ -148,7 +148,7 @@ def test_docstring(description, columns, expected_docstring):
                 models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
             ],
             """
-        Construct.
+        function description 1
 
         Args:
             column_1: The column_1 of the Model 1.
@@ -175,7 +175,9 @@ def test_init_docstring(columns, expected_docstring):
         description=None,
     )
 
-    returned_description = models_file.types.model_init_docstring(artifacts=artifacts)
+    returned_description = models_file.types.model_init_docstring(
+        artifacts=artifacts, function_description="function description 1"
+    )
 
     print(repr(returned_description))
     print(repr(expected_docstring))

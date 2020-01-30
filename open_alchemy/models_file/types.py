@@ -167,22 +167,22 @@ def model_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     """
 
 
-_DEFAULT_INIT_DOCSTRING = "Construct."
-
-
-def model_init_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
+def model_init_docstring(
+    artifacts: SQLAlchemyModelArtifacts, function_description: str
+) -> str:
     """
-    Create docstring for __init__ from model artifacts.
+    Create docstring for a function from model artifacts.
 
     Args:
         artifacts: The artifacts of the model.
+        function_description: The description for the function.
 
     Returns:
         The docstring for the model.
 
     """
     if artifacts.empty:
-        return _DEFAULT_INIT_DOCSTRING
+        return function_description
 
     # Calculate docs for the arguments
     model_arg_docs_model_name_set = functools.partial(
@@ -192,7 +192,7 @@ def model_init_docstring(artifacts: SQLAlchemyModelArtifacts) -> str:
     joined_args = "\n            ".join(mapped_args)
 
     return f"""
-        {_DEFAULT_INIT_DOCSTRING}
+        {function_description}
 
         Args:
             {joined_args}
