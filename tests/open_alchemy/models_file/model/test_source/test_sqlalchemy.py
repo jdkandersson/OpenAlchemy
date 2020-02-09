@@ -285,7 +285,6 @@ Model: TModel = models.Model  # type: ignore''',
     ids=["empty", "single column", "multiple column"],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_sqlalchemy(artifacts, expected_source):
     """
     GIVEN model artifacts

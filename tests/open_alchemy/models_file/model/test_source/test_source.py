@@ -399,7 +399,13 @@ class TModel(Parent):
 
     @classmethod
     def from_dict(cls) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
@@ -492,12 +498,27 @@ class TModel(Parent):
     col_1: model_type_1
 
     def __init__(self, col_1: arg_i_type_1 = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            col_1: The col_1 of the Model.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, col_1: arg_fd_type_1 = None) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            col_1: The col_1 of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
@@ -590,12 +611,27 @@ class TModel(Parent):
     col_1: model_type_1
 
     def __init__(self, col_1: arg_i_type_1) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            col_1: The col_1 of the Model.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, col_1: arg_fd_type_1) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            col_1: The col_1 of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
@@ -708,12 +744,29 @@ class TModel(Parent):
     col_2: model_type_2
 
     def __init__(self, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            col_1: The col_1 of the Model.
+            col_2: The col_2 of the Model.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, col_1: arg_fd_type_1, col_2: arg_fd_type_2 = None) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            col_1: The col_1 of the Model.
+            col_2: The col_2 of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
@@ -753,6 +806,7 @@ Model: TModel = models.Model  # type: ignore''',
     ],
     ids=["empty", "required empty", "not required empty", "full"],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_generate(artifacts, expected_source):
     """
@@ -761,5 +815,8 @@ def test_generate(artifacts, expected_source):
     THEN the expected source is returned.
     """
     source = models_file._model._source.generate(artifacts=artifacts)
+
+    print(repr(source))
+    print(repr(expected_source))
 
     assert source == expected_source
