@@ -6,6 +6,7 @@
 - Add tests for examples.
 - Add _from_str_ and _to_str_ to complement _from_dict_ and _to_dict_ for de-serializing and serializing from JSON.
 - Ring fence jsonschema dependency into a facade.
+- Add description from OpenAPI specification into the models file.
 
 ## Version 0.12.1 - 2020-01-12
 
