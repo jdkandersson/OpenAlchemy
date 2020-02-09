@@ -216,9 +216,6 @@ def test_model_function_docstring(
         return_value_description=return_value_description,
     )
 
-    print(repr(returned_description))
-    print(repr(expected_docstring))
-
     assert returned_description == expected_docstring
 
 
