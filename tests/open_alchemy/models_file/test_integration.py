@@ -43,7 +43,13 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -54,25 +60,58 @@ class TModel({_EXPECTED_MODEL_BASE}):
     id: typing.Optional[int]
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: The id of the Model.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, id: typing.Optional[int] = None) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: The id of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TModel":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> ModelDict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 
@@ -102,7 +141,13 @@ class Model1Dict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel1({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model1.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -113,25 +158,58 @@ class TModel1({_EXPECTED_MODEL_BASE}):
     id: typing.Optional[int]
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: The id of the Model1.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, id: typing.Optional[int] = None) -> "TModel1":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: The id of the Model1.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TModel1":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> Model1Dict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 
@@ -145,7 +223,13 @@ class Model2Dict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel2({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model2.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -156,25 +240,58 @@ class TModel2({_EXPECTED_MODEL_BASE}):
     id: typing.Optional[str]
 
     def __init__(self, id: typing.Optional[str] = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: The id of the Model2.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, id: typing.Optional[str] = None) -> "TModel2":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: The id of the Model2.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TModel2":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> Model2Dict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 
@@ -201,7 +318,15 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
+            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa of
+            the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -217,7 +342,15 @@ class TModel({_EXPECTED_MODEL_BASE}):
             int
         ] = None,
     ) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
+                extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa
+                of the Model.
+
+        """
         ...
 
     @classmethod
@@ -227,20 +360,49 @@ class TModel({_EXPECTED_MODEL_BASE}):
             int
         ] = None,
     ) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
+                extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa
+                of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TModel":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> ModelDict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 
@@ -299,7 +461,13 @@ class ModelDict({_EXPECTED_TD_BASE}, total=False):
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -310,25 +478,58 @@ class TModel({_EXPECTED_MODEL_BASE}):
     id: typing.Optional[int]
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: The id of the Model.
+
+        """
         ...
 
     @classmethod
     def from_dict(cls, id: typing.Optional[int] = None) -> "TModel":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: The id of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TModel":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> ModelDict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 

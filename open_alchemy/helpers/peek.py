@@ -127,6 +127,32 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     return value
 
 
+def description(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the description property from a property schema.
+
+    Raises MalformedSchemaError if the description value is not a string.
+
+    Args:
+        schema: The schema to get the description from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The description value or None if it was not found.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="description")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "A description value must be of type string."
+        )
+    return value
+
+
 def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     """
     Determine whether property schema is for a primary key.

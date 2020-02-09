@@ -30,6 +30,7 @@ def gather_column_artifacts(
     type_ = helpers.peek.type_(schema=schema, schemas={})
     format_ = helpers.peek.format_(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
+    description = helpers.peek.description(schema=schema, schemas={})
     generated = helpers.get_ext_prop(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":
@@ -44,6 +45,7 @@ def gather_column_artifacts(
         required=required,
         de_ref=de_ref,
         generated=generated,
+        description=description,
     )
 
 
@@ -60,6 +62,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
     """
     required = set(schema.get("required", []))
+    description = helpers.peek.description(schema=schema, schemas={})
 
     # Initialize lists
     columns: typing.List[types.ColumnArtifacts] = []
@@ -83,7 +86,13 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
 
         # Add artifacts to the lists
-        columns.append(types.ColumnArtifacts(type=column_type, name=property_name))
+        columns.append(
+            types.ColumnArtifacts(
+                type=column_type,
+                name=property_name,
+                description=column_artifacts.description,
+            )
+        )
         prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
         arg_artifacts = types.ColumnArgArtifacts(
             init_type=arg_init_type,
@@ -149,6 +158,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 required=required_args, not_required=not_required_args
             ),
             parent_cls=parent_cls,
+            description=description,
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(

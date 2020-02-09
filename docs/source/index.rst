@@ -128,7 +128,12 @@ The following information is recorded in the models file:
 * The name and type of each property of a schema.
 * The :ref:`from-dict` and :ref:`to-dict` function signatures, including
   the type of the arguments and return values.
+* The :ref:`from-str` and :ref:`to-str` function signatures, including
+  the type of the arguments and return values.
 * The properties created on instance objects due to any :ref:`backref`.
+* Special SQLAlchemy properties for interacting with the database.
+* The object and property descriptions from the OpenAPI specification in the
+  class and function docstrings.
 
 .. _backrefs:
 

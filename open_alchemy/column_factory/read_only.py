@@ -45,7 +45,7 @@ from open_alchemy import types
 
 def handle_read_only(
     *, schema: types.Schema, schemas: types.Schemas
-) -> typing.Tuple[typing.List, types.Schema]:
+) -> typing.Tuple[typing.List, types.ReadOnlySchema]:
     """
     Handle readOnly property.
 
@@ -61,8 +61,8 @@ def handle_read_only(
 
 
 def _prepare_schema(
-    *, schema: types.Schema, schemas: types.Schemas, array_context: bool = False
-) -> types.Schema:
+    *, schema: types.Schema, schemas: types.Schemas
+) -> types.ReadOnlySchema:
     """
     Check and transform readOnly schema to consistent format.
 
@@ -77,11 +77,44 @@ def _prepare_schema(
 
     """
     # Check readOnly
-    if not array_context and not helpers.peek.read_only(schema=schema, schemas=schemas):
+    if not helpers.peek.read_only(schema=schema, schemas=schemas):
         raise exceptions.MalformedSchemaError(
             "A readOnly property must set readOnly to True."
         )
 
+    # Check type
+    try:
+        type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+    except exceptions.TypeMissingError:
+        raise exceptions.MalformedSchemaError(
+            "Every readOnly property must have a type."
+        )
+
+    if type_ == "object":
+        return _prepare_schema_object(schema=schema, schemas=schemas)
+    if type_ == "array":
+        return _prepare_schema_array(schema=schema, schemas=schemas)
+    raise exceptions.MalformedSchemaError(
+        "A readOnly property can only be an object or array."
+    )
+
+
+def _prepare_schema_object_common(
+    *, schema: types.Schema, schemas: types.Schemas, array_context: bool
+) -> types.ReadOnlySchemaObjectCommon:
+    """
+    Check and transform readOnly schema to consistent format.
+
+    Args:
+        schema: The readOnly schema to operate on.
+        schemas: Used to resolve any $ref.
+        array_context: Whether checking is being done at the array items level. Changes
+            exception messages and schema validation.
+
+    Returns:
+        The schema in a consistent format.
+
+    """
     # Check type
     try:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
@@ -93,22 +126,6 @@ def _prepare_schema(
         )
 
     schema = helpers.prepare_schema(schema=schema, schemas=schemas)
-
-    # Handle array
-    if type_ == "array":
-        if array_context:
-            raise exceptions.MalformedSchemaError(
-                "readOnly array items cannot be an array."
-            )
-        items_schema = schema.get("items")
-        if items_schema is None:
-            raise exceptions.MalformedSchemaError(
-                "A readOnly array must define its items."
-            )
-        object_schema = _prepare_schema(
-            schema=items_schema, array_context=True, schemas=schemas
-        )
-        return {"type": "array", "readOnly": True, "items": object_schema}
 
     if type_ != "object":
         raise exceptions.MalformedSchemaError(
@@ -129,7 +146,7 @@ def _prepare_schema(
         )
 
     # Initialize schema properties to return
-    properties_schema = {}
+    properties_schema: types.Schema = {}
 
     # Process properties
     for property_name, property_schema in properties.items():
@@ -140,8 +157,53 @@ def _prepare_schema(
             )
         properties_schema[property_name] = {"type": property_type}
 
-    object_schema = {"type": "object", "properties": properties_schema}
-    if not array_context:
-        object_schema["readOnly"] = True
+    return {"type": "object", "properties": properties_schema}
 
-    return object_schema
+
+def _prepare_schema_object(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> types.ReadOnlyObjectSchema:
+    """
+    Check and transform readOnly schema to consistent format.
+
+    Args:
+        schema: The readOnly schema to operate on.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        The schema in a consistent format.
+
+    """
+    base_schema = _prepare_schema_object_common(
+        schema=schema, schemas=schemas, array_context=False
+    )
+    return {
+        "type": base_schema["type"],
+        "properties": base_schema["properties"],
+        "readOnly": True,
+    }
+
+
+def _prepare_schema_array(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> types.ReadOnlyArraySchema:
+    """
+    Check and transform readOnly schema to consistent format.
+
+    Args:
+        schema: The readOnly schema to operate on.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        The schema in a consistent format.
+
+    """
+    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+
+    items_schema = schema.get("items")
+    if items_schema is None:
+        raise exceptions.MalformedSchemaError("A readOnly array must define its items.")
+    array_object_schema = _prepare_schema_object_common(
+        schema=items_schema, schemas=schemas, array_context=True
+    )
+    return {"type": "array", "readOnly": True, "items": array_object_schema}

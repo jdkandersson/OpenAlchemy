@@ -27,7 +27,7 @@ def handle_object(
     typing.List[
         typing.Tuple[str, typing.Union[facades.sqlalchemy.column.Column, typing.Type]]
     ],
-    types.Schema,
+    types.ObjectRefSchema,
 ]:
     """
     Generate properties for a reference to another object.

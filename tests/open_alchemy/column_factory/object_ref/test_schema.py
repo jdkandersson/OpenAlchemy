@@ -36,8 +36,21 @@ from open_alchemy.column_factory import object_ref
             ),
             {"type": "object", "x-de-$ref": "RefSchema", "nullable": False},
         ),
+        (
+            types.ObjectArtifacts(
+                spec={},
+                fk_column="fk_column",
+                relationship=types.RelationshipArtifacts("RefSchema"),
+                description="description 1",
+            ),
+            {
+                "type": "object",
+                "x-de-$ref": "RefSchema",
+                "description": "description 1",
+            },
+        ),
     ],
-    ids=["plain", "nullable True", "nullable False"],
+    ids=["plain", "nullable True", "nullable False", "description"],
 )
 @pytest.mark.column
 def test_calculate_schema(artifacts, expected_schema):

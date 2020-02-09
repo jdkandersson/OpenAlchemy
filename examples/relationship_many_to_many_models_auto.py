@@ -17,7 +17,16 @@ class ProjectDict(typing.TypedDict, total=False):
 
 
 class TProject(typing.Protocol):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    A large sized business objective.
+
+    Attrs:
+        id: Unique identifier for the project.
+        name: The name of the project.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -31,27 +40,62 @@ class TProject(typing.Protocol):
     def __init__(
         self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
     ) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: Unique identifier for the project.
+            name: The name of the project.
+
+        """
         ...
 
     @classmethod
     def from_dict(
         cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
     ) -> "TProject":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: Unique identifier for the project.
+            name: The name of the project.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TProject":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> ProjectDict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 
@@ -67,7 +111,17 @@ class EmployeeDict(typing.TypedDict, total=False):
 
 
 class TEmployee(typing.Protocol):
-    """SQLAlchemy model protocol."""
+    """
+    SQLAlchemy model protocol.
+
+    Person that works for a company.
+
+    Attrs:
+        id: Unique identifier for the employee.
+        name: The name of the employee.
+        projects: The projects the employee is working on.
+
+    """
 
     # SQLAlchemy properties
     __table__: sqlalchemy.Table
@@ -85,7 +139,15 @@ class TEmployee(typing.Protocol):
         name: typing.Optional[str] = None,
         projects: typing.Optional[typing.Sequence["TProject"]] = None,
     ) -> None:
-        """Construct."""
+        """
+        Construct.
+
+        Args:
+            id: Unique identifier for the employee.
+            name: The name of the employee.
+            projects: The projects the employee is working on.
+
+        """
         ...
 
     @classmethod
@@ -95,20 +157,49 @@ class TEmployee(typing.Protocol):
         name: typing.Optional[str] = None,
         projects: typing.Optional[typing.Sequence["ProjectDict"]] = None,
     ) -> "TEmployee":
-        """Construct from a dictionary (eg. a POST payload)."""
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: Unique identifier for the employee.
+            name: The name of the employee.
+            projects: The projects the employee is working on.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
         ...
 
     @classmethod
     def from_str(cls, value: str) -> "TEmployee":
-        """Construct from a JSON string (eg. a POST payload)."""
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
         ...
 
     def to_dict(self) -> EmployeeDict:
-        """Convert to a dictionary (eg. to send back for a GET request)."""
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
         ...
 
     def to_str(self) -> str:
-        """Convert to a JSON string (eg. to send back for a GET request)."""
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
         ...
 
 

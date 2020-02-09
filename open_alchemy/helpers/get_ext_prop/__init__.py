@@ -6,6 +6,7 @@ import typing
 
 from open_alchemy import exceptions
 from open_alchemy import facades
+from open_alchemy import types
 
 _DIRECTORY = os.path.dirname(__file__)
 _SCHEMAS_FILE = os.path.join(_DIRECTORY, "extension-schemas.json")
@@ -17,7 +18,13 @@ _resolver, (_SCHEMAS, _) = facades.jsonschema.resolver(  # pylint: disable=inval
 
 def get_ext_prop(
     *,
-    source: typing.Dict[str, typing.Any],
+    source: typing.Union[
+        typing.Dict[str, typing.Any],
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
+        types.ReadOnlySchema,
+    ],
     name: str,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
@@ -53,5 +60,5 @@ def get_ext_prop(
             f"The given value is {json.dumps(value)}."
         )
     if pop:
-        del source[name]
+        del source[name]  # type: ignore
     return value

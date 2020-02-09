@@ -4,14 +4,9 @@ import dataclasses
 import typing
 
 try:
-    from typing import TypedDict
+    from typing import TypedDict, Literal, Protocol
 except ImportError:  # pragma: no cover
-    from typing_extensions import TypedDict
-
-try:
-    from typing import Protocol
-except ImportError:  # pragma: no cover
-    from typing_extensions import Protocol  # type: ignore
+    from typing_extensions import TypedDict, Literal, Protocol  # type: ignore
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
@@ -45,6 +40,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "format": str,
         "maxLength": int,
         "nullable": bool,
+        "description": str,
         "x-generated": bool,
     },
     total=False,
@@ -66,6 +62,7 @@ class ColumnArtifacts:
     format: typing.Optional[str] = None
     max_length: typing.Optional[int] = None
     nullable: bool = True
+    description: typing.Optional[str] = None
 
     # Extension properties
     primary_key: typing.Optional[bool] = None
@@ -105,3 +102,55 @@ class ObjectArtifacts:
     fk_column: str
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
+    description: typing.Optional[str] = None
+
+
+_ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ObjectRefSchemaBase", {"type": str, "x-de-$ref": str}, total=True
+)
+
+
+class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
+    """Schema for object reference definitions."""
+
+    nullable: bool
+    description: str
+    readOnly: bool
+
+
+_ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ArrayRefSchemaBase", {"description": str, "readOnly": bool}, total=False
+)
+
+
+class ArrayRefSchema(_ArrayRefSchemaBase, total=True):
+    """Schema for array reference definitions."""
+
+    type: str
+    items: _ObjectRefSchemaBase
+
+
+_ReadOnlySchemaBase = TypedDict(  # pylint: disable=invalid-name
+    "_ReadOnlySchemaBase", {"readOnly": bool}, total=True
+)
+
+
+class ReadOnlySchemaObjectCommon(TypedDict, total=True):
+    """Base class for object schema."""
+
+    type: Literal["object"]
+    properties: Schema
+
+
+class ReadOnlyObjectSchema(ReadOnlySchemaObjectCommon, _ReadOnlySchemaBase):
+    """Base class for object readOnly schema."""
+
+
+class ReadOnlyArraySchema(_ReadOnlySchemaBase):
+    """Base class for object readOnly schema."""
+
+    type: Literal["array"]
+    items: ReadOnlySchemaObjectCommon
+
+
+ReadOnlySchema = typing.Union[ReadOnlyObjectSchema, ReadOnlyArraySchema]

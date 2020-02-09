@@ -3,7 +3,7 @@
 from open_alchemy import types
 
 
-def calculate(*, artifacts: types.ObjectArtifacts) -> types.Schema:
+def calculate(*, artifacts: types.ObjectArtifacts) -> types.ObjectRefSchema:
     """
     Calculate the array schema from the artifacts.
 
@@ -14,10 +14,12 @@ def calculate(*, artifacts: types.ObjectArtifacts) -> types.Schema:
         The schema for the array to store with the model.
 
     """
-    schema: types.Schema = {
+    schema: types.ObjectRefSchema = {
         "type": "object",
         "x-de-$ref": artifacts.relationship.model_name,
     }
     if artifacts.nullable is not None:
         schema["nullable"] = artifacts.nullable
+    if artifacts.description is not None:
+        schema["description"] = artifacts.description
     return schema

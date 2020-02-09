@@ -25,7 +25,13 @@ def column_factory(
     model_name: str,
     model_schema: types.Schema,
 ) -> typing.Tuple[
-    typing.List[typing.Tuple[str, facades.sqlalchemy.column.Column]], types.Schema
+    typing.List[typing.Tuple[str, facades.sqlalchemy.column.Column]],
+    typing.Union[
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
+        types.ReadOnlySchema,
+    ],
 ]:
     """
     Generate column based on OpenAPI schema property.
@@ -72,7 +78,7 @@ def column_factory(
         )
 
     # Handle columns
-    spec, spec_column = column.handle_column(
+    spec_schema, spec_column = column.handle_column(
         schema=spec, schemas=schemas, required=required
     )
-    return ([(logical_name, spec_column)], spec)
+    return ([(logical_name, spec_column)], spec_schema)
