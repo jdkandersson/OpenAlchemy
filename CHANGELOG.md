@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 0.13.0 - 2020-02-16
 
 - Ring fence SQLAlchemy dependency to a facade and integration tests.
 - Add tests for examples.
