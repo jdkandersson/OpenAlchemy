@@ -1,5 +1,7 @@
 """Used to resolve schema references."""
 
+import functools
+import json
 import os
 import re
 import typing
@@ -116,3 +118,46 @@ def _add_remote_context(*, context: str, ref: str) -> str:
     norm_new_ref_context = os.path.normpath(new_ref_context)
     norm_case_new_ref_context = os.path.normcase(norm_new_ref_context)
     return f"{norm_case_new_ref_context}#{ref_schema}"
+
+
+def _handle_match(match: typing.Match, *, context: str) -> str:
+    """
+    Map a match to the updated value.
+
+    Args:
+        match: The match to the regular expression for the reference.
+        context: The context to use to update the reference.
+
+    Returns:
+        The updated reference.
+
+    """
+    ref = match.group(1)
+    mapped_ref = _add_remote_context(context=context, ref=ref)
+    return match.group(0).replace(ref, mapped_ref)
+
+
+_REF_VALUE_PATTERN = r'"\$ref": "(.*?)"'
+
+
+def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schema:
+    """
+    Update and $ref within the schema with the remote context.
+
+    Serialize the schema, look for $ref and update value to include context.
+
+    Args:
+        schema: The schema to update.
+        context: The con text of the schema.
+
+    Returns:
+        The schema with any $ref mapped to include the context.
+
+    """
+    # Define context for mapping
+    handle_match_context = functools.partial(_handle_match, context=context)
+
+    str_schema = json.dumps(schema)
+    mapped_str_schema = re.sub(_REF_VALUE_PATTERN, handle_match_context, str_schema)
+    mapped_schema = json.loads(mapped_str_schema)
+    return mapped_schema

@@ -164,3 +164,33 @@ class TestAddRemoteContext:
         returned_ref = helpers.ref._add_remote_context(context=context, ref=ref)
 
         assert returned_ref == expected_ref
+
+
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        ({}, {}),
+        ({"$ref": "#/Schema1"}, {"$ref": "doc.ext#/Schema1"}),
+        (
+            {"key1": {"$ref": "#/Schema1"}, "key2": {"$ref": "#/Schema2"}},
+            {
+                "key1": {"$ref": "doc.ext#/Schema1"},
+                "key2": {"$ref": "doc.ext#/Schema2"},
+            },
+        ),
+    ],
+    ids=["no update", "single update", "multiple update"],
+)
+@pytest.mark.helper
+def test_map_remote_schema_ref(schema, expected_schema):
+    """
+    GIVEN schema and context
+    WHEN _map_remote_schema_ref is called with the schema and context
+    THEN the expected schema is returned.
+    """
+    # pylint: disable=protected-access
+    context = "doc.ext"
+
+    returned_schema = helpers.ref._map_remote_schema_ref(schema=schema, context=context)
+
+    assert returned_schema == expected_schema
