@@ -12,9 +12,7 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 NameSchema = typing.Tuple[str, types.Schema]
 
 
-def resolve_ref(
-    *, name: str, schema: types.Schema, schemas: types.Schemas
-) -> NameSchema:
+def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -39,7 +37,7 @@ def resolve_ref(
 
     ref_name, ref_schema = get_ref(ref=ref, schemas=schemas)
 
-    return resolve_ref(name=ref_name, schema=ref_schema, schemas=schemas)
+    return resolve(name=ref_name, schema=ref_schema, schemas=schemas)
 
 
 def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
@@ -70,3 +68,32 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
         raise exceptions.SchemaNotFoundError(f"{ref_name} was not found in schemas.")
 
     return ref_name, ref_schema
+
+
+# def _add_remote_context(*, context: str, ref: str) -> str:
+#     """
+#     Add remote context to any $ref within a schema retrieved from a remote reference.
+
+#     There are 3 cases:
+#     1. The $ref value starts with # in which case the context is prepended.
+#     2. The $ref starts with a filename in which case only the file portion of the
+#         context is prepended.
+#     3. The $ref starts with a relative path and ends with a file in which case the fil
+#         portion of the context is prepended and merged so that the shortest possible
+#         relative path is used.
+
+#     After the paths are merged the following operations are done:
+#     1. a normalized relative path is calculated (eg. turning ./dir1/../dir2 to ./dir2)
+#         and
+#     2. the case is normalized.
+
+#     Args:
+#         context: The context of the document from which the schema was retrieved which
+#             is the relative path to the file on the system from the base OpenAPI
+#             specification.
+#         ref: The value of a $ref within the schema.
+
+#     Returns:
+#         The $ref value with the context of the document included.
+
+#     """

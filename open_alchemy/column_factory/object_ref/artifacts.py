@@ -138,7 +138,7 @@ def _handle_ref(
         The name of the referenced schema.
 
     """
-    ref_model_name, ref_schema = helpers.resolve_ref(
+    ref_model_name, ref_schema = helpers.ref.resolve(
         name=logical_name, schema=schema, schemas=schemas
     )
     ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)

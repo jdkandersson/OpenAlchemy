@@ -31,18 +31,18 @@ def mocked_model_factory(monkeypatch):
 
 
 @pytest.fixture
-def mocked_resolve_ref(monkeypatch):
-    """Monkeypatches helpers.resolve_ref."""
-    mock_resolve_ref = mock.MagicMock()
-    mock_resolve_ref.return_value = (mock.MagicMock(), mock.MagicMock())
-    monkeypatch.setattr(helpers, "resolve_ref", mock_resolve_ref)
-    return mock_resolve_ref
+def mocked_ref_resolve(monkeypatch):
+    """Monkeypatches helpers.ref.resolve."""
+    mock_ref_resolve = mock.MagicMock()
+    mock_ref_resolve.return_value = (mock.MagicMock(), mock.MagicMock())
+    monkeypatch.setattr(helpers.ref, "resolve", mock_ref_resolve)
+    return mock_ref_resolve
 
 
 @pytest.fixture
-def _mocked_resolve_ref(mocked_resolve_ref):
-    """Alias of mocked_resolve_ref to suppress unused argument."""
-    return mocked_resolve_ref
+def _mocked_ref_resolve(mocked_ref_resolve):
+    """Alias of mocked_ref_resolve to suppress unused argument."""
+    return mocked_ref_resolve
 
 
 @pytest.fixture

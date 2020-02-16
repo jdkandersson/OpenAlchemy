@@ -5,7 +5,7 @@ import typing
 from open_alchemy import exceptions
 from open_alchemy import types
 
-from .resolve_ref import get_ref
+from . import ref
 
 
 def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
@@ -209,9 +209,9 @@ def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typin
         return value
 
     # Recursive case, look for $ref
-    ref = schema.get("$ref")
-    if ref is not None:
-        _, ref_schema = get_ref(ref=ref, schemas=schemas)
+    ref_value = schema.get("$ref")
+    if ref_value is not None:
+        _, ref_schema = ref.get_ref(ref=ref_value, schemas=schemas)
         return peek_key(schema=ref_schema, schemas=schemas, key=key)
 
     # Recursive case, look for allOf

@@ -2,8 +2,8 @@
 
 from open_alchemy import types
 
+from . import ref
 from .merge_all_of import merge_all_of
-from .resolve_ref import resolve_ref
 
 
 def prepare_schema(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
@@ -18,5 +18,5 @@ def prepare_schema(*, schema: types.Schema, schemas: types.Schemas) -> types.Sch
         The prepared schema.
 
     """
-    _, schema = resolve_ref(name="", schema=schema, schemas=schemas)
+    _, schema = ref.resolve(name="", schema=schema, schemas=schemas)
     return merge_all_of(schema=schema, schemas=schemas)

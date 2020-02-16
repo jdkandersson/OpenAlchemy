@@ -2,7 +2,7 @@
 
 from open_alchemy import types
 
-from .resolve_ref import resolve_ref
+from . import ref
 
 
 def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
@@ -28,7 +28,7 @@ def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schem
     merged_schema: types.Schema = {}
     for sub_schema in all_of:
         # Resolving any $ref
-        _, ref_schema = resolve_ref(name="", schema=sub_schema, schemas=schemas)
+        _, ref_schema = ref.resolve(name="", schema=sub_schema, schemas=schemas)
         # Merging any nested allOf
         merged_sub_schema = merge_all_of(schema=ref_schema, schemas=schemas)
 
