@@ -109,35 +109,58 @@ def test_resolve_nested():
     assert return_schema == ref_schema
 
 
-# @pytest.mark.parametrize(
-#     "context, ref, expected_ref",
-#     [
-#         ("doc1.ext", "#/Schema", "doc1.ext#/Schema"),
-#         ("dir1/doc1.ext", "#/Schema", "dir1/doc1.ext#/Schema"),
-#         ("doc1.ext", "doc2.ext#/Schema", "doc2.ext#/Schema"),
-#         ("dir1/doc1.ext", "doc2.ext#/Schema", "dir1/doc2.ext#/Schema"),
-#         ("doc1.ext", "dir2/doc2.ext#/Schema", "dir2/doc2.ext#/Schema"),
-#         ("dir1/doc1.ext", "dir2/doc2.ext#/Schema", "dir1/dir2/doc2.ext#/Schema"),
-#         ("doc1.ext", "dir2/../doc2.ext#/Schema", "doc2.ext#/Schema"),
-#         ("dir1/doc1.ext", "../doc2.ext#/Schema", "doc2.ext#/Schema"),
+class TestAddRemoteContext:
+    """Tests for _add_remote_context."""
 
-#     ],
-#     ids=[
-#         "within document                                 context document",
-#         "                                                context folder",
-#         "external same folder                            context document",
-#         "                                                context folder",
-#         "external different folder                       context document",
-#         "                                                context folder",
-#         "external different folder require normalization context document"
-#         "                                                context folder"
-#     ],
-# )
-# @pytest.mark.helper
-# def test_add_remote_context(context, ref, expected_ref):
-#     """
-#     GIVEN context and value of a reference
-#     WHEN _add_remote_context is called with the context and value
-#     THEN the expected reference value is returned.
-#     """
-#     # returned_ref = helpers.ref.resolve._add
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "context, ref",
+        [("", ""), ("", "context1#context2#doc1.ext")],
+        ids=["# missing", "multiple #"],
+    )
+    @pytest.mark.helper
+    def test_error(context, ref):
+        """
+        GIVEN invalid context or ref
+        WHEN _add_remote_context is called with the context and ref
+        THEN MalformedSchemaError is raised.
+        """
+        with pytest.raises(exceptions.MalformedSchemaError):
+            helpers.ref._add_remote_context(context=context, ref=ref)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "context, ref, expected_ref",
+        [
+            ("doc1.ext", "#/Schema", "doc1.ext#/Schema"),
+            ("dir1/doc1.ext", "#/Schema", "dir1/doc1.ext#/Schema"),
+            ("doc1.ext", "doc2.ext#/Schema", "doc2.ext#/Schema"),
+            ("dir1/doc1.ext", "doc2.ext#/Schema", "dir1/doc2.ext#/Schema"),
+            ("doc1.ext", "dir2/doc2.ext#/Schema", "dir2/doc2.ext#/Schema"),
+            ("dir1/doc1.ext", "dir2/doc2.ext#/Schema", "dir1/dir2/doc2.ext#/Schema"),
+            ("doc1.ext", "dir2/../doc2.ext#/Schema", "doc2.ext#/Schema"),
+            ("dir1/doc1.ext", "../doc2.ext#/Schema", "doc2.ext#/Schema"),
+        ],
+        ids=[
+            "within document                                 context document",
+            "                                                context folder",
+            "external same folder                            context document",
+            "                                                context folder",
+            "external different folder                       context document",
+            "                                                context folder",
+            "external different folder require normalization context document",
+            "                                                context folder",
+        ],
+    )
+    @pytest.mark.helper
+    def test_add_remote_context(context, ref, expected_ref):
+        """
+        GIVEN context and value of a reference
+        WHEN _add_remote_context is called with the context and value
+        THEN the expected reference value is returned.
+        """
+        returned_ref = helpers.ref._add_remote_context(context=context, ref=ref)
+
+        assert returned_ref == expected_ref

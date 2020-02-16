@@ -1,5 +1,6 @@
 """Used to resolve schema references."""
 
+import os
 import re
 import typing
 
@@ -70,30 +71,48 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     return ref_name, ref_schema
 
 
-# def _add_remote_context(*, context: str, ref: str) -> str:
-#     """
-#     Add remote context to any $ref within a schema retrieved from a remote reference.
+def _add_remote_context(*, context: str, ref: str) -> str:
+    """
+    Add remote context to any $ref within a schema retrieved from a remote reference.
 
-#     There are 3 cases:
-#     1. The $ref value starts with # in which case the context is prepended.
-#     2. The $ref starts with a filename in which case only the file portion of the
-#         context is prepended.
-#     3. The $ref starts with a relative path and ends with a file in which case the fil
-#         portion of the context is prepended and merged so that the shortest possible
-#         relative path is used.
+    There are 3 cases:
+    1. The $ref value starts with # in which case the context is prepended.
+    2. The $ref starts with a filename in which case only the file portion of the
+        context is prepended.
+    3. The $ref starts with a relative path and ends with a file in which case the file
+        portion of the context is prepended and merged so that the shortest possible
+        relative path is used.
 
-#     After the paths are merged the following operations are done:
-#     1. a normalized relative path is calculated (eg. turning ./dir1/../dir2 to ./dir2)
-#         and
-#     2. the case is normalized.
+    After the paths are merged the following operations are done:
+    1. a normalized relative path is calculated (eg. turning ./dir1/../dir2 to ./dir2)
+        and
+    2. the case is normalized.
 
-#     Args:
-#         context: The context of the document from which the schema was retrieved which
-#             is the relative path to the file on the system from the base OpenAPI
-#             specification.
-#         ref: The value of a $ref within the schema.
+    Args:
+        context: The context of the document from which the schema was retrieved which
+            is the relative path to the file on the system from the base OpenAPI
+            specification.
+        ref: The value of a $ref within the schema.
 
-#     Returns:
-#         The $ref value with the context of the document included.
+    Returns:
+        The $ref value with the context of the document included.
 
-#     """
+    """
+    # Check reference value
+    try:
+        ref_context, ref_schema = ref.split("#")
+    except ValueError:
+        raise exceptions.MalformedSchemaError(
+            f"A reference must contain exactly one #. Actual reference: {ref}"
+        )
+    context_head, _ = os.path.split(context)
+
+    # Handle reference within document
+    if not ref_context:
+        return f"{context}{ref}"
+
+    # Handle reference outside document
+    new_ref_context = os.path.join(context_head, ref_context)
+    norm_new_ref_context = os.path.normpath(new_ref_context)
+    norm_case_new_ref_context = os.path.normcase(norm_new_ref_context)
+    return f"{norm_case_new_ref_context}#{ref_schema}"
