@@ -382,3 +382,27 @@ class TestRemoteSchemaStore:
         remote_schemas = store.get_schemas(context="remote.json")
 
         assert remote_schemas == {"key": "value"}
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_different_directory(tmp_path):
+        """
+        GIVEN file with schemas in a different directory
+        WHEN get_schemas is called with the path to the file
+        THEN the loaded JSON contents are returned.
+        """
+        # Create file
+        directory = tmp_path / "base"
+        directory.mkdir()
+        schemas_file = directory / "original.json"
+        remote_directory = directory / "remote"
+        remote_directory.mkdir()
+        remote_schemas_file = remote_directory / "remote.json"
+        remote_schemas_file.write_text('{"key": "value"}')
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str(schemas_file)
+
+        remote_schemas = store.get_schemas(context="remote/remote.json")
+
+        assert remote_schemas == {"key": "value"}
