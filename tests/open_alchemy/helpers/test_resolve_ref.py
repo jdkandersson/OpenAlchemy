@@ -299,8 +299,19 @@ class TestRemoteSchemaStore:
             store.get_schemas(context="remote.json")
 
     @staticmethod
+    @pytest.mark.parametrize(
+        "remote_context, contents",
+        [
+            ("remote.json", '{"key": "value"}'),
+            ("remote.JSON", '{"key": "value"}'),
+            ("remote.yaml", "key: value"),
+            ("remote.YAML", "key: value"),
+            ("remote.yml", "key: value"),
+        ],
+        ids=[".json", ".JSON", ".yaml", ".YAML", ".yml"],
+    )
     @pytest.mark.helper
-    def test_load_success(tmp_path):
+    def test_load_success(tmp_path, remote_context, contents):
         """
         GIVEN JSON file
         WHEN get_schemas is called with the path to the file
@@ -310,12 +321,12 @@ class TestRemoteSchemaStore:
         directory = tmp_path / "base"
         directory.mkdir()
         schemas_file = directory / "original.json"
-        remote_schemas_file = directory / "remote.json"
-        remote_schemas_file.write_text('{"key": "value"}')
+        remote_schemas_file = directory / remote_context
+        remote_schemas_file.write_text(contents)
         # Create store
         store = helpers.ref._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
-        remote_schemas = store.get_schemas(context="remote.json")
+        remote_schemas = store.get_schemas(context=remote_context)
 
         assert remote_schemas == {"key": "value"}

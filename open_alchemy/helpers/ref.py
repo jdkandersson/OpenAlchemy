@@ -219,7 +219,9 @@ class _RemoteSchemaStore:
 
         # Check for json, yaml or yml file extension
         _, extension = os.path.splitext(context)
-        if extension is None or extension.lower() not in {".json", ".yaml", ".yml"}:
+        if extension is not None:
+            extension = extension.lower()
+        if extension is None or extension not in {".json", ".yaml", ".yml"}:
             raise exceptions.SchemaNotFoundError(
                 "The remote context is not a JSON nor YAML file. The path is: "
                 f"{context}"
@@ -230,7 +232,13 @@ class _RemoteSchemaStore:
         remote_spec_filename = os.path.join(spec_dir, context)
         try:
             with open(remote_spec_filename) as in_file:
-                schemas = json.load(in_file)
+                if extension == ".json":
+                    schemas = json.load(in_file)
+                else:
+                    # Import as needed to make yaml conditional
+                    import yaml  # pylint: disable=import-outside-toplevel
+
+                    schemas = yaml.safe_load(in_file)
         except FileNotFoundError:
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
