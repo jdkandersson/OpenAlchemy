@@ -161,3 +161,20 @@ def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schem
     mapped_str_schema = re.sub(_REF_VALUE_PATTERN, handle_match_context, str_schema)
     mapped_schema = json.loads(mapped_str_schema)
     return mapped_schema
+
+
+class _RemoteSchemaStore:
+    """Store remote schemas in memory to speed up use."""
+
+    _schemas: typing.Dict[str, types.Schemas]
+    spec_path: typing.Optional[str]
+
+    def __init__(self) -> None:
+        """Construct."""
+        self._schemas = {}
+        self.spec_path = None
+
+    def reset(self):
+        """Reset the state of the schema store."""
+        self._schemas = {}
+        self.spec_path = None

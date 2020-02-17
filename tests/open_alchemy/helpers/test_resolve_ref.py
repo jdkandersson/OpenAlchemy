@@ -194,3 +194,37 @@ def test_map_remote_schema_ref(schema, expected_schema):
     returned_schema = helpers.ref._map_remote_schema_ref(schema=schema, context=context)
 
     assert returned_schema == expected_schema
+
+
+class TestRemoteSchemaStore:
+    """Tests for _RemoteSchemaStore."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    def test_init():
+        """
+        GIVEN
+        WHEN _RemoteSchemaStore is initialized
+        THEN empty store is created.
+        """
+        store = helpers.ref._RemoteSchemaStore()
+
+        assert store._schemas == {}
+        assert store.spec_path is None
+
+    @staticmethod
+    def test_reset():
+        """
+        GIVEN store which has a spec path and schemas
+        WHEN reset is called
+        THEN the state is removed.
+        """
+        store = helpers.ref._RemoteSchemaStore()
+        store._schemas["key"] = "value"
+        store.spec_path = "path 1"
+
+        store.reset()
+
+        assert store._schemas == {}
+        assert store.spec_path is None
