@@ -181,14 +181,53 @@ class _RemoteSchemaStore:
     """Store remote schemas in memory to speed up use."""
 
     _schemas: typing.Dict[str, types.Schemas]
-    spec_path: typing.Optional[str]
+    spec_context: typing.Optional[str]
 
     def __init__(self) -> None:
         """Construct."""
         self._schemas = {}
-        self.spec_path = None
+        self.spec_context = None
 
     def reset(self):
         """Reset the state of the schema store."""
         self._schemas = {}
-        self.spec_path = None
+        self.spec_context = None
+
+    def get_schemas(self, *, context: str) -> types.Schema:
+        """
+        Retrieve the schemas for a context.
+
+        Raise MissingArgumentError if the context for the original OpenAPI specification
+            has not been set.
+        Raise SchemaNotFoundError if the context doesn't exist or is not a json or yaml
+            file.
+
+        Args:
+            context: The path, relative to the original OpenAPI specification, with the
+                file containing the schemas.
+
+        Returns:
+            The schemas.
+
+        """
+        if self.spec_context is None:
+            raise exceptions.MissingArgumentError(
+                "Cannot find the file containing the remote reference, either "
+                "initialize OpenAlchemy with init_json or init_yaml or pass the path "
+                "to the OpenAPI specification to OpenAlchemy."
+            )
+
+        # Check for json, yaml or yml file extension
+        _, extension = os.path.splitext(context)
+        if extension is None or extension.lower() not in {".json", ".yaml", ".yml"}:
+            raise exceptions.SchemaNotFoundError(
+                "The remote context is not a JSON nor YAML file. The path is: "
+                f"{context}"
+            )
+
+        # Calculate location of schemas
+        spec_dir = os.path.dirname(self.spec_context)
+        remote_spec_filename = os.path.join(spec_dir, context)
+        with open(remote_spec_filename) as in_file:
+            schemas = json.load(in_file)
+        return schemas

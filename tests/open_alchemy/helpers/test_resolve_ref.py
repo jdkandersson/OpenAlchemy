@@ -220,6 +220,7 @@ class TestRemoteSchemaStore:
     # pylint: disable=protected-access
 
     @staticmethod
+    @pytest.mark.helper
     def test_init():
         """
         GIVEN
@@ -229,9 +230,10 @@ class TestRemoteSchemaStore:
         store = helpers.ref._RemoteSchemaStore()
 
         assert store._schemas == {}
-        assert store.spec_path is None
+        assert store.spec_context is None
 
     @staticmethod
+    @pytest.mark.helper
     def test_reset():
         """
         GIVEN store which has a spec path and schemas
@@ -240,9 +242,61 @@ class TestRemoteSchemaStore:
         """
         store = helpers.ref._RemoteSchemaStore()
         store._schemas["key"] = "value"
-        store.spec_path = "path 1"
+        store.spec_context = "path 1"
 
         store.reset()
 
         assert store._schemas == {}
-        assert store.spec_path is None
+        assert store.spec_context is None
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_context_not_set():
+        """
+        GIVEN _RemoteSchemaStore without spec context set
+        WHEN get_schemas is called
+        THEN MissingArgumentError is raised.
+        """
+        store = helpers.ref._RemoteSchemaStore()
+
+        with pytest.raises(exceptions.MissingArgumentError):
+            store.get_schemas(context="doc.ext")
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "context", ["dir1/.dir2/", "doc.ext"], ids=["not a file", "not json nor yaml"]
+    )
+    @pytest.mark.helper
+    def test_invalid_extension(context):
+        """
+        GIVEN context with invalid extension
+        WHEN get_schemas is called
+        THEN SchemaNotFoundError is raised.
+        """
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = "doc.ext"
+
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            store.get_schemas(context=context)
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_success(tmp_path):
+        """
+        GIVEN JSON file
+        WHEN get_schemas is called with the path to the file
+        THEN the loaded JSON contents are returned.
+        """
+        # Create file
+        directory = tmp_path / "base"
+        directory.mkdir()
+        schemas_file = directory / "original.json"
+        remote_schemas_file = directory / "remote.json"
+        remote_schemas_file.write_text('{"key": "value"}')
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str(schemas_file)
+
+        remote_schemas = store.get_schemas(context="remote.json")
+
+        assert remote_schemas == {"key": "value"}
