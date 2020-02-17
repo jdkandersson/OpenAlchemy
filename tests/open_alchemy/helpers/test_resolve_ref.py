@@ -301,6 +301,32 @@ class TestRemoteSchemaStore:
     @staticmethod
     @pytest.mark.parametrize(
         "remote_context, contents",
+        [("remote.json", "not: valid: JSON"), ("remote.yaml", "not: valid: YAML")],
+        ids=["invalid JSON", "invalid YAML"],
+    )
+    @pytest.mark.helper
+    def test_invalid_contents(tmp_path, remote_context, contents):
+        """
+        GIVEN file with invalid contents
+        WHEN get_schemas is called with the path to the file
+        THEN SchemaNotFoundError is raised.
+        """
+        # Create file
+        directory = tmp_path / "base"
+        directory.mkdir()
+        schemas_file = directory / "original.json"
+        remote_schemas_file = directory / remote_context
+        remote_schemas_file.write_text(contents)
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str(schemas_file)
+
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            store.get_schemas(context=remote_context)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "remote_context, contents",
         [
             ("remote.json", '{"key": "value"}'),
             ("remote.JSON", '{"key": "value"}'),
@@ -313,7 +339,7 @@ class TestRemoteSchemaStore:
     @pytest.mark.helper
     def test_load_success(tmp_path, remote_context, contents):
         """
-        GIVEN JSON file
+        GIVEN file with schemas
         WHEN get_schemas is called with the path to the file
         THEN the loaded JSON contents are returned.
         """

@@ -233,12 +233,24 @@ class _RemoteSchemaStore:
         try:
             with open(remote_spec_filename) as in_file:
                 if extension == ".json":
-                    schemas = json.load(in_file)
+                    try:
+                        schemas = json.load(in_file)
+                    except json.JSONDecodeError:
+                        raise exceptions.SchemaNotFoundError(
+                            "The remote reference file is not valid JSON. The path "
+                            f"is: {context}"
+                        )
                 else:
                     # Import as needed to make yaml conditional
                     import yaml  # pylint: disable=import-outside-toplevel
 
-                    schemas = yaml.safe_load(in_file)
+                    try:
+                        schemas = yaml.safe_load(in_file)
+                    except yaml.scanner.ScannerError:
+                        raise exceptions.SchemaNotFoundError(
+                            "The remote reference file is not valid YAML. The path "
+                            f"is: {context}"
+                        )
         except FileNotFoundError:
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
