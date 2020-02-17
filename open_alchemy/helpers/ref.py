@@ -228,6 +228,13 @@ class _RemoteSchemaStore:
         # Calculate location of schemas
         spec_dir = os.path.dirname(self.spec_context)
         remote_spec_filename = os.path.join(spec_dir, context)
-        with open(remote_spec_filename) as in_file:
-            schemas = json.load(in_file)
+        try:
+            with open(remote_spec_filename) as in_file:
+                schemas = json.load(in_file)
+        except FileNotFoundError:
+            raise exceptions.SchemaNotFoundError(
+                "The file with the remote reference was not found. The path is: "
+                f"{context}"
+            )
+
         return schemas

@@ -281,6 +281,25 @@ class TestRemoteSchemaStore:
 
     @staticmethod
     @pytest.mark.helper
+    def test_file_not_found(tmp_path):
+        """
+        GIVEN path to a file that doesn't exist
+        WHEN get_schemas is called with the path as the context
+        THEN SchemaNotFoundError is raised.
+        """
+        # Create file
+        directory = tmp_path / "base"
+        directory.mkdir()
+        schemas_file = directory / "original.json"
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str(schemas_file)
+
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            store.get_schemas(context="remote.json")
+
+    @staticmethod
+    @pytest.mark.helper
     def test_load_success(tmp_path):
         """
         GIVEN JSON file
