@@ -73,6 +73,21 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     return ref_name, ref_schema
 
 
+def _norm_context(*, context: str) -> str:
+    """
+    Normalize the path and case of a context.
+
+    Args:
+        context: The context to normalize.
+
+    Returns:
+        The normalized context.
+
+    """
+    norm_context = os.path.normpath(context)
+    return os.path.normcase(norm_context)
+
+
 def _add_remote_context(*, context: str, ref: str) -> str:
     """
     Add remote context to any $ref within a schema retrieved from a remote reference.
@@ -115,9 +130,8 @@ def _add_remote_context(*, context: str, ref: str) -> str:
 
     # Handle reference outside document
     new_ref_context = os.path.join(context_head, ref_context)
-    norm_new_ref_context = os.path.normpath(new_ref_context)
-    norm_case_new_ref_context = os.path.normcase(norm_new_ref_context)
-    return f"{norm_case_new_ref_context}#{ref_schema}"
+    norm_new_ref_context = _norm_context(context=new_ref_context)
+    return f"{norm_new_ref_context}#{ref_schema}"
 
 
 def _handle_match(match: typing.Match, *, context: str) -> str:

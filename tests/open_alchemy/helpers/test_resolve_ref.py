@@ -109,6 +109,24 @@ def test_resolve_nested():
     assert return_schema == ref_schema
 
 
+@pytest.mark.parametrize(
+    "context, expected_context",
+    [("dir/doc.ext", "dir/doc.ext"), ("dir/../doc.ext", "doc.ext")],
+    ids=["no norm", "norm"],
+)
+@pytest.mark.helper
+def test_norm_context(context, expected_context):
+    """
+    GIVEN context
+    WHEN _norm_context is called with the context
+    THEN the expected context is returned.
+    """
+    # pylint: disable=protected-access
+    returned_context = helpers.ref._norm_context(context=context)
+
+    assert returned_context == expected_context
+
+
 class TestAddRemoteContext:
     """Tests for _add_remote_context."""
 
