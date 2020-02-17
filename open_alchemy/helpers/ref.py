@@ -210,6 +210,10 @@ class _RemoteSchemaStore:
             The schemas.
 
         """
+        # Check whether the context is already loaded
+        if context in self._schemas:
+            return self._schemas[context]
+
         if self.spec_context is None:
             raise exceptions.MissingArgumentError(
                 "Cannot find the file containing the remote reference, either "
@@ -257,4 +261,6 @@ class _RemoteSchemaStore:
                 f"{context}"
             )
 
+        # Store for faster future retrieval
+        self._schemas[context] = schemas
         return schemas

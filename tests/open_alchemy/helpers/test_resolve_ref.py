@@ -1,6 +1,7 @@
 """Tests for ref."""
 
 import copy
+import os
 
 import pytest
 
@@ -354,5 +355,30 @@ class TestRemoteSchemaStore:
         store.spec_context = str(schemas_file)
 
         remote_schemas = store.get_schemas(context=remote_context)
+
+        assert remote_schemas == {"key": "value"}
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_twice(tmp_path):
+        """
+        GIVEN file with schemas
+        WHEN get_schemas is called with the path to the file, it is deleted and then
+            get_schemas is called again
+        THEN the loaded JSON contents are returned.
+        """
+        # Create file
+        directory = tmp_path / "base"
+        directory.mkdir()
+        schemas_file = directory / "original.json"
+        remote_schemas_file = directory / "remote.json"
+        remote_schemas_file.write_text('{"key": "value"}')
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str(schemas_file)
+
+        store.get_schemas(context="remote.json")
+        os.remove(str(remote_schemas_file))
+        remote_schemas = store.get_schemas(context="remote.json")
 
         assert remote_schemas == {"key": "value"}
