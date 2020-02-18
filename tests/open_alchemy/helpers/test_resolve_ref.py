@@ -417,6 +417,25 @@ class TestRetrieveSchema:
     @pytest.mark.parametrize(
         "schemas, path",
         [
+            ({"Schema1": {"key1": "value1"}}, "Schema2"),
+            ({"Parent!": {"Schema1": {"key1": "value1"}}}, "Parent2/Schema1"),
+        ],
+        ids=["root", "single level"],
+    )
+    @pytest.mark.helper
+    def test_miss(schemas, path):
+        """
+        GIVEN schemas and path where the path doesn't resolve
+        WHEN _retrieve_schema is called with the schemas and path
+        THEN SchemaNotFoundError is raised.
+        """
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            helpers.ref._retrieve_schema(schemas=schemas, path=path)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas, path",
+        [
             ({"Schema1": {"key1": "value1"}}, "Schema1"),
             ({"Parent": {"Schema1": {"key1": "value1"}}}, "Parent/Schema1"),
             (

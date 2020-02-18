@@ -282,10 +282,15 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
     """
     path_components = path.split("/", 1)
 
-    # Base case, no tail
-    if len(path_components) == 1:
-        return schemas[path_components[0]]
-    # Recursive case, call again with path tail
-    return _retrieve_schema(
-        schemas=schemas[path_components[0]], path=path_components[1]
-    )
+    try:
+        # Base case, no tail
+        if len(path_components) == 1:
+            return schemas[path_components[0]]
+        # Recursive case, call again with path tail
+        return _retrieve_schema(
+            schemas=schemas[path_components[0]], path=path_components[1]
+        )
+    except KeyError:
+        raise exceptions.SchemaNotFoundError(
+            f"The schema was not found in the remote schemas. Path subsection: {path}"
+        )
