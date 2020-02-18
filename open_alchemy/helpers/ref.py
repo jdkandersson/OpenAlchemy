@@ -245,7 +245,7 @@ class _RemoteSchemaStore:
                             f"is: {context}"
                         )
                 else:
-                    # Import as needed to make yaml conditional
+                    # Import as needed to make yaml optional
                     import yaml  # pylint: disable=import-outside-toplevel
 
                     try:
@@ -264,3 +264,28 @@ class _RemoteSchemaStore:
         # Store for faster future retrieval
         self._schemas[context] = schemas
         return schemas
+
+
+def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
+    """
+    Retrieve schema from a dictionary.
+
+    Raise SchemaNotFoundError if the schema is not found at the path.
+
+    Args:
+        schemas: All the schemas.
+        path: The location to retrieve the schema from.
+
+    Returns:
+        The schema at the path from the schemas.
+
+    """
+    path_components = path.split("/", 1)
+
+    # Base case, no tail
+    if len(path_components) == 1:
+        return schemas[path_components[0]]
+    # Recursive case, call again with path tail
+    return _retrieve_schema(
+        schemas=schemas[path_components[0]], path=path_components[1]
+    )

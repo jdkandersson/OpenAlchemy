@@ -406,3 +406,34 @@ class TestRemoteSchemaStore:
         remote_schemas = store.get_schemas(context="remote/remote.json")
 
         assert remote_schemas == {"key": "value"}
+
+
+class TestRetrieveSchema:
+    """Tests for _retrieve_schema."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas, path",
+        [
+            ({"Schema1": {"key1": "value1"}}, "Schema1"),
+            ({"Parent": {"Schema1": {"key1": "value1"}}}, "Parent/Schema1"),
+            (
+                {"Grandparent": {"Parent": {"Schema1": {"key1": "value1"}}}},
+                "Grandparent/Parent/Schema1",
+            ),
+            ({"Schema1": {"key1": "value1"}, "Schema2": {"key2": "value2"}}, "Schema1"),
+        ],
+        ids=["root", "single level", "multiple levels", "with siblings"],
+    )
+    @pytest.mark.helper
+    def test_valid(schemas, path):
+        """
+        GIVEN schemas and path to schema
+        WHEN _retrieve_schema is called with the schemas and path
+        THEN the schema at the path is returned.
+        """
+        schema = helpers.ref._retrieve_schema(schemas=schemas, path=path)
+
+        assert schema == {"key1": "value1"}
