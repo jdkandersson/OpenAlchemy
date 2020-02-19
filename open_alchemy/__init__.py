@@ -24,6 +24,7 @@ def init_model_factory(
     spec: oa_types.Schema,
     define_all: bool = False,
     models_filename: typing.Optional[str] = None,
+    spec_path: typing.Optional[str] = None,
 ) -> oa_types.ModelFactory:
     """
     Create factory that generates SQLAlchemy models based on OpenAPI specification.
@@ -32,12 +33,19 @@ def init_model_factory(
         base: The declarative base for the models.
         spec: The OpenAPI specification in the form of a dictionary.
         define_all: Whether to define all the models during initialization.
+        models_filename: The name of the file to write the models typing information to.
+        spec_path: The path the the OpenAPI specification. Mainly used to support remote
+            references.
 
     Returns:
         A factory that returns SQLAlchemy models derived from the base based on the
         OpenAPI specification.
 
     """
+    # Record the spec path
+    if spec_path is not None:
+        _helpers.ref.set_context(path=spec_path)
+
     # Retrieving the schema from the specification
     if "components" not in spec:
         raise exceptions.MalformedSpecificationError(
@@ -102,6 +110,7 @@ def _init_optional_base(
     spec: oa_types.Schema,
     define_all: bool,
     models_filename: typing.Optional[str] = None,
+    spec_path: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
@@ -109,7 +118,11 @@ def _init_optional_base(
     return (
         base,
         init_model_factory(
-            base=base, spec=spec, define_all=define_all, models_filename=models_filename
+            base=base,
+            spec=spec,
+            define_all=define_all,
+            models_filename=models_filename,
+            spec_path=spec_path,
         ),
     )
 
@@ -147,7 +160,11 @@ def init_json(
         spec = json.load(spec_file)
 
     return _init_optional_base(
-        base=base, spec=spec, define_all=define_all, models_filename=models_filename
+        base=base,
+        spec=spec,
+        define_all=define_all,
+        models_filename=models_filename,
+        spec_path=spec_filename,
     )
 
 
@@ -191,7 +208,11 @@ def init_yaml(
         spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
 
     return _init_optional_base(
-        base=base, spec=spec, define_all=define_all, models_filename=models_filename
+        base=base,
+        spec=spec,
+        define_all=define_all,
+        models_filename=models_filename,
+        spec_path=spec_filename,
     )
 
 

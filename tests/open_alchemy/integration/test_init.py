@@ -30,6 +30,7 @@ def test_init_optional_base_none_call(
         spec=spec,
         define_all=True,
         models_filename=None,
+        spec_path=None,
     )
 
 
@@ -64,7 +65,7 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     open_alchemy._init_optional_base(base=base, spec=spec, define_all=True)
 
     mocked_init_model_factory.assert_called_once_with(
-        base=base, spec=spec, define_all=True, models_filename=None
+        base=base, spec=spec, define_all=True, models_filename=None, spec_path=None
     )
 
 
@@ -230,7 +231,7 @@ def test_init_json_remote(engine, sessionmaker, tmp_path):
         "components": {
             "schemas": {
                 "Table": {
-                    "properties": {"column": {"$ref": "remote.json#/Column"}},
+                    "properties": {"column": {"$ref": "remote_spec.json#/Column"}},
                     "x-tablename": "table",
                     "type": "object",
                 }
