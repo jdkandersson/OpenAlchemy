@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add support for remote references to another file on the file system.
+
 ## Version 0.13.0 - 2020-02-16
 
 - Ring fence SQLAlchemy dependency to a facade and integration tests.
