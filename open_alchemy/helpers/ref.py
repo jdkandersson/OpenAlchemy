@@ -334,4 +334,5 @@ def get_remote_ref(*, ref: str) -> types.Schema:
     context = _norm_context(context=context)
     schemas = _remote_schema_store.get_schemas(context=context)
     schema = _retrieve_schema(schemas=schemas, path=path)
+    schema = _map_remote_schema_ref(schema=schema, context=context)
     return schema
