@@ -55,3 +55,25 @@ def test_call(schemas, expected_calls):
     assert model_factory.call_count == len(expected_calls)
     for name in expected_calls:
         model_factory.assert_any_call(name=name)
+
+
+@pytest.mark.helper
+def test_remote_ref(tmp_path, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref that is not normalized and file with the remote schemas
+    WHEN get_remote_ref is called with the $ref
+    THEN the schemas are stored under the normalized path.
+    """
+    # pylint: disable=protected-access
+    # Create file
+    directory = tmp_path / "base"
+    directory.mkdir()
+    schemas_file = directory / "original.json"
+    remote_schemas_file = directory / "remote.json"
+    remote_schemas_file.write_text('{"Table": {"key": "value"}}')
+    # Set up remote schemas store
+    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    schemas = {"RefTable": {"$ref": "remote.json#/Table"}}
+    model_factory = mock.MagicMock()
+
+    helpers.define_all(model_factory=model_factory, schemas=schemas)

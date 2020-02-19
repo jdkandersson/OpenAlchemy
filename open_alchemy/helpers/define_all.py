@@ -18,6 +18,7 @@ def define_all(*, model_factory: types.ModelFactory, schemas: types.Schemas) -> 
         if helpers.peek.tablename(schema=schema, schemas=schemas) is None:
             continue
         # Skip models that just reference other models
-        if schema.get("$ref") is not None:
+        ref = schema.get("$ref")
+        if ref is not None and ref.startswith("#"):
             continue
         model_factory(name=name)
