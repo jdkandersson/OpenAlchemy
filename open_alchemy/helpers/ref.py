@@ -88,6 +88,28 @@ def _norm_context(*, context: str) -> str:
     return os.path.normcase(norm_context)
 
 
+def _separate_context_path(*, ref: str) -> typing.Tuple[str, str]:
+    """
+    Separate the context and path of a reference.
+
+    Raise MalformedSchemaError if the reference does not contain #.
+
+    Args:
+        ref: The reference to separate.
+
+    Returns:
+        The context and path to the schema as a tuple.
+
+    """
+    try:
+        ref_context, ref_schema = ref.split("#")
+    except ValueError:
+        raise exceptions.MalformedSchemaError(
+            f"A reference must contain exactly one #. Actual reference: {ref}"
+        )
+    return ref_context, ref_schema
+
+
 def _add_remote_context(*, context: str, ref: str) -> str:
     """
     Add remote context to any $ref within a schema retrieved from a remote reference.
@@ -115,13 +137,7 @@ def _add_remote_context(*, context: str, ref: str) -> str:
         The $ref value with the context of the document included.
 
     """
-    # Check reference value
-    try:
-        ref_context, ref_schema = ref.split("#")
-    except ValueError:
-        raise exceptions.MalformedSchemaError(
-            f"A reference must contain exactly one #. Actual reference: {ref}"
-        )
+    ref_context, ref_schema = _separate_context_path(ref=ref)
     context_head, _ = os.path.split(context)
 
     # Handle reference within document
@@ -266,6 +282,9 @@ class _RemoteSchemaStore:
         return schemas
 
 
+_remote_schema_store = _RemoteSchemaStore()  # pylint: disable=invalid-name
+
+
 def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
     """
     Retrieve schema from a dictionary.
@@ -280,6 +299,10 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
         The schema at the path from the schemas.
 
     """
+    # Strip leading /
+    if path.startswith("/"):
+        path = path[1:]
+
     path_components = path.split("/", 1)
 
     try:
@@ -294,3 +317,21 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
         raise exceptions.SchemaNotFoundError(
             f"The schema was not found in the remote schemas. Path subsection: {path}"
         )
+
+
+def get_remote_ref(*, ref: str) -> types.Schema:
+    """
+    Retrieve remote schema based on reference.
+
+    Args:
+        ref: The reference to the remote schema.
+
+    Returns:
+        The remote schema.
+
+    """
+    context, path = _separate_context_path(ref=ref)
+    context = _norm_context(context=context)
+    schemas = _remote_schema_store.get_schemas(context=context)
+    schema = _retrieve_schema(schemas=schemas, path=path)
+    return schema

@@ -128,6 +128,41 @@ def test_norm_context(context, expected_context):
     assert returned_context == expected_context
 
 
+class TestSeperateContextPath:
+    """Tests for _add_remote_context."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_invalid():
+        """
+        GIVEN ref without #
+        WHEN _separate_context_path is called with the ref
+        THEN MalformedSchemaError is raised.
+        """
+        with pytest.raises(exceptions.MalformedSchemaError):
+            helpers.ref._separate_context_path(ref="invalid")
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "ref, expected_context, expected_path",
+        [("#/Schema1", "", "/Schema1"), ("Context1#/Schema1", "Context1", "/Schema1")],
+        ids=["no context", "with context"],
+    )
+    @pytest.mark.helper
+    def test_valid(ref, expected_context, expected_path):
+        """
+        GIVEN valid ref
+        WHEN _separate_context_path is called with the ref
+        THEN the expected context and path is returned.
+        """
+        context, path = helpers.ref._separate_context_path(ref=ref)
+
+        assert context == expected_context
+        assert path == expected_path
+
+
 class TestAddRemoteContext:
     """Tests for _add_remote_context."""
 
@@ -417,8 +452,8 @@ class TestRetrieveSchema:
     @pytest.mark.parametrize(
         "schemas, path",
         [
-            ({"Schema1": {"key1": "value1"}}, "Schema2"),
-            ({"Parent!": {"Schema1": {"key1": "value1"}}}, "Parent2/Schema1"),
+            ({"Schema1": {"key1": "value1"}}, "/Schema2"),
+            ({"Parent!": {"Schema1": {"key1": "value1"}}}, "/Parent2/Schema1"),
         ],
         ids=["root", "single level"],
     )
@@ -436,13 +471,16 @@ class TestRetrieveSchema:
     @pytest.mark.parametrize(
         "schemas, path",
         [
-            ({"Schema1": {"key1": "value1"}}, "Schema1"),
-            ({"Parent": {"Schema1": {"key1": "value1"}}}, "Parent/Schema1"),
+            ({"Schema1": {"key1": "value1"}}, "/Schema1"),
+            ({"Parent": {"Schema1": {"key1": "value1"}}}, "/Parent/Schema1"),
             (
                 {"Grandparent": {"Parent": {"Schema1": {"key1": "value1"}}}},
-                "Grandparent/Parent/Schema1",
+                "/Grandparent/Parent/Schema1",
             ),
-            ({"Schema1": {"key1": "value1"}, "Schema2": {"key2": "value2"}}, "Schema1"),
+            (
+                {"Schema1": {"key1": "value1"}, "Schema2": {"key2": "value2"}},
+                "/Schema1",
+            ),
         ],
         ids=["root", "single level", "multiple levels", "with siblings"],
     )
@@ -456,3 +494,53 @@ class TestRetrieveSchema:
         schema = helpers.ref._retrieve_schema(schemas=schemas, path=path)
 
         assert schema == {"key1": "value1"}
+
+
+@pytest.mark.helper
+def test_get_remote_ref(tmp_path, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref and file with the remote schemas
+    WHEN get_remote_ref is called with the $ref
+    THEN the remote schema is returned.
+    """
+    # pylint: disable=protected-access
+    # Create file
+    directory = tmp_path / "base"
+    directory.mkdir()
+    schemas_file = directory / "original.json"
+    remote_schemas_file = directory / "remote.json"
+    remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
+    # Set up remote schemas store
+    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    # Calculate $ref
+    ref = "remote.json#/Schema1"
+
+    schema = helpers.ref.get_remote_ref(ref=ref)
+
+    assert schema == {"key": "value"}
+
+
+@pytest.mark.helper
+def test_get_remote_ref_norm(tmp_path, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref that is not normalized and file with the remote schemas
+    WHEN get_remote_ref is called with the $ref
+    THEN the schemas are stored under the normalized path.
+    """
+    # pylint: disable=protected-access
+    # Create file
+    directory = tmp_path / "base"
+    directory.mkdir()
+    sub_directory = directory / "subdir"
+    sub_directory.mkdir()
+    schemas_file = directory / "original.json"
+    remote_schemas_file = directory / "remote.json"
+    remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
+    # Set up remote schemas store
+    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    # Calculate $ref
+    ref = "subdir/../remote.json#/Schema1"
+
+    helpers.ref.get_remote_ref(ref=ref)
+
+    assert "remote.json" in helpers.ref._remote_schema_store._schemas
