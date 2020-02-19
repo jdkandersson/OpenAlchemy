@@ -574,6 +574,33 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
 
 
 @pytest.mark.helper
+def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref and file with the remote schemas
+    WHEN get_remote_ref is called with the $ref
+    THEN the remote schema is returned.
+    """
+    # pylint: disable=protected-access
+    # Create file
+    directory = tmp_path / "base"
+    directory.mkdir()
+    schemas_file = directory / "original.json"
+    remote_schemas_file = directory / "remote.json"
+    remote_schemas_file.write_text(
+        '{"Schema1": {"$ref": "dir1/other_remote.json#/Schema2"}}'
+    )
+    # Set up remote schemas store
+    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    # Calculate $ref
+    ref = "remote.json#/Schema1"
+
+    name, schema = helpers.ref.get_remote_ref(ref=ref)
+
+    assert schema == {"$ref": "dir1/other_remote.json#/Schema2"}
+    assert name == "Schema1"
+
+
+@pytest.mark.helper
 def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     """
     GIVEN remote $ref and file with the remote schemas
