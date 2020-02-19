@@ -239,8 +239,7 @@ class _RemoteSchemaStore:
 
         # Check for json, yaml or yml file extension
         _, extension = os.path.splitext(context)
-        if extension is not None:
-            extension = extension.lower()
+        extension = extension.lower()
         if extension is None or extension not in {".json", ".yaml", ".yml"}:
             raise exceptions.SchemaNotFoundError(
                 "The remote context is not a JSON nor YAML file. The path is: "
