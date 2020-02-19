@@ -57,6 +57,10 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
         The schema referenced by ref.
 
     """
+    # Check for remote ref
+    if not ref.startswith("#"):
+        return get_remote_ref(ref=ref)
+
     # Checking value of $ref
     match = _REF_PATTER.match(ref)
     if not match:
@@ -284,7 +288,7 @@ class _RemoteSchemaStore:
 _remote_schema_store = _RemoteSchemaStore()  # pylint: disable=invalid-name
 
 
-def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
+def _retrieve_schema(*, schemas: types.Schemas, path: str) -> NameSchema:
     """
     Retrieve schema from a dictionary.
 
@@ -307,7 +311,7 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
     try:
         # Base case, no tail
         if len(path_components) == 1:
-            return schemas[path_components[0]]
+            return path_components[0], schemas[path_components[0]]
         # Recursive case, call again with path tail
         return _retrieve_schema(
             schemas=schemas[path_components[0]], path=path_components[1]
@@ -318,7 +322,7 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> types.Schema:
         )
 
 
-def get_remote_ref(*, ref: str) -> types.Schema:
+def get_remote_ref(*, ref: str) -> NameSchema:
     """
     Retrieve remote schema based on reference.
 
@@ -332,6 +336,6 @@ def get_remote_ref(*, ref: str) -> types.Schema:
     context, path = _separate_context_path(ref=ref)
     context = _norm_context(context=context)
     schemas = _remote_schema_store.get_schemas(context=context)
-    schema = _retrieve_schema(schemas=schemas, path=path)
+    name, schema = _retrieve_schema(schemas=schemas, path=path)
     schema = _map_remote_schema_ref(schema=schema, context=context)
-    return schema
+    return name, schema

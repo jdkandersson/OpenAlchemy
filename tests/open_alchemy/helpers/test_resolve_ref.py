@@ -491,9 +491,10 @@ class TestRetrieveSchema:
         WHEN _retrieve_schema is called with the schemas and path
         THEN the schema at the path is returned.
         """
-        schema = helpers.ref._retrieve_schema(schemas=schemas, path=path)
+        name, schema = helpers.ref._retrieve_schema(schemas=schemas, path=path)
 
         assert schema == {"key1": "value1"}
+        assert name == "Schema1"
 
 
 @pytest.mark.helper
@@ -515,9 +516,10 @@ def test_get_remote_ref(tmp_path, _clean_remote_schemas_store):
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
-    schema = helpers.ref.get_remote_ref(ref=ref)
+    name, schema = helpers.ref.get_remote_ref(ref=ref)
 
     assert schema == {"key": "value"}
+    assert name == "Schema1"
 
 
 @pytest.mark.helper
@@ -565,6 +567,34 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
-    schema = helpers.ref.get_remote_ref(ref=ref)
+    name, schema = helpers.ref.get_remote_ref(ref=ref)
 
     assert schema == {"$ref": "remote.json#/Schema2"}
+    assert name == "Schema1"
+
+
+@pytest.mark.helper
+def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref and file with the remote schemas
+    WHEN resolve is called with the $ref
+    THEN the remote schema is returned.
+    """
+    # pylint: disable=protected-access
+    # Create file
+    directory = tmp_path / "base"
+    directory.mkdir()
+    schemas_file = directory / "original.json"
+    remote_schemas_file = directory / "remote.json"
+    remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
+    # Set up remote schemas store
+    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    # Calculate $ref
+    schema = {"$ref": "remote.json#/Schema1"}
+
+    returned_name, returned_schema = helpers.ref.resolve(
+        name="name 1", schema=schema, schemas={}
+    )
+
+    assert returned_schema == {"key": "value"}
+    assert returned_name == "Schema1"
