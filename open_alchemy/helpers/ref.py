@@ -288,6 +288,17 @@ class _RemoteSchemaStore:
 _remote_schema_store = _RemoteSchemaStore()  # pylint: disable=invalid-name
 
 
+def set_context(*, path: str) -> None:
+    """
+    Set the context for the initial OpenAPI specification.
+
+    Args:
+        path: The path to the OpenAPI specification
+
+    """
+    _remote_schema_store.spec_context = path
+
+
 def _retrieve_schema(*, schemas: types.Schemas, path: str) -> NameSchema:
     """
     Retrieve schema from a dictionary.

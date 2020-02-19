@@ -598,3 +598,17 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
 
     assert returned_schema == {"key": "value"}
     assert returned_name == "Schema1"
+
+
+@pytest.mark.helper
+def test_set_spec_context(_clean_remote_schemas_store):
+    """
+    GIVEN spec context
+    WHEN set_spec_context is called
+    THEN the RemoteSchemaStore has the context.
+    """
+    # pylint: disable=protected-access
+
+    helpers.ref.set_context(path="path1")
+
+    assert helpers.ref._remote_schema_store.spec_context == "path1"

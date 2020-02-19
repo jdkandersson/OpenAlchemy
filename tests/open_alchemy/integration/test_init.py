@@ -218,6 +218,54 @@ def test_init_json(engine, sessionmaker, tmp_path):
 
 
 @pytest.mark.integration
+def test_init_json_remote(engine, sessionmaker, tmp_path):
+    """
+    GIVEN specification stored in a JSON file with a remote reference to another JSON
+        file
+    WHEN init_json is called with the file
+    THEN a valid model factory is returned.
+    """
+    # Defining specification
+    base_spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {"column": {"$ref": "remote.json#/Column"}},
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    remote_spec = {"Column": {"type": "integer", "x-primary-key": True}}
+
+    # Generate spec file
+    directory = tmp_path / "specs"
+    directory.mkdir()
+    spec_file = directory / "spec.json"
+    spec_file.write_text(json.dumps(base_spec))
+    remote_spec_file = directory / "remote_spec.json"
+    remote_spec_file.write_text(json.dumps(remote_spec))
+
+    # Creating model factory
+    base, model_factory = open_alchemy.init_json(str(spec_file), define_all=False)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    value = 0
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+
+
+@pytest.mark.integration
 def test_init_yaml(engine, sessionmaker, tmp_path):
     """
     GIVEN specification stored in a YAML file
