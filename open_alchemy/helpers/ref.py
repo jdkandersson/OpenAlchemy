@@ -47,7 +47,7 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     """
     Get the schema referenced by ref.
 
-    Raises SchemaNotFound is a $ref resolution fails.
+    Raises SchemaNotFoundError is a $ref resolution fails.
 
     Args:
         ref: The reference to the schema.
@@ -57,7 +57,7 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
         The schema referenced by ref.
 
     """
-    # Check for remote ref
+    # Check for remote $ref
     if not ref.startswith("#"):
         return get_remote_ref(ref=ref)
 
@@ -120,11 +120,11 @@ def _add_remote_context(*, context: str, ref: str) -> str:
 
     There are 3 cases:
     1. The $ref value starts with # in which case the context is prepended.
-    2. The $ref starts with a filename in which case only the file portion of the
+    2. The $ref starts with a filename in which case only the directory portion of the
         context is prepended.
-    3. The $ref starts with a relative path and ends with a file in which case the file
-        portion of the context is prepended and merged so that the shortest possible
-        relative path is used.
+    3. The $ref starts with a relative path and ends with a file in which case the
+        directory portion of the context is prepended and merged so that the shortest
+        possible relative path is used.
 
     After the paths are merged the following operations are done:
     1. a normalized relative path is calculated (eg. turning ./dir1/../dir2 to ./dir2)
@@ -171,6 +171,7 @@ def _handle_match(match: typing.Match, *, context: str) -> str:
     return match.group(0).replace(ref, mapped_ref)
 
 
+# Pattern used to look for any $ref after converting the schema to JSON
 _REF_VALUE_PATTERN = r'"\$ref": "(.*?)"'
 
 
