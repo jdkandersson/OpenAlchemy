@@ -377,7 +377,7 @@ class TestRemoteSchemaStore:
         """
         GIVEN file with schemas
         WHEN get_schemas is called with the path to the file
-        THEN the loaded JSON contents are returned.
+        THEN the loaded contents are returned.
         """
         # Create file
         directory = tmp_path / "base"
@@ -453,7 +453,7 @@ class TestRetrieveSchema:
         "schemas, path",
         [
             ({"Schema1": {"key1": "value1"}}, "/Schema2"),
-            ({"Parent!": {"Schema1": {"key1": "value1"}}}, "/Parent2/Schema1"),
+            ({"Parent1": {"Schema1": {"key1": "value1"}}}, "/Parent2/Schema1"),
         ],
         ids=["root", "single level"],
     )
@@ -504,7 +504,6 @@ def test_get_remote_ref(tmp_path, _clean_remote_schemas_store):
     WHEN get_remote_ref is called with the $ref
     THEN the remote schema is returned.
     """
-    # pylint: disable=protected-access
     # Create file
     directory = tmp_path / "base"
     directory.mkdir()
@@ -512,7 +511,7 @@ def test_get_remote_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
@@ -539,7 +538,7 @@ def test_get_remote_ref_norm(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "subdir/../remote.json#/Schema1"
 
@@ -555,7 +554,6 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     WHEN get_remote_ref is called with the $ref
     THEN the remote schema is returned.
     """
-    # pylint: disable=protected-access
     # Create file
     directory = tmp_path / "base"
     directory.mkdir()
@@ -563,7 +561,7 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"$ref": "#/Schema2"}}')
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
@@ -580,7 +578,6 @@ def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
     WHEN get_remote_ref is called with the $ref
     THEN the remote schema is returned.
     """
-    # pylint: disable=protected-access
     # Create file
     directory = tmp_path / "base"
     directory.mkdir()
@@ -590,7 +587,7 @@ def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
         '{"Schema1": {"$ref": "dir1/other_remote.json#/Schema2"}}'
     )
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
@@ -607,7 +604,6 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     WHEN resolve is called with the $ref
     THEN the remote schema is returned.
     """
-    # pylint: disable=protected-access
     # Create file
     directory = tmp_path / "base"
     directory.mkdir()
@@ -615,7 +611,7 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     schema = {"$ref": "remote.json#/Schema1"}
 
