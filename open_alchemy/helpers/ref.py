@@ -220,11 +220,11 @@ class _RemoteSchemaStore:
 
         Raise MissingArgumentError if the context for the original OpenAPI specification
             has not been set.
-        Raise SchemaNotFoundError if the context doesn't exist or is not a json or yaml
+        Raise SchemaNotFoundError if the context doesn't exist or is not a json nor yaml
             file.
 
         Args:
-            context: The path, relative to the original OpenAPI specification, with the
+            context: The path, relative to the original OpenAPI specification, for the
                 file containing the schemas.
 
         Returns:
@@ -245,7 +245,7 @@ class _RemoteSchemaStore:
         # Check for json, yaml or yml file extension
         _, extension = os.path.splitext(context)
         extension = extension.lower()
-        if extension is None or extension not in {".json", ".yaml", ".yml"}:
+        if extension not in {".json", ".yaml", ".yml"}:
             raise exceptions.SchemaNotFoundError(
                 "The remote context is not a JSON nor YAML file. The path is: "
                 f"{context}"
