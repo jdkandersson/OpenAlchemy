@@ -196,6 +196,66 @@ class TestAddRemoteContext:
             ("dir1/doc1.ext", "dir2/doc2.ext#/Schema", "dir1/dir2/doc2.ext#/Schema"),
             ("doc1.ext", "dir2/../doc2.ext#/Schema", "doc2.ext#/Schema"),
             ("dir1/doc1.ext", "../doc2.ext#/Schema", "doc2.ext#/Schema"),
+            (
+                "http://host.com/doc1.ext",
+                "#/Schema",
+                "http://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "#/Schema",
+                "http://host.com/dir1/doc1.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "doc2.ext#/Schema",
+                "http://host.com/dir1/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "http://host.com/dir2/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "http://host.com/dir1/dir2/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "dir2/../doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "../doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "http://host2.com/doc1.ext#/Schema",
+                "http://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "https://host2.com/doc1.ext#/Schema",
+                "https://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "//host2.com/doc1.ext#/Schema",
+                "http://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "doc1.ext",
+                "http://host.com/doc1.ext#/Schema",
+                "http://host.com/doc1.ext#/Schema",
+            ),
         ],
         ids=[
             "within document                                 context document",
@@ -206,6 +266,18 @@ class TestAddRemoteContext:
             "                                                context folder",
             "external different folder require normalization context document",
             "                                                context folder",
+            "http within document                            context document",
+            "                                                context folder",
+            "http same folder                                context document",
+            "                                                context folder",
+            "http different folder                           context document",
+            "                                                context folder",
+            "http different folder require normalization     context document",
+            "                                                context folder",
+            "http other http                                 context document",
+            "http other https                                context document",
+            "http other network no protocol                  context document",
+            "within document to http                         context document",
         ],
     )
     @pytest.mark.helper
