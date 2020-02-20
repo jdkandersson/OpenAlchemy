@@ -219,7 +219,7 @@ def test_init_json(engine, sessionmaker, tmp_path):
 
 
 @pytest.mark.integration
-def test_init_json_remote(engine, sessionmaker, tmp_path):
+def test_init_json_remote(engine, sessionmaker, tmp_path, _clean_remote_schemas_store):
     """
     GIVEN specification stored in a JSON file with a remote reference to another JSON
         file
@@ -298,7 +298,7 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
 
 
 @pytest.mark.integration
-def test_init_yaml_remote(engine, sessionmaker, tmp_path):
+def test_init_yaml_remote(engine, sessionmaker, tmp_path, _clean_remote_schemas_store):
     """
     GIVEN specification stored in a JSON file with a remote reference to another JSON
         file
