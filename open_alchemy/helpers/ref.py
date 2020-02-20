@@ -302,7 +302,7 @@ def set_context(*, path: str) -> None:
 
 def _retrieve_schema(*, schemas: types.Schemas, path: str) -> NameSchema:
     """
-    Retrieve schema from a dictionary.
+    Retrieve schema at a path from schemas.
 
     Raise SchemaNotFoundError if the schema is not found at the path.
 
@@ -318,6 +318,7 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> NameSchema:
     if path.startswith("/"):
         path = path[1:]
 
+    # Get the first directory/file as the head and the remaining path as the tail
     path_components = path.split("/", 1)
 
     try:
