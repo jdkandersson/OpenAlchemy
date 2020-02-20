@@ -22,7 +22,7 @@ def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameS
     Recursively resolves $ref until $ref key is no longer found. On each step, the name
     of the schema is recorded.
 
-    Raises SchemaNotFound is a $ref resolution fails.
+    Raises SchemaNotFoundError is a $ref resolution fails.
 
     Args:
         name: The name of the schema from the last step.
