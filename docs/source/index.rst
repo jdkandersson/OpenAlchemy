@@ -61,6 +61,9 @@ The *init_yaml* interface requires the *PyYAML* library to be installed. The
   *True*.
 * *models_filename*: The name of the file where the SQLAlchemy models will be
   written as an optional keyword only argument.
+* *spec_path*: The path to the OpenAPI specification (what would need to be
+  passed to the *open* function to read the file) as an optional keyword only
+  argument. Used to support remote references.
 
 The return value is a tuple consisting of:
 
