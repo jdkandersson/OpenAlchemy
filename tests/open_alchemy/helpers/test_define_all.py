@@ -64,7 +64,6 @@ def test_remote_ref(tmp_path, _clean_remote_schemas_store):
     WHEN get_remote_ref is called with the $ref
     THEN the schemas are stored under the normalized path.
     """
-    # pylint: disable=protected-access
     # Create file
     directory = tmp_path / "base"
     directory.mkdir()
@@ -72,7 +71,7 @@ def test_remote_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Table": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref._remote_schema_store.spec_context = str(schemas_file)
+    helpers.ref.set_context(path=str(schemas_file))
     schemas = {"RefTable": {"$ref": "remote.json#/Table"}}
     model_factory = mock.MagicMock()
 
