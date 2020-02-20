@@ -177,13 +177,13 @@ _REF_VALUE_PATTERN = r'"\$ref": "(.*?)"'
 
 def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schema:
     """
-    Update and $ref within the schema with the remote context.
+    Update any $ref within the schema with the remote context.
 
     Serialize the schema, look for $ref and update value to include context.
 
     Args:
         schema: The schema to update.
-        context: The con text of the schema.
+        context: The context of the schema.
 
     Returns:
         The schema with any $ref mapped to include the context.
