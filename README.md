@@ -162,6 +162,7 @@ This creates the `index.html` file in `docs/build/html/index.html`.
 ## Release Commands
 ```bash
 rm -r dist/*
+python -m pip install --upgrade pip
 python -m pip install --upgrade setuptools wheel
 python setup.py sdist bdist_wheel
 python -m pip install --upgrade twine
