@@ -5,7 +5,7 @@ import json
 import os
 import re
 import typing
-import urllib
+from urllib import error
 from urllib import request
 
 from open_alchemy import exceptions
@@ -300,7 +300,7 @@ class _RemoteSchemaStore:
                 spec_dir = os.path.dirname(self.spec_context)
                 remote_spec_filename = os.path.join(spec_dir, context)
                 file_cm = open(remote_spec_filename)
-        except (FileNotFoundError, urllib.error.HTTPError):
+        except (FileNotFoundError, error.HTTPError):
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
                 f"{context}"

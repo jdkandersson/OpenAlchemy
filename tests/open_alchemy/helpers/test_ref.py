@@ -2,8 +2,8 @@
 
 import copy
 import os
-import urllib
 from unittest import mock
+from urllib import error
 
 import pytest
 
@@ -586,7 +586,7 @@ class TestRemoteSchemaStore:
         THEN SchemaNotFoundError is raised.
         """
         # Defining urlopen raising error
-        mocked_urlopen.side_effect = urllib.error.HTTPError(
+        mocked_urlopen.side_effect = error.HTTPError(
             url="some url", code=404, msg="message", hdrs="headers", fp="fp"
         )
         # Create store
