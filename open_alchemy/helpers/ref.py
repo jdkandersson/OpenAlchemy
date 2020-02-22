@@ -206,7 +206,7 @@ def _handle_match(match: typing.Match, *, context: str) -> str:
 
 
 # Pattern used to look for any $ref after converting the schema to JSON
-_REF_VALUE_PATTERN = r'"\$ref": "(.*?)"'
+_REF_VALUE_PATTERN = re.compile(r'"\$ref": "(.*?)"')
 
 
 def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schema:
@@ -227,7 +227,7 @@ def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schem
     handle_match_context = functools.partial(_handle_match, context=context)
 
     str_schema = json.dumps(schema)
-    mapped_str_schema = re.sub(_REF_VALUE_PATTERN, handle_match_context, str_schema)
+    mapped_str_schema = _REF_VALUE_PATTERN.sub(handle_match_context, str_schema)
     mapped_schema = json.loads(mapped_str_schema)
     return mapped_schema
 
