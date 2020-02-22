@@ -5,6 +5,8 @@ import json
 import os
 import re
 import typing
+import urllib
+from urllib import request
 
 from open_alchemy import exceptions
 from open_alchemy import types
@@ -123,7 +125,7 @@ def _add_remote_context(*, context: str, ref: str) -> str:
     """
     Add remote context to any $ref within a schema retrieved from a remote reference.
 
-    There are 3 cases:
+    There are 5 cases:
     1. The $ref value starts with # in which case the context is prepended.
     2. The $ref starts with a filename in which case only the directory portion of the
         context is prepended.
@@ -285,35 +287,41 @@ class _RemoteSchemaStore:
                 f"{context}"
             )
 
-        # Calculate location of schemas
-        spec_dir = os.path.dirname(self.spec_context)
-        remote_spec_filename = os.path.join(spec_dir, context)
+        # Get context manager with file
         try:
-            with open(remote_spec_filename) as in_file:
-                if extension == ".json":
-                    try:
-                        schemas = json.load(in_file)
-                    except json.JSONDecodeError:
-                        raise exceptions.SchemaNotFoundError(
-                            "The remote reference file is not valid JSON. The path "
-                            f"is: {context}"
-                        )
-                else:
-                    # Import as needed to make yaml optional
-                    import yaml  # pylint: disable=import-outside-toplevel
-
-                    try:
-                        schemas = yaml.safe_load(in_file)
-                    except yaml.scanner.ScannerError:
-                        raise exceptions.SchemaNotFoundError(
-                            "The remote reference file is not valid YAML. The path "
-                            f"is: {context}"
-                        )
-        except FileNotFoundError:
+            if _URL_REF_PATTERN.search(context) is not None:
+                file_cm = request.urlopen(context)
+            else:
+                spec_dir = os.path.dirname(self.spec_context)
+                remote_spec_filename = os.path.join(spec_dir, context)
+                file_cm = open(remote_spec_filename)
+        except (FileNotFoundError, urllib.error.HTTPError):
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
                 f"{context}"
             )
+
+        # Calculate location of schemas
+        with file_cm as in_file:
+            if extension == ".json":
+                try:
+                    schemas = json.load(in_file)
+                except json.JSONDecodeError:
+                    raise exceptions.SchemaNotFoundError(
+                        "The remote reference file is not valid JSON. The path "
+                        f"is: {context}"
+                    )
+            else:
+                # Import as needed to make yaml optional
+                import yaml  # pylint: disable=import-outside-toplevel
+
+                try:
+                    schemas = yaml.safe_load(in_file)
+                except yaml.scanner.ScannerError:
+                    raise exceptions.SchemaNotFoundError(
+                        "The remote reference file is not valid YAML. The path "
+                        f"is: {context}"
+                    )
 
         # Store for faster future retrieval
         self._schemas[context] = schemas

@@ -2,6 +2,8 @@
 
 import copy
 import os
+import urllib
+from unittest import mock
 
 import pytest
 
@@ -547,6 +549,49 @@ class TestRemoteSchemaStore:
         remote_schemas = store.get_schemas(context="remote/remote.json")
 
         assert remote_schemas == {"key": "value"}
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_url_success(mocked_urlopen):
+        """
+        GIVEN context with HTTP path
+        WHEN get_schemas is called with the path to the file
+        THEN the loaded contents are returned.
+        """
+        # Defining returned data
+        response_cm = mock.MagicMock()
+        response_cm.getcode.return_value = 200
+        response_cm.read.return_value = '{"key": "value"}'
+        response_cm.__enter__.return_value = response_cm
+        mocked_urlopen.return_value = response_cm
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str("path1")
+        remote_context = "http://host.com/doc.json"
+
+        remote_schemas = store.get_schemas(context=remote_context)
+
+        assert remote_schemas == {"key": "value"}
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_url_error(mocked_urlopen):
+        """
+        GIVEN loading file from a URL fails
+        WHEN get_schemas is called with the path to the file
+        THEN SchemaNotFoundError is raised.
+        """
+        # Defining urlopen raising error
+        mocked_urlopen.side_effect = urllib.error.HTTPError(
+            url="some url", code=404, msg="message", hdrs="headers", fp="fp"
+        )
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = str("path1")
+        remote_context = "http://host.com/doc.json"
+
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            store.get_schemas(context=remote_context)
 
 
 class TestRetrieveSchema:
