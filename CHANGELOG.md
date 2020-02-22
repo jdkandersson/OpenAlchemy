@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add support for remote references to a file at a URL.
+
 ## Version 0.14.0 - 2020-02-21
 
 - Add support for remote references to another file on the file system.
