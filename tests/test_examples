@@ -22,4 +22,5 @@ python composite_index_models.py
 cd -
 cd examples/remote
 python models.py
+python url_models.py
 cd -

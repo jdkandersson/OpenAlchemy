@@ -2,6 +2,8 @@
 
 import copy
 import os
+from unittest import mock
+from urllib import error
 
 import pytest
 
@@ -112,8 +114,12 @@ def test_resolve_nested():
 
 @pytest.mark.parametrize(
     "context, expected_context",
-    [("dir/doc.ext", "dir/doc.ext"), ("dir/../doc.ext", "doc.ext")],
-    ids=["no norm", "norm"],
+    [
+        ("dir/doc.ext", "dir/doc.ext"),
+        ("dir/../doc.ext", "doc.ext"),
+        ("http://host.com/doc.ext", "http://host.com/doc.ext"),
+    ],
+    ids=["no norm", "norm", "URL"],
 )
 @pytest.mark.helper
 def test_norm_context(context, expected_context):
@@ -170,18 +176,22 @@ class TestAddRemoteContext:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "context, ref",
-        [("", ""), ("", "context1#context2#doc1.ext")],
-        ids=["# missing", "multiple #"],
+        "context, ref, exp_exception",
+        [
+            ("", "", exceptions.MalformedSchemaError),
+            ("", "context1#context2#doc1.ext", exceptions.MalformedSchemaError),
+            ("doc.ext", "//some.server#Schema1", exceptions.SchemaNotFoundError),
+        ],
+        ids=["# missing", "multiple #", "// without URL context"],
     )
     @pytest.mark.helper
-    def test_error(context, ref):
+    def test_error(context, ref, exp_exception):
         """
         GIVEN invalid context or ref
         WHEN _add_remote_context is called with the context and ref
-        THEN MalformedSchemaError is raised.
+        THEN the given expected exception is raised.
         """
-        with pytest.raises(exceptions.MalformedSchemaError):
+        with pytest.raises(exp_exception):
             helpers.ref._add_remote_context(context=context, ref=ref)
 
     @staticmethod
@@ -196,6 +206,91 @@ class TestAddRemoteContext:
             ("dir1/doc1.ext", "dir2/doc2.ext#/Schema", "dir1/dir2/doc2.ext#/Schema"),
             ("doc1.ext", "dir2/../doc2.ext#/Schema", "doc2.ext#/Schema"),
             ("dir1/doc1.ext", "../doc2.ext#/Schema", "doc2.ext#/Schema"),
+            (
+                "http://host.com/doc1.ext",
+                "#/Schema",
+                "http://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "#/Schema",
+                "http://host.com/dir1/doc1.ext#/Schema",
+            ),
+            (
+                "HTTP://host.com/doc1.ext",
+                "#/Schema",
+                "HTTP://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "https://host.com/doc1.ext",
+                "#/Schema",
+                "https://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "HTTPS://host.com/doc1.ext",
+                "#/Schema",
+                "HTTPS://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "doc2.ext#/Schema",
+                "http://host.com/dir1/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "http://host.com/dir2/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "http://host.com/dir1/dir2/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/doc1.ext",
+                "dir2/../doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host.com/dir1/doc1.ext",
+                "../doc2.ext#/Schema",
+                "http://host.com/doc2.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "http://host2.com/doc1.ext#/Schema",
+                "http://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "HTTP://host2.com/doc1.ext#/Schema",
+                "HTTP://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "https://host2.com/doc1.ext#/Schema",
+                "https://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "HTTPS://host2.com/doc1.ext#/Schema",
+                "HTTPS://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "//host2.com/doc1.ext#/Schema",
+                "http://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "doc1.ext",
+                "http://host.com/doc1.ext#/Schema",
+                "http://host.com/doc1.ext#/Schema",
+            ),
         ],
         ids=[
             "within document                                 context document",
@@ -206,6 +301,23 @@ class TestAddRemoteContext:
             "                                                context folder",
             "external different folder require normalization context document",
             "                                                context folder",
+            "http within document                            context document",
+            "                                                context folder",
+            "http capitalized                                context document",
+            "https                                           context document",
+            "https capitalized                               context document",
+            "http same folder                                context document",
+            "                                                context folder",
+            "http different folder                           context document",
+            "                                                context folder",
+            "http different folder require normalization     context document",
+            "                                                context folder",
+            "http other http                                 context document",
+            "http other http capitalized                     context document",
+            "http other https                                context document",
+            "http other https capitalized                    context document",
+            "http other network no protocol                  context document",
+            "within document to http                         context document",
         ],
     )
     @pytest.mark.helper
@@ -442,6 +554,49 @@ class TestRemoteSchemaStore:
 
         assert remote_schemas == {"key": "value"}
 
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_url_success(mocked_urlopen):
+        """
+        GIVEN context with HTTP path
+        WHEN get_schemas is called with the path to the file
+        THEN the loaded contents are returned.
+        """
+        # Defining returned data
+        response_cm = mock.MagicMock()
+        response_cm.getcode.return_value = 200
+        response_cm.read.return_value = '{"key": "value"}'
+        response_cm.__enter__.return_value = response_cm
+        mocked_urlopen.return_value = response_cm
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = "path1"
+        remote_context = "http://host.com/doc.json"
+
+        remote_schemas = store.get_schemas(context=remote_context)
+
+        assert remote_schemas == {"key": "value"}
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_load_url_error(mocked_urlopen):
+        """
+        GIVEN loading file from a URL fails
+        WHEN get_schemas is called with the path to the file
+        THEN SchemaNotFoundError is raised.
+        """
+        # Defining urlopen raising error
+        mocked_urlopen.side_effect = error.HTTPError(
+            url="some url", code=404, msg="message", hdrs="headers", fp="fp"
+        )
+        # Create store
+        store = helpers.ref._RemoteSchemaStore()
+        store.spec_context = "path1"
+        remote_context = "http://host.com/doc.json"
+
+        with pytest.raises(exceptions.SchemaNotFoundError):
+            store.get_schemas(context=remote_context)
+
 
 class TestRetrieveSchema:
     """Tests for _retrieve_schema."""
@@ -614,6 +769,32 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     schema = {"$ref": "remote.json#/Schema1"}
+
+    returned_name, returned_schema = helpers.ref.resolve(
+        name="name 1", schema=schema, schemas={}
+    )
+
+    assert returned_schema == {"key": "value"}
+    assert returned_name == "Schema1"
+
+
+@pytest.mark.helper
+def test_resolve_remote_url(mocked_urlopen, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref and urlopen with the remote schemas
+    WHEN resolve is called with the $ref
+    THEN the remote schema is returned.
+    """
+    # Defining returned data
+    response_cm = mock.MagicMock()
+    response_cm.getcode.return_value = 200
+    response_cm.read.return_value = '{"Schema1": {"key": "value"}}'
+    response_cm.__enter__.return_value = response_cm
+    mocked_urlopen.return_value = response_cm
+    # Set up remote schemas store
+    helpers.ref.set_context(path="path1")
+    # Calculate $ref
+    schema = {"$ref": "http://host.com/remote.json#/Schema1"}
 
     returned_name, returned_schema = helpers.ref.resolve(
         name="name 1", schema=schema, schemas={}

@@ -5,6 +5,8 @@ import json
 import os
 import re
 import typing
+from urllib import error
+from urllib import request
 
 from open_alchemy import exceptions
 from open_alchemy import types
@@ -77,6 +79,10 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     return ref_name, ref_schema
 
 
+# URL $ref regex
+_URL_REF_PATTERN = re.compile(r"^(https?:)\/\/", re.IGNORECASE)
+
+
 def _norm_context(*, context: str) -> str:
     """
     Normalize the path and case of a context.
@@ -88,6 +94,8 @@ def _norm_context(*, context: str) -> str:
         The normalized context.
 
     """
+    if _URL_REF_PATTERN.search(context) is not None:
+        return context
     norm_context = os.path.normpath(context)
     return os.path.normcase(norm_context)
 
@@ -114,17 +122,27 @@ def _separate_context_path(*, ref: str) -> typing.Tuple[str, str]:
     return ref_context, ref_schema
 
 
+# Regex for capturing the hostname and path from a URL
+_HOSTNAME_REF_PATTERM = re.compile(r"^(https?:\/\/.*?)(\/.*)$", re.IGNORECASE)
+
+
 def _add_remote_context(*, context: str, ref: str) -> str:
     """
     Add remote context to any $ref within a schema retrieved from a remote reference.
 
-    There are 3 cases:
+    There are 5 cases:
     1. The $ref value starts with # in which case the context is prepended.
     2. The $ref starts with a filename in which case only the directory portion of the
         context is prepended.
     3. The $ref starts with a relative path and ends with a file in which case the
         directory portion of the context is prepended and merged so that the shortest
         possible relative path is used.
+    4. The $ref starts with a HTTP protocol, in which case no changes are made.
+    5. The $ref starts with // in which case the HTTP protocol of the context is
+        prepended.
+
+    Raise SchemaNotFoundError if the $ref starts with // when the context does not start
+        with a HTTP protocol.
 
     After the paths are merged the following operations are done:
     1. a normalized relative path is calculated (eg. turning ./dir1/../dir2 to ./dir2)
@@ -141,17 +159,40 @@ def _add_remote_context(*, context: str, ref: str) -> str:
         The $ref value with the context of the document included.
 
     """
-    ref_context, ref_schema = _separate_context_path(ref=ref)
-    context_head, _ = os.path.split(context)
+    # Check for URL reference
+    url_match = _URL_REF_PATTERN.search(ref)
+    if url_match is not None:
+        return ref
+    if ref.startswith("//"):
+        context_protocol = _URL_REF_PATTERN.search(context)
+        if context_protocol is None:
+            raise exceptions.SchemaNotFoundError(
+                "A reference starting with // is only valid from within a document "
+                f"loaded from a URL. The reference is {ref}, the location of the "
+                f"document with the reference is {context}."
+            )
+        return f"{context_protocol.group(1)}{ref}"
 
     # Handle reference within document
+    ref_context, ref_schema = _separate_context_path(ref=ref)
     if not ref_context:
         return f"{context}{ref}"
 
+    # Break context into components
+    # Default where context is not a URL
+    context_hostname = ""
+    context_path = context
+    # Gather components if the context is a URL
+    hostname_match = _HOSTNAME_REF_PATTERM.search(context)
+    if hostname_match is not None:
+        context_hostname = hostname_match.group(1)
+        context_path = hostname_match.group(2)
+    context_path_head, _ = os.path.split(context_path)
+
     # Handle reference outside document
-    new_ref_context = os.path.join(context_head, ref_context)
-    norm_new_ref_context = _norm_context(context=new_ref_context)
-    return f"{norm_new_ref_context}#{ref_schema}"
+    new_ref_context_path = os.path.join(context_path_head, ref_context)
+    norm_new_ref_context_path = _norm_context(context=new_ref_context_path)
+    return f"{context_hostname}{norm_new_ref_context_path}#{ref_schema}"
 
 
 def _handle_match(match: typing.Match, *, context: str) -> str:
@@ -172,7 +213,7 @@ def _handle_match(match: typing.Match, *, context: str) -> str:
 
 
 # Pattern used to look for any $ref after converting the schema to JSON
-_REF_VALUE_PATTERN = r'"\$ref": "(.*?)"'
+_REF_VALUE_PATTERN = re.compile(r'"\$ref": "(.*?)"')
 
 
 def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schema:
@@ -193,7 +234,7 @@ def _map_remote_schema_ref(*, schema: types.Schema, context: str) -> types.Schem
     handle_match_context = functools.partial(_handle_match, context=context)
 
     str_schema = json.dumps(schema)
-    mapped_str_schema = re.sub(_REF_VALUE_PATTERN, handle_match_context, str_schema)
+    mapped_str_schema = _REF_VALUE_PATTERN.sub(handle_match_context, str_schema)
     mapped_schema = json.loads(mapped_str_schema)
     return mapped_schema
 
@@ -251,35 +292,41 @@ class _RemoteSchemaStore:
                 f"{context}"
             )
 
-        # Calculate location of schemas
-        spec_dir = os.path.dirname(self.spec_context)
-        remote_spec_filename = os.path.join(spec_dir, context)
+        # Get context manager with file
         try:
-            with open(remote_spec_filename) as in_file:
-                if extension == ".json":
-                    try:
-                        schemas = json.load(in_file)
-                    except json.JSONDecodeError:
-                        raise exceptions.SchemaNotFoundError(
-                            "The remote reference file is not valid JSON. The path "
-                            f"is: {context}"
-                        )
-                else:
-                    # Import as needed to make yaml optional
-                    import yaml  # pylint: disable=import-outside-toplevel
-
-                    try:
-                        schemas = yaml.safe_load(in_file)
-                    except yaml.scanner.ScannerError:
-                        raise exceptions.SchemaNotFoundError(
-                            "The remote reference file is not valid YAML. The path "
-                            f"is: {context}"
-                        )
-        except FileNotFoundError:
+            if _URL_REF_PATTERN.search(context) is not None:
+                file_cm = request.urlopen(context)
+            else:
+                spec_dir = os.path.dirname(self.spec_context)
+                remote_spec_filename = os.path.join(spec_dir, context)
+                file_cm = open(remote_spec_filename)
+        except (FileNotFoundError, error.HTTPError):
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
                 f"{context}"
             )
+
+        # Calculate location of schemas
+        with file_cm as in_file:
+            if extension == ".json":
+                try:
+                    schemas = json.load(in_file)
+                except json.JSONDecodeError:
+                    raise exceptions.SchemaNotFoundError(
+                        "The remote reference file is not valid JSON. The path "
+                        f"is: {context}"
+                    )
+            else:
+                # Import as needed to make yaml optional
+                import yaml  # pylint: disable=import-outside-toplevel
+
+                try:
+                    schemas = yaml.safe_load(in_file)
+                except yaml.scanner.ScannerError:
+                    raise exceptions.SchemaNotFoundError(
+                        "The remote reference file is not valid YAML. The path "
+                        f"is: {context}"
+                    )
 
         # Store for faster future retrieval
         self._schemas[context] = schemas

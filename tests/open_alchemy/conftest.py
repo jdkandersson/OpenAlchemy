@@ -2,6 +2,7 @@
 # pylint: disable=redefined-outer-name
 
 from unittest import mock
+from urllib import request
 
 import pytest
 from sqlalchemy.ext import declarative
@@ -153,3 +154,11 @@ def cleanup_models():
         if key.endswith("__"):
             continue
         delattr(models, key)
+
+
+@pytest.fixture
+def mocked_urlopen(monkeypatch):
+    """Monkeypatches urlopen.urlopen."""
+    mock_urlopen = mock.MagicMock()
+    monkeypatch.setattr(request, "urlopen", mock_urlopen)
+    return mock_urlopen
