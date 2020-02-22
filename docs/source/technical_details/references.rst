@@ -45,9 +45,7 @@ The OpenAPI specification supports remote references in
 1. another file within the file system and
 2. a file available at a URL.
 
-\(2\) is currently not supported but on the road map.
-
-For (1), the following example shows how to define a schema in another file:
+For (1), the following example shows how to reference a schema in another file:
 
 .. literalinclude:: ../../../examples/remote/example-spec.yml
     :language: yaml
@@ -59,6 +57,12 @@ The schema in the remote file is unchanged:
     :language: yaml
     :linenos:
 
+For (2), the following example shows how to reference a schema at a URL:
+
+.. literalinclude:: ../../../examples/remote/url-example-spec.yml
+    :language: yaml
+    :linenos:
+
 For a schema to be picked up by *OpenAlchemy*, it must have an entry in the
-*#/components/schemas/...* array. Remote references from within a schema are
+*#/components/schemas/...* object. Remote references from within a schema are
 also supported.
