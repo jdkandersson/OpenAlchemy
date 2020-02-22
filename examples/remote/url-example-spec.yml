@@ -23,4 +23,4 @@ paths:
 components:
   schemas:
     Employee:
-      "$ref": "https:////raw.githubusercontent.com/jdkandersson/OpenAlchemy/master/examples/remote/remote-example-spec.yml#/Employee"
+      "$ref": "https://raw.githubusercontent.com/jdkandersson/OpenAlchemy/master/examples/remote/remote-example-spec.yml#/Employee"
