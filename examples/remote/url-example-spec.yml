@@ -1,0 +1,26 @@
+
+openapi: "3.0.0"
+
+info:
+  title: Test Schema
+  description: API to illustrate OpenAlchemy MVP.
+  version: "0.1"
+
+paths:
+  /employee:
+    get:
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Employee"
+
+components:
+  schemas:
+    Employee:
+      "$ref": "https:////raw.githubusercontent.com/jdkandersson/OpenAlchemy/master/examples/remote/remote-example-spec.yml#/Employee"

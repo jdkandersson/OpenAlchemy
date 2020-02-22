@@ -79,6 +79,10 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     return ref_name, ref_schema
 
 
+# URL $ref regex
+_URL_REF_PATTERN = re.compile(r"^(https?:)\/\/", re.IGNORECASE)
+
+
 def _norm_context(*, context: str) -> str:
     """
     Normalize the path and case of a context.
@@ -90,6 +94,8 @@ def _norm_context(*, context: str) -> str:
         The normalized context.
 
     """
+    if _URL_REF_PATTERN.search(context) is not None:
+        return context
     norm_context = os.path.normpath(context)
     return os.path.normcase(norm_context)
 
@@ -116,8 +122,7 @@ def _separate_context_path(*, ref: str) -> typing.Tuple[str, str]:
     return ref_context, ref_schema
 
 
-# URL $ref regex
-_URL_REF_PATTERN = re.compile(r"^(https?:)\/\/", re.IGNORECASE)
+# Regex for capturing the hostname and path from a URL
 _HOSTNAME_REF_PATTERM = re.compile(r"^(https?:\/\/.*?)(\/.*)$", re.IGNORECASE)
 
 

@@ -114,8 +114,12 @@ def test_resolve_nested():
 
 @pytest.mark.parametrize(
     "context, expected_context",
-    [("dir/doc.ext", "dir/doc.ext"), ("dir/../doc.ext", "doc.ext")],
-    ids=["no norm", "norm"],
+    [
+        ("dir/doc.ext", "dir/doc.ext"),
+        ("dir/../doc.ext", "doc.ext"),
+        ("http://host.com/doc.ext", "http://host.com/doc.ext"),
+    ],
+    ids=["no norm", "norm", "URL"],
 )
 @pytest.mark.helper
 def test_norm_context(context, expected_context):
@@ -765,6 +769,32 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     helpers.ref.set_context(path=str(schemas_file))
     # Calculate $ref
     schema = {"$ref": "remote.json#/Schema1"}
+
+    returned_name, returned_schema = helpers.ref.resolve(
+        name="name 1", schema=schema, schemas={}
+    )
+
+    assert returned_schema == {"key": "value"}
+    assert returned_name == "Schema1"
+
+
+@pytest.mark.helper
+def test_resolve_remote_url(mocked_urlopen, _clean_remote_schemas_store):
+    """
+    GIVEN remote $ref and urlopen with the remote schemas
+    WHEN resolve is called with the $ref
+    THEN the remote schema is returned.
+    """
+    # Defining returned data
+    response_cm = mock.MagicMock()
+    response_cm.getcode.return_value = 200
+    response_cm.read.return_value = '{"Schema1": {"key": "value"}}'
+    response_cm.__enter__.return_value = response_cm
+    mocked_urlopen.return_value = response_cm
+    # Set up remote schemas store
+    helpers.ref.set_context(path="path1")
+    # Calculate $ref
+    schema = {"$ref": "http://host.com/remote.json#/Schema1"}
 
     returned_name, returned_schema = helpers.ref.resolve(
         name="name 1", schema=schema, schemas={}
