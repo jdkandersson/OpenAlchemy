@@ -170,18 +170,22 @@ class TestAddRemoteContext:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "context, ref",
-        [("", ""), ("", "context1#context2#doc1.ext")],
-        ids=["# missing", "multiple #"],
+        "context, ref, exp_exception",
+        [
+            ("", "", exceptions.MalformedSchemaError),
+            ("", "context1#context2#doc1.ext", exceptions.MalformedSchemaError),
+            ("doc.ext", "//some.server#Schema1", exceptions.SchemaNotFoundError),
+        ],
+        ids=["# missing", "multiple #", "// without URL context"],
     )
     @pytest.mark.helper
-    def test_error(context, ref):
+    def test_error(context, ref, exp_exception):
         """
         GIVEN invalid context or ref
         WHEN _add_remote_context is called with the context and ref
-        THEN MalformedSchemaError is raised.
+        THEN the given expected exception is raised.
         """
-        with pytest.raises(exceptions.MalformedSchemaError):
+        with pytest.raises(exp_exception):
             helpers.ref._add_remote_context(context=context, ref=ref)
 
     @staticmethod
@@ -205,6 +209,21 @@ class TestAddRemoteContext:
                 "http://host.com/dir1/doc1.ext",
                 "#/Schema",
                 "http://host.com/dir1/doc1.ext#/Schema",
+            ),
+            (
+                "HTTP://host.com/doc1.ext",
+                "#/Schema",
+                "HTTP://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "https://host.com/doc1.ext",
+                "#/Schema",
+                "https://host.com/doc1.ext#/Schema",
+            ),
+            (
+                "HTTPS://host.com/doc1.ext",
+                "#/Schema",
+                "HTTPS://host.com/doc1.ext#/Schema",
             ),
             (
                 "http://host.com/doc1.ext",
@@ -243,8 +262,18 @@ class TestAddRemoteContext:
             ),
             (
                 "http://host1.com/doc1.ext",
+                "HTTP://host2.com/doc1.ext#/Schema",
+                "HTTP://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
                 "https://host2.com/doc1.ext#/Schema",
                 "https://host2.com/doc1.ext#/Schema",
+            ),
+            (
+                "http://host1.com/doc1.ext",
+                "HTTPS://host2.com/doc1.ext#/Schema",
+                "HTTPS://host2.com/doc1.ext#/Schema",
             ),
             (
                 "http://host1.com/doc1.ext",
@@ -268,6 +297,9 @@ class TestAddRemoteContext:
             "                                                context folder",
             "http within document                            context document",
             "                                                context folder",
+            "http capitalized                                context document",
+            "https                                           context document",
+            "https capitalized                               context document",
             "http same folder                                context document",
             "                                                context folder",
             "http different folder                           context document",
@@ -275,7 +307,9 @@ class TestAddRemoteContext:
             "http different folder require normalization     context document",
             "                                                context folder",
             "http other http                                 context document",
+            "http other http capitalized                     context document",
             "http other https                                context document",
+            "http other https capitalized                    context document",
             "http other network no protocol                  context document",
             "within document to http                         context document",
         ],
