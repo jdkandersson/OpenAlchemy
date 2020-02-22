@@ -570,7 +570,7 @@ class TestRemoteSchemaStore:
         mocked_urlopen.return_value = response_cm
         # Create store
         store = helpers.ref._RemoteSchemaStore()
-        store.spec_context = str("path1")
+        store.spec_context = "path1"
         remote_context = "http://host.com/doc.json"
 
         remote_schemas = store.get_schemas(context=remote_context)
@@ -591,7 +591,7 @@ class TestRemoteSchemaStore:
         )
         # Create store
         store = helpers.ref._RemoteSchemaStore()
-        store.spec_context = str("path1")
+        store.spec_context = "path1"
         remote_context = "http://host.com/doc.json"
 
         with pytest.raises(exceptions.SchemaNotFoundError):
