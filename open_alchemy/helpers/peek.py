@@ -3,6 +3,7 @@
 import typing
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import types
 
 from . import ref
@@ -197,6 +198,30 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     if not isinstance(value, str):
         raise exceptions.MalformedSchemaError(
             "The x-tablename property must be of type string."
+        )
+    return value
+
+
+def default(
+    *, schema: types.Schema
+) -> typing.Optional[typing.Union[str, int, float, bool]]:
+    """
+    Retrieve the default value and check it against the schema.
+
+    Assume than any $ref and allOf in the schema has already been resolved.
+
+    Args:
+        schema: The schema to retrieve the default value from.
+
+    """
+    if "default" not in schema:
+        return None
+    value = schema.get("default")
+    try:
+        facades.jsonschema.validate(value, schema)
+    except facades.jsonschema.ValidationError:
+        raise exceptions.MalformedSchemaError(
+            f"The default value does not conform to the schema. The value is: {value}"
         )
     return value
 
