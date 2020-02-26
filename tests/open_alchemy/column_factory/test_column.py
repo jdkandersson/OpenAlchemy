@@ -101,6 +101,12 @@ def test_check_schema_invalid(schema, expected_exception):
             {"type": "type 1"},
         ),
         (
+            ColArt(open_api=OAColArt(type="type 1", default="value 1")),
+            None,
+            None,
+            {"type": "type 1", "default": "value 1"},
+        ),
+        (
             ColArt(
                 open_api=OAColArt(type="type 1"),
                 extension=ExtColArt(autoincrement=True),
@@ -128,6 +134,7 @@ def test_check_schema_invalid(schema, expected_exception):
         "type with maxLength",
         "type with description",
         "type with nullable",
+        "type with default",
         "type with autoincrement",
         "nullable input not None",
         "dict_ignore input not None",

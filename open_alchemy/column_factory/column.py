@@ -116,6 +116,8 @@ def calculate_schema(
         schema["maxLength"] = artifacts.open_api.max_length
     if artifacts.open_api.description is not None:
         schema["description"] = artifacts.open_api.description
+    if artifacts.open_api.default is not None:
+        schema["default"] = artifacts.open_api.default
     if artifacts.extension.autoincrement is not None:
         schema["x-generated"] = artifacts.extension.autoincrement
     if dict_ignore is not None:

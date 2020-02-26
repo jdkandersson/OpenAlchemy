@@ -31,6 +31,8 @@ AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
 Index = typing.Dict[str, typing.Any]
 IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
+# Type for the default value
+TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
 
 
 _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
@@ -41,6 +43,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "maxLength": int,
         "nullable": bool,
         "description": str,
+        "default": TColumnDefault,
         "x-generated": bool,
     },
     total=False,
@@ -51,9 +54,6 @@ class ColumnSchema(_ColumnSchemaBase, total=True):
     """Schema for column definitions."""
 
     type: str
-
-
-TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
 
 
 @dataclasses.dataclass
