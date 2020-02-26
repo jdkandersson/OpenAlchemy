@@ -10,6 +10,10 @@ from open_alchemy import facades
 from open_alchemy import types
 from open_alchemy.column_factory import column
 
+OAColArt = types.OpenAPiColumnArtifacts
+ExtColArt = types.ExtensionColumnArtifacts
+ColArt = types.ColumnArtifacts
+
 
 @pytest.mark.parametrize(
     "schema, expected_exception",
@@ -40,6 +44,7 @@ from open_alchemy.column_factory import column
             {"type": "type 1", "x-foreign-key": True},
             exceptions.MalformedExtensionPropertyError,
         ),
+        ({"type": "string", "default": 1}, exceptions.MalformedSchemaError),
     ],
     ids=[
         "type missing",
@@ -53,6 +58,7 @@ from open_alchemy.column_factory import column
         "index not boolean",
         "unique not boolean",
         "foreign key not string",
+        "default invalid",
     ],
 )
 @pytest.mark.column
@@ -69,45 +75,48 @@ def test_check_schema_invalid(schema, expected_exception):
 @pytest.mark.parametrize(
     "artifacts, nullable, dict_ignore, expected_schema",
     [
-        (types.ColumnArtifacts(type="type 1"), None, None, {"type": "type 1"}),
+        (ColArt(open_api=OAColArt(type="type 1")), None, None, {"type": "type 1"}),
         (
-            types.ColumnArtifacts(type="type 1", format="format 1"),
+            ColArt(open_api=OAColArt(type="type 1", format="format 1")),
             None,
             None,
             {"type": "type 1", "format": "format 1"},
         ),
         (
-            types.ColumnArtifacts(type="type 1", max_length=1),
+            ColArt(open_api=OAColArt(type="type 1", max_length=1)),
             None,
             None,
             {"type": "type 1", "maxLength": 1},
         ),
         (
-            types.ColumnArtifacts(type="type 1", description="description 1"),
+            ColArt(open_api=OAColArt(type="type 1", description="description 1")),
             None,
             None,
             {"type": "type 1", "description": "description 1"},
         ),
         (
-            types.ColumnArtifacts(type="type 1", nullable=False),
+            ColArt(open_api=OAColArt(type="type 1", nullable=False)),
             None,
             None,
             {"type": "type 1"},
         ),
         (
-            types.ColumnArtifacts(type="type 1", autoincrement=True),
+            ColArt(
+                open_api=OAColArt(type="type 1"),
+                extension=ExtColArt(autoincrement=True),
+            ),
             None,
             None,
             {"type": "type 1", "x-generated": True},
         ),
         (
-            types.ColumnArtifacts(type="type 1"),
+            ColArt(open_api=OAColArt(type="type 1")),
             False,
             None,
             {"type": "type 1", "nullable": False},
         ),
         (
-            types.ColumnArtifacts(type="type 1"),
+            ColArt(open_api=OAColArt(type="type 1")),
             None,
             True,
             {"type": "type 1", "x-dict-ignore": True},
@@ -128,7 +137,7 @@ def test_check_schema_invalid(schema, expected_exception):
 def test_calculate_schema(artifacts, expected_schema, nullable, dict_ignore):
     """
     GIVEN schema
-    WHEN check_schema is called with the schema
+    WHEN calculate_schema is called with the schema
     THEN the schema is returned.
     """
     returned_schema = column.calculate_schema(
@@ -141,10 +150,13 @@ def test_calculate_schema(artifacts, expected_schema, nullable, dict_ignore):
 @pytest.mark.parametrize(
     "artifacts, expected_schema",
     [
-        (types.ColumnArtifacts(type="type 1"), {"type": "type 1"}),
-        (types.ColumnArtifacts(type="type 1"), {"type": "type 1", "nullable": True}),
+        (ColArt(open_api=OAColArt(type="type 1")), {"type": "type 1"}),
         (
-            types.ColumnArtifacts(type="type 1"),
+            ColArt(open_api=OAColArt(type="type 1")),
+            {"type": "type 1", "nullable": True},
+        ),
+        (
+            ColArt(open_api=OAColArt(type="type 1")),
             {"type": "type 1", "x-dict-ignore": True},
         ),
     ],
@@ -173,7 +185,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
     """
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
         column._calculate_column_schema(
-            artifacts=types.ColumnArtifacts("type 1"),
+            artifacts=ColArt(open_api=OAColArt(type="type 1")),
             schema={"type": "type 1", "x-dict-ignore": "True"},
         )
 
@@ -181,42 +193,54 @@ def test_calculate_column_schema_dict_ignore_invalid():
 @pytest.mark.parametrize(
     "schema, expected_artifacts",
     [
-        ({"type": "type 1"}, types.ColumnArtifacts("type 1")),
+        ({"type": "type 1"}, ColArt(open_api=OAColArt(type="type 1"))),
         (
             {"type": "type 1", "format": "format 1"},
-            types.ColumnArtifacts("type 1", format="format 1"),
+            ColArt(open_api=OAColArt(type="type 1", format="format 1")),
         ),
         (
             {"type": "type 1", "maxLength": 1},
-            types.ColumnArtifacts("type 1", max_length=1),
+            ColArt(open_api=OAColArt(type="type 1", max_length=1)),
         ),
         (
             {"type": "type 1", "nullable": True},
-            types.ColumnArtifacts("type 1", nullable=True),
+            ColArt(open_api=OAColArt(type="type 1", nullable=True)),
         ),
         (
             {"type": "type 1", "description": "description 1"},
-            types.ColumnArtifacts("type 1", description="description 1"),
+            ColArt(open_api=OAColArt(type="type 1", description="description 1")),
         ),
         (
             {"type": "type 1", "x-primary-key": True},
-            types.ColumnArtifacts("type 1", primary_key=True),
+            ColArt(
+                open_api=OAColArt(type="type 1"), extension=ExtColArt(primary_key=True)
+            ),
         ),
         (
             {"type": "type 1", "x-autoincrement": True},
-            types.ColumnArtifacts("type 1", autoincrement=True, nullable=False),
+            ColArt(
+                open_api=OAColArt(type="type 1", nullable=False),
+                extension=ExtColArt(autoincrement=True),
+            ),
         ),
         (
             {"type": "type 1", "x-index": True},
-            types.ColumnArtifacts("type 1", index=True),
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(index=True)),
         ),
         (
             {"type": "type 1", "x-unique": True},
-            types.ColumnArtifacts("type 1", unique=True),
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(unique=True)),
         ),
         (
             {"type": "type 1", "x-foreign-key": "table.column"},
-            types.ColumnArtifacts("type 1", foreign_key="table.column"),
+            ColArt(
+                open_api=OAColArt(type="type 1"),
+                extension=ExtColArt(foreign_key="table.column"),
+            ),
+        ),
+        (
+            {"type": "string", "default": "value 1"},
+            ColArt(open_api=OAColArt(type="string", default="value 1")),
         ),
     ],
     ids=[
@@ -230,6 +254,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         "type with index",
         "type with unique",
         "type with foreign key",
+        "type with default",
     ],
 )
 @pytest.mark.column
@@ -255,7 +280,7 @@ def test_check_schema_required():
 
     artifacts = column.check_schema(schema=copy.deepcopy(schema), required=True)
 
-    assert artifacts.nullable is False
+    assert artifacts.open_api.nullable is False
 
 
 @pytest.mark.column
@@ -313,11 +338,9 @@ class TestCheckArtifacts:
         WHEN _check_artifacts is called with the artifacts
         THEN MalformedSchemaError is raised.
         """
-        artifacts = types.ColumnArtifacts(
-            type=type_,
-            format=format_,
-            max_length=max_length,
-            autoincrement=autoincrement,
+        artifacts = ColArt(
+            open_api=OAColArt(type=type_, format=format_, max_length=max_length),
+            extension=ExtColArt(autoincrement=autoincrement),
         )
 
         with pytest.raises(exceptions.MalformedSchemaError):
@@ -354,11 +377,9 @@ class TestCheckArtifacts:
         WHEN _check_artifacts is called
         THEN MalformedSchemaError is not raised.
         """
-        artifacts = types.ColumnArtifacts(
-            type=type_,
-            format=format_,
-            max_length=max_length,
-            autoincrement=autoincrement,
+        artifacts = ColArt(
+            open_api=OAColArt(type=type_, format=format_, max_length=max_length),
+            extension=ExtColArt(autoincrement=autoincrement),
         )
 
         column._check_artifacts(artifacts=artifacts)
@@ -371,7 +392,9 @@ def test_construct_column_invalid():
     WHEN construct_column is called with the artifacts
     THEN MalformedSchemaError is raised.
     """
-    artifacts = types.ColumnArtifacts(type="string", autoincrement=True)
+    artifacts = ColArt(
+        open_api=OAColArt(type="string"), extension=ExtColArt(autoincrement=True)
+    )
 
     with pytest.raises(exceptions.MalformedSchemaError):
         column.construct_column(artifacts=artifacts)
@@ -384,7 +407,7 @@ def test_construct_column_valid():
     WHEN construct_column is called with the artifacts
     THEN MalformedSchemaError is raised.
     """
-    artifacts = types.ColumnArtifacts(type="string")
+    artifacts = ColArt(open_api=OAColArt(type="string"))
 
     return_column = column.construct_column(artifacts=artifacts)
 

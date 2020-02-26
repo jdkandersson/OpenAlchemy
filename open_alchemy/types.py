@@ -53,23 +53,49 @@ class ColumnSchema(_ColumnSchemaBase, total=True):
     type: str
 
 
-@dataclasses.dataclass
-class ColumnArtifacts:
-    """Information required to construct a column."""
+TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
 
-    # OpenAPI properties
+
+@dataclasses.dataclass
+class OpenAPiColumnArtifacts:
+    """OpenAPI information required to construct a column."""
+
     type: str
     format: typing.Optional[str] = None
     max_length: typing.Optional[int] = None
     nullable: bool = True
     description: typing.Optional[str] = None
+    default: TColumnDefault = None
 
-    # Extension properties
+
+@dataclasses.dataclass
+class ExtensionColumnArtifacts:
+    """Extension property information required to construct a column."""
+
     primary_key: typing.Optional[bool] = None
     autoincrement: typing.Optional[bool] = None
     index: typing.Optional[bool] = None
     unique: typing.Optional[bool] = None
     foreign_key: typing.Optional[str] = None
+
+
+@dataclasses.dataclass
+class ColumnArtifacts:
+    """Information required to construct a column."""
+
+    open_api: OpenAPiColumnArtifacts
+    extension: ExtensionColumnArtifacts
+
+    def __init__(
+        self,
+        open_api: OpenAPiColumnArtifacts,
+        extension: typing.Optional[ExtensionColumnArtifacts] = None,
+    ) -> None:
+        """Construct."""
+        self.open_api = open_api
+        if extension is None:
+            extension = ExtensionColumnArtifacts()
+        self.extension = extension
 
 
 @dataclasses.dataclass

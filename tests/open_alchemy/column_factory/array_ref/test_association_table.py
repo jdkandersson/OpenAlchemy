@@ -283,9 +283,9 @@ class TestConstructColumn:
             kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
         else:
             _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
-        assert kwargs["artifacts"].type == "integer"
-        assert kwargs["artifacts"].format == "int64"
-        assert kwargs["artifacts"].foreign_key == "table_1.column_1"
+        assert kwargs["artifacts"].open_api.type == "integer"
+        assert kwargs["artifacts"].open_api.format == "int64"
+        assert kwargs["artifacts"].extension.foreign_key == "table_1.column_1"
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -318,9 +318,9 @@ class TestConstructColumn:
             kwargs = mocked_facades_sqlalchemy.column.construct.call_args.kwargs
         else:
             _, kwargs = mocked_facades_sqlalchemy.column.construct.call_args
-        assert kwargs["artifacts"].type == type_
-        assert kwargs["artifacts"].format == format_
-        assert kwargs["artifacts"].max_length == max_length
+        assert kwargs["artifacts"].open_api.type == type_
+        assert kwargs["artifacts"].open_api.format == format_
+        assert kwargs["artifacts"].open_api.max_length == max_length
 
 
 @pytest.mark.column
@@ -375,9 +375,9 @@ def test_construct(mocked_facades_models, mocked_facades_sqlalchemy):
         kwargs = call_args_list[0].kwargs
     else:
         _, kwargs = call_args_list[0]
-    assert kwargs["artifacts"].type == "integer"
+    assert kwargs["artifacts"].open_api.type == "integer"
     if sys.version_info[1] == 8:
         kwargs = call_args_list[1].kwargs
     else:
         _, kwargs = call_args_list[1]
-    assert kwargs["artifacts"].type == "string"
+    assert kwargs["artifacts"].open_api.type == "string"

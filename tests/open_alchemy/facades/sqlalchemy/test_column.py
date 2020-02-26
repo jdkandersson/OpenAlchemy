@@ -7,6 +7,10 @@ from open_alchemy import exceptions
 from open_alchemy import types
 from open_alchemy.facades.sqlalchemy import column
 
+OAColArt = types.OpenAPiColumnArtifacts
+ExtColArt = types.ExtensionColumnArtifacts
+ColArt = types.ColumnArtifacts
+
 
 @pytest.mark.parametrize(
     "name, expected_value",
@@ -66,7 +70,7 @@ def test_construct(type_, expected_type):
     WHEN construct is called with the artifacts
     THEN a column with the expected type is returned.
     """
-    artifacts = types.ColumnArtifacts(type_)
+    artifacts = ColArt(open_api=OAColArt(type=type_))
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -83,7 +87,10 @@ def test_construct_foreign_key():
     WHEN construct is called with the artifacts
     THEN a column with a foreign key is returned.
     """
-    artifacts = types.ColumnArtifacts("integer", foreign_key="table.column")
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"),
+        extension=ExtColArt(foreign_key="table.column"),
+    )
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -100,7 +107,7 @@ def test_construct_nullable(nullable):
     WHEN construct is called with the artifacts with nullable
     THEN the returned column nullable property is equal to nullable.
     """
-    artifacts = types.ColumnArtifacts("integer", nullable=nullable)
+    artifacts = ColArt(open_api=OAColArt(type="integer", nullable=nullable))
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -117,7 +124,9 @@ def test_construct_primary_key(primary_key):
     WHEN construct is called with the artifacts with primary_key
     THEN the returned column primary_key property is equal to primary_key.
     """
-    artifacts = types.ColumnArtifacts("integer", primary_key=primary_key)
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"), extension=ExtColArt(primary_key=primary_key)
+    )
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -134,7 +143,10 @@ def test_construct_autoincrement(autoincrement):
     WHEN construct is called with the artifacts with autoincrement
     THEN the returned column autoincrement property is equal to autoincrement.
     """
-    artifacts = types.ColumnArtifacts("integer", autoincrement=autoincrement)
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"),
+        extension=ExtColArt(autoincrement=autoincrement),
+    )
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -149,7 +161,9 @@ def test_construct_index(index):
     WHEN construct is called with the artifacts with index
     THEN the returned column index property is equal to index.
     """
-    artifacts = types.ColumnArtifacts("integer", index=index)
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"), extension=ExtColArt(index=index)
+    )
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -164,7 +178,9 @@ def test_construct_unique(unique):
     WHEN construct is called with the artifacts with unique
     THEN the returned column unique property is equal to unique.
     """
-    artifacts = types.ColumnArtifacts("integer", unique=unique)
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"), extension=ExtColArt(unique=unique)
+    )
 
     returned_column = column.construct(artifacts=artifacts)
 
@@ -184,7 +200,7 @@ class TestDetermineType:
         WHEN _determine_type is called with the artifacts
         THEN FeatureNotImplementedError is raised.
         """
-        artifacts = types.ColumnArtifacts("unsupported")
+        artifacts = ColArt(open_api=OAColArt(type="unsupported"))
 
         with pytest.raises(exceptions.FeatureNotImplementedError):
             column._determine_type(artifacts=artifacts)
@@ -207,7 +223,7 @@ class TestDetermineType:
         WHEN _determine_type is called with the artifacts with the type
         THEN the expected type is returned.
         """
-        artifacts = types.ColumnArtifacts(type_)
+        artifacts = ColArt(open_api=OAColArt(type=type_))
 
         returned_type = column._determine_type(artifacts=artifacts)
 
@@ -227,7 +243,7 @@ class TestHandleInteger:
         WHEN _handle_integer is called with the artifacts
         THEN FeatureNotImplementedError is raised.
         """
-        artifacts = types.ColumnArtifacts("integer", format="unsupported")
+        artifacts = ColArt(open_api=OAColArt(type="integer", format="unsupported"))
 
         with pytest.raises(exceptions.FeatureNotImplementedError):
             column._handle_integer(artifacts=artifacts)
@@ -249,7 +265,7 @@ class TestHandleInteger:
         WHEN _handle_integer is called with the artifacts
         THEN the expected type is returned.
         """
-        artifacts = types.ColumnArtifacts("integer", format=format_)
+        artifacts = ColArt(open_api=OAColArt(type="integer", format=format_))
 
         integer = column._handle_integer(artifacts=artifacts)
 
@@ -269,7 +285,7 @@ class TestHandleNumber:
         WHEN _handle_number is called with the artifacts
         THEN FeatureNotImplementedError is raised.
         """
-        artifacts = types.ColumnArtifacts("number", format="unsupported")
+        artifacts = ColArt(open_api=OAColArt(type="number", format="unsupported"))
 
         with pytest.raises(exceptions.FeatureNotImplementedError):
             column._handle_number(artifacts=artifacts)
@@ -287,7 +303,7 @@ class TestHandleNumber:
         WHEN _handle_integer is called with the artifacts
         THEN the expected type is returned.
         """
-        artifacts = types.ColumnArtifacts("number", format=format_)
+        artifacts = ColArt(open_api=OAColArt(type="number", format=format_))
 
         number = column._handle_number(artifacts=artifacts)
 
@@ -307,7 +323,7 @@ class TestHandleString:
         WHEN _handle_string is called with the artifacts
         THEN FeatureNotImplementedError is raised.
         """
-        artifacts = types.ColumnArtifacts("string", format="unsupported")
+        artifacts = ColArt(open_api=OAColArt(type="string", format="unsupported"))
 
         with pytest.raises(exceptions.FeatureNotImplementedError):
             column._handle_string(artifacts=artifacts)
@@ -332,7 +348,7 @@ class TestHandleString:
         WHEN _handle_integer is called with the artifacts
         THEN the expected type is returned.
         """
-        artifacts = types.ColumnArtifacts("string", format=format_)
+        artifacts = ColArt(open_api=OAColArt(type="string", format=format_))
 
         string = column._handle_string(artifacts=artifacts)
 
@@ -352,7 +368,9 @@ class TestHandleString:
         THEN a given expected type column with a maximum length is returned.
         """
         length = 1
-        artifacts = types.ColumnArtifacts("string", max_length=length, format=format_)
+        artifacts = ColArt(
+            open_api=OAColArt(type="string", max_length=length, format=format_)
+        )
 
         string = column._handle_string(artifacts=artifacts)
 
@@ -373,7 +391,7 @@ class TestHandleBoolean:
         WHEN _handle_boolean is called with the artifacts
         THEN the boolean type is returned.
         """
-        artifacts = types.ColumnArtifacts("boolean")
+        artifacts = ColArt(open_api=OAColArt(type="boolean"))
 
         boolean = column._handle_boolean(artifacts=artifacts)
 

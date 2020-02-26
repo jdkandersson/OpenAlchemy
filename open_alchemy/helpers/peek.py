@@ -202,9 +202,7 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     return value
 
 
-def default(
-    *, schema: types.Schema
-) -> typing.Optional[typing.Union[str, int, float, bool]]:
+def default(*, schema: types.Schema) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.
 

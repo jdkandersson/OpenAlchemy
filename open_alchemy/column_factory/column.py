@@ -61,6 +61,7 @@ def check_schema(
     max_length = helpers.peek.max_length(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
+    default = helpers.peek.default(schema=schema)
     primary_key = helpers.get_ext_prop(source=schema, name="x-primary-key")
     autoincrement = helpers.get_ext_prop(source=schema, name="x-autoincrement")
     index = helpers.get_ext_prop(source=schema, name="x-index")
@@ -72,16 +73,21 @@ def check_schema(
         nullable=nullable, generated=autoincrement is True, required=required
     )
     return_artifacts = types.ColumnArtifacts(
-        type_,
-        format=format_,
-        max_length=max_length,
-        nullable=nullable_artefact,
-        description=description,
-        primary_key=primary_key,
-        autoincrement=autoincrement,
-        index=index,
-        unique=unique,
-        foreign_key=foreign_key,
+        open_api=types.OpenAPiColumnArtifacts(
+            type=type_,
+            format=format_,
+            max_length=max_length,
+            nullable=nullable_artefact,
+            description=description,
+            default=default,
+        ),
+        extension=types.ExtensionColumnArtifacts(
+            primary_key=primary_key,
+            autoincrement=autoincrement,
+            index=index,
+            unique=unique,
+            foreign_key=foreign_key,
+        ),
     )
 
     return return_artifacts
@@ -103,15 +109,15 @@ def calculate_schema(
         The schema to be recorded for the column.
 
     """
-    schema: types.ColumnSchema = {"type": artifacts.type}
-    if artifacts.format is not None:
-        schema["format"] = artifacts.format
-    if artifacts.max_length is not None:
-        schema["maxLength"] = artifacts.max_length
-    if artifacts.description is not None:
-        schema["description"] = artifacts.description
-    if artifacts.autoincrement is not None:
-        schema["x-generated"] = artifacts.autoincrement
+    schema: types.ColumnSchema = {"type": artifacts.open_api.type}
+    if artifacts.open_api.format is not None:
+        schema["format"] = artifacts.open_api.format
+    if artifacts.open_api.max_length is not None:
+        schema["maxLength"] = artifacts.open_api.max_length
+    if artifacts.open_api.description is not None:
+        schema["description"] = artifacts.open_api.description
+    if artifacts.extension.autoincrement is not None:
+        schema["x-generated"] = artifacts.extension.autoincrement
     if dict_ignore is not None:
         schema["x-dict-ignore"] = dict_ignore
     if nullable is not None:
@@ -191,21 +197,21 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
         artifacts: The artifacts to check.
 
     """
-    if artifacts.max_length is not None:
-        if artifacts.type in {"integer", "number", "boolean"}:
+    if artifacts.open_api.max_length is not None:
+        if artifacts.open_api.type in {"integer", "number", "boolean"}:
             raise exceptions.MalformedSchemaError(
-                f"maxLength is not supported for {artifacts.type}"
+                f"maxLength is not supported for {artifacts.open_api.type}"
             )
         # Must be string type
-        if artifacts.format in {"date", "date-time"}:
+        if artifacts.open_api.format in {"date", "date-time"}:
             raise exceptions.MalformedSchemaError(
                 "maxLength is not supported for string with the format "
-                f"{artifacts.format}"
+                f"{artifacts.open_api.format}"
             )
-    if artifacts.autoincrement is not None:
-        if artifacts.type in {"number", "string", "boolean"}:
+    if artifacts.extension.autoincrement is not None:
+        if artifacts.open_api.type in {"number", "string", "boolean"}:
             raise exceptions.MalformedSchemaError(
-                f"autoincrement is not supported for {artifacts.type}"
+                f"autoincrement is not supported for {artifacts.open_api.type}"
             )
-    if artifacts.type == "boolean" and artifacts.format is not None:
+    if artifacts.open_api.type == "boolean" and artifacts.open_api.format is not None:
         raise exceptions.MalformedSchemaError("format is not supported for boolean")

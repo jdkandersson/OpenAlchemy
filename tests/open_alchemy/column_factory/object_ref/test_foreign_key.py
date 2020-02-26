@@ -6,6 +6,10 @@ from open_alchemy import exceptions
 from open_alchemy import types
 from open_alchemy.column_factory.object_ref import foreign_key
 
+OAColArt = types.OpenAPiColumnArtifacts
+ExtColArt = types.ExtensionColumnArtifacts
+ColArt = types.ColumnArtifacts
+
 
 @pytest.mark.parametrize(
     "model_schema",
@@ -42,7 +46,10 @@ def test_check_required_invalid_schema(model_schema):
     WHEN check_required is called
     THEN MalformedRelationshipError is raised.
     """
-    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key="ref_table.fk_column")
+    artifacts = ColArt(
+        open_api=OAColArt(type="fk_type"),
+        extension=ExtColArt(foreign_key="ref_table.fk_column"),
+    )
     fk_logical_name = "ref_table_fk_column"
 
     with pytest.raises(exceptions.MalformedRelationshipError):
@@ -61,7 +68,9 @@ def test_check_required_foreign_key_none():
     WHEN check_required is called
     THEN MalformedRelationshipError is raised.
     """
-    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key=None)
+    artifacts = ColArt(
+        open_api=OAColArt(type="fk_type"), extension=ExtColArt(foreign_key=None)
+    )
     fk_logical_name = "ref_table_fk_column"
     model_schema = {
         "properties": {
@@ -135,7 +144,10 @@ def test_check_required(model_schema, schemas, expected_required):
     WHEN check_required is called
     THEN the expected required is returned.
     """
-    artifacts = types.ColumnArtifacts(type="fk_type", foreign_key="ref_table.fk_column")
+    artifacts = ColArt(
+        open_api=OAColArt(type="fk_type"),
+        extension=ExtColArt(foreign_key="ref_table.fk_column"),
+    )
     fk_logical_name = "ref_table_fk_column"
 
     required = foreign_key.check_required(
@@ -191,29 +203,39 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {},
             None,
             None,
-            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+            ColArt(
+                open_api=OAColArt(type="fkType"),
+                extension=ExtColArt(foreign_key="table 1.fk"),
+            ),
         ),
         (
             {"$ref": "#/components/schemas/RefFk"},
             {"RefFk": {"type": "fkType"}},
             None,
             None,
-            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+            ColArt(
+                open_api=OAColArt(type="fkType"),
+                extension=ExtColArt(foreign_key="table 1.fk"),
+            ),
         ),
         (
             {"allOf": [{"type": "fkType"}]},
             {},
             None,
             None,
-            types.ColumnArtifacts(type="fkType", foreign_key="table 1.fk"),
+            ColArt(
+                open_api=OAColArt(type="fkType"),
+                extension=ExtColArt(foreign_key="table 1.fk"),
+            ),
         ),
         (
             {"type": "fkType", "format": "fkFormat"},
             {},
             None,
             None,
-            types.ColumnArtifacts(
-                type="fkType", format="fkFormat", foreign_key="table 1.fk"
+            ColArt(
+                open_api=OAColArt(type="fkType", format="fkFormat"),
+                extension=ExtColArt(foreign_key="table 1.fk"),
             ),
         ),
         (
@@ -221,8 +243,9 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {},
             None,
             None,
-            types.ColumnArtifacts(
-                type="fkType", max_length=1, foreign_key="table 1.fk"
+            ColArt(
+                open_api=OAColArt(type="fkType", max_length=1),
+                extension=ExtColArt(foreign_key="table 1.fk"),
             ),
         ),
         (
@@ -230,8 +253,9 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {},
             True,
             None,
-            types.ColumnArtifacts(
-                type="fkType", nullable=False, foreign_key="table 1.fk"
+            ColArt(
+                open_api=OAColArt(type="fkType", nullable=False),
+                extension=ExtColArt(foreign_key="table 1.fk"),
             ),
         ),
         (
@@ -239,8 +263,9 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
             {},
             None,
             False,
-            types.ColumnArtifacts(
-                type="fkType", nullable=False, foreign_key="table 1.fk"
+            ColArt(
+                open_api=OAColArt(type="fkType", nullable=False),
+                extension=ExtColArt(foreign_key="table 1.fk"),
             ),
         ),
     ],
