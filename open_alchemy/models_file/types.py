@@ -5,6 +5,8 @@ import functools
 import textwrap
 import typing
 
+from open_alchemy import types
+
 
 @dataclasses.dataclass
 class ColumnSchemaArtifacts:
@@ -24,6 +26,8 @@ class ColumnSchemaArtifacts:
     generated: typing.Optional[bool] = None
     # The description of the column
     description: typing.Optional[str] = None
+    # The description of the column
+    default: typing.Optional[types.TColumnDefault] = None
 
 
 @dataclasses.dataclass

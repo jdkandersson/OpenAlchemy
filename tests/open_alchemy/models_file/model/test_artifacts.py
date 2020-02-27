@@ -37,6 +37,11 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
             _ColumnSchemaArtifacts(type="type 1", description="description 1"),
         ),
         (
+            {"type": "string", "default": "value 1"},
+            None,
+            _ColumnSchemaArtifacts(type="string", default="value 1"),
+        ),
+        (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
@@ -58,6 +63,7 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
         "type with nullable",
         "type with x-generated",
         "type with description",
+        "type with default",
         "object",
         "array",
         "required given",
