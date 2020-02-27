@@ -204,6 +204,47 @@ def test_database_not_autoincrement(engine, sessionmaker):
 
 
 @pytest.mark.integration
+def test_database_default(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with a default value for a column
+    WHEN schema is created, values inserted without value for the default column
+    THEN the data is returned as it was inserted with default value.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string", "default": "name 1"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    model_instance = model(id=1)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.id == 1
+    assert queried_model.name == "name 1"
+
+
+@pytest.mark.integration
 def test_database_many_to_one_relationship(engine, sessionmaker):
     """
     GIVEN specification with a schema with a many to one object relationship
