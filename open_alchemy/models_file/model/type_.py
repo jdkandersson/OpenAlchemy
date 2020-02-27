@@ -41,6 +41,7 @@ def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
         nullable=artifacts.nullable,
         generated=artifacts.generated is True,
         required=artifacts.required,
+        defaulted=artifacts.default is not None,
     )
     if optional:
         return f"typing.Optional[{return_type}]"

@@ -143,7 +143,7 @@ def gather_artifacts(
     fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
     fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
     nullable = helpers.calculate_nullable(
-        nullable=nullable, generated=False, required=required
+        nullable=nullable, generated=False, required=required, defaulted=False
     )
 
     # Construct return values

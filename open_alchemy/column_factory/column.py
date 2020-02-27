@@ -70,7 +70,10 @@ def check_schema(
 
     # Construct return artifacts
     nullable_artefact = helpers.calculate_nullable(
-        nullable=nullable, generated=autoincrement is True, required=required
+        nullable=nullable,
+        generated=autoincrement is True,
+        required=required,
+        defaulted=default is not None,
     )
     return_artifacts = types.ColumnArtifacts(
         open_api=types.OpenAPiColumnArtifacts(
