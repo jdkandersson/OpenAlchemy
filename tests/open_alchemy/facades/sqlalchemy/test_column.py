@@ -114,6 +114,24 @@ def test_construct_nullable(nullable):
     assert returned_column.nullable == nullable
 
 
+@pytest.mark.parametrize("default", [None, "value 1"], ids=["not set", "set"])
+@pytest.mark.facade
+def test_construct_default(default):
+    """
+    GIVEN artifacts with default value
+    WHEN construct is called with the artifacts
+    THEN a column with a default value is returned.
+    """
+    artifacts = ColArt(open_api=OAColArt(type="integer", default=default))
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    if default is not None:
+        assert returned_column.server_default.arg == default
+    else:
+        assert returned_column.server_default == default
+
+
 @pytest.mark.parametrize(
     "primary_key", [None, True, False], ids=["none", "true", "false"]
 )

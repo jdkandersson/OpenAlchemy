@@ -40,6 +40,7 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         type_,
         foreign_key,
         nullable=artifacts.open_api.nullable,
+        server_default=artifacts.open_api.default,
         primary_key=artifacts.extension.primary_key,
         autoincrement=artifacts.extension.autoincrement,
         index=artifacts.extension.index,
