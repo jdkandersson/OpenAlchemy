@@ -247,7 +247,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         ),
         (
             {"type": "string", "default": "value 1"},
-            ColArt(open_api=OAColArt(type="string", default="value 1")),
+            ColArt(open_api=OAColArt(type="string", default="value 1", nullable=False)),
         ),
     ],
     ids=[

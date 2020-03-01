@@ -202,7 +202,7 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     return value
 
 
-def default(*, schema: types.Schema) -> types.TColumnDefault:
+def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.
 
@@ -212,11 +212,22 @@ def default(*, schema: types.Schema) -> types.TColumnDefault:
         schema: The schema to retrieve the default value from.
 
     """
-    if "default" not in schema:
+    # Retrieve value
+    value = peek_key(schema=schema, schemas=schemas, key="default")
+    if value is None:
         return None
-    value = schema.get("default")
+    # Assemble schema
+    resolved_schema: types.ColumnSchema = {
+        "type": type_(schema=schema, schemas=schemas)
+    }
+    format_value = format_(schema=schema, schemas=schemas)
+    max_length_value = max_length(schema=schema, schemas=schemas)
+    if format_value is not None:
+        resolved_schema["format"] = format_value
+    if max_length_value is not None:
+        resolved_schema["maxLength"] = max_length_value
     try:
-        facades.jsonschema.validate(value, schema)
+        facades.jsonschema.validate(value, resolved_schema)
     except facades.jsonschema.ValidationError:
         raise exceptions.MalformedSchemaError(
             f"The default value does not conform to the schema. The value is: {value}"

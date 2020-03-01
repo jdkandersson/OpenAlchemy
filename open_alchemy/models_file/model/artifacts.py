@@ -31,7 +31,7 @@ def gather_column_artifacts(
     format_ = helpers.peek.format_(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
-    default = helpers.peek.default(schema=schema)
+    default = helpers.peek.default(schema=schema, schemas={})
     generated = helpers.get_ext_prop(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":

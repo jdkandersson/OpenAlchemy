@@ -61,7 +61,7 @@ def check_schema(
     max_length = helpers.peek.max_length(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
-    default = helpers.peek.default(schema=schema)
+    default = helpers.peek.default(schema=schema, schemas={})
     primary_key = helpers.get_ext_prop(source=schema, name="x-primary-key")
     autoincrement = helpers.get_ext_prop(source=schema, name="x-autoincrement")
     index = helpers.get_ext_prop(source=schema, name="x-index")
