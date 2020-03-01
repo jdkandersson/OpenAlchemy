@@ -142,15 +142,23 @@ def gather_artifacts(
         )
     fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
     fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
+    fk_default = helpers.peek.default(schema=fk_schema, schemas=schemas)
     nullable = helpers.calculate_nullable(
-        nullable=nullable, generated=False, required=required, defaulted=False
+        nullable=nullable,
+        generated=False,
+        required=required,
+        defaulted=fk_default is not None,
     )
 
     # Construct return values
     logical_name = f"{tablename}_{fk_column}"
     artifacts = types.ColumnArtifacts(
         open_api=types.OpenAPiColumnArtifacts(
-            type=fk_type, format=fk_format, nullable=nullable, max_length=fk_max_length
+            type=fk_type,
+            format=fk_format,
+            nullable=nullable,
+            max_length=fk_max_length,
+            default=fk_default,
         ),
         extension=types.ExtensionColumnArtifacts(
             foreign_key=f"{tablename}.{fk_column}"

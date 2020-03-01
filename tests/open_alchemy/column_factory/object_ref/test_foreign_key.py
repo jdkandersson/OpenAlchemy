@@ -268,6 +268,16 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
                 extension=ExtColArt(foreign_key="table 1.fk"),
             ),
         ),
+        (
+            {"type": "string", "default": "value 1"},
+            {},
+            None,
+            None,
+            ColArt(
+                open_api=OAColArt(type="string", default="value 1", nullable=False),
+                extension=ExtColArt(foreign_key="table 1.fk"),
+            ),
+        ),
     ],
     ids=[
         "plain property",
@@ -277,6 +287,7 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
         "property has maxLength",
         "required True",
         "nullable False",
+        "with default",
     ],
 )
 @pytest.mark.column
