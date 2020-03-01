@@ -277,8 +277,9 @@ def test_default_invalid(schema):
             {"RefSchema": {"type": "integer", "default": 1}},
             1,
         ),
+        ({"type": "integer", "format": "int32", "default": 1}, {}, 1),
     ],
-    ids=["no default", "default given", "$ref with default"],
+    ids=["no default", "default given", "$ref with default", "format with default"],
 )
 @pytest.mark.helper
 def test_default(schema, schemas, expected_default):
