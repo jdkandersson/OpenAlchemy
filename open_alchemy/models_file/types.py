@@ -52,6 +52,8 @@ class ColumnArgArtifacts:
     init_type: str
     # The type of the argument for from_dict
     from_dict_type: str
+    # The default value for the column
+    default: typing.Optional[types.TColumnDefault] = None
 
 
 @dataclasses.dataclass

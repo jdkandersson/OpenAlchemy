@@ -144,29 +144,33 @@ def test_dict_de_ref_none():
 
 
 @pytest.mark.parametrize(
-    "nullable, required, expected_type",
+    "nullable, required, default, expected_type",
     [
-        (False, True, "int"),
-        (False, False, "typing.Optional[int]"),
-        (True, True, "typing.Optional[int]"),
-        (True, False, "typing.Optional[int]"),
+        (False, True, None, "int"),
+        (False, False, None, "typing.Optional[int]"),
+        (True, True, None, "typing.Optional[int]"),
+        (True, False, None, "typing.Optional[int]"),
+        (False, False, 1, "int"),
+        (True, False, 1, "int"),
     ],
     ids=[
         "not nullable required",
         "not nullable not required",
         "nullable required",
         "nullable not required",
+        "not nullable default",
+        "nullable default",
     ],
 )
 @pytest.mark.models_file
-def test_arg_init(nullable, required, expected_type):
+def test_arg_init(nullable, required, default, expected_type):
     """
     GIVEN nullable and required
     WHEN arg_init is called with the nullable and required
     THEN the expected type is returned.
     """
     artifacts = models_file.types.ColumnSchemaArtifacts(
-        type="integer", nullable=nullable, required=required
+        type="integer", nullable=nullable, required=required, default=default
     )
 
     returned_type = models_file._model._type.arg_init(artifacts=artifacts)

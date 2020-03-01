@@ -100,6 +100,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             init_type=arg_init_type,
             from_dict_type=arg_from_dict_type,
             name=property_name,
+            default=column_artifacts.default,
         )
         if property_required:
             td_required_props.append(prop_artifacts)

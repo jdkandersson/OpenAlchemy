@@ -657,6 +657,17 @@ def test_calculate_required_args(schema, expected_args):
         ),
         (
             {
+                "properties": {"column_1": {"type": "integer", "default": 1}},
+                "required": [],
+            },
+            [
+                _ColumnArgArtifacts(
+                    name="column_1", init_type="int", from_dict_type="int", default=1
+                )
+            ],
+        ),
+        (
+            {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": [],
             },
@@ -696,6 +707,7 @@ def test_calculate_required_args(schema, expected_args):
         "single not required",
         "single not nullable not required",
         "single required",
+        "single default",
         "single not required object",
         "multiple not required",
     ],
