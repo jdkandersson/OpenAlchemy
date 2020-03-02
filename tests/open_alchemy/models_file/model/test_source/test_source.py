@@ -278,19 +278,20 @@ def test_arg_init(artifacts, expected_source):
             ),
             ", column_1: fd_type_1 = None",
         ),
-        # (
-        #     _ArgArtifacts(
-        #         required=[],
-        #         not_required=[
-        #             _ColumnArgArtifacts(
-        #                 name="column_1",
-        #                 init_type="init_type_1",
-        #                 from_dict_type="fd_type_1",
-        #             )
-        #         ],
-        #     ),
-        #     ", column_1: fd_type_1 = None",
-        # ),
+        (
+            _ArgArtifacts(
+                required=[],
+                not_required=[
+                    _ColumnArgArtifacts(
+                        name="column_1",
+                        init_type="init_type_1",
+                        from_dict_type="fd_type_1",
+                        default="value 1",
+                    )
+                ],
+            ),
+            ', column_1: fd_type_1 = "value 1"',
+        ),
         (
             _ArgArtifacts(
                 required=[
@@ -351,7 +352,7 @@ def test_arg_init(artifacts, expected_source):
         "empty",
         "single required",
         "single not required",
-        # "single default",
+        "single default",
         "multiple required",
         "multiple required and not required",
         "multiple not required",

@@ -1,6 +1,7 @@
 """Types shared across modules."""
 
 import dataclasses
+import datetime
 import typing
 
 try:
@@ -33,6 +34,10 @@ IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
 # Type for the default value
 TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
+# Type for the default value expressed in Python
+TPyColumnDefault = typing.Optional[
+    typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime]
+]
 
 
 _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name

@@ -2,6 +2,7 @@
 # pylint: disable=useless-import-alias
 
 from . import backref as backref
+from . import oa_to_py_type as oa_to_py_type
 from . import peek as peek
 from . import ref as ref
 from .calculate_nullable import calculate_nullable as calculate_nullable
