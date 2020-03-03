@@ -110,7 +110,7 @@ def _arg_single_not_required(artifacts: types.ColumnArgArtifacts, name: str) -> 
 
     """
     required_source = _arg_single_required(artifacts, name)
-    return f"{required_source} = None"
+    return f"{required_source} = {artifacts.default}"
 
 
 def _arg(*, artifacts: types.ArgArtifacts, name: str) -> str:

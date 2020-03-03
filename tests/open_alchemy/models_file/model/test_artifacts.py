@@ -1,7 +1,6 @@
 """Tests for artifacts."""
 # pylint: disable=protected-access
 
-import datetime
 import sys
 
 import pytest
@@ -683,7 +682,7 @@ def test_calculate_required_args(schema, expected_args):
                     name="column_1",
                     init_type="datetime.date",
                     from_dict_type="datetime.date",
-                    default=datetime.date(year=2000, month=1, day=1),
+                    default="datetime.date(2000, 1, 1)",
                 )
             ],
         ),

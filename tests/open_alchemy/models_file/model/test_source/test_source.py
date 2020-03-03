@@ -286,7 +286,7 @@ def test_arg_init(artifacts, expected_source):
                         name="column_1",
                         init_type="init_type_1",
                         from_dict_type="fd_type_1",
-                        default="value 1",
+                        default='"value 1"',
                     )
                 ],
             ),
