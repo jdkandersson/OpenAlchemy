@@ -764,15 +764,13 @@ class TestMapDefault:
             ("string", None, 'value "1', '"value \\"1"'),
             ("string", "password", 'value "1', '"value \\"1"'),
             ("string", "byte", 'value "1', '"value \\"1"'),
-            ("string", "binary", 'value "1', b'"value \\"1"'),
-            ("string", "date", "2000-01-01", datetime.date(year=2000, month=1, day=1)),
+            ("string", "binary", 'value "1', 'b"value \\"1"'),
+            ("string", "date", "2000-01-01", "datetime.date(2000, 1, 1)"),
             (
                 "string",
                 "date-time",
                 "2000-01-01T01:01:01",
-                datetime.datetime(
-                    year=2000, month=1, day=1, hour=1, minute=1, second=1
-                ),
+                "datetime.datetime(2000, 1, 1, 1, 1, 1)",
             ),
             ("boolean", None, True, True),
         ],

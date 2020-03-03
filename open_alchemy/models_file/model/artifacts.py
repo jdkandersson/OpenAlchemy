@@ -181,9 +181,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     )
 
 
-def _map_default(
-    *, artifacts: types.ColumnSchemaArtifacts
-) -> oa_types.TPyColumnDefault:
+def _map_default(*, artifacts: types.ColumnSchemaArtifacts) -> oa_types.TColumnDefault:
     """
     Map default value from OpenAPI to be ready to be inserted into a Python file.
 
@@ -205,7 +203,16 @@ def _map_default(
     if artifacts.type == "string" and artifacts.format not in {"date", "date-time"}:
         default = json.dumps(default)
 
+    # Handle bytes
+    if artifacts.type == "string" and artifacts.format == "binary":
+        return f"b{default}"
+
     # Map type
-    return helpers.oa_to_py_type.convert(
+    mapped_default = helpers.oa_to_py_type.convert(
         value=default, type_=artifacts.type, format_=artifacts.format
     )
+
+    # Get the repr if it isn't a float, bool, number nor str
+    if isinstance(mapped_default, (int, float, str, bool)):
+        return mapped_default
+    return repr(mapped_default)
