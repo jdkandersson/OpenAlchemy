@@ -5,6 +5,7 @@ import typing
 import sqlalchemy
 
 from ... import exceptions
+from ... import helpers
 from ... import types
 
 # Remapping SQLAlchemy classes
@@ -36,11 +37,17 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
     foreign_key: typing.Optional[ForeignKey] = None
     if artifacts.extension.foreign_key is not None:
         foreign_key = ForeignKey(artifacts.extension.foreign_key)
+    # Map default value
+    default = helpers.oa_to_py_type.convert(
+        value=artifacts.open_api.default,
+        type_=artifacts.open_api.type,
+        format_=artifacts.open_api.format,
+    )
     return Column(
         type_,
         foreign_key,
         nullable=artifacts.open_api.nullable,
-        server_default=artifacts.open_api.default,
+        default=default,
         primary_key=artifacts.extension.primary_key,
         autoincrement=artifacts.extension.autoincrement,
         index=artifacts.extension.index,

@@ -39,6 +39,7 @@ def test_convert_invalid(value, type_, format_):
 @pytest.mark.parametrize(
     "value, type_, format_, expected_value",
     [
+        (None, "integer", None, None),
         (1, "integer", None, 1),
         (1, "integer", "int32", 1),
         (1, "integer", "int64", 1),
@@ -58,6 +59,7 @@ def test_convert_invalid(value, type_, format_):
         ),
     ],
     ids=[
+        "None",
         "integer no format",
         "integer int32",
         "integer int64",

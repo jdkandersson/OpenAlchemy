@@ -127,9 +127,25 @@ def test_construct_default(default):
     returned_column = column.construct(artifacts=artifacts)
 
     if default is not None:
-        assert returned_column.server_default.arg == default
+        assert returned_column.default.arg == default
     else:
-        assert returned_column.server_default == default
+        assert returned_column.default == default
+
+
+@pytest.mark.facade
+def test_construct_default_type_mapped():
+    """
+    GIVEN artifacts with a format that requires mapping with default value
+    WHEN construct is called with the artifacts
+    THEN a column with a default value that is mapped is returned.
+    """
+    artifacts = ColArt(
+        open_api=OAColArt(type="string", format="binary", default="value 1")
+    )
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    assert returned_column.default.arg == b"value 1"
 
 
 @pytest.mark.parametrize(
