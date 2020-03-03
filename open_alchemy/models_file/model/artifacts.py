@@ -1,5 +1,6 @@
 """Functions for model artifacts."""
 
+import json
 import sys
 import typing
 
@@ -100,7 +101,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             init_type=arg_init_type,
             from_dict_type=arg_from_dict_type,
             name=property_name,
-            default=column_artifacts.default,
+            default=_map_default(artifacts=column_artifacts),
         )
         if property_required:
             td_required_props.append(prop_artifacts)
@@ -177,4 +178,34 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 parent_class=td_not_required_parent_class,
             ),
         ),
+    )
+
+
+def _map_default(
+    *, artifacts: types.ColumnSchemaArtifacts
+) -> oa_types.TPyColumnDefault:
+    """
+    Map default value from OpenAPI to be ready to be inserted into a Python file.
+
+    First applies JSON formatting for a string and then using the type mapping helper
+    function.
+
+    Args:
+        artifacts: The artifacts from which to map the default value.
+
+    Returns:
+        The mapped default value.
+
+    """
+    default = artifacts.default
+    if default is None:
+        return None
+
+    # Escape string
+    if artifacts.type == "string" and artifacts.format not in {"date", "date-time"}:
+        default = json.dumps(default)
+
+    # Map type
+    return helpers.oa_to_py_type.convert(
+        value=default, type_=artifacts.type, format_=artifacts.format
     )

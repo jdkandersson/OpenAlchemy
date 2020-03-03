@@ -1,6 +1,7 @@
 """Tests for artifacts."""
 # pylint: disable=protected-access
 
+import datetime
 import sys
 
 import pytest
@@ -668,6 +669,26 @@ def test_calculate_required_args(schema, expected_args):
         ),
         (
             {
+                "properties": {
+                    "column_1": {
+                        "type": "string",
+                        "format": "date",
+                        "default": "2000-01-01",
+                    }
+                },
+                "required": [],
+            },
+            [
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="datetime.date",
+                    from_dict_type="datetime.date",
+                    default=datetime.date(year=2000, month=1, day=1),
+                )
+            ],
+        ),
+        (
+            {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": [],
             },
@@ -708,6 +729,7 @@ def test_calculate_required_args(schema, expected_args):
         "single not nullable not required",
         "single required",
         "single default",
+        "single type mapped",
         "single not required object",
         "multiple not required",
     ],
@@ -722,3 +744,65 @@ def test_calculate_not_required_args(schema, expected_args):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.arg.not_required == expected_args
+
+
+class TestMapDefault:
+    """Tests for _map_default."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "type_, format_, default, expected_default",
+        [
+            ("integer", None, None, None),
+            ("integer", None, 1, 1),
+            ("integer", "int32", 1, 1),
+            ("integer", "int64", 1, 1),
+            ("number", None, 1.1, 1.1),
+            ("number", "float", 1.1, 1.1),
+            ("string", None, 'value "1', '"value \\"1"'),
+            ("string", "password", 'value "1', '"value \\"1"'),
+            ("string", "byte", 'value "1', '"value \\"1"'),
+            ("string", "binary", 'value "1', b'"value \\"1"'),
+            ("string", "date", "2000-01-01", datetime.date(year=2000, month=1, day=1)),
+            (
+                "string",
+                "date-time",
+                "2000-01-01T01:01:01",
+                datetime.datetime(
+                    year=2000, month=1, day=1, hour=1, minute=1, second=1
+                ),
+            ),
+            ("boolean", None, True, True),
+        ],
+        ids=[
+            "None",
+            "integer",
+            "integer int32",
+            "integer int64",
+            "number",
+            "number float",
+            "string",
+            "string password",
+            "string byte",
+            "string binary",
+            "string date",
+            "string date-time",
+            "boolean",
+        ],
+    )
+    @pytest.mark.models_file
+    def test_(type_, format_, default, expected_default):
+        """
+        GIVEN type, format and default
+        WHEN _map_default is called with the artifacts
+        THEN the expected default value is returned.
+        """
+        artifacts = _ColumnSchemaArtifacts(type=type_, format=format_, default=default)
+
+        returned_default = models_file._model._artifacts._map_default(
+            artifacts=artifacts
+        )
+
+        assert returned_default == expected_default
