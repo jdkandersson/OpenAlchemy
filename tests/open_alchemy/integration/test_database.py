@@ -14,8 +14,10 @@ import open_alchemy
     "type_, format_, value",
     [
         ("integer", None, 1),
+        ("integer", "int32", 1),
         ("integer", "int64", 1),
         ("number", None, 1.0),
+        ("number", "float", 1.0),
         ("string", None, "some string"),
         ("string", "password", "some password"),
         ("string", "byte", "some string"),
@@ -30,8 +32,10 @@ import open_alchemy
     ],
     ids=[
         "integer",
+        "int32",
         "int64",
         "number",
+        "float",
         "string",
         "password",
         "byte",
