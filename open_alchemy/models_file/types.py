@@ -53,7 +53,7 @@ class ColumnArgArtifacts:
     # The type of the argument for from_dict
     from_dict_type: str
     # The default value for the column
-    default: types.TPyColumnDefault = None
+    default: types.TColumnDefault = None
 
 
 @dataclasses.dataclass
