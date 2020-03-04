@@ -1,21 +1,13 @@
 """Base class providing utilities for SQLAlchemy models."""
 
-import datetime
 import functools
 import json
-import sys
 import typing
 
 from . import exceptions
 from . import facades
 from . import helpers
 from . import types
-
-if sys.version_info[1] < 7:
-    # pylint: disable=import-error
-    from backports.datetime_fromisoformat import MonkeyPatch
-
-    MonkeyPatch.patch_fromisoformat()
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
 TOptUtilityBase = typing.Optional[TUtilityBase]
@@ -103,17 +95,6 @@ class UtilityBase:
         """Construct model from dictionary."""
         return model.from_dict(**kwargs)
 
-    @staticmethod
-    def _simple_type_from_dict(format_: str, value: typing.Any) -> typing.Any:
-        """Construct dictionary key for simple types."""
-        if format_ == "date":
-            return datetime.date.fromisoformat(value)
-        if format_ == "date-time":
-            return datetime.datetime.fromisoformat(value)
-        if format_ == "binary":
-            return value.encode()
-        return value
-
     @classmethod
     def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
         """
@@ -200,7 +181,9 @@ class UtilityBase:
                 continue
 
             # Handle other types
-            model_dict[name] = cls._simple_type_from_dict(format_=format_, value=value)
+            model_dict[name] = helpers.oa_to_py_type.convert(
+                value=value, type_=type_, format_=format_
+            )
 
         return cls(**model_dict)
 

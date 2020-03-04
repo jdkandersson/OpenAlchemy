@@ -148,10 +148,14 @@ def _construct_column(
     """
     # Convert to column artifacts
     column_artifacts = types.ColumnArtifacts(
-        type=artifacts.type,
-        format=artifacts.format,
-        max_length=artifacts.max_length,
-        foreign_key=f"{artifacts.tablename}.{artifacts.column_name}",
+        open_api=types.OpenAPiColumnArtifacts(
+            type=artifacts.type,
+            format=artifacts.format,
+            max_length=artifacts.max_length,
+        ),
+        extension=types.ExtensionColumnArtifacts(
+            foreign_key=f"{artifacts.tablename}.{artifacts.column_name}"
+        ),
     )
 
     # Construct column

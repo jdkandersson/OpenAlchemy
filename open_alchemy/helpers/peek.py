@@ -3,6 +3,7 @@
 import typing
 
 from open_alchemy import exceptions
+from open_alchemy import facades
 from open_alchemy import types
 
 from . import ref
@@ -197,6 +198,37 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     if not isinstance(value, str):
         raise exceptions.MalformedSchemaError(
             "The x-tablename property must be of type string."
+        )
+    return value
+
+
+def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
+    """
+    Retrieve the default value and check it against the schema.
+
+    Args:
+        schema: The schema to retrieve the default value from.
+
+    """
+    # Retrieve value
+    value = peek_key(schema=schema, schemas=schemas, key="default")
+    if value is None:
+        return None
+    # Assemble schema
+    resolved_schema: types.ColumnSchema = {
+        "type": type_(schema=schema, schemas=schemas)
+    }
+    format_value = format_(schema=schema, schemas=schemas)
+    max_length_value = max_length(schema=schema, schemas=schemas)
+    if format_value is not None:
+        resolved_schema["format"] = format_value
+    if max_length_value is not None:
+        resolved_schema["maxLength"] = max_length_value
+    try:
+        facades.jsonschema.validate(value, resolved_schema)
+    except facades.jsonschema.ValidationError:
+        raise exceptions.MalformedSchemaError(
+            f"The default value does not conform to the schema. The value is: {value}"
         )
     return value
 

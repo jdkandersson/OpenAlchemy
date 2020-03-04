@@ -37,6 +37,11 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
             _ColumnSchemaArtifacts(type="type 1", description="description 1"),
         ),
         (
+            {"type": "string", "default": "value 1"},
+            None,
+            _ColumnSchemaArtifacts(type="string", default="value 1"),
+        ),
+        (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
@@ -58,6 +63,7 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
         "type with nullable",
         "type with x-generated",
         "type with description",
+        "type with default",
         "object",
         "array",
         "required given",
@@ -651,6 +657,37 @@ def test_calculate_required_args(schema, expected_args):
         ),
         (
             {
+                "properties": {"column_1": {"type": "integer", "default": 1}},
+                "required": [],
+            },
+            [
+                _ColumnArgArtifacts(
+                    name="column_1", init_type="int", from_dict_type="int", default=1
+                )
+            ],
+        ),
+        (
+            {
+                "properties": {
+                    "column_1": {
+                        "type": "string",
+                        "format": "date",
+                        "default": "2000-01-01",
+                    }
+                },
+                "required": [],
+            },
+            [
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="datetime.date",
+                    from_dict_type="datetime.date",
+                    default="datetime.date(2000, 1, 1)",
+                )
+            ],
+        ),
+        (
+            {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": [],
             },
@@ -690,6 +727,8 @@ def test_calculate_required_args(schema, expected_args):
         "single not required",
         "single not nullable not required",
         "single required",
+        "single default",
+        "single type mapped",
         "single not required object",
         "multiple not required",
     ],
@@ -704,3 +743,63 @@ def test_calculate_not_required_args(schema, expected_args):
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.arg.not_required == expected_args
+
+
+class TestMapDefault:
+    """Tests for _map_default."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "type_, format_, default, expected_default",
+        [
+            ("integer", None, None, None),
+            ("integer", None, 1, 1),
+            ("integer", "int32", 1, 1),
+            ("integer", "int64", 1, 1),
+            ("number", None, 1.1, 1.1),
+            ("number", "float", 1.1, 1.1),
+            ("string", None, 'value "1', '"value \\"1"'),
+            ("string", "password", 'value "1', '"value \\"1"'),
+            ("string", "byte", 'value "1', '"value \\"1"'),
+            ("string", "binary", 'value "1', 'b"value \\"1"'),
+            ("string", "date", "2000-01-01", "datetime.date(2000, 1, 1)"),
+            (
+                "string",
+                "date-time",
+                "2000-01-01T01:01:01",
+                "datetime.datetime(2000, 1, 1, 1, 1, 1)",
+            ),
+            ("boolean", None, True, True),
+        ],
+        ids=[
+            "None",
+            "integer",
+            "integer int32",
+            "integer int64",
+            "number",
+            "number float",
+            "string",
+            "string password",
+            "string byte",
+            "string binary",
+            "string date",
+            "string date-time",
+            "boolean",
+        ],
+    )
+    @pytest.mark.models_file
+    def test_(type_, format_, default, expected_default):
+        """
+        GIVEN type, format and default
+        WHEN _map_default is called with the artifacts
+        THEN the expected default value is returned.
+        """
+        artifacts = _ColumnSchemaArtifacts(type=type_, format=format_, default=default)
+
+        returned_default = models_file._model._artifacts._map_default(
+            artifacts=artifacts
+        )
+
+        assert returned_default == expected_default

@@ -41,6 +41,7 @@ def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
         nullable=artifacts.nullable,
         generated=artifacts.generated is True,
         required=artifacts.required,
+        defaulted=artifacts.default is not None,
     )
     if optional:
         return f"typing.Optional[{return_type}]"
@@ -87,6 +88,12 @@ def arg_init(*, artifacts: types.ColumnSchemaArtifacts) -> str:
 
     """
     model_type = model(artifacts=artifacts)
+
+    # If has a default value, remove optional
+    if artifacts.default is not None:
+        if not model_type.startswith("typing.Optional["):
+            return model_type
+        return model_type[16:-1]
 
     # Add optional if not required unless already optional
     if not artifacts.required and not model_type.startswith("typing.Optional["):

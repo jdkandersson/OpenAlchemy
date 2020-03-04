@@ -1,7 +1,6 @@
 """Integration tests against database."""
 
 import datetime
-import typing
 
 import pytest
 import sqlalchemy
@@ -14,8 +13,10 @@ import open_alchemy
     "type_, format_, value",
     [
         ("integer", None, 1),
+        ("integer", "int32", 1),
         ("integer", "int64", 1),
-        ("number", None, 1.0),
+        ("number", None, 1.1),
+        ("number", "float", 1.1),
         ("string", None, "some string"),
         ("string", "password", "some password"),
         ("string", "byte", "some string"),
@@ -30,8 +31,10 @@ import open_alchemy
     ],
     ids=[
         "integer",
+        "int32",
         "int64",
         "number",
+        "float",
         "string",
         "password",
         "byte",
@@ -42,9 +45,7 @@ import open_alchemy
     ],
 )
 @pytest.mark.integration
-def test_database_types(
-    engine, sessionmaker, type_: str, format_: typing.Optional[str], value: typing.Any
-):
+def test_database_types(engine, sessionmaker, type_, format_, value):
     """
     GIVEN specification with a schema with a given type column and a value for that
         column
@@ -82,6 +83,86 @@ def test_database_types(
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == value
+
+
+@pytest.mark.parametrize(
+    "type_, format_, default, expected_value",
+    [
+        ("integer", None, 1, 1),
+        ("integer", "int32", 1, 1),
+        ("integer", "int64", 1, 1),
+        ("number", None, 1.1, 1.1),
+        ("number", "float", 1.1, 1.1),
+        ("string", None, "some string", "some string"),
+        ("string", "password", "some password", "some password"),
+        ("string", "byte", "some string", "some string"),
+        ("string", "binary", "some bytes", b"some bytes"),
+        ("string", "date", "2000-01-01", datetime.date(year=2000, month=1, day=1)),
+        (
+            "string",
+            "date-time",
+            "2000-01-01T01:01:01",
+            datetime.datetime(year=2000, month=1, day=1, hour=1, minute=1, second=1),
+        ),
+        ("boolean", None, True, True),
+    ],
+    ids=[
+        "integer",
+        "int32",
+        "int64",
+        "number",
+        "float",
+        "string",
+        "password",
+        "byte",
+        "binary",
+        "date",
+        "date-time",
+        "boolean",
+    ],
+)
+@pytest.mark.integration
+def test_database_types_default(
+    engine, sessionmaker, type_, format_, default, expected_value
+):
+    """
+    GIVEN specification with a schema with a given type column and a default for that
+        column
+    WHEN schema is created and an instance is added to the session
+    THEN the instance with the default value is returned when the session is queried for
+        it.
+    """
+    # Defining specification
+    column_schema = {"type": type_, "x-primary-key": True, "default": default}
+    if format_ is not None:
+        column_schema["format"] = format_
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {"column": column_schema},
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model()
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == expected_value
 
 
 @pytest.mark.parametrize("index", ["x-primary-key", "x-index", "x-unique"])
@@ -201,6 +282,47 @@ def test_database_not_autoincrement(engine, sessionmaker):
     session.add(model_instance)
     with pytest.raises(sqlalchemy.orm.exc.FlushError):
         session.flush()
+
+
+@pytest.mark.integration
+def test_database_default(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with a default value for a column
+    WHEN schema is created, values inserted without value for the default column
+    THEN the data is returned as it was inserted with default value.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string", "default": "name 1"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    model_instance = model(id=1)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.id == 1
+    assert queried_model.name == "name 1"
 
 
 @pytest.mark.integration

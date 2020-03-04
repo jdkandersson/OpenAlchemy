@@ -1,5 +1,6 @@
 """Functions for model artifacts."""
 
+import json
 import sys
 import typing
 
@@ -31,6 +32,7 @@ def gather_column_artifacts(
     format_ = helpers.peek.format_(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
+    default = helpers.peek.default(schema=schema, schemas={})
     generated = helpers.get_ext_prop(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":
@@ -46,6 +48,7 @@ def gather_column_artifacts(
         de_ref=de_ref,
         generated=generated,
         description=description,
+        default=default,
     )
 
 
@@ -98,6 +101,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             init_type=arg_init_type,
             from_dict_type=arg_from_dict_type,
             name=property_name,
+            default=_map_default(artifacts=column_artifacts),
         )
         if property_required:
             td_required_props.append(prop_artifacts)
@@ -175,3 +179,40 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             ),
         ),
     )
+
+
+def _map_default(*, artifacts: types.ColumnSchemaArtifacts) -> oa_types.TColumnDefault:
+    """
+    Map default value from OpenAPI to be ready to be inserted into a Python file.
+
+    First applies JSON formatting for a string and then using the type mapping helper
+    function.
+
+    Args:
+        artifacts: The artifacts from which to map the default value.
+
+    Returns:
+        The mapped default value.
+
+    """
+    default = artifacts.default
+    if default is None:
+        return None
+
+    # Escape string
+    if artifacts.type == "string" and artifacts.format not in {"date", "date-time"}:
+        default = json.dumps(default)
+
+    # Handle bytes
+    if artifacts.type == "string" and artifacts.format == "binary":
+        return f"b{default}"
+
+    # Map type
+    mapped_default = helpers.oa_to_py_type.convert(
+        value=default, type_=artifacts.type, format_=artifacts.format
+    )
+
+    # Get the repr if it isn't a float, bool, number nor str
+    if isinstance(mapped_default, (int, float, str, bool)):
+        return mapped_default
+    return repr(mapped_default)

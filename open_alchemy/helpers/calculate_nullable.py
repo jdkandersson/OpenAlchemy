@@ -4,28 +4,36 @@ import typing
 
 
 def calculate_nullable(
-    *, nullable: typing.Optional[bool], generated: bool, required: typing.Optional[bool]
+    *,
+    nullable: typing.Optional[bool],
+    generated: bool,
+    defaulted: bool,
+    required: typing.Optional[bool],
 ) -> bool:
     """
     Calculate the value of the nullable field.
 
     The following is the truth table for the nullable property.
-    +------------+-----------+-----------------+-------------------+
-    | required   | generated | schema nullable | returned nullable |
-    +============+===========+=================+===================+
-    | None/False | False     | not given       | True              |
-    +------------+-----------+-----------------+-------------------+
-    | None/False | True      | not given       | False             |
-    +------------+-----------+-----------------+-------------------+
-    | True       | X         | not given       | False             |
-    +------------+-----------+-----------------+-------------------+
-    | X          | X         | False           | False             |
-    +------------+-----------+-----------------+-------------------+
-    | X          | X         | True            | True              |
-    +------------+-----------+-----------------+-------------------+
+    +------------+-----------+---------+-----------------+-------------------+
+    | required   | generated | default | schema nullable | returned nullable |
+    +============+===========+=========+=================+===================+
+    | None/False | None      | None    | not given       | True              |
+    +------------+-----------+---------+-----------------+-------------------+
+    | None/False | None      | given   | not given       | False             |
+    +------------+-----------+---------+-----------------+-------------------+
+    | None/False | False     | X       | not given       | True              |
+    +------------+-----------+---------+-----------------+-------------------+
+    | None/False | True      | X       | not given       | False             |
+    +------------+-----------+---------+-----------------+-------------------+
+    | True       | X         | X       | not given       | False             |
+    +------------+-----------+---------+-----------------+-------------------+
+    | X          | X         | X       | False           | False             |
+    +------------+-----------+---------+-----------------+-------------------+
+    | X          | X         | X       | True            | True              |
+    +------------+-----------+---------+-----------------+-------------------+
 
     To summarize, if nullable is the schema the value for it is used. Otherwise True
-    is returned unless required is True or generated is True.
+    is returned unless required is True, generated is True or there is a default value.
 
     Args:
         nullable: Whether the property is nullable.
@@ -41,6 +49,8 @@ def calculate_nullable(
         if required:
             return False
         if generated:
+            return False
+        if defaulted:
             return False
         return True
     if nullable:

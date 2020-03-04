@@ -5,6 +5,7 @@ import typing
 import sqlalchemy
 
 from ... import exceptions
+from ... import helpers
 from ... import types
 
 # Remapping SQLAlchemy classes
@@ -34,16 +35,23 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
     """
     type_ = _determine_type(artifacts=artifacts)
     foreign_key: typing.Optional[ForeignKey] = None
-    if artifacts.foreign_key is not None:
-        foreign_key = ForeignKey(artifacts.foreign_key)
+    if artifacts.extension.foreign_key is not None:
+        foreign_key = ForeignKey(artifacts.extension.foreign_key)
+    # Map default value
+    default = helpers.oa_to_py_type.convert(
+        value=artifacts.open_api.default,
+        type_=artifacts.open_api.type,
+        format_=artifacts.open_api.format,
+    )
     return Column(
         type_,
         foreign_key,
-        nullable=artifacts.nullable,
-        primary_key=artifacts.primary_key,
-        autoincrement=artifacts.autoincrement,
-        index=artifacts.index,
-        unique=artifacts.unique,
+        nullable=artifacts.open_api.nullable,
+        default=default,
+        primary_key=artifacts.extension.primary_key,
+        autoincrement=artifacts.extension.autoincrement,
+        index=artifacts.extension.index,
+        unique=artifacts.extension.unique,
     )
 
 
@@ -62,18 +70,18 @@ def _determine_type(*, artifacts: types.ColumnArtifacts) -> Type:
     """
     # Determining the type
     type_: typing.Optional[Type] = None
-    if artifacts.type == "integer":
+    if artifacts.open_api.type == "integer":
         type_ = _handle_integer(artifacts=artifacts)
-    elif artifacts.type == "number":
+    elif artifacts.open_api.type == "number":
         type_ = _handle_number(artifacts=artifacts)
-    elif artifacts.type == "string":
+    elif artifacts.open_api.type == "string":
         type_ = _handle_string(artifacts=artifacts)
-    elif artifacts.type == "boolean":
+    elif artifacts.open_api.type == "boolean":
         type_ = _handle_boolean(artifacts=artifacts)
 
     if type_ is None:
         raise exceptions.FeatureNotImplementedError(
-            f"{artifacts.type} has not been implemented"
+            f"{artifacts.open_api.type} has not been implemented"
         )
 
     return type_
@@ -94,12 +102,12 @@ def _handle_integer(
         The SQLAlchemy integer type of the column.
 
     """
-    if artifacts.format is None or artifacts.format == "int32":
+    if artifacts.open_api.format is None or artifacts.open_api.format == "int32":
         return Integer
-    if artifacts.format == "int64":
+    if artifacts.open_api.format == "int64":
         return BigInteger
     raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for integer is not supported."
+        f"{artifacts.open_api.format} format for integer is not supported."
     )
 
 
@@ -116,10 +124,10 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> Number:
         The SQLAlchemy number type of the column.
 
     """
-    if artifacts.format is None or artifacts.format == "float":
+    if artifacts.open_api.format is None or artifacts.open_api.format == "float":
         return Number
     raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for number is not supported."
+        f"{artifacts.open_api.format} format for number is not supported."
     )
 
 
@@ -138,20 +146,20 @@ def _handle_string(
         The SQLAlchemy string type of the column.
 
     """
-    if artifacts.format in {None, "byte", "password"}:
-        if artifacts.max_length is None:
+    if artifacts.open_api.format in {None, "byte", "password"}:
+        if artifacts.open_api.max_length is None:
             return String
-        return String(length=artifacts.max_length)
-    if artifacts.format == "binary":
-        if artifacts.max_length is None:
+        return String(length=artifacts.open_api.max_length)
+    if artifacts.open_api.format == "binary":
+        if artifacts.open_api.max_length is None:
             return Binary
-        return Binary(length=artifacts.max_length)
-    if artifacts.format == "date":
+        return Binary(length=artifacts.open_api.max_length)
+    if artifacts.open_api.format == "date":
         return Date
-    if artifacts.format == "date-time":
+    if artifacts.open_api.format == "date-time":
         return DateTime
     raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.format} format for string is not supported."
+        f"{artifacts.open_api.format} format for string is not supported."
     )
 
 

@@ -1,6 +1,7 @@
 """Types shared across modules."""
 
 import dataclasses
+import datetime
 import typing
 
 try:
@@ -31,6 +32,12 @@ AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
 Index = typing.Dict[str, typing.Any]
 IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
+# Type for the default value
+TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
+# Type for the default value expressed in Python
+TPyColumnDefault = typing.Optional[
+    typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime]
+]
 
 
 _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
@@ -41,6 +48,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "maxLength": int,
         "nullable": bool,
         "description": str,
+        "default": TColumnDefault,
         "x-generated": bool,
     },
     total=False,
@@ -54,22 +62,45 @@ class ColumnSchema(_ColumnSchemaBase, total=True):
 
 
 @dataclasses.dataclass
-class ColumnArtifacts:
-    """Information required to construct a column."""
+class OpenAPiColumnArtifacts:
+    """OpenAPI information required to construct a column."""
 
-    # OpenAPI properties
     type: str
     format: typing.Optional[str] = None
     max_length: typing.Optional[int] = None
     nullable: bool = True
     description: typing.Optional[str] = None
+    default: TColumnDefault = None
 
-    # Extension properties
+
+@dataclasses.dataclass
+class ExtensionColumnArtifacts:
+    """Extension property information required to construct a column."""
+
     primary_key: typing.Optional[bool] = None
     autoincrement: typing.Optional[bool] = None
     index: typing.Optional[bool] = None
     unique: typing.Optional[bool] = None
     foreign_key: typing.Optional[str] = None
+
+
+@dataclasses.dataclass
+class ColumnArtifacts:
+    """Information required to construct a column."""
+
+    open_api: OpenAPiColumnArtifacts
+    extension: ExtensionColumnArtifacts
+
+    def __init__(
+        self,
+        open_api: OpenAPiColumnArtifacts,
+        extension: typing.Optional[ExtensionColumnArtifacts] = None,
+    ) -> None:
+        """Construct."""
+        self.open_api = open_api
+        if extension is None:
+            extension = ExtensionColumnArtifacts()
+        self.extension = extension
 
 
 @dataclasses.dataclass

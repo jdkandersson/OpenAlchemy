@@ -249,6 +249,51 @@ def test_tablename(schema, expected_tablename):
 
 
 @pytest.mark.parametrize(
+    "schema",
+    [
+        {"type": "integer", "default": "1"},
+        {"type": "string", "maxLength": 1, "default": "value 1"},
+    ],
+    ids=["default different to schema type", "default different to schema maxLength"],
+)
+@pytest.mark.helper
+def test_default_invalid(schema):
+    """
+    GIVEN schema with an invalid default
+    WHEN default is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.default(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_default",
+    [
+        ({"type": "integer"}, {}, None),
+        ({"type": "integer", "default": 1}, {}, 1),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "integer", "default": 1}},
+            1,
+        ),
+        ({"type": "integer", "format": "int32", "default": 1}, {}, 1),
+    ],
+    ids=["no default", "default given", "$ref with default", "format with default"],
+)
+@pytest.mark.helper
+def test_default(schema, schemas, expected_default):
+    """
+    GIVEN schema
+    WHEN default is called with the schema
+    THEN the expected default value is returned.
+    """
+    default = helpers.peek.default(schema=schema, schemas=schemas)
+
+    assert default == expected_default
+
+
+@pytest.mark.parametrize(
     "schema, schemas, expected_value",
     [
         ({}, {}, None),

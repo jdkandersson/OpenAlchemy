@@ -51,11 +51,11 @@ def check_required(
         raise exceptions.MalformedRelationshipError(
             f"{fk_logical_name} does not have a type. "
         )
-    if model_fk_type != artifacts.type:
+    if model_fk_type != artifacts.open_api.type:
         raise exceptions.MalformedRelationshipError(
             "The foreign key required for the relationship has a different type than "
             "the property already defined under that name. "
-            f"The required type is {artifacts.type}. "
+            f"The required type is {artifacts.open_api.type}. "
             f"The {fk_logical_name} property has the {model_fk_type} type."
         )
 
@@ -67,20 +67,21 @@ def check_required(
         raise exceptions.MalformedRelationshipError(
             f"The property already defined under {fk_logical_name} does not define a "
             'foreign key constraint. Use the "x-foreign-key" extension property to '
-            f'define a foreign key constraint, for example: "{artifacts.foreign_key}".'
+            "define a foreign key constraint, for example: "
+            f'{artifacts.extension.foreign_key}".'
         )
-    foreign_key = artifacts.foreign_key
+    foreign_key = artifacts.extension.foreign_key
     # Should not happen
     if foreign_key is None:
         raise exceptions.MalformedRelationshipError(
             "Artifacts for constructing a foreign key does not include a foreign key "
             "constraint."
         )
-    if model_foreign_key != artifacts.foreign_key:
+    if model_foreign_key != artifacts.extension.foreign_key:
         raise exceptions.MalformedRelationshipError(
             "The foreign key required for the relationship has a different foreign "
             "key constraint than the property already defined under that name. "
-            f"The required constraint is {artifacts.foreign_key}. "
+            f"The required constraint is {artifacts.extension.foreign_key}. "
             f"The {fk_logical_name} property has the {model_foreign_key} constraint."
         )
 
@@ -141,18 +142,27 @@ def gather_artifacts(
         )
     fk_format = helpers.peek.format_(schema=fk_schema, schemas=schemas)
     fk_max_length = helpers.peek.max_length(schema=fk_schema, schemas=schemas)
+    fk_default = helpers.peek.default(schema=fk_schema, schemas=schemas)
     nullable = helpers.calculate_nullable(
-        nullable=nullable, generated=False, required=required
+        nullable=nullable,
+        generated=False,
+        required=required,
+        defaulted=fk_default is not None,
     )
 
     # Construct return values
     logical_name = f"{tablename}_{fk_column}"
     artifacts = types.ColumnArtifacts(
-        type=fk_type,
-        format=fk_format,
-        nullable=nullable,
-        foreign_key=f"{tablename}.{fk_column}",
-        max_length=fk_max_length,
+        open_api=types.OpenAPiColumnArtifacts(
+            type=fk_type,
+            format=fk_format,
+            nullable=nullable,
+            max_length=fk_max_length,
+            default=fk_default,
+        ),
+        extension=types.ExtensionColumnArtifacts(
+            foreign_key=f"{tablename}.{fk_column}"
+        ),
     )
     return logical_name, artifacts
 

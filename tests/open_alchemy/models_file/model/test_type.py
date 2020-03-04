@@ -15,26 +15,47 @@ from open_alchemy import models_file
 
 
 @pytest.mark.parametrize(
-    "type_, format_, nullable, required, generated, de_ref, expected_type",
+    "type_, format_, nullable, required, generated, de_ref, default, expected_type",
     [
-        ("integer", None, False, None, None, None, "int"),
-        ("integer", "int32", False, None, None, None, "int"),
-        ("integer", "int64", False, None, None, None, "int"),
-        ("number", None, False, None, None, None, "float"),
-        ("number", "float", False, None, None, None, "float"),
-        ("string", None, False, None, None, None, "str"),
-        ("string", "password", False, None, None, None, "str"),
-        ("string", "byte", False, None, None, None, "str"),
-        ("string", "binary", False, None, None, None, "bytes"),
-        ("string", "date", False, None, None, None, "datetime.date"),
-        ("string", "date-time", False, None, None, None, "datetime.datetime"),
-        ("boolean", None, False, None, None, None, "bool"),
-        ("object", None, False, None, None, "RefModel", '"TRefModel"'),
-        ("array", None, None, None, None, "RefModel", 'typing.Sequence["TRefModel"]'),
-        ("integer", None, None, None, None, None, "typing.Optional[int]"),
-        ("integer", None, None, True, None, None, "int"),
-        ("integer", None, None, None, True, None, "int"),
-        ("integer", None, None, None, False, None, "typing.Optional[int]"),
+        ("integer", None, False, None, None, None, None, "int"),
+        ("integer", "int32", False, None, None, None, None, "int"),
+        ("integer", "int64", False, None, None, None, None, "int"),
+        ("number", None, False, None, None, None, None, "float"),
+        ("number", "float", False, None, None, None, None, "float"),
+        ("string", None, False, None, None, None, None, "str"),
+        ("string", "password", False, None, None, None, None, "str"),
+        ("string", "byte", False, None, None, None, None, "str"),
+        ("string", "binary", False, None, None, None, None, "bytes"),
+        ("string", "date", False, None, None, None, None, "datetime.date"),
+        ("string", "date-time", False, None, None, None, None, "datetime.datetime"),
+        ("boolean", None, False, None, None, None, None, "bool"),
+        ("object", None, False, None, None, "RefModel", None, '"TRefModel"'),
+        ("object", None, False, None, None, "RefModel", "value 1", '"TRefModel"'),
+        (
+            "array",
+            None,
+            None,
+            None,
+            None,
+            "RefModel",
+            None,
+            'typing.Sequence["TRefModel"]',
+        ),
+        (
+            "array",
+            None,
+            None,
+            None,
+            None,
+            "RefModel",
+            "value 1",
+            'typing.Sequence["TRefModel"]',
+        ),
+        ("integer", None, None, None, None, None, None, "typing.Optional[int]"),
+        ("integer", None, None, True, None, None, None, "int"),
+        ("integer", None, None, None, True, None, None, "int"),
+        ("integer", None, None, None, False, None, None, "typing.Optional[int]"),
+        ("integer", None, None, None, False, None, 1, "int"),
     ],
     ids=[
         "integer no format",
@@ -50,15 +71,20 @@ from open_alchemy import models_file
         "string date-time format",
         "boolean no format",
         "object",
+        "object defult",
         "array",
+        "array default",
         "nullable and required None",
         "nullable None required True",
         "nullable None generated True",
         "nullable None generated False",
+        "nullable None default given",
     ],
 )
 @pytest.mark.models_file
-def test_model(type_, format_, nullable, required, generated, de_ref, expected_type):
+def test_model(
+    type_, format_, nullable, required, generated, de_ref, default, expected_type
+):
     """
     GIVEN type, format, nullable and required
     WHEN model is called with the type, format, nullable and required
@@ -71,6 +97,7 @@ def test_model(type_, format_, nullable, required, generated, de_ref, expected_t
         required=required,
         de_ref=de_ref,
         generated=generated,
+        default=default,
     )
 
     returned_type = models_file._model._type.model(artifacts=artifacts)
@@ -117,29 +144,33 @@ def test_dict_de_ref_none():
 
 
 @pytest.mark.parametrize(
-    "nullable, required, expected_type",
+    "nullable, required, default, expected_type",
     [
-        (False, True, "int"),
-        (False, False, "typing.Optional[int]"),
-        (True, True, "typing.Optional[int]"),
-        (True, False, "typing.Optional[int]"),
+        (False, True, None, "int"),
+        (False, False, None, "typing.Optional[int]"),
+        (True, True, None, "typing.Optional[int]"),
+        (True, False, None, "typing.Optional[int]"),
+        (False, False, 1, "int"),
+        (True, False, 1, "int"),
     ],
     ids=[
         "not nullable required",
         "not nullable not required",
         "nullable required",
         "nullable not required",
+        "not nullable default",
+        "nullable default",
     ],
 )
 @pytest.mark.models_file
-def test_arg_init(nullable, required, expected_type):
+def test_arg_init(nullable, required, default, expected_type):
     """
     GIVEN nullable and required
     WHEN arg_init is called with the nullable and required
     THEN the expected type is returned.
     """
     artifacts = models_file.types.ColumnSchemaArtifacts(
-        type="integer", nullable=nullable, required=required
+        type="integer", nullable=nullable, required=required, default=default
     )
 
     returned_type = models_file._model._type.arg_init(artifacts=artifacts)
