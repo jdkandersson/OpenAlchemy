@@ -206,8 +206,6 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     """
     Retrieve the default value and check it against the schema.
 
-    Assume than any $ref and allOf in the schema has already been resolved.
-
     Args:
         schema: The schema to retrieve the default value from.
 
