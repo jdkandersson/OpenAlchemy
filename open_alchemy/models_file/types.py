@@ -27,7 +27,7 @@ class ColumnSchemaArtifacts:
     # The description of the column
     description: typing.Optional[str] = None
     # The description of the column
-    default: typing.Optional[types.TColumnDefault] = None
+    default: types.TColumnDefault = None
 
 
 @dataclasses.dataclass
