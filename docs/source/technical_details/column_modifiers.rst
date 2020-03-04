@@ -373,3 +373,39 @@ property to the <table name>.<column>. For example:
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
     relationships between tables.
+
+.. _default:
+
+Default
+-------
+
+To add a default value for a column use the OpenAPI default property:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          default: Unknown
+
+The default value is added to the column constructor as the default value as a
+"Scalar Default" in SQLAlchemy. The following property types support a default
+value (including all their formats supported by OpenAlchemy):
+
+* *integer*,
+* *number*,
+* *string* and
+* *boolean*.
+
+Adding a default to an *object* or *array* type has no effect in OpenAlchemy.
+
+.. seealso::
+
+   `SQLAlchemy "Scalar Default" <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
+      Documentation for the scalar default value in SQLAlchemy.
