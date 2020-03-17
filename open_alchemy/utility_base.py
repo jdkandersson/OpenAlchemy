@@ -225,11 +225,11 @@ class UtilityBase:
 
     @staticmethod
     def _object_to_dict_relationship(
-        *, value: typing.Any, name: str
+        *, value: typing.Any, name: str, include_backrefs: bool = False
     ) -> typing.Dict[str, typing.Any]:
         """Call to_dict on relationshup object."""
         try:
-            return value.to_dict()
+            return value.to_dict(include_backrefs=include_backrefs)
         except AttributeError:
             raise exceptions.InvalidModelInstanceError(
                 f"The {name} object property instance does not have a to_dict "
@@ -262,11 +262,18 @@ class UtilityBase:
 
     @classmethod
     def _object_to_dict(
-        cls, value, name: str, spec: types.Schema, read_only: bool
+        cls,
+        value,
+        name: str,
+        spec: types.Schema,
+        read_only: bool,
+        include_backrefs: bool = False,
     ) -> typing.Dict[str, typing.Any]:
         """Call to_dict on object."""
         if not read_only:
-            return cls._object_to_dict_relationship(value=value, name=name)
+            return cls._object_to_dict_relationship(
+                value=value, name=name, include_backrefs=include_backrefs
+            )
         return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
 
     @staticmethod
@@ -302,6 +309,7 @@ class UtilityBase:
         name: str,
         array_context: bool = False,
         read_only: bool = False,
+        include_backrefs: bool = False,
     ) -> typing.Any:
         """
         Perform property level to dict operation.
@@ -348,6 +356,7 @@ class UtilityBase:
                 name=name,
                 array_context=True,
                 read_only=read_only,
+                include_backrefs=include_backrefs,
             )
             array_dict_values = map(to_dict_property, value)
             return list(array_dict_values)
@@ -358,7 +367,11 @@ class UtilityBase:
         # Handle object
         if type_ == "object":
             return cls._object_to_dict(
-                value=value, name=name, spec=spec, read_only=read_only
+                value=value,
+                name=name,
+                spec=spec,
+                read_only=read_only,
+                include_backrefs=include_backrefs,
             )
 
         # Handle other types
@@ -382,7 +395,7 @@ class UtilityBase:
         for name, spec in properties.items():
             value = getattr(self, name, None)
             return_dict[name] = self._to_dict_property(
-                spec=spec, name=name, value=value
+                spec=spec, name=name, value=value, include_backrefs=include_backrefs
             )
 
         return return_dict
