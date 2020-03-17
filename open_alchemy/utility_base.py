@@ -46,7 +46,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls, include_backrefs = False) -> types.Schema:
+    def _get_properties(cls, include_backrefs: bool = False) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -65,10 +65,8 @@ class UtilityBase:
                 "The model schema does not have any properties."
             )
         backrefs = schema.get("x-backrefs")
-        if include_backrefs and backrefs is not None:
-            return {**properties, **backrefs} 
-	
-        return properties
+        return {**properties,
+                **backrefs} if include_backrefs and backrefs is not None else properties
 
     @staticmethod
     def _get_model(
@@ -363,7 +361,7 @@ class UtilityBase:
         # Handle other types
         return cls._simple_type_to_dict(format_=format_, value=value)
 
-    def to_dict(self, include_backrefs = True) -> typing.Dict[str, typing.Any]:
+    def to_dict(self, include_backrefs: bool = False) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
 
