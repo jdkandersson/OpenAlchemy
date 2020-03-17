@@ -65,8 +65,11 @@ class UtilityBase:
                 "The model schema does not have any properties."
             )
         backrefs = schema.get("x-backrefs")
-        return {**properties,
-                **backrefs} if include_backrefs and backrefs is not None else properties
+        return (
+            {**properties, **backrefs}
+            if include_backrefs and backrefs is not None
+            else properties
+        )
 
     @staticmethod
     def _get_model(
