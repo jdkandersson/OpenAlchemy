@@ -352,7 +352,7 @@ class TestObjectToDictRelationship:
         )
 
         assert returned_value == value.to_dict.return_value
-        value.to_dict.assert_called_once_with()
+        value.to_dict.assert_called_once_with(include_backrefs=False)
 
 
 class TestObjectToDictReadOnly:
