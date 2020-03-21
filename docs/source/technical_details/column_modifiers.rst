@@ -343,6 +343,11 @@ objects. For example:
             - division
             - salary
 
+.. seealso::
+
+   `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
+      Documentation for defining composite unique constraint in SQLAlchemy.
+
 .. _foreign-key:
 
 Foreign Key Constraint

@@ -10,7 +10,8 @@ class Employee(Base):
     __tablename__ = "employee"
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String)
+    address = sa.Column(sa.String)
     division = sa.Column(sa.String)
 
 
-sa.Index(None, Employee.name, Employee.division)
+sa.UniqueConstraint(None, Employee.address, Employee.division)

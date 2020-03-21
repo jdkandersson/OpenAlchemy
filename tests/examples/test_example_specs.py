@@ -85,7 +85,7 @@ def cleanup_models():
             {},
         ),
         (
-            "unique-constraint-example-spec.yml",
+            "composite_unique/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
@@ -157,7 +157,7 @@ def test_single_model(
             ["INDEX ix_employee_name ON employee (name, division)"],
         ),
         (
-            "unique-constraint-example-spec.yml",
+            "composite_unique/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE name='employee'",
             ["UNIQUE (division, address)"],

@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate OpenAlchemy MVP.
+  description: API to illustrate OpenAlchemy composite unique constraint feature.
   version: "0.1"
 
 paths:
@@ -45,5 +45,5 @@ components:
           description: The part of the company the employee works in.
           example: Engineering
       x-composite-unique:
-        - division
         - address
+        - division
