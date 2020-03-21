@@ -7,4 +7,4 @@ Examples
 
    connexion
    alembic
-   simple_example
+   simple
