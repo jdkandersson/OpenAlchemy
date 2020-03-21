@@ -67,7 +67,7 @@ def cleanup_models():
             {},
         ),
         (
-            "composite-index-example-spec.yml",
+            "composite_index/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
@@ -151,7 +151,7 @@ def test_single_model(
             ],
         ),
         (
-            "composite-index-example-spec.yml",
+            "composite_index/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE type='index'",
             ["INDEX ix_employee_name ON employee (name, division)"],
