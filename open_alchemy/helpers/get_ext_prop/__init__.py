@@ -45,9 +45,16 @@ def get_ext_prop(
         The value of the property or the default value if it does not exist.
 
     """
+    # Check for presence of name
+    if name not in source:
+        return default
+
+    # Retrieve value
     value = source.get(name)
     if value is None:
-        return default
+        raise exceptions.MalformedExtensionPropertyError(
+            f"The value of the {name} extension property cannot be null."
+        )
 
     schema = _SCHEMAS.get(name)
     try:

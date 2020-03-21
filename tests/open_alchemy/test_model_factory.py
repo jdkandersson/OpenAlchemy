@@ -37,6 +37,27 @@ def test_missing_tablename():
 
 
 @pytest.mark.model
+def test_tablename_none():
+    """
+    GIVEN schemas with schema that has None for the tablename
+    WHEN model_factory is called with the name of the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        model_factory.model_factory(
+            name="SingleProperty",
+            base=mock.MagicMock,
+            schemas={
+                "SingleProperty": {
+                    "x-tablename": None,
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                }
+            },
+        )
+
+
+@pytest.mark.model
 def test_not_object():
     """
     GIVEN schemas with schema that is not an object

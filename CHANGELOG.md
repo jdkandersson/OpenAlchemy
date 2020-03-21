@@ -4,6 +4,7 @@
 
 - Add support for remote references to a file at a URL.
 - Add support for default values.
+- Add check for whether the value of an extension property is null.
 
 ## Version 0.14.0 - 2020-02-21
 
