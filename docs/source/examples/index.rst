@@ -8,4 +8,5 @@ Examples
    connexion
    alembic
    simple
+   composite_index
    all_of

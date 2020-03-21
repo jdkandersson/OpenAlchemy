@@ -13,4 +13,4 @@ class Employee(Base):
     division = sa.Column(sa.String, index=True)
 
 
-sa.Index(None, "name", "division")
+sa.Index(None, Employee.name, Employee.division)
