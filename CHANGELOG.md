@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.0.0 - 2020-03-21
 
 - Add support for remote references to a file at a URL.
 - Add support for default values.
