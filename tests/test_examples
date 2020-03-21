@@ -14,8 +14,6 @@ python relationship_one_to_one_models.py
 python relationship_one_to_many_models.py
 python relationship_many_to_many_models.py
 python relationship_many_to_many_models_traditional.py
-python all_of_column_models.py
-python all_of_model_models.py
 python unique_constraint_models.py
 python composite_index_models.py
 python default_models.py
@@ -27,4 +25,8 @@ cd -
 cd examples/simple
 python models.py
 python models_traditional.py
+cd -
+cd examples/all_of
+python column_models.py
+python model_models.py
 cd -
