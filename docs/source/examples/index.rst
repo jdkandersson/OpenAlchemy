@@ -8,3 +8,4 @@ Examples
    connexion
    alembic
    simple
+   all_of
