@@ -17,14 +17,14 @@ Getting Started
 
 If you have the following OpenAPI specification:
 
-.. literalinclude:: ../../examples/simple-example-spec.yml
+.. literalinclude:: ../../examples/simple/example-spec.yml
     :language: yaml
     :linenos:
 
 To use SQLAlchemy to retrieve *Employees* from a database you need the
 following *models.py* file:
 
-.. literalinclude:: ../../examples/simple_models.py
+.. literalinclude:: ../../examples/simple/models.py
     :language: python
     :linenos:
 
@@ -122,7 +122,7 @@ in the same way as the models that can be imported from *open_alchemy.models*
 and provide the full functionality of *SQLAlchemy* models. The following is a
 sample file generated for the above example:
 
-.. literalinclude:: ../../examples/simple_models_auto.py
+.. literalinclude:: ../../examples/simple/models_auto.py
     :language: python
     :linenos:
 

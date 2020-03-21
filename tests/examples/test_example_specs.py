@@ -1,4 +1,4 @@
-"""Test for simple-example-spec.yaml."""
+"""Test for examples."""
 
 import pytest
 
@@ -31,13 +31,13 @@ def cleanup_models():
     "filename, model_name, attrs, expected_delta_attrs",
     [
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             {"name": "employee 1", "division": "division 1"},
             {"id": 1, "salary": None},
         ),
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "division": "division 1", "salary": 12},
             {},
@@ -136,13 +136,13 @@ def test_single_model(
     "filename, model_name, sql, expected_contents",
     [
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE name='employee'",
             ["PRIMARY KEY (id)"],
         ),
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE type='index'",
             [
