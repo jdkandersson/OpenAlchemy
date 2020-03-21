@@ -45,3 +45,6 @@ This allows for autocomplete on the model initialization:
 and it also enables autocomplete on instance variables:
 
 .. image:: ../../../examples/simple/models_autocomplete_instance.png
+
+.. seealso::
+    :ref:`getting-started`
