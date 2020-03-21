@@ -26,4 +26,5 @@ python url_models.py
 cd -
 cd examples/simple
 python models.py
+python models_traditional.py
 cd -
