@@ -156,10 +156,10 @@ def _handle_ref(
         )
 
     # Read other parameters
-    backref = helpers.get_ext_prop(source=ref_schema, name="x-backref")
-    uselist = helpers.get_ext_prop(source=ref_schema, name="x-uselist")
-    secondary = helpers.get_ext_prop(source=ref_schema, name="x-secondary")
-    fk_column_name = helpers.get_ext_prop(
+    backref = helpers.ext_prop.get(source=ref_schema, name="x-backref")
+    uselist = helpers.ext_prop.get(source=ref_schema, name="x-uselist")
+    secondary = helpers.ext_prop.get(source=ref_schema, name="x-secondary")
+    fk_column_name = helpers.ext_prop.get(
         source=ref_schema, name="x-foreign-key-column"
     )
     if fk_column_name is None:
@@ -310,7 +310,7 @@ def _handle_key_single(
 
     """
     if key.startswith("x-"):
-        sub_value = helpers.get_ext_prop(source=schema, name=key)
+        sub_value = helpers.ext_prop.get(source=schema, name=key)
     else:
         sub_value = schema.get(key)
     if sub_value is not None:

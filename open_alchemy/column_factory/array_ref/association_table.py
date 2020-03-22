@@ -65,7 +65,7 @@ def _gather_column_artifacts(
         )
 
     # Retrieve table name
-    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
+    tablename = helpers.ext_prop.get(source=model_schema, name="x-tablename")
     if tablename is None:
         raise exceptions.MalformedSchemaError(
             "A schema that is part of a many to many relationship must set the "

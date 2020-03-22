@@ -16,7 +16,7 @@ _resolver, (_SCHEMAS, _) = facades.jsonschema.resolver(  # pylint: disable=inval
 )
 
 
-def get_ext_prop(
+def get(
     *,
     source: typing.Union[
         typing.Dict[str, typing.Any],

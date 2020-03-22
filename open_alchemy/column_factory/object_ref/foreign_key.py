@@ -60,7 +60,7 @@ def check_required(
         )
 
     # Check foreign key constraint
-    model_foreign_key = helpers.get_ext_prop(
+    model_foreign_key = helpers.ext_prop.get(
         source=model_fk_schema, name="x-foreign-key"
     )
     if model_foreign_key is None:
@@ -117,7 +117,7 @@ def gather_artifacts(
         The logical name of the foreign key and the artifacts required to construct it.
 
     """
-    tablename = helpers.get_ext_prop(source=model_schema, name="x-tablename")
+    tablename = helpers.ext_prop.get(source=model_schema, name="x-tablename")
     if not tablename:
         raise exceptions.MalformedSchemaError(
             "Referenced object is missing x-tablename property."

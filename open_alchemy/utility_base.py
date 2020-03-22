@@ -71,7 +71,7 @@ class UtilityBase:
         *, spec: types.Schema, name: str, schema: types.Schema
     ) -> typing.Type[TUtilityBase]:
         """Get the model based on the schema."""
-        ref_model_name = helpers.get_ext_prop(source=spec, name="x-de-$ref")
+        ref_model_name = helpers.ext_prop.get(source=spec, name="x-de-$ref")
         if ref_model_name is None:
             raise exceptions.MalformedSchemaError(
                 "To construct object parameters the schema for the property must "

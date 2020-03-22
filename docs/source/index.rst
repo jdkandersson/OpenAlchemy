@@ -285,7 +285,7 @@ properties are used to define the database schema. The following specification
 defines the format and provides a description for each of the supported
 extension properties.
 
-.. literalinclude:: ../../open_alchemy/helpers/get_ext_prop/extension-schemas.json
+.. literalinclude:: ../../open_alchemy/helpers/ext_prop/extension-schemas.json
     :language: json
     :linenos:
 

@@ -33,12 +33,12 @@ def gather_column_artifacts(
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
     default = helpers.peek.default(schema=schema, schemas={})
-    generated = helpers.get_ext_prop(source=schema, name="x-generated")
+    generated = helpers.ext_prop.get(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":
-        de_ref = helpers.get_ext_prop(source=schema, name="x-de-$ref")
+        de_ref = helpers.ext_prop.get(source=schema, name="x-de-$ref")
     if type_ == "array":
-        de_ref = helpers.get_ext_prop(source=schema["items"], name="x-de-$ref")
+        de_ref = helpers.ext_prop.get(source=schema["items"], name="x-de-$ref")
 
     return types.ColumnSchemaArtifacts(
         type=type_,
@@ -111,7 +111,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             not_required_args.append(arg_artifacts)
 
     # Calculate artifacts for back references
-    backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
+    backrefs = helpers.ext_prop.get(source=schema, name="x-backrefs")
     if backrefs is not None:
         for backref_name, backref_schema in backrefs.items():
             # Gather artifacts
