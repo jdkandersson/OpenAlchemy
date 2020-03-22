@@ -329,7 +329,7 @@ used.
 
 Using *x-secondary* is equivalent to the following traditional *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_many_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_many/models_traditional.py
     :language: python
     :linenos:
 

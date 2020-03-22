@@ -7,6 +7,18 @@ info:
   version: "0.1"
 
 paths:
+  /project:
+    get:
+      summary: Used to retrieve all projects.
+      responses:
+        200:
+          description: Return all projects from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Project"
   /employee:
     get:
       summary: Used to retrieve all employees.

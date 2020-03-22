@@ -247,7 +247,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-many-example-spec.yml",
+            "relationship/many_to_many/example-spec.yml",
             ("Employee", "Project"),
             {
                 "id": 11,

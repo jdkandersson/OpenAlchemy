@@ -9,6 +9,7 @@ Examples
    alembic
    simple
    default
+   relationship/index
    composite_index
    composite_unique
    ref
