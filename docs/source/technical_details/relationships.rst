@@ -219,6 +219,9 @@ The value of *x-kwargs* is an arbitrary object with the following restrictions:
 * each key must be a string and
 * it is not allowed to contain the *backref* and *secondary* keys.
 
+Note that, other than the above, no validation is performed on the keyword
+arguments before passing them to the *relationship* constructor.
+
 .. seealso::
 
     `SQLAlchemy Relationship API <https://docs.sqlalchemy.org/en/13/orm/relationship_api.html#relationships-api>`_
