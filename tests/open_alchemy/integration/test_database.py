@@ -568,6 +568,79 @@ def test_database_one_to_many_relationship(engine, sessionmaker):
 
 
 @pytest.mark.integration
+def test_database_one_to_many_relationship_kwargs(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with a one to many object relationship with kwargs
+    WHEN schema is created, values inserted in both tables and queried
+    THEN the data is returned as specified by kwargs.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "table",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_tables": {
+                            "type": "array",
+                            "items": {
+                                "allOf": [
+                                    {"$ref": "#/components/schemas/RefTable"},
+                                    {
+                                        "x-kwargs": {
+                                            "order_by": "desc(RefTable.name)",
+                                            "lazy": "dynamic",
+                                        }
+                                    },
+                                ]
+                            },
+                        },
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance1 = ref_model(id=11, name="ref table name 1")
+    ref_model_instance2 = ref_model(id=21, name="ref table name 2")
+    model_instance = model(
+        id=12,
+        name="table name 1",
+        ref_tables=[ref_model_instance1, ref_model_instance2],
+    )
+    session = sessionmaker()
+    session.add(ref_model_instance1)
+    session.add(ref_model_instance2)
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    ref_tables = list(ref_table.name for ref_table in queried_model.ref_tables)
+    assert ref_tables == ["ref table name 2", "ref table name 1"]
+
+
+@pytest.mark.integration
 def test_database_one_to_many_relationship_other_order(engine, sessionmaker):
     """
     GIVEN specification with a schema with a one to many object relationship which are
