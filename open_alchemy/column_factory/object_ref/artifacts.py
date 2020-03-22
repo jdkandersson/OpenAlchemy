@@ -60,6 +60,7 @@ def gather(
             model_name=intermediary_obj_artifacts.ref_model_name,
             back_reference=back_reference,
             secondary=intermediary_obj_artifacts.secondary,
+            kwargs=intermediary_obj_artifacts.kwargs,
         ),
         nullable=intermediary_obj_artifacts.nullable,
         description=intermediary_obj_artifacts.description,
@@ -86,6 +87,8 @@ class _IntermediaryObjectArtifacts:
     nullable: typing.Optional[bool] = None
     # The description for the reference
     description: typing.Optional[str] = None
+    # Keyword arguments for relationship construction
+    kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None
 
 
 def _handle_schema(
@@ -205,6 +208,7 @@ def _handle_all_of(
     fk_column_name: typing.Optional[str] = None
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+    kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None
 
     # Exceptions with their messages
     incorrect_number_of_ref = exceptions.MalformedRelationshipError(
@@ -267,6 +271,13 @@ def _handle_all_of(
             default=description,
             exception_message="Relationships may have at most 1 description defined.",
         )
+        # Handle kwargs
+        kwargs = _handle_key_single(
+            key="x-kwargs",
+            schema=sub_schema,
+            default=kwargs,
+            exception_message="Relationships may have at most 1 x-kwargs defined.",
+        )
 
     # Check that $ref was found once
     if obj_artifacts is None:
@@ -283,6 +294,8 @@ def _handle_all_of(
         obj_artifacts.nullable = nullable
     if description is not None:
         obj_artifacts.description = description
+    if kwargs is not None:
+        obj_artifacts.kwargs = kwargs
 
     return obj_artifacts
 

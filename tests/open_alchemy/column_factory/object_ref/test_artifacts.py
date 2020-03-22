@@ -77,6 +77,11 @@ def test_ref_error(schemas):
             {"description": "description 1"},
             {"description": "description 2"},
         ],
+        [
+            {"$ref": "#/components/schemas/Schema1"},
+            {"x-kwargs": {"key 1": "value 1"}},
+            {"x-kwargs": {"key 2": "value 2"}},
+        ],
     ],
     ids=[
         "object",
@@ -87,6 +92,7 @@ def test_ref_error(schemas):
         "multiple x-uselist",
         "multiple nullable",
         "multiple description",
+        "multiple kwargs",
     ],
 )
 @pytest.mark.column
@@ -736,3 +742,92 @@ def test_gather_object_artifacts_description(schema, schemas, expected_descripti
     obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
 
     assert obj_artifacts.description == expected_description
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_kwargs",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "x-kwargs": {"key 1": "value 1"}}},
+            None,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-kwargs": {"key 2": "value 2"}},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            {"key 2": "value 2"},
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-kwargs": {"key 2": "value 2"}},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            {"key 2": "value 2"},
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"x-kwargs": {"key 2": "value 2"}},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            {"key 2": "value 2"},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "x-kwargs": {"key 1": "value 1"}}},
+            None,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-kwargs": {"key 2": "value 2"}},
+                ]
+            },
+            {"RefSchema": {"type": "object", "x-kwargs": {"key 1": "value 1"}}},
+            {"key 2": "value 2"},
+        ),
+    ],
+    ids=[
+        "$ref no x-kwargs",
+        "$ref x-kwargs",
+        "allOf no x-kwargs",
+        "allOf x-kwargs",
+        "allOf x-kwargs before other",
+        "allOf x-kwargs after other",
+        "allOf $ref x-kwargs",
+        "allOf x-kwargs $ref x-kwargs",
+    ],
+)
+@pytest.mark.column
+def test_gather_object_artifacts_kwargs(schema, schemas, expected_kwargs):
+    """
+    GIVEN schema and schemas and expected kwargs value
+    WHEN gather_object_artifacts is called with the schema and schemas
+    THEN the expected kwargs value is returned.
+    """
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
+
+    assert obj_artifacts.relationship.kwargs == expected_kwargs
