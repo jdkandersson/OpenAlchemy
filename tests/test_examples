@@ -1,8 +1,6 @@
 #!/bin/bash
 
 cd examples
-python ref_column_models.py
-python ref_model_models.py
 python relationship_many_to_one_models.py
 python relationship_many_to_one_models_traditional.py
 python relationship_many_to_one_not_nullable_models.py
@@ -38,4 +36,8 @@ cd -
 cd examples/default
 python models.py
 python models_traditional.py
+cd -
+cd examples/ref
+python column_models.py
+python model_models.py
 cd -

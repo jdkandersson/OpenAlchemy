@@ -11,4 +11,5 @@ Examples
    default
    composite_index
    composite_unique
+   ref
    all_of

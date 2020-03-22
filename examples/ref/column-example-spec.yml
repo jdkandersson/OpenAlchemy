@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate OpenAlchemy MVP.
+  description: API to illustrate the OpenAlchemy $ref feature for a column.
   version: "0.1"
 
 paths:

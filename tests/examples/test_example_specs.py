@@ -73,13 +73,13 @@ def cleanup_models():
             {},
         ),
         (
-            "ref-column-example-spec.yml",
+            "ref/column-example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
         (
-            "ref-model-example-spec.yml",
+            "ref/model-example-spec.yml",
             "RefEmployee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
