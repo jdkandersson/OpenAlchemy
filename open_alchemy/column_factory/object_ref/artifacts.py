@@ -324,7 +324,9 @@ def _handle_key_single(
     """
     if key.startswith("x-"):
         if key == "x-kwargs":
-            sub_value = helpers.ext_prop.get_kwargs(source=schema)
+            sub_value = helpers.ext_prop.get_kwargs(
+                source=schema, reserved={"backref", "secondary"}
+            )
         else:
             sub_value = helpers.ext_prop.get(source=schema, name=key)
     else:

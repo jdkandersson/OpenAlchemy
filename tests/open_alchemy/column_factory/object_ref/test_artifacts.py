@@ -833,18 +833,20 @@ def test_gather_object_artifacts_kwargs(schema, schemas, expected_kwargs):
     assert obj_artifacts.relationship.kwargs == expected_kwargs
 
 
+@pytest.mark.parametrize(
+    "value",
+    [{1: "value 1"}, {"backref": "value 1"}, {"secondary": "value 1"}],
+    ids=["invalid schema", "backref in kwargs", "secondary in kwargs"],
+)
 @pytest.mark.column
-def test_gather_object_artifacts_kwargs_invalid():
+def test_gather_object_artifacts_kwargs_invalid(value):
     """
     GIVEN schema with invalid kwargs and schemas
     WHEN gather_object_artifacts is called with the schema and schemas
     THEN MalformedExtensionPropertyError is raised.
     """
     schema = {
-        "allOf": [
-            {"$ref": "#/components/schemas/RefSchema"},
-            {"x-kwargs": {2: "value 2"}},
-        ]
+        "allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-kwargs": value}]
     }
     schemas = {"RefSchema": {"type": "object"}}
 
