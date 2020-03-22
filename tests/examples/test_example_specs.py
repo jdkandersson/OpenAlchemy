@@ -229,7 +229,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-one-to-many-example-spec.yml",
+            "relationship/one_to_many/example-spec.yml",
             ("Division", "Employee"),
             {
                 "id": 11,

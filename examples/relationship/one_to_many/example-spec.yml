@@ -7,6 +7,18 @@ info:
   version: "0.1"
 
 paths:
+  /division:
+    get:
+      summary: Used to retrieve all divisions.
+      responses:
+        200:
+          description: Return all divisions from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Division"
   /employee:
     get:
       summary: Used to retrieve all employees.

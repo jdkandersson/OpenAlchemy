@@ -41,6 +41,10 @@ python custom_foreign_key_models.py
 python backref_models.py
 python backref_models_traditional.py
 cd -
+cd examples/relationship/one_to_many
+python models.py
+python models_traditional.py
+cd -
 cd examples/relationship/many_to_many
 python models.py
 python models_traditional.py

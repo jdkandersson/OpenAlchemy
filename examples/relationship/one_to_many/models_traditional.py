@@ -10,6 +10,7 @@ class Division(Base):
     __tablename__ = "division"
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String)
+    employees = sa.orm.relationship("Employee")
 
 
 class Employee(Base):
@@ -18,4 +19,4 @@ class Employee(Base):
     __tablename__ = "employee"
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String)
-    division_id = sa.Column(sa.Integer, sa.ForeignKey("division.id"), nullable=False)
+    division_id = sa.Column(sa.Integer, sa.ForeignKey("division.id"))
