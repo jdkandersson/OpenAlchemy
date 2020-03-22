@@ -323,7 +323,10 @@ def _handle_key_single(
 
     """
     if key.startswith("x-"):
-        sub_value = helpers.ext_prop.get(source=schema, name=key)
+        if key == "x-kwargs":
+            sub_value = helpers.ext_prop.get_kwargs(source=schema)
+        else:
+            sub_value = helpers.ext_prop.get(source=schema, name=key)
     else:
         sub_value = schema.get(key)
     if sub_value is not None:

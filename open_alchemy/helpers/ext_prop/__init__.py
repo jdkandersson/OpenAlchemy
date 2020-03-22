@@ -104,6 +104,8 @@ def get_kwargs(
 
     """
     value = get(source=source, name="x-kwargs", default=default, pop=pop)
+    if value is None:
+        return None
 
     # Check for dictionary to make mypy happy, in reality always passes
     if not isinstance(value, dict):  # pragma: no cover

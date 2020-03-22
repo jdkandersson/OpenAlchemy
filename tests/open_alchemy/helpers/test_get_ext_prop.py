@@ -413,6 +413,20 @@ def test_kwargs_valid(value):
     assert returned_value == value
 
 
+@pytest.mark.helper
+def test_kwargs_valid_missing():
+    """
+    GIVEN empty value
+    WHEN get_kwargs is called with the value
+    THEN None is returned.
+    """
+    source = {}
+
+    returned_value = helpers.ext_prop.get_kwargs(source=source)
+
+    assert returned_value is None
+
+
 @pytest.mark.parametrize(
     "reserved, value, raises",
     [
