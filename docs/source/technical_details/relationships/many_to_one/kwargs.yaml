@@ -12,4 +12,4 @@ Employee:
       allOf:
         - "$ref": "#/components/schemas/Division"
         - x-kwargs:
-          order_by: Division.name
+            order_by: Division.name

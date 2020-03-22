@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate Many to One Relationships.
+  description: API to illustrate Many to One Relationships with keyword arguments.
   version: "0.1"
 
 paths:
