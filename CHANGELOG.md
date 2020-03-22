@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Add section of documentation for each example.
+- Add support for keyword arguments for relationships used to define relationship arguments not specifically handled by an extension property.
 
 ## Version 1.0.0 - 2020-03-21
 
