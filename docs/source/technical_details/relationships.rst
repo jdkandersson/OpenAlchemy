@@ -235,10 +235,12 @@ The one to one relationship is defined in the same way as the
 :ref:`many to one <many-to-one>` relationship except that it requires the
 *x-uselist* extension property to be set to *False* and
 :ref:`x-backref <backref>` to be defined.
-:ref:`Custom foreign keys <custom-foreign-key>` and
-:ref:`nullable <many-to-one-nullable>` are also supported. The *x-uselist*
-property can be defined along with the *x-backref* extension property using
-*allOf* or on the object being referenced. To define it on *allOf*:
+:ref:`Custom foreign keys <custom-foreign-key>`,
+:ref:`nullable <many-to-one-nullable>` and
+:ref:`relationship kwargs <relationship-kwargs>` are also supported. The
+*x-uselist* property can be defined along with the *x-backref* extension
+property using *allOf* or on the object being referenced. To define it on
+*allOf*:
 
 .. literalinclude:: ./relationships/one_to_one/example_recommended.yaml
     :language: yaml
@@ -280,11 +282,13 @@ specification snippet defines a one to many relationship:
     :language: yaml
     :linenos:
 
-The one to many relationship also supports back references and custom foreign
-keys. They are defined similar to how they are defined for many to one
-relationships. For back references see :ref:`many to one backref <backref>`
-and for custom foreign keys see
-:ref:`many to one custom foreign keys <custom-foreign-key>`. Note that
+The one to many relationship also supports back references, custom foreign
+keys and relationship kwargs. They are defined similar to how they are defined
+for many to one relationships. For back references see
+:ref:`many to one backref <backref>`, for custom foreign keys see
+:ref:`many to one custom foreign keys <custom-foreign-key>` and for
+relationship kwargs see
+:ref:`many to one relationship kwargs <relationship-kwargs>`. Note that
 *x-uselist* is not supported as it does not make sense to turn a one to many
 relationship defined as an OpenAPI array into a one to one relationship. Also
 note that :ref:`nullable <many-to-one-nullable>` is not supported because the
@@ -356,11 +360,12 @@ Using *x-secondary* is equivalent to the following traditional *models.py*:
     :linenos:
 
 Many to many relationships support *x-backref*, see
-:ref:`many to one backref <backref>`. Note that *x-uselist* is not supported as
-it does not make sense to turn a many to many relationship defined as an
-OpenAPI array into a many to one relationship. Also, because the association
-table is defined based on the primary key properties, custom foreign keys are
-not supported.
+:ref:`many to one backref <backref>`, and relationship kwargs, see
+:ref:`many to one relationship kwargs <relationship-kwargs>`. Note that
+*x-uselist* is not supported as it does not make sense to turn a many to many
+relationship defined as an OpenAPI array into a many to one relationship. Also,
+because the association table is defined based on the primary key properties,
+custom foreign keys are not supported.
 
 .. _child-parent-reference:
 
