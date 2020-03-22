@@ -36,6 +36,8 @@ python not_nullable_models_traditional.py
 python custom_foreign_key_models.py
 python backref_models.py
 python backref_models_traditional.py
+python kwargs_models.py
+python kwargs_models_traditional.py
 cd -
 cd examples/relationship/one_to_one
 python models.py
