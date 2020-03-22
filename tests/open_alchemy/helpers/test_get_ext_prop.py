@@ -1,5 +1,7 @@
 """Tests for ext_prop."""
 
+import functools
+
 import pytest
 
 from open_alchemy import exceptions
@@ -369,7 +371,7 @@ def test_relationship_backrefs_valid(value):
 def test_kwargs_invalid(value):
     """
     GIVEN value for x-kwargs that has an invalid format
-    WHEN get_kwargs is called with x-kwargs and the value
+    WHEN get_kwargs is called with the value
     THEN MalformedExtensionPropertyError is raised.
     """
     name = "x-kwargs"
@@ -400,7 +402,7 @@ def test_kwargs_invalid(value):
 def test_kwargs_valid(value):
     """
     GIVEN value for x-kwargs that has a valid format
-    WHEN get_kwargs is called with x-kwargs and the value
+    WHEN get_kwargs is called with the value
     THEN the value is returned.
     """
     name = "x-kwargs"
@@ -409,3 +411,56 @@ def test_kwargs_valid(value):
     returned_value = helpers.ext_prop.get_kwargs(source=source)
 
     assert returned_value == value
+
+
+@pytest.mark.parametrize(
+    "reserved, value, raises",
+    [
+        (set(), {}, False),
+        (set(), {"key 1": "value 1"}, False),
+        (set(), {"key 1": "value 1", "key 2": "value 2"}, False),
+        ({"key 1"}, {}, False),
+        ({"key 1"}, {"key 1": "value 1"}, True),
+        ({"key 1"}, {"key 2": "value 2"}, False),
+        ({"key 1"}, {"key 1": "value 1", "key 2": "value 2"}, True),
+        ({"key 1"}, {"key 2": "value 2", "key 3": "value 3"}, False),
+        ({"key 1", "key 2"}, {}, False),
+        ({"key 1", "key 2"}, {"key 1": "value 1"}, True),
+        ({"key 1", "key 2"}, {"key 2": "value 2"}, True),
+        ({"key 1", "key 2"}, {"key 3": "value 3"}, False),
+    ],
+    ids=[
+        "empty reserved    empty keys",
+        "empty reserved    single key",
+        "empty reserved    multiple keys",
+        "single reserved   empty keys",
+        "single reserved   single key    hit",
+        "single reserved   single key    miss",
+        "single reserved   multiple keys hit",
+        "single reserved   multiple keys miss",
+        "multiple reserved empty keys",
+        "multiple reserved single key    first hit",
+        "multiple reserved single key    second hit",
+        "multiple reserved single key    miss",
+    ],
+)
+@pytest.mark.helper
+def test_kwargs_reserved(reserved, value, raises):
+    """
+    GIVEN value for x-kwargs, set of reserved keys and whether to raise
+    WHEN get_kwargs is called with the value and reserved keys
+    THEN MalformedExtensionPropertyError is raised if it is expected to raise.
+    """
+    name = "x-kwargs"
+    source = {name: value}
+
+    test_func = functools.partial(
+        helpers.ext_prop.get_kwargs, source=source, reserved=reserved
+    )
+    if raises:
+        with pytest.raises(exceptions.MalformedExtensionPropertyError):
+            test_func()
+    else:
+        returned_value = test_func()
+
+        assert returned_value == value

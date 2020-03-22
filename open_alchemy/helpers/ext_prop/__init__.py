@@ -80,6 +80,7 @@ def get_kwargs(
         types.ArrayRefSchema,
         types.ReadOnlySchema,
     ],
+    reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
 ) -> typing.Optional[typing.Dict[str, typing.Any]]:
@@ -87,11 +88,14 @@ def get_kwargs(
     Read the value of x-kwargs, validate the schema and return it.
 
     Raise MalformedExtensionPropertyError when the schema of the extension property is
-    malformed.
+        malformed.
     Raise MalformedExtensionPropertyError when the keys of the kwargs are not a string.
+    Raise MalformedExtensionPropertyError if any keys of x-kwargs are in the reserved
+        keys.
 
     Args:
         source: The object to get the extension property from.
+        reserved: The reserved keys that should not be in the kwargs.
         default: The default value.
         pop: Whether to remove the value from the dictionary.
 
@@ -112,5 +116,15 @@ def get_kwargs(
         raise exceptions.MalformedExtensionPropertyError(
             f"The keys of x-kwargs must be strings."
         )
+
+    # Check whether any reserved keys are in use
+    if reserved is not None:
+        if not reserved.isdisjoint(value.keys()):
+            raise exceptions.MalformedExtensionPropertyError(
+                "Some of the keys in x-kwargs refer to arguments that OpenAlchemy "
+                "handles. To make use of the arguments, please use the relevant "
+                "extension property. The following keys need to be removed: "
+                f"{reserved.intersection(value.keys())}."
+            )
 
     return value
