@@ -58,7 +58,7 @@ def model_factory(
     if required_exists:
         model_schema["required"] = required_array
     if "x-backrefs" in schema:
-        model_schema["x-backrefs"] = helpers.get_ext_prop(
+        model_schema["x-backrefs"] = helpers.ext_prop.get(
             source=schema, name="x-backrefs"
         )
     description = helpers.peek.description(schema=schema, schemas={})
@@ -74,7 +74,7 @@ def model_factory(
             model_name=name,
         )
         model_class_vars.append(prop_class_vars)
-        dict_ignore = helpers.get_ext_prop(
+        dict_ignore = helpers.ext_prop.get(
             source=prop_final_spec, name="x-dict-ignore", default=False, pop=True
         )
         if not dict_ignore:
@@ -85,7 +85,7 @@ def model_factory(
         name,
         (base, utility_base.UtilityBase),
         {
-            "__tablename__": helpers.get_ext_prop(source=schema, name="x-tablename"),
+            "__tablename__": helpers.ext_prop.get(source=schema, name="x-tablename"),
             "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
             "__table_args__": table_args.construct(schema=schema),

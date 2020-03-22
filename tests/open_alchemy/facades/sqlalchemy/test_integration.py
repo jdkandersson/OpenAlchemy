@@ -78,6 +78,21 @@ def test_construct_relationship_plain(
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
+def test_construct_relationship_kwargs():
+    """
+    GIVEN given relationship artifacts with kwargs
+    WHEN construct_relationship is called with the artifacts
+    THEN a relationship with the kwargs set is returned.
+    """
+    artifacts = types.RelationshipArtifacts("RefModel", kwargs={"order_by": "id"})
+
+    relationship = facades.sqlalchemy.relationship(artifacts=artifacts)
+
+    assert relationship.order_by == "id"
+
+
+@pytest.mark.facade
 def test_construct():
     """
     GIVEN tablename, mock base and 2 columns

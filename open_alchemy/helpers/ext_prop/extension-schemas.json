@@ -48,6 +48,11 @@
     "description": "Define the name of a table.",
     "type": "string"
   },
+  "x-kwargs": {
+    "description": "Define kwargs to be passed to a function based on the context.",
+    "type": "object",
+    "additionalProperties": true
+  },
   "x-backrefs": {
     "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",
     "$ref": "#/BackRef"

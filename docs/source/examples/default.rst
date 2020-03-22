@@ -6,10 +6,10 @@ value for the column linked to the property.
 
 .. seealso::
 
-   :ref:`default`
+    :ref:`default`
       OpenAlchemy documentation for the default value.
 
-   `SQLAlchemy Scalar Default <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
+    `SQLAlchemy Scalar Default <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
       Documentation for the SQLAlchemy scalar default.
 
 The following example defines a default value for the *name* property of

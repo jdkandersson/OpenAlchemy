@@ -5,10 +5,10 @@ Composite indexes are indexes that span multiple columns.
 
 .. seealso::
 
-   :ref:`composite-index`
+    :ref:`composite-index`
       OpenAlchemy documentation for composite indexes.
 
-   `SQLAlchemy Composite Index <https://docs.sqlalchemy.org/en/13/core/constraints.html#index-api>`_
+    `SQLAlchemy Composite Index <https://docs.sqlalchemy.org/en/13/core/constraints.html#index-api>`_
       Documentation for defining composite indexes in SQLAlchemy.
 
 The following example defines a composite index for the *Employee* schema over

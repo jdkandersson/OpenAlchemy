@@ -10,7 +10,7 @@ inheritance is supported, model inheritance is planned for the future.
 
 .. seealso::
 
-   `SQLAlchemy inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html>`_
+    `SQLAlchemy inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html>`_
       Documentation for SQLAlchemy inheritance.
 
 Column Inheritance

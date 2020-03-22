@@ -8,10 +8,10 @@ assigned to a project.
 
 .. seealso::
 
-   :ref:`many-to-many`
+    :ref:`many-to-many`
       OpenAlchemy documentation for many to many relationships.
 
-   `SQLAlchemy Many to Many <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#many-to-many>`_
+    `SQLAlchemy Many to Many <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#many-to-many>`_
       SQLAlchemy documentation for many to many relationships.
 
 The following example defines a many to many relationship between *Employee*

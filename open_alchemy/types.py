@@ -123,6 +123,8 @@ class RelationshipArtifacts:
     back_reference: typing.Optional[BackReferenceArtifacts] = None
     # The name of the optional secondary table to use
     secondary: typing.Optional[str] = None
+    # Keyword arguments for the relationship construction
+    kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None
 
 
 @dataclasses.dataclass

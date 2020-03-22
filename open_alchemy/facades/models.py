@@ -78,7 +78,7 @@ def _add_backref_to_model(
 
     """
     # Check format of x-backrefs
-    backrefs = helpers.get_ext_prop(source=schema, name="x-backrefs")
+    backrefs = helpers.ext_prop.get(source=schema, name="x-backrefs")
 
     # Check whether key exists
     if backrefs is None:

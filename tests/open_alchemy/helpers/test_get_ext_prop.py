@@ -1,4 +1,6 @@
-"""Tests for get_ext_prop."""
+"""Tests for ext_prop."""
+
+import functools
 
 import pytest
 
@@ -10,22 +12,22 @@ from open_alchemy import helpers
 def test_miss():
     """
     GIVEN empty source
-    WHEN get_ext_prop is called with the source
+    WHEN get is called with the source
     THEN None is returned.
     """
-    assert helpers.get_ext_prop(source={}, name="missing") is None
+    assert helpers.ext_prop.get(source={}, name="missing") is None
 
 
 @pytest.mark.helper
 def test_miss_default():
     """
     GIVEN empty source and default value
-    WHEN get_ext_prop is called with the source and default value
+    WHEN get is called with the source and default value
     THEN default value is returned.
     """
     default = "value 1"
 
-    value = helpers.get_ext_prop(source={}, name="missing", default=default)
+    value = helpers.ext_prop.get(source={}, name="missing", default=default)
 
     assert value == default
 
@@ -71,13 +73,13 @@ def test_miss_default():
 def test_invalid(name, value):
     """
     GIVEN property and invalid value
-    WHEN get_ext_prop is called with a source made of the property and value
+    WHEN get is called with a source made of the property and value
     THEN MalformedExtensionPropertyError is raised.
     """
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.get_ext_prop(source=source, name=name)
+        helpers.ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -117,12 +119,12 @@ def test_invalid(name, value):
 def test_valid(name, value):
     """
     GIVEN property and valid value
-    WHEN get_ext_prop is called with a source made of the property and value
+    WHEN get is called with a source made of the property and value
     THEN the value is returned.
     """
     source = {name: value}
 
-    returned_value = helpers.get_ext_prop(source=source, name=name)
+    returned_value = helpers.ext_prop.get(source=source, name=name)
 
     assert returned_value == value
 
@@ -131,14 +133,14 @@ def test_valid(name, value):
 def test_pop():
     """
     GIVEN property and valid value
-    WHEN get_ext_property is called with the name, value and pop set
+    WHEN geterty is called with the name, value and pop set
     THEN the key is removed from the dictionary.
     """
     name = "x-dict-ignore"
     value = True
     source = {name: value}
 
-    returned_value = helpers.get_ext_prop(source=source, name=name, pop=True)
+    returned_value = helpers.ext_prop.get(source=source, name=name, pop=True)
 
     assert returned_value == value
     assert source == {}
@@ -161,14 +163,14 @@ def test_pop():
 def test_unique_constraint_invalid(value):
     """
     GIVEN value for x-composite-unique that has an invalid format
-    WHEN get_ext_prop with x-composite-unique and the value
+    WHEN get with x-composite-unique and the value
     THEN MalformedExtensionPropertyError is raised.
     """
     name = "x-composite-unique"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.get_ext_prop(source=source, name=name)
+        helpers.ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -192,13 +194,13 @@ def test_unique_constraint_invalid(value):
 def test_unique_constraint_valid(value):
     """
     GIVEN value for x-composite-unique that has a valid format
-    WHEN get_ext_prop with x-composite-unique and the value
+    WHEN get with x-composite-unique and the value
     THEN the value is returned.
     """
     name = "x-composite-unique"
     source = {name: value}
 
-    returned_value = helpers.get_ext_prop(source=source, name=name)
+    returned_value = helpers.ext_prop.get(source=source, name=name)
 
     assert returned_value == value
 
@@ -230,14 +232,14 @@ def test_unique_constraint_valid(value):
 def test_composite_index_invalid(value):
     """
     GIVEN value for x-composite-index that has an invalid format
-    WHEN get_ext_prop with x-composite-index and the value
+    WHEN get with x-composite-index and the value
     THEN MalformedExtensionPropertyError is raised.
     """
     name = "x-composite-index"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.get_ext_prop(source=source, name=name)
+        helpers.ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -263,13 +265,13 @@ def test_composite_index_invalid(value):
 def test_composite_index_valid(value):
     """
     GIVEN value for x-composite-index that has a valid format
-    WHEN get_ext_prop is called with x-composite-index and the value
+    WHEN get is called with x-composite-index and the value
     THEN the value is returned.
     """
     name = "x-composite-index"
     source = {name: value}
 
-    returned_value = helpers.get_ext_prop(source=source, name=name)
+    returned_value = helpers.ext_prop.get(source=source, name=name)
 
     assert returned_value == value
 
@@ -305,14 +307,14 @@ def test_composite_index_valid(value):
 def test_relationship_backrefs_invalid(value):
     """
     GIVEN value for x-backrefs with an invalid format
-    WHEN get_ext_prop is called with x-backrefs and the value
+    WHEN get is called with x-backrefs and the value
     THEN MalformedExtensionPropertyError is raised.
     """
     name = "x-backrefs"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.get_ext_prop(source=source, name=name)
+        helpers.ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -337,12 +339,142 @@ def test_relationship_backrefs_invalid(value):
 def test_relationship_backrefs_valid(value):
     """
     GIVEN value for x-backrefs with a valid format
-    WHEN get_ext_prop is called with x-backrefs and the value
+    WHEN get is called with x-backrefs and the value
     THEN value is returned.
     """
     name = "x-backrefs"
     source = {name: value}
 
-    return_value = helpers.get_ext_prop(source=source, name=name)
+    return_value = helpers.ext_prop.get(source=source, name=name)
 
     assert return_value == value
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "value",
+        ["value"],
+        {1: "value"},
+        {1: "value 1", 2: "value 2"},
+        {"key 1": "value 1", 2: "value 2"},
+    ],
+    ids=[
+        "simple",
+        "array",
+        "object not string key",
+        "object multiple key none string",
+        "object multiple key some string",
+    ],
+)
+@pytest.mark.helper
+def test_kwargs_invalid(value):
+    """
+    GIVEN value for x-kwargs that has an invalid format
+    WHEN get_kwargs is called with the value
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    name = "x-kwargs"
+    source = {name: value}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.ext_prop.get_kwargs(source=source)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"key": "value"},
+        {"key1": "value 1", "key2": "value 2"},
+        {"key": ["value"]},
+        {"key": {"sub_key": "value"}},
+        {"key": {1: "value"}},
+    ],
+    ids=[
+        "simple value",
+        "simple value multiple keys",
+        "array value",
+        "object simple string key value",
+        "object simple integer key value",
+    ],
+)
+@pytest.mark.helper
+def test_kwargs_valid(value):
+    """
+    GIVEN value for x-kwargs that has a valid format
+    WHEN get_kwargs is called with the value
+    THEN the value is returned.
+    """
+    name = "x-kwargs"
+    source = {name: value}
+
+    returned_value = helpers.ext_prop.get_kwargs(source=source)
+
+    assert returned_value == value
+
+
+@pytest.mark.helper
+def test_kwargs_valid_missing():
+    """
+    GIVEN empty value
+    WHEN get_kwargs is called with the value
+    THEN None is returned.
+    """
+    source = {}
+
+    returned_value = helpers.ext_prop.get_kwargs(source=source)
+
+    assert returned_value is None
+
+
+@pytest.mark.parametrize(
+    "reserved, value, raises",
+    [
+        (set(), {}, False),
+        (set(), {"key 1": "value 1"}, False),
+        (set(), {"key 1": "value 1", "key 2": "value 2"}, False),
+        ({"key 1"}, {}, False),
+        ({"key 1"}, {"key 1": "value 1"}, True),
+        ({"key 1"}, {"key 2": "value 2"}, False),
+        ({"key 1"}, {"key 1": "value 1", "key 2": "value 2"}, True),
+        ({"key 1"}, {"key 2": "value 2", "key 3": "value 3"}, False),
+        ({"key 1", "key 2"}, {}, False),
+        ({"key 1", "key 2"}, {"key 1": "value 1"}, True),
+        ({"key 1", "key 2"}, {"key 2": "value 2"}, True),
+        ({"key 1", "key 2"}, {"key 3": "value 3"}, False),
+    ],
+    ids=[
+        "empty reserved    empty keys",
+        "empty reserved    single key",
+        "empty reserved    multiple keys",
+        "single reserved   empty keys",
+        "single reserved   single key    hit",
+        "single reserved   single key    miss",
+        "single reserved   multiple keys hit",
+        "single reserved   multiple keys miss",
+        "multiple reserved empty keys",
+        "multiple reserved single key    first hit",
+        "multiple reserved single key    second hit",
+        "multiple reserved single key    miss",
+    ],
+)
+@pytest.mark.helper
+def test_kwargs_reserved(reserved, value, raises):
+    """
+    GIVEN value for x-kwargs, set of reserved keys and whether to raise
+    WHEN get_kwargs is called with the value and reserved keys
+    THEN MalformedExtensionPropertyError is raised if it is expected to raise.
+    """
+    name = "x-kwargs"
+    source = {name: value}
+
+    test_func = functools.partial(
+        helpers.ext_prop.get_kwargs, source=source, reserved=reserved
+    )
+    if raises:
+        with pytest.raises(exceptions.MalformedExtensionPropertyError):
+            test_func()
+    else:
+        returned_value = test_func()
+
+        assert returned_value == value

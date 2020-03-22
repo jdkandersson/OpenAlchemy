@@ -62,11 +62,11 @@ def check_schema(
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
     default = helpers.peek.default(schema=schema, schemas={})
-    primary_key = helpers.get_ext_prop(source=schema, name="x-primary-key")
-    autoincrement = helpers.get_ext_prop(source=schema, name="x-autoincrement")
-    index = helpers.get_ext_prop(source=schema, name="x-index")
-    unique = helpers.get_ext_prop(source=schema, name="x-unique")
-    foreign_key = helpers.get_ext_prop(source=schema, name="x-foreign-key")
+    primary_key = helpers.ext_prop.get(source=schema, name="x-primary-key")
+    autoincrement = helpers.ext_prop.get(source=schema, name="x-autoincrement")
+    index = helpers.ext_prop.get(source=schema, name="x-index")
+    unique = helpers.ext_prop.get(source=schema, name="x-unique")
+    foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
 
     # Construct return artifacts
     nullable_artefact = helpers.calculate_nullable(
@@ -150,7 +150,7 @@ def _calculate_column_schema(
 
     """
     nullable = helpers.peek.nullable(schema=schema, schemas={})
-    dict_ignore = helpers.get_ext_prop(source=schema, name="x-dict-ignore")
+    dict_ignore = helpers.ext_prop.get(source=schema, name="x-dict-ignore")
     return_schema = calculate_schema(
         artifacts=artifacts, nullable=nullable, dict_ignore=dict_ignore
     )

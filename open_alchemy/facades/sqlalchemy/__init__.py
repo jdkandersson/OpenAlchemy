@@ -33,9 +33,14 @@ def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipP
             uselist=artifacts.back_reference.uselist,
         )
 
+    # Construct kwargs
+    kwargs: typing.Dict[str, typing.Any] = {}
+    if artifacts.kwargs is not None:
+        kwargs = artifacts.kwargs
+
     # Construct relationship
     return orm.relationship(
-        artifacts.model_name, backref=backref, secondary=artifacts.secondary
+        artifacts.model_name, backref=backref, secondary=artifacts.secondary, **kwargs
     )
 
 

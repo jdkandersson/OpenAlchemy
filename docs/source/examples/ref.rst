@@ -7,10 +7,10 @@ schema before constructing.
 
 .. seealso::
 
-   `OpenAPI $ref Documentation <https://swagger.io/docs/specification/using-ref/>`_
+    `OpenAPI $ref Documentation <https://swagger.io/docs/specification/using-ref/>`_
       Documentation for the OpenAPI *$ref* directive.
 
-   :ref:`references`
+    :ref:`references`
       OpenAlchemy documentation for references.
 
 Column

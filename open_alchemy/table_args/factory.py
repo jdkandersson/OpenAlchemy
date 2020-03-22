@@ -12,7 +12,7 @@ from open_alchemy import facades
 from open_alchemy import types
 
 _DIRECTORY = os.path.dirname(__file__)
-_PATHS = ("..", "helpers", "get_ext_prop")
+_PATHS = ("..", "helpers", "ext_prop")
 _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, *_PATHS, "common-schemas.json")
 (
     _resolver,  # pylint: disable=invalid-name

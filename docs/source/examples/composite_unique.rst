@@ -5,10 +5,10 @@ Composite unique constraints are unique constraints that span multiple columns.
 
 .. seealso::
 
-   :ref:`composite-unique`
+    :ref:`composite-unique`
       OpenAlchemy documentation for composite unique constraints.
 
-   `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
+    `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
       Documentation for defining composite unique constraint in SQLAlchemy.
 
 The following example defines a composite unique constraint for the *Employee*

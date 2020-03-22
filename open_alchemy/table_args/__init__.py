@@ -32,11 +32,11 @@ def construct(*, schema: types.Schema) -> TableArgs:
     table_args: typing.List[typing.Iterable[TableArg]] = []
 
     # Handle x-composite-unique
-    unique_spec = helpers.get_ext_prop(source=schema, name="x-composite-unique")
+    unique_spec = helpers.ext_prop.get(source=schema, name="x-composite-unique")
     if unique_spec is not None:
         table_args.append(factory.unique_factory(spec=unique_spec))
     # Handle x-composite-index
-    index_spec = helpers.get_ext_prop(source=schema, name="x-composite-index")
+    index_spec = helpers.ext_prop.get(source=schema, name="x-composite-index")
     if index_spec is not None:
         table_args.append(factory.index_factory(spec=index_spec))
 
