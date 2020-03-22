@@ -69,3 +69,48 @@ def get(
     if pop:
         del source[name]  # type: ignore
     return value
+
+
+def get_kwargs(
+    *,
+    source: typing.Union[
+        typing.Dict[str, typing.Any],
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
+        types.ReadOnlySchema,
+    ],
+    default: typing.Optional[typing.Any] = None,
+    pop: bool = False,
+) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    """
+    Read the value of x-kwargs, validate the schema and return it.
+
+    Raise MalformedExtensionPropertyError when the schema of the extension property is
+    malformed.
+    Raise MalformedExtensionPropertyError when the keys of the kwargs are not a string.
+
+    Args:
+        source: The object to get the extension property from.
+        default: The default value.
+        pop: Whether to remove the value from the dictionary.
+
+    Returns:
+        The value of the property or the default value if it does not exist.
+
+    """
+    value = get(source=source, name="x-kwargs", default=default, pop=pop)
+
+    # Check for dictionary
+    if not isinstance(value, dict):
+        raise exceptions.MalformedExtensionPropertyError(
+            f"The value of x-kwargs must be an object."
+        )
+
+    # Check keys are strings
+    if any(not isinstance(key, str) for key in value.keys()):
+        raise exceptions.MalformedExtensionPropertyError(
+            f"The keys of x-kwargs must be strings."
+        )
+
+    return value

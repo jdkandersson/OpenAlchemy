@@ -350,33 +350,47 @@ def test_relationship_backrefs_valid(value):
 
 @pytest.mark.parametrize(
     "value",
-    ["test", ["test"], {1: "test"}],
-    ids=["simple", "array", "object not string key"],
+    [
+        "value",
+        ["value"],
+        {1: "value"},
+        {1: "value 1", 2: "value 2"},
+        {"key 1": "value 1", 2: "value 2"},
+    ],
+    ids=[
+        "simple",
+        "array",
+        "object not string key",
+        "object multiple key none string",
+        "object multiple key some string",
+    ],
 )
 @pytest.mark.helper
 def test_kwargs_invalid(value):
     """
     GIVEN value for x-kwargs that has an invalid format
-    WHEN get is called with x-kwargs and the value
+    WHEN get_kwargs is called with x-kwargs and the value
     THEN MalformedExtensionPropertyError is raised.
     """
     name = "x-kwargs"
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        helpers.ext_prop.get_kwargs(source=source)
 
 
 @pytest.mark.parametrize(
     "value",
     [
         {"key": "value"},
+        {"key1": "value 1", "key2": "value 2"},
         {"key": ["value"]},
         {"key": {"sub_key": "value"}},
         {"key": {1: "value"}},
     ],
     ids=[
         "simple value",
+        "simple value multiple keys",
         "array value",
         "object simple string key value",
         "object simple integer key value",
@@ -386,12 +400,12 @@ def test_kwargs_invalid(value):
 def test_kwargs_valid(value):
     """
     GIVEN value for x-kwargs that has a valid format
-    WHEN get is called with x-kwargs and the value
+    WHEN get_kwargs is called with x-kwargs and the value
     THEN the value is returned.
     """
     name = "x-kwargs"
     source = {name: value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name)
+    returned_value = helpers.ext_prop.get_kwargs(source=source)
 
     assert returned_value == value
