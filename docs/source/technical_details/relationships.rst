@@ -204,7 +204,7 @@ Other Keyword Arguments
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The remaining keyword arguments for *relationship* can be specified using the
-*x-kwargs* extension parameter. It can be included as a part of the *allOf*
+*x-kwargs* extension property. It can be included as a part of the *allOf*
 list when defining a reference. All *relationship* arguments are available
 except those that have a special meaning within OpenAlchemy (primarily the
 arguments that implement the features that have already been discussed). These
