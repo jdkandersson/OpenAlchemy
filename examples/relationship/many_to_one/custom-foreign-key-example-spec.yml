@@ -3,10 +3,22 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate OpenAlchemy MVP.
+  description: API to illustrate Many to One Relationships with custom foreign keys.
   version: "0.1"
 
 paths:
+  /division:
+    get:
+      summary: Used to retrieve all divisions.
+      responses:
+        200:
+          description: Return all divisions from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Division"
   /employee:
     get:
       summary: Used to retrieve all employees.

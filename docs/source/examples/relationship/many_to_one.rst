@@ -114,3 +114,35 @@ OpenAlchemy will generate the following typed models:
 .. literalinclude:: ../../../../examples/relationship/many_to_one/backref_models_auto.py
     :language: python
     :linenos:
+
+Custom Foreign Key Column
+-------------------------
+
+By default, OpenAlchemy will pick the *id* property to construct the underlying
+foreign key constraint for a relationship. This can be changed using the
+*x-foreign-key-column* extension property.
+
+.. seealso::
+
+   :ref:`custom-foreign-key`
+      OpenAlchemy documentation for custom foreign key columns.
+
+The following example defines a many to one relationship between *Employee* and
+*Division* where the *name* column is used instead of the *id* column to
+construct the foreign key:
+
+.. literalinclude:: ../../../../examples/relationship/many_to_one/custom-foreign-key-example-spec.yml
+    :language: yaml
+    :linenos:
+
+The following file uses OpenAlchemy to generate the SQLAlchemy models:
+
+.. literalinclude:: ../../../../examples/relationship/many_to_one/custom_foreign_key_models.py
+    :language: python
+    :linenos:
+
+OpenAlchemy will generate the following typed models:
+
+.. literalinclude:: ../../../../examples/relationship/many_to_one/custom_foreign_key_models_auto.py
+    :language: python
+    :linenos:

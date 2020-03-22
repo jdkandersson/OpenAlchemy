@@ -143,7 +143,7 @@ Using *x-backref* is equivalent to the following traditional *models.py*:
 Custom Foreign Key
 ^^^^^^^^^^^^^^^^^^
 
-The  *x-foreign-key-column* extension property is used to define a different
+The *x-foreign-key-column* extension property is used to define a different
 foreign key constraint column to the default *id* column. It is similar to the
 :ref:`backref` extension property. There are two ways the foreign key constrain
 can be defined. The first adds the *x-foreign-key-column* extension property
