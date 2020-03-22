@@ -8,6 +8,7 @@ Examples
    connexion
    alembic
    simple
+   default
    composite_index
    composite_unique
    all_of
