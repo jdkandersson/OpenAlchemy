@@ -46,7 +46,7 @@ property with the reference to the *required* list. For example:
 OpenAlchemy defined relationships are equivalent to the following traditional
 *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/models_traditional.py
     :language: python
     :linenos:
 
@@ -94,7 +94,7 @@ precedence over required.
 Setting *nullable* to *false* is equivalent to the following traditional
 *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_not_nullable_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/not_nullable_models_traditional.py
     :language: python
     :linenos:
 
@@ -131,7 +131,7 @@ list and the referenced object, the value from the *allOf* list will be used.
 
 Using *x-backref* is equivalent to the following traditional *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_backref_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/backref_models_traditional.py
     :language: python
     :linenos:
 
@@ -143,7 +143,7 @@ Using *x-backref* is equivalent to the following traditional *models.py*:
 Custom Foreign Key
 ^^^^^^^^^^^^^^^^^^
 
-The  *x-foreign-key-column* extension property is used to define a different
+The *x-foreign-key-column* extension property is used to define a different
 foreign key constraint column to the default *id* column. It is similar to the
 :ref:`backref` extension property. There are two ways the foreign key constrain
 can be defined. The first adds the *x-foreign-key-column* extension property
@@ -329,7 +329,7 @@ used.
 
 Using *x-secondary* is equivalent to the following traditional *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_many_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_many/models_traditional.py
     :language: python
     :linenos:
 

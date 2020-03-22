@@ -193,6 +193,11 @@ objects. For example:
             - division
             - salary
 
+.. seealso::
+
+   `SQLAlchemy Composite Index <https://docs.sqlalchemy.org/en/13/core/constraints.html#index-api>`_
+      Documentation for defining composite indexes in SQLAlchemy.
+
 .. _unique:
 
 Unique Constraint
@@ -337,6 +342,11 @@ objects. For example:
           columns:
             - division
             - salary
+
+.. seealso::
+
+   `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
+      Documentation for defining composite unique constraint in SQLAlchemy.
 
 .. _foreign-key:
 

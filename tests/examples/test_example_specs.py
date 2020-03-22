@@ -1,4 +1,4 @@
-"""Test for simple-example-spec.yaml."""
+"""Test for examples."""
 
 import pytest
 
@@ -31,65 +31,66 @@ def cleanup_models():
     "filename, model_name, attrs, expected_delta_attrs",
     [
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             {"name": "employee 1", "division": "division 1"},
             {"id": 1, "salary": None},
         ),
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "division": "division 1", "salary": 12},
             {},
         ),
         (
-            "all-of-column-example-spec.yml",
+            "all_of/column-example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "salary": 12},
             {},
         ),
         (
-            "all-of-column-example-spec.yml",
+            "all_of/column-example-spec.yml",
             "Division",
             {"id": 11, "name": "employee 1"},
             {},
         ),
         (
-            "all-of-model-example-spec.yml",
+            "all_of/model-example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "salary": 12},
             {},
         ),
         (
-            "all-of-model-example-spec.yml",
+            "all_of/model-example-spec.yml",
             "Division",
             {"id": 11, "name": "employee 1"},
             {},
         ),
         (
-            "composite-index-example-spec.yml",
+            "composite_index/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
         (
-            "ref-column-example-spec.yml",
+            "ref/column-example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
         (
-            "ref-model-example-spec.yml",
+            "ref/model-example-spec.yml",
             "RefEmployee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
         (
-            "unique-constraint-example-spec.yml",
+            "composite_unique/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
+        ("default/example-spec.yml", "Employee", {"id": 1}, {"name": "Unknown"}),
     ],
     ids=[
         "simple            Employee required only",
@@ -102,6 +103,7 @@ def cleanup_models():
         "ref-column        Employee",
         "ref-model         Employee",
         "unique-constraint Employee",
+        "default           Employee",
     ],
 )
 @pytest.mark.example
@@ -136,13 +138,13 @@ def test_single_model(
     "filename, model_name, sql, expected_contents",
     [
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE name='employee'",
             ["PRIMARY KEY (id)"],
         ),
         (
-            "simple-example-spec.yml",
+            "simple/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE type='index'",
             [
@@ -151,16 +153,16 @@ def test_single_model(
             ],
         ),
         (
-            "composite-index-example-spec.yml",
+            "composite_index/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE type='index'",
             ["INDEX ix_employee_name ON employee (name, division)"],
         ),
         (
-            "unique-constraint-example-spec.yml",
+            "composite_unique/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE name='employee'",
-            ["UNIQUE (division, address)"],
+            ["UNIQUE (address, division)"],
         ),
     ],
     ids=[
@@ -191,7 +193,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
     "filename, model_names, attrs",
     [
         (
-            "relationship-many-to-one-example-spec.yml",
+            "relationship/many_to_one/example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -200,7 +202,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-backref-example-spec.yml",
+            "relationship/many_to_one/backref-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -209,7 +211,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-custom-foreign-key-example-spec.yml",
+            "relationship/many_to_one/custom-foreign-key-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -218,7 +220,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-not-nullable-example-spec.yml",
+            "relationship/many_to_one/not-nullable-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -227,7 +229,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-one-to-many-example-spec.yml",
+            "relationship/one_to_many/example-spec.yml",
             ("Division", "Employee"),
             {
                 "id": 11,
@@ -236,7 +238,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-one-to-one-example-spec.yml",
+            "relationship/one_to_one/example-spec.yml",
             ("Employee", "PayInfo"),
             {
                 "id": 11,
@@ -245,7 +247,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-many-example-spec.yml",
+            "relationship/many_to_many/example-spec.yml",
             ("Employee", "Project"),
             {
                 "id": 11,

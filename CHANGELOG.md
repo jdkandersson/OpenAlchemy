@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add section of documentation for each example.
+
 ## Version 1.0.0 - 2020-03-21
 
 - Add support for remote references to a file at a URL.

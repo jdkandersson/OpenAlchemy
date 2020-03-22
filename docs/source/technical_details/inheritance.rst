@@ -25,13 +25,13 @@ example, the following specification defines a base schema for the *id* and
 *name* columns and re-uses them for the *Employee* and *Division* models with
 some changes to the description, example or both.
 
-.. literalinclude:: ../../../examples/all-of-column-example-spec.yml
+.. literalinclude:: ../../../examples/all_of/column-example-spec.yml
     :language: yaml
     :linenos:
 
 The SQLAlchemy models might then look like:
 
-.. literalinclude:: ../../../examples/all_of_column_models.py
+.. literalinclude:: ../../../examples/all_of/column_models.py
     :language: python
     :linenos:
 
@@ -52,13 +52,13 @@ the *description* and *x-tablename* needs to be different. By using *allOf*
 they can copy the *id* and *name* columns from *IdNameBase* and define their
 own *description* and *tablename*.
 
-.. literalinclude:: ../../../examples/all-of-model-example-spec.yml
+.. literalinclude:: ../../../examples/all_of/model-example-spec.yml
     :language: yaml
     :linenos:
 
 The SQLAlchemy models might then look like:
 
-.. literalinclude:: ../../../examples/all_of_model_models.py
+.. literalinclude:: ../../../examples/all_of/model_models.py
     :language: python
     :linenos:
 
