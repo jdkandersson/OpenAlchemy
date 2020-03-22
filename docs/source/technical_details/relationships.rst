@@ -215,6 +215,10 @@ following example defines the *order_by* argument for the relationship:
     :language: yaml
     :linenos:
 
+The value of *x-kwargs* is an arbitrary object with the following restrictions:
+* each key must be a string and
+* it is not allowed to contain the *backref* and *secondary* keys.
+
 .. seealso::
 
     `SQLAlchemy Relationship API <https://docs.sqlalchemy.org/en/13/orm/relationship_api.html#relationships-api>`_
