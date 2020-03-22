@@ -6,7 +6,7 @@ OpenAPI supports inheritance through the *allOf* directive.
 .. seealso::
 
    `OpenAPI allOf documentation <https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/>`_
-      Documentation for the *allOf* directive.
+      OpenAPI documentation for the *allOf* directive.
 
    :ref:`inheritance`
       OpenAlchemy documentation for the *allOf* directive.
