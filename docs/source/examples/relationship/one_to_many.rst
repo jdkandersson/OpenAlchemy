@@ -6,10 +6,10 @@ that the role of the child and parent is swapped.
 
 .. seealso::
 
-   :ref:`one-to-many`
+    :ref:`one-to-many`
       OpenAlchemy documentation for one to many relationships.
 
-   `SQLAlchemy One to Many <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#one-to-many>`_
+    `SQLAlchemy One to Many <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#one-to-many>`_
       SQLAlchemy documentation for one to many relationships.
 
 The following example defines a one to many relationship between *Employee*

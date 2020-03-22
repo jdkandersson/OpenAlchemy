@@ -51,7 +51,7 @@ For example:
 
 .. seealso::
 
-   `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__>`_
+    `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__>`_
       Documentation for SQLAlchemy autoincrement.
 
 .. _index:
@@ -195,7 +195,7 @@ objects. For example:
 
 .. seealso::
 
-   `SQLAlchemy Composite Index <https://docs.sqlalchemy.org/en/13/core/constraints.html#index-api>`_
+    `SQLAlchemy Composite Index <https://docs.sqlalchemy.org/en/13/core/constraints.html#index-api>`_
       Documentation for defining composite indexes in SQLAlchemy.
 
 .. _unique:
@@ -345,7 +345,7 @@ objects. For example:
 
 .. seealso::
 
-   `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
+    `SQLAlchemy Composite Unique Constraint <https://docs.sqlalchemy.org/en/13/core/constraints.html#unique-constraint>`_
       Documentation for defining composite unique constraint in SQLAlchemy.
 
 .. _foreign-key:
@@ -417,5 +417,5 @@ Adding a default to an *object* or *array* type has no effect in OpenAlchemy.
 
 .. seealso::
 
-   `SQLAlchemy "Scalar Default" <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
+    `SQLAlchemy "Scalar Default" <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
       Documentation for the scalar default value in SQLAlchemy.

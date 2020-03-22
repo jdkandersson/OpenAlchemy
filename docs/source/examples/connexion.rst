@@ -13,7 +13,7 @@ but also the SQLALchemy models.
 
 .. seealso::
 
-   `connexion documentation <https://connexion.readthedocs.io/en/latest/>`_
+    `connexion documentation <https://connexion.readthedocs.io/en/latest/>`_
       Documentation for connexion.
 
 API specification

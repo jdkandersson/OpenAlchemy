@@ -8,10 +8,10 @@ and each employee must be paid separately.
 
 .. seealso::
 
-   :ref:`one-to-one`
+    :ref:`one-to-one`
       OpenAlchemy documentation for one to one relationships.
 
-   `SQLAlchemy One to One <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#one-to-one>`_
+    `SQLAlchemy One to One <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#one-to-one>`_
       SQLAlchemy documentation for one to one relationships.
 
 The following example defines a one to one relationship between *Employee*

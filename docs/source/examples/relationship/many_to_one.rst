@@ -8,10 +8,10 @@ work in one division.
 
 .. seealso::
 
-   :ref:`many-to-one`
+    :ref:`many-to-one`
       OpenAlchemy documentation for many to one relationships.
 
-   `SQLAlchemy Many to One <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#many-to-one>`_
+    `SQLAlchemy Many to One <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html#many-to-one>`_
       SQLAlchemy documentation for many to one relationships.
 
 The following example defines a many to one relationship between *Employee*
@@ -48,7 +48,7 @@ many to one relationship.
 
 .. seealso::
 
-   :ref:`many-to-one-nullable`
+    :ref:`many-to-one-nullable`
       OpenAlchemy documentation for the nullability of many to one
       relationships.
 
@@ -86,7 +86,7 @@ relationship the parent model is also accessible.
 
 .. seealso::
 
-   :ref:`backref`
+    :ref:`backref`
       OpenAlchemy documentation for back references.
 
 The following example defines a many to one relationship between *Employee* and
@@ -124,7 +124,7 @@ foreign key constraint for a relationship. This can be changed using the
 
 .. seealso::
 
-   :ref:`custom-foreign-key`
+    :ref:`custom-foreign-key`
       OpenAlchemy documentation for custom foreign key columns.
 
 The following example defines a many to one relationship between *Employee* and

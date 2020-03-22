@@ -8,7 +8,7 @@ other objects from an object property.
 
 .. seealso::
 
-   `SQLAlchemy relationship documentation <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html>`_
+    `SQLAlchemy relationship documentation <https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html>`_
       Documentation for SQLAlchemy relationships.
 
 .. _many-to-one:
@@ -197,6 +197,28 @@ Note the following:
     * :ref:`foreign-key` describes how to define foreign key constraints.
     * :ref:`from-dict` describes how to convert dictionaries to model instances.
     * :ref:`to-dict` describes how to convert model instances to dictionaries.
+
+.. _relationship-kwargs:
+
+Other Keyword Arguments
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The remaining keyword arguments for *relationship* can be specified using the
+*x-kwargs* extension parameter. It can be included as a part of the *allOf*
+list when defining a reference. All *relationship* arguments are available
+except those that have a special meaning within OpenAlchemy (primarily the
+arguments that implement the features that have already been discussed). These
+arguments should be specified using the relevant extension property. The
+following example defines the *order_by* argument for the relationship:
+
+.. literalinclude:: ./relationships/many_to_one/kwargs.yaml
+    :language: yaml
+    :linenos:
+
+.. seealso::
+
+    `SQLAlchemy Relationship API <https://docs.sqlalchemy.org/en/13/orm/relationship_api.html#relationships-api>`_
+      Documentation of the SQLAlchemy relationship API.
 
 .. _one-to-one:
 
