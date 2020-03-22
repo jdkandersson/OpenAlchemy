@@ -12,7 +12,7 @@ from open_alchemy import models
 class EmployeeDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
-    id: int
+    id: typing.Optional[int]
     name: str
 
 
@@ -34,7 +34,7 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
+    id: typing.Optional[int]
     name: str
 
     def __init__(self, id: typing.Optional[int] = None, name: str = "Unknown") -> None:

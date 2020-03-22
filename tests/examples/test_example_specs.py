@@ -90,6 +90,7 @@ def cleanup_models():
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
         ),
+        ("default/example-spec.yml", "Employee", {"id": 1}, {"name": "Unknown"}),
     ],
     ids=[
         "simple            Employee required only",
@@ -102,6 +103,7 @@ def cleanup_models():
         "ref-column        Employee",
         "ref-model         Employee",
         "unique-constraint Employee",
+        "default           Employee",
     ],
 )
 @pytest.mark.example
@@ -160,7 +162,7 @@ def test_single_model(
             "composite_unique/example-spec.yml",
             "Employee",
             "SELECT sql FROM sqlite_master WHERE name='employee'",
-            ["UNIQUE (division, address)"],
+            ["UNIQUE (address, division)"],
         ),
     ],
     ids=[
