@@ -105,8 +105,8 @@ def get_kwargs(
     """
     value = get(source=source, name="x-kwargs", default=default, pop=pop)
 
-    # Check for dictionary
-    if not isinstance(value, dict):
+    # Check for dictionary to make mypy happy, in reality always passes
+    if not isinstance(value, dict):  # pragma: no cover
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of x-kwargs must be an object."
         )
