@@ -193,7 +193,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
     "filename, model_names, attrs",
     [
         (
-            "relationship-many-to-one-example-spec.yml",
+            "relationship/many_to_one/example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -202,7 +202,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-backref-example-spec.yml",
+            "relationship/many_to_one/backref-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -211,7 +211,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-custom-foreign-key-example-spec.yml",
+            "relationship/many_to_one/custom-foreign-key-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,
@@ -220,7 +220,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-many-to-one-not-nullable-example-spec.yml",
+            "relationship/many_to_one/not-nullable-example-spec.yml",
             ("Employee", "Division"),
             {
                 "id": 11,

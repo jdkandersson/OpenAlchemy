@@ -46,7 +46,7 @@ property with the reference to the *required* list. For example:
 OpenAlchemy defined relationships are equivalent to the following traditional
 *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/models_traditional.py
     :language: python
     :linenos:
 
@@ -94,7 +94,7 @@ precedence over required.
 Setting *nullable* to *false* is equivalent to the following traditional
 *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_not_nullable_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/not_nullable_models_traditional.py
     :language: python
     :linenos:
 
@@ -131,7 +131,7 @@ list and the referenced object, the value from the *allOf* list will be used.
 
 Using *x-backref* is equivalent to the following traditional *models.py*:
 
-.. literalinclude:: ../../../examples/relationship_many_to_one_backref_models_traditional.py
+.. literalinclude:: ../../../examples/relationship/many_to_one/backref_models_traditional.py
     :language: python
     :linenos:
 
