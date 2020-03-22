@@ -1,9 +1,5 @@
 #!/bin/bash
 
-cd examples
-python relationship_one_to_one_models.py
-python relationship_one_to_many_models.py
-cd -
 cd examples/remote
 python models.py
 python url_models.py
@@ -40,6 +36,10 @@ python not_nullable_models_traditional.py
 python custom_foreign_key_models.py
 python backref_models.py
 python backref_models_traditional.py
+cd -
+cd examples/relationship/one_to_one
+python models.py
+python models_traditional.py
 cd -
 cd examples/relationship/one_to_many
 python models.py

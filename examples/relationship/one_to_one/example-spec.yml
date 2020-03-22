@@ -7,6 +7,18 @@ info:
   version: "0.1"
 
 paths:
+  /pay_info:
+    get:
+      summary: Used to retrieve all payment information.
+      responses:
+        200:
+          description: Return all payment information from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/PayInfo"
   /employee:
     get:
       summary: Used to retrieve all employees.

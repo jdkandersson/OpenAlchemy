@@ -238,7 +238,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
         ),
         (
-            "relationship-one-to-one-example-spec.yml",
+            "relationship/one_to_one/example-spec.yml",
             ("Employee", "PayInfo"),
             {
                 "id": 11,
