@@ -36,7 +36,10 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
     type_ = _determine_type(artifacts=artifacts)
     foreign_key: typing.Optional[ForeignKey] = None
     if artifacts.extension.foreign_key is not None:
-        foreign_key = ForeignKey(artifacts.extension.foreign_key)
+        foreign_key_kwargs: types.TKwargs = {}
+        if artifacts.extension.foreign_key_kwargs is not None:
+            foreign_key_kwargs = artifacts.extension.foreign_key_kwargs
+        foreign_key = ForeignKey(artifacts.extension.foreign_key, **foreign_key_kwargs)
     # Map default value
     default = helpers.oa_to_py_type.convert(
         value=artifacts.open_api.default,
