@@ -20,3 +20,6 @@ Note that the following restrictions apply:
 
     * :samp:`__tablename__` and
     * :samp:`__table_args__`.
+
+Also note that no verification, beyond the above, is done before adding the
+kwargs to the SQLAlchemy model.

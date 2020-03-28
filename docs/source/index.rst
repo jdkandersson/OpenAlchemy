@@ -329,6 +329,7 @@ the documentation:
 +---------------------+----------------------------------------------------+
 | x-kwargs            | * :ref:`Relationship kwargs <relationship-kwargs>` |
 |                     | * :ref:`Model kwargs <model-kwargs>`               |
+|                     | * :ref:`Column kwargs <column-kwargs>`             |
 +---------------------+----------------------------------------------------+
 
 The SQLAlchemy *Base* and any constructed database models are dynamically added
