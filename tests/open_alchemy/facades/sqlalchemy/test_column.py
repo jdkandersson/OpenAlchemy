@@ -221,6 +221,23 @@ def test_construct_unique(unique):
     assert returned_column.unique == unique
 
 
+@pytest.mark.facade
+def test_construct_kwargs():
+    """
+    GIVEN artifacts with kwargs
+    WHEN construct is called with the artifacts
+    THEN the column is constructed with the kwargs.
+    """
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"),
+        extension=ExtColArt(kwargs={"doc": "value 1"}),
+    )
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    assert returned_column.doc == "value 1"
+
+
 class TestDetermineType:
     """Tests for _determine_type."""
 
