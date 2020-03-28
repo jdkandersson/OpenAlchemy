@@ -578,3 +578,65 @@ def test_table_args_index():
 
     (index,) = model.__table_args__
     assert isinstance(index, schema.Index)
+
+
+class TestGetKwargs:
+    """Tests for _get_kwargs."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "in_schema",
+        [
+            {"x-kwargs": {1: "value 1"}},
+            {"x-kwargs": {"__tablename__": "value 1"}},
+            {"x-kwargs": {"__table_args__": "value 1"}},
+            {"x-kwargs": {"key": "value 1"}},
+            {"x-kwargs": {"__key": "value 1"}},
+            {"x-kwargs": {"key__": "value 1"}},
+        ],
+        ids=[
+            "invalid kwargs",
+            "__tablename__",
+            "__table_args__",
+            "no underscores",
+            "front underscores",
+            "back underscores",
+        ],
+    )
+    @pytest.mark.model
+    def test_invalid(in_schema):
+        """
+        GIVEN invalid kwargs
+        WHEN _get_kwargs is called with the schema
+        THEN MalformedExtensionPropertyError is raised.
+        """
+        with pytest.raises(exceptions.MalformedExtensionPropertyError):
+            model_factory._get_kwargs(schema=in_schema)
+
+    @staticmethod
+    @pytest.mark.model
+    def test_valid_exists():
+        """
+        GIVEN schema with kwargs
+        WHEN _get_kwargs is called with the schema
+        THEN the kwargs are returned.
+        """
+        in_schema = {"x-kwargs": {"__key__": "value"}}
+
+        kwargs = model_factory._get_kwargs(schema=in_schema)
+
+        assert kwargs == {"__key__": "value"}
+
+    @staticmethod
+    @pytest.mark.model
+    def test_valid_not_exists():
+        """
+        GIVEN schema without kwargs
+        WHEN _get_kwargs is called with the schema
+        THEN None is returned.
+        """
+        kwargs = model_factory._get_kwargs(schema={})
+
+        assert kwargs is None

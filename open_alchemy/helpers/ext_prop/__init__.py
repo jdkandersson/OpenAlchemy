@@ -83,7 +83,7 @@ def get_kwargs(
     reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
-) -> typing.Optional[typing.Dict[str, typing.Any]]:
+) -> types.TKwargs:
     """
     Read the value of x-kwargs, validate the schema and return it.
 
