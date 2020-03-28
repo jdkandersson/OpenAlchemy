@@ -12,7 +12,8 @@ except ImportError:  # pragma: no cover
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
 AllOfSpec = typing.List[Schema]
-TKwargs = typing.Optional[typing.Dict[str, typing.Any]]
+TKwargs = typing.Dict[str, typing.Any]
+TOptKwargs = typing.Optional[TKwargs]
 
 
 class ModelFactory(Protocol):
@@ -125,7 +126,7 @@ class RelationshipArtifacts:
     # The name of the optional secondary table to use
     secondary: typing.Optional[str] = None
     # Keyword arguments for the relationship construction
-    kwargs: TKwargs = None
+    kwargs: TOptKwargs = None
 
 
 @dataclasses.dataclass

@@ -635,8 +635,31 @@ class TestGetKwargs:
         """
         GIVEN schema without kwargs
         WHEN _get_kwargs is called with the schema
-        THEN None is returned.
+        THEN empty dictionary is returned.
         """
         kwargs = model_factory._get_kwargs(schema={})
 
-        assert kwargs is None
+        assert kwargs == {}
+
+
+@pytest.mark.model
+def test_kwargs():
+    """
+    GIVEN schemas with schema that has kwargs
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the kwargs is returned.
+    """
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        base=mock.MagicMock,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "properties": {"property_1": {"type": "integer"}},
+                "x-kwargs": {"__mapper_args__": {"passive_deletes": True}},
+            }
+        },
+    )
+
+    assert model.__mapper_args__ == {"passive_deletes": True}

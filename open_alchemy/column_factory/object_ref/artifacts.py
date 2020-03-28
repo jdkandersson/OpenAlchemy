@@ -88,7 +88,7 @@ class _IntermediaryObjectArtifacts:
     # The description for the reference
     description: typing.Optional[str] = None
     # Keyword arguments for relationship construction
-    kwargs: types.TKwargs = None
+    kwargs: types.TOptKwargs = None
 
 
 def _handle_schema(
@@ -208,7 +208,7 @@ def _handle_all_of(
     fk_column_name: typing.Optional[str] = None
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
-    kwargs: types.TKwargs = None
+    kwargs: types.TOptKwargs = None
 
     # Exceptions with their messages
     incorrect_number_of_ref = exceptions.MalformedRelationshipError(
