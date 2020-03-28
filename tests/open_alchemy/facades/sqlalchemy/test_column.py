@@ -97,6 +97,28 @@ def test_construct_foreign_key():
     assert len(returned_column.foreign_keys) == 1
     foreign_key = returned_column.foreign_keys.pop()
     assert str(foreign_key) == "ForeignKey('table.column')"
+    assert foreign_key.name is None
+
+
+@pytest.mark.facade
+def test_construct_foreign_key_kwargs():
+    """
+    GIVEN artifacts with foreign key and foreign key kwargs
+    WHEN construct is called with the artifacts
+    THEN a column with a foreign key with the kwargs is returned.
+    """
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"),
+        extension=ExtColArt(
+            foreign_key="table.column", foreign_key_kwargs={"name": "name 1"}
+        ),
+    )
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    assert len(returned_column.foreign_keys) == 1
+    foreign_key = returned_column.foreign_keys.pop()
+    assert foreign_key.name == "name 1"
 
 
 @pytest.mark.parametrize("nullable", [True, False], ids=["true", "false"])
@@ -219,6 +241,22 @@ def test_construct_unique(unique):
     returned_column = column.construct(artifacts=artifacts)
 
     assert returned_column.unique == unique
+
+
+@pytest.mark.facade
+def test_construct_kwargs():
+    """
+    GIVEN artifacts with kwargs
+    WHEN construct is called with the artifacts
+    THEN the column is constructed with the kwargs.
+    """
+    artifacts = ColArt(
+        open_api=OAColArt(type="integer"), extension=ExtColArt(kwargs={"doc": "doc 1"})
+    )
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    assert returned_column.doc == "doc 1"
 
 
 class TestDetermineType:

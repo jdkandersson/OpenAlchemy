@@ -83,7 +83,8 @@ def get_kwargs(
     reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
-) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    name: str = "x-kwargs",
+) -> types.TOptKwargs:
     """
     Read the value of x-kwargs, validate the schema and return it.
 
@@ -98,12 +99,13 @@ def get_kwargs(
         reserved: The reserved keys that should not be in the kwargs.
         default: The default value.
         pop: Whether to remove the value from the dictionary.
+        name: The name of the extension property with the kwargs.
 
     Returns:
         The value of the property or the default value if it does not exist.
 
     """
-    value = get(source=source, name="x-kwargs", default=default, pop=pop)
+    value = get(source=source, name=name, default=default, pop=pop)
     if value is None:
         return None
 

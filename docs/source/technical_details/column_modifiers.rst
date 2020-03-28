@@ -6,8 +6,8 @@ Applying Modifiers to Columns
 Primary Key
 -----------
 
-To make a column the primary key for a table, set the *x-primary-key* property
-on an object property to *true*. For example:
+To make a column the primary key for a table, set the :samp:`x-primary-key`
+property on an object property to :samp:`true`. For example:
 
 .. code-block:: yaml
    :linenos:
@@ -27,8 +27,8 @@ on an object property to *true*. For example:
 Auto Increment
 --------------
 
-To make a column auto increment, set the *x-autoincrement* property to *true*.
-For example:
+To make a column auto increment, set the :samp:`x-autoincrement` property to
+:samp:`true`. For example:
 
 .. code-block:: yaml
    :linenos:
@@ -45,9 +45,9 @@ For example:
           type: string
 
 .. note::
-    SQLAlchemy turns *autoincrement* on by default on integer primary key
-    columns. If you wish to
-    disable autoincrement behavior, you must set *x-autoincrement* to *false*.
+    SQLAlchemy turns :samp:`autoincrement` on by default on integer primary key
+    columns. If you wish to disable autoincrement behavior, you must set
+    :samp:`x-autoincrement` to :samp:`false`.
 
 .. seealso::
 
@@ -68,8 +68,8 @@ can be defined over multiple columns.
 Column Index
 ^^^^^^^^^^^^
 
-To add an index to a column, set the *x-index* property on an object property
-to *true*. For example:
+To add an index to a column, set the :samp:`x-index` property on an object
+property to :samp:`true`. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -84,16 +84,16 @@ to *true*. For example:
           type: string
           x-index: true
 
-This applies an index on the *name* property so that queries filtering by name
-are faster.
+This applies an index on the :samp:`name` property so that queries filtering by
+name are faster.
 
 .. _composite-index:
 
 Composite Index
 ^^^^^^^^^^^^^^^
 
-To add an index over multiple columns, set *x-composite-index* on the object.
-For example:
+To add an index over multiple columns, set :samp:`x-composite-index` on the
+object. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -110,9 +110,9 @@ For example:
         - id
         - name
 
-This defines an index over *id* and *name* to allow for faster querying when
-filtering by both *id* and *name*. Use an array of arrays to define multiple
-composite indexes for an object. For example:
+This defines an index over :samp:`id` and :samp:`name` to allow for faster
+querying when filtering by both :samp:`id` and :samp:`name`. Use an array of
+arrays to define multiple composite indexes for an object. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -135,15 +135,15 @@ composite indexes for an object. For example:
         - - division
           - salary
 
-This defines an index over *id* and *name* and over *division* and *salary*. It
-is also possible to define a composite index as an object which has the
-following properties:
+This defines an index over :samp:`id` and :samp:`name` and over
+:samp:`division` and :samp:`salary`. It is also possible to define a composite
+index as an object which has the following properties:
 
-* *expressions*: Defines the columns of the index.
-* *name* (optional): The name of the index. Defaults to letting the database
+* :samp:`expressions`: Defines the columns of the index.
+* :samp:`name` (optional): The name of the index. Defaults to letting the database
   define the name.
-* *unique* (optional): Whether to enforce a unique constraint on the index.
-  Defaults to *false*.
+* :samp:`unique` (optional): Whether to enforce a unique constraint on the
+  index. Defaults to :samp:`false`.
 
 For example:
 
@@ -212,8 +212,8 @@ level, a constraint can be defined over multiple columns.
 Column Unique Constraint
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-To add an unique constraint to a column, set the *x-unique* property on an
-object property to *true*. For example:
+To add an unique constraint to a column, set the :samp:`x-unique` property on
+an object property to :samp:`true`. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -228,16 +228,16 @@ object property to *true*. For example:
           type: string
           x-unique: true
 
-This applies a unique constraint on the *name* property which ensures that
-there are no duplicate names in the database.
+This applies a unique constraint on the :samp:`name` property which ensures
+that there are no duplicate names in the database.
 
 .. _composite-unique:
 
 Composite Unique Constraint
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To add a unique constraint over multiple columns, set *x-composite-unique* on
-the object. For example:
+To add a unique constraint over multiple columns, set
+:samp:`x-composite-unique` on the object. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -256,10 +256,10 @@ the object. For example:
         - name
         - address
 
-This applies a unique constraint over the *name* and *address* columns to
-ensure an employee can be uniquely identified by their name and place of
-residence. Use an array of arrays to define multiple unique constraints for an
-object. For example:
+This applies a unique constraint over the :samp:`name` and :samp:`address`
+columns to ensure an employee can be uniquely identified by their name and
+place of residence. Use an array of arrays to define multiple unique
+constraints for an object. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -284,13 +284,14 @@ object. For example:
         - - division
           - salary
 
-This defines two unique constraints, one for *name* and *address* and another
-for *division* and *salary*. It is also possible to define a composite unique
-constraint as an object which has the following properties:
+This defines two unique constraints, one for :samp:`name` and :samp:`address`
+and another for :samp:`division` and :samp:`salary`. It is also possible to
+define a composite unique constraint as an object which has the following
+properties:
 
-* *columns*: Defines the columns of the unique constraint.
-* *name* (optional): The name of the unique constraint. Defaults to letting the
-  database define the name.
+* :samp:`columns`: Defines the columns of the unique constraint.
+* :samp:`name` (optional): The name of the unique constraint. Defaults to
+  letting the database define the name.
 
 For example:
 
@@ -353,8 +354,8 @@ objects. For example:
 Foreign Key Constraint
 ----------------------
 
-To add a foreign key constraint, set the *x-foreign-key* property on an object
-property to the <table name>.<column>. For example:
+To add a foreign key constraint, set the :samp:`x-foreign-key` property on an
+object property to the :samp:`<table name>.<column>`. For example:
 
 .. code-block:: yaml
     :linenos:
@@ -365,17 +366,12 @@ property to the <table name>.<column>. For example:
       properties:
         id:
           type: integer
-        name:
-          type: string
-          x-unique: true
+        ...
     Employee:
       type: object
       x-tablename: employee
       properties:
-        id:
-          type: integer
-        name:
-          type: string
+        ...
         division_id:
           type: integer
           x-foreign-key: division.id
@@ -383,6 +379,46 @@ property to the <table name>.<column>. For example:
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
     relationships between tables.
+
+.. _foreign-key-kwargs:
+
+Foreign Key kwargs
+^^^^^^^^^^^^^^^^^^
+
+SQLAlchemy includes support for several keyword arguments for constructing
+foreign keys. OpenAlchemy supports this behavior through the
+:samp:`x-foreign-key-kwargs` extension property. For example, the following
+foreign key constraint adds the :samp:`ondelete` keyword argument:
+
+.. code-block:: yaml
+    :linenos:
+
+    Division:
+      type: object
+      x-tablename: division
+      properties:
+        id:
+          type: integer
+        ...
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        ...
+        division_id:
+          type: integer
+          x-foreign-key: division.id
+          x-foreign-key-kwargs:
+            ondelete: delete
+
+Note that the value of :samp:`x-foreign-key-kwargs` must be an object where
+keys must be a string. No further validation is done before passing the kwargs
+to the SQLAlchemy foreign key constructor.
+
+.. seealso::
+
+    `SQLAlchemy Foreign Key kwargs <https://docs.sqlalchemy.org/en/13/core/constraints.html#sqlalchemy.schema.ForeignKey.__init__>`_
+      Documentation for the keyword arguments for foreign keys in SQLAlchemy.
 
 .. _default:
 
@@ -408,14 +444,59 @@ The default value is added to the column constructor as the default value as a
 "Scalar Default" in SQLAlchemy. The following property types support a default
 value (including all their formats supported by OpenAlchemy):
 
-* *integer*,
-* *number*,
-* *string* and
-* *boolean*.
+* :samp:`integer`,
+* :samp:`number`,
+* :samp:`string` and
+* :samp:`boolean`.
 
-Adding a default to an *object* or *array* type has no effect in OpenAlchemy.
+Adding a default to an :samp:`object` or :samp:`array` type has no effect in
+OpenAlchemy.
 
 .. seealso::
 
     `SQLAlchemy "Scalar Default" <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
       Documentation for the scalar default value in SQLAlchemy.
+
+.. _column-kwargs:
+
+Additional kwargs
+-----------------
+
+SQLAlchemy has further keyword arguments for columns. OpenAlchemy supports
+these through the :samp:`x-kwargs` extension property for a property. For
+example, in the following schema, the :samp:`name` column has an additional
+keyword argument :samp:`doc` added:
+
+.. code-block:: yaml
+    :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        ...
+        name:
+          type: string
+          x-kwargs:
+            doc: The name of the employee
+
+Note that the following restrictions apply for :samp:`x-kwargs`:
+
+* the value must be an object,
+* the keys of the object must be strings,
+* keys cannot be:
+
+    * :samp:`nullable`,
+    * :samp:`default`,
+    * :samp:`primary_key`,
+    * :samp:`autoincrement`,
+    * :samp:`index` and
+    * :samp:`unique`.
+
+Also note that no verification, beyond the above, is done before passing the
+kwargs to the SQLAlchemy column constructor.
+
+.. seealso::
+
+    `SQLAlchemy Column kwargs <https://docs.sqlalchemy.org/en/13/core/metadata.html#sqlalchemy.schema.Column.__init__>`_
+      Documentation for the keyword arguments for columns in SQLAlchemy.

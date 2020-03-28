@@ -89,5 +89,32 @@ def model_factory(
             "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
             "__table_args__": table_args.construct(schema=schema),
+            **_get_kwargs(schema=schema),
         },
     )
+
+
+def _get_kwargs(*, schema: types.Schema) -> types.TKwargs:
+    """
+    Retrieve kwargs for for the model.
+
+    Raise MalformedExtensionPropertyError is the key does not start and end with __.
+
+    Args:
+        schema: The schema of the model.
+
+    Returns:
+        The kwargs for the model.
+
+    """
+    kwargs = helpers.ext_prop.get_kwargs(
+        source=schema, reserved={"__tablename__", "__table_args__"}
+    )
+    if kwargs is None:
+        return {}
+    # Check that key starts and ends with __
+    if any(not key.startswith("__") or not key.endswith("__") for key in kwargs.keys()):
+        raise exceptions.MalformedExtensionPropertyError(
+            "Model kwargs can only start and end with '__'."
+        )
+    return kwargs

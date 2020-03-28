@@ -44,6 +44,11 @@
     "description": "Customize the column used for the foreign key constraint of a relationship.",
     "type": "string"
   },
+  "x-foreign-key-kwargs": {
+    "description": "Define kwargs to be passed to the foreign key constructor.",
+    "type": "object",
+    "additionalProperties": true
+  },
   "x-tablename": {
     "description": "Define the name of a table.",
     "type": "string"

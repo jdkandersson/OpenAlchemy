@@ -36,13 +36,20 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
     type_ = _determine_type(artifacts=artifacts)
     foreign_key: typing.Optional[ForeignKey] = None
     if artifacts.extension.foreign_key is not None:
-        foreign_key = ForeignKey(artifacts.extension.foreign_key)
+        foreign_key_kwargs: types.TKwargs = {}
+        if artifacts.extension.foreign_key_kwargs is not None:
+            foreign_key_kwargs = artifacts.extension.foreign_key_kwargs
+        foreign_key = ForeignKey(artifacts.extension.foreign_key, **foreign_key_kwargs)
     # Map default value
     default = helpers.oa_to_py_type.convert(
         value=artifacts.open_api.default,
         type_=artifacts.open_api.type,
         format_=artifacts.open_api.format,
     )
+    # Generate kwargs
+    kwargs: types.TKwargs = {}
+    if artifacts.extension.kwargs is not None:
+        kwargs = artifacts.extension.kwargs
     return Column(
         type_,
         foreign_key,
@@ -52,6 +59,7 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         autoincrement=artifacts.extension.autoincrement,
         index=artifacts.extension.index,
         unique=artifacts.extension.unique,
+        **kwargs,
     )
 
 
