@@ -474,8 +474,7 @@ keyword argument :samp:`doc` added:
       type: object
       x-tablename: employee
       properties:
-        id:
-          type: integer
+        ...
         name:
           type: string
           x-kwargs:
