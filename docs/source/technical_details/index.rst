@@ -11,3 +11,4 @@ Technical Details
    references
    relationships
    inheritance
+   model

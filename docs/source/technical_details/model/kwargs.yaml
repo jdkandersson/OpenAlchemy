@@ -1,0 +1,6 @@
+Employee:
+  type: object
+  ...
+  x-kwargs:
+    __mapper_args__:
+      polymorphic_identity: employee
