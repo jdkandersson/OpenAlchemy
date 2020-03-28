@@ -366,17 +366,12 @@ object property to the :samp:`<table name>.<column>`. For example:
       properties:
         id:
           type: integer
-        name:
-          type: string
-          x-unique: true
+        ...
     Employee:
       type: object
       x-tablename: employee
       properties:
-        id:
-          type: integer
-        name:
-          type: string
+        ...
         division_id:
           type: integer
           x-foreign-key: division.id
@@ -384,6 +379,46 @@ object property to the :samp:`<table name>.<column>`. For example:
 .. seealso::
     :ref:`relationship` shows how to define object references that result in
     relationships between tables.
+
+.. _foreign-key-kwargs:
+
+Foreign Key kwargs
+^^^^^^^^^^^^^^^^^^
+
+SQLAlchemy includes support for several keyword arguments for constructing
+foreign keys. OpenAlchemy supports this behavior through the
+:samp:`x-foreign-key-kwargs` extension property. For example, the following
+foreign key constraint adds the :samp:`ondelete` keyword argument:
+
+.. code-block:: yaml
+    :linenos:
+
+    Division:
+      type: object
+      x-tablename: division
+      properties:
+        id:
+          type: integer
+        ...
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        ...
+        division_id:
+          type: integer
+          x-foreign-key: division.id
+          x-foreign-key-kwargs:
+            ondelete: delete
+
+Note that the value of :samp:`x-foreign-key-kwargs` must be an object where
+keys must be a string. No further validation is done before passing the kwargs
+to the SQLAlchemy foreign key constructor.
+
+.. seealso::
+
+    `SQLAlchemy Foreign Key kwargs <https://docs.sqlalchemy.org/en/13/core/constraints.html#sqlalchemy.schema.ForeignKey.__init__>`_
+      Documentation for the keyword arguments for foreign keys in SQLAlchemy.
 
 .. _default:
 
@@ -448,7 +483,8 @@ keyword argument :samp:`doc` added:
 
 Note that the following restrictions apply for :samp:`x-kwargs`:
 
-* the key must be a string,
+* the value must be an object,
+* the keys of the object must be strings,
 * keys cannot be:
 
     * :samp:`nullable`,

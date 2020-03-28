@@ -14,8 +14,9 @@ schema defines :samp:`__mapper_args__` for the *Employee* schema:
 
 Note that the following restrictions apply:
 
-* keys must be a string,
-* keys must start and end with :samp:`__` and
+* the value must be an object,
+* the keys of the object must be strings,
+* the keys must start and end with :samp:`__` and
 * keys cannot be:
 
     * :samp:`__tablename__` and
