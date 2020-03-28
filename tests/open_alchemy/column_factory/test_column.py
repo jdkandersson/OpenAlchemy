@@ -45,6 +45,34 @@ ColArt = types.ColumnArtifacts
             exceptions.MalformedExtensionPropertyError,
         ),
         ({"type": "string", "default": 1}, exceptions.MalformedSchemaError),
+        (
+            {"type": "string", "x-kwargs": {1: "value 1"}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"nullable": True}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"default": "value 1"}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"primary_key": True}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"autoincrement": True}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"index": True}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
+        (
+            {"type": "string", "x-kwargs": {"unique": True}},
+            exceptions.MalformedExtensionPropertyError,
+        ),
     ],
     ids=[
         "type missing",
@@ -59,6 +87,13 @@ ColArt = types.ColumnArtifacts
         "unique not boolean",
         "foreign key not string",
         "default invalid",
+        "kwargs invalid",
+        "kwargs nullable",
+        "kwargs default",
+        "kwargs primary_key",
+        "kwargs autoincrement",
+        "kwargs index",
+        "kwargs unique",
     ],
 )
 @pytest.mark.column
@@ -249,19 +284,27 @@ def test_calculate_column_schema_dict_ignore_invalid():
             {"type": "string", "default": "value 1"},
             ColArt(open_api=OAColArt(type="string", default="value 1", nullable=False)),
         ),
+        (
+            {"type": "string", "x-kwargs": {"key_1": "value 1"}},
+            ColArt(
+                open_api=OAColArt(type="string"),
+                extension=ExtColArt(kwargs={"key_1": "value 1"}),
+            ),
+        ),
     ],
     ids=[
         "type only",
-        "type with format",
-        "type with maxLength",
-        "type with nullable",
-        "type with description",
-        "type with primary key",
-        "type with autoincrement",
-        "type with index",
-        "type with unique",
-        "type with foreign key",
-        "type with default",
+        "format",
+        "maxLength",
+        "nullable",
+        "description",
+        "primary key",
+        "autoincrement",
+        "index",
+        "unique",
+        "foreign key",
+        "default",
+        "kwargs",
     ],
 )
 @pytest.mark.column

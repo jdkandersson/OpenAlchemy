@@ -67,6 +67,17 @@ def check_schema(
     index = helpers.ext_prop.get(source=schema, name="x-index")
     unique = helpers.ext_prop.get(source=schema, name="x-unique")
     foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
+    kwargs = helpers.ext_prop.get_kwargs(
+        source=schema,
+        reserved={
+            "nullable",
+            "default",
+            "primary_key",
+            "autoincrement",
+            "index",
+            "unique",
+        },
+    )
 
     # Construct return artifacts
     nullable_artefact = helpers.calculate_nullable(
@@ -90,6 +101,7 @@ def check_schema(
             index=index,
             unique=unique,
             foreign_key=foreign_key,
+            kwargs=kwargs,
         ),
     )
 

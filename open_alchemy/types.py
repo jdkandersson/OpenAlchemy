@@ -84,6 +84,7 @@ class ExtensionColumnArtifacts:
     index: typing.Optional[bool] = None
     unique: typing.Optional[bool] = None
     foreign_key: typing.Optional[str] = None
+    kwargs: TOptKwargs = None
 
 
 @dataclasses.dataclass
