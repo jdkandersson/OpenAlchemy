@@ -414,6 +414,22 @@ def test_kwargs_valid(value):
 
 
 @pytest.mark.helper
+def test_kwargs_valid_name():
+    """
+    GIVEN value for kwargs that has a valid format and a property name
+    WHEN get_kwargs is called with the value and the name
+    THEN the value is returned.
+    """
+    name = "x-foreign-key-kwargs"
+    value = {"key": "value"}
+    source = {name: value}
+
+    returned_value = helpers.ext_prop.get_kwargs(source=source, name=name)
+
+    assert returned_value == value
+
+
+@pytest.mark.helper
 def test_kwargs_valid_missing():
     """
     GIVEN empty value
