@@ -31,6 +31,26 @@ def test_integration():
 
 
 @pytest.mark.column
+def test_integration_kwargs():
+    """
+    GIVEN schema with kwargs
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy column is constructed with the kwargs.
+    """
+    spec = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
+    schemas = {}
+    ([(_, column)], _) = column_factory.column_factory(
+        spec=spec,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="schema",
+    )
+
+    assert column.doc == "doc 1"
+
+
+@pytest.mark.column
 def test_integration_all_of():
     """
     GIVEN schema with allOf statement

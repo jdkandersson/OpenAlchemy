@@ -229,13 +229,12 @@ def test_construct_kwargs():
     THEN the column is constructed with the kwargs.
     """
     artifacts = ColArt(
-        open_api=OAColArt(type="integer"),
-        extension=ExtColArt(kwargs={"doc": "value 1"}),
+        open_api=OAColArt(type="integer"), extension=ExtColArt(kwargs={"doc": "doc 1"})
     )
 
     returned_column = column.construct(artifacts=artifacts)
 
-    assert returned_column.doc == "value 1"
+    assert returned_column.doc == "doc 1"
 
 
 class TestDetermineType:
