@@ -67,6 +67,13 @@ def check_schema(
     index = helpers.ext_prop.get(source=schema, name="x-index")
     unique = helpers.ext_prop.get(source=schema, name="x-unique")
     foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
+    foreign_key_kwargs = helpers.ext_prop.get_kwargs(
+        source=schema, name="x-foreign-key-kwargs"
+    )
+    if foreign_key_kwargs is not None and foreign_key is None:
+        raise exceptions.MalformedSchemaError(
+            "The column must be a foreign key column if foreign key kwargs are defined."
+        )
     kwargs = helpers.ext_prop.get_kwargs(
         source=schema,
         reserved={
@@ -101,6 +108,7 @@ def check_schema(
             index=index,
             unique=unique,
             foreign_key=foreign_key,
+            foreign_key_kwargs=foreign_key_kwargs,
             kwargs=kwargs,
         ),
     )

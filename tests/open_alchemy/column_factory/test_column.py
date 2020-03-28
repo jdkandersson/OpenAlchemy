@@ -73,6 +73,18 @@ ColArt = types.ColumnArtifacts
             {"type": "string", "x-kwargs": {"unique": True}},
             exceptions.MalformedExtensionPropertyError,
         ),
+        (
+            {"type": "string", "x-foreign-key-kwargs": {"key_1": "value 1"}},
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {
+                "type": "string",
+                "x-foreign-key": "table.column",
+                "x-foreign-key-kwargs": {1: "value 1"},
+            },
+            exceptions.MalformedExtensionPropertyError,
+        ),
     ],
     ids=[
         "type missing",
@@ -94,6 +106,8 @@ ColArt = types.ColumnArtifacts
         "kwargs autoincrement",
         "kwargs index",
         "kwargs unique",
+        "fk kwargs no foreign key",
+        "fk kwargs invalid",
     ],
 )
 @pytest.mark.column
@@ -291,6 +305,19 @@ def test_calculate_column_schema_dict_ignore_invalid():
                 extension=ExtColArt(kwargs={"key_1": "value 1"}),
             ),
         ),
+        (
+            {
+                "type": "string",
+                "x-foreign-key": "table.column",
+                "x-foreign-key-kwargs": {"key_1": "value 1"},
+            },
+            ColArt(
+                open_api=OAColArt(type="string"),
+                extension=ExtColArt(
+                    foreign_key="table.column", foreign_key_kwargs={"key_1": "value 1"}
+                ),
+            ),
+        ),
     ],
     ids=[
         "type only",
@@ -305,6 +332,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         "foreign key",
         "default",
         "kwargs",
+        "foreign key kwargs",
     ],
 )
 @pytest.mark.column
