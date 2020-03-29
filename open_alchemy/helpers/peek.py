@@ -202,6 +202,32 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     return value
 
 
+def inherits(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.Union[str, bool]]:
+    """
+    Retrieve the inherits of the schema.
+
+    Raises MalformedSchemaError if the inherits value is not a string nor a boolean.
+
+    Args:
+        schema: The schema to get inherits from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The inherits or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-inherits")
+    if value is None:
+        return None
+    if not isinstance(value, (str, bool)):
+        raise exceptions.MalformedSchemaError(
+            "The x-inherits property must be of type string or boolean."
+        )
+    return value
+
+
 def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.

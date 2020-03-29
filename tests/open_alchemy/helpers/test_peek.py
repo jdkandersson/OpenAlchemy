@@ -248,6 +248,36 @@ def test_tablename(schema, expected_tablename):
     assert returned_tablename == expected_tablename
 
 
+@pytest.mark.helper
+def test_inherits_wrong_type():
+    """
+    GIVEN schema with inherits defined as an integer
+    WHEN inherits is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-inherits": 1}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.inherits(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_inherits",
+    [({}, None), ({"x-inherits": "Parent1"}, "Parent1"), ({"x-inherits": True}, True)],
+    ids=["missing", "defined string", "defined boolean"],
+)
+@pytest.mark.helper
+def test_inherits(schema, expected_inherits):
+    """
+    GIVEN schema and expected inherits
+    WHEN inherits is called with the schema
+    THEN the expected inherits is returned.
+    """
+    returned_inherits = helpers.peek.inherits(schema=schema, schemas={})
+
+    assert returned_inherits == expected_inherits
+
+
 @pytest.mark.parametrize(
     "schema",
     [
