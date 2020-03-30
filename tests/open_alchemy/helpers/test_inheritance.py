@@ -1,127 +1,149 @@
-# """Tests for inheritance helpers."""
+"""Tests for inheritance helpers."""
 
-# import pytest
+import pytest
 
-# from open_alchemy import exceptions
-# from open_alchemy import helpers
-
-
-# @pytest.mark.parametrize(
-#     "schemas, exception",
-#     [
-#         ({}, exceptions.SchemaNotFoundError),
-#         ({"Child": {}}, exceptions.MalformedSchemaError),
-#         ({"Child": {"allOf": []}}, exceptions.MalformedSchemaError),
-#         (
-#             {"Child": {"$ref": "#/components/schemas/Parent"}},
-#             exceptions.MalformedSchemaError,
-#         ),
-#         (
-#             {"Child": {"allOf": [{"$ref": "#/components/schemas/Parent"}]}},
-#             exceptions.MalformedSchemaError,
-#         ),
-#     ],
-#     ids=[
-#         "child that is not in schemas",
-#         "no $ref",
-#         "allOf no $ref",
-#         "$ref with parent that is not in schemas",
-#         "allOf $ref with parent that is not in schemas",
-#     ],
-# )
-# @pytest.mark.helper
-# def test_check_parent_invalid(schemas, exception):
-#     """
-#     GIVEN child and parent name, schemas and expected exception
-#     WHEN check_parent is called with the names and schemas
-#     THEN the expected exception is raised.
-#     """
-#     name = "Child"
-#     parent_name = "Parent"
-
-#     with pytest.raises(exception):
-#         helpers.inheritance.check_parent(
-#             name=name, parent_name=parent_name, schemas=schemas
-#         )
+from open_alchemy import exceptions
+from open_alchemy import helpers
 
 
-# @pytest.mark.parametrize(
-#     "schemas, expected_result",
-#     [
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"x-tablename": "table 1"}},
-#             },
-#             True,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"$ref": "#/components/schemas/Grandparent"}},
-#                 {"Grandparent": {"x-tablename": "table 1"}},
-#             },
-#             False,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"x-inherits": True}},
-#             },
-#             True,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"x-inherits": False}},
-#             },
-#             False,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"x-inherits": "Grandparent"}},
-#             },
-#             True,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {}},
-#             },
-#             False,
-#         ),
-#         (
-#             {
-#                 {"Child": {"$ref": "#/components/schemas/Parent"}},
-#                 {"Parent": {"allOf": []}},
-#             },
-#             False,
-#         ),
-#     ],
-#     ids=[
-#         "base name match plain x-tablename",
-#         "base name match plain $ref to x-tablename",
-#         "base name match plain x-inherits bool true",
-#         "base name match plain x-inherits bool false",
-#         "base name match plain x-inherits string",
-#         "base name match plain missing",
-#         "base name match allOf empty",
-#         "base name match allOf $ref only",
-#         "base name match allOf x-tablename",
-#         "base name match allOf x-inherits bool true",
-#         "base name match allOf x-inherits bool false",
-#         "base name match allOf x-inherits string",
-#         "base name match allOf missing",
-#         "base name match $ref with x-tablename",
-#         "base name match allOf $ref with x-tablename",
-#         "single $ref to valid",
-#         "multiple $ref to valid",
-#         "allOf empty",
-#         "allOf single valid",
-#         "allOf single invalid",
-#         "allOf multiple invalid",
-#         "allOf multiple some valid",
-#         "allOf multiple all valid",
-#     ],
-# )
+@pytest.mark.parametrize(
+    "schema, schemas, exception",
+    [
+        ({"$ref": "#/components/schemas/Parent"}, {}, exceptions.SchemaNotFoundError),
+        ({"allOf": "Parent"}, {}, exceptions.MalformedSchemaError),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {},
+            exceptions.SchemaNotFoundError,
+        ),
+    ],
+    ids=[
+        "$ref with parent that is not in schemas",
+        "allOf not list",
+        "allOf $ref with parent that is not in schemas",
+    ],
+)
+@pytest.mark.helper
+def test_check_parent_invalid(schema, schemas, exception):
+    """
+    GIVEN child and parent name, schemas and expected exception
+    WHEN check_parent is called with the names and schemas
+    THEN the expected exception is raised.
+    """
+    parent_name = "Parent"
+
+    with pytest.raises(exception):
+        helpers.inheritance.check_parent(
+            schema=schema, parent_name=parent_name, schemas=schemas
+        )
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_result",
+    [
+        ({}, {}, False),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"x-tablename": "table 1"}},
+            True,
+        ),
+        ({"$ref": "#/components/schemas/Parent"}, {"Parent": {}}, False),
+        (
+            {"$ref": "#/components/schemas/Intermediate"},
+            {
+                "Intermediate": {"$ref": "#/components/schemas/Parent"},
+                "Parent": {"x-tablename": "table 1"},
+            },
+            True,
+        ),
+        (
+            {"$ref": "#/components/schemas/Intermediate"},
+            {"Intermediate": {"$ref": "#/components/schemas/Parent"}, "Parent": {}},
+            False,
+        ),
+        (
+            {"$ref": "#/components/schemas/Intermediate1"},
+            {
+                "Intermediate1": {"$ref": "#/components/schemas/Intermediate2"},
+                "Intermediate2": {"$ref": "#/components/schemas/Parent"},
+                "Parent": {"x-tablename": "table 1"},
+            },
+            True,
+        ),
+        (
+            {"$ref": "#/components/schemas/Intermediate1"},
+            {
+                "Intermediate1": {"$ref": "#/components/schemas/Intermediate2"},
+                "Intermediate2": {"$ref": "#/components/schemas/Parent"},
+                "Parent": {},
+            },
+            False,
+        ),
+        ({"allOf": []}, {}, False),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {"Parent": {"x-tablename": "table 1"}},
+            True,
+        ),
+        ({"allOf": [{"$ref": "#/components/schemas/Parent"}]}, {"Parent": {}}, False),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent"},
+                    {"$ref": "#/components/schemas/Other"},
+                ]
+            },
+            {"Parent": {"x-tablename": "table 1"}, "Other": {}},
+            True,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Other"},
+                    {"$ref": "#/components/schemas/Parent"},
+                ]
+            },
+            {"Parent": {"x-tablename": "table 1"}, "Other": {}},
+            True,
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Other1"},
+                    {"$ref": "#/components/schemas/Other2"},
+                ]
+            },
+            {"Other1": {}, "Other2": {}},
+            False,
+        ),
+    ],
+    ids=[
+        "base empty",
+        "base name match constructible",
+        "base name match not constructible",
+        "recursive single $ref constructable",
+        "recursive single $ref not constructable",
+        "recursive multiple $ref constructable",
+        "recursive multiple $ref not constructable",
+        "recursive allOf empty",
+        "recursive allOf single constructible",
+        "recursive allOf single not constructible",
+        "recursive allOf multiple first constructible",
+        "recursive allOf multiple second constructible",
+        "recursive allOf multiple not constructible",
+    ],
+)
+@pytest.mark.helper
+def test_check_parent(schema, schemas, expected_result):
+    """
+    GIVEN child and parent schemas
+    WHEN check_parent is called with the child and parent name and schemas
+    THEN the expected result is returned.
+    """
+    parent_name = "Parent"
+
+    result = helpers.inheritance.check_parent(
+        schema=schema, parent_name=parent_name, schemas=schemas
+    )
+
+    assert result == expected_result
