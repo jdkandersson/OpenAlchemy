@@ -9,6 +9,7 @@ from open_alchemy import helpers
 @pytest.mark.parametrize(
     "schema, schemas, exception",
     [
+        ({"$ref": 1}, {}, exceptions.MalformedSchemaError),
         ({"$ref": "#/components/schemas/Parent"}, {}, exceptions.SchemaNotFoundError),
         ({"allOf": "Parent"}, {}, exceptions.MalformedSchemaError),
         (
@@ -18,6 +19,7 @@ from open_alchemy import helpers
         ),
     ],
     ids=[
+        "$ref not string",
         "$ref with parent that is not in schemas",
         "allOf not list",
         "allOf $ref with parent that is not in schemas",

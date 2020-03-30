@@ -32,6 +32,9 @@ def check_parent(
 
     # Handle $ref
     if ref is not None:
+        if not isinstance(ref, str):
+            raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
+
         ref_name, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
 
         # Check for name match base case
