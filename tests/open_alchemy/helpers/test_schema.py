@@ -16,8 +16,19 @@ from open_alchemy import helpers
             {"Schema1": {"x-tablename": "table 1"}},
             False,
         ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Schema1"}]},
+            {"Schema1": {"x-tablename": "table 1"}},
+            True,
+        ),
     ],
-    ids=["empty", "x-tablename", "x-inherits", "x-tablename $ref only"],
+    ids=[
+        "empty",
+        "x-tablename",
+        "x-inherits",
+        "x-tablename $ref only",
+        "allOf x-tablename",
+    ],
 )
 @pytest.mark.helper
 def test_constractable(schema, schemas, expected_result):
