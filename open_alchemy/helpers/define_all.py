@@ -1,7 +1,7 @@
 """Define all the models with x-tablename properties."""
 
-from open_alchemy import helpers
-from open_alchemy import types
+from .. import types
+from . import schema as schema_helper
 
 
 def define_all(*, model_factory: types.ModelFactory, schemas: types.Schemas) -> None:
@@ -14,11 +14,6 @@ def define_all(*, model_factory: types.ModelFactory, schemas: types.Schemas) -> 
 
     """
     for name, schema in schemas.items():
-        # Skip models that do not have a x-tablename defined
-        if helpers.peek.tablename(schema=schema, schemas=schemas) is None:
-            continue
-        # Skip models that just reference other models
-        ref = schema.get("$ref")
-        if ref is not None and ref.startswith("#"):
+        if not schema_helper.constructable(schema=schema, schemas=schemas):
             continue
         model_factory(name=name)

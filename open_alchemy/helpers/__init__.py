@@ -7,6 +7,7 @@ from . import inheritance as inheritance
 from . import oa_to_py_type as oa_to_py_type
 from . import peek as peek
 from . import ref as ref
+from . import schema as schema
 from .calculate_nullable import calculate_nullable as calculate_nullable
 from .define_all import define_all as define_all
 from .merge_all_of import merge_all_of as merge_all_of
