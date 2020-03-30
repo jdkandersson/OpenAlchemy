@@ -11,6 +11,8 @@ from open_alchemy import helpers
         ({}, {}, False),
         ({"x-tablename": "table 1"}, {}, True),
         ({"x-inherits": "Schema1"}, {}, True),
+        ({"x-inherits": True}, {}, True),
+        ({"x-inherits": False}, {}, False),
         (
             {"$ref": "#/components/schemas/Schema1"},
             {"Schema1": {"x-tablename": "table 1"}},
@@ -31,7 +33,9 @@ from open_alchemy import helpers
     ids=[
         "empty",
         "x-tablename",
-        "x-inherits",
+        "x-inherits string",
+        "x-inherits bool true",
+        "x-inherits bool false",
         "x-tablename $ref only",
         "allOf empty",
         "allOf x-tablename",

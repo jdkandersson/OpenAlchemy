@@ -31,6 +31,7 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if peek.tablename(schema=schema, schemas=schemas) is not None:
         return True
     # Check for inherits
-    if peek.inherits(schema=schema, schemas=schemas) is not None:
+    inherits = peek.inherits(schema=schema, schemas=schemas)
+    if isinstance(inherits, str) or inherits is True:
         return True
     return False
