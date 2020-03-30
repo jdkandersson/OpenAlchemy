@@ -7,29 +7,34 @@
 
 
 # @pytest.mark.parametrize(
-#     "schema, parent_name, schemas, exception",
+#     "name, parent_name, schemas, exception",
 #     [
-#         ({}, "Parent", {}, exceptions.MalformedSchemaError),
+#         ("Child", "Parent", {}, exceptions.SchemaNotFoundError),
+#         ("Child", "Parent", {"Child": {}}, exceptions.MalformedSchemaError),
 #         (
-#             {"$ref": "#/components/schemas/Parent"},
+#             "Child",
 #             "Parent",
-#             {},
-#             exceptions.SchemaNotFoundError,
-#         ),
-#         (
-#             {"$ref": "#/components/schemas/Parent"},
-#             "Parent",
-#             {"Parent": {"key": "value"}},
+#             {"Child": {"$ref": "#/components/schemas/Parent"}},
 #             exceptions.MalformedSchemaError,
 #         ),
 #         (
-#             {"allOf": []},
+#             "Child",
 #             "Parent",
-#             {"Parent": {"key": "value"}},
+#             {
+#                 "Child": {"$ref": "#/components/schemas/Parent"},
+#                 "Parent": {"key": "value"},
+#             },
+#             exceptions.MalformedSchemaError,
+#         ),
+#         (
+#             "Child",
+#             "Parent",
+#             {"Child": {"allOf": []}, "Parent": {"key": "value"}},
 #             exceptions.MalformedSchemaError,
 #         ),
 #     ],
 #     ids=[
+#         "child that is not in schemas",
 #         "no $ref",
 #         "$ref with parent that is not in schemas",
 #         "$ref with parent that is not a table nor inherits",
@@ -37,13 +42,13 @@
 #     ],
 # )
 # @pytest.mark.helper
-# def test_check_parent_invalid(schema, parent_name, schemas, exception):
+# def test_check_parent_invalid(name, parent_name, schemas, exception):
 #     """
-#     GIVEN schema, parent, schemas and expected exception
-#     WHEN check_parent is called with the schema, parent and schemas
+#     GIVEN child and parent name, schemas and expected exception
+#     WHEN check_parent is called with the names and schemas
 #     THEN the expected exception is raised.
 #     """
 #     with pytest.raises(exception):
 #         helpers.inheritance.check_parent(
-#             schema=schema, parent_name=parent_name, schemas=schemas
+#             name=name, parent_name=parent_name, schemas=schemas
 #         )

@@ -1,7 +1,8 @@
 """Helpers to support inheritance."""
 
+# from .. import exceptions
 # from .. import types
-# from . import ref
+# from . import schema as schema_helper
 
 
 # def check_parent(
@@ -22,8 +23,12 @@
 #         Whether the parent is in the inheritance chain.
 
 #     """
-#     ref = schema.get("$ref")
-#     all_of = schema.get("allOf")
-
-#     if ref is None and all_of is None:
-#         raise
+#     schema = schemas.get(name)
+#     if schema is None:
+#         raise exceptions.SchemaNotFoundError(
+#             f"Could not find the schema {name}."
+#         )
+#     if not schema_helper.constructable(schema=schema, schemas=schemas):
+#         raise exceptions.MalformedSchemaError(
+#             f"The schema {name} is not a schema that can be constructed as a model."
+#         )

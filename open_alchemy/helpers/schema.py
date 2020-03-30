@@ -23,6 +23,10 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     ref = schema.get("$ref")
     if ref is not None and ref.startswith("#"):
         return False
+    # Check for single item allOf
+    all_of = schema.get("allOf")
+    if all_of is not None and len(all_of) < 2:
+        return False
     # Check for tablename
     if peek.tablename(schema=schema, schemas=schemas) is not None:
         return True

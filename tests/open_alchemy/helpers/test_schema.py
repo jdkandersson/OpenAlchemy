@@ -16,8 +16,14 @@ from open_alchemy import helpers
             {"Schema1": {"x-tablename": "table 1"}},
             False,
         ),
+        ({"allOf": []}, {}, False),
         (
             {"allOf": [{"$ref": "#/components/schemas/Schema1"}]},
+            {"Schema1": {"x-tablename": "table 1"}},
+            False,
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Schema1"}, {"key": "value"}]},
             {"Schema1": {"x-tablename": "table 1"}},
             True,
         ),
@@ -27,7 +33,9 @@ from open_alchemy import helpers
         "x-tablename",
         "x-inherits",
         "x-tablename $ref only",
+        "allOf empty",
         "allOf x-tablename",
+        "allOf x-tablename with additional",
     ],
 )
 @pytest.mark.helper
