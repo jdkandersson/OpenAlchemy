@@ -118,6 +118,11 @@ def test_check_parent_invalid(schema, schemas, exception):
             {"Other1": {}, "Other2": {}},
             False,
         ),
+        (
+            {"allOf": [{"allOf": [{"$ref": "#/components/schemas/Parent"}]}]},
+            {"Parent": {"x-tablename": "table 1"}},
+            True,
+        ),
     ],
     ids=[
         "base empty",
@@ -133,6 +138,7 @@ def test_check_parent_invalid(schema, schemas, exception):
         "recursive allOf multiple first constructible",
         "recursive allOf multiple second constructible",
         "recursive allOf multiple not constructible",
+        "recursive nested allOf constructible",
     ],
 )
 @pytest.mark.helper
