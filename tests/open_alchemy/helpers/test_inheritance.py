@@ -28,8 +28,8 @@ from open_alchemy import helpers
 @pytest.mark.helper
 def test_check_parent_invalid(schema, schemas, exception):
     """
-    GIVEN child and parent name, schemas and expected exception
-    WHEN check_parent is called with the names and schemas
+    GIVEN child schema and parent name, schemas and expected exception
+    WHEN check_parent is called with the schema, name and schemas
     THEN the expected exception is raised.
     """
     parent_name = "Parent"
@@ -138,8 +138,8 @@ def test_check_parent_invalid(schema, schemas, exception):
 @pytest.mark.helper
 def test_check_parent(schema, schemas, expected_result):
     """
-    GIVEN child and parent schemas
-    WHEN check_parent is called with the child and parent name and schemas
+    GIVEN child schema, parent name and schemas
+    WHEN check_parent is called with the child schema, parent name and schemas
     THEN the expected result is returned.
     """
     parent_name = "Parent"
@@ -149,3 +149,129 @@ def test_check_parent(schema, schemas, expected_result):
     )
 
     assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, exception",
+    [
+        ({}, {}, exceptions.MalformedSchemaError),
+        ({"$ref": 1}, {}, exceptions.MalformedSchemaError),
+        ({"$ref": "#/components/schemas/Parent"}, {}, exceptions.SchemaNotFoundError),
+        ({"allOf": "Parent"}, {}, exceptions.MalformedSchemaError),
+        ({"allOf": []}, {}, exceptions.MalformedSchemaError),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {},
+            exceptions.SchemaNotFoundError,
+        ),
+        ({"allOf": [{}]}, {}, exceptions.MalformedSchemaError),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {"Parent": {}},
+            exceptions.MalformedSchemaError,
+        ),
+        ({"allOf": [{}, {}]}, {}, exceptions.MalformedSchemaError),
+    ],
+    ids=[
+        "empty",
+        "$ref not string",
+        "$ref with parent that is not in schemas",
+        "allOf not list",
+        "allOf empty",
+        "allOf $ref with parent that is not in schemas",
+        "allOf single not constructible",
+        "allOf single $ref not constructible",
+        "allOf multiple not constructible",
+    ],
+)
+@pytest.mark.helper
+def test_get_parent_invalid(schema, schemas, exception):
+    """
+    GIVEN schema, schemas and expected exception
+    WHEN get_parent is called with the schema and schemas
+    THEN the expected exception is raised.
+    """
+    with pytest.raises(exception):
+        helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_name",
+    [
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"x-tablename": "table 1"}},
+            "Parent",
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {"$ref": "#/components/schemas/Grandparent"},
+                "Grandparent": {"x-tablename": "table 1"},
+            },
+            "Grandparent",
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {"Parent": {"x-tablename": "table 1"}},
+            "Parent",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {
+                "Parent1": {"x-tablename": "table 1"},
+                "Parent2": {"x-tablename": "table 2"},
+            },
+            "Parent1",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {"Parent1": {"x-tablename": "table 1"}, "Parent2": {}},
+            "Parent1",
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {"Parent1": {}, "Parent2": {"x-tablename": "table 2"}},
+            "Parent2",
+        ),
+        (
+            {"allOf": [{"allOf": [{"$ref": "#/components/schemas/Parent"}]}]},
+            {"Parent": {"x-tablename": "table 1"}},
+            "Parent",
+        ),
+    ],
+    ids=[
+        "$ref constructible",
+        "$ref recursive constructible",
+        "allOf single constructible",
+        "allOf multiple constructible",
+        "allOf multiple first constructible",
+        "allOf multiple second constructible",
+        "nested allOf",
+    ],
+)
+@pytest.mark.helper
+def test_get_parent_valid(schema, schemas, expected_name):
+    """
+    GIVEN schema, schemas and expected name
+    WHEN get_parent is called with the schema and schemas
+    THEN the expected name is returned.
+    """
+    name = helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+
+    assert name == expected_name
