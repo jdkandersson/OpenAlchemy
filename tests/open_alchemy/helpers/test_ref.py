@@ -58,31 +58,26 @@ def test_resolve_not_ref_schema(schema, schemas, expected_name):
     assert return_schema == {"type": "integer"}
 
 
+@pytest.mark.parametrize(
+    "schema, schemas, exception",
+    [
+        ({"$ref": "#/components/not/schema"}, {}, exceptions.SchemaNotFoundError),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {},
+            exceptions.SchemaNotFoundError,
+        ),
+    ],
+    ids=["invalid $ref", "not defined"],
+)
 @pytest.mark.helper
-def test_resolve_not_schema():
+def test_resolve_error(schema, schemas, exception):
     """
-    GIVEN schema that references something that is not a schema
+    GIVEN schema and schemas that are not valid
     WHEN resolve is called with the schema
-    THEN SchemaNotFoundError is raised.
+    THEN the expected exception is raised.
     """
-    schema = {"$ref": "#/components/not/schema"}
-    schemas = {}
-
-    with pytest.raises(exceptions.SchemaNotFoundError):
-        helpers.ref.resolve(name="name 1", schema=schema, schemas=schemas)
-
-
-@pytest.mark.helper
-def test_resolve_not_defined():
-    """
-    GIVEN schema that references a schema that doesn't exist
-    WHEN resolve is called with the schema
-    THEN SchemaNotFoundError is raised.
-    """
-    schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {}
-
-    with pytest.raises(exceptions.SchemaNotFoundError):
+    with pytest.raises(exception):
         helpers.ref.resolve(name="name 1", schema=schema, schemas=schemas)
 
 
