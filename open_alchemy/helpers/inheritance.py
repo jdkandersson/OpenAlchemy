@@ -78,6 +78,11 @@ def _check_parent(
         if ref_name == parent_name:
             return schema_helper.constructable(schema=ref_schema, schemas=schemas)
 
+        # Check referenced schema still inherits
+        inherits = peek_helper.inherits(schema=ref_schema, schemas=schemas)
+        if inherits is False:
+            return False
+
         # Recursive case
         return _check_parent(ref_schema, parent_name, schemas, seen_refs)
 
