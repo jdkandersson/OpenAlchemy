@@ -80,8 +80,7 @@ def _check_parent(
             return schema_helper.constructable(schema=ref_schema, schemas=schemas)
 
         # Check referenced schema still inherits
-        inherits = peek_helper.inherits(schema=ref_schema, schemas=schemas)
-        if inherits is False:
+        if inherits(schema=schema, schemas=schemas) is False:
             return False
 
         # Recursive case
@@ -229,8 +228,7 @@ def _get_parents(
         ref_name, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
 
         # Check for inherits
-        inherits = peek_helper.inherits(schema=schema, schemas=schemas)
-        if isinstance(inherits, str) or inherits is True:
+        if inherits(schema=schema, schemas=schemas):
             yield from _get_parents(ref_schema, schemas, seen_refs)
 
         if schema_helper.constructable(schema=ref_schema, schemas=schemas):
@@ -243,3 +241,23 @@ def _get_parents(
             raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
         for sub_schema in all_of:
             yield from _get_parents(sub_schema, schemas, seen_refs)
+
+
+def inherits(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Check whether a schema inherits.
+
+    Args:
+        schema: The schema to check.
+        schemas: All the schemas.
+
+    Returns:
+        Whether the schema inherits.
+
+    """
+    inherits_value = peek_helper.inherits(schema=schema, schemas=schemas)
+    if inherits_value is None:
+        return None
+    if isinstance(inherits_value, str) or inherits_value is True:
+        return True
+    return False

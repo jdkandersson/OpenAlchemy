@@ -579,3 +579,26 @@ def test_get_parents_valid(schema, schemas, expected_parents):
 
     assert isinstance(generator, types.GeneratorType)
     assert list(generator) == expected_parents
+
+
+@pytest.mark.parametrize(
+    "schema, expected_result",
+    [
+        ({}, None),
+        ({"x-inherits": True}, True),
+        ({"x-inherits": False}, False),
+        ({"x-inherits": ""}, True),
+        ({"x-inherits": "Parent"}, True),
+    ],
+    ids=["missing", "bool true", "bool false", "string empty", "string not empty"],
+)
+@pytest.mark.helper
+def test_inherits(schema, expected_result):
+    """
+    GIVEN schema and expected result
+    WHEN inherits is called with the schema
+    THEN the expected result is returned.
+    """
+    result = helpers.inheritance.inherits(schema=schema, schemas={})
+
+    assert result == expected_result
