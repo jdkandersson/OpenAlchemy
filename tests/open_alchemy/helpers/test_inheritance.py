@@ -95,6 +95,19 @@ def test_check_parent_invalid(schema, schemas, exception):
             False,
         ),
         (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Grandparent"},
+                        {"x-inherits": False},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "table 1"},
+            },
+            True,
+        ),
+        (
             {"$ref": "#/components/schemas/Intermediate"},
             {"Intermediate": {"$ref": "#/components/schemas/Parent"}, "Parent": {}},
             False,
@@ -166,6 +179,7 @@ def test_check_parent_invalid(schema, schemas, exception):
         "base name match not constructible",
         "recursive single $ref constructable",
         "recursive single $ref constructable not inherits",
+        "recursive single $ref constructable not inherits but match",
         "recursive single $ref not constructable",
         "recursive multiple $ref constructable",
         "recursive multiple $ref not constructable",
