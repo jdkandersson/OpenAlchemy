@@ -18,6 +18,13 @@ NameSchema = typing.Tuple[str, types.Schema]
 
 
 def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameSchema:
+    """External interface."""
+    return _resolve(name, schema, schemas, set())
+
+
+def _resolve(
+    name: str, schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
+) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -30,6 +37,7 @@ def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameS
         name: The name of the schema from the last step.
         schema: The specification of the schema from the last step.
         schemas: Dictionary with all defined schemas used to resolve $ref.
+        seen_refs: The references that have already been processed.
 
     Returns:
         The first schema that no longer has the $ref key and the name of that schema.
@@ -40,9 +48,14 @@ def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameS
     if ref is None:
         return name, schema
 
+    # Check for circular $ref
+    if ref in seen_refs:
+        raise exceptions.MalformedSchemaError("Circular reference chain detected.")
+    seen_refs.add(ref)
+
     ref_name, ref_schema = get_ref(ref=ref, schemas=schemas)
 
-    return resolve(name=ref_name, schema=ref_schema, schemas=schemas)
+    return _resolve(ref_name, ref_schema, schemas, seen_refs)
 
 
 def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:

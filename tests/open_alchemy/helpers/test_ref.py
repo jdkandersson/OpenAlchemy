@@ -67,8 +67,26 @@ def test_resolve_not_ref_schema(schema, schemas, expected_name):
             {},
             exceptions.SchemaNotFoundError,
         ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
+                "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
+            },
+            exceptions.MalformedSchemaError,
+        ),
     ],
-    ids=["invalid $ref", "not defined"],
+    ids=[
+        "invalid $ref",
+        "not defined",
+        "single step circular reference",
+        "multiple step circular reference",
+    ],
 )
 @pytest.mark.helper
 def test_resolve_error(schema, schemas, exception):
