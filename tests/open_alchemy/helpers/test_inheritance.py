@@ -21,20 +21,26 @@ from open_alchemy import helpers
         ),
         (
             {"$ref": "#/components/schemas/Other"},
-            {"Other": {"$ref": "#/components/schemas/Other"}},
+            {"Other": {"$ref": "#/components/schemas/Other", "x-inherits": True}},
             exceptions.MalformedSchemaError,
         ),
         (
             {"$ref": "#/components/schemas/Other1"},
             {
-                "Other1": {"$ref": "#/components/schemas/Other2"},
-                "Other2": {"$ref": "#/components/schemas/Other1"},
+                "Other1": {"$ref": "#/components/schemas/Other2", "x-inherits": True},
+                "Other2": {"$ref": "#/components/schemas/Other1", "x-inherits": True},
             },
             exceptions.MalformedSchemaError,
         ),
         (
             {"$ref": "#/components/schemas/Other"},
-            {"Other": {"allOf": [{"$ref": "#/components/schemas/Other"}]}},
+            {
+                "Other": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Other", "x-inherits": True}
+                    ]
+                }
+            },
             exceptions.MalformedSchemaError,
         ),
     ],
@@ -362,21 +368,33 @@ def test_get_parent_valid(schema, schemas, expected_name):
         ({"$ref": "#/components/schemas/Parent"}, {}, exceptions.SchemaNotFoundError),
         (
             {"$ref": "#/components/schemas/Parent"},
-            {"Parent": {"$ref": "#/components/schemas/Parent"}},
+            {"Parent": {"$ref": "#/components/schemas/Parent", "x-inherits": True}},
             exceptions.MalformedSchemaError,
         ),
         (
             {"$ref": "#/components/schemas/Parent"},
             {
-                "Parent": {"$ref": "#/components/schemas/Grandparent"},
-                "Grandparent": {"$ref": "#/components/schemas/Parent"},
+                "Parent": {
+                    "$ref": "#/components/schemas/Grandparent",
+                    "x-inherits": True,
+                },
+                "Grandparent": {
+                    "$ref": "#/components/schemas/Parent",
+                    "x-inherits": True,
+                },
             },
             exceptions.MalformedSchemaError,
         ),
         ({"allOf": "Parent"}, {}, exceptions.MalformedSchemaError),
         (
             {"$ref": "#/components/schemas/Parent"},
-            {"Parent": {"allOf": [{"$ref": "#/components/schemas/Parent"}]}},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Parent", "x-inherits": True}
+                    ]
+                }
+            },
             exceptions.MalformedSchemaError,
         ),
     ],
