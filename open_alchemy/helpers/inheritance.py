@@ -18,8 +18,9 @@ def check_parent(
     Recursive function. The base cases are:
     1. the schema has $ref where the name matches the parent name if
         a. the referenced schema is constructable, return True or
-        b. if the referenced schema is not constructable, return False and
-    2. the schema does not have $ref nor allOf in which case return False.
+        b. if the referenced schema is not constructable, return False,
+    2. the schema does not have $ref nor allOf in which case return False and
+    3. The schema has $ref but the referenced schema does not inherit.
 
     The recursive cases are:
     1. the schema has $ref where the name does not match the parent name in which case
