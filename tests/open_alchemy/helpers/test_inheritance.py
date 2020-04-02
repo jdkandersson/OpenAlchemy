@@ -43,7 +43,7 @@ from open_alchemy import helpers
         "allOf $ref with parent that is not in schemas",
         "circular $ref single step",
         "circular $ref multiple step",
-        "allOf circular $ref single step",
+        "allOf circular $ref",
     ],
 )
 @pytest.mark.helper
@@ -198,6 +198,24 @@ def test_check_parent(schema, schemas, expected_result):
             exceptions.MalformedSchemaError,
         ),
         ({"allOf": [{}, {}]}, {}, exceptions.MalformedSchemaError),
+        (
+            {"$ref": "#/components/schemas/Other"},
+            {"Other": {"$ref": "#/components/schemas/Other"}},
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/Other1"},
+            {
+                "Other1": {"$ref": "#/components/schemas/Other2"},
+                "Other2": {"$ref": "#/components/schemas/Other1"},
+            },
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/Other"},
+            {"Other": {"allOf": [{"$ref": "#/components/schemas/Other"}]}},
+            exceptions.MalformedSchemaError,
+        ),
     ],
     ids=[
         "empty",
@@ -209,6 +227,9 @@ def test_check_parent(schema, schemas, expected_result):
         "allOf single not constructible",
         "allOf single $ref not constructible",
         "allOf multiple not constructible",
+        "circular $ref single step",
+        "circular $ref multiple step",
+        "allOf circular $ref",
     ],
 )
 @pytest.mark.helper

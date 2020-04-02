@@ -12,7 +12,7 @@ def check_parent(
     *, schema: types.Schema, parent_name: str, schemas: types.Schemas
 ) -> bool:
     """External interface."""
-    return _check_parent(schema=schema, parent_name=parent_name, schemas=schemas)
+    return _check_parent(schema, parent_name, schemas)
 
 
 def _check_parent(
@@ -61,14 +61,15 @@ def _check_parent(
 
     # Handle $ref
     if ref is not None:
+        if not isinstance(ref, str):
+            raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
+
+        # Check for circular references
         if ref in seen_refs:
             raise exceptions.MalformedSchemaError(
                 "Circular reference chain detected for the schema."
             )
         seen_refs.add(ref)
-
-        if not isinstance(ref, str):
-            raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
 
         ref_name, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
 
@@ -89,6 +90,15 @@ def _check_parent(
 
 
 def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
+    """External interface."""
+    return _get_parent(schema, schemas)
+
+
+def _get_parent(
+    schema: types.Schema,
+    schemas: types.Schemas,
+    seen_refs: typing.Optional[typing.Set[str]] = None,
+) -> str:
     """
     Get the name of the parent of the schema.
 
@@ -105,8 +115,18 @@ def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
     Raise MalformedSchemaError if the schema has allOf and all of the elements raise
         MalformedSchemaError.
 
-    Check for an immediate $ref
+    Args:
+        schema: The schema to retrieve the parent for.
+        schemas: All the schemas.
+        seen_refs: The $ref that have already been check to avoid circular dependencies.
+
+    Returns:
+        The name of the parent.
+
     """
+    if seen_refs is None:
+        seen_refs = set()
+
     # Check for $ref and allOf
     ref = schema.get("$ref")
     all_of = schema.get("allOf")
@@ -120,6 +140,13 @@ def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
         if not isinstance(ref, str):
             raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
 
+        # Check for circular references
+        if ref in seen_refs:
+            raise exceptions.MalformedSchemaError(
+                "Circular reference chain detected for the schema."
+            )
+        seen_refs.add(ref)
+
         ref_name, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
 
         # Check whether the referenced schema is constructible
@@ -127,7 +154,7 @@ def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
             return ref_name
 
         # Recursive case
-        return get_parent(schema=ref_schema, schemas=schemas)
+        return _get_parent(ref_schema, schemas, seen_refs)
 
     # Handle allOf
     if not isinstance(all_of, list):
@@ -135,7 +162,7 @@ def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
     # Find first constructable schema
     for sub_schema in all_of:
         try:
-            return get_parent(schema=sub_schema, schemas=schemas)
+            return _get_parent(sub_schema, schemas, seen_refs)
         except exceptions.MalformedSchemaError:
             pass
     # None of the schemas in allOf are constructable
