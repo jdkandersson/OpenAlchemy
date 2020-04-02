@@ -1,5 +1,7 @@
 """Helpers to support inheritance."""
 
+import typing
+
 from .. import exceptions
 from .. import types
 from . import ref as ref_helper
@@ -8,6 +10,16 @@ from . import schema as schema_helper
 
 def check_parent(
     *, schema: types.Schema, parent_name: str, schemas: types.Schemas
+) -> bool:
+    """External interface."""
+    return _check_parent(schema=schema, parent_name=parent_name, schemas=schemas)
+
+
+def _check_parent(
+    schema: types.Schema,
+    parent_name: str,
+    schemas: types.Schemas,
+    seen_refs: typing.Optional[typing.Set[str]] = None,
 ) -> bool:
     """
     Check that the parent is in the inheritance chain of a schema.
@@ -32,11 +44,15 @@ def check_parent(
         schema: The schema to check.
         parent_name: The parent to check for in the inheritance chain.
         schemas: All the schemas.
+        seen_refs: The $ref that have already been check to avoid circular dependencies.
 
     Returns:
         Whether the parent is in the inheritance chain.
 
     """
+    if seen_refs is None:
+        seen_refs = set()
+
     # Check for $ref and allOf
     ref = schema.get("$ref")
     all_of = schema.get("allOf")
@@ -45,6 +61,12 @@ def check_parent(
 
     # Handle $ref
     if ref is not None:
+        if ref in seen_refs:
+            raise exceptions.MalformedSchemaError(
+                "Circular reference chain detected for the schema."
+            )
+        seen_refs.add(ref)
+
         if not isinstance(ref, str):
             raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
 
@@ -55,13 +77,13 @@ def check_parent(
             return schema_helper.constructable(schema=ref_schema, schemas=schemas)
 
         # Recursive case
-        return check_parent(schema=ref_schema, parent_name=parent_name, schemas=schemas)
+        return _check_parent(ref_schema, parent_name, schemas, seen_refs)
 
     # Handle allOf
     if not isinstance(all_of, list):
         raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
     return any(
-        check_parent(schema=sub_schema, parent_name=parent_name, schemas=schemas)
+        _check_parent(sub_schema, parent_name, schemas, seen_refs)
         for sub_schema in all_of
     )
 

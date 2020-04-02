@@ -17,12 +17,33 @@ from open_alchemy import helpers
             {},
             exceptions.SchemaNotFoundError,
         ),
+        (
+            {"$ref": "#/components/schemas/Other"},
+            {"Other": {"$ref": "#/components/schemas/Other"}},
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/Other1"},
+            {
+                "Other1": {"$ref": "#/components/schemas/Other2"},
+                "Other2": {"$ref": "#/components/schemas/Other1"},
+            },
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/Other"},
+            {"Other": {"allOf": [{"$ref": "#/components/schemas/Other"}]}},
+            exceptions.MalformedSchemaError,
+        ),
     ],
     ids=[
         "$ref not string",
         "$ref with parent that is not in schemas",
         "allOf not list",
         "allOf $ref with parent that is not in schemas",
+        "circular $ref single step",
+        "circular $ref multiple step",
+        "allOf circular $ref single step",
     ],
 )
 @pytest.mark.helper
