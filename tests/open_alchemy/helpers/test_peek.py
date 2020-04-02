@@ -369,7 +369,42 @@ def test_peek_key(schema, schemas, expected_value):
     WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
-    # pylint: disable=protected-access
     returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
 
     assert returned_type == expected_value
+
+
+@pytest.mark.parametrize(
+    "schema, schemas",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
+                "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
+            },
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+        ),
+    ],
+    ids=[
+        "single step circular $ref",
+        "multiple step circular $ref",
+        "allOf single step circular $ref",
+    ],
+)
+@pytest.mark.helper
+def test_peek_key_invalid(schema, schemas):
+    """
+    GIVEN schema, schemas that are invalid
+    WHEN peek_key is called with the schema and schemas
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")

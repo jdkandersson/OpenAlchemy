@@ -261,6 +261,25 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
 
 def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
     """Recursive type lookup."""
+    return _peek_key(schema, schemas, key, set())
+
+
+def _peek_key(
+    schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
+) -> typing.Any:
+    """
+    Recursive type lookup.
+
+    Args:
+        schema: The schema to look up the key in.
+        schemas: All the schemas to resolve any $ref.
+        key: The key to check for.
+        seen_refs: All the $ref that have already been seen.
+
+    Returns:
+        The key value (if found) or None.
+
+    """
     # Base case, look for type key
     value = schema.get(key)
     if value is not None:
@@ -269,14 +288,19 @@ def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typin
     # Recursive case, look for $ref
     ref_value = schema.get("$ref")
     if ref_value is not None:
+        # Check for circular $ref
+        if ref_value in seen_refs:
+            raise exceptions.MalformedSchemaError("Circular reference detected.")
+        seen_refs.add(ref_value)
+
         _, ref_schema = ref.get_ref(ref=ref_value, schemas=schemas)
-        return peek_key(schema=ref_schema, schemas=schemas, key=key)
+        return _peek_key(ref_schema, schemas, key, seen_refs)
 
     # Recursive case, look for allOf
     all_of = schema.get("allOf")
     if all_of is not None:
         for sub_schema in all_of:
-            value = peek_key(schema=sub_schema, schemas=schemas, key=key)
+            value = _peek_key(sub_schema, schemas, key, seen_refs)
             if value is not None:
                 return value
 
