@@ -11,16 +11,6 @@ from . import schema as schema_helper
 def check_parent(
     *, schema: types.Schema, parent_name: str, schemas: types.Schemas
 ) -> bool:
-    """External interface."""
-    return _check_parent(schema, parent_name, schemas, set())
-
-
-def _check_parent(
-    schema: types.Schema,
-    parent_name: str,
-    schemas: types.Schemas,
-    seen_refs: typing.Set[str],
-) -> bool:
     """
     Check that the parent is in the inheritance chain of a schema.
 
@@ -39,6 +29,7 @@ def _check_parent(
 
     Raise MalformedSchemaError if the parent is not found in the chain.
     Raise MalformedSchemaError if the parent does not have x-tablename nor x-inherits.
+    Raise MalformedSchemaError if a $ref value is seen again.
 
     Args:
         schema: The schema to check.
@@ -50,6 +41,16 @@ def _check_parent(
         Whether the parent is in the inheritance chain.
 
     """
+    return _check_parent(schema, parent_name, schemas, set())
+
+
+def _check_parent(
+    schema: types.Schema,
+    parent_name: str,
+    schemas: types.Schemas,
+    seen_refs: typing.Set[str],
+) -> bool:
+    """Implement check_parent."""
     # Check for $ref and allOf
     ref = schema.get("$ref")
     all_of = schema.get("allOf")
@@ -87,13 +88,6 @@ def _check_parent(
 
 
 def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
-    """External interface."""
-    return _get_parent(schema, schemas, set())
-
-
-def _get_parent(
-    schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
-) -> str:
     """
     Get the name of the parent of the schema.
 
@@ -109,6 +103,7 @@ def _get_parent(
     Raise MalformedSchemaError if the schema does not have $ref nor allOf.
     Raise MalformedSchemaError if the schema has allOf and all of the elements raise
         MalformedSchemaError.
+    Raise MalformedSchemaError if a $ref value is seen again.
 
     Args:
         schema: The schema to retrieve the parent for.
@@ -119,6 +114,13 @@ def _get_parent(
         The name of the parent.
 
     """
+    return _get_parent(schema, schemas, set())
+
+
+def _get_parent(
+    schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
+) -> str:
+    """Implement get_parent."""
     # Check for $ref and allOf
     ref = schema.get("$ref")
     all_of = schema.get("allOf")

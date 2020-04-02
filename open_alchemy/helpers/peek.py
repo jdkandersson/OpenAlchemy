@@ -260,15 +260,10 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
 
 
 def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
-    """Recursive type lookup."""
-    return _peek_key(schema, schemas, key, set())
-
-
-def _peek_key(
-    schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
-) -> typing.Any:
     """
     Recursive type lookup.
+
+    Raise MalformedSchemaError of a $ref value is seen again.
 
     Args:
         schema: The schema to look up the key in.
@@ -280,6 +275,13 @@ def _peek_key(
         The key value (if found) or None.
 
     """
+    return _peek_key(schema, schemas, key, set())
+
+
+def _peek_key(
+    schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
+) -> typing.Any:
+    """Implement peek_key."""
     # Base case, look for type key
     value = schema.get(key)
     if value is not None:

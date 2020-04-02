@@ -18,13 +18,6 @@ NameSchema = typing.Tuple[str, types.Schema]
 
 
 def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameSchema:
-    """External interface."""
-    return _resolve(name, schema, schemas, set())
-
-
-def _resolve(
-    name: str, schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
-) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -32,6 +25,7 @@ def _resolve(
     of the schema is recorded.
 
     Raises SchemaNotFoundError is a $ref resolution fails.
+    Raise MalformedSchemaError of a $ref value is seen again.
 
     Args:
         name: The name of the schema from the last step.
@@ -43,6 +37,13 @@ def _resolve(
         The first schema that no longer has the $ref key and the name of that schema.
 
     """
+    return _resolve(name, schema, schemas, set())
+
+
+def _resolve(
+    name: str, schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
+) -> NameSchema:
+    """Implement resolve."""
     # Checking whether schema is a reference schema
     ref = schema.get("$ref")
     if ref is None:
