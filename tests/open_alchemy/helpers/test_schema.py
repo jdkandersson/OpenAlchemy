@@ -74,3 +74,26 @@ def test_constractable_remote(tmp_path, _clean_remote_schemas_store):
     result = helpers.schema.constructable(schema=schema, schemas={})
 
     assert result is True
+
+
+@pytest.mark.parametrize(
+    "schema, expected_result",
+    [
+        ({}, None),
+        ({"x-inherits": True}, True),
+        ({"x-inherits": False}, False),
+        ({"x-inherits": ""}, True),
+        ({"x-inherits": "Parent"}, True),
+    ],
+    ids=["missing", "bool true", "bool false", "string empty", "string not empty"],
+)
+@pytest.mark.helper
+def test_inherits(schema, expected_result):
+    """
+    GIVEN schema and expected result
+    WHEN inherits is called with the schema
+    THEN the expected result is returned.
+    """
+    result = helpers.schema.inherits(schema=schema, schemas={})
+
+    assert result == expected_result

@@ -1,5 +1,7 @@
 """Helpers for schemas."""
 
+import typing
+
 from .. import types
 from . import peek
 
@@ -31,7 +33,26 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if peek.tablename(schema=schema, schemas=schemas) is not None:
         return True
     # Check for inherits
-    inherits = peek.inherits(schema=schema, schemas=schemas)
-    if isinstance(inherits, str) or inherits is True:
+    if inherits(schema=schema, schemas=schemas) is True:
+        return True
+    return False
+
+
+def inherits(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Check whether a schema inherits.
+
+    Args:
+        schema: The schema to check.
+        schemas: All the schemas.
+
+    Returns:
+        Whether the schema inherits.
+
+    """
+    inherits_value = peek.inherits(schema=schema, schemas=schemas)
+    if inherits_value is None:
+        return None
+    if isinstance(inherits_value, str) or inherits_value is True:
         return True
     return False
