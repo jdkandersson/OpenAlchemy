@@ -4,6 +4,7 @@ import typing
 
 from .. import exceptions
 from .. import types
+from . import peek as peek_helper
 from . import ref as ref_helper
 from . import schema as schema_helper
 
@@ -27,6 +28,8 @@ def check_parent(
         if True is returned for any of them, True is returned otherwise False is
         returned.
 
+    Raise MalformedSchemaError is the value of $ref is not a string.
+    Raise MalformedSchemaError if the value of allOf is not a list.
     Raise MalformedSchemaError if the parent is not found in the chain.
     Raise MalformedSchemaError if the parent does not have x-tablename nor x-inherits.
     Raise MalformedSchemaError if a $ref value is seen again.
@@ -100,6 +103,8 @@ def get_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
     2. the schema has allOf in which case the return value of the first element that
         does not raise the MalformedSchemaError is returned.
 
+    Raise MalformedSchemaError is the value of $ref is not a string.
+    Raise MalformedSchemaError if the value of allOf is not a list.
     Raise MalformedSchemaError if the schema does not have $ref nor allOf.
     Raise MalformedSchemaError if the schema has allOf and all of the elements raise
         MalformedSchemaError.
@@ -163,3 +168,72 @@ def _get_parent(
     raise exceptions.MalformedSchemaError(
         "A schema that is marked as inhereting does not reference a valid parent."
     )
+
+
+def get_parents(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Generator[str, None, None]:
+    """
+    Retrieve all parents of a schema.
+
+    Recursive function. Base cases:
+    1. schema without $ref nor allOf then nothing is returned.
+
+    Recursive cases:
+    1. $ref in which case values are yielded from the function called with the
+        referenced schema and the referenced name is yielded and
+    2. allOf in which case values are yielded from the function called with each element
+        of allOf.
+
+    Raise MalformedSchemaError is the value of $ref is not a string.
+    Raise MalformedSchemaError if the value of allOf is not a list.
+    Raise MalformedSchemaError if the same $ref value is seen again.
+
+    Args:
+        schema: The schema to retrieve all parents for.
+        schemas: All the schemas.
+
+    Returns:
+        A generator with all parents of the schema.
+
+    """
+    return _get_parents(schema, schemas, set())
+
+
+def _get_parents(
+    schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
+) -> typing.Generator[str, None, None]:
+    """Implement get_parents."""
+    # Check for $ref and allOf
+    ref = schema.get("$ref")
+    all_of = schema.get("allOf")
+
+    # Handle $ref
+    if ref is not None:
+        if not isinstance(ref, str):
+            raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
+
+        # Check for circular references
+        if ref in seen_refs:
+            raise exceptions.MalformedSchemaError(
+                "Circular reference chain detected for the schema."
+            )
+        seen_refs.add(ref)
+
+        ref_name, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
+
+        # Check for inherits
+        inherits = peek_helper.inherits(schema=schema, schemas=schemas)
+        if isinstance(inherits, str) or inherits is True:
+            yield from _get_parents(ref_schema, schemas, seen_refs)
+
+        if schema_helper.constructable(schema=ref_schema, schemas=schemas):
+            yield ref_name
+        return
+
+    # Handle allOf
+    if all_of is not None:
+        if not isinstance(all_of, list):
+            raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
+        for sub_schema in all_of:
+            yield from _get_parents(sub_schema, schemas, seen_refs)

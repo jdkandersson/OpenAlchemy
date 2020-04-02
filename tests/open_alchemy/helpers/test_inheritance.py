@@ -1,5 +1,7 @@
 """Tests for inheritance helpers."""
 
+import types
+
 import pytest
 
 from open_alchemy import exceptions
@@ -323,3 +325,211 @@ def test_get_parent_valid(schema, schemas, expected_name):
     name = helpers.inheritance.get_parent(schema=schema, schemas=schemas)
 
     assert name == expected_name
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, exception",
+    [
+        ({"$ref": 1}, {}, exceptions.MalformedSchemaError),
+        ({"$ref": "#/components/schemas/Parent"}, {}, exceptions.SchemaNotFoundError),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"$ref": "#/components/schemas/Parent"}},
+            exceptions.MalformedSchemaError,
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {"$ref": "#/components/schemas/Grandparent"},
+                "Grandparent": {"$ref": "#/components/schemas/Parent"},
+            },
+            exceptions.MalformedSchemaError,
+        ),
+        ({"allOf": "Parent"}, {}, exceptions.MalformedSchemaError),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"allOf": [{"$ref": "#/components/schemas/Parent"}]}},
+            exceptions.MalformedSchemaError,
+        ),
+    ],
+    ids=[
+        "$ref not string",
+        "$ref unresolved",
+        "single step circular $ref",
+        "multiple step circular $ref",
+        "allOf not list",
+        "allOf single step circular $ref",
+    ],
+)
+@pytest.mark.helper
+def test_get_parents_invalid(schema, schemas, exception):
+    """
+    GIVEN invalid schema and schemas and expected exception
+    WHEN get_parents is called with the schema and schemas
+    THEN the expect exception is raised.
+    """
+    with pytest.raises(exception):
+        list(helpers.inheritance.get_parents(schema=schema, schemas=schemas))
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_parents",
+    [
+        ({}, {}, []),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"x-tablename": "parent"}},
+            ["Parent"],
+        ),
+        ({"$ref": "#/components/schemas/Parent"}, {"Parent": {}}, []),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Grandparent", "Parent"],
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True, "x-tablename": "parent"},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Grandparent", "Parent"],
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": "Grandparent"},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Grandparent", "Parent"],
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": False, "x-tablename": "parent"},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Parent"],
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {
+                "Parent": {
+                    "allOf": [
+                        {"x-tablename": "parent"},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {},
+            },
+            ["Parent"],
+        ),
+        (
+            {"$ref": "#/components/schemas/Parent"},
+            {"Parent": {"$ref": "#/components/schemas/Grandparent"}, "Grandparent": {}},
+            [],
+        ),
+        ({"allOf": []}, {}, []),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/Parent"}]},
+            {"Parent": {"x-tablename": "parent"}},
+            ["Parent"],
+        ),
+        ({"allOf": [{"$ref": "#/components/schemas/Parent"}]}, {"Parent": {}}, []),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {
+                "Parent1": {"x-tablename": "parent 1"},
+                "Parent2": {"x-tablename": "parent 2"},
+            },
+            ["Parent1", "Parent2"],
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {"Parent1": {"x-tablename": "parent 1"}, "Parent2": {}},
+            ["Parent1"],
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {"Parent1": {}, "Parent2": {"x-tablename": "parent 2"}},
+            ["Parent2"],
+        ),
+        (
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/Parent1"},
+                    {"$ref": "#/components/schemas/Parent2"},
+                ]
+            },
+            {"Parent1": {}, "Parent2": {}},
+            [],
+        ),
+    ],
+    ids=[
+        "empty",
+        "single $ref constructable",
+        "single $ref not constructable",
+        "nested $ref constructable inherits bool",
+        "nested $ref constructable inherits bool with tablename",
+        "nested $ref constructable inherits string",
+        "nested $ref constructable no inheritance",
+        "nested $ref some constructable",
+        "nested $ref not constructable",
+        "allOf empty",
+        "allOf single constructabe",
+        "allOf single not constructabe",
+        "allOf multiple constructabe",
+        "allOf multiple first constructabe",
+        "allOf multiple second constructabe",
+        "allOf multiple not constructabe",
+    ],
+)
+@pytest.mark.helper
+def test_get_parents_valid(schema, schemas, expected_parents):
+    """
+    GIVEN schema and schemas and expected parents
+    WHEN get_parents is called with the schema and schemas
+    THEN the expect parents are returned.
+    """
+    generator = helpers.inheritance.get_parents(schema=schema, schemas=schemas)
+
+    assert isinstance(generator, types.GeneratorType)
+    assert list(generator) == expected_parents
