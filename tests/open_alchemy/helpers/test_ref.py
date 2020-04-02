@@ -21,23 +21,41 @@ def test_ref_resolve_exists():
     assert hasattr(helpers.ref, "resolve")
 
 
+@pytest.mark.parametrize(
+    "schema, schemas, expected_name",
+    [
+        ({"type": "integer"}, {}, "Schema"),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "integer"}},
+            "RefSchema",
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
+                "NestedRefSchema": {"type": "integer"},
+            },
+            "NestedRefSchema",
+        ),
+    ],
+    ids=["no $ref", "single $ref", "nested $ref"],
+)
 @pytest.mark.helper
-def test_resolve_not_ref_schema():
+def test_resolve_not_ref_schema(schema, schemas, expected_name):
     """
-    GIVEN schema that does not have $ref and name
-    WHEN resolve is called with the schema and name
-    THEN the schema and name are returned.
+    GIVEN schema, schemas and expected name
+    WHEN resolve is called with the schema, schemas and name
+    THEN the schema and expected name are returned.
     """
-    name = "name 1"
-    schema = {"type": "integer"}
-    schemas = {}
+    name = "Schema"
 
     (return_name, return_schema) = helpers.ref.resolve(
         name=name, schema=copy.deepcopy(schema), schemas=schemas
     )
 
-    assert return_name == name
-    assert return_schema == schema
+    assert return_name == expected_name
+    assert return_schema == {"type": "integer"}
 
 
 @pytest.mark.helper
@@ -66,50 +84,6 @@ def test_resolve_not_defined():
 
     with pytest.raises(exceptions.SchemaNotFoundError):
         helpers.ref.resolve(name="name 1", schema=schema, schemas=schemas)
-
-
-@pytest.mark.helper
-def test_resolve_single():
-    """
-    GIVEN schema that references another schema and schemas
-    WHEN resolve is called with the schema and schemas
-    THEN the referenced schema and logical name is returned.
-    """
-    ref_schema = {"type": "boolean"}
-    ref_name = "RefSchema"
-    schema = {"$ref": f"#/components/schemas/{ref_name}"}
-    schemas = {ref_name: copy.deepcopy(ref_schema)}
-
-    (return_name, return_schema) = helpers.ref.resolve(
-        name="name 1", schema=schema, schemas=schemas
-    )
-
-    assert return_name == ref_name
-    assert return_schema == ref_schema
-
-
-@pytest.mark.helper
-def test_resolve_nested():
-    """
-    GIVEN schema that references another schema which also references another schema
-        and schemas
-    WHEN resolve is called with the schema and schemas
-    THEN the final referenced schema and logical name is returned.
-    """
-    ref_schema = {"type": "boolean"}
-    ref_name = "RefSchema"
-    schema = {"$ref": "#/components/schemas/NestedRefSchema"}
-    schemas = {
-        "NestedRefSchema": {"$ref": f"#/components/schemas/{ref_name}"},
-        "RefSchema": copy.deepcopy(ref_schema),
-    }
-
-    (return_name, return_schema) = helpers.ref.resolve(
-        name="name 1", schema=schema, schemas=schemas
-    )
-
-    assert return_name == ref_name
-    assert return_schema == ref_schema
 
 
 @pytest.mark.parametrize(
