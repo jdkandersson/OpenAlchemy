@@ -27,7 +27,7 @@ class ModelFactory(Protocol):
 class GetBase(Protocol):
     """Defines interface for the get_base function."""
 
-    def __call__(self, *, schema: Schema, schemas: Schemas) -> typing.Type:
+    def __call__(self, *, name: str, schemas: Schemas) -> typing.Type:
         """Call signature for get_base."""
         ...
 

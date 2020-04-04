@@ -61,7 +61,7 @@ def model_factory(
             model_schema["properties"][prop_name] = prop_final_spec
 
     # Assembling model
-    base = get_base(schema=schema, schemas=schemas)
+    base = get_base(name=name, schemas=schemas)
     return type(
         name,
         (base, utility_base.UtilityBase),

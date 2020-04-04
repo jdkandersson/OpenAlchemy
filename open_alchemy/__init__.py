@@ -216,7 +216,7 @@ def init_yaml(
     )
 
 
-def _get_base(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> typing.Type:
+def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
     """
     Retrieve the base class of a schema considering inheritance.
 
@@ -229,7 +229,7 @@ def _get_base(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> typing.T
     constructed when attempting to construct the child.
 
     Args:
-        schema: The schema to determine the base for.
+        name: The name of the schema to determine the base for.
         schemas: All the schemas.
 
     Returns:
@@ -237,6 +237,10 @@ def _get_base(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> typing.T
         inheritance.
 
     """
+    schema = schemas.get(name)
+    if schema is None:
+        raise exceptions.SchemaNotFoundError(f"Could not fund schema {name}.")
+
     if _helpers.schema.inherits(schema=schema, schemas=schemas):
         parent = _helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
         try:
