@@ -77,7 +77,7 @@ def model_factory(
 
 def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     """
-    Retrieve the schema from the schemas.
+    Retrieve and prepare the schema from the schemas.
 
     Raise SchemaNotFoundError if the schema is not found in the schemas.
     Raise MalformedSchemaError is the schema does not have x-tablename.

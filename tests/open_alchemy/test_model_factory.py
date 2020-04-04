@@ -567,7 +567,10 @@ class TestGetSchema:
             "x-tablename": "schema",
             "properties": {"key": "value"},
         }
-        schemas = {"Schema": schema}
+        schemas = {
+            "Schema": {"$ref": "#/components/schemas/RefSchema"},
+            "RefSchema": schema,
+        }
 
         returned_schema = model_factory._get_schema(name, schemas)
 
