@@ -660,3 +660,51 @@ def test_kwargs():
     )
 
     assert model.__mapper_args__ == {"passive_deletes": True}
+
+
+class TestPrepareModelDict:
+    """Tests for _prepare_model_dict."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas, expected_dict",
+        [
+            ({"Schema": {"x-tablename": "schema"}}, {"__tablename__": "schema"}),
+            (
+                {
+                    "Schema": {
+                        "x-inherits": "Parent",
+                        "$ref": "#/components/schemas/Parent",
+                    },
+                    "Parent": {"x-tablename": "parent"},
+                },
+                {},
+            ),
+            (
+                {
+                    "Schema": {
+                        "x-inherits": "Parent",
+                        "x-tablename": "schema",
+                        "$ref": "#/components/schemas/Parent",
+                    },
+                    "Parent": {"x-tablename": "parent"},
+                },
+                {"__tablename__": "schema"},
+            ),
+        ],
+        ids=["not inherits", "inherits same tablename", "inherits different tablename"],
+    )
+    @pytest.mark.model
+    def test_(schemas, expected_dict):
+        """
+        GIVEN schema and expected dictionary
+        WHEN _prepare_model_dict is called with the schema
+        THEN the expected dictionary is returned.
+        """
+        returned_dict = model_factory._prepare_model_dict(
+            name="Schema", schemas=schemas
+        )
+
+        assert expected_dict == returned_dict

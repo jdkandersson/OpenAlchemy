@@ -140,3 +140,35 @@ def _get_kwargs(*, schema: types.Schema) -> types.TKwargs:
             "Model kwargs can only start and end with '__'."
         )
     return kwargs
+
+
+def _prepare_model_dict(
+    name: str, schemas: types.Schemas
+) -> typing.Dict[str, typing.Any]:
+    """
+    Prepare the dictionary used to construct the model.
+
+    Assume the schema is valid.
+    Add the __tablename__ key if it is required.
+
+    Args:
+        name: The name of the schema to prepare the dictionary for.
+        schemas: All the schemas.
+
+    Returns:
+        The dictionary for the schema.
+
+    """
+    schema = schemas[name]
+    tablename = helpers.peek.tablename(schema=schema, schemas=schemas)
+
+    # Handle no inheritance
+    if not helpers.schema.inherits(schema=schema, schemas=schemas):
+        return {"__tablename__": tablename}
+
+    parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+    parent_schema = schemas[parent]
+    parent_tablename = helpers.peek.tablename(schema=parent_schema, schemas=schemas)
+    if tablename == parent_tablename:
+        return {}
+    return {"__tablename__": tablename}
