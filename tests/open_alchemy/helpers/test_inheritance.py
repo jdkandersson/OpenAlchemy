@@ -579,3 +579,49 @@ def test_get_parents_valid(schema, schemas, expected_parents):
 
     assert isinstance(generator, types.GeneratorType)
     assert list(generator) == expected_parents
+
+
+@pytest.mark.parametrize(
+    "schema, exception",
+    [
+        ({}, exceptions.InheritanceError),
+        ({"x-inherits": False}, exceptions.InheritanceError),
+        ({"x-inherits": "Parent"}, exceptions.InheritanceError),
+    ],
+    ids=["x-inherits missing", "x-inherits False", "x-inherits wrong parent"],
+)
+@pytest.mark.helper
+def test_retrieve_parent_invalid(schema, exception):
+    """
+    GIVEN invalid schema and expected exception
+    WHEN retrieve_parent is called with the schema
+    THEN the expected exception is raised.
+    """
+    with pytest.raises(exception):
+        helpers.inheritance.retrieve_parent(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, schemas",
+    [
+        (
+            {"x-inherits": True, "$ref": "#/components/schemas/Parent"},
+            {"Parent": {"x-tablename": "parent"}},
+        ),
+        (
+            {"x-inherits": "Parent", "$ref": "#/components/schemas/Parent"},
+            {"Parent": {"x-tablename": "parent"}},
+        ),
+    ],
+    ids=["x-inherits True", "x-inherits string"],
+)
+@pytest.mark.helper
+def test_retrieve_parent_valid(schema, schemas):
+    """
+    GIVEN invalid schema and expected exception
+    WHEN retrieve_parent is called with the schema
+    THEN the expected exception is raised.
+    """
+    parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+
+    assert parent == "Parent"

@@ -4,6 +4,7 @@ import typing
 
 from .. import exceptions
 from .. import types
+from . import peek as peek_helper
 from . import ref as ref_helper
 from . import schema as schema_helper
 
@@ -240,3 +241,34 @@ def _get_parents(
             raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
         for sub_schema in all_of:
             yield from _get_parents(sub_schema, schemas, seen_refs)
+
+
+def retrieve_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
+    """
+    Get or check the name of the parent.
+
+    If x-inherits is True, get the name of the parent. If it is a string, check the
+    parent.
+
+    Raise InheritanceError if x-inherits is not defined or False.
+
+    Args:
+        schema: The schema to retrieve the parent for.
+        schemas: All the schemas.
+
+    Returns:
+        The parent.
+
+    """
+    inherits = peek_helper.inherits(schema=schema, schemas=schemas)
+    if inherits is True:
+        return get_parent(schema=schema, schemas=schemas)
+    if isinstance(inherits, str):
+        if not check_parent(schema=schema, parent_name=inherits, schemas=schemas):
+            raise exceptions.InheritanceError(
+                f"The x-inherits value {inherits} is not a valid parent."
+            )
+        return inherits
+    raise exceptions.InheritanceError(
+        f"Cannot retrive the name of the parent if x-inherits is not defined or False."
+    )
