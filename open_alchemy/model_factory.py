@@ -66,11 +66,11 @@ def model_factory(
         name,
         (base, utility_base.UtilityBase),
         {
-            "__tablename__": helpers.ext_prop.get(source=schema, name="x-tablename"),
             "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
+            **_prepare_model_dict(name=name, schemas=schemas),
         },
     )
 
