@@ -76,7 +76,22 @@ def model_factory(
 
 
 def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
-    """Retrieve the schema from the schemas."""
+    """
+    Retrieve the schema from the schemas.
+
+    Raise SchemaNotFoundError if the schema is not found in the schemas.
+    Raise MalformedSchemaError is the schema does not have x-tablename.
+    Raise FeatureNotImplementedError if the type is not found or it is not "object".
+    Raise MalformedSchemaError if there are no properties.
+
+    Args:
+        name: The name of the schema to retrieve.
+        schemas: All the schemas.
+
+    Returns:
+        The schema.
+
+    """
     # Input validation
     # Checking that name is in schemas
     if name not in schemas:

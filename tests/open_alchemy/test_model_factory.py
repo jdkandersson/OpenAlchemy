@@ -6,7 +6,7 @@ import copy
 from unittest import mock
 
 import pytest
-from sqlalchemy import schema
+from sqlalchemy import schema as sql_schema
 
 from open_alchemy import exceptions
 from open_alchemy import model_factory
@@ -560,7 +560,7 @@ def test_table_args_unique():
     )
 
     (unique,) = model.__table_args__
-    assert isinstance(unique, schema.UniqueConstraint)
+    assert isinstance(unique, sql_schema.UniqueConstraint)
 
 
 @pytest.mark.model
@@ -584,7 +584,90 @@ def test_table_args_index():
     )
 
     (index,) = model.__table_args__
-    assert isinstance(index, schema.Index)
+    assert isinstance(index, sql_schema.Index)
+
+
+class TestGetSchema:
+    """Tests for _get_schema."""
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas, exception",
+        [
+            ({}, exceptions.SchemaNotFoundError),
+            (
+                {"Schema": {"type": "object", "properties": {"key": "value"}}},
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {"Schema": {"x-tablename": "schema", "properties": {"key": "value"}}},
+                exceptions.FeatureNotImplementedError,
+            ),
+            (
+                {
+                    "Schema": {
+                        "type": "string",
+                        "x-tablename": "schema",
+                        "properties": {"key": "value"},
+                    }
+                },
+                exceptions.FeatureNotImplementedError,
+            ),
+            (
+                {"Schema": {"type": "object", "x-tablename": "schema"}},
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {
+                    "Schema": {
+                        "type": "object",
+                        "x-tablename": "schema",
+                        "properties": {},
+                    }
+                },
+                exceptions.MalformedSchemaError,
+            ),
+        ],
+        ids=[
+            "schema doesn't exist",
+            "x-tablename missing",
+            "type missing",
+            "type not object",
+            "properties missing",
+            "properties empty",
+        ],
+    )
+    @pytest.mark.model
+    def test_invalid(schemas, exception):
+        """
+        GIVEN invalid schema and expected exception
+        WHEN _get_schema is called with the schema
+        THEN the expected exception is raised.
+        """
+        name = "Schema"
+
+        with pytest.raises(exception):
+            model_factory._get_schema(name, schemas)
+
+    @staticmethod
+    @pytest.mark.model
+    def test_valid():
+        """
+        GIVEN valid schema
+        WHEN _get_schema is called with the schema
+        THEN the schema is returned.
+        """
+        name = "Schema"
+        schema = {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"key": "value"},
+        }
+        schemas = {"Schema": schema}
+
+        returned_schema = model_factory._get_schema(name, schemas)
+
+        assert returned_schema == schema
 
 
 class TestGetKwargs:
