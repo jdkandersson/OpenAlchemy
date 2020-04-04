@@ -26,27 +26,7 @@ def model_factory(
         The model as a class.
 
     """
-    # Input validation
-    # Checking that name is in schemas
-    if name not in schemas:
-        raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
-    schema: types.Schema = schemas.get(name, {})
-    # De-referencing schema
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
-    # Checking for tablename key
-    if "x-tablename" not in schema:
-        raise exceptions.MalformedSchemaError(
-            f'"x-tablename" is a required schema property for {name}.'
-        )
-    # Checking for object type
-    if schema.get("type") != "object":
-        raise exceptions.FeatureNotImplementedError(
-            f"{schema.get('type')} is not supported in {name}."
-        )
-    if not schema.get("properties"):
-        raise exceptions.MalformedSchemaError(
-            f"At least 1 property is required for {name}."
-        )
+    schema = _get_schema(name, schemas)
 
     # Calculating the class variables for the model
     model_class_vars = []
@@ -93,6 +73,32 @@ def model_factory(
             **_get_kwargs(schema=schema),
         },
     )
+
+
+def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
+    """Retrieve the schema from the schemas."""
+    # Input validation
+    # Checking that name is in schemas
+    if name not in schemas:
+        raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
+    schema: types.Schema = schemas.get(name, {})
+    # De-referencing schema
+    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    # Checking for tablename key
+    if "x-tablename" not in schema:
+        raise exceptions.MalformedSchemaError(
+            f'"x-tablename" is a required schema property for {name}.'
+        )
+    # Checking for object type
+    if schema.get("type") != "object":
+        raise exceptions.FeatureNotImplementedError(
+            f"{schema.get('type')} is not supported in {name}."
+        )
+    if not schema.get("properties"):
+        raise exceptions.MalformedSchemaError(
+            f"At least 1 property is required for {name}."
+        )
+    return schema
 
 
 def _get_kwargs(*, schema: types.Schema) -> types.TKwargs:
