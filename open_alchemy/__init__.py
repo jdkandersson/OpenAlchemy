@@ -216,4 +216,40 @@ def init_yaml(
     )
 
 
+def _get_base(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> typing.Type:
+    """
+    Retrieve the base class of a schema considering inheritance.
+
+    If x-inherits is True, retrieve calculate the parent. If it is a string, verify that
+    the parent is valid. In either case, the model for that schema is used as the base
+    instead of the usual base.
+    If x-inherits is not present or False, return the usual base.
+
+    Raise InheritanceConstructionOrderError if the parent of the schema has not been
+    constructed when attempting to construct the child.
+
+    Args:
+        schema: The schema to determine the base for.
+        schemas: All the schemas.
+
+    Returns:
+        The base of the model. Either the usual base or the model parent in the case of
+        inheritance.
+
+    """
+    inherits = _helpers.peek.inherits(schema=schema, schemas=schemas)
+    if _helpers.schema.inherits(schema=schema, schemas=schemas):
+        if inherits is True:
+            inherits = _helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+        try:
+            assert isinstance(inherits, str)
+            return getattr(models, inherits)
+        except AttributeError:
+            raise exceptions.InheritanceError(
+                "Any parents of a schema must be constructed before the schema can be "
+                "constructed."
+            )
+    return getattr(models, "Base")
+
+
 __all__ = ["init_model_factory", "init_json", "init_yaml"]
