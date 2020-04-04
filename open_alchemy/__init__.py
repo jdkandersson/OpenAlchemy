@@ -237,13 +237,10 @@ def _get_base(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> typing.T
         inheritance.
 
     """
-    inherits = _helpers.peek.inherits(schema=schema, schemas=schemas)
     if _helpers.schema.inherits(schema=schema, schemas=schemas):
-        if inherits is True:
-            inherits = _helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+        parent = _helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
         try:
-            assert isinstance(inherits, str)
-            return getattr(models, inherits)
+            return getattr(models, parent)
         except AttributeError:
             raise exceptions.InheritanceError(
                 "Any parents of a schema must be constructed before the schema can be "
