@@ -12,6 +12,11 @@ from open_alchemy import exceptions
 from open_alchemy import model_factory
 
 
+def _mock_get_base(**_):
+    """Mock get_base function."""
+    return mock.MagicMock
+
+
 @pytest.mark.model
 def test_missing_schema():
     """
@@ -20,7 +25,7 @@ def test_missing_schema():
     THEN SchemaNotFoundError is raised.
     """
     with pytest.raises(exceptions.SchemaNotFoundError):
-        model_factory.model_factory(name="Missing", base=None, schemas={})
+        model_factory.model_factory(name="Missing", get_base=None, schemas={})
 
 
 @pytest.mark.model
@@ -32,7 +37,7 @@ def test_missing_tablename():
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
-            name="MissingTablename", base=None, schemas={"MissingTablename": {}}
+            name="MissingTablename", get_base=None, schemas={"MissingTablename": {}}
         )
 
 
@@ -46,7 +51,7 @@ def test_tablename_none():
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
         model_factory.model_factory(
             name="SingleProperty",
-            base=mock.MagicMock,
+            get_base=_mock_get_base,
             schemas={
                 "SingleProperty": {
                     "x-tablename": None,
@@ -67,7 +72,7 @@ def test_not_object():
     with pytest.raises(exceptions.FeatureNotImplementedError):
         model_factory.model_factory(
             name="NotObject",
-            base=None,
+            get_base=None,
             schemas={"NotObject": {"x-tablename": "table 1", "type": "not_object"}},
         )
 
@@ -82,7 +87,7 @@ def test_properties_missing():
     with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
             name="MissingProperty",
-            base=None,
+            get_base=None,
             schemas={"MissingProperty": {"x-tablename": "table 1", "type": "object"}},
         )
 
@@ -97,7 +102,7 @@ def test_properties_empty():
     with pytest.raises(exceptions.MalformedSchemaError):
         model_factory.model_factory(
             name="EmptyProperty",
-            base=None,
+            get_base=None,
             schemas={
                 "EmptyProperty": {
                     "x-tablename": "table 1",
@@ -117,7 +122,7 @@ def test_single_property():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -139,7 +144,7 @@ def test_multiple_property():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -165,7 +170,7 @@ def test_tablename():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -194,7 +199,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -224,7 +229,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -254,7 +259,7 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -276,7 +281,7 @@ def test_ref():
     """
     model = model_factory.model_factory(
         name="Schema",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "Schema": {"$ref": "#/components/schemas/RefSchema"},
             "RefSchema": {
@@ -300,7 +305,7 @@ def test_all_of():
     """
     model = model_factory.model_factory(
         name="Schema",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "Schema": {
                 "allOf": [
@@ -506,7 +511,7 @@ def test_schema(schemas, expected_schema):
     THEN a model with _schema set to the expected schema is returned.
     """
     model = model_factory.model_factory(
-        name="Schema", base=mock.MagicMock, schemas=schemas
+        name="Schema", get_base=_mock_get_base, schemas=schemas
     )
 
     assert model._schema == expected_schema
@@ -529,7 +534,9 @@ def test_schema_relationship_invalid():
     }
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        model_factory.model_factory(name="Schema", base=mock.MagicMock, schemas=schemas)
+        model_factory.model_factory(
+            name="Schema", get_base=_mock_get_base, schemas=schemas
+        )
 
 
 @pytest.mark.model
@@ -541,7 +548,7 @@ def test_table_args_unique():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -565,7 +572,7 @@ def test_table_args_index():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -651,7 +658,7 @@ def test_kwargs():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",

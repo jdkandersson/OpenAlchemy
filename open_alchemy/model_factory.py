@@ -12,14 +12,14 @@ from . import utility_base
 
 
 def model_factory(
-    *, name: str, base: typing.Type, schemas: types.Schemas
+    *, name: str, get_base: types.GetBase, schemas: types.Schemas
 ) -> typing.Type:
     """
     Convert OpenAPI schema to SQLAlchemy model.
 
     Args:
         name: The name of the schema.
-        base: The SQLAlchemy declarative base.
+        get_base: Funcrtion to retrieve the base class for the model.
         schemas: The OpenAPI schemas.
 
     Returns:
@@ -81,6 +81,7 @@ def model_factory(
             model_schema["properties"][prop_name] = prop_final_spec
 
     # Assembling model
+    base = get_base(schema=schema, schemas=schemas)
     return type(
         name,
         (base, utility_base.UtilityBase),

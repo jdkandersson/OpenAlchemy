@@ -24,6 +24,14 @@ class ModelFactory(Protocol):
         ...
 
 
+class GetBase(Protocol):
+    """Defines interface for the get_base function."""
+
+    def __call__(self, *, schema: Schema, schemas: Schemas) -> typing.Type:
+        """Call signature for get_base."""
+        ...
+
+
 # Unique consraint types
 ColumnList = typing.List[str]
 ColumnListList = typing.List[ColumnList]

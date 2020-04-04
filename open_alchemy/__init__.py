@@ -60,7 +60,7 @@ def init_model_factory(
 
     # Binding the base and schemas
     bound_model_factories = functools.partial(
-        _model_factory.model_factory, schemas=schemas, base=base
+        _model_factory.model_factory, schemas=schemas, get_base=_get_base
     )
     # Caching calls
     cached_model_factories = functools.lru_cache(maxsize=None)(bound_model_factories)
