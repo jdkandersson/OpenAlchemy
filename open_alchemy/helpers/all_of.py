@@ -1,11 +1,18 @@
 """Merges objects under allOf statement."""
 
+import typing
+
 from open_alchemy import types
 
 from . import ref
 
 
-def merge(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+def merge(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    skip_name: typing.Optional[str] = None
+) -> types.Schema:
     """
     Merge schemas under allOf statement.
 
@@ -16,15 +23,18 @@ def merge(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
     Args:
         schema: The schema to operate on.
         schemas: Used to resolve any $ref.
+        skip_name (optional): The name of any schema to skip.
 
     Returns:
         The schema with all top level allOf statements resolved.
 
     """
-    return _merge(schema, schemas)
+    return _merge(schema, schemas, skip_name)
 
 
-def _merge(schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+def _merge(
+    schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str]
+) -> types.Schema:
     """Implement merge."""
     all_of = schema.get("allOf")
     if all_of is None:
@@ -33,9 +43,11 @@ def _merge(schema: types.Schema, schemas: types.Schemas) -> types.Schema:
     merged_schema: types.Schema = {}
     for sub_schema in all_of:
         # Resolving any $ref
-        _, ref_schema = ref.resolve(name="", schema=sub_schema, schemas=schemas)
+        _, ref_schema = ref.resolve(
+            name="", schema=sub_schema, schemas=schemas, skip_name=skip_name
+        )
         # Merging any nested allOf
-        merged_sub_schema = _merge(ref_schema, schemas)
+        merged_sub_schema = _merge(ref_schema, schemas, skip_name)
 
         # Capturing required arrays
         merged_required = merged_schema.get("required")

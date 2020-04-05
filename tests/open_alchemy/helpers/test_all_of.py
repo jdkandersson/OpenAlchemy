@@ -1,4 +1,4 @@
-"""Tests for merge allOf helper."""
+"""Tests for all_of helpers."""
 
 
 import pytest
@@ -55,6 +55,46 @@ def test_valid(schema, schemas, expected_schema):
     THEN the expected schema is returned.
     """
     return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
+
+    assert return_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_schema",
+    [
+        (
+            {"allOf": [{"$ref": "#/components/schemas/OtherSchema"}]},
+            {"OtherSchema": {"key": "value"}},
+            {"key": "value"},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"key": "value"}},
+            {},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/IntermediateSchema"}]},
+            {
+                "IntermediateSchema": {"$ref": "#/components/schemas/RefSchema"},
+                "RefSchema": {"key": "value"},
+            },
+            {},
+        ),
+    ],
+    ids=["miss", "allOf", "nested allOf"],
+)
+@pytest.mark.helper
+def test_skip(schema, schemas, expected_schema):
+    """
+    GIVEN given schema, schemas and expected schema
+    WHEN merge is called with the schema and schemas
+    THEN the expected schema is returned.
+    """
+    skip_name = "RefSchema"
+
+    return_schema = helpers.all_of.merge(
+        schema=schema, schemas=schemas, skip_name=skip_name
+    )
 
     assert return_schema == expected_schema
 
