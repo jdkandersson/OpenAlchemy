@@ -340,7 +340,7 @@ class UtilityBase:
         return value
 
     @classmethod
-    def _to_dict_property(
+    def to_dict_property(
         cls,
         value: typing.Any,
         *,
@@ -389,7 +389,7 @@ class UtilityBase:
                     "The array item schema must have an items property."
                 )
             to_dict_property = functools.partial(
-                cls._to_dict_property,
+                cls.to_dict_property,
                 spec=item_spec,
                 name=name,
                 array_context=True,
@@ -410,6 +410,21 @@ class UtilityBase:
         # Handle other types
         return cls._simple_type_to_dict(format_=format_, value=value)
 
+    @classmethod
+    def instance_to_dict(cls, instance: TUtilityBase) -> typing.Dict[str, typing.Any]:
+        """Convert instance of the model to a dictionary."""
+        properties = cls.get_properties()
+
+        # Collecting the values of the properties
+        return_dict: typing.Dict[str, typing.Any] = {}
+        for name, spec in properties.items():
+            value = getattr(instance, name, None)
+            return_dict[name] = instance.to_dict_property(
+                spec=spec, name=name, value=value
+            )
+
+        return return_dict
+
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
@@ -421,17 +436,7 @@ class UtilityBase:
             The dictionary representation of the model.
 
         """
-        properties = self.get_properties()
-
-        # Collecting the values of the properties
-        return_dict: typing.Dict[str, typing.Any] = {}
-        for name, spec in properties.items():
-            value = getattr(self, name, None)
-            return_dict[name] = self._to_dict_property(
-                spec=spec, name=name, value=value
-            )
-
-        return return_dict
+        return self.instance_to_dict(self)
 
     def to_str(self) -> str:
         """

@@ -300,6 +300,35 @@ def test_to_dict_array_multiple(__init__):
     }
 
 
+# @pytest.mark.utility_base
+# def test_to_dict_inheritance(__init__):
+#     """
+#     GIVEN class that derives from UtilityBase with a schema that inherits
+#     WHEN to_dict is called
+#     THEN the dictionary based on the parent and child properties is returned.
+#     """
+#     mock_models = [mock.MagicMock(), mock.MagicMock()]
+#     model = type(
+#         "model",
+#         (utility_base.UtilityBase,),
+#         {
+#             "_schema": {
+#                 "properties": {"key": {"type": "array", "items": {"type": "object"}}}
+#             },
+#             "__init__": __init__,
+#         },
+#     )
+#     instance = model(**{"key": mock_models})
+
+#     returned_dict = instance.to_dict()
+
+#     assert returned_dict == {
+#         "key": list(
+#             map(lambda mock_model: mock_model.to_dict.return_value, mock_models)
+#         )
+#     }
+
+
 class TestObjectToDictRelationship:
     """Tests _object_to_dict_relationship."""
 
@@ -433,7 +462,7 @@ class TestObjectToDictReadOnly:
 
 
 class TestToDictProperty:
-    """Tests for _to_dict_property."""
+    """Tests for to_dict_property."""
 
     # pylint: disable=protected-access
 
@@ -460,11 +489,11 @@ class TestToDictProperty:
     def test_invalid_spec(spec, value, error):
         """
         GIVEN invalid property spec and expected error
-        WHEN _to_dict_property is called with the spec
+        WHEN to_dict_property is called with the spec
         THEN the expected error is raised.
         """
         with pytest.raises(error):
-            utility_base.UtilityBase._to_dict_property(value, spec=spec, name="name 1")
+            utility_base.UtilityBase.to_dict_property(value, spec=spec, name="name 1")
 
     @staticmethod
     @pytest.mark.parametrize("value", [None, "value 1"], ids=["none", "value"])
@@ -472,12 +501,12 @@ class TestToDictProperty:
     def test_simple_value(value):
         """
         GIVEN spec that isn't an object or array and value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN value is returned.
         """
         spec = {"type": "string"}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             value, spec=spec, name="name 1"
         )
 
@@ -503,12 +532,12 @@ class TestToDictProperty:
     def test_string_format(format_, value, expected_value):
         """
         GIVEN spec with a string type and given format
-        WHEN _to_dict_property is called with the spec and given value
+        WHEN to_dict_property is called with the spec and given value
         THEN the given expected value is returned as a string.
         """
         spec = {"type": "string", "format": format_}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             value, spec=spec, name="name 1"
         )
 
@@ -519,13 +548,13 @@ class TestToDictProperty:
     def test_object_none():
         """
         GIVEN object spec and None value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN None is returned.
         """
         value = None
         spec = {"type": "object"}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             value, spec=spec, name="name 1"
         )
 
@@ -536,13 +565,13 @@ class TestToDictProperty:
     def test_object_value():
         """
         GIVEN object spec and value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN value to_dict return value is returned.
         """
         value = mock.MagicMock()
         spec = {"type": "object"}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             value, spec=spec, name="name 1"
         )
 
@@ -553,12 +582,12 @@ class TestToDictProperty:
     def test_array_none():
         """
         GIVEN areray spec and None value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN empty list is returned.
         """
         spec = {"type": "array", "items": {"type": "object"}}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             None, spec=spec, name="name 1"
         )
 
@@ -569,12 +598,12 @@ class TestToDictProperty:
     def test_array_empty():
         """
         GIVEN object spec and empty list value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN empty list.
         """
         spec = {"type": "array", "items": {"type": "object"}}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             [], spec=spec, name="name 1"
         )
 
@@ -585,13 +614,13 @@ class TestToDictProperty:
     def test_array_single():
         """
         GIVEN object spec and single item list value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN item to_dict value is returned in a list.
         """
         item_value = mock.MagicMock()
         spec = {"type": "array", "items": {"type": "object"}}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             [item_value], spec=spec, name="name 1"
         )
 
@@ -602,14 +631,14 @@ class TestToDictProperty:
     def test_array_multiple():
         """
         GIVEN object spec and multiple item list values
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN item to_dict values are returned in a list.
         """
         item1_value = mock.MagicMock()
         item2_value = mock.MagicMock()
         spec = {"type": "array", "items": {"type": "object"}}
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             [item1_value, item2_value], spec=spec, name="name 1"
         )
 
@@ -623,7 +652,7 @@ class TestToDictProperty:
     def test_read_only():
         """
         GIVEN readOnly spec and mock value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN spec property values are returned.
         """
         value = mock.MagicMock()
@@ -633,7 +662,7 @@ class TestToDictProperty:
             "properties": {"key": {"type": "string"}},
         }
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             value, spec=spec, name="name 1"
         )
 
@@ -644,7 +673,7 @@ class TestToDictProperty:
     def test_read_only_array():
         """
         GIVEN readOnly array spec and mock value
-        WHEN _to_dict_property is called with the spec and value
+        WHEN to_dict_property is called with the spec and value
         THEN spec property values are returned.
         """
         value = mock.MagicMock()
@@ -654,7 +683,7 @@ class TestToDictProperty:
             "items": {"type": "object", "properties": {"key": {"type": "string"}}},
         }
 
-        returned_value = utility_base.UtilityBase._to_dict_property(
+        returned_value = utility_base.UtilityBase.to_dict_property(
             [value], spec=spec, name="name 1"
         )
 
