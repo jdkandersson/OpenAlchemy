@@ -45,8 +45,6 @@ def check_parent(
         Whether the parent is in the inheritance chain.
 
     """
-    print(schema)
-    print(parent_name)
     return _check_parent(schema, parent_name, schemas, set())
 
 
@@ -262,7 +260,6 @@ def retrieve_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
         The parent.
 
     """
-    print(schema)
     inherits = peek_helper.inherits(schema=schema, schemas=schemas)
     if inherits is True:
         return get_parent(schema=schema, schemas=schemas)
