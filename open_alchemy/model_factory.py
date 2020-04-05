@@ -97,13 +97,27 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     if name not in schemas:
         raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
     schema: types.Schema = schemas.get(name, {})
-    # De-referencing schema
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
-    # Checking for tablename key
-    if "x-tablename" not in schema:
-        raise exceptions.MalformedSchemaError(
-            f'"x-tablename" is a required schema property for {name}.'
+    # Check for parent
+    inherits = helpers.schema.inherits(schema=schema, schemas=schemas)
+    if not inherits:
+        # De-referencing schema
+        schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+        # Checking for tablename key
+        if "x-tablename" not in schema:
+            raise exceptions.MalformedSchemaError(
+                f'"x-tablename" is a required schema property for {name}.'
+            )
+    else:
+        parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+        # De-referencing schema excluding parent schema
+        schema = helpers.prepare_schema(
+            schema=schema, schemas=schemas, skip_name=parent
         )
+        # Checking for inherits key
+        if "x-inherits" not in schema:
+            raise exceptions.MalformedSchemaError(
+                f'"x-inherits" is a required schema property for {name}.'
+            )
     # Checking for object type
     if schema.get("type") != "object":
         raise exceptions.FeatureNotImplementedError(

@@ -504,6 +504,18 @@ class TestGetSchema:
                 exceptions.MalformedSchemaError,
             ),
             (
+                {
+                    "Schema": {
+                        "allOf": [
+                            {"type": "object", "properties": {"key": "value"}},
+                            {"$ref": "#/components/schemas/Parent"},
+                        ]
+                    },
+                    "Parent": {"x-inherits": True},
+                },
+                exceptions.MalformedSchemaError,
+            ),
+            (
                 {"Schema": {"x-tablename": "schema", "properties": {"key": "value"}}},
                 exceptions.FeatureNotImplementedError,
             ),
@@ -534,7 +546,8 @@ class TestGetSchema:
         ],
         ids=[
             "schema doesn't exist",
-            "x-tablename missing",
+            "x-tablename and x-inherits missing",
+            "x-inherits on parent",
             "type missing",
             "type not object",
             "properties missing",
@@ -575,6 +588,36 @@ class TestGetSchema:
         returned_schema = model_factory._get_schema(name, schemas)
 
         assert returned_schema == schema
+
+    @staticmethod
+    @pytest.mark.model
+    def test_valid_inherits():
+        """
+        GIVEN valid schema that inherits
+        WHEN _get_schema is called with the schema
+        THEN the schema exclusing the parent is returned.
+        """
+        name = "Schema"
+        schema = {
+            "allOf": [
+                {"type": "object", "x-inherits": True, "properties": {"key": "value"}},
+                {"$ref": "#/components/schemas/RefSchema"},
+            ]
+        }
+        ref_schema = {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"parent_key": "parent value"},
+        }
+        schemas = {"Schema": schema, "RefSchema": ref_schema}
+
+        returned_schema = model_factory._get_schema(name, schemas)
+
+        assert returned_schema == {
+            "type": "object",
+            "x-inherits": True,
+            "properties": {"key": "value"},
+        }
 
 
 class TestGetKwargs:
