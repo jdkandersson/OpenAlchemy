@@ -27,6 +27,30 @@ from open_alchemy import helpers
             {"Table1": {"x-tablename": "table1"}, "Table2": {"x-tablename": "table2"}},
             ["Table1", "Table2"],
         ),
+        (
+            {
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {"x-tablename": "parent"},
+            },
+            ["Parent", "Child"],
+        ),
+        (
+            {
+                "Parent": {"x-tablename": "parent"},
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+            },
+            ["Parent", "Child"],
+        ),
     ],
     ids=[
         "empty,                          zero",
@@ -35,8 +59,10 @@ from open_alchemy import helpers
         "$ref single x-tablename,        one",
         "multiple no x-tablename,        multiple",
         "multiple one first x-tablename, multiple",
-        "multiple one last x-tablename, multiple",
+        "multiple one last x-tablename,  multiple",
         "multiple all x-tablename,       multiple",
+        "x-inherits child first,         multiple",
+        "x-inherits parent first,        multiple",
     ],
 )
 @pytest.mark.helper
@@ -50,9 +76,9 @@ def test_call(schemas, expected_calls):
 
     helpers.define_all(model_factory=model_factory, schemas=schemas)
 
-    assert model_factory.call_count == len(expected_calls)
-    for name in expected_calls:
-        model_factory.assert_any_call(name=name)
+    model_factory.assert_has_calls(
+        list(mock.call(name=name) for name in expected_calls)
+    )
 
 
 @pytest.mark.helper
