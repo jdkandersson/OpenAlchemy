@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.1.0 - 2020-04-05
 
 - Add section of documentation for each example.
 - Add support for keyword arguments for relationships used to define relationship arguments not specifically handled by an extension property.
