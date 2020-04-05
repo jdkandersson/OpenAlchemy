@@ -228,6 +228,27 @@ def test_calculate_column(schema, expected_columns):
     assert artifacts.sqlalchemy.columns == expected_columns
 
 
+@pytest.mark.models_file
+def test_calculate_column_inherits_return(mocked_facades_models):
+    """
+    GIVEN schema that inherits and mocked models facade
+    WHEN calculate is called with the schema
+    THEN the schema and parent schema columns are returned.
+    """
+    schema = {"properties": {"column_1": {"type": "integer"}}, "x-inherits": "Parent"}
+    mocked_facades_models.get_model_schema.return_value = {
+        "properties": {"column_2": {"type": "string"}}
+    }
+
+    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+
+    mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
+    assert artifacts.sqlalchemy.columns == [
+        _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
+        _ColumnArtifacts(name="column_2", type="typing.Optional[str]"),
+    ]
+
+
 @pytest.mark.parametrize(
     "schema, expected_empty",
     [
