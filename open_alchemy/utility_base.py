@@ -46,7 +46,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls) -> types.Schema:
+    def get_properties(cls) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -131,7 +131,7 @@ class UtilityBase:
             )
 
         # Assemble dictionary for construction
-        properties = cls._get_properties()
+        properties = cls.get_properties()
         model_dict: typing.Dict[str, typing.Any] = {}
         for name, value in kwargs.items():
             # Get the specification and type of the property
@@ -218,7 +218,7 @@ class UtilityBase:
 
             # Construct parent initialization dictionary
             # Get properties for schema
-            properties = cls._get_properties()
+            properties = cls.get_properties()
             # Pass kwargs that don't belong to the current model to the parent
             parent_kwargs = {
                 key: value for key, value in kwargs.items() if key not in properties
@@ -421,7 +421,7 @@ class UtilityBase:
             The dictionary representation of the model.
 
         """
-        properties = self._get_properties()
+        properties = self.get_properties()
 
         # Collecting the values of the properties
         return_dict: typing.Dict[str, typing.Any] = {}
