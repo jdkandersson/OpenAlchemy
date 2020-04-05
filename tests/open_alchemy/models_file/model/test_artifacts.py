@@ -244,8 +244,8 @@ def test_calculate_column_inherits_return(mocked_facades_models):
 
     mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
     assert artifacts.sqlalchemy.columns == [
-        _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
         _ColumnArtifacts(name="column_2", type="typing.Optional[str]"),
+        _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
     ]
 
 

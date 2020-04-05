@@ -64,6 +64,9 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         The artifacts for the model.
 
     """
+    # Resolve inheritance chain
+    schema = helpers.inheritance.retrieve_model_parents_schema(schema=schema)
+
     required = set(schema.get("required", []))
     description = helpers.peek.description(schema=schema, schemas={})
 
