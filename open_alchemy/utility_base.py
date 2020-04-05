@@ -436,6 +436,13 @@ class UtilityBase:
             The dictionary representation of the model.
 
         """
+        schema = self._get_schema()
+        if helpers.schema.inherits(schema=schema, schemas={}):
+            # Retrieve parent model and convert to dict
+            parent: typing.Type[UtilityBase] = self._get_parent(schema=schema)
+            parent_dict = parent.instance_to_dict(self)
+            return {**parent_dict, **self.instance_to_dict(self)}
+
         return self.instance_to_dict(self)
 
     def to_str(self) -> str:

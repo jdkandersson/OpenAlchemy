@@ -300,33 +300,45 @@ def test_to_dict_array_multiple(__init__):
     }
 
 
-# @pytest.mark.utility_base
-# def test_to_dict_inheritance(__init__):
-#     """
-#     GIVEN class that derives from UtilityBase with a schema that inherits
-#     WHEN to_dict is called
-#     THEN the dictionary based on the parent and child properties is returned.
-#     """
-#     mock_models = [mock.MagicMock(), mock.MagicMock()]
-#     model = type(
-#         "model",
-#         (utility_base.UtilityBase,),
-#         {
-#             "_schema": {
-#                 "properties": {"key": {"type": "array", "items": {"type": "object"}}}
-#             },
-#             "__init__": __init__,
-#         },
-#     )
-#     instance = model(**{"key": mock_models})
+@pytest.mark.utility_base
+def test_to_dict_inheritance_call(mocked_facades_models, __init__):
+    """
+    GIVEN class that derives from UtilityBase with a schema that inherits
+    WHEN to_dict is called
+    THEN the dictionary based on the parent and child properties is returned.
+    """
+    schema = {"properties": {"key": {"type": "type 1"}}, "x-inherits": "Parent"}
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+    instance = model(**{"key": "value", "parent_key": "parent value"})
 
-#     returned_dict = instance.to_dict()
+    instance.to_dict()
 
-#     assert returned_dict == {
-#         "key": list(
-#             map(lambda mock_model: mock_model.to_dict.return_value, mock_models)
-#         )
-#     }
+    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
+    check_func = mocked_facades_models.get_model.return_value.instance_to_dict
+    check_func.assert_called_once_with(instance)
+
+
+@pytest.mark.utility_base
+def test_to_dict_inheritance_return(mocked_facades_models, __init__):
+    """
+    GIVEN class that derives from UtilityBase with a schema that inherits
+    WHEN to_dict is called
+    THEN the dictionary based on the parent and child properties is returned.
+    """
+    schema = {"properties": {"key": {"type": "type 1"}}, "x-inherits": "Parent"}
+    mocked_facades_models.get_model.return_value.instance_to_dict.return_value = {
+        "parent_key": "parent value"
+    }
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+    instance = model(**{"key": "value", "parent_key": "parent value"})
+
+    returned_dict = instance.to_dict()
+
+    assert returned_dict == {"key": "value", "parent_key": "parent value"}
 
 
 class TestObjectToDictRelationship:
