@@ -53,6 +53,13 @@
     "description": "Define the name of a table.",
     "type": "string"
   },
+  "x-inherits": {
+    "description": "Define that a schema inherits from another schema or specify which schema to inherit from.",
+    "oneOf": [
+      {"type": "string"},
+      {"type": "boolean"}
+    ]
+  },
   "x-kwargs": {
     "description": "Define kwargs to be passed to a function based on the context.",
     "type": "object",

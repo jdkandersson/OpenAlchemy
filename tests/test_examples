@@ -51,3 +51,9 @@ cd examples/relationship/many_to_many
 python models.py
 python models_traditional.py
 cd -
+cd examples/inheritance
+python single_models.py
+python single_models_traditional.py
+python joined_models.py
+python joined_models_traditional.py
+cd -

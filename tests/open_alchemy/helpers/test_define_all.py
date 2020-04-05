@@ -13,7 +13,6 @@ from open_alchemy import helpers
         ({}, []),
         ({"Table": {}}, []),
         ({"Table": {"x-tablename": "table"}}, ["Table"]),
-        ({"Table": {"allOf": [{"x-tablename": "table"}]}}, ["Table"]),
         (
             {
                 "Table": {"x-tablename": "table"},
@@ -28,17 +27,80 @@ from open_alchemy import helpers
             {"Table1": {"x-tablename": "table1"}, "Table2": {"x-tablename": "table2"}},
             ["Table1", "Table2"],
         ),
+        (
+            {
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {"x-tablename": "parent"},
+            },
+            ["Parent", "Child"],
+        ),
+        (
+            {
+                "Parent": {"x-tablename": "parent"},
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+            },
+            ["Parent", "Child"],
+        ),
+        (
+            {
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Grandparent", "Parent", "Child"],
+        ),
+        (
+            {
+                "Grandparent": {"x-tablename": "grandparent"},
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+            },
+            ["Grandparent", "Parent", "Child"],
+        ),
     ],
     ids=[
-        "empty,                          zero",
-        "single no x-tablename,          zero",
-        "single x-tablename,             one",
-        "allOf single x-tablename,       one",
-        "$ref single x-tablename,        one",
-        "multiple no x-tablename,        multiple",
-        "multiple one first x-tablename, multiple",
-        "multiple one last x-tablename, multiple",
-        "multiple all x-tablename,       multiple",
+        "empty,                            zero",
+        "single no x-tablename,            zero",
+        "single x-tablename,               one",
+        "$ref single x-tablename,          one",
+        "multiple no x-tablename,          multiple",
+        "multiple one first x-tablename,   multiple",
+        "multiple one last x-tablename,    multiple",
+        "multiple all x-tablename,         multiple",
+        "x-inherits single child first,    multiple",
+        "x-inherits single parent first,   multiple",
+        "x-inherits multiple parent first, multiple",
+        "x-inherits multiple child first,  multiple",
     ],
 )
 @pytest.mark.helper
@@ -52,9 +114,9 @@ def test_call(schemas, expected_calls):
 
     helpers.define_all(model_factory=model_factory, schemas=schemas)
 
-    assert model_factory.call_count == len(expected_calls)
-    for name in expected_calls:
-        model_factory.assert_any_call(name=name)
+    model_factory.assert_has_calls(
+        list(mock.call(name=name) for name in expected_calls)
+    )
 
 
 @pytest.mark.helper

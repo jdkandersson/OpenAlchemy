@@ -47,3 +47,7 @@ class InvalidModelInstanceError(ValueError, BaseError):
 
 class MalformedModelDictionaryError(ValueError, BaseError):
     """Raised when an dictionary of a model does not satisfy the model schema."""
+
+
+class InheritanceError(BaseError):
+    """Raised when an error related to inheritance occurs."""

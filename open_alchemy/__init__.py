@@ -60,7 +60,7 @@ def init_model_factory(
 
     # Binding the base and schemas
     bound_model_factories = functools.partial(
-        _model_factory.model_factory, schemas=schemas, base=base
+        _model_factory.model_factory, schemas=schemas, get_base=_get_base
     )
     # Caching calls
     cached_model_factories = functools.lru_cache(maxsize=None)(bound_model_factories)
@@ -214,6 +214,43 @@ def init_yaml(
         models_filename=models_filename,
         spec_path=spec_filename,
     )
+
+
+def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
+    """
+    Retrieve the base class of a schema considering inheritance.
+
+    If x-inherits is True, retrieve the parent. If it is a string, verify that the
+    parent is valid. In either case, the model for that schema is used as the base
+    instead of the usual base.
+    If x-inherits is not present or False, return the usual base.
+
+    Raise InheritanceConstructionOrderError if the parent of the schema has not been
+    constructed when attempting to construct the child.
+
+    Args:
+        name: The name of the schema to determine the base for.
+        schemas: All the schemas.
+
+    Returns:
+        The base of the model. Either the usual base or the model parent in the case of
+        inheritance.
+
+    """
+    schema = schemas.get(name)
+    if schema is None:
+        raise exceptions.SchemaNotFoundError(f"Could not fund schema {name}.")
+
+    if _helpers.schema.inherits(schema=schema, schemas=schemas):
+        parent = _helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+        try:
+            return getattr(models, parent)
+        except AttributeError:
+            raise exceptions.InheritanceError(
+                "Any parents of a schema must be constructed before the schema can be "
+                "constructed."
+            )
+    return getattr(models, "Base")
 
 
 __all__ = ["init_model_factory", "init_json", "init_yaml"]

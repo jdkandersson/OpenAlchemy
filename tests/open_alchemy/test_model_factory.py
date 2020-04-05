@@ -6,106 +6,15 @@ import copy
 from unittest import mock
 
 import pytest
-from sqlalchemy import schema
+from sqlalchemy import schema as sql_schema
 
 from open_alchemy import exceptions
 from open_alchemy import model_factory
 
 
-@pytest.mark.model
-def test_missing_schema():
-    """
-    GIVEN schemas and name that is not in schemas
-    WHEN model_factory is called
-    THEN SchemaNotFoundError is raised.
-    """
-    with pytest.raises(exceptions.SchemaNotFoundError):
-        model_factory.model_factory(name="Missing", base=None, schemas={})
-
-
-@pytest.mark.model
-def test_missing_tablename():
-    """
-    GIVEN schemas and name that refers to a schema without the x-tablename key
-    WHEN model_factory is called
-    THEN MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        model_factory.model_factory(
-            name="MissingTablename", base=None, schemas={"MissingTablename": {}}
-        )
-
-
-@pytest.mark.model
-def test_tablename_none():
-    """
-    GIVEN schemas with schema that has None for the tablename
-    WHEN model_factory is called with the name of the schema
-    THEN MalformedExtensionPropertyError is raised.
-    """
-    with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        model_factory.model_factory(
-            name="SingleProperty",
-            base=mock.MagicMock,
-            schemas={
-                "SingleProperty": {
-                    "x-tablename": None,
-                    "type": "object",
-                    "properties": {"property_1": {"type": "integer"}},
-                }
-            },
-        )
-
-
-@pytest.mark.model
-def test_not_object():
-    """
-    GIVEN schemas with schema that is not an object
-    WHEN model_factory is called with the name of the schema
-    THEN FeatureNotImplementedError is raised.
-    """
-    with pytest.raises(exceptions.FeatureNotImplementedError):
-        model_factory.model_factory(
-            name="NotObject",
-            base=None,
-            schemas={"NotObject": {"x-tablename": "table 1", "type": "not_object"}},
-        )
-
-
-@pytest.mark.model
-def test_properties_missing():
-    """
-    GIVEN schemas with schema that does not have the properties key
-    WHEN model_factory is called with the name of the schema
-    THEN MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        model_factory.model_factory(
-            name="MissingProperty",
-            base=None,
-            schemas={"MissingProperty": {"x-tablename": "table 1", "type": "object"}},
-        )
-
-
-@pytest.mark.model
-def test_properties_empty():
-    """
-    GIVEN schemas with schema that has empty properties key
-    WHEN model_factory is called with the name of the schema
-    THEN MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        model_factory.model_factory(
-            name="EmptyProperty",
-            base=None,
-            schemas={
-                "EmptyProperty": {
-                    "x-tablename": "table 1",
-                    "type": "object",
-                    "properties": {},
-                }
-            },
-        )
+def _mock_get_base(**_):
+    """Mock get_base function."""
+    return mock.MagicMock
 
 
 @pytest.mark.model
@@ -117,7 +26,7 @@ def test_single_property():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -139,7 +48,7 @@ def test_multiple_property():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -165,7 +74,7 @@ def test_tablename():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -194,7 +103,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -224,7 +133,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -254,7 +163,7 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
     model_factory.model_factory(
-        name=model_name, base=mock.MagicMock, schemas=copy.deepcopy(schemas)
+        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
     )
 
     mocked_column_factory.assert_called_once_with(
@@ -276,7 +185,7 @@ def test_ref():
     """
     model = model_factory.model_factory(
         name="Schema",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "Schema": {"$ref": "#/components/schemas/RefSchema"},
             "RefSchema": {
@@ -300,7 +209,7 @@ def test_all_of():
     """
     model = model_factory.model_factory(
         name="Schema",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "Schema": {
                 "allOf": [
@@ -316,6 +225,41 @@ def test_all_of():
 
     assert hasattr(model, "property_1")
     assert model.__tablename__ == "table 1"
+
+
+@pytest.mark.model
+def test_inherits():
+    """
+    GIVEN schemas with schema that inherits
+    WHEN model_factory is called with the name of the schema
+    THEN a model which inherits from the parent and with only the child properties
+        defined is returned.
+    """
+    model = model_factory.model_factory(
+        name="Child",
+        get_base=_mock_get_base,
+        schemas={
+            "Child": {
+                "allOf": [
+                    {
+                        "x-inherits": True,
+                        "type": "object",
+                        "properties": {"property_2": {"type": "integer"}},
+                    },
+                    {"$ref": "#/components/schemas/Parent"},
+                ]
+            },
+            "Parent": {
+                "x-tablename": "parent",
+                "type": "object",
+                "properties": {"property_1": {"type": "string"}},
+            },
+        },
+    )
+
+    assert not hasattr(model, "property_1")
+    assert hasattr(model, "property_2")
+    assert getattr(model, "__tablename__", None) is None
 
 
 @pytest.mark.parametrize(
@@ -483,6 +427,30 @@ def test_all_of():
                 },
             },
         ),
+        (
+            {
+                "Schema": {
+                    "allOf": [
+                        {
+                            "x-inherits": True,
+                            "type": "object",
+                            "properties": {"property_2": {"type": "string"}},
+                        },
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {
+                    "x-tablename": "parent",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                },
+            },
+            {
+                "type": "object",
+                "properties": {"property_2": {"type": "string"}},
+                "x-inherits": "Parent",
+            },
+        ),
     ],
     ids=[
         "single x-dict-ignore true",
@@ -496,6 +464,7 @@ def test_all_of():
         "single description empty",
         "single description",
         "multiple properties",
+        "x-inherits",
     ],
 )
 @pytest.mark.model
@@ -506,7 +475,7 @@ def test_schema(schemas, expected_schema):
     THEN a model with _schema set to the expected schema is returned.
     """
     model = model_factory.model_factory(
-        name="Schema", base=mock.MagicMock, schemas=schemas
+        name="Schema", get_base=_mock_get_base, schemas=schemas
     )
 
     assert model._schema == expected_schema
@@ -529,7 +498,9 @@ def test_schema_relationship_invalid():
     }
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        model_factory.model_factory(name="Schema", base=mock.MagicMock, schemas=schemas)
+        model_factory.model_factory(
+            name="Schema", get_base=_mock_get_base, schemas=schemas
+        )
 
 
 @pytest.mark.model
@@ -541,7 +512,7 @@ def test_table_args_unique():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -553,7 +524,7 @@ def test_table_args_unique():
     )
 
     (unique,) = model.__table_args__
-    assert isinstance(unique, schema.UniqueConstraint)
+    assert isinstance(unique, sql_schema.UniqueConstraint)
 
 
 @pytest.mark.model
@@ -565,7 +536,7 @@ def test_table_args_index():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -577,7 +548,141 @@ def test_table_args_index():
     )
 
     (index,) = model.__table_args__
-    assert isinstance(index, schema.Index)
+    assert isinstance(index, sql_schema.Index)
+
+
+class TestGetSchema:
+    """Tests for _get_schema."""
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schemas, exception",
+        [
+            ({}, exceptions.SchemaNotFoundError),
+            (
+                {"Schema": {"type": "object", "properties": {"key": "value"}}},
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {
+                    "Schema": {
+                        "allOf": [
+                            {"type": "object", "properties": {"key": "value"}},
+                            {"$ref": "#/components/schemas/Parent"},
+                        ]
+                    },
+                    "Parent": {"x-inherits": True},
+                },
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {"Schema": {"x-tablename": "schema", "properties": {"key": "value"}}},
+                exceptions.FeatureNotImplementedError,
+            ),
+            (
+                {
+                    "Schema": {
+                        "type": "string",
+                        "x-tablename": "schema",
+                        "properties": {"key": "value"},
+                    }
+                },
+                exceptions.FeatureNotImplementedError,
+            ),
+            (
+                {"Schema": {"type": "object", "x-tablename": "schema"}},
+                exceptions.MalformedSchemaError,
+            ),
+            (
+                {
+                    "Schema": {
+                        "type": "object",
+                        "x-tablename": "schema",
+                        "properties": {},
+                    }
+                },
+                exceptions.MalformedSchemaError,
+            ),
+        ],
+        ids=[
+            "schema doesn't exist",
+            "x-tablename and x-inherits missing",
+            "x-inherits on parent",
+            "type missing",
+            "type not object",
+            "properties missing",
+            "properties empty",
+        ],
+    )
+    @pytest.mark.model
+    def test_invalid(schemas, exception):
+        """
+        GIVEN invalid schema and expected exception
+        WHEN _get_schema is called with the schema
+        THEN the expected exception is raised.
+        """
+        name = "Schema"
+
+        with pytest.raises(exception):
+            model_factory._get_schema(name, schemas)
+
+    @staticmethod
+    @pytest.mark.model
+    def test_valid():
+        """
+        GIVEN valid schema
+        WHEN _get_schema is called with the schema
+        THEN the schema is returned.
+        """
+        name = "Schema"
+        schema = {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"key": "value"},
+        }
+        schemas = {
+            "Schema": {"$ref": "#/components/schemas/RefSchema"},
+            "RefSchema": schema,
+        }
+
+        returned_schema = model_factory._get_schema(name, schemas)
+
+        assert returned_schema == schema
+
+    @staticmethod
+    @pytest.mark.parametrize("inherits", [True, "RefSchema"], ids=["bool", "string"])
+    @pytest.mark.model
+    def test_valid_inherits(inherits):
+        """
+        GIVEN valid schema that inherits
+        WHEN _get_schema is called with the schema
+        THEN the schema exclusing the parent is returned.
+        """
+        name = "Schema"
+        schema = {
+            "allOf": [
+                {
+                    "type": "object",
+                    "x-inherits": inherits,
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/RefSchema"},
+            ]
+        }
+        ref_schema = {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"parent_key": "parent value"},
+        }
+        schemas = {"Schema": schema, "RefSchema": ref_schema}
+
+        returned_schema = model_factory._get_schema(name, schemas)
+
+        assert returned_schema == {
+            "type": "object",
+            "x-inherits": "RefSchema",
+            "properties": {"key": "value"},
+        }
 
 
 class TestGetKwargs:
@@ -651,7 +756,7 @@ def test_kwargs():
     """
     model = model_factory.model_factory(
         name="SingleProperty",
-        base=mock.MagicMock,
+        get_base=_mock_get_base,
         schemas={
             "SingleProperty": {
                 "x-tablename": "table 1",
@@ -663,3 +768,33 @@ def test_kwargs():
     )
 
     assert model.__mapper_args__ == {"passive_deletes": True}
+
+
+class TestPrepareModelDict:
+    """Tests for _prepare_model_dict."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schema, expected_dict",
+        [
+            ({"x-tablename": "schema"}, {"__tablename__": "schema"}),
+            ({"x-inherits": "Parent"}, {}),
+            (
+                {"x-inherits": "Parent", "x-tablename": "schema"},
+                {"__tablename__": "schema"},
+            ),
+        ],
+        ids=["not inherits", "inherits same tablename", "inherits different tablename"],
+    )
+    @pytest.mark.model
+    def test_(schema, expected_dict):
+        """
+        GIVEN schema and expected dictionary
+        WHEN _prepare_model_dict is called with the schema
+        THEN the expected dictionary is returned.
+        """
+        returned_dict = model_factory._prepare_model_dict(schema=schema)
+
+        assert expected_dict == returned_dict

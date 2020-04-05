@@ -1,4 +1,4 @@
-"""Tests for merge allOf helper."""
+"""Tests for all_of helpers."""
 
 
 import pytest
@@ -6,105 +6,97 @@ import pytest
 from open_alchemy import helpers
 
 
+@pytest.mark.parametrize(
+    "schema, schemas, expected_schema",
+    [
+        # THEN the schema is returned.
+        ({"key": "value"}, {}, {"key": "value"}),
+        # THEN the schema in allOf is returned.
+        ({"allOf": [{"key": "value"}]}, {}, {"key": "value"}),
+        # THEN the merged schema of all schemas under allOf is returned.
+        (
+            {"allOf": [{"key_1": "value_1"}, {"key_2": "value_2"}]},
+            {},
+            {"key_1": "value_1", "key_2": "value_2"},
+        ),
+        # THEN the value of the last schema is assigned to the key in the returned
+        # schema.
+        ({"allOf": [{"key": "value_1"}, {"key": "value_2"}]}, {}, {"key": "value_2"}),
+        # THEN the schema in allOf is returned.
+        ({"allOf": [{"allOf": [{"key": "value"}]}]}, {}, {"key": "value"}),
+        # THEN the $ref schema in allOf is returned.
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"key": "value"}},
+            {"key": "value"},
+        ),
+        # THEN the allOf $ref schema in allOf is returned.
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"allOf": [{"key": "value"}]}},
+            {"key": "value"},
+        ),
+    ],
+    ids=[
+        "allOf missing",
+        "single",
+        "multiple",
+        "multiple same key",
+        "nested allOf",
+        "$ref",
+        "$ref",
+    ],
+)
 @pytest.mark.helper
-def test_not_all_of():
+def test_valid(schema, schemas, expected_schema):
     """
-    GIVEN schema that does not have the allOf statement
-    WHEN merge_all_of is called with the schema
-    THEN the schema is returned.
+    GIVEN given schema, schemas and expected schema
+    WHEN merge is called with the schema and schemas
+    THEN the expected schema is returned.
     """
-    schema = {"key": "value"}
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas={})
-
-    assert return_schema == {"key": "value"}
+    assert return_schema == expected_schema
 
 
+@pytest.mark.parametrize(
+    "schema, schemas, expected_schema",
+    [
+        (
+            {"allOf": [{"$ref": "#/components/schemas/OtherSchema"}]},
+            {"OtherSchema": {"key": "value"}},
+            {"key": "value"},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"key": "value"}},
+            {},
+        ),
+        (
+            {"allOf": [{"$ref": "#/components/schemas/IntermediateSchema"}]},
+            {
+                "IntermediateSchema": {"$ref": "#/components/schemas/RefSchema"},
+                "RefSchema": {"key": "value"},
+            },
+            {},
+        ),
+    ],
+    ids=["miss", "allOf", "nested allOf"],
+)
 @pytest.mark.helper
-def test_single():
+def test_skip(schema, schemas, expected_schema):
     """
-    GIVEN schema that has allOf statement with a single schema
-    WHEN merge_all_of is called with the schema
-    THEN the schema in allOf is returned.
+    GIVEN given schema, schemas and expected schema
+    WHEN merge is called with the schema and schemas and skip name
+    THEN the expected schema is returned.
     """
-    schema = {"allOf": [{"key": "value"}]}
+    skip_name = "RefSchema"
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas={})
+    return_schema = helpers.all_of.merge(
+        schema=schema, schemas=schemas, skip_name=skip_name
+    )
 
-    assert return_schema == {"key": "value"}
-
-
-@pytest.mark.helper
-def test_multiple():
-    """
-    GIVEN schema that has multiple schemas under allOf
-    WHEN merge_all_of is called with the schema
-    THEN the merged schema of all schemas under allOf is returned.
-    """
-    schema = {"allOf": [{"key_1": "value_1"}, {"key_2": "value_2"}]}
-
-    return_schema = helpers.merge_all_of(schema=schema, schemas={})
-
-    assert return_schema == {"key_1": "value_1", "key_2": "value_2"}
-
-
-@pytest.mark.helper
-def test_multiple_same_key():
-    """
-    GIVEN schema that has multiple schemas under allOf with the same key
-    WHEN merge_all_of is called with the schema
-    THEN the value of the last schema is assigned to the key in the returned schema.
-    """
-    schema = {"allOf": [{"key": "value_1"}, {"key": "value_2"}]}
-
-    return_schema = helpers.merge_all_of(schema=schema, schemas={})
-
-    assert return_schema == {"key": "value_2"}
-
-
-@pytest.mark.helper
-def test_nested_all_of():
-    """
-    GIVEN schema that has allOf statement with an allOf statement with a single schema
-    WHEN merge_all_of is called with the schema
-    THEN the schema in allOf is returned.
-    """
-    schema = {"allOf": [{"allOf": [{"key": "value"}]}]}
-
-    return_schema = helpers.merge_all_of(schema=schema, schemas={})
-
-    assert return_schema == {"key": "value"}
-
-
-@pytest.mark.helper
-def test_ref():
-    """
-    GIVEN schema that has allOf statement with $ref to another schema
-    WHEN merge_all_of is called with the schema
-    THEN the $ref schema in allOf is returned.
-    """
-    schema = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
-    schemas = {"RefSchema": {"key": "value"}}
-
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
-
-    assert return_schema == {"key": "value"}
-
-
-@pytest.mark.helper
-def test_ref_all_of():
-    """
-    GIVEN schema that has allOf statement with $ref to another schema with an allOf
-        statement with a schema
-    WHEN merge_all_of is called with the schema
-    THEN the allOf $ref schema in allOf is returned.
-    """
-    schema = {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}
-    schemas = {"RefSchema": {"allOf": [{"key": "value"}]}}
-
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
-
-    assert return_schema == {"key": "value"}
+    assert return_schema == expected_schema
 
 
 @pytest.mark.parametrize(
@@ -122,13 +114,13 @@ def test_required(all_of_schema, expected_required):
     """
     GIVEN schema that has allOf with schemas with given required properties and expected
         final required
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected required property.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert sorted(return_schema["required"]) == sorted(expected_required)
 
@@ -170,13 +162,13 @@ def test_properties(all_of_schema, expected_properties):
     """
     GIVEN schema that has allOf with schemas with given properties and expected
         properties
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected properties.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["properties"] == expected_properties
 
@@ -218,12 +210,12 @@ def test_backrefs(all_of_schema, expected_backrefs):
     """
     GIVEN schema that has allOf with schemas with given backrefs and expected
         backrefs
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected backrefs.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["x-backrefs"] == expected_backrefs

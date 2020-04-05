@@ -46,7 +46,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def _get_properties(cls) -> types.Schema:
+    def get_properties(cls) -> types.Schema:
         """
         Get the properties from the schema.
 
@@ -89,6 +89,24 @@ class UtilityBase:
         return ref_model
 
     @staticmethod
+    def _get_parent(*, schema: types.Schema) -> typing.Type[TUtilityBase]:
+        """Get the parent model of a model."""
+        parent_name = helpers.ext_prop.get(source=schema, name="x-inherits")
+        if parent_name is None or not isinstance(parent_name, str):
+            raise exceptions.MalformedSchemaError(
+                "To construct a model that inherits x-inherits must be present and a "
+                "string. "
+                f"The model schema is {json.dumps(schema)}."
+            )
+        # Try to get model
+        parent: TOptUtilityBase = facades.models.get_model(name=parent_name)
+        if parent is None:
+            raise exceptions.SchemaNotFoundError(
+                f"The {parent_name} model was not found on open_alchemy.models."
+            )
+        return parent
+
+    @staticmethod
     def _model_from_dict(
         kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
     ) -> TUtilityBase:
@@ -96,20 +114,10 @@ class UtilityBase:
         return model.from_dict(**kwargs)
 
     @classmethod
-    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
-        """
-        Construct model instance from a dictionary.
-
-        Raise MalformedModelDictionaryError when the dictionary does not satisfy the
-        model schema.
-
-        Args:
-            kwargs: The values to construct the class with.
-
-        Returns:
-            An instance of the model constructed using the dictionary.
-
-        """
+    def construct_from_dict_init(
+        cls: typing.Type[TUtilityBase], **kwargs: typing.Any
+    ) -> typing.Dict[str, typing.Any]:
+        """Construct the dictionary passed to model construction."""
         # Check dictionary
         schema = cls._get_schema()
         try:
@@ -123,7 +131,7 @@ class UtilityBase:
             )
 
         # Assemble dictionary for construction
-        properties = cls._get_properties()
+        properties = cls.get_properties()
         model_dict: typing.Dict[str, typing.Any] = {}
         for name, value in kwargs.items():
             # Get the specification and type of the property
@@ -155,7 +163,7 @@ class UtilityBase:
                 )
 
             # Handle object
-            ref_model: typing.Type[TUtilityBase]
+            ref_model: typing.Type[UtilityBase]
             if type_ == "object":
                 ref_model = cls._get_model(spec=spec, name=name, schema=schema)
                 ref_model_instance = cls._model_from_dict(value, model=ref_model)
@@ -185,7 +193,50 @@ class UtilityBase:
                 value=value, type_=type_, format_=format_
             )
 
-        return cls(**model_dict)
+        return model_dict
+
+    @classmethod
+    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
+        """
+        Construct model instance from a dictionary.
+
+        Raise MalformedModelDictionaryError when the dictionary does not satisfy the
+        model schema.
+
+        Args:
+            kwargs: The values to construct the class with.
+
+        Returns:
+            An instance of the model constructed using the dictionary.
+
+        """
+        schema = cls._get_schema()
+        # Handle model that inherits
+        if helpers.schema.inherits(schema=schema, schemas={}):
+            # Retrieve parent model
+            parent: typing.Type[UtilityBase] = cls._get_parent(schema=schema)
+
+            # Construct parent initialization dictionary
+            # Get properties for schema
+            properties = cls.get_properties()
+            # Pass kwargs that don't belong to the current model to the parent
+            parent_kwargs = {
+                key: value for key, value in kwargs.items() if key not in properties
+            }
+            parent_init_dict = parent.construct_from_dict_init(**parent_kwargs)
+
+            # COnstruct child (the current model) initialization dictionary
+            child_kwargs = {
+                key: value for key, value in kwargs.items() if key in properties
+            }
+            init_dict = {
+                **parent_init_dict,
+                **cls.construct_from_dict_init(**child_kwargs),
+            }
+        else:
+            init_dict = cls.construct_from_dict_init(**kwargs)
+
+        return cls(**init_dict)
 
     @classmethod
     def from_str(cls: typing.Type[TUtilityBase], value: str) -> TUtilityBase:
@@ -289,7 +340,7 @@ class UtilityBase:
         return value
 
     @classmethod
-    def _to_dict_property(
+    def to_dict_property(
         cls,
         value: typing.Any,
         *,
@@ -338,7 +389,7 @@ class UtilityBase:
                     "The array item schema must have an items property."
                 )
             to_dict_property = functools.partial(
-                cls._to_dict_property,
+                cls.to_dict_property,
                 spec=item_spec,
                 name=name,
                 array_context=True,
@@ -359,6 +410,21 @@ class UtilityBase:
         # Handle other types
         return cls._simple_type_to_dict(format_=format_, value=value)
 
+    @classmethod
+    def instance_to_dict(cls, instance: TUtilityBase) -> typing.Dict[str, typing.Any]:
+        """Convert instance of the model to a dictionary."""
+        properties = cls.get_properties()
+
+        # Collecting the values of the properties
+        return_dict: typing.Dict[str, typing.Any] = {}
+        for name, spec in properties.items():
+            value = getattr(instance, name, None)
+            return_dict[name] = instance.to_dict_property(
+                spec=spec, name=name, value=value
+            )
+
+        return return_dict
+
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
@@ -370,17 +436,14 @@ class UtilityBase:
             The dictionary representation of the model.
 
         """
-        properties = self._get_properties()
+        schema = self._get_schema()
+        if helpers.schema.inherits(schema=schema, schemas={}):
+            # Retrieve parent model and convert to dict
+            parent: typing.Type[UtilityBase] = self._get_parent(schema=schema)
+            parent_dict = parent.instance_to_dict(self)
+            return {**parent_dict, **self.instance_to_dict(self)}
 
-        # Collecting the values of the properties
-        return_dict: typing.Dict[str, typing.Any] = {}
-        for name, spec in properties.items():
-            value = getattr(self, name, None)
-            return_dict[name] = self._to_dict_property(
-                spec=spec, name=name, value=value
-            )
-
-        return return_dict
+        return self.instance_to_dict(self)
 
     def to_str(self) -> str:
         """

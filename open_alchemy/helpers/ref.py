@@ -17,7 +17,13 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 NameSchema = typing.Tuple[str, types.Schema]
 
 
-def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameSchema:
+def resolve(
+    *,
+    name: str,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    skip_name: typing.Optional[str] = None,
+) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -25,24 +31,47 @@ def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameS
     of the schema is recorded.
 
     Raises SchemaNotFoundError is a $ref resolution fails.
+    Raise MalformedSchemaError of a $ref value is seen again.
 
     Args:
         name: The name of the schema from the last step.
         schema: The specification of the schema from the last step.
         schemas: Dictionary with all defined schemas used to resolve $ref.
+        seen_refs: The references that have already been processed.
+        skip_name (optional): Skip the schema and return an empty schema instead.
 
     Returns:
         The first schema that no longer has the $ref key and the name of that schema.
 
     """
+    return _resolve(name, schema, schemas, set(), skip_name)
+
+
+def _resolve(
+    name: str,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    seen_refs: typing.Set[str],
+    skip_name: typing.Optional[str],
+) -> NameSchema:
+    """Implement resolve."""
     # Checking whether schema is a reference schema
     ref = schema.get("$ref")
     if ref is None:
         return name, schema
 
+    # Check for circular $ref
+    if ref in seen_refs:
+        raise exceptions.MalformedSchemaError("Circular reference chain detected.")
+    seen_refs.add(ref)
+
     ref_name, ref_schema = get_ref(ref=ref, schemas=schemas)
 
-    return resolve(name=ref_name, schema=ref_schema, schemas=schemas)
+    # Check if schema should be skipped
+    if ref_name == skip_name:
+        return name, {}
+
+    return _resolve(ref_name, ref_schema, schemas, seen_refs, skip_name)
 
 
 def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:

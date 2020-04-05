@@ -51,7 +51,7 @@ To make a column auto increment, set the :samp:`x-autoincrement` property to
 
 .. seealso::
 
-    `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html?highlight=autoincrement#sqlalchemy.schema.Column.__init__>`_
+    `SQLAlchemy autoincrement documentation <https://docs.sqlalchemy.org/en/13/core/metadata.html#sqlalchemy.schema.Column.__init__>`_
       Documentation for SQLAlchemy autoincrement.
 
 .. _index:

@@ -248,6 +248,36 @@ def test_tablename(schema, expected_tablename):
     assert returned_tablename == expected_tablename
 
 
+@pytest.mark.helper
+def test_inherits_wrong_type():
+    """
+    GIVEN schema with inherits defined as an integer
+    WHEN inherits is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-inherits": 1}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.inherits(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_inherits",
+    [({}, None), ({"x-inherits": "Parent1"}, "Parent1"), ({"x-inherits": True}, True)],
+    ids=["missing", "defined string", "defined boolean"],
+)
+@pytest.mark.helper
+def test_inherits(schema, expected_inherits):
+    """
+    GIVEN schema and expected inherits
+    WHEN inherits is called with the schema
+    THEN the expected inherits is returned.
+    """
+    returned_inherits = helpers.peek.inherits(schema=schema, schemas={})
+
+    assert returned_inherits == expected_inherits
+
+
 @pytest.mark.parametrize(
     "schema",
     [
@@ -339,7 +369,42 @@ def test_peek_key(schema, schemas, expected_value):
     WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
-    # pylint: disable=protected-access
     returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
 
     assert returned_type == expected_value
+
+
+@pytest.mark.parametrize(
+    "schema, schemas",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
+                "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
+            },
+        ),
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+        ),
+    ],
+    ids=[
+        "single step circular $ref",
+        "multiple step circular $ref",
+        "allOf single step circular $ref",
+    ],
+)
+@pytest.mark.helper
+def test_peek_key_invalid(schema, schemas):
+    """
+    GIVEN schema, schemas that are invalid
+    WHEN peek_key is called with the schema and schemas
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")

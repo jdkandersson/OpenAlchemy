@@ -144,7 +144,7 @@ def _handle_ref(
     ref_model_name, ref_schema = helpers.ref.resolve(
         name=logical_name, schema=schema, schemas=schemas
     )
-    ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
+    ref_schema = helpers.all_of.merge(schema=ref_schema, schemas=schemas)
 
     # Check referenced schema
     try:

@@ -50,7 +50,7 @@ def test_get_model(mocked_models):
 
 
 @pytest.mark.facade
-def test_get_not_defined(mocked_models):
+def test_get_model_not_defined(mocked_models):
     """
     GIVE mocked models without model and name
     WHEN get_model is called with the name
@@ -60,6 +60,38 @@ def test_get_not_defined(mocked_models):
     del mocked_models.Model
 
     model = models.get_model(name=name)
+
+    assert model is None
+
+
+@pytest.mark.facade
+def test_get_model_schema(mocked_models):
+    """
+    GIVE mocked models and name
+    WHEN get_model_schema is called with the name
+    THEN the model schema is returned.
+    """
+    name = "Model"
+
+    model = models.get_model_schema(name=name)
+
+    assert (
+        model
+        == getattr(mocked_models, name)._schema  # pylint: disable=protected-access
+    )
+
+
+@pytest.mark.facade
+def test_get_model_schema_not_defined(mocked_models):
+    """
+    GIVE mocked models without model and name
+    WHEN get_model_schema is called with the name
+    THEN None is returned.
+    """
+    name = "Model"
+    del mocked_models.Model
+
+    model = models.get_model_schema(name=name)
 
     assert model is None
 

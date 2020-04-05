@@ -47,14 +47,6 @@ def _mocked_ref_resolve(mocked_ref_resolve):
 
 
 @pytest.fixture
-def mocked_merge_all_of(monkeypatch):
-    """Monkeypatches helpers.merge_all_of."""
-    mock_merge_all_of = mock.MagicMock()
-    monkeypatch.setattr(helpers, "merge_all_of", mock_merge_all_of)
-    return mock_merge_all_of
-
-
-@pytest.fixture
 def mocked_handle_column(monkeypatch):
     """Mock column_factory._handle_column."""
     mock_handle_column = mock.MagicMock()
