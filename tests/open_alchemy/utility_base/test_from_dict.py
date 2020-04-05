@@ -475,3 +475,102 @@ def test_from_dict_array_multiple_from_dict(mocked_facades_models, __init__):
         mocked_facades_models.get_model.return_value.from_dict.return_value,
         mocked_facades_models.get_model.return_value.from_dict.return_value,
     ]
+
+
+@pytest.mark.utility_base
+def test_from_dict_inheritance_inherits_bool(__init__):
+    """
+    GIVEN schema where x-inherits is a boolean
+    WHEN model is defined and constructed with from_dict
+    THEN MalformedSchemaError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key": {"type": "string"}}, "x-inherits": True},
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        model.from_dict(**{"key": "value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_inheritance_model_undefined(__init__):
+    """
+    GIVEN schema that inherits where parent is not on the models
+    WHEN from_dict is called
+    THEN SchemaNotFoundError is raised.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "string"}},
+                "x-inherits": "Parent",
+            },
+            "__init__": __init__,
+        },
+    )
+
+    with pytest.raises(exceptions.SchemaNotFoundError):
+        model.from_dict(**{"key": "value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_inheritance_call(mocked_facades_models, __init__):
+    """
+    GIVEN schema with parent model that has been mocked and dictionary
+    WHEN from_dict is called with the dictionary
+    THEN from_dict on the mocked model is called with the portion of the dictionary
+        for that model.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "string"}},
+                "x-inherits": "Parent",
+            },
+            "__init__": __init__,
+        },
+    )
+
+    model.from_dict(**{"key": "value", "parent_key": "parent value"})
+
+    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
+    check_func = mocked_facades_models.get_model.return_value.construct_from_dict_init
+    check_func.assert_called_once_with(**{"parent_key": "parent value"})
+
+
+@pytest.mark.utility_base
+def test_from_dict_inheritance_return(mocked_facades_models, __init__):
+    """
+    GIVEN schema with parent model that has been mocked and dictionary
+    WHEN from_dict is called with the dictionary
+    THEN the from_dict on the mocked model return value is merged with the from_dict for
+        the child.
+    """
+    return_func = mocked_facades_models.get_model.return_value.construct_from_dict_init
+    return_func.return_value = {"parent_key": "parent value"}
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {
+                "properties": {"key": {"type": "string"}},
+                "x-inherits": "Parent",
+            },
+            "__init__": __init__,
+        },
+    )
+
+    instance = model.from_dict(**{"key": "value", "parent_key": "parent value"})
+
+    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
+    assert instance.key == "value"  # pylint: disable=no-member
+    assert instance.parent_key == "parent value"  # pylint: disable=no-member

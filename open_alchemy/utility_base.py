@@ -89,6 +89,24 @@ class UtilityBase:
         return ref_model
 
     @staticmethod
+    def _get_parent(*, schema: types.Schema) -> typing.Type[TUtilityBase]:
+        """Get the parent model of a model."""
+        parent_name = helpers.ext_prop.get(source=schema, name="x-inherits")
+        if parent_name is None or not isinstance(parent_name, str):
+            raise exceptions.MalformedSchemaError(
+                "To construct a model that inherits x-inherits must be present and a "
+                "string. "
+                f"The model schema is {json.dumps(schema)}."
+            )
+        # Try to get model
+        parent: TOptUtilityBase = facades.models.get_model(name=parent_name)
+        if parent is None:
+            raise exceptions.SchemaNotFoundError(
+                f"The {parent_name} model was not found on open_alchemy.models."
+            )
+        return parent
+
+    @staticmethod
     def _model_from_dict(
         kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
     ) -> TUtilityBase:
@@ -192,7 +210,30 @@ class UtilityBase:
             An instance of the model constructed using the dictionary.
 
         """
-        init_dict = cls.construct_from_dict_init(**kwargs)
+        schema = cls._get_schema()
+        # Handle model that inherits
+        if helpers.schema.inherits(schema=schema, schemas={}):
+            # Retrieve parent model
+            parent: typing.Type = cls._get_parent(schema=schema)
+
+            # Get properties for schema
+            properties = cls._get_properties()
+            parent_kwargs = {
+                key: value for key, value in kwargs.items() if key not in properties
+            }
+            parent_init_dict = parent.construct_from_dict_init(**parent_kwargs)
+
+            child_kwargs = {
+                key: value for key, value in kwargs.items() if key in properties
+            }
+            init_dict = {
+                **parent_init_dict,
+                **cls.construct_from_dict_init(**child_kwargs),
+            }
+        else:
+            init_dict = cls.construct_from_dict_init(**kwargs)
+
+        print(init_dict)
         return cls(**init_dict)
 
     @classmethod
