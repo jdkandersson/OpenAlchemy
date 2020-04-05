@@ -51,18 +51,56 @@ from open_alchemy import helpers
             },
             ["Parent", "Child"],
         ),
+        (
+            {
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Grandparent": {"x-tablename": "grandparent"},
+            },
+            ["Grandparent", "Parent", "Child"],
+        ),
+        (
+            {
+                "Grandparent": {"x-tablename": "grandparent"},
+                "Parent": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Grandparent"},
+                    ]
+                },
+                "Child": {
+                    "allOf": [
+                        {"x-inherits": True},
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+            },
+            ["Grandparent", "Parent", "Child"],
+        ),
     ],
     ids=[
-        "empty,                          zero",
-        "single no x-tablename,          zero",
-        "single x-tablename,             one",
-        "$ref single x-tablename,        one",
-        "multiple no x-tablename,        multiple",
-        "multiple one first x-tablename, multiple",
-        "multiple one last x-tablename,  multiple",
-        "multiple all x-tablename,       multiple",
-        "x-inherits child first,         multiple",
-        "x-inherits parent first,        multiple",
+        "empty,                            zero",
+        "single no x-tablename,            zero",
+        "single x-tablename,               one",
+        "$ref single x-tablename,          one",
+        "multiple no x-tablename,          multiple",
+        "multiple one first x-tablename,   multiple",
+        "multiple one last x-tablename,    multiple",
+        "multiple all x-tablename,         multiple",
+        "x-inherits single child first,    multiple",
+        "x-inherits single parent first,   multiple",
+        "x-inherits multiple parent first, multiple",
+        "x-inherits multiple child first,  multiple",
     ],
 )
 @pytest.mark.helper
