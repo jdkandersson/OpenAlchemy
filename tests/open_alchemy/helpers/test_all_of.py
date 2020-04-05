@@ -87,7 +87,7 @@ def test_valid(schema, schemas, expected_schema):
 def test_skip(schema, schemas, expected_schema):
     """
     GIVEN given schema, schemas and expected schema
-    WHEN merge is called with the schema and schemas
+    WHEN merge is called with the schema and schemas and skip name
     THEN the expected schema is returned.
     """
     skip_name = "RefSchema"

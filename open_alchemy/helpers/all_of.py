@@ -11,7 +11,7 @@ def merge(
     *,
     schema: types.Schema,
     schemas: types.Schemas,
-    skip_name: typing.Optional[str] = None
+    skip_name: typing.Optional[str] = None,
 ) -> types.Schema:
     """
     Merge schemas under allOf statement.
