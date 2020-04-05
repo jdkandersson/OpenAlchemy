@@ -216,13 +216,16 @@ class UtilityBase:
             # Retrieve parent model
             parent: typing.Type[TUtilityBase] = cls._get_parent(schema=schema)
 
+            # Construct parent initialization dictionary
             # Get properties for schema
             properties = cls._get_properties()
+            # Pass kwargs that don't belong to the current model to the parent
             parent_kwargs = {
                 key: value for key, value in kwargs.items() if key not in properties
             }
             parent_init_dict = parent.construct_from_dict_init(**parent_kwargs)
 
+            # COnstruct child (the current model) initialization dictionary
             child_kwargs = {
                 key: value for key, value in kwargs.items() if key in properties
             }
@@ -233,7 +236,6 @@ class UtilityBase:
         else:
             init_dict = cls.construct_from_dict_init(**kwargs)
 
-        print(init_dict)
         return cls(**init_dict)
 
     @classmethod
