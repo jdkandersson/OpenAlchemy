@@ -184,6 +184,14 @@ to define joined table inheritance in OpenAlchemy:
             __mapper_args__:
               polymorphic_identity: manager
 
+.. seealso::
+
+    :ref:`joined-table-inheritance-example`
+      Full example for joined table inheritance.
+
+    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#joined-table-inheritance>`_
+      Documentation for SQLAlchemy joined table inheritance.
+
 .. _single-table-inheritance:
 
 Single Table Inheritance
@@ -227,6 +235,9 @@ inheritance in OpenAlchemy:
               polymorphic_identity: manager
 
 .. seealso::
+
+    :ref:`single-table-inheritance-example`
+      Full example for single table inheritance.
 
     `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#single-table-inheritance>`_
       Documentation for SQLAlchemy single table inheritance.

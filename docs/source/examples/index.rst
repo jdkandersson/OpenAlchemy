@@ -14,3 +14,4 @@ Examples
    composite_unique
    ref
    all_of
+   inheritance
