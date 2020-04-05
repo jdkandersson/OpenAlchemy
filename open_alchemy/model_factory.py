@@ -41,6 +41,10 @@ def model_factory(
         model_schema["x-backrefs"] = helpers.ext_prop.get(
             source=schema, name="x-backrefs"
         )
+    if "x-inherits" in schema:
+        model_schema["x-inherits"] = helpers.ext_prop.get(
+            source=schema, name="x-inherits"
+        )
     description = helpers.peek.description(schema=schema, schemas={})
     if description is not None:
         model_schema["description"] = description
@@ -79,7 +83,8 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     """
     Retrieve and prepare the schema from the schemas.
 
-    Assume the schema has already been prepared.
+    Assume the schema has already been prepared. Replace x-inherits boolean with the
+    parent name.
 
     Raise SchemaNotFoundError if the schema is not found in the schemas.
     Raise MalformedSchemaError is the schema does not have x-tablename.
@@ -120,6 +125,7 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
             raise exceptions.MalformedSchemaError(
                 f'"x-inherits" is a required schema property for {name}.'
             )
+        schema["x-inherits"] = parent
     # Checking for object type
     if schema.get("type") != "object":
         raise exceptions.FeatureNotImplementedError(

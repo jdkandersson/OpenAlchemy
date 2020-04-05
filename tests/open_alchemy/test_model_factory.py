@@ -427,6 +427,30 @@ def test_inherits():
                 },
             },
         ),
+        (
+            {
+                "Schema": {
+                    "allOf": [
+                        {
+                            "x-inherits": True,
+                            "type": "object",
+                            "properties": {"property_2": {"type": "string"}},
+                        },
+                        {"$ref": "#/components/schemas/Parent"},
+                    ]
+                },
+                "Parent": {
+                    "x-tablename": "parent",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                },
+            },
+            {
+                "type": "object",
+                "properties": {"property_2": {"type": "string"}},
+                "x-inherits": "Parent",
+            },
+        ),
     ],
     ids=[
         "single x-dict-ignore true",
@@ -440,6 +464,7 @@ def test_inherits():
         "single description empty",
         "single description",
         "multiple properties",
+        "x-inherits",
     ],
 )
 @pytest.mark.model
@@ -625,8 +650,9 @@ class TestGetSchema:
         assert returned_schema == schema
 
     @staticmethod
+    @pytest.mark.parametrize("inherits", [True, "RefSchema"], ids=["bool", "string"])
     @pytest.mark.model
-    def test_valid_inherits():
+    def test_valid_inherits(inherits):
         """
         GIVEN valid schema that inherits
         WHEN _get_schema is called with the schema
@@ -635,7 +661,11 @@ class TestGetSchema:
         name = "Schema"
         schema = {
             "allOf": [
-                {"type": "object", "x-inherits": True, "properties": {"key": "value"}},
+                {
+                    "type": "object",
+                    "x-inherits": inherits,
+                    "properties": {"key": "value"},
+                },
                 {"$ref": "#/components/schemas/RefSchema"},
             ]
         }
@@ -650,7 +680,7 @@ class TestGetSchema:
 
         assert returned_schema == {
             "type": "object",
-            "x-inherits": True,
+            "x-inherits": "RefSchema",
             "properties": {"key": "value"},
         }
 
