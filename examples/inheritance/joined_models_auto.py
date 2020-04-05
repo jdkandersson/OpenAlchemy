@@ -129,7 +129,7 @@ class TManager(typing.Protocol):
     Person that works for a company.
 
     Attrs:
-        id: Unique identifier for the employee.
+        id: Unique identifier for the manager.
         name: The name of the employee.
         type: The type of the employee.
         manager_data: Data for the manager.
@@ -158,7 +158,7 @@ class TManager(typing.Protocol):
         Construct.
 
         Args:
-            id: Unique identifier for the employee.
+            id: Unique identifier for the manager.
             name: The name of the employee.
             type: The type of the employee.
             manager_data: Data for the manager.
@@ -178,7 +178,7 @@ class TManager(typing.Protocol):
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Unique identifier for the employee.
+            id: Unique identifier for the manager.
             name: The name of the employee.
             type: The type of the employee.
             manager_data: Data for the manager.
@@ -240,7 +240,7 @@ class TEngineer(typing.Protocol):
     Person that works for a company.
 
     Attrs:
-        id: Unique identifier for the employee.
+        id: Unique identifier for the engineer.
         name: The name of the employee.
         type: The type of the employee.
         engineer_info: Information for the manager.
@@ -269,7 +269,7 @@ class TEngineer(typing.Protocol):
         Construct.
 
         Args:
-            id: Unique identifier for the employee.
+            id: Unique identifier for the engineer.
             name: The name of the employee.
             type: The type of the employee.
             engineer_info: Information for the manager.
@@ -289,7 +289,7 @@ class TEngineer(typing.Protocol):
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Unique identifier for the employee.
+            id: Unique identifier for the engineer.
             name: The name of the employee.
             type: The type of the employee.
             engineer_info: Information for the manager.
