@@ -504,7 +504,6 @@ def test_to_from_dict_many_to_many_read_only(engine, sessionmaker):
     assert queried_ref_instance.to_dict() == {"id": 12, "tables": [{"id": 11}]}
 
 
-@pytest.mark.only_this
 @pytest.mark.integration
 def test_inheritance(engine, sessionmaker):
     """
