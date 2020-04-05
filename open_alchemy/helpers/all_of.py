@@ -21,6 +21,11 @@ def merge(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
         The schema with all top level allOf statements resolved.
 
     """
+    return _merge(schema, schemas)
+
+
+def _merge(schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+    """Implement merge."""
     all_of = schema.get("allOf")
     if all_of is None:
         return schema
@@ -30,7 +35,7 @@ def merge(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
         # Resolving any $ref
         _, ref_schema = ref.resolve(name="", schema=sub_schema, schemas=schemas)
         # Merging any nested allOf
-        merged_sub_schema = merge(schema=ref_schema, schemas=schemas)
+        merged_sub_schema = _merge(ref_schema, schemas)
 
         # Capturing required arrays
         merged_required = merged_schema.get("required")
