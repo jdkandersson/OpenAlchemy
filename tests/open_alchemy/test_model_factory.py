@@ -712,42 +712,24 @@ class TestPrepareModelDict:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "schemas, expected_dict",
+        "schema, expected_dict",
         [
-            ({"Schema": {"x-tablename": "schema"}}, {"__tablename__": "schema"}),
+            ({"x-tablename": "schema"}, {"__tablename__": "schema"}),
+            ({"x-inherits": "Parent"}, {}),
             (
-                {
-                    "Schema": {
-                        "x-inherits": "Parent",
-                        "$ref": "#/components/schemas/Parent",
-                    },
-                    "Parent": {"x-tablename": "parent"},
-                },
-                {},
-            ),
-            (
-                {
-                    "Schema": {
-                        "x-inherits": "Parent",
-                        "x-tablename": "schema",
-                        "$ref": "#/components/schemas/Parent",
-                    },
-                    "Parent": {"x-tablename": "parent"},
-                },
+                {"x-inherits": "Parent", "x-tablename": "schema"},
                 {"__tablename__": "schema"},
             ),
         ],
         ids=["not inherits", "inherits same tablename", "inherits different tablename"],
     )
     @pytest.mark.model
-    def test_(schemas, expected_dict):
+    def test_(schema, expected_dict):
         """
         GIVEN schema and expected dictionary
         WHEN _prepare_model_dict is called with the schema
         THEN the expected dictionary is returned.
         """
-        returned_dict = model_factory._prepare_model_dict(
-            name="Schema", schemas=schemas
-        )
+        returned_dict = model_factory._prepare_model_dict(schema=schema)
 
         assert expected_dict == returned_dict

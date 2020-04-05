@@ -70,7 +70,7 @@ def model_factory(
             **dict(itertools.chain.from_iterable(model_class_vars)),
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
-            **_prepare_model_dict(name=name, schemas=schemas),
+            **_prepare_model_dict(schema=schema),
         },
     )
 
@@ -78,6 +78,8 @@ def model_factory(
 def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     """
     Retrieve and prepare the schema from the schemas.
+
+    Assume the schema has already been prepared.
 
     Raise SchemaNotFoundError if the schema is not found in the schemas.
     Raise MalformedSchemaError is the schema does not have x-tablename.
@@ -156,9 +158,7 @@ def _get_kwargs(*, schema: types.Schema) -> types.TKwargs:
     return kwargs
 
 
-def _prepare_model_dict(
-    name: str, schemas: types.Schemas
-) -> typing.Dict[str, typing.Any]:
+def _prepare_model_dict(schema: types.Schema) -> typing.Dict[str, typing.Any]:
     """
     Prepare the dictionary used to construct the model.
 
@@ -173,16 +173,7 @@ def _prepare_model_dict(
         The dictionary for the schema.
 
     """
-    schema = schemas[name]
-    tablename = helpers.peek.tablename(schema=schema, schemas=schemas)
-
-    # Handle no inheritance
-    if not helpers.schema.inherits(schema=schema, schemas=schemas):
+    tablename = helpers.peek.tablename(schema=schema, schemas={})
+    if tablename is not None:
         return {"__tablename__": tablename}
-
-    parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
-    parent_schema = schemas[parent]
-    parent_tablename = helpers.peek.tablename(schema=parent_schema, schemas=schemas)
-    if tablename == parent_tablename:
-        return {}
-    return {"__tablename__": tablename}
+    return {}
