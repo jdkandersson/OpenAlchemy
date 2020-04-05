@@ -48,7 +48,7 @@ def set_(
             "schemas."
         )
     # Prepare schema for construction. Note any top level $ref must already be resolved.
-    ref_schema = helpers.merge_all_of(schema=ref_schema, schemas=schemas)
+    ref_schema = helpers.all_of.merge(schema=ref_schema, schemas=schemas)
 
     # Calculate foreign key artifacts
     fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(

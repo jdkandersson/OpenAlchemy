@@ -51,10 +51,10 @@ from open_alchemy import helpers
 def test_valid(schema, schemas, expected_schema):
     """
     GIVEN given schema, schemas and expected schema
-    WHEN merge_all_of is called with the schema and schemas
+    WHEN merge is called with the schema and schemas
     THEN the expected schema is returned.
     """
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema == expected_schema
 
@@ -74,13 +74,13 @@ def test_required(all_of_schema, expected_required):
     """
     GIVEN schema that has allOf with schemas with given required properties and expected
         final required
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected required property.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert sorted(return_schema["required"]) == sorted(expected_required)
 
@@ -122,13 +122,13 @@ def test_properties(all_of_schema, expected_properties):
     """
     GIVEN schema that has allOf with schemas with given properties and expected
         properties
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected properties.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["properties"] == expected_properties
 
@@ -170,12 +170,12 @@ def test_backrefs(all_of_schema, expected_backrefs):
     """
     GIVEN schema that has allOf with schemas with given backrefs and expected
         backrefs
-    WHEN merge_all_of is called with the schema
+    WHEN merge is called with the schema
     THEN the returned schema has the expected backrefs.
     """
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.merge_all_of(schema=schema, schemas=schemas)
+    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["x-backrefs"] == expected_backrefs

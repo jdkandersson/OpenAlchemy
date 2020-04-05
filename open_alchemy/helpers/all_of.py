@@ -5,7 +5,7 @@ from open_alchemy import types
 from . import ref
 
 
-def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
+def merge(*, schema: types.Schema, schemas: types.Schemas) -> types.Schema:
     """
     Merge schemas under allOf statement.
 
@@ -30,7 +30,7 @@ def merge_all_of(*, schema: types.Schema, schemas: types.Schemas) -> types.Schem
         # Resolving any $ref
         _, ref_schema = ref.resolve(name="", schema=sub_schema, schemas=schemas)
         # Merging any nested allOf
-        merged_sub_schema = merge_all_of(schema=ref_schema, schemas=schemas)
+        merged_sub_schema = merge(schema=ref_schema, schemas=schemas)
 
         # Capturing required arrays
         merged_required = merged_schema.get("required")
