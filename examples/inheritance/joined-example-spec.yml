@@ -1,0 +1,110 @@
+
+openapi: "3.0.0"
+
+info:
+  title: Test Schema
+  description: API to illustrate OpenAlchemy joined inheritance.
+  version: "0.1"
+
+paths:
+  /employee:
+    get:
+      summary: Used to retrieve all employees.
+      responses:
+        200:
+          description: Return all employees from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Employee"
+  /manager:
+    get:
+      summary: Used to retrieve all managers.
+      responses:
+        200:
+          description: Return all managers from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Manager"
+  /engineer:
+    get:
+      summary: Used to retrieve all engineers.
+      responses:
+        200:
+          description: Return all engineers from the database.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Engineer"
+
+components:
+  schemas:
+    Employee:
+      description: Person that works for a company.
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the employee.
+          example: 0
+          x-primary-key: true
+        name:
+          type: string
+          description: The name of the employee.
+          example: David Andersson
+        type:
+          type: string
+          description: The type of the employee.
+          example: employee
+      x-kwargs:
+        __mapper_args__:
+          polymorphic_on: type
+          polymorphic_identity: employee
+    Manager:
+      allOf:
+        - $ref: "#/components/schemas/Employee"
+        - x-inherits: true
+          x-tablename: manager
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the manager.
+              example: 0
+              x-primary-key: true
+              x-foreign-key: employee.id
+            manager_data:
+              type: string
+              description: Data for the manager.
+              example: some data
+          x-kwargs:
+            __mapper_args__:
+              polymorphic_identity: manager
+    Engineer:
+      allOf:
+        - $ref: "#/components/schemas/Employee"
+        - x-inherits: true
+          x-tablename: engineer
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the engineer.
+              example: 0
+              x-primary-key: true
+              x-foreign-key: employee.id
+            engineer_info:
+              type: string
+              description: Information for the manager.
+              example: some info
+          x-kwargs:
+            __mapper_args__:
+              polymorphic_identity: engineer

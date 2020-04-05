@@ -288,3 +288,96 @@ def test_relationship(engine, sessionmaker, filename, model_names, attrs):
 
     queried_instance = session.query(model).first()
     assert queried_instance.to_dict() == attrs
+
+
+@pytest.mark.parametrize(
+    "filename, model_names, attrs, test_idx",
+    [
+        (
+            "inheritance/single-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {"id": 1, "name": "employee 1", "type": "employee"},
+            0,
+        ),
+        (
+            "inheritance/single-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {
+                "id": 1,
+                "name": "employee 1",
+                "type": "manager",
+                "manager_data": "manager data 1",
+            },
+            1,
+        ),
+        (
+            "inheritance/single-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {
+                "id": 1,
+                "name": "employee 1",
+                "type": "engineer",
+                "engineer_info": "engineer info 1",
+            },
+            2,
+        ),
+        (
+            "inheritance/joined-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {"id": 1, "name": "employee 1", "type": "employee"},
+            0,
+        ),
+        (
+            "inheritance/joined-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {
+                "id": 1,
+                "name": "employee 1",
+                "type": "manager",
+                "manager_data": "manager data 1",
+            },
+            1,
+        ),
+        (
+            "inheritance/joined-example-spec.yml",
+            ("Employee", "Manager", "Engineer"),
+            {
+                "id": 1,
+                "name": "employee 1",
+                "type": "engineer",
+                "engineer_info": "engineer info 1",
+            },
+            2,
+        ),
+    ],
+    ids=[
+        "single Employee",
+        "single Manager",
+        "single Engineer",
+        "joined Employee",
+        "joined Manager",
+        "joined Engineer",
+    ],
+)
+@pytest.mark.example
+def test_inheritance(engine, sessionmaker, filename, model_names, attrs, test_idx):
+    """
+    GIVEN spec with inheritance
+    WHEN model is constructed and passed to the database
+    THEN the constructed data is returned when queried.
+    """
+    test_models, session = helpers.create_models_session(
+        filename=filename,
+        model_names=model_names,
+        engine=engine,
+        sessionmaker=sessionmaker,
+    )
+    model = test_models[test_idx]
+
+    # Create instance
+    model_instance = model.from_dict(**attrs)
+    session.add(model_instance)
+    session.flush()
+
+    queried_instance = session.query(model).first()
+    assert queried_instance.to_dict() == attrs
