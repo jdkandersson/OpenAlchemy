@@ -189,7 +189,7 @@ to define joined table inheritance in OpenAlchemy:
     :ref:`joined-table-inheritance-example`
       Full example for joined table inheritance.
 
-    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#joined-table-inheritance>`_
+    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html#joined-table-inheritance>`_
       Documentation for SQLAlchemy joined table inheritance.
 
 .. _single-table-inheritance:
@@ -239,5 +239,5 @@ inheritance in OpenAlchemy:
     :ref:`single-table-inheritance-example`
       Full example for single table inheritance.
 
-    `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#single-table-inheritance>`_
+    `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html#single-table-inheritance>`_
       Documentation for SQLAlchemy single table inheritance.

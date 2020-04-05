@@ -17,7 +17,7 @@ might be defined that derives from :samp:`Employee` and adds the
     :ref:`joined-table-inheritance`
       OpenAlchemy documentation for joined table inheritance.
 
-    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#joined-table-inheritance>`_
+    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html#joined-table-inheritance>`_
       Documentation for SQLAlchemy joined table inheritance.
 
 The following example defines joined tabled inheritance where :samp:`Employee`
@@ -60,7 +60,7 @@ no foreign key relationship between the models.
     :ref:`single-table-inheritance`
       OpenAlchemy documentation for single table inheritance.
 
-    `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#single-table-inheritance>`_
+    `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html#single-table-inheritance>`_
       Documentation for SQLAlchemy single table inheritance.
 
 The following example defines single tabled inheritance where :samp:`Employee`
