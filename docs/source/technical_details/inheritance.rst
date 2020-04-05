@@ -89,8 +89,97 @@ properties. The :samp:`x-kwargs` has already been discussed here:
 :ref:`model-kwargs` and will be used to define some special model parameters to
 instruct SQLAlchemy how to map :samp:`Manager` to :samp:`Employee`.
 
+.. _x-inherits:
+
 :samp:`x-inherits`
 ^^^^^^^^^^^^^^^^^^
+
+The :samp:`x-inherits` extension property is used to indicate to OpenAlchemy
+that a schema inherits from another schema. The following values are supported:
+
+* :samp:`boolean`:
+    * :samp:`true`: Indicates that the schema inherits from the closest schema
+      that it has a :samp:`$ref` to that can be constructed. Object schemas
+      with the :samp:`x-tablename` or :samp:`x-inherits` are those that
+      generally can be constructed.
+    * :samp:`false`: Indicates that the schema does not inherit.
+* :samp:`string`: The name of the parent schema. The schema must have a
+  :samp:`$ref` that links it to the schema with the name of :samp:`x-inherits`.
+
+In any case, if a schema inherits from another schema, there must be a
+:samp:`$ref` linking the two schemas. That can be contained in :samp:`allOf`
+and could be behind any number of nested :samp:`$ref`.
+
+:samp:`x-kwargs`
+^^^^^^^^^^^^^^^^
+
+The required :samp:`__mapper_args__` must be added using :samp:`x-kwargs`. For
+example, for :samp:`Employee`:
+
+.. code-block:: yaml
+   :linenos:
+
+   Employee:
+      type: object
+      ...
+      x-kwargs:
+        __mapper_args__:
+          polymorphic_on: type
+          polymorphic_identity: employee
+
+And for :samp:`Manager`:
+
+.. code-block:: yaml
+   :linenos:
+
+    Manager:
+      type: object
+      ...
+      x-kwargs:
+        __mapper_args__:
+          polymorphic_identity: manager
+
+Example
+^^^^^^^
+
+The following shows the :samp:`Employee` and :samp:`Manager` schemas required
+to define joined table inheritance in OpenAlchemy:
+
+.. code-block:: yaml
+   :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          x-primary-key: true
+        ...
+        type:
+          type: string
+          description: The type of the employee.
+          example: employee
+      x-kwargs:
+        __mapper_args__:
+          polymorphic_on: type
+          polymorphic_identity: employee
+    Manager:
+      allOf:
+        - $ref: "#/components/schemas/Employee"
+        - x-inherits: true
+          x-tablename: manager
+          type: object
+          properties:
+            id:
+              type: integer
+              x-primary-key: true
+              x-foreign-key: employee.id
+            manager_data:
+              type: string
+          x-kwargs:
+            __mapper_args__:
+              polymorphic_identity: manager
 
 .. seealso::
 
