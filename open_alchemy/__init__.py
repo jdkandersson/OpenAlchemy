@@ -220,8 +220,8 @@ def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
     """
     Retrieve the base class of a schema considering inheritance.
 
-    If x-inherits is True, retrieve calculate the parent. If it is a string, verify that
-    the parent is valid. In either case, the model for that schema is used as the base
+    If x-inherits is True, retrieve the parent. If it is a string, verify that the
+    parent is valid. In either case, the model for that schema is used as the base
     instead of the usual base.
     If x-inherits is not present or False, return the usual base.
 
