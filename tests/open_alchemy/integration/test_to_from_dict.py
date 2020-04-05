@@ -502,3 +502,89 @@ def test_to_from_dict_many_to_many_read_only(engine, sessionmaker):
     session.flush()
     queried_ref_instance = session.query(ref_model).first()
     assert queried_ref_instance.to_dict() == {"id": 12, "tables": [{"id": 11}]}
+
+
+@pytest.mark.only_this
+@pytest.mark.integration
+def test_inheritance(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with inheritance
+    WHEN model is defined based on schema and constructed using from_dict
+    THEN when to_dict is called the construction dictionary contains parent values.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "Employee": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "type": {"type": "string"},
+                    },
+                    "x-tablename": "employee",
+                    "type": "object",
+                    "x-kwargs": {
+                        "__mapper_args__": {
+                            "polymorphic_on": "type",
+                            "polymorphic_identity": "employee",
+                        }
+                    },
+                },
+                "Manager": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Employee"},
+                        {
+                            "x-inherits": "Employee",
+                            "type": "object",
+                            "properties": {"manager_data": {"type": "string"}},
+                            "x-kwargs": {
+                                "__mapper_args__": {"polymorphic_identity": "manager"}
+                            },
+                        },
+                    ]
+                },
+                "Engineer": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/Employee"},
+                        {
+                            "x-inherits": "Employee",
+                            "type": "object",
+                            "properties": {"engineer_info": {"type": "string"}},
+                            "x-kwargs": {
+                                "__mapper_args__": {"polymorphic_identity": "engineer"}
+                            },
+                        },
+                    ]
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    employee = model_factory(name="Employee")
+    manager = model_factory(name="Manager")
+
+    # Creating models
+    base.metadata.create_all(engine)
+
+    # Creating instance of models
+    employee_dict = {"id": 1, "name": "employee 1", "type": "employee"}
+    manager_dict = {
+        "id": 2,
+        "name": "employee 2",
+        "type": "manager",
+        "manager_data": "manager data 2",
+    }
+    employee_instance = employee.from_dict(**employee_dict)
+    manager_instance = manager.from_dict(**manager_dict)
+    session = sessionmaker()
+    session.add(employee_instance)
+    session.add(manager_instance)
+    session.flush()
+
+    queried_employee = session.query(employee).first()
+    assert queried_employee.to_dict() == employee_dict
+    queried_manager = session.query(manager).first()
+    assert queried_manager.to_dict() == manager_dict

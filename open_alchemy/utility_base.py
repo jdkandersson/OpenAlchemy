@@ -96,20 +96,10 @@ class UtilityBase:
         return model.from_dict(**kwargs)
 
     @classmethod
-    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
-        """
-        Construct model instance from a dictionary.
-
-        Raise MalformedModelDictionaryError when the dictionary does not satisfy the
-        model schema.
-
-        Args:
-            kwargs: The values to construct the class with.
-
-        Returns:
-            An instance of the model constructed using the dictionary.
-
-        """
+    def construct_from_dict_init(
+        cls: typing.Type[TUtilityBase], **kwargs: typing.Any
+    ) -> typing.Dict[str, typing.Any]:
+        """Construct the dictionary passed to model construction."""
         # Check dictionary
         schema = cls._get_schema()
         try:
@@ -185,7 +175,25 @@ class UtilityBase:
                 value=value, type_=type_, format_=format_
             )
 
-        return cls(**model_dict)
+        return model_dict
+
+    @classmethod
+    def from_dict(cls: typing.Type[TUtilityBase], **kwargs: typing.Any) -> TUtilityBase:
+        """
+        Construct model instance from a dictionary.
+
+        Raise MalformedModelDictionaryError when the dictionary does not satisfy the
+        model schema.
+
+        Args:
+            kwargs: The values to construct the class with.
+
+        Returns:
+            An instance of the model constructed using the dictionary.
+
+        """
+        init_dict = cls.construct_from_dict_init(**kwargs)
+        return cls(**init_dict)
 
     @classmethod
     def from_str(cls: typing.Type[TUtilityBase], value: str) -> TUtilityBase:
