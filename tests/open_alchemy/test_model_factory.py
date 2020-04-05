@@ -227,6 +227,41 @@ def test_all_of():
     assert model.__tablename__ == "table 1"
 
 
+@pytest.mark.model
+def test_inherits():
+    """
+    GIVEN schemas with schema that inherits
+    WHEN model_factory is called with the name of the schema
+    THEN a model which inherits from the parent and with only the child properties
+        defined is returned.
+    """
+    model = model_factory.model_factory(
+        name="Child",
+        get_base=_mock_get_base,
+        schemas={
+            "Child": {
+                "allOf": [
+                    {
+                        "x-inherits": True,
+                        "type": "object",
+                        "properties": {"property_2": {"type": "integer"}},
+                    },
+                    {"$ref": "#/components/schemas/Parent"},
+                ]
+            },
+            "Parent": {
+                "x-tablename": "parent",
+                "type": "object",
+                "properties": {"property_1": {"type": "string"}},
+            },
+        },
+    )
+
+    assert not hasattr(model, "property_1")
+    assert hasattr(model, "property_2")
+    assert getattr(model, "__tablename__", None) is None
+
+
 @pytest.mark.parametrize(
     "schemas, expected_schema",
     [
