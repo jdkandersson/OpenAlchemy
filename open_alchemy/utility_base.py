@@ -163,7 +163,7 @@ class UtilityBase:
                 )
 
             # Handle object
-            ref_model: typing.Type[TUtilityBase]
+            ref_model: typing.Type[UtilityBase]
             if type_ == "object":
                 ref_model = cls._get_model(spec=spec, name=name, schema=schema)
                 ref_model_instance = cls._model_from_dict(value, model=ref_model)
