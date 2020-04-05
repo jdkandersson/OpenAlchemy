@@ -627,6 +627,31 @@ def test_retrieve_parent_valid(schema, schemas):
     assert parent == "Parent"
 
 
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        ({"key": "value"}, {"key": "value"}),
+        (
+            {"key": "value", "x-inherits": "parent"},
+            {"key": "value", "x-inherits": "parent", "parent_key": "parent value"},
+        ),
+    ],
+    ids=["not inherits", "inherits"],
+)
+@pytest.mark.helper
+def test_retrieve_model_parents_schema(schema, expected_schema, mocked_facades_models):
+    """
+    GIVEN schema that does not inherit
+    WHEN retrieve_model_parents_schema is called
+    THEN the schema is returned.
+    """
+    mocked_facades_models.get_model_schema.return_value = {"parent_key": "parent value"}
+
+    returned_schema = helpers.inheritance.retrieve_model_parents_schema(schema=schema)
+
+    assert returned_schema == expected_schema
+
+
 class TestRetrieveModelParentsSchema:
     """TEsts for _retrieve_model_parents_schema."""
 

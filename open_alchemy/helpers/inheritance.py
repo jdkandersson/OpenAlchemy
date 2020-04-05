@@ -5,6 +5,7 @@ import typing
 from .. import exceptions
 from .. import facades
 from .. import types
+from . import all_of as all_of_helper
 from . import ext_prop as ext_prop_helper
 from . import peek as peek_helper
 from . import ref as ref_helper
@@ -274,6 +275,22 @@ def retrieve_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
     raise exceptions.InheritanceError(
         f"Cannot retrive the name of the parent if x-inherits is not defined or False."
     )
+
+
+def retrieve_model_parents_schema(schema: types.Schema) -> types.Schema:
+    """
+    Retrieve the combined schema of the input and all its parent schemas.
+
+    Args:
+        schema: The model schema. Assume that it does not contain any $ref nor allOf.
+
+    Returns:
+        The combined schema.
+
+    """
+    schemas = _retrieve_model_parents_schema(schema)
+    schema = {"allOf": schemas}
+    return all_of_helper.merge(schema=schema, schemas={})
 
 
 def _retrieve_model_parents_schema(
