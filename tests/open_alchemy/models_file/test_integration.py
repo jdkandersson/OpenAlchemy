@@ -657,3 +657,113 @@ class TModel({_EXPECTED_MODEL_BASE}):
 Model: TModel = models.Model  # type: ignore
 '''
     assert source == expected_source
+
+
+@pytest.mark.models_file
+def test_multiple_calls():
+    """
+    GIVEN schema and name
+    WHEN schema is added to the models file twice
+    THEN the models file is generated once.
+    """
+    schema = {"properties": {"id": {"type": "integer"}}}
+    name = "Model"
+    models = models_file.ModelsFile()
+
+    models.add_model(schema=schema, name=name)
+    models.add_model(schema=schema, name=name)
+    source = models.generate_models()
+
+    expected_source = f'''{_DOCSTRING}
+# pylint: disable=no-member,super-init-not-called,unused-argument
+
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
+
+from open_alchemy import models
+
+
+class ModelDict({_EXPECTED_TD_BASE}, total=False):
+    """TypedDict for properties that are not required."""
+
+    id: typing.Optional[int]
+
+
+class TModel({_EXPECTED_MODEL_BASE}):
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        id: The id of the Model.
+
+    """
+
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
+    id: typing.Optional[int]
+
+    def __init__(self, id: typing.Optional[int] = None) -> None:
+        """
+        Construct.
+
+        Args:
+            id: The id of the Model.
+
+        """
+        ...
+
+    @classmethod
+    def from_dict(cls, id: typing.Optional[int] = None) -> "TModel":
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            id: The id of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
+        ...
+
+    @classmethod
+    def from_str(cls, value: str) -> "TModel":
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
+        ...
+
+    def to_dict(self) -> ModelDict:
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
+        ...
+
+    def to_str(self) -> str:
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
+        ...
+
+
+Model: TModel = models.Model  # type: ignore
+'''
+    assert source == expected_source

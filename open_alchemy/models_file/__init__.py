@@ -13,20 +13,12 @@ from . import models as _models
 from . import types as types
 
 
-@dataclasses.dataclass
-class _Model:
-    """Records a model to be processed."""
-
-    name: str
-    schema: oa_types.Schema
-
-
 class ModelsFile:
     """Keeps track of models and writes them as output."""
 
     def __init__(self):
         """Construct."""
-        self._models: typing.List[_Model] = []
+        self._models: typing.Dict[str, oa_types.Schema] = {}
 
     def add_model(self, schema: oa_types.Schema, name: str) -> None:
         """
@@ -37,7 +29,9 @@ class ModelsFile:
             name: The name of the model.
 
         """
-        self._models.append(_Model(name=name, schema=schema))
+        if name in self._models:
+            return
+        self._models[name] = schema
 
     def generate_models(self) -> str:
         """
@@ -49,8 +43,8 @@ class ModelsFile:
         """
         # Generate source code for each model
         model_sources: typing.List[str] = []
-        for model in self._models:
-            model_source = _model.generate(schema=model.schema, name=model.name)
+        for name, schema in self._models.items():
+            model_source = _model.generate(schema=schema, name=name)
             model_sources.append(model_source)
 
         # Generate source code for models file

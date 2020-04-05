@@ -8,7 +8,24 @@ class Employee(Base):
     """Person that works for a company."""
 
     __tablename__ = "employee"
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    name = sa.Column(sa.String, index=True)
-    division = sa.Column(sa.String, index=True)
-    salary = sa.Column(sa.Float)
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.String)
+    type = sa.Column(sa.String)
+
+    __mapper_args__ = {"polymorphic_on": type, "polymorphic_identity": "employee"}
+
+
+class Manager(Employee):
+    """Person that works for a company."""
+
+    manager_data = sa.Column(sa.String)
+
+    __mapper_args__ = {"polymorphic_identity": "manager"}
+
+
+class Engineer(Employee):
+    """Person that works for a company."""
+
+    engineer_info = sa.Column(sa.String)
+
+    __mapper_args__ = {"polymorphic_identity": "engineer"}
