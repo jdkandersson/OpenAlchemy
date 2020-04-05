@@ -1,6 +1,5 @@
 """Tests for ref."""
 
-import copy
 import os
 from unittest import mock
 from urllib import error
@@ -42,7 +41,7 @@ def test_ref_resolve_exists():
     ids=["no $ref", "single $ref", "nested $ref"],
 )
 @pytest.mark.helper
-def test_resolve_not_ref_schema(schema, schemas, expected_name):
+def test_resolve_valid(schema, schemas, expected_name):
     """
     GIVEN schema, schemas and expected name
     WHEN resolve is called with the schema, schemas and name
@@ -51,11 +50,56 @@ def test_resolve_not_ref_schema(schema, schemas, expected_name):
     name = "Schema"
 
     (return_name, return_schema) = helpers.ref.resolve(
-        name=name, schema=copy.deepcopy(schema), schemas=schemas
+        name=name, schema=schema, schemas=schemas
     )
 
     assert return_name == expected_name
     assert return_schema == {"type": "integer"}
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_name, expected_schema",
+    [
+        (
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"key": "value"}},
+            "Schema",
+            {},
+        ),
+        (
+            {"$ref": "#/components/schemas/IntermediateSchema"},
+            {
+                "IntermediateSchema": {"$ref": "#/components/schemas/RefSchema"},
+                "RefSchema": {"key": "value"},
+            },
+            "IntermediateSchema",
+            {},
+        ),
+        (
+            {"$ref": "#/components/schemas/OtherSchema"},
+            {"OtherSchema": {"key": "value"}},
+            "OtherSchema",
+            {"key": "value"},
+        ),
+    ],
+    ids=["skip hit", "nested skip hit", "skip miss"],
+)
+@pytest.mark.helper
+def test_resolve_valid_skip(schema, schemas, expected_name, expected_schema):
+    """
+    GIVEN schema, schemas and schema name to skip
+    WHEN resolve is called with the schema, schemas, name and schema to skip
+    THEN an empty schema is returned.
+    """
+    name = "Schema"
+    skip_name = "RefSchema"
+
+    (return_name, return_schema) = helpers.ref.resolve(
+        name=name, schema=schema, schemas=schemas, skip_name=skip_name
+    )
+
+    assert return_name == expected_name
+    assert return_schema == expected_schema
 
 
 @pytest.mark.parametrize(

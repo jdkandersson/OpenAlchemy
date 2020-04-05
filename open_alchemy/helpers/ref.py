@@ -17,7 +17,13 @@ _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 NameSchema = typing.Tuple[str, types.Schema]
 
 
-def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameSchema:
+def resolve(
+    *,
+    name: str,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    skip_name: typing.Optional[str] = None,
+) -> NameSchema:
     """
     Resolve reference to another schema.
 
@@ -32,16 +38,21 @@ def resolve(*, name: str, schema: types.Schema, schemas: types.Schemas) -> NameS
         schema: The specification of the schema from the last step.
         schemas: Dictionary with all defined schemas used to resolve $ref.
         seen_refs: The references that have already been processed.
+        skip_name (optional): Skip the schema and return an empty schema instead.
 
     Returns:
         The first schema that no longer has the $ref key and the name of that schema.
 
     """
-    return _resolve(name, schema, schemas, set())
+    return _resolve(name, schema, schemas, set(), skip_name)
 
 
 def _resolve(
-    name: str, schema: types.Schema, schemas: types.Schemas, seen_refs: typing.Set[str]
+    name: str,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    seen_refs: typing.Set[str],
+    skip_name: typing.Optional[str],
 ) -> NameSchema:
     """Implement resolve."""
     # Checking whether schema is a reference schema
@@ -56,7 +67,11 @@ def _resolve(
 
     ref_name, ref_schema = get_ref(ref=ref, schemas=schemas)
 
-    return _resolve(ref_name, ref_schema, schemas, seen_refs)
+    # Check if schema should be skipped
+    if ref_name == skip_name:
+        return name, {}
+
+    return _resolve(ref_name, ref_schema, schemas, seen_refs, skip_name)
 
 
 def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
