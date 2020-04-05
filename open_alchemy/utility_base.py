@@ -214,7 +214,7 @@ class UtilityBase:
         # Handle model that inherits
         if helpers.schema.inherits(schema=schema, schemas={}):
             # Retrieve parent model
-            parent: typing.Type = cls._get_parent(schema=schema)
+            parent: typing.Type[TUtilityBase] = cls._get_parent(schema=schema)
 
             # Get properties for schema
             properties = cls._get_properties()
