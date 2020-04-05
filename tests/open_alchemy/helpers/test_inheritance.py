@@ -625,3 +625,87 @@ def test_retrieve_parent_valid(schema, schemas):
     parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
 
     assert parent == "Parent"
+
+
+class TestRetrieveModelParentsSchema:
+    """TEsts for _retrieve_model_parents_schema."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_no_inheritance(mocked_facades_models):
+        """
+        GIVEN schema that does not inherit
+        WHEN _retrieve_model_parents_schema is called with the schema
+        THEN the schema is returned.
+        """
+        schema = {"key": "value"}
+
+        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+
+        assert isinstance(schemas_generator, types.GeneratorType)
+        assert list(schemas_generator) == [{"key": "value"}]
+        mocked_facades_models.get_model_schema.assert_not_called()
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_single_inheritance_not_exists(mocked_facades_models):
+        """
+        GIVEN schema that has a parent
+        WHEN _retrieve_model_parents_schema is called with the schema
+        THEN the schema and the parent schema.
+        """
+        schema = {"key": "value", "x-inherits": "Parent"}
+        mocked_facades_models.get_model_schema.return_value = None
+
+        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+
+        with pytest.raises(exceptions.InheritanceError):
+            list(schemas_generator)
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_single_inheritance(mocked_facades_models):
+        """
+        GIVEN schema that has a parent
+        WHEN _retrieve_model_parents_schema is called with the schema
+        THEN the schema and the parent schema.
+        """
+        schema = {"key": "value", "x-inherits": "Parent"}
+        mocked_facades_models.get_model_schema.return_value = {
+            "parent_key": "parent value"
+        }
+
+        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+
+        assert list(schemas_generator) == [
+            {"parent_key": "parent value"},
+            {"key": "value", "x-inherits": "Parent"},
+        ]
+        mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
+
+    @staticmethod
+    @pytest.mark.helper
+    def test_multiple_inheritance(mocked_facades_models):
+        """
+        GIVEN schema that has a parent
+        WHEN _retrieve_model_parents_schema is called with the schema
+        THEN the schema and the parent schema.
+        """
+        schema = {"key": "value", "x-inherits": "Parent"}
+        mocked_facades_models.get_model_schema.side_effect = [
+            {"parent_key": "parent value", "x-inherits": "Grandparent"},
+            {"grandparent_key": "grandparent value"},
+        ]
+
+        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+
+        assert list(schemas_generator) == [
+            {"grandparent_key": "grandparent value"},
+            {"parent_key": "parent value", "x-inherits": "Grandparent"},
+            {"key": "value", "x-inherits": "Parent"},
+        ]
+        assert mocked_facades_models.get_model_schema.call_count == 2
+        mocked_facades_models.get_model_schema.assert_any_call(name="Grandparent")
+        mocked_facades_models.get_model_schema.assert_any_call(name="Parent")

@@ -3,7 +3,9 @@
 import typing
 
 from .. import exceptions
+from .. import facades
 from .. import types
+from . import ext_prop as ext_prop_helper
 from . import peek as peek_helper
 from . import ref as ref_helper
 from . import schema as schema_helper
@@ -272,3 +274,29 @@ def retrieve_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
     raise exceptions.InheritanceError(
         f"Cannot retrive the name of the parent if x-inherits is not defined or False."
     )
+
+
+def _retrieve_model_parents_schema(
+    schema: types.Schema,
+) -> typing.Generator[types.Schema, None, None]:
+    """
+    Retrieve all the schemas of the inheritance chain, including the initial schema.
+
+    Recursive function. Base case is schema without x-inherits where schema is yielded.
+    Recursive case is schema with x-inherits where the function is called on the parent
+    schema and then the schema is yielded.
+
+    Args:
+        schema: The model schema. Assume that it does not contain any $ref nor allOf.
+
+    Returns:
+        Generator with all the schemas.
+
+    """
+    inherits = ext_prop_helper.get(source=schema, name="x-inherits")
+    if isinstance(inherits, str):
+        parent_schema = facades.models.get_model_schema(name=inherits)
+        if parent_schema is None:
+            raise exceptions.InheritanceError(f"The parent {inherits} is not defined.")
+        yield from _retrieve_model_parents_schema(parent_schema)
+    yield schema
