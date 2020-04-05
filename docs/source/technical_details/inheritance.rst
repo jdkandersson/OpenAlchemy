@@ -110,6 +110,9 @@ In any case, if a schema inherits from another schema, there must be a
 :samp:`$ref` linking the two schemas. That can be contained in :samp:`allOf`
 and could be behind any number of nested :samp:`$ref`.
 
+.. seealso::
+    :ref:`references` shows how to reference to other schemas.
+
 :samp:`x-kwargs`
 ^^^^^^^^^^^^^^^^
 
@@ -181,7 +184,49 @@ to define joined table inheritance in OpenAlchemy:
             __mapper_args__:
               polymorphic_identity: manager
 
+.. _single-table-inheritance:
+
+Single Table Inheritance
+------------------------
+
+Single table inheritance is very similar to :ref:`joined-table-inheritance`
+with the difference that all classes are linked to the same table and there is
+no foreign key relationship between the models. The following shows the
+:samp:`Employee` and :samp:`Manager` schemas required to define single table
+inheritance in OpenAlchemy:
+
+.. code-block:: yaml
+   :linenos:
+
+    Employee:
+      type: object
+      x-tablename: employee
+      properties:
+        id:
+          type: integer
+          x-primary-key: true
+        ...
+        type:
+          type: string
+          description: The type of the employee.
+          example: employee
+      x-kwargs:
+        __mapper_args__:
+          polymorphic_on: type
+          polymorphic_identity: employee
+    Manager:
+      allOf:
+        - $ref: "#/components/schemas/Employee"
+        - x-inherits: true
+          type: object
+          properties:
+            manager_data:
+              type: string
+          x-kwargs:
+            __mapper_args__:
+              polymorphic_identity: manager
+
 .. seealso::
 
-    `SQLAlchemy joined table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#joined-table-inheritance>`_
-      Documentation for SQLAlchemy joined table inheritance.
+    `SQLAlchemy single table inheritance documentation <https://docs.sqlalchemy.org/en/13/orm/inheritance.html?highlight=single%20table#single-table-inheritance>`_
+      Documentation for SQLAlchemy single table inheritance.
