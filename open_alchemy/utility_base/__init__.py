@@ -4,10 +4,11 @@ import functools
 import json
 import typing
 
-from . import exceptions
-from . import facades
-from . import helpers
-from . import types
+from .. import exceptions
+from .. import facades
+from .. import helpers
+from .. import types
+from . import to_dict
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
 TOptUtilityBase = typing.Optional[TUtilityBase]
