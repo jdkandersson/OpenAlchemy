@@ -61,6 +61,18 @@ class TestConvertRelationship:
         value.to_dict.assert_called_once_with()
         assert returned_value == value.to_dict.return_value
 
+    @staticmethod
+    @pytest.mark.utility_base
+    def test_valid_none():
+        """
+        GIVEN None value
+        WHEN _convert_relationship is called with the value
+        THEN None is returned.
+        """
+        returned_value = utility_base.to_dict.object_._convert_relationship(value=None)
+
+        assert returned_value is None
+
 
 class TestConvertReadOnly:
     """Tests for _convert_read_only."""
@@ -94,6 +106,7 @@ class TestConvertReadOnly:
         "schema, value, expected_value",
         [
             ({"properties": {"key": "type 1"}}, mock.MagicMock(spec=[]), {"key": None}),
+            ({"properties": {"key": "type 1"}}, None, None),
             (
                 {"properties": {"key": "type 1"}},
                 mock.MagicMock(spec=["key"], key="value"),
@@ -118,6 +131,7 @@ class TestConvertReadOnly:
             ),
         ],
         ids=[
+            "None",
             "single property missing",
             "single property present",
             "multiple property missing",
@@ -137,3 +151,62 @@ class TestConvertReadOnly:
         )
 
         assert returned_value == expected_value
+
+
+@pytest.mark.parametrize(
+    "schema, value, read_only",
+    [
+        (
+            {"properties": {"key": "type 1"}},
+            mock.MagicMock(to_dict=lambda: {"key": "value"}),
+            None,
+        ),
+        (
+            {"properties": {"key": "type 1"}},
+            mock.MagicMock(to_dict=lambda: {"key": "value"}),
+            False,
+        ),
+        ({"properties": {"key": "type 1"}}, mock.MagicMock(key="value"), True),
+        (
+            {"properties": {"key": "type 1"}, "readOnly": False},
+            mock.MagicMock(to_dict=lambda: {"key": "value"}),
+            None,
+        ),
+        (
+            {"properties": {"key": "type 1"}, "readOnly": True},
+            mock.MagicMock(key="value"),
+            None,
+        ),
+        (
+            {"properties": {"key": "type 1"}, "readOnly": False},
+            mock.MagicMock(to_dict=lambda: {"key": "value"}),
+            False,
+        ),
+        (
+            {"properties": {"key": "type 1"}, "readOnly": True},
+            mock.MagicMock(key="value"),
+            False,
+        ),
+    ],
+    ids=[
+        "readOnly arg None",
+        "readOnly arg False",
+        "readOnly arg True",
+        "readOnly arg None  schema False",
+        "readOnly arg None  schema True",
+        "readOnly arg False schema False",
+        "readOnly arg False schema True",
+    ],
+)
+@pytest.mark.utility_base
+def test_convert(schema, value, read_only):
+    """
+    GIVEN schema, value and readOnly value
+    WHEN convert is called with the schema, value and readOnly
+    THEN the dictionary is returned.
+    """
+    return_value = utility_base.to_dict.object_.convert(
+        schema=schema, value=value, read_only=read_only
+    )
+
+    assert return_value == {"key": "value"}
