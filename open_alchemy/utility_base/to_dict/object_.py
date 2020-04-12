@@ -71,7 +71,7 @@ def _convert_read_only(
 
 
 def convert(
-    *, value: typing.Any, schema: oa_types.Schema, read_only: typing.Optional[bool]
+    value: typing.Any, *, schema: oa_types.Schema, read_only: typing.Optional[bool]
 ) -> types.TOptObjectDict:
     """
     Convert object schema value to dictionary.
