@@ -270,52 +270,6 @@ class UtilityBase:
             )
         return cls.from_dict(**dict_value)
 
-    @staticmethod
-    def _object_to_dict_relationship(
-        *, value: typing.Any, name: str
-    ) -> typing.Dict[str, typing.Any]:
-        """Call to_dict on relationshup object."""
-        try:
-            return value.to_dict()
-        except AttributeError:
-            raise exceptions.InvalidModelInstanceError(
-                f"The {name} object property instance does not have a to_dict "
-                "implementation."
-            )
-        except TypeError:
-            raise exceptions.InvalidModelInstanceError(
-                f"The {name} object property instance to_dict implementation is "
-                "expecting arguments."
-            )
-
-    @staticmethod
-    def _object_to_dict_read_only(
-        *, value: typing.Any, spec: oa_types.Schema, name: str
-    ) -> typing.Dict[str, typing.Any]:
-        """Convert relationship to dictionary based on spec."""
-        properties = spec.get("properties")
-        if properties is None:
-            raise exceptions.MalformedSchemaError(
-                f"readOnly object definition {name} must have properties."
-            )
-        if not properties:
-            raise exceptions.MalformedSchemaError(
-                f"readOnly object definitions {name} must have at least 1 property."
-            )
-        return_dict = {}
-        for key in properties.keys():
-            return_dict[key] = getattr(value, key, None)
-        return return_dict
-
-    @classmethod
-    def _object_to_dict(
-        cls, value, name: str, spec: oa_types.Schema, read_only: bool
-    ) -> typing.Dict[str, typing.Any]:
-        """Call to_dict on object."""
-        if not read_only:
-            return cls._object_to_dict_relationship(value=value, name=name)
-        return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
-
     @classmethod
     def to_dict_property(
         cls,
@@ -380,8 +334,8 @@ class UtilityBase:
 
         # Handle object
         if type_ == "object":
-            return cls._object_to_dict(
-                value=value, name=name, spec=spec, read_only=read_only
+            return to_dict.object_.convert(
+                value=value, schema=spec, read_only=read_only
             )
 
         # Handle other types
