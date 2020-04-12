@@ -214,7 +214,7 @@ def test_to_dict_array_none(init_kwargs, __init__):
 
     returned_dict = instance.to_dict()
 
-    assert returned_dict == {"key": []}
+    assert returned_dict == {"key": None}
 
 
 @pytest.mark.utility_base
@@ -471,7 +471,7 @@ class TestToDictProperty:
             None, spec=spec, name="name 1"
         )
 
-        assert returned_value == []
+        assert returned_value is None
 
     @staticmethod
     @pytest.mark.utility_base

@@ -312,22 +312,7 @@ class UtilityBase:
                 raise exceptions.MalformedSchemaError(
                     "The array item schema cannot have the array type."
                 )
-            if value is None:
-                return []
-            item_spec = spec.get("items")
-            if item_spec is None:
-                raise exceptions.MalformedSchemaError(
-                    "The array item schema must have an items property."
-                )
-            to_dict_property = functools.partial(
-                cls.to_dict_property,
-                spec=item_spec,
-                name=name,
-                array_context=True,
-                read_only=read_only,
-            )
-            array_dict_values = map(to_dict_property, value)
-            return list(array_dict_values)
+            return to_dict.array.convert(value=value, schema=spec)
 
         if value is None:
             return None
