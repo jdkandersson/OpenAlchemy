@@ -316,30 +316,6 @@ class UtilityBase:
             return cls._object_to_dict_relationship(value=value, name=name)
         return cls._object_to_dict_read_only(value=value, name=name, spec=spec)
 
-    @staticmethod
-    def _simple_type_to_dict(
-        *, format_: typing.Optional[str], value: typing.Any
-    ) -> typing.Any:
-        """
-        Convert values with basic types to dictionary keys.
-
-        Args:
-            format_: The format of the value.
-            value: The value to convert.
-
-        Returns:
-            The value converted to the expected dictionary key.
-
-        """
-        # Handle other types
-        if format_ == "date":
-            return value.isoformat()
-        if format_ == "date-time":
-            return value.isoformat()
-        if format_ == "binary":
-            return value.decode()
-        return value
-
     @classmethod
     def to_dict_property(
         cls,
@@ -409,7 +385,7 @@ class UtilityBase:
             )
 
         # Handle other types
-        return cls._simple_type_to_dict(format_=format_, value=value)
+        return to_dict.simple.convert(format_=format_, value=value)
 
     @classmethod
     def instance_to_dict(cls, instance: TUtilityBase) -> typing.Dict[str, typing.Any]:
