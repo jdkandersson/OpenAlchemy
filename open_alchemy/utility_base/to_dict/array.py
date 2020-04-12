@@ -10,9 +10,13 @@ from .. import types
 from . import object_
 
 
-def convert(*, value: typing.Any, schema: ao_types.Schema) -> types.TOptArrayDict:
+def convert(value: typing.Any, *, schema: ao_types.Schema) -> types.TOptArrayDict:
     """
     Convert array property so that it can be included in an object dictionary.
+
+    Raises MalformedSchemaError if schema does not define item schema.
+    Raises MalformedSchemaError if the item schema is not of type object.
+    Raises MalformedSchemaError if the item schema is not of type object.
 
     Args:
         value: The value to convert.
@@ -31,7 +35,7 @@ def convert(*, value: typing.Any, schema: ao_types.Schema) -> types.TOptArrayDic
         )
     item_type = helpers.peek.type_(schema=item_schema, schemas={})
     if item_type != "object":
-        raise exceptions.MalformedSchemaError(
+        raise exceptions.FeatureNotImplementedError(
             "The array item schema must be of type object."
         )
     read_only = helpers.peek.read_only(schema=schema, schemas={})
@@ -41,5 +45,5 @@ def convert(*, value: typing.Any, schema: ao_types.Schema) -> types.TOptArrayDic
     try:
         converted_items = map(item_conversion, value)
     except TypeError:
-        raise exceptions.MalformedSchemaError("Array values must be iterable.")
+        raise exceptions.InvalidInstanceError("Array values must be iterable.")
     return list(converted_items)

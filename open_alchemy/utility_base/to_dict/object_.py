@@ -71,7 +71,10 @@ def _convert_read_only(
 
 
 def convert(
-    value: typing.Any, *, schema: oa_types.Schema, read_only: typing.Optional[bool]
+    value: typing.Any,
+    *,
+    schema: oa_types.Schema,
+    read_only: typing.Optional[bool] = None,
 ) -> types.TOptObjectDict:
     """
     Convert object schema value to dictionary.
@@ -79,7 +82,7 @@ def convert(
     Args:
         value: The value to convert.
         schema: The schema for the value.
-        read_only: Whether the schema is read only.
+        read_only (optional): Whether the schema is read only.
 
     """
     schema_read_only = helpers.peek.read_only(schema=schema, schemas={})

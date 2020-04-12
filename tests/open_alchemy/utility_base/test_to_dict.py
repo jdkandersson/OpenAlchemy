@@ -1,6 +1,5 @@
 """Tests for UtilityBase."""
 
-import datetime
 from unittest import mock
 
 import pytest
@@ -39,130 +38,33 @@ def test_to_dict_no_properties(__init__):
         instance.to_dict()
 
 
-@pytest.mark.utility_base
-def test_to_dict_no_type(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with a property without a
-        type
-    WHEN to_dict is called
-    THEN MalformedSchemaError is raised.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {}}}, "__init__": __init__},
-    )
-    instance = model()
-
-    with pytest.raises(exceptions.TypeMissingError):
-        instance.to_dict()
-
-
 @pytest.mark.parametrize(
-    "schema, init_args, expected_dict",
+    "schema, value, expected_value",
     [
-        ({"properties": {}}, {}, {}),
-        ({"properties": {}}, {"key_1": "value 1"}, {}),
-        ({"properties": {"key_1": {"type": "type 1"}}}, {}, {"key_1": None}),
+        ({"properties": {"key": {"type": "integer"}}}, {"key": 1}, {"key": 1}),
         (
-            {"properties": {"key_1": {"type": "type 1"}}},
-            {"key_1": "value 1"},
-            {"key_1": "value 1"},
-        ),
-        (
-            {"properties": {"key_1": {"type": "type 1"}, "key_2": {"type": "type 2"}}},
-            {"key_1": "value 1", "key_2": "value 2"},
-            {"key_1": "value 1", "key_2": "value 2"},
+            {"properties": {"key_1": {"type": "integer"}, "key_2": {"type": "string"}}},
+            {"key_1": 1, "key_2": "value 2"},
+            {"key_1": 1, "key_2": "value 2"},
         ),
     ],
-    ids=[
-        "empty",
-        "single not in schema",
-        "single property missing",
-        "single in schema",
-        "multiple",
-    ],
+    ids=["single", "multiple"],
 )
 @pytest.mark.utility_base
-def test_to_dict_simple_type(schema, init_args, expected_dict, __init__):
+def test_valid(__init__, schema, value, expected_value):
     """
-    GIVEN class that derives from UtilityBase with a given schema with properties that
-        are not objects and expected object
+    GIVEN class that derives from UtilityBase with a schema and the expected value
     WHEN to_dict is called
-    THEN the expected object is returned.
+    THEN the expected value is returned.
     """
     model = type(
         "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
     )
-    instance = model(**init_args)
+    instance = model(**value)
 
     returned_dict = instance.to_dict()
 
-    assert returned_dict == expected_dict
-
-
-@pytest.mark.utility_base
-def test_to_str(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a given schema with properties
-    WHEN to_str is called
-    THEN the JSON representation of the properties is returned.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {
-            "_schema": {"properties": {"key_1": {"type": "type 1"}}},
-            "__init__": __init__,
-        },
-    )
-    instance = model(key_1=1)
-
-    returned_str = instance.to_str()
-
-    assert returned_str == '{"key_1": 1}'
-
-
-@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
-@pytest.mark.utility_base
-def test_to_dict_object_none(init_kwargs, __init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property and
-        init args
-    WHEN model is initialized with init_args and to_dict is called
-    THEN None is returned for the property.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**init_kwargs)
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": None}
-
-
-@pytest.mark.utility_base
-def test_to_dict_object(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an object property
-        that has a mock model
-    WHEN to_dict is called
-    THEN the mock model to_dict return value is returned as the property value.
-    """
-    mock_model = mock.MagicMock()
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {"_schema": {"properties": {"key": {"type": "object"}}}, "__init__": __init__},
-    )
-    instance = model(**{"key": mock_model})
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": mock_model.to_dict.return_value}
+    assert returned_dict == expected_value
 
 
 @pytest.mark.utility_base
@@ -191,115 +93,6 @@ def test_to_dict_backrefs_object(__init__):
     assert returned_dict == {"key_1": 1}
 
 
-@pytest.mark.parametrize("init_kwargs", [{}, {"key": None}], ids=["undefined", "none"])
-@pytest.mark.utility_base
-def test_to_dict_array_none(init_kwargs, __init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an array property and
-        init args
-    WHEN model is initialized with init_args and to_dict is called
-    THEN an empty list is returned for the property.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {
-            "_schema": {
-                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
-            },
-            "__init__": __init__,
-        },
-    )
-    instance = model(**init_kwargs)
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": None}
-
-
-@pytest.mark.utility_base
-def test_to_dict_array_empty(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an array property
-        that is empty
-    WHEN to_dict is called
-    THEN an empty list is returned as the property value.
-    """
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {
-            "_schema": {
-                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
-            },
-            "__init__": __init__,
-        },
-    )
-    instance = model(**{"key": []})
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": []}
-
-
-@pytest.mark.utility_base
-def test_to_dict_array_single(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an array property
-        that has a single mock model
-    WHEN to_dict is called
-    THEN list with the mock model to_dict return value is returned as the property
-        value.
-    """
-    mock_model = mock.MagicMock()
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {
-            "_schema": {
-                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
-            },
-            "__init__": __init__,
-        },
-    )
-    instance = model(**{"key": [mock_model]})
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {"key": [mock_model.to_dict.return_value]}
-
-
-@pytest.mark.utility_base
-def test_to_dict_array_multiple(__init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema with an array property
-        that has multiple mock models
-    WHEN to_dict is called
-    THEN list with the mock models to_dict return value is returned as the property
-        value.
-    """
-    mock_models = [mock.MagicMock(), mock.MagicMock()]
-    model = type(
-        "model",
-        (utility_base.UtilityBase,),
-        {
-            "_schema": {
-                "properties": {"key": {"type": "array", "items": {"type": "object"}}}
-            },
-            "__init__": __init__,
-        },
-    )
-    instance = model(**{"key": mock_models})
-
-    returned_dict = instance.to_dict()
-
-    assert returned_dict == {
-        "key": list(
-            map(lambda mock_model: mock_model.to_dict.return_value, mock_models)
-        )
-    }
-
-
 @pytest.mark.utility_base
 def test_to_dict_inheritance_call(mocked_facades_models, __init__):
     """
@@ -307,27 +100,11 @@ def test_to_dict_inheritance_call(mocked_facades_models, __init__):
     WHEN to_dict is called
     THEN the dictionary based on the parent and child properties is returned.
     """
-    schema = {"properties": {"key": {"type": "type 1"}}, "x-inherits": "Parent"}
-    model = type(
-        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
-    )
-    instance = model(**{"key": "value", "parent_key": "parent value"})
-
-    instance.to_dict()
-
-    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
-    check_func = mocked_facades_models.get_model.return_value.instance_to_dict
-    check_func.assert_called_once_with(instance)
-
-
-@pytest.mark.utility_base
-def test_to_dict_inheritance_return(mocked_facades_models, __init__):
-    """
-    GIVEN class that derives from UtilityBase with a schema that inherits
-    WHEN to_dict is called
-    THEN the dictionary based on the parent and child properties is returned.
-    """
-    schema = {"properties": {"key": {"type": "type 1"}}, "x-inherits": "Parent"}
+    schema = {
+        "type": "object",
+        "properties": {"key": {"type": "string"}},
+        "x-inherits": "Parent",
+    }
     mocked_facades_models.get_model.return_value.instance_to_dict.return_value = {
         "parent_key": "parent value"
     }
@@ -339,232 +116,28 @@ def test_to_dict_inheritance_return(mocked_facades_models, __init__):
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": "value", "parent_key": "parent value"}
+    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
+    check_func = mocked_facades_models.get_model.return_value.instance_to_dict
+    check_func.assert_called_once_with(instance)
 
 
-class TestToDictProperty:
-    """Tests for to_dict_property."""
-
-    # pylint: disable=protected-access
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        "spec, value, error",
-        [
-            ({}, mock.MagicMock(), exceptions.TypeMissingError),
-            ({"type": "array"}, [mock.MagicMock()], exceptions.MalformedSchemaError),
-            (
-                {"type": "array", "items": {}},
-                [mock.MagicMock()],
-                exceptions.TypeMissingError,
-            ),
-            (
-                {"type": "array", "items": {"type": "array"}},
-                [mock.MagicMock()],
-                exceptions.MalformedSchemaError,
-            ),
-        ],
-        ids=["no type", "array no items", "array items no type", "array items array"],
+@pytest.mark.utility_base
+def test_to_str(__init__):
+    """
+    GIVEN class that derives from UtilityBase with a given schema with properties
+    WHEN to_str is called
+    THEN the JSON representation of the properties is returned.
+    """
+    model = type(
+        "model",
+        (utility_base.UtilityBase,),
+        {
+            "_schema": {"properties": {"key_1": {"type": "integer"}}},
+            "__init__": __init__,
+        },
     )
-    @pytest.mark.utility_base
-    def test_invalid_spec(spec, value, error):
-        """
-        GIVEN invalid property spec and expected error
-        WHEN to_dict_property is called with the spec
-        THEN the expected error is raised.
-        """
-        with pytest.raises(error):
-            utility_base.UtilityBase.to_dict_property(value, spec=spec, name="name 1")
+    instance = model(key_1=1)
 
-    @staticmethod
-    @pytest.mark.parametrize("value", [None, "value 1"], ids=["none", "value"])
-    @pytest.mark.utility_base
-    def test_simple_value(value):
-        """
-        GIVEN spec that isn't an object or array and value
-        WHEN to_dict_property is called with the spec and value
-        THEN value is returned.
-        """
-        spec = {"type": "string"}
+    returned_str = instance.to_str()
 
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == value
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        "format_, value, expected_value",
-        [
-            ("binary", b"some binary file", "some binary file"),
-            ("date", datetime.date(year=2000, month=1, day=1), "2000-01-01"),
-            (
-                "date-time",
-                datetime.datetime(
-                    year=2000, month=1, day=1, hour=1, minute=1, second=1
-                ),
-                "2000-01-01T01:01:01",
-            ),
-        ],
-        ids=["binary", "date", "date-time"],
-    )
-    @pytest.mark.utility_base
-    def test_string_format(format_, value, expected_value):
-        """
-        GIVEN spec with a string type and given format
-        WHEN to_dict_property is called with the spec and given value
-        THEN the given expected value is returned as a string.
-        """
-        spec = {"type": "string", "format": format_}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == expected_value
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_object_none():
-        """
-        GIVEN object spec and None value
-        WHEN to_dict_property is called with the spec and value
-        THEN None is returned.
-        """
-        value = None
-        spec = {"type": "object"}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == value
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_object_value():
-        """
-        GIVEN object spec and value
-        WHEN to_dict_property is called with the spec and value
-        THEN value to_dict return value is returned.
-        """
-        value = mock.MagicMock()
-        spec = {"type": "object"}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == value.to_dict.return_value
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_array_none():
-        """
-        GIVEN areray spec and None value
-        WHEN to_dict_property is called with the spec and value
-        THEN empty list is returned.
-        """
-        spec = {"type": "array", "items": {"type": "object"}}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            None, spec=spec, name="name 1"
-        )
-
-        assert returned_value is None
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_array_empty():
-        """
-        GIVEN object spec and empty list value
-        WHEN to_dict_property is called with the spec and value
-        THEN empty list.
-        """
-        spec = {"type": "array", "items": {"type": "object"}}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            [], spec=spec, name="name 1"
-        )
-
-        assert returned_value == []
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_array_single():
-        """
-        GIVEN object spec and single item list value
-        WHEN to_dict_property is called with the spec and value
-        THEN item to_dict value is returned in a list.
-        """
-        item_value = mock.MagicMock()
-        spec = {"type": "array", "items": {"type": "object"}}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            [item_value], spec=spec, name="name 1"
-        )
-
-        assert returned_value == [item_value.to_dict.return_value]
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_array_multiple():
-        """
-        GIVEN object spec and multiple item list values
-        WHEN to_dict_property is called with the spec and value
-        THEN item to_dict values are returned in a list.
-        """
-        item1_value = mock.MagicMock()
-        item2_value = mock.MagicMock()
-        spec = {"type": "array", "items": {"type": "object"}}
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            [item1_value, item2_value], spec=spec, name="name 1"
-        )
-
-        assert returned_value == [
-            item1_value.to_dict.return_value,
-            item2_value.to_dict.return_value,
-        ]
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_read_only():
-        """
-        GIVEN readOnly spec and mock value
-        WHEN to_dict_property is called with the spec and value
-        THEN spec property values are returned.
-        """
-        value = mock.MagicMock()
-        spec = {
-            "readOnly": True,
-            "type": "object",
-            "properties": {"key": {"type": "string"}},
-        }
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            value, spec=spec, name="name 1"
-        )
-
-        assert returned_value == {"key": value.key}
-
-    @staticmethod
-    @pytest.mark.utility_base
-    def test_read_only_array():
-        """
-        GIVEN readOnly array spec and mock value
-        WHEN to_dict_property is called with the spec and value
-        THEN spec property values are returned.
-        """
-        value = mock.MagicMock()
-        spec = {
-            "readOnly": True,
-            "type": "array",
-            "items": {"type": "object", "properties": {"key": {"type": "string"}}},
-        }
-
-        returned_value = utility_base.UtilityBase.to_dict_property(
-            [value], spec=spec, name="name 1"
-        )
-
-        assert returned_value == [{"key": value.key}]
+    assert returned_str == '{"key_1": 1}'

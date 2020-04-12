@@ -2,24 +2,28 @@
 
 import typing
 
+from ... import exceptions
+from ... import helpers
+from ... import types as oa_types
 from .. import types
 
 
-def convert(
-    *, format_: typing.Optional[str], value: typing.Any
-) -> types.TOptSimpleDict:
+def convert(value: typing.Any, *, schema: oa_types.Schema) -> types.TOptSimpleDict:
     """
     Convert values with basic types to dictionary values.
 
     Args:
-        format_: The format of the value.
         value: The value to convert.
+        schema: The schema for the value.
 
     Returns:
         The value converted to the expected dictionary value.
 
     """
-    # Handle other types
+    type_ = helpers.peek.type_(schema=schema, schemas={})
+    if type_ not in {"integer", "number", "string", "boolean"}:
+        raise exceptions.FeatureNotImplementedError(f"Type {type_} is not supported.")
+    format_ = helpers.peek.format_(schema=schema, schemas={})
     if format_ == "date":
         return value.isoformat()
     if format_ == "date-time":

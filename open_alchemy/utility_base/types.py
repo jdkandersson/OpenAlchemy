@@ -11,7 +11,7 @@ TOptObjectDict = typing.Optional[TObjectDict]
 TArrayDict = typing.List[TOptObjectDict]
 TOptArrayDict = typing.Optional[TArrayDict]
 TComplexDict = typing.Union[TOptObjectDict, TOptArrayDict]
-TAny = typing.Union[TComplexDict, TOptSimpleDict]
+TAnyDict = typing.Union[TComplexDict, TOptSimpleDict]
 
 
 class TModel(oa_types.Protocol):

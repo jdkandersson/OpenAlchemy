@@ -271,62 +271,6 @@ class UtilityBase:
         return cls.from_dict(**dict_value)
 
     @classmethod
-    def to_dict_property(
-        cls,
-        value: typing.Any,
-        *,
-        spec: oa_types.Schema,
-        name: str,
-        array_context: bool = False,
-        read_only: bool = False,
-    ) -> typing.Any:
-        """
-        Perform property level to dict operation.
-
-        Args:
-            value: The value of the property.
-            spec: The specification for the property.
-            name: The name of the property.
-            array_context: Whether array items are being worked on.
-            read_only: Whether a readOnly property is being worked on.
-
-        Returns:
-            property value.
-
-        """
-        if not read_only:
-            read_only = spec.get("readOnly", read_only)
-        try:
-            type_ = helpers.peek.type_(schema=spec, schemas={})
-        except exceptions.TypeMissingError:
-            schema_descriptor = "array item" if array_context else "property"
-            raise exceptions.TypeMissingError(
-                f"The {schema_descriptor} schema for the {name} property does not have "
-                f"a type. The {schema_descriptor} schema is {json.dumps(spec)}."
-            )
-        format_ = helpers.peek.format_(schema=spec, schemas={})
-
-        # Handle array
-        if type_ == "array":
-            if array_context:
-                raise exceptions.MalformedSchemaError(
-                    "The array item schema cannot have the array type."
-                )
-            return to_dict.array.convert(value=value, schema=spec)
-
-        if value is None:
-            return None
-
-        # Handle object
-        if type_ == "object":
-            return to_dict.object_.convert(
-                value=value, schema=spec, read_only=read_only
-            )
-
-        # Handle other types
-        return to_dict.simple.convert(format_=format_, value=value)
-
-    @classmethod
     def instance_to_dict(cls, instance: TUtilityBase) -> typing.Dict[str, typing.Any]:
         """Convert instance of the model to a dictionary."""
         properties = cls.get_properties()
@@ -335,9 +279,7 @@ class UtilityBase:
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, spec in properties.items():
             value = getattr(instance, name, None)
-            return_dict[name] = instance.to_dict_property(
-                spec=spec, name=name, value=value
-            )
+            return_dict[name] = to_dict.convert(schema=spec, value=value)
 
         return return_dict
 

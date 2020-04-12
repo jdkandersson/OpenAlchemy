@@ -1,27 +1,52 @@
 """Tests for converting simple types."""
 
 import datetime
+from unittest import mock
 
 import pytest
 
+from open_alchemy import exceptions
 from open_alchemy import utility_base
 
 
 @pytest.mark.parametrize(
-    "format_, value, expected_value",
+    "schema, exception",
     [
-        (None, 1, 1),
-        ("int32", 1, 1),
-        ("int64", 1, 1),
-        (None, 1.1, 1.1),
-        ("float", 1.1, 1.1),
-        (None, "value 1", "value 1"),
-        ("password", "value 1", "value 1"),
-        ("byte", "value 1", "value 1"),
-        ("binary", b"value 1", "value 1"),
-        ("date", datetime.date(2000, 1, 1), "2000-01-01"),
-        ("date", datetime.datetime(2000, 1, 1, 1, 1, 1), "2000-01-01T01:01:01"),
-        (None, True, True),
+        ({}, exceptions.TypeMissingError),
+        ({"type": "type 1"}, exceptions.FeatureNotImplementedError),
+    ],
+    ids=["no type", "unsupported type"],
+)
+@pytest.mark.utility_base
+def test_convert_invalid(schema, exception):
+    """
+    GIVEN invaid schema and expected exception
+    WHEN convert is called with the schema
+    THEN the expected exception is raised.
+    """
+    with pytest.raises(exception):
+        utility_base.to_dict.simple.convert(schema=schema, value=mock.MagicMock())
+
+
+@pytest.mark.parametrize(
+    "schema, value, expected_value",
+    [
+        ({"type": "integer"}, 1, 1),
+        ({"type": "integer", "format": "int32"}, 1, 1),
+        ({"type": "integer", "format": "int64"}, 1, 1),
+        ({"type": "number"}, 1.1, 1.1),
+        ({"type": "number", "format": "float"}, 1.1, 1.1),
+        ({"type": "string"}, "value 1", "value 1"),
+        ({"type": "string", "format": "password"}, "value 1", "value 1"),
+        ({"type": "string", "format": "byte"}, "value 1", "value 1"),
+        ({"type": "string", "format": "binary"}, b"value 1", "value 1"),
+        ({"type": "string", "format": "date"}, datetime.date(2000, 1, 1), "2000-01-01"),
+        (
+            {"type": "string", "format": "date-time"},
+            datetime.datetime(2000, 1, 1, 1, 1, 1),
+            "2000-01-01T01:01:01",
+        ),
+        ({"type": "boolean"}, True, True),
     ],
     ids=[
         "integer",
@@ -39,12 +64,12 @@ from open_alchemy import utility_base
     ],
 )
 @pytest.mark.utility_base
-def test_convert(format_, value, expected_value):
+def test_convert(schema, value, expected_value):
     """
-    GIVEN format, value and expected value
-    WHEN convert is called with the value and format
+    GIVEN schema, value and expected value
+    WHEN convert is called with the value and schema
     THEN the expected value is returned.
     """
-    returned_value = utility_base.to_dict.simple.convert(format_=format_, value=value)
+    returned_value = utility_base.to_dict.simple.convert(schema=schema, value=value)
 
     assert returned_value == expected_value

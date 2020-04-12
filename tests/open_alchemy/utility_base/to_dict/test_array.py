@@ -16,14 +16,14 @@ from open_alchemy import utility_base
         (
             {"items": {"type": "array"}},
             mock.MagicMock(),
-            exceptions.MalformedSchemaError,
+            exceptions.FeatureNotImplementedError,
         ),
         (
             {"items": {"type": "string"}},
             mock.MagicMock(),
-            exceptions.MalformedSchemaError,
+            exceptions.FeatureNotImplementedError,
         ),
-        ({"items": {"type": "object"}}, 1, exceptions.MalformedSchemaError),
+        ({"items": {"type": "object"}}, 1, exceptions.InvalidInstanceError),
     ],
     ids=[
         "no item spec",
