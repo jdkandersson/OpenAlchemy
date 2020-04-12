@@ -7,7 +7,7 @@ import typing
 from .. import exceptions
 from .. import facades
 from .. import helpers
-from .. import types
+from .. import types as oa_types
 from . import to_dict
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
@@ -21,14 +21,14 @@ class UtilityBase:
     # columns any $ref must be resolved an allOf must be merged for all. Objects must
     # be recorded as a free-form object and have a x-de-$ref extension property with
     # the de-referenced name of the schema.
-    _schema: typing.ClassVar[types.Schema]
+    _schema: typing.ClassVar[oa_types.Schema]
 
     def __init__(self, **kwargs: typing.Any) -> None:
         """Construct."""
         raise NotImplementedError
 
     @classmethod
-    def _get_schema(cls) -> types.Schema:
+    def _get_schema(cls) -> oa_types.Schema:
         """
         Get the schema.
 
@@ -47,7 +47,7 @@ class UtilityBase:
         return cls._schema
 
     @classmethod
-    def get_properties(cls) -> types.Schema:
+    def get_properties(cls) -> oa_types.Schema:
         """
         Get the properties from the schema.
 
@@ -69,7 +69,7 @@ class UtilityBase:
 
     @staticmethod
     def _get_model(
-        *, spec: types.Schema, name: str, schema: types.Schema
+        *, spec: oa_types.Schema, name: str, schema: oa_types.Schema
     ) -> typing.Type[TUtilityBase]:
         """Get the model based on the schema."""
         ref_model_name = helpers.ext_prop.get(source=spec, name="x-de-$ref")
@@ -90,7 +90,7 @@ class UtilityBase:
         return ref_model
 
     @staticmethod
-    def _get_parent(*, schema: types.Schema) -> typing.Type[TUtilityBase]:
+    def _get_parent(*, schema: oa_types.Schema) -> typing.Type[TUtilityBase]:
         """Get the parent model of a model."""
         parent_name = helpers.ext_prop.get(source=schema, name="x-inherits")
         if parent_name is None or not isinstance(parent_name, str):
@@ -290,7 +290,7 @@ class UtilityBase:
 
     @staticmethod
     def _object_to_dict_read_only(
-        *, value: typing.Any, spec: types.Schema, name: str
+        *, value: typing.Any, spec: oa_types.Schema, name: str
     ) -> typing.Dict[str, typing.Any]:
         """Convert relationship to dictionary based on spec."""
         properties = spec.get("properties")
@@ -309,7 +309,7 @@ class UtilityBase:
 
     @classmethod
     def _object_to_dict(
-        cls, value, name: str, spec: types.Schema, read_only: bool
+        cls, value, name: str, spec: oa_types.Schema, read_only: bool
     ) -> typing.Dict[str, typing.Any]:
         """Call to_dict on object."""
         if not read_only:
@@ -321,7 +321,7 @@ class UtilityBase:
         cls,
         value: typing.Any,
         *,
-        spec: types.Schema,
+        spec: oa_types.Schema,
         name: str,
         array_context: bool = False,
         read_only: bool = False,

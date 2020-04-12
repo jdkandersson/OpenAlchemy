@@ -2,8 +2,12 @@
 
 import typing
 
+from .. import types
 
-def convert(*, format_: typing.Optional[str], value: typing.Any) -> typing.Any:
+
+def convert(
+    *, format_: typing.Optional[str], value: typing.Any
+) -> types.TOptSimpleDict:
     """
     Convert values with basic types to dictionary values.
 

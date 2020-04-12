@@ -1,11 +1,10 @@
 """Dictionary conversion for object."""
 
-import typing
-
 from ... import exceptions
+from .. import types
 
 
-def _convert_relationship(*, value: typing.Any) -> typing.Dict[str, typing.Any]:
+def _convert_relationship(*, value: types.TModel) -> types.TOptObjectDict:
     """
     Convert object relationship property to a dictionary.
 
