@@ -1,6 +1,9 @@
 """Dictionary conversion for object."""
 
+import typing
+
 from ... import exceptions
+from ... import types as oa_types
 from .. import types
 
 
@@ -30,3 +33,31 @@ def _convert_relationship(*, value: types.TModel) -> types.TOptObjectDict:
             f"The object property instance to_dict implementation is "
             "expecting arguments."
         )
+
+
+def _convert_read_only(
+    *, schema: oa_types.Schema, value: typing.Any
+) -> types.TOptObjectDict:
+    """
+    Convert readOnly value to a dictionary.
+
+    Raise MalformedSchemaError if the schema does not have properties.
+    Raise MalformedSchemaError if the schema has empty properties.
+    """
+    properties = schema.get("properties")
+    if properties is None:
+        raise exceptions.MalformedSchemaError(
+            f"readOnly object definition must have properties."
+        )
+    if not isinstance(properties, dict):
+        raise exceptions.MalformedSchemaError(
+            f"readOnly object definition must have dictionary properties."
+        )
+    if not properties:
+        raise exceptions.MalformedSchemaError(
+            f"readOnly object definitions must have at least 1 property."
+        )
+    return_dict = {}
+    for key in properties.keys():
+        return_dict[key] = getattr(value, key, None)
+    return return_dict
