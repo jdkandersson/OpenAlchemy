@@ -69,28 +69,6 @@ class UtilityBase:
         return properties
 
     @staticmethod
-    def _get_model(
-        *, spec: oa_types.Schema, name: str, schema: oa_types.Schema
-    ) -> typing.Type[TUtilityBase]:
-        """Get the model based on the schema."""
-        ref_model_name = helpers.ext_prop.get(source=spec, name="x-de-$ref")
-        if ref_model_name is None:
-            raise exceptions.MalformedSchemaError(
-                "To construct object parameters the schema for the property must "
-                "include the x-de-$ref extension property with the name of the "
-                "model to construct for the property. "
-                f"The property is {name}. "
-                f"The model schema is {json.dumps(schema)}."
-            )
-        # Try to get model
-        ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
-        if ref_model is None:
-            raise exceptions.SchemaNotFoundError(
-                f"The {ref_model_name} model was not found on open_alchemy.models."
-            )
-        return ref_model
-
-    @staticmethod
     def _get_parent(*, schema: oa_types.Schema) -> typing.Type[TUtilityBase]:
         """Get the parent model of a model."""
         parent_name = helpers.ext_prop.get(source=schema, name="x-inherits")
@@ -107,13 +85,6 @@ class UtilityBase:
                 f"The {parent_name} model was not found on open_alchemy.models."
             )
         return parent
-
-    @staticmethod
-    def _model_from_dict(
-        kwargs: typing.Dict[str, typing.Any], *, model: typing.Type[TUtilityBase]
-    ) -> TUtilityBase:
-        """Construct model from dictionary."""
-        return model.from_dict(**kwargs)
 
     @classmethod
     def construct_from_dict_init(
@@ -164,11 +135,8 @@ class UtilityBase:
                 )
 
             # Handle object
-            ref_model: typing.Type[UtilityBase]
             if type_ == "object":
-                ref_model = cls._get_model(spec=spec, name=name, schema=schema)
-                ref_model_instance = cls._model_from_dict(value, model=ref_model)
-                model_dict[name] = ref_model_instance
+                model_dict[name] = from_dict.object_.convert(value, schema=spec)
                 continue
 
             if type_ == "array":
@@ -181,9 +149,8 @@ class UtilityBase:
                         f"The property is {name}. "
                         f"The model schema is {json.dumps(schema)}."
                     )
-                ref_model = cls._get_model(spec=item_spec, name=name, schema=schema)
                 model_from_dict = functools.partial(
-                    cls._model_from_dict, model=ref_model
+                    from_dict.object_.convert, schema=item_spec
                 )
                 ref_model_instances = map(model_from_dict, value)
                 model_dict[name] = list(ref_model_instances)

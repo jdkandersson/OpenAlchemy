@@ -463,7 +463,7 @@ def test_from_dict_array_multiple_from_dict(mocked_facades_models, __init__):
         **{"key": [{"obj_key_1": "obj value 1"}, {"obj_key_2": "obj value 2"}]}
     )
 
-    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
+    mocked_facades_models.get_model.assert_any_call(name="RefModel")
     assert mocked_facades_models.get_model.return_value.from_dict.call_count == 2
     mocked_facades_models.get_model.return_value.from_dict.assert_any_call(
         **{"obj_key_1": "obj value 1"}
