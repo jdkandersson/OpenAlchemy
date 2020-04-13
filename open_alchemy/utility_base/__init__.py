@@ -127,12 +127,10 @@ class UtilityBase:
                     value=value, schema=property_schema
                 )
             except exceptions.BaseError as exc:
-                exc.add_kwargs(
-                    schema=schema,
-                    property_schema=property_schema,
-                    property_name=name,
-                    property_value=value,
-                )
+                exc.schema = schema  # type: ignore
+                exc.property_schema = property_schema  # type: ignore
+                exc.property_name = name  # type: ignore
+                exc.property_value = value  # type: ignore
                 raise
 
         return model_dict
@@ -197,39 +195,46 @@ class UtilityBase:
         """
         if not isinstance(value, str):
             raise exceptions.MalformedModelDictionaryError(
-                f"The value is not of type string. The value is {value}."
+                "The value is not of type string.", value=value, value_type=type(value)
             )
         try:
             dict_value = json.loads(value)
         except json.JSONDecodeError:
             raise exceptions.MalformedModelDictionaryError(
-                f"The string value is not valid JSON. The value is {value}."
+                "The string value is not valid JSON.", value=value
             )
         if not isinstance(dict_value, dict):
             raise exceptions.MalformedModelDictionaryError(
-                f"The string value is not a Python dictionary. The value is {value}."
+                "The string value is not a Python dictionary.",
+                value=value,
+                value_type=type(value),
             )
         return cls.from_dict(**dict_value)
 
     @classmethod
     def instance_to_dict(cls, instance: TUtilityBase) -> typing.Dict[str, typing.Any]:
         """Convert instance of the model to a dictionary."""
+        schema = cls._get_schema()
         properties = cls.get_properties()
 
         # Collecting the values of the properties
         return_dict: typing.Dict[str, typing.Any] = {}
-        for name, spec in properties.items():
+        for name, property_schema in properties.items():
             value = getattr(instance, name, None)
-            return_dict[name] = to_dict.convert(schema=spec, value=value)
+            try:
+                return_dict[name] = to_dict.convert(schema=property_schema, value=value)
+            except exceptions.BaseError as exc:
+                exc.schema = schema  # type: ignore
+                exc.property_schema = property_schema  # type: ignore
+                exc.property_name = name  # type: ignore
+                exc.property_value = value  # type: ignore
+                raise
 
         return return_dict
 
     def to_dict(self) -> typing.Dict[str, typing.Any]:
         """
         Convert model instance to dictionary.
-
-        Raise TypeMissingError if a property does not have a type.
-        Raise InvalidModelInstanceError is an object to_dict call failed.
 
         Returns:
             The dictionary representation of the model.

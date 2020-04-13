@@ -94,6 +94,32 @@ def test_to_dict_backrefs_object(__init__):
 
 
 @pytest.mark.utility_base
+def test_to_dict_error(__init__):
+    """
+    GIVEN schema and value that raises an error
+    WHEN model is defined with the schema and constructed with to_dict
+    THEN raised error includes information about the model schema and property.
+    """
+    schema = {"properties": {"key_1": {"type": "object"}}}
+    dictionary = {"key_1": {}}
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+    instance = model(**{"key_1": 1})
+
+    try:
+        instance.to_dict()
+    except exceptions.BaseError as exc:
+        # pylint: disable=no-member
+        assert exc.schema == {"properties": {"key_1": {"type": "object"}}}
+        assert exc.property_schema == {"type": "object"}
+        assert exc.property_name == "key_1"
+        assert exc.property_value == 1
+    else:
+        raise AssertionError("Should have raised.")
+
+
+@pytest.mark.utility_base
 def test_to_dict_inheritance_call(mocked_facades_models, __init__):
     """
     GIVEN class that derives from UtilityBase with a schema that inherits

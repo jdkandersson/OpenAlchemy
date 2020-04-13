@@ -6,13 +6,9 @@ class BaseError(Exception):
 
     def __init__(self, message, **kwargs):
         """Construct."""
-        self.add_kwargs(**kwargs)
-        super().__init__(message)
-
-    def add_kwargs(self, **kwargs):
-        """Add kwargs to exception."""
         for key, value in kwargs.items():
             setattr(self, key, value)
+        super().__init__(message)
 
     def __str__(self):
         """Convert exception to string."""
