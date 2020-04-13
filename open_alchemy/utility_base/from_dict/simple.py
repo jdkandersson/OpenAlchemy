@@ -31,6 +31,7 @@ def convert(
         The value converted for a column.
 
     """
+    print(schema)
     type_ = helpers.peek.type_(schema=schema, schemas={})
     if value is None:
         return None

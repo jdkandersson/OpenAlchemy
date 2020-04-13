@@ -158,7 +158,6 @@ class UtilityBase:
 
             # Check type
             type_ = spec.get("type")
-            format_ = spec.get("format")
             if type_ is None:
                 raise exceptions.TypeMissingError(
                     f"The schema for the {name} property does not have a type."
@@ -191,9 +190,7 @@ class UtilityBase:
                 continue
 
             # Handle other types
-            model_dict[name] = helpers.oa_to_py_type.convert(
-                value=value, type_=type_, format_=format_
-            )
+            model_dict[name] = from_dict.simple.convert(value, schema=spec)
 
         return model_dict
 
