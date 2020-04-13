@@ -17,7 +17,7 @@ TOptUtilityBase = typing.Optional[TUtilityBase]
 class UtilityBase:
     """Base class providing utilities for SQLAlchemy models."""
 
-    # Record of the schema used to construct the model. Myst be an object type. For all
+    # Record of the schema used to construct the model. Must be an object type. For all
     # columns any $ref must be resolved an allOf must be merged for all. Objects must
     # be recorded as a free-form object and have a x-de-$ref extension property with
     # the de-referenced name of the schema.

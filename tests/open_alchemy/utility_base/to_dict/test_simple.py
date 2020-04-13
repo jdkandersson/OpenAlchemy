@@ -10,22 +10,51 @@ from open_alchemy import utility_base
 
 
 @pytest.mark.parametrize(
-    "schema, exception",
+    "schema, value, exception",
     [
-        ({}, exceptions.TypeMissingError),
-        ({"type": "type 1"}, exceptions.FeatureNotImplementedError),
+        ({}, mock.MagicMock(), exceptions.TypeMissingError),
+        ({"type": "type 1"}, mock.MagicMock(), exceptions.FeatureNotImplementedError),
+        ({"type": "integer"}, 1.1, exceptions.InvalidInstanceError),
+        ({"type": "number"}, 1, exceptions.InvalidInstanceError),
+        ({"type": "string"}, 1, exceptions.InvalidInstanceError),
+        (
+            {"type": "string", "format": "binary"},
+            "value",
+            exceptions.InvalidInstanceError,
+        ),
+        (
+            {"type": "string", "format": "date"},
+            "value",
+            exceptions.InvalidInstanceError,
+        ),
+        (
+            {"type": "string", "format": "date-time"},
+            "value",
+            exceptions.InvalidInstanceError,
+        ),
+        ({"type": "boolean"}, 1, exceptions.InvalidInstanceError),
     ],
-    ids=["no type", "unsupported type"],
+    ids=[
+        "no type",
+        "unsupported type",
+        "integer different type",
+        "number different type",
+        "string different type",
+        "string binary different type",
+        "string date different type",
+        "string date-time different type",
+        "boolean different type",
+    ],
 )
 @pytest.mark.utility_base
-def test_convert_invalid(schema, exception):
+def test_convert_invalid(schema, value, exception):
     """
     GIVEN invaid schema and expected exception
     WHEN convert is called with the schema
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.to_dict.simple.convert(schema=schema, value=mock.MagicMock())
+        utility_base.to_dict.simple.convert(schema=schema, value=value)
 
 
 @pytest.mark.parametrize(
@@ -39,8 +68,11 @@ def test_convert_invalid(schema, exception):
         ({"type": "string"}, "value 1", "value 1"),
         ({"type": "string", "format": "password"}, "value 1", "value 1"),
         ({"type": "string", "format": "byte"}, "value 1", "value 1"),
+        ({"type": "string", "format": "binary"}, None, None),
         ({"type": "string", "format": "binary"}, b"value 1", "value 1"),
+        ({"type": "string", "format": "date"}, None, None),
         ({"type": "string", "format": "date"}, datetime.date(2000, 1, 1), "2000-01-01"),
+        ({"type": "string", "format": "date-time"}, None, None),
         (
             {"type": "string", "format": "date-time"},
             datetime.datetime(2000, 1, 1, 1, 1, 1),
@@ -57,9 +89,12 @@ def test_convert_invalid(schema, exception):
         "string",
         "string  password",
         "string  byte",
-        "string  binary",
-        "string  date",
-        "string  date-time",
+        "string  binary None",
+        "string  binary not NOne",
+        "string  date None",
+        "string  date not None",
+        "string  date-time None",
+        "string  date-time not None",
         "boolean",
     ],
 )
