@@ -30,14 +30,22 @@ def test_convert_invalid(schema, exception):
         utility_base.from_dict.convert(schema=schema, value=mock.MagicMock())
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"type": "string"}),
+        ({"type": "string", "readOnly": False}),
+        ({"type": "string", "readOnly": None}),
+    ],
+    ids=["simple", "readOnly False", "readOnly None"],
+)
 @pytest.mark.utility_base
-def test_convert_simple():
+def test_convert_valid(schema):
     """
-    GIVEN schema for simple property and value
+    GIVEN valid schema for simple property and value
     WHEN convert is called with the schema and value
     THEN the converted value is returned.
     """
-    schema = {"type": "string"}
     value = "value 1"
 
     returned_value = utility_base.from_dict.convert(schema=schema, value=value)
