@@ -117,34 +117,8 @@ class UtilityBase:
                     f"The model schema is {json.dumps(schema)}."
                 )
 
-            # Check readOnly
-            read_only = spec.get("readOnly")
-            if read_only is True:
-                raise exceptions.MalformedModelDictionaryError(
-                    "A parameter was passed in that is marked as readOnly in the "
-                    "schema. "
-                    f"The parameter is {name}. "
-                    f"The model schema is {json.dumps(schema)}."
-                )
-
-            # Check type
-            type_ = spec.get("type")
-            if type_ is None:
-                raise exceptions.TypeMissingError(
-                    f"The schema for the {name} property does not have a type."
-                )
-
-            # Handle object
-            if type_ == "object":
-                model_dict[name] = from_dict.object_.convert(value, schema=spec)
-                continue
-
-            if type_ == "array":
-                model_dict[name] = from_dict.array.convert(value, schema=spec)
-                continue
-
-            # Handle other types
-            model_dict[name] = from_dict.simple.convert(value, schema=spec)
+            # Convert to column value
+            model_dict[name] = from_dict.convert(value=value, schema=spec)
 
         return model_dict
 

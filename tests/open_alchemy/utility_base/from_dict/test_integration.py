@@ -12,7 +12,10 @@ from open_alchemy import utility_base
     "schema, exception",
     [
         ({}, exceptions.TypeMissingError),
-        ({"type": "string", "readOnly": True}, exceptions.InvalidModelInstanceError),
+        (
+            {"type": "string", "readOnly": True},
+            exceptions.MalformedModelDictionaryError,
+        ),
     ],
     ids=["no type", "readOny"],
 )

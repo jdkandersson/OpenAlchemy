@@ -26,7 +26,7 @@ def convert(*, schema: oa_types.Schema, value: typing.Any) -> types.TAnyCol:
     type_ = helpers.peek.type_(schema=schema, schemas={})
     read_only = helpers.peek.read_only(schema=schema, schemas={})
     if read_only:
-        raise exceptions.InvalidModelInstanceError(
+        raise exceptions.MalformedModelDictionaryError(
             "readOnly properties cannot be passed to the from_dict constructor."
         )
     if type_ == "object":
