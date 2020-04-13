@@ -8,6 +8,7 @@ from .. import exceptions
 from .. import facades
 from .. import helpers
 from .. import types as oa_types
+from . import from_dict
 from . import to_dict
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
