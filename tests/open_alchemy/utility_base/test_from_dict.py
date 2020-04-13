@@ -91,6 +91,31 @@ def test_from_dict(schema, dictionary, __init__):
         assert getattr(instance, key) == value
 
 
+@pytest.mark.utility_base
+def test_from_dict_error(__init__):
+    """
+    GIVEN schema and value that raises an error
+    WHEN model is defined with the schema and constructed with from_dict
+    THEN raised error includes information about the model schema and property.
+    """
+    schema = {"properties": {"key_1": {"type": "object"}}}
+    dictionary = {"key_1": {}}
+    model = type(
+        "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
+    )
+
+    try:
+        model.from_dict(**dictionary)
+    except exceptions.BaseError as exc:
+        # pylint: disable=no-member
+        assert exc.schema == {"properties": {"key_1": {"type": "object"}}}
+        assert exc.property_schema == {"type": "object"}
+        assert exc.property_name == "key_1"
+        assert exc.property_value == {}
+    else:
+        raise AssertionError("Should have raised.")
+
+
 @pytest.mark.parametrize(
     "value",
     [1, "hi", '"hi"', '{"key_2": 2}'],

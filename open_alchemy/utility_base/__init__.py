@@ -64,7 +64,7 @@ class UtilityBase:
         properties = schema.get("properties")
         if properties is None:
             raise exceptions.MalformedSchemaError(
-                "The model schema does not have any properties."
+                "The model schema does not have any properties.", schema=schema
             )
         return properties
 
@@ -75,14 +75,18 @@ class UtilityBase:
         if parent_name is None or not isinstance(parent_name, str):
             raise exceptions.MalformedSchemaError(
                 "To construct a model that inherits x-inherits must be present and a "
-                "string. "
-                f"The model schema is {json.dumps(schema)}."
+                "string.",
+                schema=schema,
+                x_inherits=parent_name,
+                x_inherits_type=type(parent_name),
             )
         # Try to get model
         parent: TOptUtilityBase = facades.models.get_model(name=parent_name)
         if parent is None:
             raise exceptions.SchemaNotFoundError(
-                f"The {parent_name} model was not found on open_alchemy.models."
+                "The parent model was not found on open_alchemy.models.",
+                schema=schema,
+                parent_model_name=parent_name,
             )
         return parent
 
@@ -98,9 +102,9 @@ class UtilityBase:
         except facades.jsonschema.ValidationError:
             raise exceptions.MalformedModelDictionaryError(
                 "The dictionary passed to from_dict is not a valid instance of the "
-                "model schema. "
-                f"The expected schema is {json.dumps(schema)}. "
-                f"The given value is {json.dumps(kwargs)}."
+                "model schema.",
+                schema=schema,
+                kwargs=kwargs,
             )
 
         # Assemble dictionary for construction
@@ -108,17 +112,28 @@ class UtilityBase:
         model_dict: typing.Dict[str, typing.Any] = {}
         for name, value in kwargs.items():
             # Get the specification and type of the property
-            spec = properties.get(name)
-            if spec is None:
+            property_schema = properties.get(name)
+            if property_schema is None:
                 raise exceptions.MalformedModelDictionaryError(
                     "A parameter was passed in that is not a property in the model "
-                    "schema. "
-                    f"The parameter is {name}. "
-                    f"The model schema is {json.dumps(schema)}."
+                    "schema.",
+                    parameter_name=name,
+                    schema=schema,
                 )
 
             # Convert to column value
-            model_dict[name] = from_dict.convert(value=value, schema=spec)
+            try:
+                model_dict[name] = from_dict.convert(
+                    value=value, schema=property_schema
+                )
+            except exceptions.BaseError as exc:
+                exc.add_kwargs(
+                    schema=schema,
+                    property_schema=property_schema,
+                    property_name=name,
+                    property_value=value,
+                )
+                raise
 
         return model_dict
 
