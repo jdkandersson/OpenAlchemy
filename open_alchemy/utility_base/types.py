@@ -22,6 +22,8 @@ TObjectCol = typing.Any  # pylint: disable=invalid-name
 TOptObjectCol = typing.Optional[TObjectCol]
 TArrayCol = typing.Iterable[TOptObjectCol]
 TOptArrayCol = typing.Optional[TArrayCol]
+TComplexCol = typing.Union[TOptObjectCol, TOptArrayCol]
+TAnyCol = typing.Union[TComplexCol, TSimpleCol]
 
 
 class TModel(oa_types.Protocol):

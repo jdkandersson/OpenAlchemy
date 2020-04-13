@@ -140,20 +140,7 @@ class UtilityBase:
                 continue
 
             if type_ == "array":
-                item_spec = spec.get("items")
-                if item_spec is None:
-                    raise exceptions.MalformedSchemaError(
-                        "To construct array parameters the schema for the property "
-                        "must include the items property with the information about "
-                        "the array items. "
-                        f"The property is {name}. "
-                        f"The model schema is {json.dumps(schema)}."
-                    )
-                model_from_dict = functools.partial(
-                    from_dict.object_.convert, schema=item_spec
-                )
-                ref_model_instances = map(model_from_dict, value)
-                model_dict[name] = list(ref_model_instances)
+                model_dict[name] = from_dict.array.convert(value, schema=spec)
                 continue
 
             # Handle other types
