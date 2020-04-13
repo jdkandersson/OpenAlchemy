@@ -15,7 +15,7 @@ from open_alchemy import utility_base
     ids=["no de-$-ref", "value not dict"],
 )
 @pytest.mark.utility_base
-def test_invalid(schema, value, exception):
+def test_convert_invalid(schema, value, exception):
     """
     GIVEN invalid schema and value and expected exception
     WHEN convert is called with the schema and value
@@ -26,7 +26,7 @@ def test_invalid(schema, value, exception):
 
 
 @pytest.mark.utility_base
-def test_invalid_missing_model(mocked_facades_models):
+def test_convert_invalid_missing_model(mocked_facades_models):
     """
     GIVEN mocked models facade that returns None for the model
     WHEN convert is called
@@ -41,7 +41,7 @@ def test_invalid_missing_model(mocked_facades_models):
 
 
 @pytest.mark.utility_base
-def test_valid(mocked_facades_models):
+def test_convert_valid(mocked_facades_models):
     """
     GIVEN mocked models facade, schema and value
     WHEN convert is called

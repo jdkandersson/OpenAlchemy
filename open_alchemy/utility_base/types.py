@@ -18,6 +18,10 @@ TAnyDict = typing.Union[TComplexDict, TOptSimpleDict]
 TStringCol = typing.Union[str, bytes, datetime.date, datetime.datetime]
 TSimpleCol = typing.Union[int, float, TStringCol, bool]
 TOptSimpleCol = typing.Optional[TSimpleCol]
+TObjectCol = typing.Any  # pylint: disable=invalid-name
+TOptObjectCol = typing.Optional[TObjectCol]
+TArrayCol = typing.Iterable[TOptObjectCol]
+TOptArrayCol = typing.Optional[TArrayCol]
 
 
 class TModel(oa_types.Protocol):

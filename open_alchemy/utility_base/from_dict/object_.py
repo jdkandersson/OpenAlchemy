@@ -1,7 +1,5 @@
 """Convert object dictionary to column value."""
 
-import typing
-
 from ... import exceptions
 from ... import facades
 from ... import helpers
@@ -9,7 +7,9 @@ from ... import types as oa_types
 from .. import types
 
 
-def convert(value: types.TObjectDict, *, schema: oa_types.Schema) -> typing.Any:
+def convert(
+    value: types.TObjectDict, *, schema: oa_types.Schema
+) -> types.TOptObjectCol:
     """
     Convert dictionary value to model instance.
 
