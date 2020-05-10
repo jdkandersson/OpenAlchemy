@@ -150,7 +150,7 @@ def arg_init(*, artifacts: types.ArgArtifacts) -> str:
 
 
 def _check_not_read_only_arg(arg: types.ColumnArgArtifacts) -> bool:
-    """Check whether an argument is read only."""
+    """Check whether an argument is not read only."""
     return arg.read_only is not True
 
 

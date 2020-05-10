@@ -148,6 +148,31 @@ TEST_REMOVE_READ_ONLY_ARGS_DATA = [
                     name="column_1",
                     init_type="init_type_1",
                     from_dict_type="fd_type_1",
+                    read_only=False,
+                )
+            ],
+            not_required=[],
+        ),
+        _ArgArtifacts(
+            required=[
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="init_type_1",
+                    from_dict_type="fd_type_1",
+                    read_only=False,
+                )
+            ],
+            not_required=[],
+        ),
+        id="single required read only False",
+    ),
+    pytest.param(
+        _ArgArtifacts(
+            required=[
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="init_type_1",
+                    from_dict_type="fd_type_1",
                     read_only=True,
                 )
             ],
