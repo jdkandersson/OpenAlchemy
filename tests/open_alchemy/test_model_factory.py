@@ -107,7 +107,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"},
+        schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
         required=None,
@@ -137,7 +137,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"},
+        schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
         required=False,
@@ -167,7 +167,7 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
     )
 
     mocked_column_factory.assert_called_once_with(
-        spec={"type": "integer"},
+        schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
         required=True,

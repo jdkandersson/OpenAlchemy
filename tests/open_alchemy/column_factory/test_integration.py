@@ -25,7 +25,7 @@ def test_integration_simple(schema, expected_schema):
     """
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -47,7 +47,7 @@ def test_integration_kwargs():
     schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
     ([(_, column)], _) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -68,7 +68,7 @@ def test_integration_all_of():
     schema = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -91,7 +91,7 @@ def test_integration_ref():
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -124,7 +124,7 @@ def test_integration_object_ref():
         [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
         returned_schema,
     ) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
@@ -160,7 +160,7 @@ def test_integration_object_ref_read_only():
     logical_name = "ref_schema"
 
     ([], returned_schema) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
@@ -201,7 +201,7 @@ def test_integration_array_ref():
         [(tbl_logical_name, relationship)],
         returned_schema,
     ) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
@@ -265,7 +265,7 @@ def test_integration_array_ref_read_only():
     logical_name = "ref_schema"
 
     ([], returned_schema) = column_factory.column_factory(
-        spec=schema,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
