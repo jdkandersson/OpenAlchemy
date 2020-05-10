@@ -3,7 +3,7 @@ openapi: "3.0.0"
 
 info:
   title: Test Schema
-  description: API to illustrate the OpenAlchemy default feature.
+  description: API to illustrate the OpenAlchemy readOnly feature.
   version: "0.1"
 
 paths:
@@ -32,8 +32,9 @@ components:
           description: Unique identifier for the employee.
           example: 0
           x-primary-key: true
+          x-autoincrement: true
+          readOnly: true
         name:
           type: string
           description: The name of the employee.
           example: David Andersson
-          default: Unknown

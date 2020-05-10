@@ -91,6 +91,12 @@ def cleanup_models():
             {},
         ),
         ("default/example-spec.yml", "Employee", {"id": 1}, {"name": "Unknown"}),
+        (
+            "read_only/example-spec.yml",
+            "Employee",
+            {"name": "name 1"},
+            {"id": 1, "name": "name 1"},
+        ),
     ],
     ids=[
         "simple            Employee required only",
@@ -104,6 +110,7 @@ def cleanup_models():
         "ref-model         Employee",
         "unique-constraint Employee",
         "default           Employee",
+        "read_only         Employee",
     ],
 )
 @pytest.mark.example
