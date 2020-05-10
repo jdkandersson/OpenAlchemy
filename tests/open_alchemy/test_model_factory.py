@@ -1,6 +1,6 @@
 """Input validation tests."""
 # Disable protected access for testing.
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 import copy
 from unittest import mock

@@ -30,11 +30,11 @@ def _convert_relationship(*, value: types.TModel) -> types.TOptObjectDict:
         return value.to_dict()
     except AttributeError:
         raise exceptions.InvalidModelInstanceError(
-            f"The object property instance does not have a to_dict " "implementation."
+            "The object property instance does not have a to_dict implementation."
         )
     except TypeError:
         raise exceptions.InvalidModelInstanceError(
-            f"The object property instance to_dict implementation is "
+            "The object property instance to_dict implementation is "
             "expecting arguments."
         )
 
@@ -54,15 +54,15 @@ def _convert_read_only(
     properties = schema.get("properties")
     if properties is None:
         raise exceptions.MalformedSchemaError(
-            f"readOnly object definition must have properties."
+            "readOnly object definition must have properties."
         )
     if not isinstance(properties, dict):
         raise exceptions.MalformedSchemaError(
-            f"readOnly object definition must have dictionary properties."
+            "readOnly object definition must have dictionary properties."
         )
     if not properties:
         raise exceptions.MalformedSchemaError(
-            f"readOnly object definitions must have at least 1 property."
+            "readOnly object definitions must have at least 1 property."
         )
     return_dict = {}
     for key in properties.keys():
