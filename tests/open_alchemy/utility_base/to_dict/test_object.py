@@ -28,23 +28,25 @@ class TestConvertRelationship:
             utility_base.to_dict.object_._convert_relationship(value=value)
 
     @staticmethod
-    def to_dict_with_args(test):
-        """to_dict function that expects arguments."""
-        raise AssertionError(f"Should not have been called with {test}")
-
-    @classmethod
     @pytest.mark.utility_base
-    def test_expects_args(cls):
+    def test_expects_args():
         """
         GIVEN value that has a to_dict function that expects arguments
         WHEN _convert_relationship is called with the value
         THEN InvalidModelInstanceError is raised.
         """
-        value = mock.MagicMock()
-        value.to_dict = cls.to_dict_with_args
+        object_value_expects_args = mock.MagicMock()
+
+        def to_dict_with_args(test):
+            """to_dict function that expects arguments."""
+            raise AssertionError(f"Should not have been called with {test}")
+
+        object_value_expects_args.to_dict = to_dict_with_args
 
         with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.to_dict.object_._convert_relationship(value=value)
+            utility_base.to_dict.object_._convert_relationship(
+                value=object_value_expects_args
+            )
 
     @staticmethod
     @pytest.mark.utility_base
@@ -54,12 +56,17 @@ class TestConvertRelationship:
         WHEN _convert_relationship is called with the value
         THEN to_dict is called and it's return value is returned.
         """
-        value = mock.MagicMock()
+        object_value = mock.MagicMock()
 
-        returned_value = utility_base.to_dict.object_._convert_relationship(value=value)
+        returned_value = utility_base.to_dict.object_._convert_relationship(
+            value=object_value
+        )
 
-        value.to_dict.assert_called_once_with()
-        assert returned_value == value.to_dict.return_value
+        object_value.to_dict.assert_called_once_with()  # pylint: disable=no-member
+        expected_return_value = (
+            object_value.to_dict.return_value  # pylint: disable=no-member
+        )
+        assert returned_value == expected_return_value
 
     @staticmethod
     @pytest.mark.utility_base

@@ -16,8 +16,9 @@ from open_alchemy import utility_base
             {"type": "string", "readOnly": True},
             exceptions.MalformedModelDictionaryError,
         ),
+        ({"type": "unsupported"}, exceptions.FeatureNotImplementedError),
     ],
-    ids=["no type", "readOny"],
+    ids=["no type", "readOny", "unsupported"],
 )
 @pytest.mark.utility_base
 def test_convert_invalid(schema, exception):
