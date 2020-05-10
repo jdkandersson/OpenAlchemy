@@ -26,8 +26,10 @@ class ColumnSchemaArtifacts:
     generated: typing.Optional[bool] = None
     # The description of the column
     description: typing.Optional[str] = None
-    # The description of the column
+    # The default value of the column
     default: types.TColumnDefault = None
+    # Whether the column is read only
+    read_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass

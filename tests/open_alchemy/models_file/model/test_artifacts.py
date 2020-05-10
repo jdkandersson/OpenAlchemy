@@ -42,6 +42,11 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
             _ColumnSchemaArtifacts(type="string", default="value 1"),
         ),
         (
+            {"type": "string", "readOnly": True},
+            None,
+            _ColumnSchemaArtifacts(type="string", read_only=True),
+        ),
+        (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
@@ -64,6 +69,7 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
         "type with x-generated",
         "type with description",
         "type with default",
+        "type with readOnly",
         "object",
         "array",
         "required given",
