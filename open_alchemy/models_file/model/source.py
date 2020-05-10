@@ -149,6 +149,28 @@ def arg_init(*, artifacts: types.ArgArtifacts) -> str:
     return _arg(artifacts=artifacts, name="init_type")
 
 
+def _check_not_read_only_arg(arg: types.ColumnArgArtifacts) -> bool:
+    """Check whether an argument is read only."""
+    return arg.read_only is not True
+
+
+def remove_read_only_args(*, artifacts: types.ArgArtifacts) -> types.ArgArtifacts:
+    """
+    Remove read only arguments from the artifacts.
+
+    Args:
+        artifacts: The artifacts to filter.
+
+    Returns:
+        The filtered artifacts.
+
+    """
+    return types.ArgArtifacts(
+        required=list(filter(_check_not_read_only_arg, artifacts.required)),
+        not_required=list(filter(_check_not_read_only_arg, artifacts.not_required)),
+    )
+
+
 def arg_from_dict(*, artifacts: types.ArgArtifacts) -> str:
     """
     Generate the arguments for the signature of from_dict for a model.
@@ -160,7 +182,8 @@ def arg_from_dict(*, artifacts: types.ArgArtifacts) -> str:
         The argument signature for the from_dict functions.
 
     """
-    return _arg(artifacts=artifacts, name="from_dict_type")
+    no_read_only_artifacts = remove_read_only_args(artifacts=artifacts)
+    return _arg(artifacts=no_read_only_artifacts, name="from_dict_type")
 
 
 def generate(*, artifacts: types.ModelArtifacts) -> str:

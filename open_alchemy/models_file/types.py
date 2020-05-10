@@ -65,9 +65,9 @@ class ArgArtifacts:
     """Artifacts for the __init__ and from_dict args for a model."""
 
     # The artifacts for the arguments that are required
-    required: typing.List[ColumnArgArtifacts]
+    required: typing.Iterable[ColumnArgArtifacts]
     # The artifacts for the arguments that are not required
-    not_required: typing.List[ColumnArgArtifacts]
+    not_required: typing.Iterable[ColumnArgArtifacts]
 
 
 @dataclasses.dataclass
