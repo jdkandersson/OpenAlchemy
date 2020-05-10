@@ -109,6 +109,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             from_dict_type=arg_from_dict_type,
             name=property_name,
             default=_map_default(artifacts=column_artifacts),
+            read_only=column_artifacts.read_only,
         )
         if property_required:
             typed_dict_required_props.append(prop_artifacts)

@@ -56,6 +56,8 @@ class ColumnArgArtifacts:
     from_dict_type: str
     # The default value for the column
     default: types.TColumnDefault = None
+    # Whether the column is read only
+    read_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass
