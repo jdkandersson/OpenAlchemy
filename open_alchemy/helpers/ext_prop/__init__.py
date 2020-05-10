@@ -112,13 +112,13 @@ def get_kwargs(
     # Check for dictionary to make mypy happy, in reality always passes
     if not isinstance(value, dict):  # pragma: no cover
         raise exceptions.MalformedExtensionPropertyError(
-            f"The value of x-kwargs must be an object."
+            "The value of x-kwargs must be an object."
         )
 
     # Check keys are strings
     if any(not isinstance(key, str) for key in value.keys()):
         raise exceptions.MalformedExtensionPropertyError(
-            f"The keys of x-kwargs must be strings."
+            "The keys of x-kwargs must be strings."
         )
 
     # Check whether any reserved keys are in use

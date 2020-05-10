@@ -33,6 +33,7 @@ def gather_column_artifacts(
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
     default = helpers.peek.default(schema=schema, schemas={})
+    read_only = helpers.peek.read_only(schema=schema, schemas={})
     generated = helpers.ext_prop.get(source=schema, name="x-generated")
     de_ref = None
     if type_ == "object":
@@ -49,6 +50,7 @@ def gather_column_artifacts(
         generated=generated,
         description=description,
         default=default,
+        read_only=read_only,
     )
 
 
@@ -72,8 +74,8 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
     # Initialize lists
     columns: typing.List[types.ColumnArtifacts] = []
-    td_required_props: typing.List[types.ColumnArtifacts] = []
-    td_not_required_props: typing.List[types.ColumnArtifacts] = []
+    typed_dict_required_props: typing.List[types.ColumnArtifacts] = []
+    typed_dict_not_required_props: typing.List[types.ColumnArtifacts] = []
     required_args: typing.List[types.ColumnArgArtifacts] = []
     not_required_args: typing.List[types.ColumnArgArtifacts] = []
 
@@ -87,7 +89,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
 
         # Calculate the type
         column_type = _type.model(artifacts=column_artifacts)
-        td_prop_type = _type.typed_dict(artifacts=column_artifacts)
+        typed_dict_prop_type = _type.typed_dict(artifacts=column_artifacts)
         arg_init_type = _type.arg_init(artifacts=column_artifacts)
         arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
 
@@ -99,18 +101,21 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 description=column_artifacts.description,
             )
         )
-        prop_artifacts = types.ColumnArtifacts(type=td_prop_type, name=property_name)
+        prop_artifacts = types.ColumnArtifacts(
+            type=typed_dict_prop_type, name=property_name
+        )
         arg_artifacts = types.ColumnArgArtifacts(
             init_type=arg_init_type,
             from_dict_type=arg_from_dict_type,
             name=property_name,
             default=_map_default(artifacts=column_artifacts),
+            read_only=column_artifacts.read_only,
         )
         if property_required:
-            td_required_props.append(prop_artifacts)
+            typed_dict_required_props.append(prop_artifacts)
             required_args.append(arg_artifacts)
         else:
-            td_not_required_props.append(prop_artifacts)
+            typed_dict_not_required_props.append(prop_artifacts)
             not_required_args.append(arg_artifacts)
 
     # Calculate artifacts for back references
@@ -136,25 +141,25 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         parent_cls = "typing.Protocol"
 
     # Calculate whether property lists are empty, their names and parent class
-    td_required_empty = not td_required_props
-    td_not_required_empty = not td_not_required_props
-    td_required_name = None
-    td_not_required_name: typing.Optional[str] = f"{name}Dict"
-    td_required_parent_class = None
-    td_not_required_parent_class: typing.Optional[str]
+    typed_dict_required_empty = not typed_dict_required_props
+    typed_dict_not_required_empty = not typed_dict_not_required_props
+    typed_dict_required_name = None
+    typed_dict_not_required_name: typing.Optional[str] = f"{name}Dict"
+    typed_dict_required_parent_class = None
+    typed_dict_not_required_parent_class: typing.Optional[str]
     if sys.version_info[1] < 8:
-        td_not_required_parent_class = "typing_extensions.TypedDict"
+        typed_dict_not_required_parent_class = "typing_extensions.TypedDict"
     else:  # version compatibility
-        td_not_required_parent_class = "typing.TypedDict"
-    if not td_required_empty and not td_not_required_empty:
-        td_required_parent_class = td_not_required_parent_class
-        td_required_name = f"_{name}DictBase"
-        td_not_required_parent_class = td_required_name
-    if not td_required_empty and td_not_required_empty:
-        td_required_name = td_not_required_name
-        td_not_required_name = None
-        td_required_parent_class = td_not_required_parent_class
-        td_not_required_parent_class = None
+        typed_dict_not_required_parent_class = "typing.TypedDict"
+    if not typed_dict_required_empty and not typed_dict_not_required_empty:
+        typed_dict_required_parent_class = typed_dict_not_required_parent_class
+        typed_dict_required_name = f"_{name}DictBase"
+        typed_dict_not_required_parent_class = typed_dict_required_name
+    if not typed_dict_required_empty and typed_dict_not_required_empty:
+        typed_dict_required_name = typed_dict_not_required_name
+        typed_dict_not_required_name = None
+        typed_dict_required_parent_class = typed_dict_not_required_parent_class
+        typed_dict_not_required_parent_class = None
 
     return types.ModelArtifacts(
         sqlalchemy=types.SQLAlchemyModelArtifacts(
@@ -169,16 +174,16 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         ),
         typed_dict=types.TypedDictArtifacts(
             required=types.TypedDictClassArtifacts(
-                props=td_required_props,
-                empty=td_required_empty,
-                name=td_required_name,
-                parent_class=td_required_parent_class,
+                props=typed_dict_required_props,
+                empty=typed_dict_required_empty,
+                name=typed_dict_required_name,
+                parent_class=typed_dict_required_parent_class,
             ),
             not_required=types.TypedDictClassArtifacts(
-                props=td_not_required_props,
-                empty=td_not_required_empty,
-                name=td_not_required_name,
-                parent_class=td_not_required_parent_class,
+                props=typed_dict_not_required_props,
+                empty=typed_dict_not_required_empty,
+                name=typed_dict_not_required_name,
+                parent_class=typed_dict_not_required_parent_class,
             ),
         ),
     )

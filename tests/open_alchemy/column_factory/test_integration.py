@@ -7,18 +7,25 @@ from open_alchemy import column_factory
 from open_alchemy import facades
 
 
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        ({"type": "boolean"}, {"type": "boolean"}),
+        ({"type": "boolean", "readOnly": True}, {"type": "boolean", "readOnly": True}),
+    ],
+    ids=["any basic type", "any basic type with readOnly"],
+)
 @pytest.mark.column
-def test_integration():
+def test_integration_simple(schema, expected_schema):
     """
     GIVEN schema
     WHEN column_factory is called with the schema
     THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
-        spec.
+        schema.
     """
-    spec = {"type": "boolean"}
     schemas = {}
-    ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec,
+    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -27,7 +34,7 @@ def test_integration():
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
-    assert spec == {"type": "boolean"}
+    assert returned_schema == expected_schema
 
 
 @pytest.mark.column
@@ -37,10 +44,10 @@ def test_integration_kwargs():
     WHEN column_factory is called with the schema
     THEN SQLAlchemy column is constructed with the kwargs.
     """
-    spec = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
+    schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
     ([(_, column)], _) = column_factory.column_factory(
-        spec=spec,
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -56,12 +63,12 @@ def test_integration_all_of():
     GIVEN schema with allOf statement
     WHEN column_factory is called with the schema
     THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
-        spec.
+        schema.
     """
-    spec = {"allOf": [{"type": "boolean"}]}
+    schema = {"allOf": [{"type": "boolean"}]}
     schemas = {}
-    ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec,
+    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -70,7 +77,7 @@ def test_integration_all_of():
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
-    assert spec == {"type": "boolean"}
+    assert returned_schema == {"type": "boolean"}
 
 
 @pytest.mark.column
@@ -79,12 +86,12 @@ def test_integration_ref():
     GIVEN schema that references another schema and schemas
     WHEN column_factory is called with the schema and schemas
     THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
-        the spec.
+        the schema.
     """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
-    ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec,
+    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+        schema=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -93,7 +100,7 @@ def test_integration_ref():
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
-    assert spec == {"type": "boolean"}
+    assert returned_schema == {"type": "boolean"}
 
 
 @pytest.mark.column
@@ -103,7 +110,7 @@ def test_integration_object_ref():
     WHEN column_factory is called with the schema and schemas
     THEN foreign key reference and relationship is returned with the spec.
     """
-    spec = {"$ref": "#/components/schemas/RefSchema"}
+    schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
         "RefSchema": {
             "type": "object",
@@ -115,9 +122,9 @@ def test_integration_object_ref():
 
     (
         [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        spec,
+        returned_schema,
     ) = column_factory.column_factory(
-        spec=spec,
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
@@ -131,7 +138,40 @@ def test_integration_object_ref():
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert relationship.uselist is None
-    assert spec == {"type": "object", "x-de-$ref": "RefSchema"}
+    assert returned_schema == {"type": "object", "x-de-$ref": "RefSchema"}
+
+
+@pytest.mark.column
+def test_integration_object_ref_read_only():
+    """
+    GIVEN schema that references another object schema and is readOnly and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN no columns and the schema is returned.
+    """
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
+            "readOnly": True,
+        }
+    }
+    logical_name = "ref_schema"
+
+    ([], returned_schema) = column_factory.column_factory(
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema={"properties": {}},
+        model_name="schema",
+    )
+
+    assert returned_schema == {
+        "type": "object",
+        "properties": {"id": {"type": "integer"}},
+        "readOnly": True,
+    }
 
 
 @pytest.mark.column
@@ -140,9 +180,9 @@ def test_integration_array_ref():
     GIVEN schema that references another object schema from an array and schemas
     WHEN column_factory is called with the schema and schemas
     THEN foreign key reference  is added to the referenced schema and relationship is
-        returned with the spec.
+        returned with the schema.
     """
-    spec = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
+    schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
         "RefSchema": {
             "type": "object",
@@ -157,8 +197,11 @@ def test_integration_array_ref():
     }
     logical_name = "ref_schema"
 
-    ([(tbl_logical_name, relationship)], spec) = column_factory.column_factory(
-        spec=spec,
+    (
+        [(tbl_logical_name, relationship)],
+        returned_schema,
+    ) = column_factory.column_factory(
+        schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
@@ -167,7 +210,7 @@ def test_integration_array_ref():
 
     assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
-    assert spec == {
+    assert returned_schema == {
         "type": "array",
         "items": {"type": "object", "x-de-$ref": "RefSchema"},
     }
@@ -191,4 +234,46 @@ def test_integration_array_ref():
                 },
             ]
         }
+    }
+
+
+@pytest.mark.column
+def test_integration_array_ref_read_only():
+    """
+    GIVEN schema that references another object schema from an array that is read only
+        and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN no columns and the schema is returned.
+    """
+    schema = {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/RefSchema"},
+        "readOnly": True,
+    }
+    schemas = {
+        "RefSchema": {
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
+    model_schema = {
+        "type": "object",
+        "x-tablename": "schema",
+        "properties": {"id": {"type": "integer"}},
+    }
+    logical_name = "ref_schema"
+
+    ([], returned_schema) = column_factory.column_factory(
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
+        model_schema=model_schema,
+        model_name="model",
+    )
+
+    assert returned_schema == {
+        "type": "array",
+        "items": {"type": "object", "properties": {"id": {"type": "integer"}}},
+        "readOnly": True,
     }

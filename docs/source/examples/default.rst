@@ -1,8 +1,8 @@
 Default
 =======
 
-The OpenAPI *default* directive is interpreted by OpenAlchemy as a default
-value for the column linked to the property.
+The OpenAPI :samp:`default` directive is interpreted by OpenAlchemy as a
+default value for the column linked to the property.
 
 .. seealso::
 
@@ -12,8 +12,8 @@ value for the column linked to the property.
     `SQLAlchemy Scalar Default <https://docs.sqlalchemy.org/en/13/core/defaults.html#scalar-defaults>`_
       Documentation for the SQLAlchemy scalar default.
 
-The following example defines a default value for the *name* property of
-*Employee*:
+The following example defines a default value for the :samp:`name` property of
+:samp:`Employee`:
 
 .. literalinclude:: ../../../examples/default/example-spec.yml
     :language: yaml

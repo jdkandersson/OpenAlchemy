@@ -156,6 +156,12 @@ def test_check_schema_invalid(schema, expected_exception):
             {"type": "type 1", "default": "value 1"},
         ),
         (
+            ColArt(open_api=OAColArt(type="type 1", read_only=True)),
+            None,
+            None,
+            {"type": "type 1", "readOnly": True},
+        ),
+        (
             ColArt(
                 open_api=OAColArt(type="type 1"),
                 extension=ExtColArt(autoincrement=True),
@@ -184,6 +190,7 @@ def test_check_schema_invalid(schema, expected_exception):
         "type with description",
         "type with nullable",
         "type with default",
+        "type with readOnly",
         "type with autoincrement",
         "nullable input not None",
         "dict_ignore input not None",
@@ -318,6 +325,10 @@ def test_calculate_column_schema_dict_ignore_invalid():
                 ),
             ),
         ),
+        (
+            {"type": "type 1", "readOnly": True},
+            ColArt(open_api=OAColArt(type="type 1", read_only=True)),
+        ),
     ],
     ids=[
         "type only",
@@ -333,6 +344,7 @@ def test_calculate_column_schema_dict_ignore_invalid():
         "default",
         "kwargs",
         "foreign key kwargs",
+        "readOnly",
     ],
 )
 @pytest.mark.column

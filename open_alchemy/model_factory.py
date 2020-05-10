@@ -50,7 +50,7 @@ def model_factory(
         model_schema["description"] = description
     for prop_name, prop_spec in schema.get("properties", []).items():
         prop_class_vars, prop_final_spec = column_factory.column_factory(
-            spec=prop_spec,
+            schema=prop_spec,
             schemas=schemas,
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,

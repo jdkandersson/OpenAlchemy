@@ -26,8 +26,10 @@ class ColumnSchemaArtifacts:
     generated: typing.Optional[bool] = None
     # The description of the column
     description: typing.Optional[str] = None
-    # The description of the column
+    # The default value of the column
     default: types.TColumnDefault = None
+    # Whether the column is read only
+    read_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass
@@ -54,6 +56,8 @@ class ColumnArgArtifacts:
     from_dict_type: str
     # The default value for the column
     default: types.TColumnDefault = None
+    # Whether the column is read only
+    read_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass
@@ -61,9 +65,9 @@ class ArgArtifacts:
     """Artifacts for the __init__ and from_dict args for a model."""
 
     # The artifacts for the arguments that are required
-    required: typing.List[ColumnArgArtifacts]
+    required: typing.Iterable[ColumnArgArtifacts]
     # The artifacts for the arguments that are not required
-    not_required: typing.List[ColumnArgArtifacts]
+    not_required: typing.Iterable[ColumnArgArtifacts]
 
 
 @dataclasses.dataclass

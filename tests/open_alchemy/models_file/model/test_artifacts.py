@@ -42,6 +42,11 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
             _ColumnSchemaArtifacts(type="string", default="value 1"),
         ),
         (
+            {"type": "string", "readOnly": True},
+            None,
+            _ColumnSchemaArtifacts(type="string", read_only=True),
+        ),
+        (
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
@@ -64,6 +69,7 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
         "type with x-generated",
         "type with description",
         "type with default",
+        "type with readOnly",
         "object",
         "array",
         "required given",
@@ -585,6 +591,20 @@ def test_calculate_td_parent(
         ),
         (
             {
+                "properties": {"column_1": {"type": "integer", "readOnly": True}},
+                "required": ["column_1"],
+            },
+            [
+                _ColumnArgArtifacts(
+                    name="column_1",
+                    init_type="int",
+                    from_dict_type="int",
+                    read_only=True,
+                )
+            ],
+        ),
+        (
+            {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": ["column_1"],
             },
@@ -619,6 +639,7 @@ def test_calculate_td_parent(
         "single required not given",
         "single not required",
         "single required",
+        "single readOnly",
         "single required object",
         "multiple required",
     ],
