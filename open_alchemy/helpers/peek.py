@@ -104,7 +104,7 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
     return value
 
 
-def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
+def read_only(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
     """
     Determine whether schema is readOnly.
 
@@ -120,7 +120,7 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     """
     value = peek_key(schema=schema, schemas=schemas, key="readOnly")
     if value is None:
-        return False
+        return None
     if not isinstance(value, bool):
         raise exceptions.MalformedSchemaError(
             "A readOnly property must be of type boolean."

@@ -49,12 +49,18 @@ def column_factory(
         specification to store for the column.
 
     """
+    # Check type
+    type_ = helpers.peek.type_(schema=spec, schemas=schemas)
+
+    if type_ not in {"object", "array"}:
+        spec_schema, spec_column = column.handle_column(
+            schema=spec, schemas=schemas, required=required
+        )
+        return ([(logical_name, spec_column)], spec_schema)
+
     # Check readOnly
     if helpers.peek.read_only(schema=spec, schemas=schemas):
         return read_only.handle_read_only(schema=spec, schemas=schemas)
-
-    # Check type
-    type_ = helpers.peek.type_(schema=spec, schemas=schemas)
 
     if type_ == "object":
         # Handle objects
@@ -67,18 +73,11 @@ def column_factory(
             model_schema=model_schema,
         )
 
-    if type_ == "array":
-        # Handle arrays
-        return array_ref.handle_array(
-            schema=spec,
-            model_name=model_name,
-            model_schema=model_schema,
-            schemas=schemas,
-            logical_name=logical_name,
-        )
-
-    # Handle columns
-    spec_schema, spec_column = column.handle_column(
-        schema=spec, schemas=schemas, required=required
+    # Handle arrays
+    return array_ref.handle_array(
+        schema=spec,
+        model_name=model_name,
+        model_schema=model_schema,
+        schemas=schemas,
+        logical_name=logical_name,
     )
-    return ([(logical_name, spec_column)], spec_schema)

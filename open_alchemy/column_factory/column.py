@@ -62,6 +62,7 @@ def check_schema(
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     description = helpers.peek.description(schema=schema, schemas={})
     default = helpers.peek.default(schema=schema, schemas={})
+    read_only = helpers.peek.read_only(schema=schema, schemas={})
     primary_key = helpers.ext_prop.get(source=schema, name="x-primary-key")
     autoincrement = helpers.ext_prop.get(source=schema, name="x-autoincrement")
     index = helpers.ext_prop.get(source=schema, name="x-index")
@@ -101,6 +102,7 @@ def check_schema(
             nullable=nullable_artefact,
             description=description,
             default=default,
+            read_only=read_only,
         ),
         extension=types.ExtensionColumnArtifacts(
             primary_key=primary_key,
@@ -141,6 +143,8 @@ def calculate_schema(
         schema["description"] = artifacts.open_api.description
     if artifacts.open_api.default is not None:
         schema["default"] = artifacts.open_api.default
+    if artifacts.open_api.read_only is not None:
+        schema["readOnly"] = artifacts.open_api.read_only
     if artifacts.extension.autoincrement is not None:
         schema["x-generated"] = artifacts.extension.autoincrement
     if dict_ignore is not None:

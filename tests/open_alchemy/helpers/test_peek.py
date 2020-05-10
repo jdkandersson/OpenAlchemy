@@ -142,7 +142,7 @@ def test_read_only_wrong_type():
 
 @pytest.mark.parametrize(
     "schema, expected_read_only",
-    [({}, False), ({"readOnly": False}, False), ({"readOnly": True}, True)],
+    [({}, None), ({"readOnly": False}, False), ({"readOnly": True}, True)],
     ids=["missing", "false", "true"],
 )
 @pytest.mark.helper

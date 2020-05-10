@@ -7,18 +7,25 @@ from open_alchemy import column_factory
 from open_alchemy import facades
 
 
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        ({"type": "boolean"}, {"type": "boolean"}),
+        ({"type": "boolean", "readOnly": True}, {"type": "boolean", "readOnly": True}),
+    ],
+    ids=["any basic type", "any basic type with readOnly"],
+)
 @pytest.mark.column
-def test_integration():
+def test_integration_simple(schema, expected_schema):
     """
     GIVEN schema
     WHEN column_factory is called with the schema
     THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
-        spec.
+        schema.
     """
-    spec = {"type": "boolean"}
     schemas = {}
-    ([(logical_name, column)], spec) = column_factory.column_factory(
-        spec=spec,
+    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+        spec=schema,
         schemas=schemas,
         logical_name="column_1",
         model_schema={},
@@ -27,7 +34,7 @@ def test_integration():
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
-    assert spec == {"type": "boolean"}
+    assert returned_schema == expected_schema
 
 
 @pytest.mark.column

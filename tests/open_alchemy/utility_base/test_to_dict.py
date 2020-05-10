@@ -101,11 +101,11 @@ def test_to_dict_error(__init__):
     THEN raised error includes information about the model schema and property.
     """
     schema = {"properties": {"key_1": {"type": "object"}}}
-    dictionary = {"key_1": {}}
+    dictionary = {"key_1": 1}
     model = type(
         "model", (utility_base.UtilityBase,), {"_schema": schema, "__init__": __init__}
     )
-    instance = model(**{"key_1": 1})
+    instance = model(**dictionary)
 
     try:
         instance.to_dict()
