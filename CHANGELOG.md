@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Add support for `readOnly`.
+- Fix bug where TypedDIct types for `binary`, `date` and `date-time` string formats mapped to the incorrect python types.
 
 ## Version 1.1.0 - 2020-04-05
 

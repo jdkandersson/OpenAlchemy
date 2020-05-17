@@ -72,6 +72,12 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
         model_type = model_type.replace(
             f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict"
         )
+    if artifacts.format == "binary":
+        model_type = model_type.replace("bytes", "str")
+    if artifacts.format == "date":
+        model_type = model_type.replace("datetime.date", "str")
+    if artifacts.format == "date-time":
+        model_type = model_type.replace("datetime.datetime", "str")
 
     return model_type
 
