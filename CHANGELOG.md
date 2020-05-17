@@ -4,6 +4,7 @@
 
 - Add support for `readOnly`.
 - Fix bug where TypedDIct types for `binary`, `date` and `date-time` string formats mapped to the incorrect python types.
+- Fix bug where `to_dict` and `to_str` returned `null` for values that are not required and not nullable.
 
 ## Version 1.1.0 - 2020-04-05
 
