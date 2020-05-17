@@ -221,6 +221,15 @@ class UtilityBase:
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, property_schema in properties.items():
             value = getattr(instance, name, None)
+
+            # Handle none value
+            if value is None:
+                return_none = to_dict.return_none(schema=schema, property_name=name)
+                if return_none is True:
+                    return_dict[name] = None
+                # Don't consider for coverage due to coverage bug
+                continue  # pragma: no cover
+
             try:
                 return_dict[name] = to_dict.convert(schema=property_schema, value=value)
             except exceptions.BaseError as exc:
