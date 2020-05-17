@@ -48,6 +48,18 @@ def test_to_dict_no_properties(__init__):
             id="single",
         ),
         pytest.param(
+            {"properties": {"key": {"type": "integer"}}},
+            {"key": None},
+            {},
+            id="single null value not return",
+        ),
+        pytest.param(
+            {"properties": {"key": {"type": "integer", "nullable": True}}},
+            {"key": None},
+            {"key": None},
+            id="single null value return",
+        ),
+        pytest.param(
             {"properties": {"key_1": {"type": "integer"}, "key_2": {"type": "string"}}},
             {"key_1": 1, "key_2": "value 2"},
             {"key_1": 1, "key_2": "value 2"},
