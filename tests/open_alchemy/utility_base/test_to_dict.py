@@ -41,14 +41,19 @@ def test_to_dict_no_properties(__init__):
 @pytest.mark.parametrize(
     "schema, value, expected_value",
     [
-        ({"properties": {"key": {"type": "integer"}}}, {"key": 1}, {"key": 1}),
-        (
+        pytest.param(
+            {"properties": {"key": {"type": "integer"}}},
+            {"key": 1},
+            {"key": 1},
+            id="single",
+        ),
+        pytest.param(
             {"properties": {"key_1": {"type": "integer"}, "key_2": {"type": "string"}}},
             {"key_1": 1, "key_2": "value 2"},
             {"key_1": 1, "key_2": "value 2"},
+            id="multiple",
         ),
     ],
-    ids=["single", "multiple"],
 )
 @pytest.mark.utility_base
 def test_valid(__init__, schema, value, expected_value):
