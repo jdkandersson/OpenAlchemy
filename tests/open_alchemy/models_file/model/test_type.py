@@ -106,23 +106,25 @@ def test_model(
 
 
 @pytest.mark.parametrize(
-    "type_, expected_type",
+    "type_, format_, expected_type",
     [
-        ("integer", "int"),
-        ("object", '"RefModelDict"'),
-        ("array", 'typing.Sequence["RefModelDict"]'),
+        pytest.param("integer", None, "typing.Optional[int]", id="plain"),
+        pytest.param("string", "binary", "typing.Optional[str]", id="binary"),
+        pytest.param("string", "date", "typing.Optional[str]", id="date"),
+        pytest.param("string", "date-time", "typing.Optional[str]", id="date-time"),
+        pytest.param("object", None, 'typing.Optional["RefModelDict"]', id="object"),
+        pytest.param("array", None, 'typing.Sequence["RefModelDict"]', id="array"),
     ],
-    ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
-def test_dict(type_, expected_type):
+def test_dict(type_, format_, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
     WHEN typed_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
     artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_, nullable=False, de_ref="RefModel"
+        type=type_, format=format_, nullable=True, de_ref="RefModel"
     )
 
     returned_type = models_file._model._type.typed_dict(artifacts=artifacts)
