@@ -6,39 +6,34 @@ import typing
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
-from open_alchemy import types
+from open_alchemy import types as oa_types
 
 from . import array_ref
 from . import column
 from . import object_ref
 from . import read_only
+from . import types
 
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
-_TReturnValue = typing.List[
-    typing.Tuple[
-        str,
-        typing.Union[facades.sqlalchemy.column.Column, facades.sqlalchemy.Relationship],
-    ]
-]
-_ReturnSchema = typing.Union[
-    types.ColumnSchema,
-    types.ObjectRefSchema,
-    types.ArrayRefSchema,
-    types.ReadOnlySchema,
+_TReturnSchema = typing.Union[
+    oa_types.ColumnSchema,
+    oa_types.ObjectRefSchema,
+    oa_types.ArrayRefSchema,
+    oa_types.ReadOnlySchema,
 ]
 
 
 def column_factory(
     *,
-    schema: types.Schema,
-    schemas: types.Schemas,
+    schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
     model_name: str,
-    model_schema: types.Schema,
-) -> typing.Tuple[_TReturnValue, _ReturnSchema]:
+    model_schema: oa_types.Schema,
+) -> typing.Tuple[types.TReturnValue, _TReturnSchema]:
     """
     Generate column based on OpenAPI schema property.
 
