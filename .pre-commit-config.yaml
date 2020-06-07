@@ -33,7 +33,6 @@ repos:
   - id: mypy
     name: mypy
     entry: python3 -m mypy --ignore-missing-imports open_alchemy
-    args: []
     language: system
     types: [python]
     exclude: '^example|conf.py$'
