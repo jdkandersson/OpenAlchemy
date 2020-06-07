@@ -6,11 +6,12 @@ import typing
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
-from open_alchemy import types
+from open_alchemy import types as oa_types
 
 from ...utility_base import TOptUtilityBase
 from .. import column
 from .. import object_ref
+from .. import types
 from . import artifacts as _artifacts
 from . import association_table as _association_table
 from . import foreign_key as _foreign_key
@@ -20,12 +21,12 @@ from . import schema as _schema
 
 def handle_array(
     *,
-    schema: types.Schema,
+    schema: oa_types.Schema,
     model_name: str,
-    model_schema: types.Schema,
-    schemas: types.Schemas,
+    model_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
     logical_name: str,
-) -> typing.Tuple[typing.List[typing.Tuple[str, typing.Type]], types.ArrayRefSchema]:
+) -> typing.Tuple[types.TReturnValue, oa_types.ArrayRefSchema]:
     """
     Generate properties for a reference to another object through an array.
 

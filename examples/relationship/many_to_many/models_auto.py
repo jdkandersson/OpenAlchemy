@@ -34,8 +34,8 @@ class TProject(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
@@ -99,7 +99,7 @@ class TProject(typing.Protocol):
         ...
 
 
-Project: TProject = models.Project  # type: ignore
+Project: typing.Type[TProject] = models.Project  # type: ignore
 
 
 class EmployeeDict(typing.TypedDict, total=False):
@@ -129,9 +129,9 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    projects: typing.Sequence["TProject"]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    projects: 'sqlalchemy.Column[typing.Sequence["TProject"]]'
 
     def __init__(
         self,
@@ -203,4 +203,4 @@ class TEmployee(typing.Protocol):
         ...
 
 
-Employee: TEmployee = models.Employee  # type: ignore
+Employee: typing.Type[TEmployee] = models.Employee  # type: ignore

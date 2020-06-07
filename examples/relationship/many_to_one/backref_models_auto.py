@@ -35,9 +35,9 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    employees: typing.Sequence["TEmployee"]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    employees: 'sqlalchemy.Column[typing.Sequence["TEmployee"]]'
 
     def __init__(
         self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
@@ -103,7 +103,7 @@ class TDivision(typing.Protocol):
         ...
 
 
-Division: TDivision = models.Division  # type: ignore
+Division: typing.Type[TDivision] = models.Division  # type: ignore
 
 
 class EmployeeDict(typing.TypedDict, total=False):
@@ -133,9 +133,9 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    division: typing.Optional["TDivision"]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    division: 'sqlalchemy.Column[typing.Optional["TDivision"]]'
 
     def __init__(
         self,
@@ -207,4 +207,4 @@ class TEmployee(typing.Protocol):
         ...
 
 
-Employee: TEmployee = models.Employee  # type: ignore
+Employee: typing.Type[TEmployee] = models.Employee  # type: ignore

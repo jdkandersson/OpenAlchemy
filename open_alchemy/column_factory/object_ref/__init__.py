@@ -7,9 +7,10 @@ import typing
 from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import helpers
-from open_alchemy import types
+from open_alchemy import types as oa_types
 
 from .. import column
+from .. import types
 from . import artifacts as artifacts
 from . import foreign_key as foreign_key
 from . import schema as _schema
@@ -17,18 +18,13 @@ from . import schema as _schema
 
 def handle_object(
     *,
-    schema: types.Schema,
-    schemas: types.Schemas,
+    schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
     required: typing.Optional[bool],
     logical_name: str,
     model_name: str,
-    model_schema: types.Schema,
-) -> typing.Tuple[
-    typing.List[
-        typing.Tuple[str, typing.Union[facades.sqlalchemy.column.Column, typing.Type]]
-    ],
-    types.ObjectRefSchema,
-]:
+    model_schema: oa_types.Schema,
+) -> typing.Tuple[types.TReturnValue, oa_types.ObjectRefSchema]:
     """
     Generate properties for a reference to another object.
 
@@ -76,6 +72,7 @@ def handle_object(
         model_schema=model_schema,
         schemas=schemas,
     )
+    return_value: types.TReturnValue
     if fk_required:
         fk_column = column.construct_column(artifacts=fk_artifacts)
         return_value = [(fk_logical_name, fk_column)]

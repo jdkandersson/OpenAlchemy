@@ -11,7 +11,8 @@ from open_alchemy import types
 from . import column as column
 
 # Mapping from SQLAlchemy
-Table: sqlalchemy.Table = sqlalchemy.Table
+Table = sqlalchemy.Table
+Relationship = orm.RelationshipProperty
 
 
 def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipProperty:

@@ -79,7 +79,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -115,7 +115,7 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    column_1: type_1
+    column_1: 'sqlalchemy.Column[type_1]'
 
     def __init__(self, column_1: init_type_1) -> None:
         """
@@ -173,7 +173,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -210,7 +210,7 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    column_1: type_1
+    column_1: 'sqlalchemy.Column[type_1]'
 
     def __init__(self, column_1: init_type_1) -> None:
         """
@@ -268,7 +268,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -313,8 +313,8 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    column_1: type_1
-    column_2: type_2
+    column_1: 'sqlalchemy.Column[type_1]'
+    column_2: 'sqlalchemy.Column[type_2]'
 
     def __init__(self, column_1: init_type_1, column_2: init_type_2) -> None:
         """
@@ -374,7 +374,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "single column", "single column readOnly", "multiple column"],

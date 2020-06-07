@@ -30,7 +30,13 @@ setuptools.setup(
         "Typing :: Typed",
     ],
     python_requires=">=3.6",
-    install_requires=["SQLAlchemy>=1.0", "jsonschema>=3", "Jinja2>=2", "black"],
+    install_requires=[
+        "SQLAlchemy>=1.0",
+        "jsonschema>=3",
+        "Jinja2>=2",
+        "black",
+        "sqlalchemy-stubs>=0.3",
+    ],
     include_package_data=True,
     extras_require={
         "yaml": ["PyYAML"],

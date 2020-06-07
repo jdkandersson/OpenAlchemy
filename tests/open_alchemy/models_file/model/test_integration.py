@@ -49,7 +49,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -107,6 +107,6 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore'''
+Model: typing.Type[TModel] = models.Model  # type: ignore'''
 
     assert source == expected_source

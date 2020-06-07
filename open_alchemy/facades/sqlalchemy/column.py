@@ -9,17 +9,26 @@ from ... import helpers
 from ... import types
 
 # Remapping SQLAlchemy classes
-Column: sqlalchemy.Column = sqlalchemy.Column
-Type: sqlalchemy.sql.type_api.TypeEngine = sqlalchemy.sql.type_api.TypeEngine
-ForeignKey: sqlalchemy.ForeignKey = sqlalchemy.ForeignKey
-Integer: sqlalchemy.Integer = sqlalchemy.Integer
-BigInteger: sqlalchemy.BigInteger = sqlalchemy.BigInteger
-Number: sqlalchemy.Float = sqlalchemy.Float
-String: sqlalchemy.String = sqlalchemy.String
-Binary: sqlalchemy.LargeBinary = sqlalchemy.LargeBinary
-Date: sqlalchemy.Date = sqlalchemy.Date
-DateTime: sqlalchemy.DateTime = sqlalchemy.DateTime
-Boolean: sqlalchemy.Boolean = sqlalchemy.Boolean
+Column = sqlalchemy.Column
+Type = sqlalchemy.sql.type_api.TypeEngine
+ForeignKey = sqlalchemy.ForeignKey
+Integer = sqlalchemy.Integer
+BigInteger = sqlalchemy.BigInteger
+Number = sqlalchemy.Float
+String = sqlalchemy.String
+Binary = sqlalchemy.LargeBinary
+Date = sqlalchemy.Date
+DateTime = sqlalchemy.DateTime
+Boolean = sqlalchemy.Boolean
+
+
+class _TOptColumnArgs(types.TypedDict, total=False):
+    """Keyword arguments for Column."""
+
+    primary_key: bool
+    autoincrement: bool
+    index: bool
+    unique: bool
 
 
 def construct(*, artifacts: types.ColumnArtifacts) -> Column:
@@ -46,6 +55,16 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         type_=artifacts.open_api.type,
         format_=artifacts.open_api.format,
     )
+    # Generate optional keyword arguments
+    opt_kwargs: _TOptColumnArgs = {}
+    if artifacts.extension.primary_key is not None:
+        opt_kwargs["primary_key"] = artifacts.extension.primary_key
+    if artifacts.extension.autoincrement is not None:
+        opt_kwargs["autoincrement"] = artifacts.extension.autoincrement
+    if artifacts.extension.index is not None:
+        opt_kwargs["index"] = artifacts.extension.index
+    if artifacts.extension.unique is not None:
+        opt_kwargs["unique"] = artifacts.extension.unique
     # Generate kwargs
     kwargs: types.TKwargs = {}
     if artifacts.extension.kwargs is not None:
@@ -55,10 +74,7 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         foreign_key,
         nullable=artifacts.open_api.nullable,
         default=default,
-        primary_key=artifacts.extension.primary_key,
-        autoincrement=artifacts.extension.autoincrement,
-        index=artifacts.extension.index,
-        unique=artifacts.extension.unique,
+        **opt_kwargs,
         **kwargs,
     )
 
@@ -111,9 +127,9 @@ def _handle_integer(
 
     """
     if artifacts.open_api.format is None or artifacts.open_api.format == "int32":
-        return Integer
+        return Integer()
     if artifacts.open_api.format == "int64":
-        return BigInteger
+        return BigInteger()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for integer is not supported."
     )
@@ -133,7 +149,7 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> Number:
 
     """
     if artifacts.open_api.format is None or artifacts.open_api.format == "float":
-        return Number
+        return Number()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for number is not supported."
     )
@@ -156,16 +172,16 @@ def _handle_string(
     """
     if artifacts.open_api.format in {None, "byte", "password"}:
         if artifacts.open_api.max_length is None:
-            return String
+            return String()
         return String(length=artifacts.open_api.max_length)
     if artifacts.open_api.format == "binary":
         if artifacts.open_api.max_length is None:
-            return Binary
+            return Binary()
         return Binary(length=artifacts.open_api.max_length)
     if artifacts.open_api.format == "date":
-        return Date
+        return Date()
     if artifacts.open_api.format == "date-time":
-        return DateTime
+        return DateTime()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for string is not supported."
     )
@@ -184,4 +200,4 @@ def _handle_boolean(
         The SQLAlchemy boolean type of the column.
 
     """
-    return Boolean
+    return Boolean()

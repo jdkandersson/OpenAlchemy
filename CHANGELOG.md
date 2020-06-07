@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Remove several bugs from the generated models file and integrate with `sqlalchemy-stubs`.
+
 ## Version 1.1.1 - 2020-05-17
 
 - Add support for `readOnly`.

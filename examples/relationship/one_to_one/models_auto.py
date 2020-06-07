@@ -35,9 +35,9 @@ class TPayInfo(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    account_number: typing.Optional[str]
-    employee: typing.Optional["TEmployee"]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    account_number: "sqlalchemy.Column[typing.Optional[str]]"
+    employee: 'sqlalchemy.Column[typing.Optional["TEmployee"]]'
 
     def __init__(
         self,
@@ -107,7 +107,7 @@ class TPayInfo(typing.Protocol):
         ...
 
 
-PayInfo: TPayInfo = models.PayInfo  # type: ignore
+PayInfo: typing.Type[TPayInfo] = models.PayInfo  # type: ignore
 
 
 class EmployeeDict(typing.TypedDict, total=False):
@@ -137,9 +137,9 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    pay_info: typing.Optional["TPayInfo"]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    pay_info: 'sqlalchemy.Column[typing.Optional["TPayInfo"]]'
 
     def __init__(
         self,
@@ -211,4 +211,4 @@ class TEmployee(typing.Protocol):
         ...
 
 
-Employee: TEmployee = models.Employee  # type: ignore
+Employee: typing.Type[TEmployee] = models.Employee  # type: ignore

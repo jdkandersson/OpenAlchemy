@@ -99,7 +99,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -154,7 +154,7 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    col_1: model_type_1
+    col_1: 'sqlalchemy.Column[model_type_1]'
 
     def __init__(self, col_1: arg_i_type_1 = None) -> None:
         """
@@ -212,7 +212,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -267,7 +267,7 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    col_1: model_type_1
+    col_1: 'sqlalchemy.Column[model_type_1]'
 
     def __init__(self, col_1: arg_i_type_1) -> None:
         """
@@ -325,7 +325,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -399,8 +399,8 @@ class TModel(Parent):
     query: orm.Query
 
     # Model properties
-    col_1: model_type_1
-    col_2: model_type_2
+    col_1: 'sqlalchemy.Column[model_type_1]'
+    col_2: 'sqlalchemy.Column[model_type_2]'
 
     def __init__(self, col_1: arg_i_type_1, col_2: arg_i_type_2 = None) -> None:
         """
@@ -460,7 +460,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "required empty", "not required empty", "full"],

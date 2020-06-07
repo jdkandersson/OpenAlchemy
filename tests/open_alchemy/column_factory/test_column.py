@@ -380,7 +380,7 @@ def test_integration():
     WHEN handle_column is called with the schema
     THEN the logical name and an instance of SQLAlchemy Column is returned.
     """
-    returned_schema, returned_column = column.handle_column(
+    returned_column, returned_schema = column.handle_column(
         schema={"$ref": "#/components/schemas/Column"},
         schemas={"Column": {"type": "number"}},
     )

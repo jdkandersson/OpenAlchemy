@@ -555,7 +555,7 @@ class TTable({expected_model_base}):
     query: orm.Query
 
     # Model properties
-    column: typing.Optional[int]
+    column: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, column: typing.Optional[int] = None) -> None:
         """
@@ -613,6 +613,6 @@ class TTable({expected_model_base}):
         ...
 
 
-Table: TTable = models.Table  # type: ignore
+Table: typing.Type[TTable] = models.Table  # type: ignore
 '''
     assert models_file_contents == expected_contents

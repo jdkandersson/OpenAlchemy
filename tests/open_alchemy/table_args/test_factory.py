@@ -192,17 +192,38 @@ def test_construct_unique(spec, expected_name, expected_columns):
 @pytest.mark.parametrize(
     "spec, expected_name, expected_expressions, expected_unique",
     [
-        ({"expressions": ["column 1"]}, None, ["column 1"], None),
-        ({"name": "name 1", "expressions": ["column 1"]}, "name 1", ["column 1"], None),
-        ({"expressions": ["column 1"], "unique": True}, None, ["column 1"], True),
-        (
+        pytest.param(
+            {"expressions": ["column 1"]}, None, ["column 1"], False, id="single"
+        ),
+        pytest.param(
+            {"name": "name 1", "expressions": ["column 1"]},
+            "name 1",
+            ["column 1"],
+            False,
+            id="single name",
+        ),
+        pytest.param(
+            {"expressions": ["column 1"], "unique": True},
+            None,
+            ["column 1"],
+            True,
+            id="single unique True",
+        ),
+        pytest.param(
+            {"expressions": ["column 1"], "unique": False},
+            None,
+            ["column 1"],
+            False,
+            id="single unique False",
+        ),
+        pytest.param(
             {"expressions": ["column 1", "column 2"]},
             None,
             ["column 1", "column 2"],
-            None,
+            False,
+            id="multiple",
         ),
     ],
-    ids=["single", "single name", "single unique", "multiple"],
 )
 @pytest.mark.table_args
 def test_construct_index(spec, expected_name, expected_expressions, expected_unique):

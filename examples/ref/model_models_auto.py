@@ -36,9 +36,9 @@ class TRefEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    division: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    division: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
@@ -110,4 +110,4 @@ class TRefEmployee(typing.Protocol):
         ...
 
 
-RefEmployee: TRefEmployee = models.RefEmployee  # type: ignore
+RefEmployee: typing.Type[TRefEmployee] = models.RefEmployee  # type: ignore
