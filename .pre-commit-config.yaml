@@ -18,7 +18,7 @@ repos:
   rev: master
   hooks:
   - id: mypy
-    exclude: '^example|conf.py$|.py$'
+    exclude: '^example|conf.py$'
 - repo: local
   hooks:
   - id: pylint
