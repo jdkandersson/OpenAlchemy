@@ -99,7 +99,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -212,7 +212,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -325,7 +325,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _ModelArtifacts(
@@ -460,7 +460,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "required empty", "not required empty", "full"],

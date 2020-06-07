@@ -52,4 +52,4 @@ class T{{ artifacts.name }}({{ artifacts.parent_cls }}):
         ...
 
 
-{{ artifacts.name }}: T{{ artifacts.name }} = models.{{ artifacts.name }}  # type: ignore
+{{ artifacts.name }}: typing.Type[T{{ artifacts.name }}] = models.{{ artifacts.name }}  # type: ignore

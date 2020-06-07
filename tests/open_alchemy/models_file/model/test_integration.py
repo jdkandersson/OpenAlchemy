@@ -107,6 +107,6 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore'''
+Model: typing.Type[TModel] = models.Model  # type: ignore'''
 
     assert source == expected_source

@@ -613,6 +613,6 @@ class TTable({expected_model_base}):
         ...
 
 
-Table: TTable = models.Table  # type: ignore
+Table: typing.Type[TTable] = models.Table  # type: ignore
 '''
     assert models_file_contents == expected_contents

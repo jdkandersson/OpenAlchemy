@@ -115,7 +115,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore
+Model: typing.Type[TModel] = models.Model  # type: ignore
 ''',
         ),
         (
@@ -213,7 +213,7 @@ class TModel1({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model1: TModel1 = models.Model1  # type: ignore
+Model1: typing.Type[TModel1] = models.Model1  # type: ignore
 
 
 class Model2Dict({_EXPECTED_TD_BASE}, total=False):
@@ -295,7 +295,7 @@ class TModel2({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model2: TModel2 = models.Model2  # type: ignore
+Model2: typing.Type[TModel2] = models.Model2  # type: ignore
 ''',
         ),
         (
@@ -406,7 +406,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore
+Model: typing.Type[TModel] = models.Model  # type: ignore
 ''',
         ),
     ],
@@ -533,7 +533,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore
+Model: typing.Type[TModel] = models.Model  # type: ignore
 '''
     assert source == expected_source
 
@@ -654,7 +654,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore
+Model: typing.Type[TModel] = models.Model  # type: ignore
 '''
     assert source == expected_source
 
@@ -764,6 +764,6 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
 
-Model: TModel = models.Model  # type: ignore
+Model: typing.Type[TModel] = models.Model  # type: ignore
 '''
     assert source == expected_source

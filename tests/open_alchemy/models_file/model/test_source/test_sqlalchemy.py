@@ -79,7 +79,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -173,7 +173,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -268,7 +268,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
         (
             _SQLAlchemyModelArtifacts(
@@ -374,7 +374,7 @@ class TModel(Parent):
         ...
 
 
-Model: TModel = models.Model  # type: ignore''',
+Model: typing.Type[TModel] = models.Model  # type: ignore''',
         ),
     ],
     ids=["empty", "single column", "single column readOnly", "multiple column"],
