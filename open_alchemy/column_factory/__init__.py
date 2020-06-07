@@ -54,7 +54,7 @@ def column_factory(
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
 
     if type_ not in {"object", "array"}:
-        column_schema, column_value = column.handle_column(
+        column_value, column_schema = column.handle_column(
             schema=schema, schemas=schemas, required=required
         )
         return ([(logical_name, column_value)], column_schema)

@@ -13,7 +13,7 @@ def handle_column(
     schema: types.Schema,
     schemas: types.Schemas,
     required: typing.Optional[bool] = None,
-) -> typing.Tuple[types.ColumnSchema, facades.sqlalchemy.column.Column]:
+) -> typing.Tuple[facades.sqlalchemy.column.Column, types.ColumnSchema]:
     """
     Generate column based on OpenAPI schema property.
 
@@ -32,7 +32,7 @@ def handle_column(
     artifacts = check_schema(schema=schema, required=required)
     column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
     column = construct_column(artifacts=artifacts)
-    return column_schema, column
+    return column, column_schema
 
 
 def check_schema(
