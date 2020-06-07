@@ -139,7 +139,10 @@ def _construct_unique(spec: types.Unique) -> schema.UniqueConstraint:
         The unique constraints.
 
     """
-    return schema.UniqueConstraint(*spec["columns"], name=spec.get("name"))
+    name = spec.get("name")
+    columns = spec["columns"]
+
+    return schema.UniqueConstraint(*columns, name=name)
 
 
 def _construct_index(spec: types.Index) -> schema.Index:

@@ -35,7 +35,20 @@ class GetBase(Protocol):
 # Unique consraint types
 ColumnList = typing.List[str]
 ColumnListList = typing.List[ColumnList]
-Unique = typing.Dict[str, typing.Any]
+
+
+class _UniqueBase(TypedDict, total=True):
+    """Base class for unique schema."""
+
+    columns: typing.List[str]
+
+
+class Unique(_UniqueBase, total=False):
+    """Unique schema."""
+
+    name: typing.Optional[str]
+
+
 UniqueList = typing.List[Unique]
 AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
 # Index types
