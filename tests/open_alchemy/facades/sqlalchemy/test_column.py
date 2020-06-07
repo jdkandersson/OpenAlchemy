@@ -171,7 +171,7 @@ def test_construct_default_type_mapped():
 
 
 @pytest.mark.parametrize(
-    "primary_key", [None, True, False], ids=["none", "true", "false"]
+    "primary_key", [False, True, False], ids=["none", "true", "false"]
 )
 @pytest.mark.facade
 def test_construct_primary_key(primary_key):
@@ -190,7 +190,7 @@ def test_construct_primary_key(primary_key):
 
 
 @pytest.mark.parametrize(
-    "autoincrement", [None, True, False], ids=["none", "true", "false"]
+    "autoincrement", ["auto", True, False], ids=["none", "true", "false"]
 )
 @pytest.mark.facade
 def test_construct_autoincrement(autoincrement):

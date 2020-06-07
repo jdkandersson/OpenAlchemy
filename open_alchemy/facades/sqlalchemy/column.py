@@ -22,6 +22,15 @@ DateTime = sqlalchemy.DateTime
 Boolean = sqlalchemy.Boolean
 
 
+class _TOptColumnArgs(types.TypedDict, total=False):
+    """Keyword arguments for Column."""
+
+    primary_key: bool
+    autoincrement: bool
+    index: bool
+    unique: bool
+
+
 def construct(*, artifacts: types.ColumnArtifacts) -> Column:
     """
     Construct column from artifacts.
@@ -46,6 +55,16 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         type_=artifacts.open_api.type,
         format_=artifacts.open_api.format,
     )
+    # Generate optional keyword arguments
+    opt_kwargs: _TOptColumnArgs = {}
+    if artifacts.extension.primary_key is not None:
+        opt_kwargs["primary_key"] = artifacts.extension.primary_key
+    if artifacts.extension.autoincrement is not None:
+        opt_kwargs["autoincrement"] = artifacts.extension.autoincrement
+    if artifacts.extension.index is not None:
+        opt_kwargs["index"] = artifacts.extension.index
+    if artifacts.extension.unique is not None:
+        opt_kwargs["unique"] = artifacts.extension.unique
     # Generate kwargs
     kwargs: types.TKwargs = {}
     if artifacts.extension.kwargs is not None:
@@ -55,10 +74,7 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
         foreign_key,
         nullable=artifacts.open_api.nullable,
         default=default,
-        primary_key=artifacts.extension.primary_key,
-        autoincrement=artifacts.extension.autoincrement,
-        index=artifacts.extension.index,
-        unique=artifacts.extension.unique,
+        **opt_kwargs,
         **kwargs,
     )
 
