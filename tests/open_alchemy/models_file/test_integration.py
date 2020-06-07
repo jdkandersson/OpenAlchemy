@@ -121,6 +121,110 @@ Model: typing.Type[TModel] = models.Model  # type: ignore
         ),
         (
             [
+                (
+                    {
+                        "properties": {
+                            "ref_model": {"type": "object", "x-de-$ref": "RefModel"}
+                        }
+                    },
+                    "Model",
+                )
+            ],
+            f'''{_DOCSTRING}
+# pylint: disable=no-member,super-init-not-called,unused-argument
+
+import typing
+
+import sqlalchemy{_ADDITIONAL_IMPORT}
+from sqlalchemy import orm
+
+from open_alchemy import models
+
+
+class ModelDict({_EXPECTED_TD_BASE}, total=False):
+    """TypedDict for properties that are not required."""
+
+    ref_model: typing.Optional["RefModelDict"]
+
+
+class TModel({_EXPECTED_MODEL_BASE}):
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        ref_model: The ref_model of the Model.
+
+    """
+
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
+    ref_model: 'sqlalchemy.Column[typing.Optional["TRefModel"]]'
+
+    def __init__(self, ref_model: typing.Optional["TRefModel"] = None) -> None:
+        """
+        Construct.
+
+        Args:
+            ref_model: The ref_model of the Model.
+
+        """
+        ...
+
+    @classmethod
+    def from_dict(cls, ref_model: typing.Optional["RefModelDict"] = None) -> "TModel":
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            ref_model: The ref_model of the Model.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
+        ...
+
+    @classmethod
+    def from_str(cls, value: str) -> "TModel":
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
+        ...
+
+    def to_dict(self) -> ModelDict:
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
+        ...
+
+    def to_str(self) -> str:
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
+        ...
+
+
+Model: typing.Type[TModel] = models.Model  # type: ignore
+''',
+        ),
+        (
+            [
                 ({"properties": {"id": {"type": "integer"}}}, "Model1"),
                 ({"properties": {"id": {"type": "string"}}}, "Model2"),
             ],
@@ -411,7 +515,7 @@ Model: typing.Type[TModel] = models.Model  # type: ignore
 ''',
         ),
     ],
-    ids=["single", "multiple", "black"],
+    ids=["single", "single object", "multiple", "black"],
 )
 @pytest.mark.models_file
 def test_integration(schemas, expected_source):
