@@ -49,7 +49,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """

@@ -36,9 +36,9 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    type: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
@@ -110,7 +110,7 @@ class TEmployee(typing.Protocol):
         ...
 
 
-Employee: TEmployee = models.Employee  # type: ignore
+Employee: typing.Type[TEmployee] = models.Employee  # type: ignore
 
 
 class ManagerDict(typing.TypedDict, total=False):
@@ -142,10 +142,10 @@ class TManager(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    type: typing.Optional[str]
-    manager_data: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
+    manager_data: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
@@ -221,7 +221,7 @@ class TManager(typing.Protocol):
         ...
 
 
-Manager: TManager = models.Manager  # type: ignore
+Manager: typing.Type[TManager] = models.Manager  # type: ignore
 
 
 class EngineerDict(typing.TypedDict, total=False):
@@ -253,10 +253,10 @@ class TEngineer(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
-    name: typing.Optional[str]
-    type: typing.Optional[str]
-    engineer_info: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
+    engineer_info: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
@@ -332,4 +332,4 @@ class TEngineer(typing.Protocol):
         ...
 
 
-Engineer: TEngineer = models.Engineer  # type: ignore
+Engineer: typing.Type[TEngineer] = models.Engineer  # type: ignore

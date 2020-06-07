@@ -43,10 +43,10 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: int
-    name: str
-    division: str
-    salary: typing.Optional[float]
+    id: "sqlalchemy.Column[int]"
+    name: "sqlalchemy.Column[str]"
+    division: "sqlalchemy.Column[str]"
+    salary: "sqlalchemy.Column[typing.Optional[float]]"
 
     def __init__(
         self,
@@ -122,4 +122,4 @@ class TEmployee(typing.Protocol):
         ...
 
 
-Employee: TEmployee = models.Employee  # type: ignore
+Employee: typing.Type[TEmployee] = models.Employee  # type: ignore

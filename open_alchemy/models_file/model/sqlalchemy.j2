@@ -9,7 +9,7 @@ class T{{ artifacts.name }}({{ artifacts.parent_cls }}):
     query: orm.Query{% if not artifacts.empty %}
 
     # Model properties{% for column in artifacts.columns %}
-    {{ column.name }}: "sqlalchemy.Column[{{ column.type }}]"{% endfor %}{% endif %}
+    {{ column.name }}: 'sqlalchemy.Column[{{ column.type }}]'{% endfor %}{% endif %}
 
     def __init__(self{{ arg_init_source }}) -> None:
         """{{ artifacts.init_docstring }}"""

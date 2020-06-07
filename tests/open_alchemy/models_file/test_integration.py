@@ -770,10 +770,11 @@ Model: typing.Type[TModel] = models.Model  # type: ignore
     assert source == expected_source
 
 
-def _generate_source(schema):
+def _generate_source(schemas, names):
     """Generate the models file source from a schema."""
     models = models_file.ModelsFile()
-    models.add_model(schema=schema, name="Model")
+    for schema, name in zip(schemas, names):
+        models.add_model(schema=schema, name=name)
     return models.generate_models()
 
 
@@ -786,15 +787,30 @@ def _create_source_file(source, tmp_path):
     return source_file
 
 
+@pytest.mark.parametrize(
+    "schemas, names",
+    [
+        pytest.param(
+            [{"properties": {"id": {"type": "integer"}}}], ["Model"], id="simple",
+        ),
+        pytest.param(
+            [
+                {"properties": {"id": {"type": "integer"}}},
+                {"properties": {"model": {"type": "object", "x-de-$ref": "RefModel"}}},
+            ],
+            ["RefModel", "Model"],
+            id="object",
+        ),
+    ],
+)
 @pytest.mark.models_file
-def test_generate_type_return(tmp_path):
+def test_generate_type_return(tmp_path, schemas, names):
     """
     GIVEN schema
     WHEN the models file is generated and mypy is run over it
     THEN no errors are returned.
     """
-    schema = {"properties": {"id": {"type": "integer"}}}
-    source = _generate_source(schema)
+    source = _generate_source(schemas, names)
     source_file = _create_source_file(source, tmp_path)
 
     _, _, returncode = api.run([str(source_file)])
@@ -832,7 +848,7 @@ def test_generate_type_check(tmp_path, schema, mypy_check, expected_out_substr):
     WHEN the models file is generated and mypy is run over it
     THEN the expected output substring is in the mypy output.
     """
-    source = _generate_source(schema) + f"\n{mypy_check}"
+    source = _generate_source([schema], ["Model"]) + f"\n{mypy_check}"
     source_file = _create_source_file(source, tmp_path)
 
     out, _, _ = api.run([str(source_file)])
