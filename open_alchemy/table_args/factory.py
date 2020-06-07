@@ -154,10 +154,11 @@ def _construct_index(spec: types.Index) -> schema.Index:
     # There is a bug in the sqlalchemy-stubs where name is not Optional for Index
     name: str = spec.get("name")  # type: ignore
     unique = spec.get("unique")
+    expressions = spec["expressions"]
 
     if unique is not None:
-        return schema.Index(name, *spec["expressions"], unique=unique)
-    return schema.Index(name, *spec["expressions"])
+        return schema.Index(name, *expressions, unique=unique)
+    return schema.Index(name, *expressions)
 
 
 def unique_factory(
