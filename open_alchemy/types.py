@@ -39,7 +39,21 @@ Unique = typing.Dict[str, typing.Any]
 UniqueList = typing.List[Unique]
 AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
 # Index types
-Index = typing.Dict[str, typing.Any]
+
+
+class _IndexBase(TypedDict, total=True):
+    """Base class for index schema."""
+
+    expressions: typing.List[str]
+
+
+class Index(_IndexBase, total=False):
+    """Index schema."""
+
+    name: typing.Optional[str]
+    unique: bool
+
+
 IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
 # Type for the default value

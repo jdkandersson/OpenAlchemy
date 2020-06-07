@@ -151,9 +151,13 @@ def _construct_index(spec: types.Index) -> schema.Index:
         The composite index.
 
     """
-    return schema.Index(
-        spec.get("name"), *spec["expressions"], unique=spec.get("unique")
-    )
+    # There is a bug in the sqlalchemy-stubs where name is not Optional for Index
+    name: str = spec.get("name")  # type: ignore
+    unique = spec.get("unique")
+
+    if unique is not None:
+        return schema.Index(name, *spec["expressions"], unique=unique)
+    return schema.Index(name, *spec["expressions"])
 
 
 def unique_factory(
