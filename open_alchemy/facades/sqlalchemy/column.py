@@ -9,17 +9,17 @@ from ... import helpers
 from ... import types
 
 # Remapping SQLAlchemy classes
-Column: sqlalchemy.Column = sqlalchemy.Column
-Type: sqlalchemy.sql.type_api.TypeEngine = sqlalchemy.sql.type_api.TypeEngine
-ForeignKey: sqlalchemy.ForeignKey = sqlalchemy.ForeignKey
-Integer: sqlalchemy.Integer = sqlalchemy.Integer
-BigInteger: sqlalchemy.BigInteger = sqlalchemy.BigInteger
-Number: sqlalchemy.Float = sqlalchemy.Float
-String: sqlalchemy.String = sqlalchemy.String
-Binary: sqlalchemy.LargeBinary = sqlalchemy.LargeBinary
-Date: sqlalchemy.Date = sqlalchemy.Date
-DateTime: sqlalchemy.DateTime = sqlalchemy.DateTime
-Boolean: sqlalchemy.Boolean = sqlalchemy.Boolean
+Column = sqlalchemy.Column
+Type = sqlalchemy.sql.type_api.TypeEngine
+ForeignKey = sqlalchemy.ForeignKey
+Integer = sqlalchemy.Integer
+BigInteger = sqlalchemy.BigInteger
+Number = sqlalchemy.Float
+String = sqlalchemy.String
+Binary = sqlalchemy.LargeBinary
+Date = sqlalchemy.Date
+DateTime = sqlalchemy.DateTime
+Boolean = sqlalchemy.Boolean
 
 
 def construct(*, artifacts: types.ColumnArtifacts) -> Column:
@@ -111,9 +111,9 @@ def _handle_integer(
 
     """
     if artifacts.open_api.format is None or artifacts.open_api.format == "int32":
-        return Integer
+        return Integer()
     if artifacts.open_api.format == "int64":
-        return BigInteger
+        return BigInteger()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for integer is not supported."
     )
@@ -133,7 +133,7 @@ def _handle_number(*, artifacts: types.ColumnArtifacts) -> Number:
 
     """
     if artifacts.open_api.format is None or artifacts.open_api.format == "float":
-        return Number
+        return Number()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for number is not supported."
     )
@@ -156,16 +156,16 @@ def _handle_string(
     """
     if artifacts.open_api.format in {None, "byte", "password"}:
         if artifacts.open_api.max_length is None:
-            return String
+            return String()
         return String(length=artifacts.open_api.max_length)
     if artifacts.open_api.format == "binary":
         if artifacts.open_api.max_length is None:
-            return Binary
+            return Binary()
         return Binary(length=artifacts.open_api.max_length)
     if artifacts.open_api.format == "date":
-        return Date
+        return Date()
     if artifacts.open_api.format == "date-time":
-        return DateTime
+        return DateTime()
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.format} format for string is not supported."
     )
@@ -184,4 +184,4 @@ def _handle_boolean(
         The SQLAlchemy boolean type of the column.
 
     """
-    return Boolean
+    return Boolean()

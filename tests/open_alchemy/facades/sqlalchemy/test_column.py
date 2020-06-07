@@ -299,7 +299,7 @@ class TestDetermineType:
 
         returned_type = column._determine_type(artifacts=artifacts)
 
-        assert returned_type == expected_type
+        assert isinstance(returned_type, expected_type)
 
 
 class TestHandleInteger:
@@ -322,7 +322,7 @@ class TestHandleInteger:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "format_, expected_integer",
+        "format_, expected_integer_cls",
         [
             (None, sqlalchemy.Integer),
             ("int32", sqlalchemy.Integer),
@@ -331,7 +331,7 @@ class TestHandleInteger:
         ids=["None", "int32", "int64"],
     )
     @pytest.mark.facade
-    def test_valid(format_, expected_integer):
+    def test_valid(format_, expected_integer_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
         WHEN _handle_integer is called with the artifacts
@@ -341,7 +341,7 @@ class TestHandleInteger:
 
         integer = column._handle_integer(artifacts=artifacts)
 
-        assert integer == expected_integer
+        assert isinstance(integer, expected_integer_cls)
 
 
 class TestHandleNumber:
@@ -364,12 +364,12 @@ class TestHandleNumber:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "format_, expected_number",
+        "format_, expected_number_cls",
         [(None, sqlalchemy.Float), ("float", sqlalchemy.Float)],
         ids=["None", "float"],
     )
     @pytest.mark.facade
-    def test_valid(format_, expected_number):
+    def test_valid(format_, expected_number_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
         WHEN _handle_integer is called with the artifacts
@@ -379,7 +379,7 @@ class TestHandleNumber:
 
         number = column._handle_number(artifacts=artifacts)
 
-        assert number == expected_number
+        assert isinstance(number, expected_number_cls)
 
 
 class TestHandleString:
@@ -424,7 +424,7 @@ class TestHandleString:
 
         string = column._handle_string(artifacts=artifacts)
 
-        assert string == expected_type
+        assert isinstance(string, expected_type)
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -467,4 +467,4 @@ class TestHandleBoolean:
 
         boolean = column._handle_boolean(artifacts=artifacts)
 
-        assert boolean == sqlalchemy.Boolean
+        assert isinstance(boolean, sqlalchemy.Boolean)
