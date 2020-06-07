@@ -555,7 +555,7 @@ class TTable({expected_model_base}):
     query: orm.Query
 
     # Model properties
-    column: typing.Optional[int]
+    column: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, column: typing.Optional[int] = None) -> None:
         """

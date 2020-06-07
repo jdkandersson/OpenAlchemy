@@ -14,17 +14,26 @@ repos:
   - id: pydocstyle
     args: ['--add-select=D213,D404', '--ignore=D202,D212,D406,D407,D203']
     exclude: '^test|^example'
-- repo: https://github.com/pre-commit/mirrors-mypy
-  rev: master
-  hooks:
-  - id: mypy
-    exclude: '^example|conf.py$'
+# - repo: https://github.com/pre-commit/mirrors-mypy
+#   rev: master
+#   hooks:
+#   - id: mypy
+#     exclude: '^example|conf.py$'
 - repo: local
   hooks:
   - id: pylint
     name: pylint
     entry: python3 -m pylint.__main__
     args: [-rn]
+    language: system
+    types: [python]
+    exclude: '^example|conf.py$'
+- repo: local
+  hooks:
+  - id: mypy
+    name: mypy
+    entry: python3 -m mypy --ignore-missing-imports open_alchemy
+    args: []
     language: system
     types: [python]
     exclude: '^example|conf.py$'

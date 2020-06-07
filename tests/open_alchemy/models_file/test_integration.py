@@ -57,7 +57,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -155,7 +155,7 @@ class TModel1({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -237,7 +237,7 @@ class TModel2({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[str]
+    id: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(self, id: typing.Optional[str] = None) -> None:
         """
@@ -314,7 +314,7 @@ from open_alchemy import models
 class ModelDict({_EXPECTED_TD_BASE}, total=False):
     """TypedDict for properties that are not required."""
 
-    extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: typing.Optional[int]
+    {_LONG_NAME}: typing.Optional[int]
 
 
 class TModel({_EXPECTED_MODEL_BASE}):
@@ -322,8 +322,8 @@ class TModel({_EXPECTED_MODEL_BASE}):
     SQLAlchemy model protocol.
 
     Attrs:
-        extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
-            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa of
+        {_LONG_NAME}: The
+            {_LONG_NAME} of
             the Model.
 
     """
@@ -334,11 +334,11 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: typing.Optional[int]
+    {_LONG_NAME}: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(
         self,
-        extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: typing.Optional[
+        {_LONG_NAME}: typing.Optional[
             int
         ] = None,
     ) -> None:
@@ -346,8 +346,8 @@ class TModel({_EXPECTED_MODEL_BASE}):
         Construct.
 
         Args:
-            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
-                extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa
+            {_LONG_NAME}: The
+                {_LONG_NAME}
                 of the Model.
 
         """
@@ -356,7 +356,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     @classmethod
     def from_dict(
         cls,
-        extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: typing.Optional[
+        {_LONG_NAME}: typing.Optional[
             int
         ] = None,
     ) -> "TModel":
@@ -364,8 +364,8 @@ class TModel({_EXPECTED_MODEL_BASE}):
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa: The
-                extremely_long_name_that_will_cause_wrapping_aaaaaaaaaaaaaaaaa
+            {_LONG_NAME}: The
+                {_LONG_NAME}
                 of the Model.
 
         Returns:
@@ -475,7 +475,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -589,8 +589,8 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    name: typing.Optional[str]
-    id: typing.Optional[int]
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(
         self, name: typing.Optional[str] = None, id: typing.Optional[int] = None
@@ -706,7 +706,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: typing.Optional[int]
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
