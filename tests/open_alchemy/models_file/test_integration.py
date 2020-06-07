@@ -3,6 +3,7 @@
 import sys
 
 import pytest
+from mypy import api
 
 from open_alchemy import models_file
 
@@ -767,3 +768,73 @@ class TModel({_EXPECTED_MODEL_BASE}):
 Model: typing.Type[TModel] = models.Model  # type: ignore
 '''
     assert source == expected_source
+
+
+def _generate_source(schema):
+    """Generate the models file source from a schema."""
+    models = models_file.ModelsFile()
+    models.add_model(schema=schema, name="Model")
+    return models.generate_models()
+
+
+def _create_source_file(source, tmp_path):
+    """Create a file with the source code."""
+    directory = tmp_path / "models"
+    directory.mkdir()
+    source_file = directory / "models.py"
+    source_file.write_text(source)
+    return source_file
+
+
+@pytest.mark.models_file
+def test_generate_type_return(tmp_path):
+    """
+    GIVEN schema
+    WHEN the models file is generated and mypy is run over it
+    THEN no errors are returned.
+    """
+    schema = {"properties": {"id": {"type": "integer"}}}
+    source = _generate_source(schema)
+    source_file = _create_source_file(source, tmp_path)
+
+    _, _, returncode = api.run([str(source_file)])
+
+    assert returncode == 0
+
+
+@pytest.mark.parametrize(
+    "schema, mypy_check, expected_out_substr",
+    [
+        pytest.param(
+            {"properties": {"id": {"type": "integer"}}},
+            "reveal_type(Model.id)",
+            "'sqlalchemy.sql.schema.Column[Union[builtins.int, None]]'",
+            id="nullable column",
+        ),
+        pytest.param(
+            {"properties": {"id": {"type": "integer"}}},
+            "model = Model()\nreveal_type(model.id)",
+            "'Union[builtins.int, None]'",
+            id="nullable column instance",
+        ),
+        pytest.param(
+            {"properties": {"id": {"type": "integer", "nullable": False}}},
+            "reveal_type(Model.id)",
+            "'sqlalchemy.sql.schema.Column[builtins.int*]'",
+            id="not nullable column",
+        ),
+    ],
+)
+@pytest.mark.models_file
+def test_generate_type_check(tmp_path, schema, mypy_check, expected_out_substr):
+    """
+    GIVEN schema, a mypy check and expected mypy output substring
+    WHEN the models file is generated and mypy is run over it
+    THEN the expected output substring is in the mypy output.
+    """
+    source = _generate_source(schema) + f"\n{mypy_check}"
+    source_file = _create_source_file(source, tmp_path)
+
+    out, _, _ = api.run([str(source_file)])
+
+    assert expected_out_substr in out
