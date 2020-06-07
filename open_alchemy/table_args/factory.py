@@ -21,7 +21,9 @@ _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, *_PATHS, "common-schemas.json")
 
 
 def _spec_to_schema_name(
-    *, spec: types.AnyUnique, schema_names: typing.Optional[typing.List[str]] = None
+    *,
+    spec: typing.Union[types.AnyUnique, types.AnyIndex],
+    schema_names: typing.Optional[typing.List[str]] = None
 ) -> str:
     """
     Convert a specification to the name of the matched schema.
@@ -178,7 +180,7 @@ def unique_factory(
     return map(_construct_unique, mapped_spec)
 
 
-def index_factory(*, spec: types.AnyUnique) -> typing.Iterator[schema.Index]:
+def index_factory(*, spec: types.AnyIndex) -> typing.Iterator[schema.Index]:
     """
     Generate composite indexes from specification.
 
