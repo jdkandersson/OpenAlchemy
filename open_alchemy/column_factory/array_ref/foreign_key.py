@@ -68,8 +68,8 @@ def set_(
     # Handle model already constructed by altering the model on open_aclehmy.model
     ref_model: TOptUtilityBase = facades.models.get_model(name=ref_model_name)
     if ref_model is not None:
-        fk_column = column.construct_column(artifacts=fk_artifacts)
-        setattr(ref_model, fk_logical_name, fk_column)
+        column_inst = column.construct_column(artifacts=fk_artifacts)
+        setattr(ref_model, fk_logical_name, column_inst)
         return
 
     # Handle model not constructed by adding the foreign key schema to the model schema
