@@ -14,6 +14,13 @@ from . import artifacts as artifacts
 from . import foreign_key as foreign_key
 from . import schema as _schema
 
+_TReturnValue = typing.List[
+    typing.Tuple[
+        str,
+        typing.Union[facades.sqlalchemy.column.Column, facades.sqlalchemy.Relationship],
+    ]
+]
+
 
 def handle_object(
     *,
@@ -23,12 +30,7 @@ def handle_object(
     logical_name: str,
     model_name: str,
     model_schema: types.Schema,
-) -> typing.Tuple[
-    typing.List[
-        typing.Tuple[str, typing.Union[facades.sqlalchemy.column.Column, typing.Type]]
-    ],
-    types.ObjectRefSchema,
-]:
+) -> typing.Tuple[_TReturnValue, types.ObjectRefSchema]:
     """
     Generate properties for a reference to another object.
 
@@ -76,6 +78,7 @@ def handle_object(
         model_schema=model_schema,
         schemas=schemas,
     )
+    return_value: _TReturnValue
     if fk_required:
         fk_column = column.construct_column(artifacts=fk_artifacts)
         return_value = [(fk_logical_name, fk_column)]

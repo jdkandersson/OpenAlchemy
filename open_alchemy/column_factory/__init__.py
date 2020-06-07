@@ -16,6 +16,20 @@ from . import read_only
 _REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
 
 
+_TReturnValue = typing.List[
+    typing.Tuple[
+        str,
+        typing.Union[facades.sqlalchemy.column.Column, facades.sqlalchemy.Relationship],
+    ]
+]
+_ReturnSchema = typing.Union[
+    types.ColumnSchema,
+    types.ObjectRefSchema,
+    types.ArrayRefSchema,
+    types.ReadOnlySchema,
+]
+
+
 def column_factory(
     *,
     schema: types.Schema,
@@ -24,15 +38,7 @@ def column_factory(
     logical_name: str,
     model_name: str,
     model_schema: types.Schema,
-) -> typing.Tuple[
-    typing.List[typing.Tuple[str, facades.sqlalchemy.column.Column]],
-    typing.Union[
-        types.ColumnSchema,
-        types.ObjectRefSchema,
-        types.ArrayRefSchema,
-        types.ReadOnlySchema,
-    ],
-]:
+) -> typing.Tuple[_TReturnValue, _ReturnSchema]:
     """
     Generate column based on OpenAPI schema property.
 

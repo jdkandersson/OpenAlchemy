@@ -25,7 +25,10 @@ def handle_array(
     model_schema: types.Schema,
     schemas: types.Schemas,
     logical_name: str,
-) -> typing.Tuple[typing.List[typing.Tuple[str, typing.Type]], types.ArrayRefSchema]:
+) -> typing.Tuple[
+    typing.List[typing.Tuple[str, facades.sqlalchemy.Relationship]],
+    types.ArrayRefSchema,
+]:
     """
     Generate properties for a reference to another object through an array.
 
