@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Remove several bugs from the generated models file and integrate with `sqlalchemy-stubs`.
+- Ring fence `black` dependency.
 
 ## Version 1.1.1 - 2020-05-17
 
