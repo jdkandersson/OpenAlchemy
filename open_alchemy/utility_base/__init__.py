@@ -271,3 +271,8 @@ class UtilityBase:
         return json.dumps(instance_dict)
 
     __str__ = to_str
+
+    def __repr__(self) -> str:
+        """Calculate the repr for the model."""
+        properties = self.get_properties()
+        return repr_.calculate(instance=self, properties=properties)
