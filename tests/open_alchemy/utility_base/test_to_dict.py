@@ -184,3 +184,4 @@ def test_to_str(__init__):
     returned_str = instance.to_str()
 
     assert returned_str == '{"key_1": 1}'
+    assert str(instance) == '{"key_1": 1}'

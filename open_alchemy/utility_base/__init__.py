@@ -268,3 +268,5 @@ class UtilityBase:
         """
         instance_dict = self.to_dict()
         return json.dumps(instance_dict)
+
+    __str__ = to_str
