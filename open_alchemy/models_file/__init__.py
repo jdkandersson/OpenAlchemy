@@ -4,8 +4,7 @@
 import dataclasses
 import typing
 
-import black
-
+from open_alchemy import facades
 from open_alchemy import types as oa_types
 
 from . import model as _model
@@ -49,9 +48,4 @@ class ModelsFile:
 
         # Generate source code for models file
         raw_source = _models.generate(models=model_sources)
-        try:
-            return black.format_file_contents(
-                src_contents=raw_source, fast=False, mode=black.FileMode()
-            )
-        except black.NothingChanged:
-            return raw_source
+        return facades.code_formatter.apply(source=raw_source)
