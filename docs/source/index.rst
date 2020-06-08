@@ -21,15 +21,15 @@ If you have the following OpenAPI specification:
     :language: yaml
     :linenos:
 
-To use SQLAlchemy to retrieve *Employees* from a database you need the
-following *models.py* file:
+To use SQLAlchemy to retrieve :samp:`Employees` from a database you need the
+following :samp:`models.py` file:
 
 .. literalinclude:: ../../examples/simple/models.py
     :language: python
     :linenos:
 
-The *Base* for the SQLAlchemy models and the *Employee* model is now available
-from *open_alchemy.models*::
+The :samp:`Base` for the SQLAlchemy models and the :samp:`Employee` model is
+now available from :samp:`open_alchemy.models`::
 
     from open_alchemy.models import Base
     from open_alchemy.models import Employee
@@ -44,83 +44,86 @@ friendly.
 
 .. _init-yaml:
 
-*init_yaml*
-^^^^^^^^^^^
+:samp:`init_yaml`
+^^^^^^^^^^^^^^^^^
 
-The *init_yaml* interface requires the *PyYAML* library to be installed. The
-*init_yaml* interface accepts the following arguments:
+The :samp:`init_yaml` interface requires the :samp:`PyYAML` library to be
+installed. The :samp:`init_yaml` interface accepts the following arguments:
 
-* *spec_filename*: The name of the file as a positional argument. The file
-  must by a YAML file.
-* *base*: The SQLAlchemy declarative base as an optional keyword only
+* :samp:`spec_filename`: The name of the file as a positional argument. The
+  file must by a YAML file.
+* :samp:`base`: The SQLAlchemy declarative base as an optional keyword only
   argument. It is used to as the base class for all SQLAlchemy models. If it
   is not passed in, a new declarative base is constructed.
-* *define_all*: Whether to pre-define the SQLAlchemy models as an optional
-  keyword only argument. If it is *True*, all schemas with the *x-tablename*
-  property are constructed as a part of the initialization. Defaults to
-  *True*.
-* *models_filename*: The name of the file where the SQLAlchemy models will be
-  written as an optional keyword only argument.
-* *spec_path*: The path to the OpenAPI specification (what would need to be
-  passed to the *open* function to read the file) as an optional keyword only
-  argument. Used to support remote references.
+* :samp:`define_all`: Whether to pre-define the SQLAlchemy models as an optional
+  keyword only argument. If it is :samp:`True`, all schemas with the
+  :samp:`x-tablename` property are constructed as a part of the initialization.
+  Defaults to :samp:`True`.
+* :samp:`models_filename`: The name of the file where the SQLAlchemy models
+  will be written as an optional keyword only argument.
+* :samp:`spec_path`: The path to the OpenAPI specification (what would need to
+  be passed to the :samp:`open` function to read the file) as an optional
+  keyword only argument. Used to support remote references.
 
 The return value is a tuple consisting of:
 
-* *Base*: The SQLAlchemy declarative based used for the models. It is also
-  importable: :python:`from open_alchemy.models import Base`.
-* *model_factory*: The factory that can be used to construct the SQLAlchemy
-  models using the name of the schema in the OpenAPI specification. All
-  constructed models are added to the *open_alchemy.models* module and are
-  importable. For example: :python:`from open_alchemy.models import Employee`.
+* :samp:`Base`: The SQLAlchemy declarative based used for the models. It is
+  also importable: :python:`from open_alchemy.models import Base`.
+* :samp:`model_factory`: The factory that can be used to construct the
+  SQLAlchemy models using the name of the schema in the OpenAPI specification.
+  All constructed models are added to the :samp:`open_alchemy.models` module
+  and are importable. For example:
+  :python:`from open_alchemy.models import Employee`.
 
 .. _init-json:
 
-*init_json*
-^^^^^^^^^^^
+:samp:`init_json`
+^^^^^^^^^^^^^^^^^
 
-The *init_json* interface is similar to the :ref:`init-yaml` interface except
-that *spec_filename* must be a JSON file and *PyYAML* is not a required
-dependency.
+The :samp:`init_json` interface is similar to the :ref:`init-yaml` interface
+except that :samp:`spec_filename` must be a JSON file and :samp:`PyYAML` is not
+a required dependency.
 
 .. _init-model-factory:
 
-*init_model_factory*
-^^^^^^^^^^^^^^^^^^^^
+:samp:`init_model_factory`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The *init_model_factory* interface is less user friendly but perhaps of
+The :samp:`init_model_factory` interface is less user friendly but perhaps of
 interest to advanced users. It accepts the specification in dictionary format
 (so it has fewer dependencies than :ref:`init-yaml` and :ref:`init-json`) and
 does not construct a declarative base. It accepts the following parameters:
 
-* *base*: The SQLAlchemy declarative base as a keyword only argument. It is
-  used to as the base class for all SQLAlchemy models.
-* *spec*: The OpenAPI specification as a dictionary as a keyword only
+* :samp:`base`: The SQLAlchemy declarative base as a keyword only argument. It
+  is used to as the base class for all SQLAlchemy models.
+* :samp:`spec`: The OpenAPI specification as a dictionary as a keyword only
   argument.
-* *define_all*: Whether to pre-define the SQLAlchemy models as an optional
-  keyword only argument. If it is *True*, all schemas with the *x-tablename*
-  property are constructed as a part of the initialization. Defaults to
-  *False*.
-* *models_filename*: The name of the file where the SQLAlchemy models will be
-  written as an optional keyword only argument.
+* :samp:`define_all`: Whether to pre-define the SQLAlchemy models as an
+  optional keyword only argument. If it is :samp:`True`, all schemas with the
+  :samp:`x-tablename` property are constructed as a part of the initialization.
+  Defaults to :samp:`False`.
+* :samp:`models_filename`: The name of the file where the SQLAlchemy models
+  will be written as an optional keyword only argument.
 
-The return value is the *model_factory* as defined as part of the return value
-of :ref:`init-yaml`.
+The return value is the :samp:`model_factory` as defined as part of the return
+value of :ref:`init-yaml`.
 
 .. _models-file:
 
 Models File
 -----------
 
-*OpenAlchemy* can optionally generate a file with all the SQLAlchemy models.
-Each model is constructed based on the *OpenApi* schema. The class inherits
-from the SQLAlchemy model defined on *open_alchemy.models*. The generated
-classes contain type information only, they do not provide any additional
-functionality on top of what the SQLAlchemy model provides. They are primarily
+:samp:`OpenAlchemy` can optionally generate a file with all the
+:samp:`SQLAlchemy` models. Each model is constructed based on the
+:samp:`OpenApi` schema. The class inherits from the :samp:`SQLAlchemy` model
+defined on :samp:`open_alchemy.models`. The generated classes contain type
+information only, they do not provide any additional functionality on top of
+what the :samp:`SQLAlchemy` model provides. They are primarily
 used to enable IDE auto-complete and type hint support. The models can be used
-in the same way as the models that can be imported from *open_alchemy.models*
-and provide the full functionality of *SQLAlchemy* models. The following is a
-sample file generated for the above example:
+in the same way as the models that can be imported from
+:samp:`open_alchemy.models` and provide the full functionality of
+:samp:`SQLAlchemy` models. The following is a sample file generated for the
+above example:
 
 .. literalinclude:: ../../examples/simple/models_auto.py
     :language: python
@@ -140,13 +143,13 @@ The following information is recorded in the models file:
 
 .. _backrefs:
 
-.. note:: To be able to add relationships created by *x-backrefs* to the type
-    annotations of the models file, the schema stored alongside a model, which
-    is accessible at the *_schema* class variable (not a public interface so it
-    should not be used or relied upon), will use the *x-backrefs* extension
-    property to record the schema for all back references for the model.
-    *x-backrefs* is not a public interface and should not be relied upon as it
-    is subject to change.
+.. note:: To be able to add relationships created by :samp:`x-backrefs` to the
+    type annotations of the models file, the schema stored alongside a model,
+    which is accessible at the :samp:`_schema` class variable (not a public
+    interface so it should not be used or relied upon), will use the
+    :samp:`x-backrefs` extension property to record the schema for all back
+    references for the model. :samp:`x-backrefs` is not a public interface and
+    should not be relied upon as it is subject to change.
 
 .. _model-utilities:
 
@@ -160,12 +163,12 @@ dictionary.
 
 .. _from-dict:
 
-*from_dict*
-^^^^^^^^^^^
+:samp:`from_dict`
+^^^^^^^^^^^^^^^^^
 
-The *from_dict* function is available on all constructed models. It accepts a
-dictionary and constructs a model instance based on the dictionary. It is
-similar to :python:`Employee(**employee_dict)` with a few advantages:
+The :samp:`from_dict` function is available on all constructed models. It
+accepts a dictionary and constructs a model instance based on the dictionary.
+It is similar to :python:`Employee(**employee_dict)` with a few advantages:
 
 * The dictionary based on which the model is constructed is checked against
   the schema used to define the model.
@@ -187,20 +190,20 @@ For example::
 .. _de-ref:
 
 .. note:: To be able to support relationships, the schema stored alongside a
-    model, which is accessible at the *_schema* class variable (not a public
-    interface so it should not be used or relied upon), won't store the actual
-    schema for the referenced object. Instead, the *object* type is noted for
-    the property alongside the *x-de-$ref* extension property which stores the
-    name of the referenced model.
+    model, which is accessible at the :samp:`_schema` class variable (not a
+    public interface so it should not be used or relied upon), won't store the
+    actual schema for the referenced object. Instead, the :samp:`object` type
+    is noted for the property alongside the :samp:`x-de-$ref` extension
+    property which stores the name of the referenced model.
 
 .. _from-str:
 
-*from_str*
-^^^^^^^^^^^
+:samp:`from_str`
+^^^^^^^^^^^^^^^^
 
-The *from_str* function is available on all constructed models. It accepts a
-JSON formatted string and constructs a model instance by de-serializing the
-JSON string and then using :ref:`from-dict`. For example::
+The :samp:`from_str` function is available on all constructed models. It
+accepts a JSON formatted string and constructs a model instance by
+de-serializing the JSON string and then using :ref:`from-dict`. For example::
 
     >>> employee_str = '''{
         "id": 1,
@@ -214,13 +217,13 @@ JSON string and then using :ref:`from-dict`. For example::
 
 .. _to-dict:
 
-*to_dict*
-^^^^^^^^^
+:samp:`to_dict`
+^^^^^^^^^^^^^^^
 
-The *to_dict* function is available on all constructed models. It converts a
-model instance into a dictionary based on the schema that was used to define
-the model. If the model includes a relationship, the *to_dict* function is
-called recursively on the relationship.
+The :samp:`to_dict` function is available on all constructed models. It
+converts a model instance into a dictionary based on the schema that was used
+to define the model. If the model includes a relationship, the :samp:`to_dict`
+function is called recursively on the relationship.
 
 For example::
 
@@ -239,11 +242,11 @@ For example::
 
 .. _to-str:
 
-*to_str*
-^^^^^^^^^
+:samp:`to_str`
+^^^^^^^^^^^^^^
 
-The *to_str* function is available on all constructed models. It converts a
-model instance into a JSON formatted string by serializing the output of
+The :samp:`to_str` function is available on all constructed models. It converts
+a model instance into a JSON formatted string by serializing the output of
 :ref:`to-dict`.
 
 For example::
@@ -257,6 +260,36 @@ For example::
     >>> employee = Employee.from_str(employee_str)
     >>> employee.to_str()
     '{"id": 1, "name": "David Andersson", "division": "engineering", "salary": 1000000}'
+
+.. _str:
+
+:samp:`__str__`
+^^^^^^^^^^^^^^^
+
+It is possible to convert any model instance to a string using the
+:python:`str` function. This is supported as there is a :samp:`__str__` alias
+for the :ref:`to-str` function.
+
+.. _repr:
+
+:samp:`__repr__`
+^^^^^^^^^^^^^^^^
+
+Each model includes a :samp:`__repr__` implementation to support calling
+:python:`repr` in any model instance. The returned string is the source code
+required to construct an equivalent model instance.
+
+For example::
+
+    >>> employee_dict = {
+        "id": 1,
+        "name": "David Andersson",
+        "division": "engineering",
+        "salary": 1000000,
+    }
+    >>> employee = Employee.from_dict(**employee_dict)
+    >>> repr(employee)
+    "open_alchemy.models.Employee(id=1, name='David Andersson', division='engineering', salary=1000000)"
 
 .. _alembic:
 
@@ -274,11 +307,12 @@ alembic is supported. The following instructions show how to get started:
 How Does It Work?
 -----------------
 
-Given a name for a schema, *OpenAlchemy* looks for that schema in the
-schemas section of the specification. The schema must have the *x-tablename*
-property which defines the name of the table. The schema is required to be an
-*object*. For each *property* of the schema, a column is generated for the
-table mapping OpenAPI types to equivalent SQLAlchemy types.
+Given a name for a schema, :samp:`OpenAlchemy` looks for that schema in the
+schemas section of the specification. The schema must have the
+:samp:`x-tablename` property which defines the name of the table. The schema is
+required to be an :samp:`object`. For each :samp:`property` of the schema, a
+column is generated for the table mapping OpenAPI types to equivalent
+SQLAlchemy types.
 
 On top of the information in the OpenAPI specification, certain extension
 properties are used to define the database schema. The following specification
@@ -336,8 +370,8 @@ the documentation:
 | :samp:`x-foreign-key-kwargs` | :ref:`Foreign Key kwargs <foreign-key-kwargs>`     |
 +------------------------------+----------------------------------------------------+
 
-The SQLAlchemy *Base* and any constructed database models are dynamically added
-to the *models* module that is available from OpenAlchemy.
+The SQLAlchemy :samp:`Base` and any constructed database models are dynamically
+added to the :samp:`models` module that is available from OpenAlchemy.
 
 Technical Details
 -----------------
