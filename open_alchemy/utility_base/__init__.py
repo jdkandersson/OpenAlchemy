@@ -9,6 +9,7 @@ from .. import facades
 from .. import helpers
 from .. import types as oa_types
 from . import from_dict
+from . import repr_
 from . import to_dict
 
 TUtilityBase = typing.TypeVar("TUtilityBase", bound="UtilityBase")
@@ -268,3 +269,10 @@ class UtilityBase:
         """
         instance_dict = self.to_dict()
         return json.dumps(instance_dict)
+
+    __str__ = to_str
+
+    def __repr__(self) -> str:
+        """Calculate the repr for the model."""
+        properties = self.get_properties()
+        return repr_.calculate(instance=self, properties=properties)

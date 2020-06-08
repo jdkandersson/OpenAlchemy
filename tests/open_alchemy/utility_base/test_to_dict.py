@@ -172,7 +172,7 @@ def test_to_str(__init__):
     THEN the JSON representation of the properties is returned.
     """
     model = type(
-        "model",
+        "Model",
         (utility_base.UtilityBase,),
         {
             "_schema": {"properties": {"key_1": {"type": "integer"}}},
@@ -184,3 +184,5 @@ def test_to_str(__init__):
     returned_str = instance.to_str()
 
     assert returned_str == '{"key_1": 1}'
+    assert str(instance) == '{"key_1": 1}'
+    assert repr(instance) == "open_alchemy.models.Model(key_1=1)"

@@ -4,6 +4,7 @@
 
 - Remove several bugs from the generated models file and integrate with `sqlalchemy-stubs`.
 - Ring fence `black` dependency.
+- add support for `__str__` and `__repr__` for model instances.
 
 ## Version 1.1.1 - 2020-05-17
 
