@@ -206,12 +206,12 @@ def inherits(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[typing.Union[str, bool]]:
     """
-    Retrieve the inherits of the schema.
+    Retrieve the value of the x-inherits extension property of the schema.
 
-    Raises MalformedSchemaError if the inherits value is not a string nor a boolean.
+    Raises MalformedSchemaError if the value is not a string nor a boolean.
 
     Args:
-        schema: The schema to get inherits from.
+        schema: The schema to get x-inherits from.
         schemas: The schemas for $ref lookup.
 
     Returns:
@@ -224,6 +224,30 @@ def inherits(
     if not isinstance(value, (str, bool)):
         raise exceptions.MalformedSchemaError(
             "The x-inherits property must be of type string or boolean."
+        )
+    return value
+
+
+def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the value of the x-json extension property of the schema.
+
+    Raises MalformedSchemaError if the value is not a boolean.
+
+    Args:
+        schema: The schema to get x-json from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-json value or None if the schema does not have the key.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-json")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "The x-json property must be of type boolean."
         )
     return value
 
