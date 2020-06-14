@@ -269,12 +269,11 @@ class TestDetermineType:
     @pytest.mark.parametrize(
         "type_, expected_type",
         [
-            ("integer", sqlalchemy.Integer),
-            ("number", sqlalchemy.Float),
-            ("string", sqlalchemy.String),
-            ("boolean", sqlalchemy.Boolean),
+            pytest.param("integer", sqlalchemy.Integer, id="integer"),
+            pytest.param("number", sqlalchemy.Float, id="number"),
+            pytest.param("string", sqlalchemy.String, id="string"),
+            pytest.param("boolean", sqlalchemy.Boolean, id="boolean"),
         ],
-        ids=["integer", "number", "string", "boolean"],
     )
     @pytest.mark.facade
     def test_supported(type_, expected_type):
@@ -290,15 +289,24 @@ class TestDetermineType:
         assert isinstance(returned_type, expected_type)
 
     @staticmethod
+    @pytest.mark.parametrize(
+        "type_",
+        [
+            pytest.param("integer", id="integer"),
+            pytest.param("number", id="number"),
+            pytest.param("string", id="string"),
+            pytest.param("boolean", id="boolean"),
+        ],
+    )
     @pytest.mark.facade
-    def test_supported_json():
+    def test_supported_json(type_):
         """
-        GIVEN JSON artifacts
+        GIVEN JSON artifacts and type
         WHEN _determine_type is called with the artifacts
         THEN the JSON type is returned.
         """
         artifacts = ColArt(
-            open_api=OAColArt(type="integer"), extension=ExtColArt(json=True)
+            open_api=OAColArt(type=type_), extension=ExtColArt(json=True)
         )
 
         returned_type = column._determine_type(artifacts=artifacts)
