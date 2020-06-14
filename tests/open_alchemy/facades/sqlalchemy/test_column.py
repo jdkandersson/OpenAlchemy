@@ -15,30 +15,18 @@ ColArt = types.ColumnArtifacts
 @pytest.mark.parametrize(
     "name, expected_value",
     [
-        ("Column", sqlalchemy.Column),
-        ("Type", sqlalchemy.sql.type_api.TypeEngine),
-        ("ForeignKey", sqlalchemy.ForeignKey),
-        ("Integer", sqlalchemy.Integer),
-        ("BigInteger", sqlalchemy.BigInteger),
-        ("Number", sqlalchemy.Float),
-        ("String", sqlalchemy.String),
-        ("Binary", sqlalchemy.LargeBinary),
-        ("Date", sqlalchemy.Date),
-        ("DateTime", sqlalchemy.DateTime),
-        ("Boolean", sqlalchemy.Boolean),
-    ],
-    ids=[
-        "Column",
-        "Type",
-        "ForeignKey",
-        "Integer",
-        "BigInteger",
-        "Number",
-        "String",
-        "Binary",
-        "Date",
-        "DateTime",
-        "Boolean",
+        pytest.param("Column", sqlalchemy.Column, id="Column"),
+        pytest.param("Type", sqlalchemy.sql.type_api.TypeEngine, id="Type"),
+        pytest.param("ForeignKey", sqlalchemy.ForeignKey, id="ForeignKey"),
+        pytest.param("Integer", sqlalchemy.Integer, id="Integer"),
+        pytest.param("BigInteger", sqlalchemy.BigInteger, id="BigInteger"),
+        pytest.param("Number", sqlalchemy.Float, id="Number"),
+        pytest.param("String", sqlalchemy.String, id="String"),
+        pytest.param("Binary", sqlalchemy.LargeBinary, id="Binary"),
+        pytest.param("Date", sqlalchemy.Date, id="Date"),
+        pytest.param("DateTime", sqlalchemy.DateTime, id="DateTime"),
+        pytest.param("Boolean", sqlalchemy.Boolean, id="Boolean"),
+        pytest.param("JSON", sqlalchemy.JSON, id="JSON"),
     ],
 )
 @pytest.mark.facade
@@ -468,3 +456,25 @@ class TestHandleBoolean:
         boolean = column._handle_boolean(artifacts=artifacts)
 
         assert isinstance(boolean, sqlalchemy.Boolean)
+
+
+class TestHandleJSON:
+    """Tests for _handle_json."""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.facade
+    def test_valid():
+        """
+        GIVEN artifacts
+        WHEN _handle_json is called with the artifacts
+        THEN the JSON type is returned.
+        """
+        artifacts = ColArt(
+            open_api=OAColArt(type="type 1"), extension=ExtColArt(json=True)
+        )
+
+        boolean = column._handle_json(artifacts=artifacts)
+
+        assert isinstance(boolean, sqlalchemy.JSON)

@@ -20,6 +20,7 @@ Binary = sqlalchemy.LargeBinary
 Date = sqlalchemy.Date
 DateTime = sqlalchemy.DateTime
 Boolean = sqlalchemy.Boolean
+JSON = sqlalchemy.JSON
 
 
 class _TOptColumnArgs(types.TypedDict, total=False):
@@ -201,3 +202,19 @@ def _handle_boolean(
 
     """
     return Boolean()
+
+
+def _handle_json(
+    *, artifacts: types.ColumnArtifacts  # pylint: disable=unused-argument
+) -> JSON:
+    """
+    Handle artifacts for an json type.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy json type of the column.
+
+    """
+    return JSON()
