@@ -412,26 +412,17 @@ class TestCheckArtifacts:
     @pytest.mark.parametrize(
         "type_, format_, max_length, autoincrement",
         [
-            ("integer", None, 1, None),
-            ("number", None, 1, None),
-            ("boolean", None, 1, None),
-            ("string", "date", 1, None),
-            ("string", "date-time", 1, None),
-            ("number", None, None, True),
-            ("string", None, None, True),
-            ("boolean", None, None, True),
-            ("boolean", "format1", None, None),
-        ],
-        ids=[
-            "maxLength     integer",
-            "maxLength     number",
-            "maxLength     boolean",
-            "maxLength     string  date",
-            "maxLength     string  date-time",
-            "autoincrement number",
-            "autoincrement string",
-            "autoincrement boolean",
-            "format        boolean",
+            pytest.param("integer", None, 1, None, id="maxLength integer",),
+            pytest.param("number", None, 1, None, id="maxLength number",),
+            pytest.param("boolean", None, 1, None, id="maxLength boolean",),
+            pytest.param("string", "date", 1, None, id="maxLength string  date",),
+            pytest.param(
+                "string", "date-time", 1, None, id="maxLength string date-time",
+            ),
+            pytest.param("number", None, None, True, id="autoincrement number",),
+            pytest.param("string", None, None, True, id="autoincrement string",),
+            pytest.param("boolean", None, None, True, id="autoincrement boolean",),
+            pytest.param("boolean", "format1", None, None, id="format boolean",),
         ],
     )
     @pytest.mark.column
