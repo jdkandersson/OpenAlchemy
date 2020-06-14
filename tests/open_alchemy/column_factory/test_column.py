@@ -18,96 +18,107 @@ ColArt = types.ColumnArtifacts
 @pytest.mark.parametrize(
     "schema, expected_exception",
     [
-        ({}, exceptions.TypeMissingError),
-        ({"type": 1}, exceptions.TypeMissingError),
-        ({"type": "type 1", "format": 1}, exceptions.MalformedSchemaError),
-        ({"type": "type 1", "maxLength": "1"}, exceptions.MalformedSchemaError),
-        ({"type": "type 1", "nullable": "True"}, exceptions.MalformedSchemaError),
-        ({"type": "type 1", "description": True}, exceptions.MalformedSchemaError),
-        (
+        pytest.param({}, exceptions.TypeMissingError, id="type missing",),
+        pytest.param({"type": 1}, exceptions.TypeMissingError, id="type not string",),
+        pytest.param(
+            {"type": "type 1", "format": 1},
+            exceptions.MalformedSchemaError,
+            id="format not string",
+        ),
+        pytest.param(
+            {"type": "type 1", "maxLength": "1"},
+            exceptions.MalformedSchemaError,
+            id="maxLength not integer",
+        ),
+        pytest.param(
+            {"type": "type 1", "nullable": "True"},
+            exceptions.MalformedSchemaError,
+            id="nullable not boolean",
+        ),
+        pytest.param(
+            {"type": "type 1", "description": True},
+            exceptions.MalformedSchemaError,
+            id="description not string",
+        ),
+        pytest.param(
             {"type": "type 1", "x-primary-key": "True"},
             exceptions.MalformedExtensionPropertyError,
+            id="primary key not boolean",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-autoincrement": "True"},
             exceptions.MalformedExtensionPropertyError,
+            id="autoincrement not boolean",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-index": "True"},
             exceptions.MalformedExtensionPropertyError,
+            id="index not boolean",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-unique": "True"},
             exceptions.MalformedExtensionPropertyError,
+            id="unique not boolean",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-foreign-key": True},
             exceptions.MalformedExtensionPropertyError,
+            id="foreign key not string",
         ),
-        ({"type": "string", "default": 1}, exceptions.MalformedSchemaError),
-        (
+        pytest.param(
+            {"type": "string", "default": 1},
+            exceptions.MalformedSchemaError,
+            id="default invalid",
+        ),
+        pytest.param(
             {"type": "string", "x-kwargs": {1: "value 1"}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs invalid",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"nullable": True}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs nullable",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"default": "value 1"}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs default",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"primary_key": True}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs primary_key",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"autoincrement": True}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs autoincrement",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"index": True}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs index",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"unique": True}},
             exceptions.MalformedExtensionPropertyError,
+            id="kwargs unique",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-foreign-key-kwargs": {"key_1": "value 1"}},
             exceptions.MalformedSchemaError,
+            id="fk kwargs no foreign key",
         ),
-        (
+        pytest.param(
             {
                 "type": "string",
                 "x-foreign-key": "table.column",
                 "x-foreign-key-kwargs": {1: "value 1"},
             },
             exceptions.MalformedExtensionPropertyError,
+            id="fk kwargs invalid",
         ),
-    ],
-    ids=[
-        "type missing",
-        "type not string",
-        "format not string",
-        "maxLength not integer",
-        "nullable not boolean",
-        "description not string",
-        "primary key not boolean",
-        "autoincrement not boolean",
-        "index not boolean",
-        "unique not boolean",
-        "foreign key not string",
-        "default invalid",
-        "kwargs invalid",
-        "kwargs nullable",
-        "kwargs default",
-        "kwargs primary_key",
-        "kwargs autoincrement",
-        "kwargs index",
-        "kwargs unique",
-        "fk kwargs no foreign key",
-        "fk kwargs invalid",
     ],
 )
 @pytest.mark.column
