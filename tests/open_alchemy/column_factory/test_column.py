@@ -300,6 +300,13 @@ def test_check_schema_required():
             id="type with nullable",
         ),
         pytest.param(
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(json=True)),
+            None,
+            None,
+            {"type": "type 1", "x-json": True},
+            id="type with x-json",
+        ),
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", default="value 1")),
             None,
             None,

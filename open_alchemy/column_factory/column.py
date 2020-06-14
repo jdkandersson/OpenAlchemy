@@ -143,6 +143,8 @@ def calculate_schema(
         schema["maxLength"] = artifacts.open_api.max_length
     if artifacts.open_api.description is not None:
         schema["description"] = artifacts.open_api.description
+    if artifacts.extension.json is not None:
+        schema["x-json"] = artifacts.extension.json
     if artifacts.open_api.default is not None:
         schema["default"] = artifacts.open_api.default
     if artifacts.open_api.read_only is not None:
