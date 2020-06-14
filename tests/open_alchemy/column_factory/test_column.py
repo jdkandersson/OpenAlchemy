@@ -140,67 +140,81 @@ def test_check_schema_invalid(schema, expected_exception):
 @pytest.mark.parametrize(
     "schema, expected_artifacts",
     [
-        ({"type": "type 1"}, ColArt(open_api=OAColArt(type="type 1"))),
-        (
+        pytest.param(
+            {"type": "type 1"}, ColArt(open_api=OAColArt(type="type 1")), id="type only"
+        ),
+        pytest.param(
             {"type": "type 1", "format": "format 1"},
             ColArt(open_api=OAColArt(type="type 1", format="format 1")),
+            id="format",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "maxLength": 1},
             ColArt(open_api=OAColArt(type="type 1", max_length=1)),
+            id="maxLength",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "nullable": True},
             ColArt(open_api=OAColArt(type="type 1", nullable=True)),
+            id="nullable",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "description": "description 1"},
             ColArt(open_api=OAColArt(type="type 1", description="description 1")),
+            id="description",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-primary-key": True},
             ColArt(
                 open_api=OAColArt(type="type 1"), extension=ExtColArt(primary_key=True)
             ),
+            id="primary key",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-autoincrement": True},
             ColArt(
                 open_api=OAColArt(type="type 1", nullable=False),
                 extension=ExtColArt(autoincrement=True),
             ),
+            id="autoincrement",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-index": True},
             ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(index=True)),
+            id="index",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-unique": True},
             ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(unique=True)),
+            id="unique",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-json": True},
             ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(json=True)),
+            id="json",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-foreign-key": "table.column"},
             ColArt(
                 open_api=OAColArt(type="type 1"),
                 extension=ExtColArt(foreign_key="table.column"),
             ),
+            id="foreign key",
         ),
-        (
+        pytest.param(
             {"type": "string", "default": "value 1"},
             ColArt(open_api=OAColArt(type="string", default="value 1", nullable=False)),
+            id="default",
         ),
-        (
+        pytest.param(
             {"type": "string", "x-kwargs": {"key_1": "value 1"}},
             ColArt(
                 open_api=OAColArt(type="string"),
                 extension=ExtColArt(kwargs={"key_1": "value 1"}),
             ),
+            id="kwargs",
         ),
-        (
+        pytest.param(
             {
                 "type": "string",
                 "x-foreign-key": "table.column",
@@ -212,28 +226,13 @@ def test_check_schema_invalid(schema, expected_exception):
                     foreign_key="table.column", foreign_key_kwargs={"key_1": "value 1"}
                 ),
             ),
+            id="foreign key kwargs",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "readOnly": True},
             ColArt(open_api=OAColArt(type="type 1", read_only=True)),
+            id="readOnly",
         ),
-    ],
-    ids=[
-        "type only",
-        "format",
-        "maxLength",
-        "nullable",
-        "description",
-        "primary key",
-        "autoincrement",
-        "index",
-        "unique",
-        "json",
-        "foreign key",
-        "default",
-        "kwargs",
-        "foreign key kwargs",
-        "readOnly",
     ],
 )
 @pytest.mark.column

@@ -85,6 +85,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "maxLength": int,
         "nullable": bool,
         "description": str,
+        "x-json": bool,
         "default": TColumnDefault,
         "x-generated": bool,
         "readOnly": bool,
