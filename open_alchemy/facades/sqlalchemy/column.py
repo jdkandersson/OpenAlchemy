@@ -93,23 +93,22 @@ def _determine_type(*, artifacts: types.ColumnArtifacts) -> Type:
         The type for the column.
 
     """
+    # Check for JSON
+    if artifacts.extension.json:
+        return _handle_json(artifacts=artifacts)
     # Determining the type
-    type_: typing.Optional[Type] = None
     if artifacts.open_api.type == "integer":
-        type_ = _handle_integer(artifacts=artifacts)
-    elif artifacts.open_api.type == "number":
-        type_ = _handle_number(artifacts=artifacts)
-    elif artifacts.open_api.type == "string":
-        type_ = _handle_string(artifacts=artifacts)
-    elif artifacts.open_api.type == "boolean":
-        type_ = _handle_boolean(artifacts=artifacts)
+        return _handle_integer(artifacts=artifacts)
+    if artifacts.open_api.type == "number":
+        return _handle_number(artifacts=artifacts)
+    if artifacts.open_api.type == "string":
+        return _handle_string(artifacts=artifacts)
+    if artifacts.open_api.type == "boolean":
+        return _handle_boolean(artifacts=artifacts)
 
-    if type_ is None:
-        raise exceptions.FeatureNotImplementedError(
-            f"{artifacts.open_api.type} has not been implemented"
-        )
-
-    return type_
+    raise exceptions.FeatureNotImplementedError(
+        f"{artifacts.open_api.type} has not been implemented"
+    )
 
 
 def _handle_integer(

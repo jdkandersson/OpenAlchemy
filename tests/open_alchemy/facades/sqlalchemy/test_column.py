@@ -289,6 +289,22 @@ class TestDetermineType:
 
         assert isinstance(returned_type, expected_type)
 
+    @staticmethod
+    @pytest.mark.facade
+    def test_supported_json():
+        """
+        GIVEN JSON artifacts
+        WHEN _determine_type is called with the artifacts
+        THEN the JSON type is returned.
+        """
+        artifacts = ColArt(
+            open_api=OAColArt(type="integer"), extension=ExtColArt(json=True)
+        )
+
+        returned_type = column._determine_type(artifacts=artifacts)
+
+        assert isinstance(returned_type, sqlalchemy.JSON)
+
 
 class TestHandleInteger:
     """Tests for _handle_integer."""
