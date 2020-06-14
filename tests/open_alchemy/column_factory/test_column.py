@@ -441,6 +441,22 @@ class TestCheckArtifacts:
             column._check_artifacts(artifacts=artifacts)
 
     @staticmethod
+    @pytest.mark.column
+    def test_invalid_json_default():
+        """
+        GIVEN JSON column with default
+        WHEN _check_artifacts is called
+        THEN FeatureNotImplementedError is raised.
+        """
+        artifacts = ColArt(
+            open_api=OAColArt(type="type 1", default="value 1"),
+            extension=ExtColArt(json=True),
+        )
+
+        with pytest.raises(exceptions.FeatureNotImplementedError):
+            column._check_artifacts(artifacts=artifacts)
+
+    @staticmethod
     @pytest.mark.parametrize(
         "type_, format_, max_length, autoincrement",
         [

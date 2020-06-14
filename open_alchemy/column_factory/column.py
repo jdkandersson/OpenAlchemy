@@ -230,6 +230,7 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
         artifacts: The artifacts to check.
 
     """
+    # Check whether max length was used incorrectly
     if artifacts.open_api.max_length is not None:
         if artifacts.open_api.type in {"integer", "number", "boolean"}:
             raise exceptions.MalformedSchemaError(
@@ -241,10 +242,17 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
                 "maxLength is not supported for string with the format "
                 f"{artifacts.open_api.format}"
             )
+    # Check whether autoincrement was used incorrectly
     if artifacts.extension.autoincrement is not None:
         if artifacts.open_api.type in {"number", "string", "boolean"}:
             raise exceptions.MalformedSchemaError(
                 f"autoincrement is not supported for {artifacts.open_api.type}"
             )
+    # Check whether format was used with boolean
     if artifacts.open_api.type == "boolean" and artifacts.open_api.format is not None:
         raise exceptions.MalformedSchemaError("format is not supported for boolean")
+    # Check whether default was used with JSON column
+    if artifacts.extension.json and artifacts.open_api.default is not None:
+        raise exceptions.FeatureNotImplementedError(
+            "default is not supported for JSON column"
+        )
