@@ -51,14 +51,13 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
             foreign_key_kwargs = artifacts.extension.foreign_key_kwargs
         foreign_key = ForeignKey(artifacts.extension.foreign_key, **foreign_key_kwargs)
     # Map default value
+    default = None
     if artifacts.open_api.default is not None:
         default = helpers.oa_to_py_type.convert(
             value=artifacts.open_api.default,
             type_=artifacts.open_api.type,
             format_=artifacts.open_api.format,
         )
-    else:
-        default = None
 
     # Generate optional keyword arguments
     opt_kwargs: _TOptColumnArgs = {}
