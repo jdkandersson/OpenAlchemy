@@ -71,7 +71,7 @@ def prepare(
 
     Args:
         schema: The schema to prepare.
-        schemas: The schemas from which to resolve $ref.
+        schemas: The schemas from which to resolve any $ref.
         skip_name (optional): Any schema name to skip.
 
     Returns:
@@ -82,3 +82,33 @@ def prepare(
         name="", schema=schema, schemas=schemas, skip_name=skip_name
     )
     return all_of_helper.merge(schema=schema, schemas=schemas, skip_name=skip_name)
+
+
+def prepare_deep(schema: types.Schema, schemas: types.Schemas):
+    """
+    Resolve $ref and merge allOf including for object properties and items.
+
+    Assume the schema is a valid JSONSchema.
+
+    Args:
+        schema: The schema to prepare.
+        schemas: The schemas from which to resolve any $ref.
+
+    Returns:
+        The prepared schema.
+
+    """
+    schema = prepare(schema=schema, schemas=schemas)
+
+    # Resolve $ref in any properties
+    properties = schema.get("properties", None)
+    if properties is not None:
+        for name, prop_schema in properties.items():
+            properties[name] = prepare_deep(schema=prop_schema, schemas=schemas)
+
+    # Resolve $ref of any items
+    items_schema = schema.get("items", None)
+    if items_schema is not None:
+        schema["items"] = prepare_deep(schema=items_schema, schemas=schemas)
+
+    return schema
