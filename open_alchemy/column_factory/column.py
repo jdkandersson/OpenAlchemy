@@ -244,7 +244,7 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
             )
     # Check whether autoincrement was used incorrectly
     if artifacts.extension.autoincrement is not None:
-        if artifacts.open_api.type in {"number", "string", "boolean"}:
+        if artifacts.open_api.type != "integer":
             raise exceptions.MalformedSchemaError(
                 f"autoincrement is not supported for {artifacts.open_api.type}"
             )
