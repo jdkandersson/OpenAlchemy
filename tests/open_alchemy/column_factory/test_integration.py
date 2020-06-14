@@ -46,8 +46,16 @@ def test_integration_simple(schema, expected_schema):
             id="simple",
         ),
         pytest.param(
-            {"type": "object", "x-json": True},
-            {"type": "object", "x-json": True},
+            {
+                "type": "object",
+                "x-json": True,
+                "properties": {"key": {"type": "integer"}},
+            },
+            {
+                "type": "object",
+                "x-json": True,
+                "properties": {"key": {"type": "integer"}},
+            },
             id="object",
         ),
         pytest.param(
