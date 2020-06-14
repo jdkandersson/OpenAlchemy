@@ -61,6 +61,11 @@ ColArt = types.ColumnArtifacts
             id="unique not boolean",
         ),
         pytest.param(
+            {"type": "type 1", "x-json": "True"},
+            exceptions.MalformedExtensionPropertyError,
+            id="json not boolean",
+        ),
+        pytest.param(
             {"type": "type 1", "x-foreign-key": True},
             exceptions.MalformedExtensionPropertyError,
             id="foreign key not string",
@@ -130,6 +135,131 @@ def test_check_schema_invalid(schema, expected_exception):
     """
     with pytest.raises(expected_exception):
         column.check_schema(schema=schema)
+
+
+@pytest.mark.parametrize(
+    "schema, expected_artifacts",
+    [
+        ({"type": "type 1"}, ColArt(open_api=OAColArt(type="type 1"))),
+        (
+            {"type": "type 1", "format": "format 1"},
+            ColArt(open_api=OAColArt(type="type 1", format="format 1")),
+        ),
+        (
+            {"type": "type 1", "maxLength": 1},
+            ColArt(open_api=OAColArt(type="type 1", max_length=1)),
+        ),
+        (
+            {"type": "type 1", "nullable": True},
+            ColArt(open_api=OAColArt(type="type 1", nullable=True)),
+        ),
+        (
+            {"type": "type 1", "description": "description 1"},
+            ColArt(open_api=OAColArt(type="type 1", description="description 1")),
+        ),
+        (
+            {"type": "type 1", "x-primary-key": True},
+            ColArt(
+                open_api=OAColArt(type="type 1"), extension=ExtColArt(primary_key=True)
+            ),
+        ),
+        (
+            {"type": "type 1", "x-autoincrement": True},
+            ColArt(
+                open_api=OAColArt(type="type 1", nullable=False),
+                extension=ExtColArt(autoincrement=True),
+            ),
+        ),
+        (
+            {"type": "type 1", "x-index": True},
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(index=True)),
+        ),
+        (
+            {"type": "type 1", "x-unique": True},
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(unique=True)),
+        ),
+        (
+            {"type": "type 1", "x-json": True},
+            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(json=True)),
+        ),
+        (
+            {"type": "type 1", "x-foreign-key": "table.column"},
+            ColArt(
+                open_api=OAColArt(type="type 1"),
+                extension=ExtColArt(foreign_key="table.column"),
+            ),
+        ),
+        (
+            {"type": "string", "default": "value 1"},
+            ColArt(open_api=OAColArt(type="string", default="value 1", nullable=False)),
+        ),
+        (
+            {"type": "string", "x-kwargs": {"key_1": "value 1"}},
+            ColArt(
+                open_api=OAColArt(type="string"),
+                extension=ExtColArt(kwargs={"key_1": "value 1"}),
+            ),
+        ),
+        (
+            {
+                "type": "string",
+                "x-foreign-key": "table.column",
+                "x-foreign-key-kwargs": {"key_1": "value 1"},
+            },
+            ColArt(
+                open_api=OAColArt(type="string"),
+                extension=ExtColArt(
+                    foreign_key="table.column", foreign_key_kwargs={"key_1": "value 1"}
+                ),
+            ),
+        ),
+        (
+            {"type": "type 1", "readOnly": True},
+            ColArt(open_api=OAColArt(type="type 1", read_only=True)),
+        ),
+    ],
+    ids=[
+        "type only",
+        "format",
+        "maxLength",
+        "nullable",
+        "description",
+        "primary key",
+        "autoincrement",
+        "index",
+        "unique",
+        "json",
+        "foreign key",
+        "default",
+        "kwargs",
+        "foreign key kwargs",
+        "readOnly",
+    ],
+)
+@pytest.mark.column
+def test_check_schema_artifacts(schema, expected_artifacts):
+    """
+    GIVEN schema and expected artifacts
+    WHEN check_schema is called with the schema
+    THEN the expected artifacts are returned.
+    """
+    artifacts = column.check_schema(schema=schema)
+
+    assert artifacts == expected_artifacts
+
+
+@pytest.mark.column
+def test_check_schema_required():
+    """
+    GIVEN schema
+    WHEN check_schema is called with the schema and required True
+    THEN nullable is False.
+    """
+    schema = {"type": "type 1"}
+
+    artifacts = column.check_schema(schema=copy.deepcopy(schema), required=True)
+
+    assert artifacts.open_api.nullable is False
 
 
 @pytest.mark.parametrize(
@@ -262,126 +392,6 @@ def test_calculate_column_schema_dict_ignore_invalid():
             artifacts=ColArt(open_api=OAColArt(type="type 1")),
             schema={"type": "type 1", "x-dict-ignore": "True"},
         )
-
-
-@pytest.mark.parametrize(
-    "schema, expected_artifacts",
-    [
-        ({"type": "type 1"}, ColArt(open_api=OAColArt(type="type 1"))),
-        (
-            {"type": "type 1", "format": "format 1"},
-            ColArt(open_api=OAColArt(type="type 1", format="format 1")),
-        ),
-        (
-            {"type": "type 1", "maxLength": 1},
-            ColArt(open_api=OAColArt(type="type 1", max_length=1)),
-        ),
-        (
-            {"type": "type 1", "nullable": True},
-            ColArt(open_api=OAColArt(type="type 1", nullable=True)),
-        ),
-        (
-            {"type": "type 1", "description": "description 1"},
-            ColArt(open_api=OAColArt(type="type 1", description="description 1")),
-        ),
-        (
-            {"type": "type 1", "x-primary-key": True},
-            ColArt(
-                open_api=OAColArt(type="type 1"), extension=ExtColArt(primary_key=True)
-            ),
-        ),
-        (
-            {"type": "type 1", "x-autoincrement": True},
-            ColArt(
-                open_api=OAColArt(type="type 1", nullable=False),
-                extension=ExtColArt(autoincrement=True),
-            ),
-        ),
-        (
-            {"type": "type 1", "x-index": True},
-            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(index=True)),
-        ),
-        (
-            {"type": "type 1", "x-unique": True},
-            ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(unique=True)),
-        ),
-        (
-            {"type": "type 1", "x-foreign-key": "table.column"},
-            ColArt(
-                open_api=OAColArt(type="type 1"),
-                extension=ExtColArt(foreign_key="table.column"),
-            ),
-        ),
-        (
-            {"type": "string", "default": "value 1"},
-            ColArt(open_api=OAColArt(type="string", default="value 1", nullable=False)),
-        ),
-        (
-            {"type": "string", "x-kwargs": {"key_1": "value 1"}},
-            ColArt(
-                open_api=OAColArt(type="string"),
-                extension=ExtColArt(kwargs={"key_1": "value 1"}),
-            ),
-        ),
-        (
-            {
-                "type": "string",
-                "x-foreign-key": "table.column",
-                "x-foreign-key-kwargs": {"key_1": "value 1"},
-            },
-            ColArt(
-                open_api=OAColArt(type="string"),
-                extension=ExtColArt(
-                    foreign_key="table.column", foreign_key_kwargs={"key_1": "value 1"}
-                ),
-            ),
-        ),
-        (
-            {"type": "type 1", "readOnly": True},
-            ColArt(open_api=OAColArt(type="type 1", read_only=True)),
-        ),
-    ],
-    ids=[
-        "type only",
-        "format",
-        "maxLength",
-        "nullable",
-        "description",
-        "primary key",
-        "autoincrement",
-        "index",
-        "unique",
-        "foreign key",
-        "default",
-        "kwargs",
-        "foreign key kwargs",
-        "readOnly",
-    ],
-)
-@pytest.mark.column
-def test_check_schema_artifacts(schema, expected_artifacts):
-    """
-    GIVEN schema and expected artifacts
-    WHEN check_schema is called with the schema
-    THEN the expected artifacts are returned.
-    """
-    artifacts = column.check_schema(schema=schema)
-
-    assert artifacts == expected_artifacts
-
-
-@pytest.mark.column
-def test_check_schema_required():
-    """
-    GIVEN schema
-    WHEN check_schema is called with the schema and required True
-    THEN nullable is False.
-    """
-    schema = {"type": "type 1"}
-
-    artifacts = column.check_schema(schema=copy.deepcopy(schema), required=True)
-
-    assert artifacts.open_api.nullable is False
 
 
 @pytest.mark.column

@@ -67,6 +67,7 @@ def check_schema(
     autoincrement = helpers.ext_prop.get(source=schema, name="x-autoincrement")
     index = helpers.ext_prop.get(source=schema, name="x-index")
     unique = helpers.ext_prop.get(source=schema, name="x-unique")
+    json = helpers.ext_prop.get(source=schema, name="x-json")
     foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
     foreign_key_kwargs = helpers.ext_prop.get_kwargs(
         source=schema, name="x-foreign-key-kwargs"
@@ -109,6 +110,7 @@ def check_schema(
             autoincrement=autoincrement,
             index=index,
             unique=unique,
+            json=json,
             foreign_key=foreign_key,
             foreign_key_kwargs=foreign_key_kwargs,
             kwargs=kwargs,
