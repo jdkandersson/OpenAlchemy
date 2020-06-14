@@ -403,23 +403,6 @@ def test_calculate_column_schema_dict_ignore_invalid():
         )
 
 
-@pytest.mark.column
-def test_integration():
-    """
-    GIVEN schema and logical name
-    WHEN handle_column is called with the schema
-    THEN the logical name and an instance of SQLAlchemy Column is returned.
-    """
-    returned_column, returned_schema = column.handle_column(
-        schema={"$ref": "#/components/schemas/Column"},
-        schemas={"Column": {"type": "number"}},
-    )
-
-    assert isinstance(returned_column, facades.sqlalchemy.column.Column)
-    assert isinstance(returned_column.type, facades.sqlalchemy.column.Number)
-    assert returned_schema == {"type": "number"}
-
-
 class TestCheckArtifacts:
     """Tests for _check_artifacts."""
 
@@ -533,3 +516,20 @@ def test_construct_column_valid():
 
     assert isinstance(return_column, facades.sqlalchemy.column.Column)
     assert isinstance(return_column.type, facades.sqlalchemy.column.String)
+
+
+@pytest.mark.column
+def test_integration():
+    """
+    GIVEN schema and logical name
+    WHEN handle_column is called with the schema
+    THEN the logical name and an instance of SQLAlchemy Column is returned.
+    """
+    returned_column, returned_schema = column.handle_column(
+        schema={"$ref": "#/components/schemas/Column"},
+        schemas={"Column": {"type": "number"}},
+    )
+
+    assert isinstance(returned_column, facades.sqlalchemy.column.Column)
+    assert isinstance(returned_column.type, facades.sqlalchemy.column.Number)
+    assert returned_schema == {"type": "number"}
