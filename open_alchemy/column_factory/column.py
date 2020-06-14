@@ -232,7 +232,7 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
     """
     # Check whether max length was used incorrectly
     if artifacts.open_api.max_length is not None:
-        if artifacts.open_api.type in {"integer", "number", "boolean"}:
+        if artifacts.open_api.type != "string":
             raise exceptions.MalformedSchemaError(
                 f"maxLength is not supported for {artifacts.open_api.type}"
             )
