@@ -89,30 +89,14 @@ def test_types(engine, sessionmaker, type_, format_, value):
 @pytest.mark.parametrize(
     "schema, value",
     [
+        pytest.param({"type": "integer", "x-json": True}, 1, id="integer"),
+        pytest.param({"type": "number", "x-json": True}, 1.1, id="number"),
+        pytest.param({"type": "string", "x-json": True}, "value 1", id="string",),
+        pytest.param({"type": "boolean", "x-json": True}, True, id="boolean",),
         pytest.param(
-            {"type": "integer", "x-primary-key": True, "x-json": True}, 1, id="integer"
+            {"type": "object", "x-json": True}, {"key": "value"}, id="object",
         ),
-        pytest.param(
-            {"type": "number", "x-primary-key": True, "x-json": True}, 1.1, id="number"
-        ),
-        pytest.param(
-            {"type": "string", "x-primary-key": True, "x-json": True},
-            "value 1",
-            id="string",
-        ),
-        pytest.param(
-            {"type": "boolean", "x-primary-key": True, "x-json": True},
-            True,
-            id="boolean",
-        ),
-        pytest.param(
-            {"type": "object", "x-primary-key": True, "x-json": True},
-            {"key": "value"},
-            id="object",
-        ),
-        pytest.param(
-            {"type": "array", "x-primary-key": True, "x-json": True}, [1], id="array"
-        ),
+        pytest.param({"type": "array", "x-json": True}, [1], id="array"),
     ],
 )
 @pytest.mark.integration
@@ -127,7 +111,10 @@ def test_types_json(engine, sessionmaker, schema, value):
         "components": {
             "schemas": {
                 "Table": {
-                    "properties": {"column": schema},
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "column": schema,
+                    },
                     "x-tablename": "table",
                     "type": "object",
                 }
@@ -142,7 +129,7 @@ def test_types_json(engine, sessionmaker, schema, value):
     # Creating models
     base.metadata.create_all(engine)
     # Creating model instance
-    model_instance = model(column=copy.deepcopy(value))
+    model_instance = model(id=1, column=copy.deepcopy(value))
     session = sessionmaker()
     session.add(model_instance)
     session.flush()
