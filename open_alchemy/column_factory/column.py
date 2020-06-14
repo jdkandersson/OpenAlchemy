@@ -216,15 +216,18 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
             a. integer
             b. number
             c. boolean
-            d. string with the format of
+            d. JSON
+            e. string with the format of
                 i. date
                 ii. date-time
         2. autoincrement with
             a. number
             b. string
             c. boolean
+            d. JSON
         3. format with
             a. boolean
+        4. default with JSON
 
     Args:
         artifacts: The artifacts to check.
