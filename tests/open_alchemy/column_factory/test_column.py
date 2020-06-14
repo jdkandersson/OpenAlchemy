@@ -383,7 +383,7 @@ def test_calculate_column_schema(artifacts, expected_schema):
     THEN the schema is returned.
     """
     returned_schema = column._calculate_column_schema(
-        artifacts=artifacts, schema=copy.deepcopy(expected_schema)
+        artifacts=artifacts, schema=copy.deepcopy(expected_schema), schemas={}
     )
 
     assert returned_schema == expected_schema
@@ -400,7 +400,32 @@ def test_calculate_column_schema_dict_ignore_invalid():
         column._calculate_column_schema(
             artifacts=ColArt(open_api=OAColArt(type="type 1")),
             schema={"type": "type 1", "x-dict-ignore": "True"},
+            schemas={},
         )
+
+
+@pytest.mark.column
+def test_calculate_column_schema_json():
+    """
+    GIVEN schema
+    WHEN _calculate_column_schema is called with the schema
+    THEN the schema is returned.
+    """
+    artifacts = ColArt(open_api=OAColArt(type="type 1"), extension=ExtColArt(json=True))
+    schema = {
+        "type": "object",
+        "properties": {"column": {"$ref": "#/components/schemas/RefSchema"}},
+    }
+    schemas = {"RefSchema": {"type": "integer"}}
+
+    returned_schema = column._calculate_column_schema(
+        artifacts=artifacts, schema=schema, schemas=schemas
+    )
+
+    assert returned_schema == {
+        "type": "object",
+        "properties": {"column": {"type": "integer"}},
+    }
 
 
 class TestCheckArtifacts:

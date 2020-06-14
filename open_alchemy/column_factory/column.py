@@ -30,7 +30,9 @@ def handle_column(
     """
     schema = helpers.schema.prepare(schema=schema, schemas=schemas)
     artifacts = check_schema(schema=schema, required=required)
-    column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
+    column_schema = _calculate_column_schema(
+        artifacts=artifacts, schema=schema, schemas=schemas
+    )
     column = construct_column(artifacts=artifacts)
     return column, column_schema
 
@@ -159,7 +161,7 @@ def calculate_schema(
 
 
 def _calculate_column_schema(
-    *, artifacts: types.ColumnArtifacts, schema: types.Schema
+    *, artifacts: types.ColumnArtifacts, schema: types.Schema, schemas: types.Schemas
 ) -> types.ColumnSchema:
     """
     Calculate the schema to be returned for a column.
@@ -177,6 +179,10 @@ def _calculate_column_schema(
         The schema to be recorded for the column.
 
     """
+    # Handle json
+    if artifacts.extension.json:
+        return helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     dict_ignore = helpers.ext_prop.get(source=schema, name="x-dict-ignore")
     return_schema = calculate_schema(
