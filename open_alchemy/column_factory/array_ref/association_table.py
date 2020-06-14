@@ -52,7 +52,7 @@ def _gather_column_artifacts(
 
     """
     # Resolve $ref and merge allOf
-    model_schema = helpers.prepare_schema(schema=model_schema, schemas=schemas)
+    model_schema = helpers.schema.prepare(schema=model_schema, schemas=schemas)
 
     # Check schema type
     model_type = model_schema.get("type")

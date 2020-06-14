@@ -43,7 +43,7 @@ def check_required(
     model_fk_schema = properties.get(fk_logical_name)
     if model_fk_schema is None:
         return True
-    model_fk_schema = helpers.prepare_schema(schema=model_fk_schema, schemas=schemas)
+    model_fk_schema = helpers.schema.prepare(schema=model_fk_schema, schemas=schemas)
 
     # Check type
     model_fk_type = model_fk_schema.get("type")

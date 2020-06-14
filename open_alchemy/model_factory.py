@@ -108,7 +108,7 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     inherits = helpers.schema.inherits(schema=schema, schemas=schemas)
     if not inherits:
         # De-referencing schema
-        schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+        schema = helpers.schema.prepare(schema=schema, schemas=schemas)
         # Checking for tablename key
         if "x-tablename" not in schema:
             raise exceptions.MalformedSchemaError(
@@ -117,7 +117,7 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
     else:
         parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
         # De-referencing schema excluding parent schema
-        schema = helpers.prepare_schema(
+        schema = helpers.schema.prepare(
             schema=schema, schemas=schemas, skip_name=parent
         )
         # Checking for inherits key

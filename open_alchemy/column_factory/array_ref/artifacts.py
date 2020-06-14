@@ -24,7 +24,7 @@ def gather(
 
     """
     # Resolve any allOf and $ref
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    schema = helpers.schema.prepare(schema=schema, schemas=schemas)
 
     # Get item schema
     item_schema = schema.get("items")
@@ -53,7 +53,7 @@ def gather(
         )
 
     # Check referenced specification
-    ref_schema = helpers.prepare_schema(schema=artifacts.spec, schemas=schemas)
+    ref_schema = helpers.schema.prepare(schema=artifacts.spec, schemas=schemas)
     ref_tablename = helpers.ext_prop.get(source=ref_schema, name="x-tablename")
     if ref_tablename is None:
         raise exceptions.MalformedRelationshipError(

@@ -3,7 +3,9 @@
 import typing
 
 from .. import types
+from . import all_of as all_of_helper
 from . import peek
+from . import ref as ref_helper
 
 
 def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
@@ -56,3 +58,27 @@ def inherits(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional
     if isinstance(inherits_value, str) or inherits_value is True:
         return True
     return False
+
+
+def prepare(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    skip_name: typing.Optional[str] = None,
+) -> types.Schema:
+    """
+    Resolve $ref and merge allOf.
+
+    Args:
+        schema: The schema to prepare.
+        schemas: The schemas from which to resolve $ref.
+        skip_name (optional): Any schema name to skip.
+
+    Returns:
+        The prepared schema.
+
+    """
+    _, schema = ref_helper.resolve(
+        name="", schema=schema, schemas=schemas, skip_name=skip_name
+    )
+    return all_of_helper.merge(schema=schema, schemas=schemas, skip_name=skip_name)

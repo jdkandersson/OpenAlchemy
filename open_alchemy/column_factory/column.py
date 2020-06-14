@@ -28,7 +28,7 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    schema = helpers.schema.prepare(schema=schema, schemas=schemas)
     artifacts = check_schema(schema=schema, required=required)
     column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
     column = construct_column(artifacts=artifacts)
