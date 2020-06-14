@@ -264,44 +264,56 @@ def test_check_schema_required():
 @pytest.mark.parametrize(
     "artifacts, nullable, dict_ignore, expected_schema",
     [
-        (ColArt(open_api=OAColArt(type="type 1")), None, None, {"type": "type 1"}),
-        (
+        pytest.param(
+            ColArt(open_api=OAColArt(type="type 1")),
+            None,
+            None,
+            {"type": "type 1"},
+            id="type only",
+        ),
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", format="format 1")),
             None,
             None,
             {"type": "type 1", "format": "format 1"},
+            id="type with format",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", max_length=1)),
             None,
             None,
             {"type": "type 1", "maxLength": 1},
+            id="type with maxLength",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", description="description 1")),
             None,
             None,
             {"type": "type 1", "description": "description 1"},
+            id="type with description",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", nullable=False)),
             None,
             None,
             {"type": "type 1"},
+            id="type with nullable",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", default="value 1")),
             None,
             None,
             {"type": "type 1", "default": "value 1"},
+            id="type with default",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1", read_only=True)),
             None,
             None,
             {"type": "type 1", "readOnly": True},
+            id="type with readOnly",
         ),
-        (
+        pytest.param(
             ColArt(
                 open_api=OAColArt(type="type 1"),
                 extension=ExtColArt(autoincrement=True),
@@ -309,31 +321,22 @@ def test_check_schema_required():
             None,
             None,
             {"type": "type 1", "x-generated": True},
+            id="type with autoincrement",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1")),
             False,
             None,
             {"type": "type 1", "nullable": False},
+            id="nullable input not None",
         ),
-        (
+        pytest.param(
             ColArt(open_api=OAColArt(type="type 1")),
             None,
             True,
             {"type": "type 1", "x-dict-ignore": True},
+            id="dict_ignore input not None",
         ),
-    ],
-    ids=[
-        "type only",
-        "type with format",
-        "type with maxLength",
-        "type with description",
-        "type with nullable",
-        "type with default",
-        "type with readOnly",
-        "type with autoincrement",
-        "nullable input not None",
-        "dict_ignore input not None",
     ],
 )
 @pytest.mark.column
