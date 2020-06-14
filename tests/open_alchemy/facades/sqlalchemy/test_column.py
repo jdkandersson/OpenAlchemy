@@ -68,6 +68,32 @@ def test_construct(type_, expected_type):
     assert returned_column.nullable is True
 
 
+@pytest.mark.parametrize(
+    "type_",
+    [
+        pytest.param("integer", id="integer"),
+        pytest.param("number", id="number"),
+        pytest.param("string", id="string"),
+        pytest.param("boolean", id="boolean"),
+        pytest.param("object", id="object"),
+        pytest.param("array", id="array"),
+    ],
+)
+@pytest.mark.facade
+def test_construct_json(type_):
+    """
+    GIVEN artifacts for a JSON type
+    WHEN construct is called with the artifacts
+    THEN a column with the expected type is returned.
+    """
+    artifacts = ColArt(open_api=OAColArt(type=type_), extension=ExtColArt(json=True))
+
+    returned_column = column.construct(artifacts=artifacts)
+
+    assert isinstance(returned_column, sqlalchemy.Column)
+    assert isinstance(returned_column.type, sqlalchemy.JSON)
+
+
 @pytest.mark.facade
 def test_construct_foreign_key():
     """

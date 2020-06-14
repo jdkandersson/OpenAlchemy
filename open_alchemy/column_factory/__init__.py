@@ -53,7 +53,9 @@ def column_factory(
     # Check type
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
 
-    if type_ not in {"object", "array"}:
+    if type_ not in {"object", "array"} or helpers.peek.json(
+        schema=schema, schemas=schemas
+    ):
         column_value, column_schema = column.handle_column(
             schema=schema, schemas=schemas, required=required
         )
