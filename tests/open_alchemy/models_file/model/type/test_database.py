@@ -10,7 +10,6 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import exceptions
 from open_alchemy import models_file
 
 _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
@@ -176,7 +175,7 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
                             "x-primary-key": True,
                             "x-autoincrement": True,
                         },
-                        "column": {"type": type_, "x-json": True,},
+                        "column": {"type": type_, "x-json": True},
                     },
                     "x-tablename": "table",
                     "type": "object",
