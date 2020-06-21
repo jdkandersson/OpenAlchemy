@@ -16,3 +16,4 @@ Examples
    ref
    all_of
    inheritance
+   json
