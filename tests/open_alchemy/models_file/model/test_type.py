@@ -13,49 +13,66 @@ import open_alchemy
 from open_alchemy import exceptions
 from open_alchemy import models_file
 
+_ColSchemaArt = models_file.types.ColumnSchemaArtifacts
+
 
 @pytest.mark.parametrize(
-    "type_, format_, nullable, required, generated, de_ref, default, expected_type",
+    "artifacts, expected_type",
     [
-        ("integer", None, False, None, None, None, None, "int"),
-        ("integer", "int32", False, None, None, None, None, "int"),
-        ("integer", "int64", False, None, None, None, None, "int"),
-        ("number", None, False, None, None, None, None, "float"),
-        ("number", "float", False, None, None, None, None, "float"),
-        ("string", None, False, None, None, None, None, "str"),
-        ("string", "password", False, None, None, None, None, "str"),
-        ("string", "byte", False, None, None, None, None, "str"),
-        ("string", "binary", False, None, None, None, None, "bytes"),
-        ("string", "date", False, None, None, None, None, "datetime.date"),
-        ("string", "date-time", False, None, None, None, None, "datetime.datetime"),
-        ("boolean", None, False, None, None, None, None, "bool"),
-        ("object", None, False, None, None, "RefModel", None, '"TRefModel"'),
-        ("object", None, False, None, None, "RefModel", "value 1", '"TRefModel"'),
-        (
-            "array",
-            None,
-            None,
-            None,
-            None,
-            "RefModel",
-            None,
+        pytest.param(_ColSchemaArt(type="integer", nullable=False), "int"),
+        pytest.param(
+            _ColSchemaArt(type="integer", format="int32", nullable=False), "int"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="integer", format="int64", nullable=False), "int"
+        ),
+        pytest.param(_ColSchemaArt(type="number", nullable=False), "float"),
+        pytest.param(
+            _ColSchemaArt(type="number", format="float", nullable=False), "float"
+        ),
+        pytest.param(_ColSchemaArt(type="string", nullable=False), "str"),
+        pytest.param(
+            _ColSchemaArt(type="string", format="password", nullable=False), "str"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="byte", nullable=False), "str"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="binary", nullable=False), "bytes"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date", nullable=False), "datetime.date"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date-time", nullable=False),
+            "datetime.datetime",
+        ),
+        pytest.param(_ColSchemaArt(type="boolean", nullable=False), "bool"),
+        pytest.param(
+            _ColSchemaArt(type="object", nullable=False, de_ref="RefModel"),
+            '"TRefModel"',
+        ),
+        pytest.param(
+            _ColSchemaArt(
+                type="object", nullable=False, de_ref="RefModel", default="value 1"
+            ),
+            '"TRefModel"',
+        ),
+        pytest.param(
+            _ColSchemaArt(type="array", de_ref="RefModel"),
             'typing.Sequence["TRefModel"]',
         ),
-        (
-            "array",
-            None,
-            None,
-            None,
-            None,
-            "RefModel",
-            "value 1",
+        pytest.param(
+            _ColSchemaArt(type="array", de_ref="RefModel", default="value 1"),
             'typing.Sequence["TRefModel"]',
         ),
-        ("integer", None, None, None, None, None, None, "typing.Optional[int]"),
-        ("integer", None, None, True, None, None, None, "int"),
-        ("integer", None, None, None, True, None, None, "int"),
-        ("integer", None, None, None, False, None, None, "typing.Optional[int]"),
-        ("integer", None, None, None, False, None, 1, "int"),
+        pytest.param(_ColSchemaArt(type="integer"), "typing.Optional[int]"),
+        pytest.param(_ColSchemaArt(type="integer", required=True), "int"),
+        pytest.param(_ColSchemaArt(type="integer", generated=True), "int"),
+        pytest.param(
+            _ColSchemaArt(type="integer", generated=False), "typing.Optional[int]"
+        ),
+        pytest.param(_ColSchemaArt(type="integer", generated=False, default=1), "int"),
     ],
     ids=[
         "integer no format",
@@ -82,24 +99,12 @@ from open_alchemy import models_file
     ],
 )
 @pytest.mark.models_file
-def test_model(
-    type_, format_, nullable, required, generated, de_ref, default, expected_type
-):
+def test_model(artifacts, expected_type):
     """
-    GIVEN type, format, nullable and required
-    WHEN model is called with the type, format, nullable and required
+    GIVEN artifacts
+    WHEN model is called with the artifacts
     THEN the expected type is returned.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_,
-        format=format_,
-        nullable=nullable,
-        required=required,
-        de_ref=de_ref,
-        generated=generated,
-        default=default,
-    )
-
     returned_type = models_file._model._type.model(artifacts=artifacts)
 
     assert returned_type == expected_type
@@ -123,7 +128,7 @@ def test_dict(type_, format_, expected_type):
     WHEN typed_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
+    artifacts = _ColSchemaArt(
         type=type_, format=format_, nullable=True, de_ref="RefModel"
     )
 
@@ -139,7 +144,7 @@ def test_dict_de_ref_none():
     WHEN typed_dict is called with the artifacts
     THEN MissingArgumentError is raised.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(type="object", de_ref=None)
+    artifacts = _ColSchemaArt(type="object", de_ref=None)
 
     with pytest.raises(exceptions.MissingArgumentError):
         models_file._model._type.typed_dict(artifacts=artifacts)
@@ -171,7 +176,7 @@ def test_arg_init(nullable, required, default, expected_type):
     WHEN arg_init is called with the nullable and required
     THEN the expected type is returned.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
+    artifacts = _ColSchemaArt(
         type="integer", nullable=nullable, required=required, default=default
     )
 
@@ -196,7 +201,7 @@ def test_arg_from_dict(type_, expected_type):
     WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
+    artifacts = _ColSchemaArt(
         type=type_, nullable=False, required=True, de_ref="RefModel"
     )
 
@@ -212,7 +217,7 @@ def test_arg_from_dict_de_ref_none():
     WHEN arg_from_dict is called with the artifacts
     THEN MissingArgumentError is raised.
     """
-    artifacts = models_file.types.ColumnSchemaArtifacts(type="object", de_ref=None)
+    artifacts = _ColSchemaArt(type="object", de_ref=None)
 
     with pytest.raises(exceptions.MissingArgumentError):
         models_file._model._type.arg_from_dict(artifacts=artifacts)
@@ -329,7 +334,7 @@ def test_model_database_type_simple(
     model = model_factory(name="Table")
 
     # Create artifacts
-    artifacts = models_file.types.ColumnSchemaArtifacts(
+    artifacts = _ColSchemaArt(
         type=type_, format=format_, nullable=nullable, required=required
     )
     calculated_type_str = models_file._model._type.model(artifacts=artifacts)
