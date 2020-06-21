@@ -148,6 +148,68 @@ def test_model_database_type_simple(
 
 
 @pytest.mark.parametrize(
+    "type_, value",
+    [
+        pytest.param("integer", 1, id="integer"),
+        pytest.param("number", 1.0, id="number"),
+        pytest.param("string", "value 1", id="string"),
+        pytest.param("boolean", True, id="boolean"),
+        pytest.param("object", {"key": "value"}, id="object"),
+        pytest.param("array", [1], id="array"),
+    ],
+)
+@pytest.mark.models_file
+def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
+    """
+    GIVEN JSON type
+    WHEN a specification is written for the combination and a model created and
+        initialized with the value
+    THEN the queried value complies with the type calculated by type_.model.
+    """
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {
+                            "type": "integer",
+                            "x-primary-key": True,
+                            "x-autoincrement": True,
+                        },
+                        "column": {"type": type_, "x-json": True,},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                    "required": ["column"],
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Create artifacts
+    artifacts = _ColSchemaArt(type=type_, required=True)
+    calculated_type_str = models_file._model._type.model(artifacts=artifacts)
+    calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+    typeguard.check_type("queried_model.column", queried_model.column, calculated_type)
+
+
+@pytest.mark.parametrize(
     "nullable, required, generated",
     [(False, None, None), (None, True, None), (None, None, True)],
     ids=[
