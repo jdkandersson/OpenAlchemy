@@ -10,26 +10,69 @@ _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
 
 
 @pytest.mark.parametrize(
-    "type_, format_, expected_type",
+    "artifacts, expected_type",
     [
-        pytest.param("integer", None, "typing.Optional[int]", id="plain"),
-        pytest.param("string", "binary", "typing.Optional[str]", id="binary"),
-        pytest.param("string", "date", "typing.Optional[str]", id="date"),
-        pytest.param("string", "date-time", "typing.Optional[str]", id="date-time"),
-        pytest.param("object", None, 'typing.Optional["RefModelDict"]', id="object"),
-        pytest.param("array", None, 'typing.Sequence["RefModelDict"]', id="array"),
+        pytest.param(_ColSchemaArt(type="integer"), "typing.Optional[int]", id="plain"),
+        pytest.param(
+            _ColSchemaArt(type="string", format="binary"),
+            "typing.Optional[str]",
+            id="binary",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="binary", json=True),
+            "typing.Optional[str]",
+            id="binary json",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date"),
+            "typing.Optional[str]",
+            id="date",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date", json=True),
+            "typing.Optional[str]",
+            id="date json",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date-time"),
+            "typing.Optional[str]",
+            id="date-time",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="string", format="date-time", json=True),
+            "typing.Optional[str]",
+            id="date-time json",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="object", de_ref="RefModel"),
+            'typing.Optional["RefModelDict"]',
+            id="object",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="object", json=True),
+            "typing.Optional[typing.Dict]",
+            id="object json",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="array", de_ref="RefModel"),
+            'typing.Sequence["RefModelDict"]',
+            id="array",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="array", json=True),
+            "typing.Optional[typing.Sequence]",
+            id="array",
+        ),
     ],
 )
 @pytest.mark.models_file
-def test_dict(type_, format_, expected_type):
+def test_dict(artifacts, expected_type):
     """
-    GIVEN None format and required, False nullable and de_ref and given type
-    WHEN typed_dict is called with the type, format, nullable, required and de_ref
+    GIVEN artifacts and expected type
+    WHEN typed_dict is called with the artifacts
     THEN the given expected type is returned.
     """
-    artifacts = _ColSchemaArt(
-        type=type_, format=format_, nullable=True, de_ref="RefModel"
-    )
+    artifacts.nullable = True
 
     returned_type = models_file._model._type.typed_dict(artifacts=artifacts)
 

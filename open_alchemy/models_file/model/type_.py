@@ -85,6 +85,10 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     # Calculate type the same way as for the model
     model_type = model(artifacts=artifacts)
 
+    # No more checks if JSON
+    if artifacts.json:
+        return model_type
+
     # Modify the type in case of object or array
     if artifacts.type in {"object", "array"}:
         if artifacts.de_ref is None:
@@ -95,6 +99,7 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
         model_type = model_type.replace(
             f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict"
         )
+    # Revert back to str for binary, date and date-time
     if artifacts.format == "binary":
         model_type = model_type.replace("bytes", "str")
     if artifacts.format == "date":
