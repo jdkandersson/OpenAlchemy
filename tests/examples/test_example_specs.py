@@ -114,6 +114,18 @@ def cleanup_models():
             {"id": 1, "name": "name 1"},
             id="read_only Employee",
         ),
+        pytest.param(
+            "json/example-spec.yml",
+            "Employee",
+            {"name": "name 1", "division": "division 1", "data": {"key": "value"}},
+            {
+                "id": 1,
+                "name": "name 1",
+                "division": "division 1",
+                "data": {"key": "value"},
+            },
+            id="json Employee",
+        ),
     ],
 )
 @pytest.mark.example
