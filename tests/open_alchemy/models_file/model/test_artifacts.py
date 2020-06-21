@@ -58,6 +58,24 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
             id="type with readOnly",
         ),
         pytest.param(
+            {"type": "string", "x-json": True},
+            None,
+            _ColumnSchemaArtifacts(type="string", json=True),
+            id="simple type with x-json",
+        ),
+        pytest.param(
+            {"type": "object", "x-json": True},
+            None,
+            _ColumnSchemaArtifacts(type="object", json=True),
+            id="object type with x-json",
+        ),
+        pytest.param(
+            {"type": "array", "x-json": True},
+            None,
+            _ColumnSchemaArtifacts(type="array", json=True),
+            id="array type with x-json",
+        ),
+        pytest.param(
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),

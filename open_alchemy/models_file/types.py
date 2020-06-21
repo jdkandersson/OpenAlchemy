@@ -30,6 +30,8 @@ class ColumnSchemaArtifacts:
     default: types.TColumnDefault = None
     # Whether the column is read only
     read_only: typing.Optional[bool] = None
+    # Whether the column is json
+    json: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass
