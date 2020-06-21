@@ -1,15 +1,8 @@
 """Tests for type_."""
-# pylint: disable=protected-access,unused-import
-
-import datetime
-import typing  # noqa: F401
+# pylint: disable=protected-access
 
 import pytest
-import sqlalchemy
-import typeguard
-from sqlalchemy.ext import declarative
 
-import open_alchemy
 from open_alchemy import exceptions
 from open_alchemy import models_file
 
