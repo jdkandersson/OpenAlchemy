@@ -23,6 +23,9 @@ def convert(*, schema: oa_types.Schema, value: typing.Any) -> types.TAnyDict:
         The converted value.
 
     """
+    json = helpers.peek.json(schema=schema, schemas={})
+    if json:
+        return value
     type_ = helpers.peek.type_(schema=schema, schemas={})
     if type_ == "object":
         return object_.convert(value, schema=schema)
