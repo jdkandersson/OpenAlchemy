@@ -15,64 +15,66 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
 @pytest.mark.parametrize(
     "schema, required, expected_artifacts",
     [
-        ({"type": "type 1"}, None, _ColumnSchemaArtifacts(type="type 1")),
-        (
+        pytest.param(
+            {"type": "type 1"},
+            None,
+            _ColumnSchemaArtifacts(type="type 1"),
+            id="type only",
+        ),
+        pytest.param(
             {"type": "type 1", "format": "format 1"},
             None,
             _ColumnSchemaArtifacts(type="type 1", format="format 1"),
+            id="type with format",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "nullable": True},
             None,
             _ColumnSchemaArtifacts(type="type 1", nullable=True),
+            id="type with nullable",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "x-generated": True},
             None,
             _ColumnSchemaArtifacts(type="type 1", generated=True),
+            id="type with x-generated",
         ),
-        (
+        pytest.param(
             {"type": "type 1", "description": "description 1"},
             None,
             _ColumnSchemaArtifacts(type="type 1", description="description 1"),
+            id="type with description",
         ),
-        (
+        pytest.param(
             {"type": "string", "default": "value 1"},
             None,
             _ColumnSchemaArtifacts(type="string", default="value 1"),
+            id="type with default",
         ),
-        (
+        pytest.param(
             {"type": "string", "readOnly": True},
             None,
             _ColumnSchemaArtifacts(type="string", read_only=True),
+            id="type with readOnly",
         ),
-        (
+        pytest.param(
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
             _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
+            id="object",
         ),
-        (
+        pytest.param(
             {"type": "array", "items": {"x-de-$ref": "RefModel"}},
             None,
             _ColumnSchemaArtifacts(type="array", de_ref="RefModel"),
+            id="array",
         ),
-        (
+        pytest.param(
             {"type": "type 1"},
             True,
             _ColumnSchemaArtifacts(type="type 1", required=True),
+            id="required given",
         ),
-    ],
-    ids=[
-        "type only",
-        "type with format",
-        "type with nullable",
-        "type with x-generated",
-        "type with description",
-        "type with default",
-        "type with readOnly",
-        "object",
-        "array",
-        "required given",
     ],
 )
 @pytest.mark.models_file
