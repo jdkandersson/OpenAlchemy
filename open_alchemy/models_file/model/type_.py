@@ -149,6 +149,10 @@ def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     # Calculate type the same way as for the model
     init_type = arg_init(artifacts=artifacts)
 
+    # No more checks if JSON
+    if artifacts.json:
+        return init_type
+
     # Modify the type in case of object or array
     if artifacts.type in {"object", "array"}:
         if artifacts.de_ref is None:

@@ -45,24 +45,36 @@ def test_arg_init(nullable, required, default, expected_type):
 
 
 @pytest.mark.parametrize(
-    "type_, expected_type",
+    "artifacts, expected_type",
     [
-        ("integer", "int"),
-        ("object", '"RefModelDict"'),
-        ("array", 'typing.Sequence["RefModelDict"]'),
+        pytest.param(_ColSchemaArt(type="integer"), "int", id="plain"),
+        pytest.param(
+            _ColSchemaArt(type="object", de_ref="RefModel"),
+            '"RefModelDict"',
+            id="object",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="object", json=True), "typing.Dict", id="object json"
+        ),
+        pytest.param(
+            _ColSchemaArt(type="array", de_ref="RefModel"),
+            'typing.Sequence["RefModelDict"]',
+            id="array",
+        ),
+        pytest.param(
+            _ColSchemaArt(type="array", json=True), "typing.Sequence", id="array json"
+        ),
     ],
-    ids=["plain", "object", "array"],
 )
 @pytest.mark.models_file
-def test_arg_from_dict(type_, expected_type):
+def test_arg_from_dict(artifacts, expected_type):
     """
     GIVEN None format and required, False nullable and de_ref and given type
     WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
-    artifacts = _ColSchemaArt(
-        type=type_, nullable=False, required=True, de_ref="RefModel"
-    )
+    artifacts.nullable = False
+    artifacts.required = True
 
     returned_type = models_file._model._type.arg_from_dict(artifacts=artifacts)
 
