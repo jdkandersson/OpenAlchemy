@@ -158,7 +158,6 @@ def test_model_database_type_simple(
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     """
     GIVEN JSON type

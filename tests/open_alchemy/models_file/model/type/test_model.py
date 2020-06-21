@@ -175,7 +175,6 @@ _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_model(artifacts, expected_type):
     """
     GIVEN artifacts
