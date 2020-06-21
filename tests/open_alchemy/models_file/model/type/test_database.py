@@ -158,6 +158,7 @@ def test_model_database_type_simple(
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.only_this
 def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     """
     GIVEN JSON type
@@ -190,7 +191,7 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     model = model_factory(name="Table")
 
     # Create artifacts
-    artifacts = _ColSchemaArt(type=type_, required=True)
+    artifacts = _ColSchemaArt(type=type_, json=True, required=True)
     calculated_type_str = models_file._model._type.model(artifacts=artifacts)
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
 
