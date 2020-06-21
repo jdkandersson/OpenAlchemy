@@ -1,5 +1,6 @@
 """Integration tests for dictionary to model conversion."""
 
+import copy
 from unittest import mock
 
 import pytest
@@ -32,26 +33,37 @@ def test_convert_invalid(schema, exception):
 
 
 @pytest.mark.parametrize(
-    "schema",
+    "schema, value",
     [
-        ({"type": "string"}),
-        ({"type": "string", "readOnly": False}),
-        ({"type": "string", "readOnly": None}),
+        pytest.param({"type": "string"}, "value 1", id="simple"),
+        pytest.param(
+            {"type": "string", "readOnly": False}, "value 1", id="readOnly False"
+        ),
+        pytest.param(
+            {"type": "string", "readOnly": None}, "value 1", id="readOnly None"
+        ),
+        pytest.param({"type": "integer", "x-json": True}, 1, id="JSON integer"),
+        pytest.param({"type": "number", "x-json": True}, 1.1, id="JSON number"),
+        pytest.param({"type": "string", "x-json": True}, "value 1", id="JSON string"),
+        pytest.param({"type": "boolean", "x-json": True}, True, id="JSON boolean"),
+        pytest.param(
+            {"type": "object", "x-json": True}, {"key": "value"}, id="JSON object"
+        ),
+        pytest.param({"type": "array", "x-json": True}, [1], id="JSON array"),
     ],
-    ids=["simple", "readOnly False", "readOnly None"],
 )
 @pytest.mark.utility_base
-def test_convert_valid(schema):
+def test_convert_valid(schema, value):
     """
     GIVEN valid schema for simple property and value
     WHEN convert is called with the schema and value
     THEN the converted value is returned.
     """
-    value = "value 1"
+    returned_value = utility_base.from_dict.convert(
+        schema=schema, value=copy.deepcopy(value)
+    )
 
-    returned_value = utility_base.from_dict.convert(schema=schema, value=value)
-
-    assert returned_value == "value 1"
+    assert returned_value == value
 
 
 @pytest.mark.utility_base

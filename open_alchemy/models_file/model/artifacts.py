@@ -34,12 +34,14 @@ def gather_column_artifacts(
     description = helpers.peek.description(schema=schema, schemas={})
     default = helpers.peek.default(schema=schema, schemas={})
     read_only = helpers.peek.read_only(schema=schema, schemas={})
+    x_json = helpers.peek.json(schema=schema, schemas={})
     generated = helpers.ext_prop.get(source=schema, name="x-generated")
     de_ref = None
-    if type_ == "object":
-        de_ref = helpers.ext_prop.get(source=schema, name="x-de-$ref")
-    if type_ == "array":
-        de_ref = helpers.ext_prop.get(source=schema["items"], name="x-de-$ref")
+    if not x_json:
+        if type_ == "object":
+            de_ref = helpers.ext_prop.get(source=schema, name="x-de-$ref")
+        if type_ == "array":
+            de_ref = helpers.ext_prop.get(source=schema["items"], name="x-de-$ref")
 
     return types.ColumnSchemaArtifacts(
         type=type_,
@@ -51,6 +53,7 @@ def gather_column_artifacts(
         description=description,
         default=default,
         read_only=read_only,
+        json=x_json,
     )
 
 

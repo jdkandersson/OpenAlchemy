@@ -125,7 +125,7 @@ def _prepare_schema_object_common(
             else "Array readOnly items must have a type."
         )
 
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    schema = helpers.schema.prepare(schema=schema, schemas=schemas)
 
     if type_ != "object":
         raise exceptions.MalformedSchemaError(
@@ -198,7 +198,7 @@ def _prepare_schema_array(
         The schema in a consistent format.
 
     """
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    schema = helpers.schema.prepare(schema=schema, schemas=schemas)
 
     items_schema = schema.get("items")
     if items_schema is None:

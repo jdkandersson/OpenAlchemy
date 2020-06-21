@@ -30,87 +30,102 @@ def cleanup_models():
 @pytest.mark.parametrize(
     "filename, model_name, attrs, expected_delta_attrs",
     [
-        (
+        pytest.param(
             "simple/example-spec.yml",
             "Employee",
             {"name": "employee 1", "division": "division 1"},
             {"id": 1, "salary": None},
+            id="simple Employee required only",
         ),
-        (
+        pytest.param(
             "simple/example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "division": "division 1", "salary": 12},
             {},
+            id="simple Employee all",
         ),
-        (
+        pytest.param(
             "all_of/column-example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "salary": 12},
             {},
+            id="all-of-column Employee",
         ),
-        (
+        pytest.param(
             "all_of/column-example-spec.yml",
             "Division",
             {"id": 11, "name": "employee 1"},
             {},
+            id="all-of-column Division",
         ),
-        (
+        pytest.param(
             "all_of/model-example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "salary": 12},
             {},
+            id="all-of-model Employee",
         ),
-        (
+        pytest.param(
             "all_of/model-example-spec.yml",
             "Division",
             {"id": 11, "name": "employee 1"},
             {},
+            id="all-of-model Division",
         ),
-        (
+        pytest.param(
             "composite_index/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
+            id="composite-index Employee",
         ),
-        (
+        pytest.param(
             "ref/column-example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
+            id="ref-column Employee",
         ),
-        (
+        pytest.param(
             "ref/model-example-spec.yml",
             "RefEmployee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
+            id="ref-model Employee",
         ),
-        (
+        pytest.param(
             "composite_unique/example-spec.yml",
             "Employee",
             {"id": 1, "name": "employee 1", "division": "division 1"},
             {},
+            id="unique-constraint Employee",
         ),
-        ("default/example-spec.yml", "Employee", {"id": 1}, {"name": "Unknown"}),
-        (
+        pytest.param(
+            "default/example-spec.yml",
+            "Employee",
+            {"id": 1},
+            {"name": "Unknown"},
+            id="default Employee",
+        ),
+        pytest.param(
             "read_only/example-spec.yml",
             "Employee",
             {"name": "name 1"},
             {"id": 1, "name": "name 1"},
+            id="read_only Employee",
         ),
-    ],
-    ids=[
-        "simple            Employee required only",
-        "simple            Employee all",
-        "all-of-column     Employee",
-        "all-of-column     Division",
-        "all-of-model      Employee",
-        "all-of-model      Division",
-        "composite-index   Employee",
-        "ref-column        Employee",
-        "ref-model         Employee",
-        "unique-constraint Employee",
-        "default           Employee",
-        "read_only         Employee",
+        pytest.param(
+            "json/example-spec.yml",
+            "Employee",
+            {"name": "name 1", "division": "division 1", "data": {"key": "value"}},
+            {
+                "id": 1,
+                "name": "name 1",
+                "division": "division 1",
+                "data": {"key": "value"},
+            },
+            id="json Employee",
+        ),
     ],
 )
 @pytest.mark.example

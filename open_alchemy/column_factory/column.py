@@ -28,9 +28,11 @@ def handle_column(
         The logical name and the SQLAlchemy column based on the schema.
 
     """
-    schema = helpers.prepare_schema(schema=schema, schemas=schemas)
+    schema = helpers.schema.prepare(schema=schema, schemas=schemas)
     artifacts = check_schema(schema=schema, required=required)
-    column_schema = _calculate_column_schema(artifacts=artifacts, schema=schema)
+    column_schema = _calculate_column_schema(
+        artifacts=artifacts, schema=schema, schemas=schemas
+    )
     column = construct_column(artifacts=artifacts)
     return column, column_schema
 
@@ -67,6 +69,7 @@ def check_schema(
     autoincrement = helpers.ext_prop.get(source=schema, name="x-autoincrement")
     index = helpers.ext_prop.get(source=schema, name="x-index")
     unique = helpers.ext_prop.get(source=schema, name="x-unique")
+    json = helpers.ext_prop.get(source=schema, name="x-json")
     foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
     foreign_key_kwargs = helpers.ext_prop.get_kwargs(
         source=schema, name="x-foreign-key-kwargs"
@@ -109,6 +112,7 @@ def check_schema(
             autoincrement=autoincrement,
             index=index,
             unique=unique,
+            json=json,
             foreign_key=foreign_key,
             foreign_key_kwargs=foreign_key_kwargs,
             kwargs=kwargs,
@@ -141,6 +145,8 @@ def calculate_schema(
         schema["maxLength"] = artifacts.open_api.max_length
     if artifacts.open_api.description is not None:
         schema["description"] = artifacts.open_api.description
+    if artifacts.extension.json is not None:
+        schema["x-json"] = artifacts.extension.json
     if artifacts.open_api.default is not None:
         schema["default"] = artifacts.open_api.default
     if artifacts.open_api.read_only is not None:
@@ -155,7 +161,7 @@ def calculate_schema(
 
 
 def _calculate_column_schema(
-    *, artifacts: types.ColumnArtifacts, schema: types.Schema
+    *, artifacts: types.ColumnArtifacts, schema: types.Schema, schemas: types.Schemas
 ) -> types.ColumnSchema:
     """
     Calculate the schema to be returned for a column.
@@ -173,6 +179,10 @@ def _calculate_column_schema(
         The schema to be recorded for the column.
 
     """
+    # Handle json
+    if artifacts.extension.json:
+        return helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+
     nullable = helpers.peek.nullable(schema=schema, schemas={})
     dict_ignore = helpers.ext_prop.get(source=schema, name="x-dict-ignore")
     return_schema = calculate_schema(
@@ -212,22 +222,26 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
             a. integer
             b. number
             c. boolean
-            d. string with the format of
+            d. JSON
+            e. string with the format of
                 i. date
                 ii. date-time
         2. autoincrement with
             a. number
             b. string
             c. boolean
+            d. JSON
         3. format with
             a. boolean
+        4. default with JSON
 
     Args:
         artifacts: The artifacts to check.
 
     """
+    # Check whether max length was used incorrectly
     if artifacts.open_api.max_length is not None:
-        if artifacts.open_api.type in {"integer", "number", "boolean"}:
+        if artifacts.open_api.type != "string":
             raise exceptions.MalformedSchemaError(
                 f"maxLength is not supported for {artifacts.open_api.type}"
             )
@@ -237,10 +251,17 @@ def _check_artifacts(*, artifacts: types.ColumnArtifacts) -> None:
                 "maxLength is not supported for string with the format "
                 f"{artifacts.open_api.format}"
             )
+    # Check whether autoincrement was used incorrectly
     if artifacts.extension.autoincrement is not None:
-        if artifacts.open_api.type in {"number", "string", "boolean"}:
+        if artifacts.open_api.type != "integer":
             raise exceptions.MalformedSchemaError(
                 f"autoincrement is not supported for {artifacts.open_api.type}"
             )
+    # Check whether format was used with boolean
     if artifacts.open_api.type == "boolean" and artifacts.open_api.format is not None:
         raise exceptions.MalformedSchemaError("format is not supported for boolean")
+    # Check whether default was used with JSON column
+    if artifacts.extension.json and artifacts.open_api.default is not None:
+        raise exceptions.FeatureNotImplementedError(
+            "default is not supported for JSON column"
+        )

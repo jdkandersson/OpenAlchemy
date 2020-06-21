@@ -20,7 +20,7 @@ def test_integration_simple(schema, expected_schema):
     """
     GIVEN schema
     WHEN column_factory is called with the schema
-    THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
+    THEN a SQLAlchemy boolean column is returned in a tuple with logical name and
         schema.
     """
     schemas = {}
@@ -34,6 +34,55 @@ def test_integration_simple(schema, expected_schema):
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
+    assert returned_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        pytest.param(
+            {"type": "boolean", "x-json": True},
+            {"type": "boolean", "x-json": True},
+            id="simple",
+        ),
+        pytest.param(
+            {
+                "type": "object",
+                "x-json": True,
+                "properties": {"key": {"type": "integer"}},
+            },
+            {
+                "type": "object",
+                "x-json": True,
+                "properties": {"key": {"type": "integer"}},
+            },
+            id="object",
+        ),
+        pytest.param(
+            {"type": "array", "x-json": True},
+            {"type": "array", "x-json": True},
+            id="array",
+        ),
+    ],
+)
+@pytest.mark.column
+def test_integration_simple_json(schema, expected_schema):
+    """
+    GIVEN JSON schema and expected schema
+    WHEN column_factory is called with the schema
+    THEN a SQLALchemy JSON column and the expected schema are returned.
+    """
+    schemas = {}
+    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
+        model_name="schema",
+    )
+
+    assert logical_name == "column_1"
+    assert isinstance(column.type, facades.sqlalchemy.column.JSON)
     assert returned_schema == expected_schema
 
 

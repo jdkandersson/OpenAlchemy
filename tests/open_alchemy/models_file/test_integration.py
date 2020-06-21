@@ -692,6 +692,7 @@ def _create_source_file(source, tmp_path):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.slow
 def test_generate_type_return(tmp_path, schemas, names):
     """
     GIVEN schema
@@ -730,6 +731,7 @@ def test_generate_type_return(tmp_path, schemas, names):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.slow
 def test_generate_type_check(tmp_path, schema, mypy_check, expected_out_substr):
     """
     GIVEN schema, a mypy check and expected mypy output substring

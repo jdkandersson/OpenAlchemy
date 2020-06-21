@@ -251,7 +251,7 @@ def test_tablename(schema, expected_tablename):
 @pytest.mark.helper
 def test_inherits_wrong_type():
     """
-    GIVEN schema with inherits defined as an integer
+    GIVEN schema with x-inherits defined as an integer
     WHEN inherits is called with the schema
     THEN MalformedSchemaError is raised.
     """
@@ -276,6 +276,36 @@ def test_inherits(schema, expected_inherits):
     returned_inherits = helpers.peek.inherits(schema=schema, schemas={})
 
     assert returned_inherits == expected_inherits
+
+
+@pytest.mark.helper
+def test_json_wrong_type():
+    """
+    GIVEN schema with x-json defined as an integer
+    WHEN json is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-json": 1}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.json(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_json",
+    [({}, None), ({"x-json": True}, True)],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_json(schema, expected_json):
+    """
+    GIVEN schema and expected json
+    WHEN json is called with the schema
+    THEN the expected json is returned.
+    """
+    returned_json = helpers.peek.json(schema=schema, schemas={})
+
+    assert returned_json == expected_json
 
 
 @pytest.mark.parametrize(

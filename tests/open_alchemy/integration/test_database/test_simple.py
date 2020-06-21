@@ -1,5 +1,6 @@
 """Integration tests against database for simple tests."""
 
+import copy
 import datetime
 
 import pytest
@@ -76,6 +77,59 @@ def test_types(engine, sessionmaker, type_, format_, value):
     base.metadata.create_all(engine)
     # Creating model instance
     model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+
+
+@pytest.mark.parametrize(
+    "schema, value",
+    [
+        pytest.param({"type": "integer", "x-json": True}, 1, id="integer"),
+        pytest.param({"type": "number", "x-json": True}, 1.1, id="number"),
+        pytest.param({"type": "string", "x-json": True}, "value 1", id="string",),
+        pytest.param({"type": "boolean", "x-json": True}, True, id="boolean",),
+        pytest.param(
+            {"type": "object", "x-json": True}, {"key": "value"}, id="object",
+        ),
+        pytest.param({"type": "array", "x-json": True}, [1], id="array"),
+    ],
+)
+@pytest.mark.integration
+def test_types_json(engine, sessionmaker, schema, value):
+    """
+    GIVEN specification with a schema with a JSON property
+    WHEN schema is created and an instance is added to the session
+    THEN the instance is returned when the session is queried for it.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "column": schema,
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(id=1, column=copy.deepcopy(value))
     session = sessionmaker()
     session.add(model_instance)
     session.flush()

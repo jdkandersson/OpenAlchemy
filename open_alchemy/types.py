@@ -85,6 +85,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "maxLength": int,
         "nullable": bool,
         "description": str,
+        "x-json": bool,
         "default": TColumnDefault,
         "x-generated": bool,
         "readOnly": bool,
@@ -120,6 +121,7 @@ class ExtensionColumnArtifacts:
     autoincrement: typing.Optional[bool] = None
     index: typing.Optional[bool] = None
     unique: typing.Optional[bool] = None
+    json: typing.Optional[bool] = None
     foreign_key: typing.Optional[str] = None
     foreign_key_kwargs: TOptKwargs = None
     kwargs: TOptKwargs = None

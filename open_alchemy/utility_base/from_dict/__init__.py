@@ -29,6 +29,9 @@ def convert(*, schema: oa_types.Schema, value: typing.Any) -> types.TAnyCol:
         raise exceptions.MalformedModelDictionaryError(
             "readOnly properties cannot be passed to the from_dict constructor."
         )
+    json = helpers.peek.json(schema=schema, schemas={})
+    if json:
+        return value
     if type_ == "object":
         return object_.convert(value, schema=schema)
     if type_ == "array":

@@ -30,22 +30,38 @@ def test_invalid(schema, exception):
 @pytest.mark.parametrize(
     "schema, value, expected_value",
     [
-        ({"type": "string"}, "value", "value"),
-        (
+        pytest.param({"type": "string"}, "value 1", "value 1", id="simple"),
+        pytest.param({"type": "integer", "x-json": True}, 1, 1, id="json integer"),
+        pytest.param({"type": "number", "x-json": True}, 1.1, 1.1, id="json number"),
+        pytest.param(
+            {"type": "string", "x-json": True}, "value 1", "value 1", id="json string"
+        ),
+        pytest.param(
+            {"type": "boolean", "x-json": True}, True, True, id="json boolean"
+        ),
+        pytest.param(
+            {"type": "object", "x-json": True},
+            {"key": "value"},
+            {"key": "value"},
+            id="json object",
+        ),
+        pytest.param({"type": "array", "x-json": True}, [1], [1], id="json array"),
+        pytest.param(
             {"type": "object", "properties": {"key": "type 1"}},
             mock.MagicMock(to_dict=lambda: {"key": "value"}),
             {"key": "value"},
+            id="object",
         ),
-        (
+        pytest.param(
             {
                 "type": "array",
                 "items": {"type": "object", "properties": {"key": "type 1"}},
             },
             [mock.MagicMock(to_dict=lambda: {"key": "value"})],
             [{"key": "value"}],
+            id="array",
         ),
     ],
-    ids=["simple", "object", "array"],
 )
 @pytest.mark.utility_base
 def test_valid(schema, value, expected_value):

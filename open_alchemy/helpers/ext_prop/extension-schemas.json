@@ -35,6 +35,10 @@
     "description": "Add composite unique constraint to a table.",
     "$ref": "#/CompositeUnique"
   },
+  "x-json": {
+    "description": "Treat the property as a JSON object rather than a particular type.",
+    "type": "boolean"
+  },
   "x-foreign-key": {
     "description": "Add a foreign key constraint to a column. Must have the format \"<table name>.<column name>\".",
     "type": "string",

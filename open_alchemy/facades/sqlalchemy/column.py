@@ -20,6 +20,7 @@ Binary = sqlalchemy.LargeBinary
 Date = sqlalchemy.Date
 DateTime = sqlalchemy.DateTime
 Boolean = sqlalchemy.Boolean
+JSON = sqlalchemy.JSON
 
 
 class _TOptColumnArgs(types.TypedDict, total=False):
@@ -50,11 +51,14 @@ def construct(*, artifacts: types.ColumnArtifacts) -> Column:
             foreign_key_kwargs = artifacts.extension.foreign_key_kwargs
         foreign_key = ForeignKey(artifacts.extension.foreign_key, **foreign_key_kwargs)
     # Map default value
-    default = helpers.oa_to_py_type.convert(
-        value=artifacts.open_api.default,
-        type_=artifacts.open_api.type,
-        format_=artifacts.open_api.format,
-    )
+    default = None
+    if artifacts.open_api.default is not None:
+        default = helpers.oa_to_py_type.convert(
+            value=artifacts.open_api.default,
+            type_=artifacts.open_api.type,
+            format_=artifacts.open_api.format,
+        )
+
     # Generate optional keyword arguments
     opt_kwargs: _TOptColumnArgs = {}
     if artifacts.extension.primary_key is not None:
@@ -92,23 +96,22 @@ def _determine_type(*, artifacts: types.ColumnArtifacts) -> Type:
         The type for the column.
 
     """
+    # Check for JSON
+    if artifacts.extension.json:
+        return _handle_json(artifacts=artifacts)
     # Determining the type
-    type_: typing.Optional[Type] = None
     if artifacts.open_api.type == "integer":
-        type_ = _handle_integer(artifacts=artifacts)
-    elif artifacts.open_api.type == "number":
-        type_ = _handle_number(artifacts=artifacts)
-    elif artifacts.open_api.type == "string":
-        type_ = _handle_string(artifacts=artifacts)
-    elif artifacts.open_api.type == "boolean":
-        type_ = _handle_boolean(artifacts=artifacts)
+        return _handle_integer(artifacts=artifacts)
+    if artifacts.open_api.type == "number":
+        return _handle_number(artifacts=artifacts)
+    if artifacts.open_api.type == "string":
+        return _handle_string(artifacts=artifacts)
+    if artifacts.open_api.type == "boolean":
+        return _handle_boolean(artifacts=artifacts)
 
-    if type_ is None:
-        raise exceptions.FeatureNotImplementedError(
-            f"{artifacts.open_api.type} has not been implemented"
-        )
-
-    return type_
+    raise exceptions.FeatureNotImplementedError(
+        f"{artifacts.open_api.type} has not been implemented"
+    )
 
 
 def _handle_integer(
@@ -201,3 +204,19 @@ def _handle_boolean(
 
     """
     return Boolean()
+
+
+def _handle_json(
+    *, artifacts: types.ColumnArtifacts  # pylint: disable=unused-argument
+) -> JSON:
+    """
+    Handle artifacts for an json type.
+
+    Args:
+        artifacts: The artifacts for the column.
+
+    Returns:
+        The SQLAlchemy json type of the column.
+
+    """
+    return JSON()

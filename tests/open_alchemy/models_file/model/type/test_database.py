@@ -10,212 +10,9 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import exceptions
 from open_alchemy import models_file
 
-
-@pytest.mark.parametrize(
-    "type_, format_, nullable, required, generated, de_ref, default, expected_type",
-    [
-        ("integer", None, False, None, None, None, None, "int"),
-        ("integer", "int32", False, None, None, None, None, "int"),
-        ("integer", "int64", False, None, None, None, None, "int"),
-        ("number", None, False, None, None, None, None, "float"),
-        ("number", "float", False, None, None, None, None, "float"),
-        ("string", None, False, None, None, None, None, "str"),
-        ("string", "password", False, None, None, None, None, "str"),
-        ("string", "byte", False, None, None, None, None, "str"),
-        ("string", "binary", False, None, None, None, None, "bytes"),
-        ("string", "date", False, None, None, None, None, "datetime.date"),
-        ("string", "date-time", False, None, None, None, None, "datetime.datetime"),
-        ("boolean", None, False, None, None, None, None, "bool"),
-        ("object", None, False, None, None, "RefModel", None, '"TRefModel"'),
-        ("object", None, False, None, None, "RefModel", "value 1", '"TRefModel"'),
-        (
-            "array",
-            None,
-            None,
-            None,
-            None,
-            "RefModel",
-            None,
-            'typing.Sequence["TRefModel"]',
-        ),
-        (
-            "array",
-            None,
-            None,
-            None,
-            None,
-            "RefModel",
-            "value 1",
-            'typing.Sequence["TRefModel"]',
-        ),
-        ("integer", None, None, None, None, None, None, "typing.Optional[int]"),
-        ("integer", None, None, True, None, None, None, "int"),
-        ("integer", None, None, None, True, None, None, "int"),
-        ("integer", None, None, None, False, None, None, "typing.Optional[int]"),
-        ("integer", None, None, None, False, None, 1, "int"),
-    ],
-    ids=[
-        "integer no format",
-        "integer int32 format",
-        "integer int64 format",
-        "number no format",
-        "number float format",
-        "string no format",
-        "string password format",
-        "string byte format",
-        "string binary format",
-        "string date format",
-        "string date-time format",
-        "boolean no format",
-        "object",
-        "object defult",
-        "array",
-        "array default",
-        "nullable and required None",
-        "nullable None required True",
-        "nullable None generated True",
-        "nullable None generated False",
-        "nullable None default given",
-    ],
-)
-@pytest.mark.models_file
-def test_model(
-    type_, format_, nullable, required, generated, de_ref, default, expected_type
-):
-    """
-    GIVEN type, format, nullable and required
-    WHEN model is called with the type, format, nullable and required
-    THEN the expected type is returned.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_,
-        format=format_,
-        nullable=nullable,
-        required=required,
-        de_ref=de_ref,
-        generated=generated,
-        default=default,
-    )
-
-    returned_type = models_file._model._type.model(artifacts=artifacts)
-
-    assert returned_type == expected_type
-
-
-@pytest.mark.parametrize(
-    "type_, format_, expected_type",
-    [
-        pytest.param("integer", None, "typing.Optional[int]", id="plain"),
-        pytest.param("string", "binary", "typing.Optional[str]", id="binary"),
-        pytest.param("string", "date", "typing.Optional[str]", id="date"),
-        pytest.param("string", "date-time", "typing.Optional[str]", id="date-time"),
-        pytest.param("object", None, 'typing.Optional["RefModelDict"]', id="object"),
-        pytest.param("array", None, 'typing.Sequence["RefModelDict"]', id="array"),
-    ],
-)
-@pytest.mark.models_file
-def test_dict(type_, format_, expected_type):
-    """
-    GIVEN None format and required, False nullable and de_ref and given type
-    WHEN typed_dict is called with the type, format, nullable, required and de_ref
-    THEN the given expected type is returned.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_, format=format_, nullable=True, de_ref="RefModel"
-    )
-
-    returned_type = models_file._model._type.typed_dict(artifacts=artifacts)
-
-    assert returned_type == expected_type
-
-
-@pytest.mark.models_file
-def test_dict_de_ref_none():
-    """
-    GIVEN object artifacts where de_ref is None
-    WHEN typed_dict is called with the artifacts
-    THEN MissingArgumentError is raised.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(type="object", de_ref=None)
-
-    with pytest.raises(exceptions.MissingArgumentError):
-        models_file._model._type.typed_dict(artifacts=artifacts)
-
-
-@pytest.mark.parametrize(
-    "nullable, required, default, expected_type",
-    [
-        (False, True, None, "int"),
-        (False, False, None, "typing.Optional[int]"),
-        (True, True, None, "typing.Optional[int]"),
-        (True, False, None, "typing.Optional[int]"),
-        (False, False, 1, "int"),
-        (True, False, 1, "int"),
-    ],
-    ids=[
-        "not nullable required",
-        "not nullable not required",
-        "nullable required",
-        "nullable not required",
-        "not nullable default",
-        "nullable default",
-    ],
-)
-@pytest.mark.models_file
-def test_arg_init(nullable, required, default, expected_type):
-    """
-    GIVEN nullable and required
-    WHEN arg_init is called with the nullable and required
-    THEN the expected type is returned.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
-        type="integer", nullable=nullable, required=required, default=default
-    )
-
-    returned_type = models_file._model._type.arg_init(artifacts=artifacts)
-
-    assert returned_type == expected_type
-
-
-@pytest.mark.parametrize(
-    "type_, expected_type",
-    [
-        ("integer", "int"),
-        ("object", '"RefModelDict"'),
-        ("array", 'typing.Sequence["RefModelDict"]'),
-    ],
-    ids=["plain", "object", "array"],
-)
-@pytest.mark.models_file
-def test_arg_from_dict(type_, expected_type):
-    """
-    GIVEN None format and required, False nullable and de_ref and given type
-    WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
-    THEN the given expected type is returned.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(
-        type=type_, nullable=False, required=True, de_ref="RefModel"
-    )
-
-    returned_type = models_file._model._type.arg_from_dict(artifacts=artifacts)
-
-    assert returned_type == expected_type
-
-
-@pytest.mark.models_file
-def test_arg_from_dict_de_ref_none():
-    """
-    GIVEN object artifacts where de_ref is None
-    WHEN arg_from_dict is called with the artifacts
-    THEN MissingArgumentError is raised.
-    """
-    artifacts = models_file.types.ColumnSchemaArtifacts(type="object", de_ref=None)
-
-    with pytest.raises(exceptions.MissingArgumentError):
-        models_file._model._type.arg_from_dict(artifacts=artifacts)
+_ColSchemaArt = models_file.types.ColumnSchemaArtifacts
 
 
 @pytest.mark.parametrize(
@@ -329,9 +126,71 @@ def test_model_database_type_simple(
     model = model_factory(name="Table")
 
     # Create artifacts
-    artifacts = models_file.types.ColumnSchemaArtifacts(
+    artifacts = _ColSchemaArt(
         type=type_, format=format_, nullable=nullable, required=required
     )
+    calculated_type_str = models_file._model._type.model(artifacts=artifacts)
+    calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(column=value)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column == value
+    typeguard.check_type("queried_model.column", queried_model.column, calculated_type)
+
+
+@pytest.mark.parametrize(
+    "type_, value",
+    [
+        pytest.param("integer", 1, id="integer"),
+        pytest.param("number", 1.0, id="number"),
+        pytest.param("string", "value 1", id="string"),
+        pytest.param("boolean", True, id="boolean"),
+        pytest.param("object", {"key": "value"}, id="object"),
+        pytest.param("array", [1], id="array"),
+    ],
+)
+@pytest.mark.models_file
+def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
+    """
+    GIVEN JSON type
+    WHEN a specification is written for the combination and a model created and
+        initialized with the value
+    THEN the queried value complies with the type calculated by type_.model.
+    """
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {
+                            "type": "integer",
+                            "x-primary-key": True,
+                            "x-autoincrement": True,
+                        },
+                        "column": {"type": type_, "x-json": True},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                    "required": ["column"],
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Create artifacts
+    artifacts = _ColSchemaArt(type=type_, json=True, required=True)
     calculated_type_str = models_file._model._type.model(artifacts=artifacts)
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
 

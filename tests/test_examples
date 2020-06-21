@@ -61,3 +61,7 @@ python single_models_traditional.py
 python joined_models.py
 python joined_models_traditional.py
 cd -
+cd examples/json
+python models.py
+python models_traditional.py
+cd -
