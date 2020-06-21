@@ -316,7 +316,7 @@ def test_calculate_empty(schema, expected_empty):
             {
                 "properties": {
                     "column_1": {"type": "integer"},
-                    "column_2": {"type": "str"},
+                    "column_2": {"type": "string"},
                 },
                 "required": ["column_1", "column_2"],
             },
@@ -374,7 +374,7 @@ def test_calculate_td_required_props(schema, expected_props):
             {
                 "properties": {
                     "column_1": {"type": "integer"},
-                    "column_2": {"type": "str"},
+                    "column_2": {"type": "string"},
                 },
                 "required": [],
             },
@@ -640,7 +640,7 @@ def test_calculate_td_parent(
             {
                 "properties": {
                     "column_1": {"type": "integer"},
-                    "column_2": {"type": "str"},
+                    "column_2": {"type": "string"},
                 },
                 "required": ["column_1", "column_2"],
             },
@@ -765,7 +765,7 @@ def test_calculate_required_args(schema, expected_args):
             {
                 "properties": {
                     "column_1": {"type": "integer"},
-                    "column_2": {"type": "str"},
+                    "column_2": {"type": "string"},
                 },
                 "required": [],
             },

@@ -6,6 +6,43 @@ from open_alchemy import helpers
 from .. import types
 
 
+def _string_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
+    """Calculate type for string."""
+    if artifacts.json:
+        return "str"
+    if artifacts.format == "binary":
+        return "bytes"
+    if artifacts.format == "date":
+        return "datetime.date"
+    if artifacts.format == "date-time":
+        return "datetime.datetime"
+    return "str"
+
+
+def _array_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
+    """Calculate type for array."""
+    if artifacts.json:
+        return "typing.Sequence"
+    return f'typing.Sequence["T{artifacts.de_ref}"]'
+
+
+def _object_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
+    """Calculate type for object."""
+    if artifacts.json:
+        return "typing.Dict"
+    return f'"T{artifacts.de_ref}"'
+
+
+_TYPE_MAPPING = {
+    "string": _string_mapping,
+    "integer": lambda _: "int",
+    "number": lambda _: "float",
+    "boolean": lambda _: "bool",
+    "array": _array_mapping,
+    "object": _object_mapping,
+}
+
+
 def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     """
     Calculate the Python type of a column.
@@ -18,23 +55,9 @@ def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
 
     """
     # Determine underlying type
-    return_type = "str"
-    if artifacts.type == "integer":
-        return_type = "int"
-    if artifacts.type == "number":
-        return_type = "float"
-    if artifacts.type == "boolean":
-        return_type = "bool"
-    if artifacts.type == "object":
-        return_type = f'"T{artifacts.de_ref}"'
-    if artifacts.type == "array":
-        return f'typing.Sequence["T{artifacts.de_ref}"]'
-    if artifacts.format == "binary":
-        return_type = "bytes"
-    if artifacts.format == "date":
-        return_type = "datetime.date"
-    if artifacts.format == "date-time":
-        return_type = "datetime.datetime"
+    return_type = _TYPE_MAPPING[artifacts.type](artifacts)
+    if artifacts.type == "array" and not artifacts.json:
+        return return_type
 
     # Determine whether the type is optional
     optional = helpers.calculate_nullable(
