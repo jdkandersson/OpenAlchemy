@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add support for generic JSON data for properties.
+
 ## Version 1.2.0 - 2020-06-08
 
 - Remove several bugs from the generated models file and integrate with `sqlalchemy-stubs`.
