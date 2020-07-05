@@ -60,6 +60,12 @@ def test_to_dict_no_properties(__init__):
             id="single null value return",
         ),
         pytest.param(
+            {"properties": {"key": {"type": "integer", "writeOnly": True}}},
+            {"key": 1},
+            {},
+            id="single writeOnly",
+        ),
+        pytest.param(
             {"properties": {"key_1": {"type": "integer"}, "key_2": {"type": "string"}}},
             {"key_1": 1, "key_2": "value 2"},
             {"key_1": 1, "key_2": "value 2"},
