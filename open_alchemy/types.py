@@ -111,6 +111,7 @@ class OpenAPiColumnArtifacts:
     description: typing.Optional[str] = None
     default: TColumnDefault = None
     read_only: typing.Optional[bool] = None
+    write_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass

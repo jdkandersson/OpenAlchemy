@@ -233,6 +233,11 @@ def test_check_schema_invalid(schema, expected_exception):
             ColArt(open_api=OAColArt(type="type 1", read_only=True)),
             id="readOnly",
         ),
+        pytest.param(
+            {"type": "type 1", "writeOnly": True},
+            ColArt(open_api=OAColArt(type="type 1", write_only=True)),
+            id="writeOnly",
+        ),
     ],
 )
 @pytest.mark.column

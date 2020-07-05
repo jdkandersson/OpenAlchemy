@@ -66,6 +66,7 @@ def check_schema(
     artifacts.open_api.description = helpers.peek.description(schema=schema, schemas={})
     artifacts.open_api.default = helpers.peek.default(schema=schema, schemas={})
     artifacts.open_api.read_only = helpers.peek.read_only(schema=schema, schemas={})
+    artifacts.open_api.write_only = helpers.peek.write_only(schema=schema, schemas={})
     # Retrieve extension artifacts
     artifacts.extension.primary_key = helpers.ext_prop.get(
         source=schema, name="x-primary-key"
