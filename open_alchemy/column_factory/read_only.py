@@ -66,6 +66,9 @@ def _prepare_schema(
     """
     Check and transform readOnly schema to consistent format.
 
+    Raise MalformedSchemaError if readOnly is False, no type is defined or the type is
+    not an object nor array.
+
     Args:
         schema: The readOnly schema to operate on.
         schemas: Used to resolve any $ref.
