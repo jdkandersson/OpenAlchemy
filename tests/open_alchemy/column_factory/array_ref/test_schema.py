@@ -10,15 +10,16 @@ from open_alchemy.column_factory import array_ref
 @pytest.mark.parametrize(
     "artifacts, expected_schema",
     [
-        (
+        pytest.param(
             types.ObjectArtifacts(
                 spec={},
                 fk_column="fk_column",
                 relationship=types.RelationshipArtifacts("RefSchema"),
             ),
             {"type": "array", "items": {"type": "object", "x-de-$ref": "RefSchema"}},
+            id="plain",
         ),
-        (
+        pytest.param(
             types.ObjectArtifacts(
                 spec={},
                 fk_column="fk_column",
@@ -30,9 +31,23 @@ from open_alchemy.column_factory import array_ref
                 "items": {"type": "object", "x-de-$ref": "RefSchema"},
                 "description": "description 1",
             },
+            id="description",
+        ),
+        pytest.param(
+            types.ObjectArtifacts(
+                spec={},
+                fk_column="fk_column",
+                relationship=types.RelationshipArtifacts("RefSchema"),
+                write_only=True,
+            ),
+            {
+                "type": "array",
+                "items": {"type": "object", "x-de-$ref": "RefSchema"},
+                "writeOnly": True,
+            },
+            id="writeOnly",
         ),
     ],
-    ids=["plain", "description"],
 )
 @pytest.mark.column
 def test_calculate(artifacts, expected_schema):

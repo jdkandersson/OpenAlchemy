@@ -199,7 +199,9 @@ class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
 
 
 _ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
-    "_ArrayRefSchemaBase", {"description": str, "readOnly": bool}, total=False
+    "_ArrayRefSchemaBase",
+    {"description": str, "readOnly": bool, "writeOnly": bool},
+    total=False,
 )
 
 
