@@ -29,32 +29,30 @@ def gather_column_artifacts(
 
     """
     type_ = helpers.peek.type_(schema=schema, schemas={})
-    format_ = helpers.peek.format_(schema=schema, schemas={})
-    nullable = helpers.peek.nullable(schema=schema, schemas={})
-    description = helpers.peek.description(schema=schema, schemas={})
-    default = helpers.peek.default(schema=schema, schemas={})
-    read_only = helpers.peek.read_only(schema=schema, schemas={})
-    x_json = helpers.peek.json(schema=schema, schemas={})
-    generated = helpers.ext_prop.get(source=schema, name="x-generated")
-    de_ref = None
-    if not x_json:
-        if type_ == "object":
-            de_ref = helpers.ext_prop.get(source=schema, name="x-de-$ref")
-        if type_ == "array":
-            de_ref = helpers.ext_prop.get(source=schema["items"], name="x-de-$ref")
-
-    return types.ColumnSchemaArtifacts(
-        type=type_,
-        format=format_,
-        nullable=nullable,
-        required=required,
-        de_ref=de_ref,
-        generated=generated,
-        description=description,
-        default=default,
-        read_only=read_only,
-        json=x_json,
+    artifacts = types.ColumnSchemaArtifacts(
+        open_api=types.ColumnSchemaOpenAPIArtifacts(type=type_, required=required)
     )
+    artifacts.open_api.format = helpers.peek.format_(schema=schema, schemas={})
+    artifacts.open_api.nullable = helpers.peek.nullable(schema=schema, schemas={})
+    artifacts.open_api.description = helpers.peek.description(schema=schema, schemas={})
+    artifacts.open_api.default = helpers.peek.default(schema=schema, schemas={})
+    artifacts.open_api.read_only = helpers.peek.read_only(schema=schema, schemas={})
+    artifacts.open_api.write_only = helpers.peek.write_only(schema=schema, schemas={})
+    artifacts.extension.json = helpers.peek.json(schema=schema, schemas={})
+    artifacts.extension.generated = helpers.ext_prop.get(
+        source=schema, name="x-generated"
+    )
+    if not artifacts.extension.json:
+        if type_ == "object":
+            artifacts.extension.de_ref = helpers.ext_prop.get(
+                source=schema, name="x-de-$ref"
+            )
+        if type_ == "array":
+            artifacts.extension.de_ref = helpers.ext_prop.get(
+                source=schema["items"], name="x-de-$ref"
+            )
+
+    return artifacts
 
 
 def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
@@ -101,7 +99,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             types.ColumnArtifacts(
                 type=column_type,
                 name=property_name,
-                description=column_artifacts.description,
+                description=column_artifacts.open_api.description,
             )
         )
         prop_artifacts = types.ColumnArtifacts(
@@ -112,7 +110,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
             from_dict_type=arg_from_dict_type,
             name=property_name,
             default=_map_default(artifacts=column_artifacts),
-            read_only=column_artifacts.read_only,
+            read_only=column_artifacts.open_api.read_only,
         )
         if property_required:
             typed_dict_required_props.append(prop_artifacts)
@@ -206,21 +204,24 @@ def _map_default(*, artifacts: types.ColumnSchemaArtifacts) -> oa_types.TColumnD
         The mapped default value.
 
     """
-    default = artifacts.default
+    default = artifacts.open_api.default
     if default is None:
         return None
 
     # Escape string
-    if artifacts.type == "string" and artifacts.format not in {"date", "date-time"}:
+    if artifacts.open_api.type == "string" and artifacts.open_api.format not in {
+        "date",
+        "date-time",
+    }:
         default = json.dumps(default)
 
     # Handle bytes
-    if artifacts.type == "string" and artifacts.format == "binary":
+    if artifacts.open_api.type == "string" and artifacts.open_api.format == "binary":
         return f"b{default}"
 
     # Map type
     mapped_default = helpers.oa_to_py_type.convert(
-        value=default, type_=artifacts.type, format_=artifacts.format
+        value=default, type_=artifacts.open_api.type, format_=artifacts.open_api.format
     )
 
     # Get the repr if it isn't a float, bool, number nor str

@@ -7,7 +7,9 @@ import pytest
 
 from open_alchemy import models_file
 
-_ColumnSchemaArtifacts = models_file.types.ColumnSchemaArtifacts
+_ColSchemaArtifacts = models_file.types.ColumnSchemaArtifacts
+_ColSchemaOAArtifacts = models_file.types.ColumnSchemaOpenAPIArtifacts
+_ColSchemaExtArtifacts = models_file.types.ColumnSchemaExtensionArtifacts
 _ColumnArtifacts = models_file.types.ColumnArtifacts
 _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
 
@@ -18,79 +20,119 @@ _ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
         pytest.param(
             {"type": "type 1"},
             None,
-            _ColumnSchemaArtifacts(type="type 1"),
+            _ColSchemaArtifacts(open_api=_ColSchemaOAArtifacts(type="type 1")),
             id="type only",
         ),
         pytest.param(
             {"type": "type 1", "format": "format 1"},
             None,
-            _ColumnSchemaArtifacts(type="type 1", format="format 1"),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="type 1", format="format 1")
+            ),
             id="type with format",
         ),
         pytest.param(
             {"type": "type 1", "nullable": True},
             None,
-            _ColumnSchemaArtifacts(type="type 1", nullable=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="type 1", nullable=True)
+            ),
             id="type with nullable",
         ),
         pytest.param(
             {"type": "type 1", "x-generated": True},
             None,
-            _ColumnSchemaArtifacts(type="type 1", generated=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="type 1"),
+                extension=_ColSchemaExtArtifacts(generated=True),
+            ),
             id="type with x-generated",
         ),
         pytest.param(
             {"type": "type 1", "description": "description 1"},
             None,
-            _ColumnSchemaArtifacts(type="type 1", description="description 1"),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(
+                    type="type 1", description="description 1"
+                )
+            ),
             id="type with description",
         ),
         pytest.param(
             {"type": "string", "default": "value 1"},
             None,
-            _ColumnSchemaArtifacts(type="string", default="value 1"),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="string", default="value 1")
+            ),
             id="type with default",
         ),
         pytest.param(
             {"type": "string", "readOnly": True},
             None,
-            _ColumnSchemaArtifacts(type="string", read_only=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="string", read_only=True)
+            ),
             id="type with readOnly",
+        ),
+        pytest.param(
+            {"type": "string", "writeOnly": True},
+            None,
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="string", write_only=True)
+            ),
+            id="type with writeOnly",
         ),
         pytest.param(
             {"type": "string", "x-json": True},
             None,
-            _ColumnSchemaArtifacts(type="string", json=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="string"),
+                extension=_ColSchemaExtArtifacts(json=True),
+            ),
             id="simple type with x-json",
         ),
         pytest.param(
             {"type": "object", "x-json": True},
             None,
-            _ColumnSchemaArtifacts(type="object", json=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="object"),
+                extension=_ColSchemaExtArtifacts(json=True),
+            ),
             id="object type with x-json",
         ),
         pytest.param(
             {"type": "array", "x-json": True},
             None,
-            _ColumnSchemaArtifacts(type="array", json=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="array"),
+                extension=_ColSchemaExtArtifacts(json=True),
+            ),
             id="array type with x-json",
         ),
         pytest.param(
             {"type": "object", "x-de-$ref": "RefModel"},
             None,
-            _ColumnSchemaArtifacts(type="object", de_ref="RefModel"),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="object"),
+                extension=_ColSchemaExtArtifacts(de_ref="RefModel"),
+            ),
             id="object",
         ),
         pytest.param(
             {"type": "array", "items": {"x-de-$ref": "RefModel"}},
             None,
-            _ColumnSchemaArtifacts(type="array", de_ref="RefModel"),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="array"),
+                extension=_ColSchemaExtArtifacts(de_ref="RefModel"),
+            ),
             id="array",
         ),
         pytest.param(
             {"type": "type 1"},
             True,
-            _ColumnSchemaArtifacts(type="type 1", required=True),
+            _ColSchemaArtifacts(
+                open_api=_ColSchemaOAArtifacts(type="type 1", required=True)
+            ),
             id="required given",
         ),
     ],
@@ -858,7 +900,9 @@ class TestMapDefault:
         WHEN _map_default is called with the artifacts
         THEN the expected default value is returned.
         """
-        artifacts = _ColumnSchemaArtifacts(type=type_, format=format_, default=default)
+        artifacts = _ColSchemaArtifacts(
+            open_api=_ColSchemaOAArtifacts(type=type_, format=format_, default=default)
+        )
 
         returned_default = models_file._model._artifacts._map_default(
             artifacts=artifacts

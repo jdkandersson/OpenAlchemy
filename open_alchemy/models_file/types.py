@@ -9,8 +9,8 @@ from open_alchemy import types
 
 
 @dataclasses.dataclass
-class ColumnSchemaArtifacts:
-    """Artifacts from the OpenAPI schema."""
+class ColumnSchemaOpenAPIArtifacts:
+    """OpenAPI Artifacts from the OpenAPI schema."""
 
     # The type of the column
     type: str
@@ -20,18 +20,45 @@ class ColumnSchemaArtifacts:
     nullable: typing.Optional[bool] = None
     # Whether the column is required
     required: typing.Optional[bool] = None
-    # The model being reference for an object/array type
-    de_ref: typing.Optional[str] = None
-    # Whether the value of the column is generated (eg. through auto increment)
-    generated: typing.Optional[bool] = None
     # The description of the column
     description: typing.Optional[str] = None
     # The default value of the column
     default: types.TColumnDefault = None
     # Whether the column is read only
     read_only: typing.Optional[bool] = None
+    # Whether the column is write only
+    write_only: typing.Optional[bool] = None
+
+
+@dataclasses.dataclass
+class ColumnSchemaExtensionArtifacts:
+    """Extension Artifacts from the OpenAPI schema."""
+
+    # The model being reference for an object/array type
+    de_ref: typing.Optional[str] = None
+    # Whether the value of the column is generated (eg. through auto increment)
+    generated: typing.Optional[bool] = None
     # Whether the column is json
     json: typing.Optional[bool] = None
+
+
+@dataclasses.dataclass
+class ColumnSchemaArtifacts:
+    """Artifacts from the OpenAPI schema."""
+
+    open_api: ColumnSchemaOpenAPIArtifacts
+    extension: ColumnSchemaExtensionArtifacts
+
+    def __init__(
+        self,
+        open_api: ColumnSchemaOpenAPIArtifacts,
+        extension: typing.Optional[ColumnSchemaExtensionArtifacts] = None,
+    ) -> None:
+        """Construct."""
+        self.open_api = open_api
+        if extension is None:
+            extension = ColumnSchemaExtensionArtifacts()
+        self.extension = extension
 
 
 @dataclasses.dataclass
