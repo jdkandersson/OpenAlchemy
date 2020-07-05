@@ -57,28 +57,39 @@ def check_schema(
         construct the column as a tuple.
 
     """
-    # Retrieve artifacts
+    # Retrieve OpenAPI artifacts
     type_ = helpers.peek.type_(schema=schema, schemas={})
-    format_ = helpers.peek.format_(schema=schema, schemas={})
-    max_length = helpers.peek.max_length(schema=schema, schemas={})
+    artifacts = types.ColumnArtifacts(open_api=types.OpenAPiColumnArtifacts(type=type_))
+    artifacts.open_api.format = helpers.peek.format_(schema=schema, schemas={})
+    artifacts.open_api.max_length = helpers.peek.max_length(schema=schema, schemas={})
     nullable = helpers.peek.nullable(schema=schema, schemas={})
-    description = helpers.peek.description(schema=schema, schemas={})
-    default = helpers.peek.default(schema=schema, schemas={})
-    read_only = helpers.peek.read_only(schema=schema, schemas={})
-    primary_key = helpers.ext_prop.get(source=schema, name="x-primary-key")
-    autoincrement = helpers.ext_prop.get(source=schema, name="x-autoincrement")
-    index = helpers.ext_prop.get(source=schema, name="x-index")
-    unique = helpers.ext_prop.get(source=schema, name="x-unique")
-    json = helpers.ext_prop.get(source=schema, name="x-json")
-    foreign_key = helpers.ext_prop.get(source=schema, name="x-foreign-key")
-    foreign_key_kwargs = helpers.ext_prop.get_kwargs(
+    artifacts.open_api.description = helpers.peek.description(schema=schema, schemas={})
+    artifacts.open_api.default = helpers.peek.default(schema=schema, schemas={})
+    artifacts.open_api.read_only = helpers.peek.read_only(schema=schema, schemas={})
+    # Retrieve extension artifacts
+    artifacts.extension.primary_key = helpers.ext_prop.get(
+        source=schema, name="x-primary-key"
+    )
+    artifacts.extension.autoincrement = helpers.ext_prop.get(
+        source=schema, name="x-autoincrement"
+    )
+    artifacts.extension.index = helpers.ext_prop.get(source=schema, name="x-index")
+    artifacts.extension.unique = helpers.ext_prop.get(source=schema, name="x-unique")
+    artifacts.extension.json = helpers.ext_prop.get(source=schema, name="x-json")
+    artifacts.extension.foreign_key = helpers.ext_prop.get(
+        source=schema, name="x-foreign-key"
+    )
+    artifacts.extension.foreign_key_kwargs = helpers.ext_prop.get_kwargs(
         source=schema, name="x-foreign-key-kwargs"
     )
-    if foreign_key_kwargs is not None and foreign_key is None:
+    if (
+        artifacts.extension.foreign_key_kwargs is not None
+        and artifacts.extension.foreign_key is None
+    ):
         raise exceptions.MalformedSchemaError(
             "The column must be a foreign key column if foreign key kwargs are defined."
         )
-    kwargs = helpers.ext_prop.get_kwargs(
+    artifacts.extension.kwargs = helpers.ext_prop.get_kwargs(
         source=schema,
         reserved={
             "nullable",
@@ -90,36 +101,15 @@ def check_schema(
         },
     )
 
-    # Construct return artifacts
-    nullable_artefact = helpers.calculate_nullable(
+    # Update nullable to consider autoincrement, required and default
+    artifacts.open_api.nullable = helpers.calculate_nullable(
         nullable=nullable,
-        generated=autoincrement is True,
+        generated=artifacts.extension.autoincrement is True,
         required=required,
-        defaulted=default is not None,
-    )
-    return_artifacts = types.ColumnArtifacts(
-        open_api=types.OpenAPiColumnArtifacts(
-            type=type_,
-            format=format_,
-            max_length=max_length,
-            nullable=nullable_artefact,
-            description=description,
-            default=default,
-            read_only=read_only,
-        ),
-        extension=types.ExtensionColumnArtifacts(
-            primary_key=primary_key,
-            autoincrement=autoincrement,
-            index=index,
-            unique=unique,
-            json=json,
-            foreign_key=foreign_key,
-            foreign_key_kwargs=foreign_key_kwargs,
-            kwargs=kwargs,
-        ),
+        defaulted=artifacts.open_api.default is not None,
     )
 
-    return return_artifacts
+    return artifacts
 
 
 def calculate_schema(
