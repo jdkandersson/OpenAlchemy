@@ -47,7 +47,7 @@ def handle_read_only(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Tuple[typing.List, types.ReadOnlySchema]:
     """
-    Handle readOnly property.
+    Handle readOnly object and array properties.
 
     Args:
         schema: The readOnly property schema.
