@@ -142,6 +142,8 @@ def calculate_schema(
         schema["default"] = artifacts.open_api.default
     if artifacts.open_api.read_only is not None:
         schema["readOnly"] = artifacts.open_api.read_only
+    if artifacts.open_api.write_only is not None:
+        schema["writeOnly"] = artifacts.open_api.write_only
     if artifacts.extension.autoincrement is not None:
         schema["x-generated"] = artifacts.extension.autoincrement
     if dict_ignore is not None:

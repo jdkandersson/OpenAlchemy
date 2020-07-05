@@ -89,6 +89,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "default": TColumnDefault,
         "x-generated": bool,
         "readOnly": bool,
+        "writeOnly": bool,
     },
     total=False,
 )

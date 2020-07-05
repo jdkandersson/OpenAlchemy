@@ -326,6 +326,13 @@ def test_check_schema_required():
             id="type with readOnly",
         ),
         pytest.param(
+            ColArt(open_api=OAColArt(type="type 1", write_only=True)),
+            None,
+            None,
+            {"type": "type 1", "writeOnly": True},
+            id="type with writeOnly",
+        ),
+        pytest.param(
             ColArt(
                 open_api=OAColArt(type="type 1"),
                 extension=ExtColArt(autoincrement=True),
