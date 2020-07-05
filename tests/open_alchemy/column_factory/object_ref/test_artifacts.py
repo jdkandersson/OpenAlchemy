@@ -745,6 +745,93 @@ def test_gather_object_artifacts_description(schema, schemas, expected_descripti
 
 
 @pytest.mark.parametrize(
+    "schema, schemas, expected_write_only",
+    [
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object"}},
+            None,
+            id="$ref no writeOnly",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"type": "object", "writeOnly": True}},
+            True,
+            id="$ref writeOnly",
+        ),
+        pytest.param(
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object"}},
+            None,
+            id="allOf no writeOnly",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"writeOnly": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+            id="allOf writeOnly",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"writeOnly": False},
+                    {"x-backref": "backref 2"},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+            id="allOf writeOnly before other",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "backref 2"},
+                    {"writeOnly": False},
+                ]
+            },
+            {"RefSchema": {"type": "object"}},
+            False,
+            id="allOf writeOnly after other",
+        ),
+        pytest.param(
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"type": "object", "writeOnly": True}},
+            True,
+            id="allOf $ref writeOnly",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"writeOnly": False},
+                ]
+            },
+            {"RefSchema": {"type": "object", "writeOnly": True}},
+            False,
+            id="allOf writeOnly $ref writeOnly",
+        ),
+    ],
+)
+@pytest.mark.column
+def test_gather_object_artifacts_write_only(schema, schemas, expected_write_only):
+    """
+    GIVEN schema and schemas and expected write_only value
+    WHEN gather_object_artifacts is called with the schema and schemas
+    THEN the expected write_only value is returned.
+    """
+    obj_artifacts = artifacts.gather(schema=schema, logical_name="", schemas=schemas)
+
+    assert obj_artifacts.write_only == expected_write_only
+
+
+@pytest.mark.parametrize(
     "schema, schemas, expected_kwargs",
     [
         (

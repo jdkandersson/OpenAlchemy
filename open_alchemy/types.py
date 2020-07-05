@@ -181,6 +181,7 @@ class ObjectArtifacts:
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+    write_only: typing.Optional[bool] = None
 
 
 _ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
