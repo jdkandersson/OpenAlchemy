@@ -195,6 +195,7 @@ class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
     nullable: bool
     description: str
     readOnly: bool
+    writeOnly: bool
 
 
 _ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name

@@ -22,4 +22,6 @@ def calculate(*, artifacts: types.ObjectArtifacts) -> types.ObjectRefSchema:
         schema["nullable"] = artifacts.nullable
     if artifacts.description is not None:
         schema["description"] = artifacts.description
+    if artifacts.write_only is not None:
+        schema["writeOnly"] = artifacts.write_only
     return schema
