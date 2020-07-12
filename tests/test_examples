@@ -28,6 +28,10 @@ cd examples/read_only
 python models.py
 python models_traditional.py
 cd -
+cd examples/write_only
+python models.py
+python models_traditional.py
+cd -
 cd examples/ref
 python column_models.py
 python model_models.py
