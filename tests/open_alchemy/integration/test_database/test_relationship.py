@@ -240,7 +240,7 @@ def test_one_to_many(engine, sessionmaker):
     assert len(queried_model.ref_tables) == 1
     assert queried_model.ref_tables[0].id == 11
     assert queried_model.ref_tables[0].name == "ref table name 1"
-    assert queried_model.ref_tables[0].table_id == 12
+    assert queried_model.ref_tables[0].table_ref_tables_id == 12
     assert queried_model.ref_tables[0].table.name == "table name 1"
     queried_ref_model = session.query(ref_model).first()
     assert queried_ref_model.id == 11

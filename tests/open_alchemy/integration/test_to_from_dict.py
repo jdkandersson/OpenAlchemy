@@ -276,7 +276,6 @@ def test_to_from_dict_one_to_many_read_only(engine, sessionmaker):
     assert queried_ref_instance.to_dict() == {"id": 12, "table": {"id": 11}}
 
 
-@pytest.mark.only_this
 @pytest.mark.integration
 def test_to_from_dict_one_to_many_fk_def(engine, sessionmaker):
     """
