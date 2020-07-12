@@ -340,21 +340,31 @@ def test_calculate_empty(schema, expected_empty):
 @pytest.mark.parametrize(
     "schema, expected_props",
     [
-        ({"properties": {}}, []),
-        ({"properties": {"column_1": {"type": "integer"}}}, []),
-        ({"properties": {"column_1": {"type": "integer"}}, "required": []}, []),
-        (
+        pytest.param({"properties": {}}, [], id="empty",),
+        pytest.param(
+            {"properties": {"column_1": {"type": "integer"}}},
+            [],
+            id="single required not given",
+        ),
+        pytest.param(
+            {"properties": {"column_1": {"type": "integer"}}, "required": []},
+            [],
+            id="single not required",
+        ),
+        pytest.param(
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
             [_ColumnArtifacts(name="column_1", type="int")],
+            id="single required",
         ),
-        (
+        pytest.param(
             {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": ["column_1"],
             },
             [_ColumnArtifacts(name="column_1", type='"RefModelDict"')],
+            id="single required object",
         ),
-        (
+        pytest.param(
             {
                 "properties": {
                     "column_1": {"type": "integer"},
@@ -366,18 +376,10 @@ def test_calculate_empty(schema, expected_empty):
                 _ColumnArtifacts(name="column_1", type="int"),
                 _ColumnArtifacts(name="column_2", type="str"),
             ],
+            id="multiple required",
         ),
     ],
-    ids=[
-        "empty",
-        "single required not given",
-        "single not required",
-        "single required",
-        "single required object",
-        "multiple required",
-    ],
 )
-@pytest.mark.only_this
 @pytest.mark.models_file
 def test_calculate_td_required_props(schema, expected_props):
     """
