@@ -358,6 +358,22 @@ def test_calculate_empty(schema, expected_empty):
         ),
         pytest.param(
             {
+                "properties": {"column_1": {"type": "integer", "writeOnly": True}},
+                "required": ["column_1"],
+            },
+            [],
+            id="single required writeOnly True",
+        ),
+        pytest.param(
+            {
+                "properties": {"column_1": {"type": "integer", "writeOnly": False}},
+                "required": ["column_1"],
+            },
+            [_ColumnArtifacts(name="column_1", type="int")],
+            id="single required writeOnly False",
+        ),
+        pytest.param(
+            {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": ["column_1"],
             },
@@ -439,6 +455,14 @@ def test_calculate_td_required_props(schema, expected_props):
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
             [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
             id="single not required",
+        ),
+        pytest.param(
+            {
+                "properties": {"column_1": {"type": "integer", "writeOnly": True}},
+                "required": [],
+            },
+            [],
+            id="single not required writeOnly",
         ),
         pytest.param(
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
