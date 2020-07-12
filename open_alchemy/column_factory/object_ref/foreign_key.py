@@ -107,6 +107,7 @@ def gather_artifacts(
 
     Args:
         model_schema: The schema of the referenced model.
+        logical_name: The logical name of the property with the object reference.
         schemas: All model schemas used to resolve any $ref.
         fk_column: The name of the foreign key column.
         required: Whether the foreign key is constructed for a property that is
