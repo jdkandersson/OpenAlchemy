@@ -1,5 +1,6 @@
 """Functions for model artifacts."""
 
+import itertools
 import json
 import sys
 import typing
@@ -84,6 +85,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     columns = list(
         map(_calculate_column_artifacts, schema["properties"].keys(), columns_artifacts)
     )
+    # Calculate artifacts for the typed dictionary
     typed_dict_props = list(
         map(
             _calculate_typed_dict_artifacts,
@@ -101,6 +103,7 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         for prop_required, typed_dict_prop in zip(prop_required_list, typed_dict_props)
         if not prop_required
     ]
+    # Calculate artifacts for the arguments
     args = list(
         map(_calculate_arg_artifacts, schema["properties"].keys(), columns_artifacts)
     )
@@ -110,21 +113,16 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     not_required_args = [
         arg for prop_required, arg in zip(prop_required_list, args) if not prop_required
     ]
-
     # Calculate artifacts for back references
     backrefs = helpers.ext_prop.get(source=schema, name="x-backrefs")
     if backrefs is not None:
-        for backref_name, backref_schema in backrefs.items():
-            # Gather artifacts
-            column_artifacts = gather_column_artifacts(
-                schema=backref_schema, required=None
-            )
-
-            # Calculate the type
-            column_type = _type.model(artifacts=column_artifacts)
-
-            # Add artifacts to the lists
-            columns.append(types.ColumnArtifacts(type=column_type, name=backref_name))
+        backref_column_artifacts = map(
+            gather_column_artifacts, backrefs.values(), itertools.repeat(None)
+        )
+        backref_columns_iter = map(
+            _calculate_column_artifacts, backrefs.keys(), backref_column_artifacts
+        )
+        columns.extend(backref_columns_iter)
 
     # Calculate model parent class
     parent_cls: str
