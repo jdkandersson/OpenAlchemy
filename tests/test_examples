@@ -1,67 +1,71 @@
 #!/bin/bash
 
-cd examples/remote
+# cd examples/remote
+# python models.py
+# python url_models.py
+# cd -
+# cd examples/simple
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/all_of
+# python column_models.py
+# python model_models.py
+# cd -
+# cd examples/composite_index
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/composite_unique
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/default
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/read_only
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/ref
+# python column_models.py
+# python model_models.py
+# cd -
+# cd examples/relationship/many_to_one
+# python models.py
+# python models_traditional.py
+# python not_nullable_models.py
+# python not_nullable_models_traditional.py
+# python custom_foreign_key_models.py
+# python backref_models.py
+# python backref_models_traditional.py
+# python kwargs_models.py
+# python kwargs_models_traditional.py
+# cd -
+# cd examples/relationship/one_to_one
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/relationship/one_to_many
+# python models.py
+# python models_traditional.py
+# cd -
+# cd examples/relationship/many_to_many
+# python models.py
+# python models_traditional.py
+# cd -
+cd examples/relationship/multiple
 python models.py
-python url_models.py
+# python models_traditional.py
 cd -
-cd examples/simple
-python models.py
-python models_traditional.py
-cd -
-cd examples/all_of
-python column_models.py
-python model_models.py
-cd -
-cd examples/composite_index
-python models.py
-python models_traditional.py
-cd -
-cd examples/composite_unique
-python models.py
-python models_traditional.py
-cd -
-cd examples/default
-python models.py
-python models_traditional.py
-cd -
-cd examples/read_only
-python models.py
-python models_traditional.py
-cd -
-cd examples/ref
-python column_models.py
-python model_models.py
-cd -
-cd examples/relationship/many_to_one
-python models.py
-python models_traditional.py
-python not_nullable_models.py
-python not_nullable_models_traditional.py
-python custom_foreign_key_models.py
-python backref_models.py
-python backref_models_traditional.py
-python kwargs_models.py
-python kwargs_models_traditional.py
-cd -
-cd examples/relationship/one_to_one
-python models.py
-python models_traditional.py
-cd -
-cd examples/relationship/one_to_many
-python models.py
-python models_traditional.py
-cd -
-cd examples/relationship/many_to_many
-python models.py
-python models_traditional.py
-cd -
-cd examples/inheritance
-python single_models.py
-python single_models_traditional.py
-python joined_models.py
-python joined_models_traditional.py
-cd -
-cd examples/json
-python models.py
-python models_traditional.py
-cd -
+# cd examples/inheritance
+# python single_models.py
+# python single_models_traditional.py
+# python joined_models.py
+# python joined_models_traditional.py
+# cd -
+# cd examples/json
+# python models.py
+# python models_traditional.py
+# cd -

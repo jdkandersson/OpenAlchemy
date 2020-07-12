@@ -214,7 +214,7 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
 @pytest.mark.parametrize(
     "filename, model_names, attrs",
     [
-        (
+        pytest.param(
             "relationship/many_to_one/example-spec.yml",
             ("Employee", "Division"),
             {
@@ -222,8 +222,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "division": {"id": 12, "name": "division 1"},
             },
+            id="relationship-many-to-one",
         ),
-        (
+        pytest.param(
             "relationship/many_to_one/backref-example-spec.yml",
             ("Employee", "Division"),
             {
@@ -231,8 +232,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "division": {"id": 12, "name": "division 1"},
             },
+            id="relationship-many-to-one-backref",
         ),
-        (
+        pytest.param(
             "relationship/many_to_one/custom-foreign-key-example-spec.yml",
             ("Employee", "Division"),
             {
@@ -240,8 +242,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "division": {"id": 12, "name": "division 1"},
             },
+            id="relationship-many-to-one-custom-foreign-key",
         ),
-        (
+        pytest.param(
             "relationship/many_to_one/not-nullable-example-spec.yml",
             ("Employee", "Division"),
             {
@@ -249,8 +252,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "division": {"id": 12, "name": "division 1"},
             },
+            id="relationship-many-to-one-not-nullable",
         ),
-        (
+        pytest.param(
             "relationship/one_to_many/example-spec.yml",
             ("Division", "Employee"),
             {
@@ -258,8 +262,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "division 1",
                 "employees": [{"id": 12, "name": "employee 1"}],
             },
+            id="relationship-one-to-many",
         ),
-        (
+        pytest.param(
             "relationship/one_to_one/example-spec.yml",
             ("Employee", "PayInfo"),
             {
@@ -267,8 +272,9 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "pay_info": {"id": 12, "account_number": "account 1"},
             },
+            id="relationship-one-to-one",
         ),
-        (
+        pytest.param(
             "relationship/many_to_many/example-spec.yml",
             ("Employee", "Project"),
             {
@@ -276,16 +282,8 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
                 "name": "employee 1",
                 "projects": [{"id": 12, "name": "project 1"}],
             },
+            id="relationship-many-to-many",
         ),
-    ],
-    ids=[
-        "relationship-many-to-one",
-        "relationship-many-to-one-backref",
-        "relationship-many-to-one-custom-foreign-key",
-        "relationship-many-to-one-not-nullable",
-        "relationship-one-to-many",
-        "relationship-one-to-one",
-        "relationship-many-to-many",
     ],
 )
 @pytest.mark.example
