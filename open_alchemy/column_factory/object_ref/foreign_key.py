@@ -91,6 +91,7 @@ def check_required(
 def gather_artifacts(
     *,
     model_schema: types.Schema,
+    logical_name: str,
     schemas: types.Schemas,
     fk_column: str,
     required: typing.Optional[bool] = None,
@@ -151,7 +152,7 @@ def gather_artifacts(
     )
 
     # Construct return values
-    logical_name = f"{tablename}_{fk_column}"
+    return_logical_name = f"{logical_name}_{fk_column}"
     artifacts = types.ColumnArtifacts(
         open_api=types.OpenAPiColumnArtifacts(
             type=fk_type,
@@ -164,7 +165,7 @@ def gather_artifacts(
             foreign_key=f"{tablename}.{fk_column}"
         ),
     )
-    return logical_name, artifacts
+    return return_logical_name, artifacts
 
 
 def gather_artifacts_helper(
@@ -189,6 +190,7 @@ def gather_artifacts_helper(
     """
     return gather_artifacts(
         model_schema=obj_artifacts.spec,
+        logical_name=obj_artifacts.logical_name,
         schemas=schemas,
         fk_column=obj_artifacts.fk_column,
         required=required,

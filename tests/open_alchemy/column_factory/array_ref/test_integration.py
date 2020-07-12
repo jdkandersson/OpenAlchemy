@@ -48,7 +48,7 @@ def test_handle_array():
                 {
                     "type": "object",
                     "properties": {
-                        f"{tablename}_id": {
+                        "ref_schema_id": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.id",
                             "x-dict-ignore": True,
@@ -111,7 +111,7 @@ def test_handle_array_backref():
                 {
                     "type": "object",
                     "properties": {
-                        f"{tablename}_id": {
+                        "ref_schema_id": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.id",
                             "x-dict-ignore": True,

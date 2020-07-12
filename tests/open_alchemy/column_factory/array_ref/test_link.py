@@ -20,7 +20,7 @@ def test_schemas():
     ref_schema = {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     artifacts = types.ObjectArtifacts(
         spec=copy.deepcopy(ref_schema),
-        logical_name="logical name 1",
+        logical_name="ref_schema",
         fk_column="id",
         relationship=types.RelationshipArtifacts(model_name="RefSchema"),
     )
@@ -43,7 +43,7 @@ def test_schemas():
                 {
                     "type": "object",
                     "properties": {
-                        f"{tablename}_id": {
+                        "ref_schema_id": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.id",
                             "x-dict-ignore": True,

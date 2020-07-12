@@ -13,6 +13,7 @@ from .. import object_ref
 def set_(
     *,
     ref_model_name: str,
+    logical_name: str,
     model_schema: types.Schema,
     schemas: types.Schemas,
     fk_column: str,
@@ -34,6 +35,7 @@ def set_(
 
     Args:
         ref_model_name: The name of the referenced model.
+        logical_name: The logical name of the array reference property.
         model_schema: The schema which contains the one to many relationship.
         schemas: All the model schemas used to look for the referenced model and to
             resolve any $ref.
@@ -52,7 +54,10 @@ def set_(
 
     # Calculate foreign key artifacts
     fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(
-        model_schema=model_schema, schemas=schemas, fk_column=fk_column
+        model_schema=model_schema,
+        logical_name=logical_name,
+        schemas=schemas,
+        fk_column=fk_column,
     )
 
     # Check whether the foreign key has already been defined in the referenced model

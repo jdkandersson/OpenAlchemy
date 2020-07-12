@@ -28,6 +28,7 @@ def construct(
     if artifacts.relationship.secondary is None:
         _foreign_key.set_(
             ref_model_name=artifacts.relationship.model_name,
+            logical_name=artifacts.logical_name,
             model_schema=model_schema,
             schemas=schemas,
             fk_column=artifacts.fk_column,
