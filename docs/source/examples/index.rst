@@ -10,6 +10,7 @@ Examples
    simple
    default
    read_only
+   write_only
    relationship/index
    composite_index
    composite_unique
