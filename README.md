@@ -141,7 +141,8 @@ An example API has been defined using connexion and Flask here:
 - `to_str` model methods to convert instances to JSON string,
 - `__str__` model methods to support the python `str` function,
 - `__repr__` model methods to support the python `repr` function,
-- `to_dict` model methods to convert instances to dictionaries and
+- `to_dict` model methods to convert instances to dictionaries,
+- `readOnly` and `writeOnly` for influence the conversion to and from dictionaries and
 - exposing created models under `open_alchemy.models` removing the need for `models.py` files.
 
 ## Contributing
