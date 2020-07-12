@@ -175,11 +175,11 @@ class ObjectArtifacts:
     """Artifacts retrieved from object schema."""
 
     spec: Schema
+    logical_name: str
     fk_column: str
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
-    logical_name: typing.Optional[str] = None
 
 
 _ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name

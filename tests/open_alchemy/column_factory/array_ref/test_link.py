@@ -20,6 +20,7 @@ def test_schemas():
     ref_schema = {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     artifacts = types.ObjectArtifacts(
         spec=copy.deepcopy(ref_schema),
+        logical_name="logical name 1",
         fk_column="id",
         relationship=types.RelationshipArtifacts(model_name="RefSchema"),
     )
@@ -69,6 +70,7 @@ def test_secondary(mocked_facades_models):
     secondary = "association"
     artifacts = types.ObjectArtifacts(
         spec=copy.deepcopy(ref_schema),
+        logical_name="logical name 1",
         fk_column="id",
         relationship=types.RelationshipArtifacts(
             model_name="RefSchema", secondary=secondary
