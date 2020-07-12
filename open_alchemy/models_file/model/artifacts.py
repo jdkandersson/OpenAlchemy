@@ -86,11 +86,20 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
         map(_calculate_column_artifacts, schema["properties"].keys(), columns_artifacts)
     )
     # Calculate artifacts for the typed dictionary
+    write_only_idx = [artifact.open_api.write_only for artifact in columns_artifacts]
     typed_dict_props = list(
         map(
             _calculate_typed_dict_artifacts,
-            schema["properties"].keys(),
-            columns_artifacts,
+            (
+                value
+                for idx, value in enumerate(schema["properties"].keys())
+                if not write_only_idx[idx]
+            ),
+            (
+                value
+                for idx, value in enumerate(columns_artifacts)
+                if not write_only_idx[idx]
+            ),
         )
     )
     typed_dict_required_props = [

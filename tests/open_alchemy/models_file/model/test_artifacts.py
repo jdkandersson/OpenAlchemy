@@ -378,6 +378,39 @@ def test_calculate_empty(schema, expected_empty):
             ],
             id="multiple required",
         ),
+        pytest.param(
+            {
+                "properties": {
+                    "column_1": {"type": "integer", "writeOnly": True},
+                    "column_2": {"type": "string"},
+                },
+                "required": ["column_1", "column_2"],
+            },
+            [_ColumnArtifacts(name="column_2", type="str"),],
+            id="multiple required first writeOnly",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "column_1": {"type": "integer"},
+                    "column_2": {"type": "string", "writeOnly": True},
+                },
+                "required": ["column_1", "column_2"],
+            },
+            [_ColumnArtifacts(name="column_1", type="int"),],
+            id="multiple required second writeOnly",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "column_1": {"type": "integer", "writeOnly": True},
+                    "column_2": {"type": "string", "writeOnly": True},
+                },
+                "required": ["column_1", "column_2"],
+            },
+            [],
+            id="multiple required all writeOnly",
+        ),
     ],
 )
 @pytest.mark.models_file
@@ -396,27 +429,31 @@ def test_calculate_td_required_props(schema, expected_props):
 @pytest.mark.parametrize(
     "schema, expected_props",
     [
-        ({"properties": {}}, []),
-        (
+        pytest.param({"properties": {}}, [], id="empty",),
+        pytest.param(
             {"properties": {"column_1": {"type": "integer"}}},
             [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
+            id="single required not given",
         ),
-        (
+        pytest.param(
             {"properties": {"column_1": {"type": "integer"}}, "required": []},
             [_ColumnArtifacts(name="column_1", type="typing.Optional[int]")],
+            id="single not required",
         ),
-        (
+        pytest.param(
             {"properties": {"column_1": {"type": "integer"}}, "required": ["column_1"]},
             [],
+            id="single required",
         ),
-        (
+        pytest.param(
             {
                 "properties": {"column_1": {"type": "object", "x-de-$ref": "RefModel"}},
                 "required": [],
             },
             [_ColumnArtifacts(name="column_1", type='typing.Optional["RefModelDict"]')],
+            id="single not required object",
         ),
-        (
+        pytest.param(
             {
                 "properties": {
                     "column_1": {"type": "integer"},
@@ -428,15 +465,8 @@ def test_calculate_td_required_props(schema, expected_props):
                 _ColumnArtifacts(name="column_1", type="typing.Optional[int]"),
                 _ColumnArtifacts(name="column_2", type="typing.Optional[str]"),
             ],
+            id="multiple not required",
         ),
-    ],
-    ids=[
-        "empty",
-        "single required not given",
-        "single not required",
-        "single required",
-        "single not required object",
-        "multiple not required",
     ],
 )
 @pytest.mark.models_file
