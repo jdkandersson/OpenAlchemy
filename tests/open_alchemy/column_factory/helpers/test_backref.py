@@ -36,6 +36,7 @@ class TestCalculateSchema:
         """
         artifacts = types.ObjectArtifacts(
             spec={},
+            logical_name="logical name 1",
             fk_column="fk_column",
             relationship=types.RelationshipArtifacts(
                 model_name="RefModel", back_reference=None, secondary=None
@@ -89,6 +90,7 @@ class TestCalculateSchema:
         """
         artifacts = types.ObjectArtifacts(
             spec={},
+            logical_name="logical name 1",
             fk_column="fk_column",
             relationship=types.RelationshipArtifacts(
                 model_name="RefModel",
@@ -115,6 +117,7 @@ def test_record_backref_none():
     """
     artifacts = types.ObjectArtifacts(
         spec={},
+        logical_name="logical name 1",
         fk_column="fk_column",
         relationship=types.RelationshipArtifacts(
             model_name="RefModel", back_reference=None, secondary=None
@@ -138,6 +141,7 @@ def test_record():
     """
     artifacts = types.ObjectArtifacts(
         spec={},
+        logical_name="logical name 1",
         fk_column="fk_column",
         relationship=types.RelationshipArtifacts(
             model_name="RefModel",

@@ -48,7 +48,7 @@ setuptools.setup(
             "pydocstyle",
             "black",
             "pre-commit",
-            "isort",
+            "isort<5.0.0",
             "PyYAML",
             "Sphinx",
             "doc8",
