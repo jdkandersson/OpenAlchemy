@@ -71,7 +71,7 @@ def test_schemas(schemas):
                 {
                     "type": "object",
                     "properties": {
-                        f"logical name 1_{fk_column}": {
+                        f"{tablename}_logical name 1_{fk_column}": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.{fk_column}",
                             "x-dict-ignore": True,
@@ -112,7 +112,7 @@ def test_models(mocked_facades_models: mock.MagicMock):
         fk_column=fk_column,
     )
 
-    added_fk_column = getattr(mock_ref_model, f"logical name 1_{fk_column}")
+    added_fk_column = getattr(mock_ref_model, f"{tablename}_logical name 1_{fk_column}")
     assert isinstance(added_fk_column.type, facades.sqlalchemy.column.Integer)
     foreign_key = list(added_fk_column.foreign_keys)[0]
     assert f"{tablename}.{fk_column}" in str(foreign_key)
@@ -140,7 +140,10 @@ def test_fk_def():
             "type": "object",
             "x-tablename": "ref_schema",
             "properties": {
-                "logical name 1_id": {"type": "integer", "x-foreign-key": "schema.id"}
+                f"{tablename}_logical name 1_id": {
+                    "type": "integer",
+                    "x-foreign-key": "schema.id",
+                }
             },
         }
     }
@@ -158,7 +161,10 @@ def test_fk_def():
             "type": "object",
             "x-tablename": "ref_schema",
             "properties": {
-                "logical name 1_id": {"type": "integer", "x-foreign-key": "schema.id"}
+                f"{tablename}_logical name 1_id": {
+                    "type": "integer",
+                    "x-foreign-key": "schema.id",
+                }
             },
         }
     }

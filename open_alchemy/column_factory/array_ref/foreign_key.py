@@ -53,9 +53,11 @@ def set_(
     ref_schema = helpers.all_of.merge(schema=ref_schema, schemas=schemas)
 
     # Calculate foreign key artifacts
+    tablename = helpers.peek.tablename(schema=model_schema, schemas={})
+    fk_input_logical_name = f"{tablename}_{logical_name}"
     fk_logical_name, fk_artifacts = object_ref.foreign_key.gather_artifacts(
         model_schema=model_schema,
-        logical_name=logical_name,
+        logical_name=fk_input_logical_name,
         schemas=schemas,
         fk_column=fk_column,
     )

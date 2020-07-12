@@ -43,7 +43,7 @@ def test_schemas():
                 {
                     "type": "object",
                     "properties": {
-                        "ref_schema_id": {
+                        f"{tablename}_ref_schema_id": {
                             "type": "integer",
                             "x-foreign-key": f"{tablename}.id",
                             "x-dict-ignore": True,

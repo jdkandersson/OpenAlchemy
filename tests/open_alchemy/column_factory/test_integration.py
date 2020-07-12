@@ -274,7 +274,7 @@ def test_integration_array_ref():
                 {
                     "type": "object",
                     "properties": {
-                        "ref_schema_id": {
+                        "schema_ref_schema_id": {
                             "type": "integer",
                             "x-foreign-key": "schema.id",
                             "x-dict-ignore": True,
