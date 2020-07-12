@@ -148,6 +148,23 @@ def test_gather_object_artifacts_spec(schema, schemas):
     assert obj_artifacts.spec == {"type": "object"}
 
 
+@pytest.mark.column
+def test_gather_object_artifacts_logical_name():
+    """
+    GIVEN logical name
+    WHEN gather_object_artifacts is called with the logical name
+    THEN the expected logical name is returned.
+    """
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {"RefSchema": {"type": "object"}}
+
+    obj_artifacts = artifacts.gather(
+        schema=schema, logical_name="logical name 1", schemas=schemas
+    )
+
+    assert obj_artifacts.logical_name == "logical name 1"
+
+
 @pytest.mark.parametrize(
     "schema, schemas",
     [

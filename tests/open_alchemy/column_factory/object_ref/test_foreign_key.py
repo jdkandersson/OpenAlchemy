@@ -191,7 +191,10 @@ def test_gather_artifacts_malformed_schema(schema, schemas, fk_column):
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         foreign_key.gather_artifacts(
-            model_schema=schema, schemas=schemas, fk_column=fk_column
+            model_schema=schema,
+            logical_name="logical name 1",
+            schemas=schemas,
+            fk_column=fk_column,
         )
 
 
@@ -304,11 +307,12 @@ def test_gather_artifacts_return(
 
     logical_name, artifacts = foreign_key.gather_artifacts(
         model_schema=schema,
+        logical_name="logical name 1",
         schemas=schemas,
         fk_column="fk",
         required=required,
         nullable=nullable,
     )
 
-    assert logical_name == "table 1_fk"
+    assert logical_name == "logical name 1_fk"
     assert artifacts == expected_artifacts

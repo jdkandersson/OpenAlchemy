@@ -55,6 +55,7 @@ def gather(
 
     return types.ObjectArtifacts(
         spec=intermediary_obj_artifacts.ref_schema,
+        logical_name=logical_name,
         fk_column=intermediary_obj_artifacts.fk_column_name,
         relationship=types.RelationshipArtifacts(
             model_name=intermediary_obj_artifacts.ref_model_name,

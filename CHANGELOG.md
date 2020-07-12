@@ -3,7 +3,8 @@
 ## Version _next_
 
 - Add support for generic JSON data for properties.
-- Add support for `writeOnly`
+- Add support for `writeOnly`.
+- Fix bug where the name of the foreign key column was based on the table name and not the property name.
 
 ## Version 1.2.0 - 2020-06-08
 

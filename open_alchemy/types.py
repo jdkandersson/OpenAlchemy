@@ -4,10 +4,14 @@ import dataclasses
 import datetime
 import typing
 
-try:
-    from typing import TypedDict, Literal, Protocol
+try:  # pragma: no cover
+    from typing import TypedDict
+    from typing import Literal
+    from typing import Protocol
 except ImportError:  # pragma: no cover
-    from typing_extensions import TypedDict, Literal, Protocol  # type: ignore
+    from typing_extensions import TypedDict  # type: ignore
+    from typing_extensions import Literal  # type: ignore
+    from typing_extensions import Protocol  # type: ignore
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
@@ -177,6 +181,7 @@ class ObjectArtifacts:
     """Artifacts retrieved from object schema."""
 
     spec: Schema
+    logical_name: str
     fk_column: str
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
