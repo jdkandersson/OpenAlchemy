@@ -38,6 +38,7 @@ from open_alchemy.column_factory import array_ref
         pytest.param(
             types.ObjectArtifacts(
                 spec={},
+                logical_name="logical name 1",
                 fk_column="fk_column",
                 relationship=types.RelationshipArtifacts("RefSchema"),
                 write_only=True,
