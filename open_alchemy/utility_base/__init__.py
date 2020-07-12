@@ -221,6 +221,10 @@ class UtilityBase:
         # Collecting the values of the properties
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, property_schema in properties.items():
+            # Handle for writeOnly
+            if helpers.peek.write_only(schema=property_schema, schemas={}):
+                continue
+
             value = getattr(instance, name, None)
 
             # Handle none value

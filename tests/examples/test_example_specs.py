@@ -156,6 +156,33 @@ def test_single_model(
         assert getattr(queried_instance, name) == value, f"{name} != {value}"
 
 
+@pytest.mark.example
+def test_single_model_write_only(engine, sessionmaker):
+    """
+    GIVEN writeOnly example spec
+    WHEN model instance is created with the input dictionary
+    THEN the writeOnly field is not returned when it is converted to a dictionary.
+    """
+    filename = "write_only/example-spec.yml"
+    model_name = "Employee"
+    employee_dict = {"name": "name 1", "passport_number": "passport number 1"}
+    model, session = helpers.create_model_session(
+        filename=filename,
+        model_name=model_name,
+        engine=engine,
+        sessionmaker=sessionmaker,
+    )
+
+    # Create instance
+    model_instance = model(**employee_dict)
+    session.add(model_instance)
+    session.flush()
+
+    queried_instance = session.query(model).first()
+    assert queried_instance.passport_number == "passport number 1"
+    assert queried_instance.to_dict() == {"id": 1, "name": "name 1"}
+
+
 @pytest.mark.parametrize(
     "filename, model_name, sql, expected_contents",
     [

@@ -128,6 +128,32 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
     return value
 
 
+def write_only(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[bool]:
+    """
+    Determine whether schema is writeOnly.
+
+    Raises MalformedSchemaError if the writeOnly value is not a boolean.
+
+    Args:
+        schema: The schema to get writeOnly from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        Whether the schema is writeOnly.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="writeOnly")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "A writeOnly property must be of type boolean."
+        )
+    return value
+
+
 def description(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[str]:

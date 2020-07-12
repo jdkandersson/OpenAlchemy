@@ -7,6 +7,8 @@ from open_alchemy import exceptions
 from open_alchemy import models_file
 
 _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
+_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
+_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
 
 
 @pytest.mark.parametrize(
@@ -36,7 +38,9 @@ def test_arg_init(nullable, required, default, expected_type):
     THEN the expected type is returned.
     """
     artifacts = _ColSchemaArt(
-        type="integer", nullable=nullable, required=required, default=default
+        open_api=_ColSchemaOAArt(
+            type="integer", nullable=nullable, required=required, default=default
+        )
     )
 
     returned_type = models_file._model._type.arg_init(artifacts=artifacts)
@@ -47,22 +51,40 @@ def test_arg_init(nullable, required, default, expected_type):
 @pytest.mark.parametrize(
     "artifacts, expected_type",
     [
-        pytest.param(_ColSchemaArt(type="integer"), "int", id="plain"),
         pytest.param(
-            _ColSchemaArt(type="object", de_ref="RefModel"),
+            _ColSchemaArt(open_api=_ColSchemaOAArt(type="integer")), "int", id="plain"
+        ),
+        pytest.param(
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="object"),
+                extension=_ColSchemaExtArt(de_ref="RefModel"),
+            ),
             '"RefModelDict"',
             id="object",
         ),
         pytest.param(
-            _ColSchemaArt(type="object", json=True), "typing.Dict", id="object json"
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="object"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
+            "typing.Dict",
+            id="object json",
         ),
         pytest.param(
-            _ColSchemaArt(type="array", de_ref="RefModel"),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="array"),
+                extension=_ColSchemaExtArt(de_ref="RefModel"),
+            ),
             'typing.Sequence["RefModelDict"]',
             id="array",
         ),
         pytest.param(
-            _ColSchemaArt(type="array", json=True), "typing.Sequence", id="array json"
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="array"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
+            "typing.Sequence",
+            id="array json",
         ),
     ],
 )
@@ -73,8 +95,8 @@ def test_arg_from_dict(artifacts, expected_type):
     WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
-    artifacts.nullable = False
-    artifacts.required = True
+    artifacts.open_api.nullable = False
+    artifacts.open_api.required = True
 
     returned_type = models_file._model._type.arg_from_dict(artifacts=artifacts)
 
@@ -88,7 +110,9 @@ def test_arg_from_dict_de_ref_none():
     WHEN arg_from_dict is called with the artifacts
     THEN MissingArgumentError is raised.
     """
-    artifacts = _ColSchemaArt(type="object", de_ref=None)
+    artifacts = _ColSchemaArt(
+        open_api=_ColSchemaOAArt(type="object"), extension=_ColSchemaExtArt(de_ref=None)
+    )
 
     with pytest.raises(exceptions.MissingArgumentError):
         models_file._model._type.arg_from_dict(artifacts=artifacts)

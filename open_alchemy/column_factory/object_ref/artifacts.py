@@ -65,6 +65,7 @@ def gather(
         ),
         nullable=intermediary_obj_artifacts.nullable,
         description=intermediary_obj_artifacts.description,
+        write_only=intermediary_obj_artifacts.write_only,
     )
 
 
@@ -88,6 +89,8 @@ class _IntermediaryObjectArtifacts:
     nullable: typing.Optional[bool] = None
     # The description for the reference
     description: typing.Optional[str] = None
+    # The write_only for the reference
+    write_only: typing.Optional[bool] = None
     # Keyword arguments for relationship construction
     kwargs: types.TOptKwargs = None
 
@@ -169,6 +172,7 @@ def _handle_ref(
     if fk_column_name is None:
         fk_column_name = "id"
     nullable = helpers.peek.nullable(schema=ref_schema, schemas={})
+    write_only = helpers.peek.write_only(schema=ref_schema, schemas={})
 
     return _IntermediaryObjectArtifacts(
         ref_model_name=ref_model_name,
@@ -178,6 +182,7 @@ def _handle_ref(
         uselist=uselist,
         secondary=secondary,
         nullable=nullable,
+        write_only=write_only,
     )
 
 
@@ -209,6 +214,7 @@ def _handle_all_of(
     fk_column_name: typing.Optional[str] = None
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+    write_only: typing.Optional[bool] = None
     kwargs: types.TOptKwargs = None
 
     # Exceptions with their messages
@@ -272,6 +278,13 @@ def _handle_all_of(
             default=description,
             exception_message="Relationships may have at most 1 description defined.",
         )
+        # Handle writeOnly
+        write_only = _handle_key_single(
+            key="writeOnly",
+            schema=sub_schema,
+            default=write_only,
+            exception_message="Relationships may have at most 1 writeOnly defined.",
+        )
         # Handle kwargs
         kwargs = _handle_key_single(
             key="x-kwargs",
@@ -295,6 +308,8 @@ def _handle_all_of(
         obj_artifacts.nullable = nullable
     if description is not None:
         obj_artifacts.description = description
+    if write_only is not None:
+        obj_artifacts.write_only = write_only
     if kwargs is not None:
         obj_artifacts.kwargs = kwargs
 

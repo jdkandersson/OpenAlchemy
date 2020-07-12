@@ -47,7 +47,7 @@ def handle_read_only(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Tuple[typing.List, types.ReadOnlySchema]:
     """
-    Handle readOnly property.
+    Handle readOnly object and array properties.
 
     Args:
         schema: The readOnly property schema.
@@ -65,6 +65,9 @@ def _prepare_schema(
 ) -> types.ReadOnlySchema:
     """
     Check and transform readOnly schema to consistent format.
+
+    Raise MalformedSchemaError if readOnly is False, no type is defined or the type is
+    not an object nor array.
 
     Args:
         schema: The readOnly schema to operate on.

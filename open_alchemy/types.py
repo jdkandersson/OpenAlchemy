@@ -93,6 +93,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "default": TColumnDefault,
         "x-generated": bool,
         "readOnly": bool,
+        "writeOnly": bool,
     },
     total=False,
 )
@@ -115,6 +116,7 @@ class OpenAPiColumnArtifacts:
     description: typing.Optional[str] = None
     default: TColumnDefault = None
     read_only: typing.Optional[bool] = None
+    write_only: typing.Optional[bool] = None
 
 
 @dataclasses.dataclass
@@ -184,6 +186,7 @@ class ObjectArtifacts:
     relationship: RelationshipArtifacts
     nullable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+    write_only: typing.Optional[bool] = None
 
 
 _ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
@@ -197,10 +200,13 @@ class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
     nullable: bool
     description: str
     readOnly: bool
+    writeOnly: bool
 
 
 _ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
-    "_ArrayRefSchemaBase", {"description": str, "readOnly": bool}, total=False
+    "_ArrayRefSchemaBase",
+    {"description": str, "readOnly": bool, "writeOnly": bool},
+    total=False,
 )
 
 

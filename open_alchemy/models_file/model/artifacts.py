@@ -1,5 +1,6 @@
 """Functions for model artifacts."""
 
+import itertools
 import json
 import sys
 import typing
@@ -12,7 +13,7 @@ from . import type_ as _type
 
 
 def gather_column_artifacts(
-    *, schema: oa_types.Schema, required: typing.Optional[bool]
+    schema: oa_types.Schema, required: typing.Optional[bool]
 ) -> types.ColumnSchemaArtifacts:
     """
     Gather artifacts for generating the class of a models.
@@ -29,32 +30,30 @@ def gather_column_artifacts(
 
     """
     type_ = helpers.peek.type_(schema=schema, schemas={})
-    format_ = helpers.peek.format_(schema=schema, schemas={})
-    nullable = helpers.peek.nullable(schema=schema, schemas={})
-    description = helpers.peek.description(schema=schema, schemas={})
-    default = helpers.peek.default(schema=schema, schemas={})
-    read_only = helpers.peek.read_only(schema=schema, schemas={})
-    x_json = helpers.peek.json(schema=schema, schemas={})
-    generated = helpers.ext_prop.get(source=schema, name="x-generated")
-    de_ref = None
-    if not x_json:
-        if type_ == "object":
-            de_ref = helpers.ext_prop.get(source=schema, name="x-de-$ref")
-        if type_ == "array":
-            de_ref = helpers.ext_prop.get(source=schema["items"], name="x-de-$ref")
-
-    return types.ColumnSchemaArtifacts(
-        type=type_,
-        format=format_,
-        nullable=nullable,
-        required=required,
-        de_ref=de_ref,
-        generated=generated,
-        description=description,
-        default=default,
-        read_only=read_only,
-        json=x_json,
+    artifacts = types.ColumnSchemaArtifacts(
+        open_api=types.ColumnSchemaOpenAPIArtifacts(type=type_, required=required)
     )
+    artifacts.open_api.format = helpers.peek.format_(schema=schema, schemas={})
+    artifacts.open_api.nullable = helpers.peek.nullable(schema=schema, schemas={})
+    artifacts.open_api.description = helpers.peek.description(schema=schema, schemas={})
+    artifacts.open_api.default = helpers.peek.default(schema=schema, schemas={})
+    artifacts.open_api.read_only = helpers.peek.read_only(schema=schema, schemas={})
+    artifacts.open_api.write_only = helpers.peek.write_only(schema=schema, schemas={})
+    artifacts.extension.json = helpers.peek.json(schema=schema, schemas={})
+    artifacts.extension.generated = helpers.ext_prop.get(
+        source=schema, name="x-generated"
+    )
+    if not artifacts.extension.json:
+        if type_ == "object":
+            artifacts.extension.de_ref = helpers.ext_prop.get(
+                source=schema, name="x-de-$ref"
+            )
+        if type_ == "array":
+            artifacts.extension.de_ref = helpers.ext_prop.get(
+                source=schema["items"], name="x-de-$ref"
+            )
+
+    return artifacts
 
 
 def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
@@ -75,66 +74,64 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     required = set(schema.get("required", []))
     description = helpers.peek.description(schema=schema, schemas={})
 
-    # Initialize lists
-    columns: typing.List[types.ColumnArtifacts] = []
-    typed_dict_required_props: typing.List[types.ColumnArtifacts] = []
-    typed_dict_not_required_props: typing.List[types.ColumnArtifacts] = []
-    required_args: typing.List[types.ColumnArgArtifacts] = []
-    not_required_args: typing.List[types.ColumnArgArtifacts] = []
+    # Convert schemas to artifacts
+    prop_schemas = schema["properties"].values()
+    prop_required_list = [key in required for key in schema["properties"].keys()]
+    columns_artifacts = list(
+        map(gather_column_artifacts, prop_schemas, prop_required_list)
+    )
 
-    # Calculate artifacts for properties
-    for property_name, property_schema in schema["properties"].items():
-        # Gather artifacts
-        property_required = property_name in required
-        column_artifacts = gather_column_artifacts(
-            schema=property_schema, required=property_required
+    # Calculate artifacts for columns
+    columns = list(
+        map(_calculate_column_artifacts, schema["properties"].keys(), columns_artifacts)
+    )
+    # Calculate artifacts for the typed dictionary
+    write_only_idx = [artifact.open_api.write_only for artifact in columns_artifacts]
+    typed_dict_props = list(
+        map(
+            _calculate_typed_dict_artifacts,
+            (
+                value
+                for idx, value in enumerate(schema["properties"].keys())
+                if not write_only_idx[idx]
+            ),
+            (
+                value
+                for idx, value in enumerate(columns_artifacts)
+                if not write_only_idx[idx]
+            ),
         )
-
-        # Calculate the type
-        column_type = _type.model(artifacts=column_artifacts)
-        typed_dict_prop_type = _type.typed_dict(artifacts=column_artifacts)
-        arg_init_type = _type.arg_init(artifacts=column_artifacts)
-        arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
-
-        # Add artifacts to the lists
-        columns.append(
-            types.ColumnArtifacts(
-                type=column_type,
-                name=property_name,
-                description=column_artifacts.description,
-            )
-        )
-        prop_artifacts = types.ColumnArtifacts(
-            type=typed_dict_prop_type, name=property_name
-        )
-        arg_artifacts = types.ColumnArgArtifacts(
-            init_type=arg_init_type,
-            from_dict_type=arg_from_dict_type,
-            name=property_name,
-            default=_map_default(artifacts=column_artifacts),
-            read_only=column_artifacts.read_only,
-        )
-        if property_required:
-            typed_dict_required_props.append(prop_artifacts)
-            required_args.append(arg_artifacts)
-        else:
-            typed_dict_not_required_props.append(prop_artifacts)
-            not_required_args.append(arg_artifacts)
-
+    )
+    typed_dict_required_props = [
+        typed_dict_prop
+        for prop_required, typed_dict_prop in zip(prop_required_list, typed_dict_props)
+        if prop_required
+    ]
+    typed_dict_not_required_props = [
+        typed_dict_prop
+        for prop_required, typed_dict_prop in zip(prop_required_list, typed_dict_props)
+        if not prop_required
+    ]
+    # Calculate artifacts for the arguments
+    args = list(
+        map(_calculate_arg_artifacts, schema["properties"].keys(), columns_artifacts)
+    )
+    required_args = [
+        arg for prop_required, arg in zip(prop_required_list, args) if prop_required
+    ]
+    not_required_args = [
+        arg for prop_required, arg in zip(prop_required_list, args) if not prop_required
+    ]
     # Calculate artifacts for back references
     backrefs = helpers.ext_prop.get(source=schema, name="x-backrefs")
     if backrefs is not None:
-        for backref_name, backref_schema in backrefs.items():
-            # Gather artifacts
-            column_artifacts = gather_column_artifacts(
-                schema=backref_schema, required=None
-            )
-
-            # Calculate the type
-            column_type = _type.model(artifacts=column_artifacts)
-
-            # Add artifacts to the lists
-            columns.append(types.ColumnArtifacts(type=column_type, name=backref_name))
+        backref_column_artifacts = map(
+            gather_column_artifacts, backrefs.values(), itertools.repeat(None)
+        )
+        backref_columns_iter = map(
+            _calculate_column_artifacts, backrefs.keys(), backref_column_artifacts
+        )
+        columns.extend(backref_columns_iter)
 
     # Calculate model parent class
     parent_cls: str
@@ -192,6 +189,50 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     )
 
 
+def _calculate_column_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArtifacts:
+    """Calculate column artifacts from schema artifacts."""
+    # Calculate the type
+    type_ = _type.model(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArtifacts(
+        type=type_, name=name, description=artifacts.open_api.description,
+    )
+
+
+def _calculate_typed_dict_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArtifacts:
+    """Calculate typed dict artifacts from schema artifacts."""
+    # Calculate the type
+    type_ = _type.typed_dict(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArtifacts(
+        type=type_, name=name, description=artifacts.open_api.description,
+    )
+
+
+def _calculate_arg_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArgArtifacts:
+    """Calculate typed dict artifacts from schema artifacts."""
+    # Calculate the type
+    init_type = _type.arg_init(artifacts=artifacts)
+    from_dict_type = _type.arg_from_dict(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArgArtifacts(
+        init_type=init_type,
+        from_dict_type=from_dict_type,
+        name=name,
+        default=_map_default(artifacts=artifacts),
+        read_only=artifacts.open_api.read_only,
+    )
+
+
 def _map_default(*, artifacts: types.ColumnSchemaArtifacts) -> oa_types.TColumnDefault:
     """
     Map default value from OpenAPI to be ready to be inserted into a Python file.
@@ -206,21 +247,24 @@ def _map_default(*, artifacts: types.ColumnSchemaArtifacts) -> oa_types.TColumnD
         The mapped default value.
 
     """
-    default = artifacts.default
+    default = artifacts.open_api.default
     if default is None:
         return None
 
     # Escape string
-    if artifacts.type == "string" and artifacts.format not in {"date", "date-time"}:
+    if artifacts.open_api.type == "string" and artifacts.open_api.format not in {
+        "date",
+        "date-time",
+    }:
         default = json.dumps(default)
 
     # Handle bytes
-    if artifacts.type == "string" and artifacts.format == "binary":
+    if artifacts.open_api.type == "string" and artifacts.open_api.format == "binary":
         return f"b{default}"
 
     # Map type
     mapped_default = helpers.oa_to_py_type.convert(
-        value=default, type_=artifacts.type, format_=artifacts.format
+        value=default, type_=artifacts.open_api.type, format_=artifacts.open_api.format
     )
 
     # Get the repr if it isn't a float, bool, number nor str

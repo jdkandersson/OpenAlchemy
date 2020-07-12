@@ -13,6 +13,8 @@ import open_alchemy
 from open_alchemy import models_file
 
 _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
+_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
+_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
 
 
 @pytest.mark.parametrize(
@@ -127,7 +129,9 @@ def test_model_database_type_simple(
 
     # Create artifacts
     artifacts = _ColSchemaArt(
-        type=type_, format=format_, nullable=nullable, required=required
+        open_api=_ColSchemaOAArt(
+            type=type_, format=format_, nullable=nullable, required=required
+        )
     )
     calculated_type_str = models_file._model._type.model(artifacts=artifacts)
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
@@ -190,7 +194,10 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     model = model_factory(name="Table")
 
     # Create artifacts
-    artifacts = _ColSchemaArt(type=type_, json=True, required=True)
+    artifacts = _ColSchemaArt(
+        open_api=_ColSchemaOAArt(type=type_, required=True),
+        extension=_ColSchemaExtArt(json=True),
+    )
     calculated_type_str = models_file._model._type.model(artifacts=artifacts)
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
 

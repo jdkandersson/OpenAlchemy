@@ -159,6 +159,37 @@ def test_read_only(schema, expected_read_only):
 
 
 @pytest.mark.helper
+def test_write_only_wrong_type():
+    """
+    GIVEN schema with writeOnly defined as a string
+    WHEN write_only is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"writeOnly": "true"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.write_only(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_write_only",
+    [({}, None), ({"writeOnly": False}, False), ({"writeOnly": True}, True)],
+    ids=["missing", "false", "true"],
+)
+@pytest.mark.helper
+def test_write_only(schema, expected_write_only):
+    """
+    GIVEN schema and expected writeOnly
+    WHEN write_only is called with the schema
+    THEN the expected writeOnly is returned.
+    """
+
+    returned_write_only = helpers.peek.write_only(schema=schema, schemas={})
+
+    assert returned_write_only == expected_write_only
+
+
+@pytest.mark.helper
 def test_description_wrong_type():
     """
     GIVEN schema with description defined as a boolean

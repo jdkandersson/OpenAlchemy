@@ -8,29 +8,29 @@ from .. import types
 
 def _string_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
     """Calculate type for string."""
-    if artifacts.json:
+    if artifacts.extension.json:
         return "str"
-    if artifacts.format == "binary":
+    if artifacts.open_api.format == "binary":
         return "bytes"
-    if artifacts.format == "date":
+    if artifacts.open_api.format == "date":
         return "datetime.date"
-    if artifacts.format == "date-time":
+    if artifacts.open_api.format == "date-time":
         return "datetime.datetime"
     return "str"
 
 
 def _array_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
     """Calculate type for array."""
-    if artifacts.json:
+    if artifacts.extension.json:
         return "typing.Sequence"
-    return f'typing.Sequence["T{artifacts.de_ref}"]'
+    return f'typing.Sequence["T{artifacts.extension.de_ref}"]'
 
 
 def _object_mapping(artifacts: types.ColumnSchemaArtifacts) -> str:
     """Calculate type for object."""
-    if artifacts.json:
+    if artifacts.extension.json:
         return "typing.Dict"
-    return f'"T{artifacts.de_ref}"'
+    return f'"T{artifacts.extension.de_ref}"'
 
 
 _TYPE_MAPPING = {
@@ -55,16 +55,16 @@ def model(*, artifacts: types.ColumnSchemaArtifacts) -> str:
 
     """
     # Determine underlying type
-    return_type = _TYPE_MAPPING[artifacts.type](artifacts)
-    if artifacts.type == "array" and not artifacts.json:
+    return_type = _TYPE_MAPPING[artifacts.open_api.type](artifacts)
+    if artifacts.open_api.type == "array" and not artifacts.extension.json:
         return return_type
 
     # Determine whether the type is optional
     optional = helpers.calculate_nullable(
-        nullable=artifacts.nullable,
-        generated=artifacts.generated is True,
-        required=artifacts.required,
-        defaulted=artifacts.default is not None,
+        nullable=artifacts.open_api.nullable,
+        generated=artifacts.extension.generated is True,
+        required=artifacts.open_api.required,
+        defaulted=artifacts.open_api.default is not None,
     )
     if optional:
         return f"typing.Optional[{return_type}]"
@@ -86,25 +86,25 @@ def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     model_type = model(artifacts=artifacts)
 
     # No more checks if JSON
-    if artifacts.json:
+    if artifacts.extension.json:
         return model_type
 
     # Modify the type in case of object or array
-    if artifacts.type in {"object", "array"}:
-        if artifacts.de_ref is None:
+    if artifacts.open_api.type in {"object", "array"}:
+        if artifacts.extension.de_ref is None:
             raise exceptions.MissingArgumentError(
                 "The schema for the property of an object reference must include "
                 "x-de-$ref with the name of the model being referenced."
             )
         model_type = model_type.replace(
-            f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict"
+            f"T{artifacts.extension.de_ref}", f"{artifacts.extension.de_ref}Dict"
         )
     # Revert back to str for binary, date and date-time
-    if artifacts.format == "binary":
+    if artifacts.open_api.format == "binary":
         model_type = model_type.replace("bytes", "str")
-    if artifacts.format == "date":
+    if artifacts.open_api.format == "date":
         model_type = model_type.replace("datetime.date", "str")
-    if artifacts.format == "date-time":
+    if artifacts.open_api.format == "date-time":
         model_type = model_type.replace("datetime.datetime", "str")
 
     return model_type
@@ -124,13 +124,15 @@ def arg_init(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     model_type = model(artifacts=artifacts)
 
     # If has a default value, remove optional
-    if artifacts.default is not None:
+    if artifacts.open_api.default is not None:
         if not model_type.startswith("typing.Optional["):
             return model_type
         return model_type[16:-1]
 
     # Add optional if not required unless already optional
-    if not artifacts.required and not model_type.startswith("typing.Optional["):
+    if not artifacts.open_api.required and not model_type.startswith(
+        "typing.Optional["
+    ):
         return f"typing.Optional[{model_type}]"
     return model_type
 
@@ -150,16 +152,18 @@ def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
     init_type = arg_init(artifacts=artifacts)
 
     # No more checks if JSON
-    if artifacts.json:
+    if artifacts.extension.json:
         return init_type
 
     # Modify the type in case of object or array
-    if artifacts.type in {"object", "array"}:
-        if artifacts.de_ref is None:
+    if artifacts.open_api.type in {"object", "array"}:
+        if artifacts.extension.de_ref is None:
             raise exceptions.MissingArgumentError(
                 "The schema for the property of an object reference must include "
                 "x-de-$ref with the name of the model being referenced."
             )
-        init_type = init_type.replace(f"T{artifacts.de_ref}", f"{artifacts.de_ref}Dict")
+        init_type = init_type.replace(
+            f"T{artifacts.extension.de_ref}", f"{artifacts.extension.de_ref}Dict"
+        )
 
     return init_type

@@ -7,59 +7,86 @@ from open_alchemy import exceptions
 from open_alchemy import models_file
 
 _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
+_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
+_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
 
 
 @pytest.mark.parametrize(
     "artifacts, expected_type",
     [
-        pytest.param(_ColSchemaArt(type="integer"), "typing.Optional[int]", id="plain"),
         pytest.param(
-            _ColSchemaArt(type="string", format="binary"),
+            _ColSchemaArt(open_api=_ColSchemaOAArt(type="integer")),
+            "typing.Optional[int]",
+            id="plain",
+        ),
+        pytest.param(
+            _ColSchemaArt(open_api=_ColSchemaOAArt(type="string", format="binary")),
             "typing.Optional[str]",
             id="binary",
         ),
         pytest.param(
-            _ColSchemaArt(type="string", format="binary", json=True),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="string", format="binary"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
             "typing.Optional[str]",
             id="binary json",
         ),
         pytest.param(
-            _ColSchemaArt(type="string", format="date"),
+            _ColSchemaArt(open_api=_ColSchemaOAArt(type="string", format="date")),
             "typing.Optional[str]",
             id="date",
         ),
         pytest.param(
-            _ColSchemaArt(type="string", format="date", json=True),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="string", format="date"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
             "typing.Optional[str]",
             id="date json",
         ),
         pytest.param(
-            _ColSchemaArt(type="string", format="date-time"),
+            _ColSchemaArt(open_api=_ColSchemaOAArt(type="string", format="date-time")),
             "typing.Optional[str]",
             id="date-time",
         ),
         pytest.param(
-            _ColSchemaArt(type="string", format="date-time", json=True),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="string", format="date-time"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
             "typing.Optional[str]",
             id="date-time json",
         ),
         pytest.param(
-            _ColSchemaArt(type="object", de_ref="RefModel"),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="object"),
+                extension=_ColSchemaExtArt(de_ref="RefModel"),
+            ),
             'typing.Optional["RefModelDict"]',
             id="object",
         ),
         pytest.param(
-            _ColSchemaArt(type="object", json=True),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="object"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
             "typing.Optional[typing.Dict]",
             id="object json",
         ),
         pytest.param(
-            _ColSchemaArt(type="array", de_ref="RefModel"),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="array"),
+                extension=_ColSchemaExtArt(de_ref="RefModel"),
+            ),
             'typing.Sequence["RefModelDict"]',
             id="array",
         ),
         pytest.param(
-            _ColSchemaArt(type="array", json=True),
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(type="array"),
+                extension=_ColSchemaExtArt(json=True),
+            ),
             "typing.Optional[typing.Sequence]",
             id="array",
         ),
@@ -86,7 +113,9 @@ def test_dict_de_ref_none():
     WHEN typed_dict is called with the artifacts
     THEN MissingArgumentError is raised.
     """
-    artifacts = _ColSchemaArt(type="object", de_ref=None)
+    artifacts = _ColSchemaArt(
+        open_api=_ColSchemaOAArt(type="object"), extension=_ColSchemaExtArt(de_ref=None)
+    )
 
     with pytest.raises(exceptions.MissingArgumentError):
         models_file._model._type.typed_dict(artifacts=artifacts)
