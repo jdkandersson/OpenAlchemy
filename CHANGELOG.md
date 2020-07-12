@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Add support for generic JSON data for properties.
+- Add support for `writeOnly`
 
 ## Version 1.2.0 - 2020-06-08
 

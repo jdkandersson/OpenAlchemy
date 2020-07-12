@@ -60,7 +60,7 @@ from open_alchemy.column_factory import object_ref
                 relationship=types.RelationshipArtifacts("RefSchema"),
                 write_only=True,
             ),
-            {"type": "object", "x-de-$ref": "RefSchema", "writeOnly": True,},
+            {"type": "object", "x-de-$ref": "RefSchema", "writeOnly": True},
             id="writeOnly",
         ),
     ],

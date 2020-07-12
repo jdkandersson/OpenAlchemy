@@ -402,7 +402,7 @@ def test_calculate_empty(schema, expected_empty):
                 },
                 "required": ["column_1", "column_2"],
             },
-            [_ColumnArtifacts(name="column_2", type="str"),],
+            [_ColumnArtifacts(name="column_2", type="str")],
             id="multiple required first writeOnly",
         ),
         pytest.param(
@@ -413,7 +413,7 @@ def test_calculate_empty(schema, expected_empty):
                 },
                 "required": ["column_1", "column_2"],
             },
-            [_ColumnArtifacts(name="column_1", type="int"),],
+            [_ColumnArtifacts(name="column_1", type="int")],
             id="multiple required second writeOnly",
         ),
         pytest.param(
