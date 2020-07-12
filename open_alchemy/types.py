@@ -4,7 +4,7 @@ import dataclasses
 import datetime
 import typing
 
-try:
+try:  # pragma: no cover
     from typing import TypedDict
     from typing import Literal
     from typing import Protocol
