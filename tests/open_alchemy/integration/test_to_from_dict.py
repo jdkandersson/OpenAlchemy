@@ -276,6 +276,7 @@ def test_to_from_dict_one_to_many_read_only(engine, sessionmaker):
     assert queried_ref_instance.to_dict() == {"id": 12, "table": {"id": 11}}
 
 
+@pytest.mark.only_this
 @pytest.mark.integration
 def test_to_from_dict_one_to_many_fk_def(engine, sessionmaker):
     """
@@ -294,7 +295,7 @@ def test_to_from_dict_one_to_many_fk_def(engine, sessionmaker):
                     "RefTable": {
                         "properties": {
                             "id": {"type": "integer", "x-primary-key": True},
-                            "table_id": {
+                            "table_ref_tables_id": {
                                 "type": "integer",
                                 "x-foreign-key": "table.id",
                             },
@@ -329,7 +330,7 @@ def test_to_from_dict_one_to_many_fk_def(engine, sessionmaker):
     session.add(instance)
     session.flush()
     queried_ref_instance = session.query(ref_model).first()
-    assert queried_ref_instance.to_dict() == {"id": 12, "table_id": 11}
+    assert queried_ref_instance.to_dict() == {"id": 12, "table_ref_tables_id": 11}
 
 
 @pytest.mark.integration
