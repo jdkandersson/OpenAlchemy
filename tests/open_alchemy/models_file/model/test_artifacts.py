@@ -377,6 +377,7 @@ def test_calculate_empty(schema, expected_empty):
         "multiple required",
     ],
 )
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_calculate_td_required_props(schema, expected_props):
     """
@@ -386,6 +387,7 @@ def test_calculate_td_required_props(schema, expected_props):
     """
     artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
 
+    # assert False
     assert artifacts.typed_dict.required.props == expected_props
 
 

@@ -12,7 +12,7 @@ from . import type_ as _type
 
 
 def gather_column_artifacts(
-    *, schema: oa_types.Schema, required: typing.Optional[bool]
+    schema: oa_types.Schema, required: typing.Optional[bool]
 ) -> types.ColumnSchemaArtifacts:
     """
     Gather artifacts for generating the class of a models.
@@ -73,51 +73,43 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     required = set(schema.get("required", []))
     description = helpers.peek.description(schema=schema, schemas={})
 
-    # Initialize lists
-    columns: typing.List[types.ColumnArtifacts] = []
-    typed_dict_required_props: typing.List[types.ColumnArtifacts] = []
-    typed_dict_not_required_props: typing.List[types.ColumnArtifacts] = []
-    required_args: typing.List[types.ColumnArgArtifacts] = []
-    not_required_args: typing.List[types.ColumnArgArtifacts] = []
+    # Convert schemas to artifacts
+    prop_schemas = schema["properties"].values()
+    prop_required_list = [key in required for key in schema["properties"].keys()]
+    columns_artifacts = list(
+        map(gather_column_artifacts, prop_schemas, prop_required_list)
+    )
 
-    # Calculate artifacts for properties
-    for property_name, property_schema in schema["properties"].items():
-        # Gather artifacts
-        property_required = property_name in required
-        column_artifacts = gather_column_artifacts(
-            schema=property_schema, required=property_required
+    # Calculate artifacts for columns
+    columns = list(
+        map(_calculate_column_artifacts, schema["properties"].keys(), columns_artifacts)
+    )
+    typed_dict_props = list(
+        map(
+            _calculate_typed_dict_artifacts,
+            schema["properties"].keys(),
+            columns_artifacts,
         )
-
-        # Calculate the type
-        column_type = _type.model(artifacts=column_artifacts)
-        typed_dict_prop_type = _type.typed_dict(artifacts=column_artifacts)
-        arg_init_type = _type.arg_init(artifacts=column_artifacts)
-        arg_from_dict_type = _type.arg_from_dict(artifacts=column_artifacts)
-
-        # Add artifacts to the lists
-        columns.append(
-            types.ColumnArtifacts(
-                type=column_type,
-                name=property_name,
-                description=column_artifacts.open_api.description,
-            )
-        )
-        prop_artifacts = types.ColumnArtifacts(
-            type=typed_dict_prop_type, name=property_name
-        )
-        arg_artifacts = types.ColumnArgArtifacts(
-            init_type=arg_init_type,
-            from_dict_type=arg_from_dict_type,
-            name=property_name,
-            default=_map_default(artifacts=column_artifacts),
-            read_only=column_artifacts.open_api.read_only,
-        )
-        if property_required:
-            typed_dict_required_props.append(prop_artifacts)
-            required_args.append(arg_artifacts)
-        else:
-            typed_dict_not_required_props.append(prop_artifacts)
-            not_required_args.append(arg_artifacts)
+    )
+    typed_dict_required_props = [
+        typed_dict_prop
+        for prop_required, typed_dict_prop in zip(prop_required_list, typed_dict_props)
+        if prop_required
+    ]
+    typed_dict_not_required_props = [
+        typed_dict_prop
+        for prop_required, typed_dict_prop in zip(prop_required_list, typed_dict_props)
+        if not prop_required
+    ]
+    args = list(
+        map(_calculate_arg_artifacts, schema["properties"].keys(), columns_artifacts)
+    )
+    required_args = [
+        arg for prop_required, arg in zip(prop_required_list, args) if prop_required
+    ]
+    not_required_args = [
+        arg for prop_required, arg in zip(prop_required_list, args) if not prop_required
+    ]
 
     # Calculate artifacts for back references
     backrefs = helpers.ext_prop.get(source=schema, name="x-backrefs")
@@ -187,6 +179,50 @@ def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
                 parent_class=typed_dict_not_required_parent_class,
             ),
         ),
+    )
+
+
+def _calculate_column_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArtifacts:
+    """Calculate column artifacts from schema artifacts."""
+    # Calculate the type
+    type_ = _type.model(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArtifacts(
+        type=type_, name=name, description=artifacts.open_api.description,
+    )
+
+
+def _calculate_typed_dict_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArtifacts:
+    """Calculate typed dict artifacts from schema artifacts."""
+    # Calculate the type
+    type_ = _type.typed_dict(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArtifacts(
+        type=type_, name=name, description=artifacts.open_api.description,
+    )
+
+
+def _calculate_arg_artifacts(
+    name: str, artifacts: types.ColumnSchemaArtifacts
+) -> types.ColumnArgArtifacts:
+    """Calculate typed dict artifacts from schema artifacts."""
+    # Calculate the type
+    init_type = _type.arg_init(artifacts=artifacts)
+    from_dict_type = _type.arg_from_dict(artifacts=artifacts)
+
+    # Add artifacts to the lists
+    return types.ColumnArgArtifacts(
+        init_type=init_type,
+        from_dict_type=from_dict_type,
+        name=name,
+        default=_map_default(artifacts=artifacts),
+        read_only=artifacts.open_api.read_only,
     )
 
 
