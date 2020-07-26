@@ -373,8 +373,6 @@ class TestGetSchemaBackrefs:
         WHEN _get_schema_backrefs is called with the schema and schemas
         THEN the expected backrefs are returned.
         """
-        returned_backrefs = backref._get_schema_backrefs(
-            "Schema", schema, schemas=schemas
-        )
+        returned_backrefs = backref._get_schema_backrefs(schemas, "Schema", schema)
 
         assert list(returned_backrefs) == expected_backrefs

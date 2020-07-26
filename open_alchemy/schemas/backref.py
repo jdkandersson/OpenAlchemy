@@ -109,7 +109,7 @@ def _calculate_schema(
 
 
 def _get_schema_backrefs(
-    schema_name: str, schema: types.Schema, *, schemas: types.Schemas
+    schemas: types.Schemas, schema_name: str, schema: types.Schema,
 ) -> typing.Iterable[_CalculateSchemaReturn]:
     """
     Get the backrefs for a schema.
