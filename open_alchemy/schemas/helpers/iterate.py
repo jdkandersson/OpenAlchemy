@@ -12,6 +12,9 @@ def constructable(
     """
     Create an iterable with all constructable schemas from all schemas.
 
+    Iterates over all items in the schemas, checks whether a schema is constructable and
+    yields those that are.
+
     Args:
         schemas: The schemas to iterate over.
 
@@ -31,6 +34,11 @@ def properties(
 ) -> typing.Iterable[typing.Tuple[str, types.Schema]]:
     """
     Create an iterable with all properties of a schema from a constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise looks for properties and yields all items if the key exists.
 
     Args:
         schema: The constructable schems.

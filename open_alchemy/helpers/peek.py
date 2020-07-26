@@ -278,6 +278,30 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
     return value
 
 
+def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the backref of the schema.
+
+    Raises MalformedSchemaError if the backref value is not a string.
+
+    Args:
+        schema: The schema to get backref from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The backref or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-backref")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-backref property must be of type string."
+        )
+    return value
+
+
 def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.

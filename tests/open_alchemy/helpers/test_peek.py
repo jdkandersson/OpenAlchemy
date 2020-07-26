@@ -339,6 +339,36 @@ def test_json(schema, expected_json):
     assert returned_json == expected_json
 
 
+@pytest.mark.helper
+def test_backref_wrong_type():
+    """
+    GIVEN schema with backref defined as a boolean
+    WHEN backref is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-backref": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.backref(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_backref",
+    [({}, None), ({"x-backref": "table 1"}, "table 1")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_backref(schema, expected_backref):
+    """
+    GIVEN schema and expected backref
+    WHEN backref is called with the schema
+    THEN the expected backref is returned.
+    """
+    returned_backref = helpers.peek.backref(schema=schema, schemas={})
+
+    assert returned_backref == expected_backref
+
+
 @pytest.mark.parametrize(
     "schema",
     [
