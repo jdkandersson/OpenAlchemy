@@ -8,6 +8,16 @@ from open_alchemy import types
 
 from . import ref
 
+PeekValueT = typing.TypeVar("PeekValueT")
+
+
+class PeekValue(types.Protocol):
+    """Defines interface for model factory."""
+
+    def __call__(self, *, schema: types.Schema, schemas: types.Schemas) -> PeekValueT:
+        """Call signature for ModelFactory."""
+        ...
+
 
 def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
     """

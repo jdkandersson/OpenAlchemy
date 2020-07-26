@@ -1,5 +1,7 @@
 """Pre-process schemas by adding any back references into the schemas."""
 
+# import typing
+
 from .. import helpers
 from .. import types
 
@@ -33,3 +35,20 @@ def _defines_backref(schema: types.Schema, *, schemas: types.Schemas) -> bool:
         return True
 
     return False
+
+
+# def _calculate_schema(
+#     schema: types.Schema, *, schema_name: str, schemas: types.Schemas
+# ) -> typing.Tuple[str, types.Schema]:
+#     """
+#     Calculate the schema for a back reference.
+
+#     Args:
+#         schema: The schema of a property with a back reference.
+#         schema_name: The name of the schema that the property is on.
+#         schema: All the defines schemas.
+
+#     Returns:
+#         The name of the schema the back reference needs to be added to.
+
+#     """

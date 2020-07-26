@@ -90,3 +90,42 @@ class TestDefinesBackref:
         returned_result = backref._defines_backref(schema, schemas=schemas)
 
         assert returned_result == expected_result
+
+
+# class TestCalculateSchema:
+#     """Tests for _calculate_schema"""
+
+#     # pylint: disable=protected-access
+
+#     object_schema: ("RefSchema", {"type": "object", "x-de-$ref": "Schema"})
+#     array_schema: (
+#         "RefSchema",
+#         {"type": "array", "items": {"type": "object", "x-de-$ref": "Schema"}}
+#     )
+
+#     @staticmethod
+#     @pytest.mark.parametrize(
+#         "schema, schemas, expected_schema",
+#         [
+#             pytest.param(
+#                 {
+#                     "allOf": [
+#                         {"$ref": "#/components/schemas/RefSchema"},
+#                         {"x-backref": "schema"}
+#                     ]
+#                 },
+#                 {"RefSchema": {}},
+#                 array_schema,
+#                 id="many to one"
+#             ),
+#             pytest.param(
+#                 id="one to one"
+#             ),
+#             pytest.param(
+#                 id="one to many"
+#             ),
+#             pytest.param(
+#                 id="many to many"
+#             ),
+#         ]
+#     )
