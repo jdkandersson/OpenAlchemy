@@ -78,6 +78,12 @@ class TestDefinesBackref:
                 True,
                 id="items $ref backref",
             ),
+            pytest.param(
+                {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
+                {"RefSchema": {"x-backref": "schema"}},
+                True,
+                id="items allOf $ref backref",
+            ),
         ],
     )
     @pytest.mark.schemas
@@ -92,40 +98,122 @@ class TestDefinesBackref:
         assert returned_result == expected_result
 
 
-# class TestCalculateSchema:
-#     """Tests for _calculate_schema"""
+class TestCalculateSchema:
+    """Tests for _calculate_schema"""
 
-#     # pylint: disable=protected-access
+    # pylint: disable=protected-access
 
-#     object_schema: ("RefSchema", {"type": "object", "x-de-$ref": "Schema"})
-#     array_schema: (
-#         "RefSchema",
-#         {"type": "array", "items": {"type": "object", "x-de-$ref": "Schema"}}
-#     )
+    @staticmethod
+    @pytest.mark.parametrize(
+        "schema, schemas, expected_schema",
+        [
+            pytest.param(
+                {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-backref": "schema"},
+                    ]
+                },
+                {"RefSchema": {}},
+                (
+                    "RefSchema",
+                    {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "Schema"},
+                    },
+                ),
+                id="many to one",
+            ),
+            pytest.param(
+                {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-backref": "schema"},
+                    ]
+                },
+                {"RefSchema": {"x-backref": "wrong_schema"}},
+                (
+                    "RefSchema",
+                    {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "Schema"},
+                    },
+                ),
+                id="many to one backref local and remote",
+            ),
+            pytest.param(
+                {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-backref": "schema", "x-uselist": True},
+                    ]
+                },
+                {"RefSchema": {}},
+                (
+                    "RefSchema",
+                    {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "Schema"},
+                    },
+                ),
+                id="many to one uselist True",
+            ),
+            pytest.param(
+                {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-backref": "schema", "x-uselist": False},
+                    ]
+                },
+                {"RefSchema": {}},
+                ("RefSchema", {"type": "object", "x-de-$ref": "Schema"}),
+                id="one to one",
+            ),
+            pytest.param(
+                {
+                    "items": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefSchema"},
+                            {"x-backref": "schema"},
+                        ]
+                    }
+                },
+                {"RefSchema": {}},
+                ("RefSchema", {"type": "object", "x-de-$ref": "Schema"}),
+                id="one to many",
+            ),
+            pytest.param(
+                {
+                    "items": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefSchema"},
+                            {"x-backref": "schema", "x-secondary": "schema_ref_schema"},
+                        ]
+                    }
+                },
+                {"RefSchema": {}},
+                (
+                    "RefSchema",
+                    {
+                        "type": "array",
+                        "items": {"type": "object", "x-de-$ref": "Schema"},
+                    },
+                ),
+                id="many to many",
+            ),
+        ],
+    )
+    @pytest.mark.schemas
+    def test_(schema, schemas, expected_schema):
+        """
+        GIVEN schema, schemas and expected schema
+        WHEN _calculate_schema is called with the schema and schemas
+        THEN the expected schema is returned.
+        """
+        returned_schema = backref._calculate_schema(
+            schema, schema_name="Schema", schemas=schemas
+        )
 
-#     @staticmethod
-#     @pytest.mark.parametrize(
-#         "schema, schemas, expected_schema",
-#         [
-#             pytest.param(
-#                 {
-#                     "allOf": [
-#                         {"$ref": "#/components/schemas/RefSchema"},
-#                         {"x-backref": "schema"}
-#                     ]
-#                 },
-#                 {"RefSchema": {}},
-#                 array_schema,
-#                 id="many to one"
-#             ),
-#             pytest.param(
-#                 id="one to one"
-#             ),
-#             pytest.param(
-#                 id="one to many"
-#             ),
-#             pytest.param(
-#                 id="many to many"
-#             ),
-#         ]
-#     )
+        print(returned_schema)
+        print(expected_schema)
+        assert returned_schema == expected_schema

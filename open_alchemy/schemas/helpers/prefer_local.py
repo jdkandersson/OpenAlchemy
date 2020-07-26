@@ -6,7 +6,7 @@ from ... import types
 
 def get(
     *, get_value: helpers.peek.PeekValue, schema: types.Schema, schemas: types.Schemas
-) -> helpers.peek.PeekValueT:
+) -> helpers.peek.TPeekValue:
     """
     Retrieve the value using a function preferably without having to follow a $ref.
 
@@ -28,7 +28,7 @@ def get(
     if all_of is not None:
         no_ref = filter(lambda sub_schema: sub_schema.get("$ref") is None, all_of)
 
-        def map_to_value(sub_schema: types.Schema) -> helpers.peek.PeekValueT:
+        def map_to_value(sub_schema: types.Schema) -> helpers.peek.TPeekValue:
             """Use get_value to turn the schema into the value."""
             return get_value(schema=sub_schema, schemas=schemas)
 
