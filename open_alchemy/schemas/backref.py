@@ -1,5 +1,6 @@
 """Pre-process schemas by adding any back references into the schemas."""
 
+import functools
 import typing
 
 from .. import exceptions
@@ -8,7 +9,7 @@ from .. import types
 from . import helpers
 
 
-def _defines_backref(schema: types.Schema, *, schemas: types.Schemas) -> bool:
+def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
     """
     Check whether the property schema defines a back reference.
 
@@ -48,7 +49,7 @@ class _CalculateSchemaReturn(typing.NamedTuple):
 
 
 def _calculate_schema(
-    schema: types.Schema, *, schema_name: str, schemas: types.Schemas
+    schema_name: str, schemas: types.Schemas, schema: types.Schema
 ) -> _CalculateSchemaReturn:
     """
     Calculate the schema for a back reference.
@@ -105,3 +106,32 @@ def _calculate_schema(
         return_schema = {"type": "array", "items": return_schema}
 
     return _CalculateSchemaReturn(ref_schema_name, backref, return_schema)
+
+
+def _get_schema_backrefs(
+    schema_name: str, schema: types.Schema, *, schemas: types.Schemas
+) -> typing.Iterable[_CalculateSchemaReturn]:
+    """
+    Get the backrefs for a schema.
+
+    Takes a constructable schema, gets all properties, filters for those that define a
+    backref and retrieves the information to define a back reference.
+
+    Args:
+        schema: A constructable schema.
+        schema_name: The name of the schema.
+        schemas: All schemas.
+
+    """
+    # Get all the properties of the schema
+    names_properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    # Remove property name
+    properties = map(lambda arg: arg[1], names_properties)
+    # Remove properties that don't define back references
+    defines_backref_schemas = functools.partial(_defines_backref, schemas)
+    backref_properties = filter(defines_backref_schemas, properties)
+    # Capture information for back references
+    calculate_schema_schema_name_schemas = functools.partial(
+        _calculate_schema, schema_name, schemas
+    )
+    return map(calculate_schema_schema_name_schemas, backref_properties)
