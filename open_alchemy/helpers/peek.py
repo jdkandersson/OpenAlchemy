@@ -8,17 +8,6 @@ from open_alchemy import types
 
 from . import ref as ref_helper
 
-# TPeekValue = typing.TypeVar("TPeekValue")
-TPeekValue = typing.Optional[bool]
-
-
-class PeekValue(types.Protocol):
-    """Defines interface for peek functions."""
-
-    def __call__(self, *, schema: types.Schema, schemas: types.Schemas) -> TPeekValue:
-        """Call signature for peek functions."""
-        ...
-
 
 def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
     """
