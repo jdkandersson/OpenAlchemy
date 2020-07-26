@@ -39,9 +39,17 @@ def _defines_backref(schema: types.Schema, *, schemas: types.Schemas) -> bool:
     return False
 
 
+class _CalculateSchemaReturn(typing.NamedTuple):
+    """The return value of _calculate_schema."""
+
+    ref_schema_name: str
+    property_name: str
+    schema: types.Schema
+
+
 def _calculate_schema(
     schema: types.Schema, *, schema_name: str, schemas: types.Schemas
-) -> typing.Tuple[str, types.Schema]:
+) -> _CalculateSchemaReturn:
     """
     Calculate the schema for a back reference.
 
@@ -56,6 +64,7 @@ def _calculate_schema(
     """
     is_array: bool = False
     ref: typing.Optional[str]
+    backref: typing.Optional[str]
 
     # Handle array
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
@@ -64,6 +73,9 @@ def _calculate_schema(
             is_array = True
 
         ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
+        backref = helpers.prefer_local.get(
+            get_value=oa_helpers.peek.backref, schema=items_schema, schemas=schemas
+        )
     # Handle object
     else:
         uselist: typing.Optional[bool] = helpers.prefer_local.get(
@@ -72,6 +84,9 @@ def _calculate_schema(
         if uselist is not False:
             is_array = True
         ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
+        backref = helpers.prefer_local.get(
+            get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
+        )
 
     # Resolve name
     if ref is None:  # pragma: no cover
@@ -82,8 +97,11 @@ def _calculate_schema(
     )
 
     # Calculate schema
+    if backref is None:  # pragma: no cover
+        # Should never get here
+        raise exceptions.MalformedSchemaError("Could not find a back reference")
     return_schema: types.Schema = {"type": "object", "x-de-$ref": schema_name}
     if is_array:
         return_schema = {"type": "array", "items": return_schema}
 
-    return ref_schema_name, return_schema
+    return _CalculateSchemaReturn(ref_schema_name, backref, return_schema)

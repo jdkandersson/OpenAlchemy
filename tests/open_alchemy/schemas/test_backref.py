@@ -117,6 +117,7 @@ class TestCalculateSchema:
                 {"RefSchema": {}},
                 (
                     "RefSchema",
+                    "schema",
                     {
                         "type": "array",
                         "items": {"type": "object", "x-de-$ref": "Schema"},
@@ -134,6 +135,7 @@ class TestCalculateSchema:
                 {"RefSchema": {"x-backref": "wrong_schema"}},
                 (
                     "RefSchema",
+                    "schema",
                     {
                         "type": "array",
                         "items": {"type": "object", "x-de-$ref": "Schema"},
@@ -151,6 +153,7 @@ class TestCalculateSchema:
                 {"RefSchema": {}},
                 (
                     "RefSchema",
+                    "schema",
                     {
                         "type": "array",
                         "items": {"type": "object", "x-de-$ref": "Schema"},
@@ -166,7 +169,7 @@ class TestCalculateSchema:
                     ]
                 },
                 {"RefSchema": {}},
-                ("RefSchema", {"type": "object", "x-de-$ref": "Schema"}),
+                ("RefSchema", "schema", {"type": "object", "x-de-$ref": "Schema"}),
                 id="one to one",
             ),
             pytest.param(
@@ -179,7 +182,7 @@ class TestCalculateSchema:
                     }
                 },
                 {"RefSchema": {}},
-                ("RefSchema", {"type": "object", "x-de-$ref": "Schema"}),
+                ("RefSchema", "schema", {"type": "object", "x-de-$ref": "Schema"}),
                 id="one to many",
             ),
             pytest.param(
@@ -194,6 +197,7 @@ class TestCalculateSchema:
                 {"RefSchema": {}},
                 (
                     "RefSchema",
+                    "schema",
                     {
                         "type": "array",
                         "items": {"type": "object", "x-de-$ref": "Schema"},
