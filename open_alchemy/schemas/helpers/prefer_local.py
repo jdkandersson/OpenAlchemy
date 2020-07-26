@@ -33,9 +33,10 @@ def get(
             return get_value(schema=sub_schema, schemas=schemas)
 
         retrieved_values = map(map_to_value, no_ref)
-        retrieved_value = next(
-            (value for value in retrieved_values if value is not None), None
+        not_none_retrieved_values = filter(
+            lambda value: value is not None, retrieved_values
         )
+        retrieved_value = next(not_none_retrieved_values, None)
         if retrieved_value is not None:
             return retrieved_value
     return get_value(schema=schema, schemas=schemas)
