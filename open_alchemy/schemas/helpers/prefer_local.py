@@ -5,21 +5,21 @@ import typing
 # from ... import helpers
 from ... import types
 
-# TPeekValue = typing.TypeVar("TPeekValue")
-TPeekValue = typing.Optional[bool]
+_TPeekValue = typing.Any
+# _TPeekValue = typing.Optional[bool]
 
 
 class PeekValue(types.Protocol):
     """Defines interface for peek functions."""
 
-    def __call__(self, *, schema: types.Schema, schemas: types.Schemas) -> TPeekValue:
+    def __call__(self, *, schema: types.Schema, schemas: types.Schemas) -> _TPeekValue:
         """Call signature for peek functions."""
         ...
 
 
 def get(
     *, get_value: PeekValue, schema: types.Schema, schemas: types.Schemas
-) -> TPeekValue:
+) -> _TPeekValue:
     """
     Retrieve the value using a function preferably without having to follow a $ref.
 
@@ -41,7 +41,7 @@ def get(
     if all_of is not None:
         no_ref = filter(lambda sub_schema: sub_schema.get("$ref") is None, all_of)
 
-        def map_to_value(sub_schema: types.Schema) -> TPeekValue:
+        def map_to_value(sub_schema: types.Schema) -> _TPeekValue:
             """Use get_value to turn the schema into the value."""
             return get_value(schema=sub_schema, schemas=schemas)
 
