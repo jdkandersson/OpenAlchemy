@@ -1,7 +1,5 @@
 """Retrieve the value of a key preferably without following a $ref."""
 
-import typing
-
 from ... import helpers
 from ... import types
 
@@ -29,9 +27,12 @@ def get(
     all_of = schema.get("allOf")
     if all_of is not None:
         no_ref = filter(lambda sub_schema: sub_schema.get("$ref") is None, all_of)
-        retrieved_values: typing.Iterable[helpers.peek.PeekValueT] = map(
-            lambda sub_schema: get_value(schema=sub_schema, schemas=schemas), no_ref
-        )
+
+        def map_to_value(sub_schema: types.Schema) -> helpers.peek.PeekValueT:
+            """Use get_value to turn the schema into the value."""
+            return get_value(schema=sub_schema, schemas=schemas)
+
+        retrieved_values = map(map_to_value, no_ref)
         retrieved_value = next(
             (value for value in retrieved_values if value is not None), None
         )
