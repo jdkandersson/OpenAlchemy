@@ -578,7 +578,7 @@ class TestGetBackrefs:
         assert list(returned_backrefs) == expected_backrefs
 
 
-CalcSchemaRet = backref._CalculateSchemaReturn  # pylint: disable=protected-access
+BackArt = backref._BackrefArtifacts  # pylint: disable=protected-access
 
 
 class TestGroupBackrefs:
@@ -592,86 +592,80 @@ class TestGroupBackrefs:
         [
             pytest.param([], [], id="empty",),
             pytest.param(
-                [CalcSchemaRet("Schema1", "prop_1", {})],
-                [("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})])],
+                [BackArt("Schema1", "prop_1", {})],
+                [("Schema1", [BackArt("Schema1", "prop_1", {})])],
                 id="single",
             ),
             pytest.param(
+                [BackArt("Schema1", "prop_1", {}), BackArt("Schema2", "prop_1", {}),],
                 [
-                    CalcSchemaRet("Schema1", "prop_1", {}),
-                    CalcSchemaRet("Schema2", "prop_1", {}),
-                ],
-                [
-                    ("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})]),
-                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
+                    ("Schema1", [BackArt("Schema1", "prop_1", {})]),
+                    ("Schema2", [BackArt("Schema2", "prop_1", {})]),
                 ],
                 id="multiple different",
             ),
             pytest.param(
                 [
-                    CalcSchemaRet("Schema1", "prop_1", {}),
-                    CalcSchemaRet("Schema1", "prop_2", {}),
-                    CalcSchemaRet("Schema2", "prop_1", {}),
+                    BackArt("Schema1", "prop_1", {}),
+                    BackArt("Schema1", "prop_2", {}),
+                    BackArt("Schema2", "prop_1", {}),
                 ],
                 [
                     (
                         "Schema1",
                         [
-                            CalcSchemaRet("Schema1", "prop_1", {}),
-                            CalcSchemaRet("Schema1", "prop_2", {}),
+                            BackArt("Schema1", "prop_1", {}),
+                            BackArt("Schema1", "prop_2", {}),
                         ],
                     ),
-                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
+                    ("Schema2", [BackArt("Schema2", "prop_1", {})]),
                 ],
                 id="multiple some different first multiple ordered",
             ),
             pytest.param(
                 [
-                    CalcSchemaRet("Schema1", "prop_1", {}),
-                    CalcSchemaRet("Schema2", "prop_1", {}),
-                    CalcSchemaRet("Schema1", "prop_2", {}),
+                    BackArt("Schema1", "prop_1", {}),
+                    BackArt("Schema2", "prop_1", {}),
+                    BackArt("Schema1", "prop_2", {}),
                 ],
                 [
                     (
                         "Schema1",
                         [
-                            CalcSchemaRet("Schema1", "prop_1", {}),
-                            CalcSchemaRet("Schema1", "prop_2", {}),
+                            BackArt("Schema1", "prop_1", {}),
+                            BackArt("Schema1", "prop_2", {}),
                         ],
                     ),
-                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
+                    ("Schema2", [BackArt("Schema2", "prop_1", {})]),
                 ],
                 id="multiple some different first multiple not ordered",
             ),
             pytest.param(
                 [
-                    CalcSchemaRet("Schema1", "prop_1", {}),
-                    CalcSchemaRet("Schema2", "prop_1", {}),
-                    CalcSchemaRet("Schema2", "prop_2", {}),
+                    BackArt("Schema1", "prop_1", {}),
+                    BackArt("Schema2", "prop_1", {}),
+                    BackArt("Schema2", "prop_2", {}),
                 ],
                 [
-                    ("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})]),
+                    ("Schema1", [BackArt("Schema1", "prop_1", {})]),
                     (
                         "Schema2",
                         [
-                            CalcSchemaRet("Schema2", "prop_1", {}),
-                            CalcSchemaRet("Schema2", "prop_2", {}),
+                            BackArt("Schema2", "prop_1", {}),
+                            BackArt("Schema2", "prop_2", {}),
                         ],
                     ),
                 ],
                 id="multiple some different second multiple",
             ),
             pytest.param(
-                [
-                    CalcSchemaRet("Schema1", "prop_1", {}),
-                    CalcSchemaRet("Schema1", "prop_2", {}),
-                ],
+                [BackArt("Schema1", "prop_1", {}), BackArt("Schema1", "prop_2", {}),],
                 [
                     (
                         "Schema1",
                         [
-                            CalcSchemaRet("Schema1", "prop_1", {}),
-                            CalcSchemaRet("Schema1", "prop_2", {}),
+                            BackArt("Schema1", "prop_1", {}),
+                            BackArt("Schema1", "prop_2", {}),
                         ],
                     )
                 ],
@@ -694,8 +688,8 @@ class TestGroupBackrefs:
         assert returned_backrefs == expected_backrefs
 
 
-class TestCreateXBackrefs:
-    """Tests for _create_x_backrefs"""
+class TestBackrefsToSchema:
+    """Tests for _backrefs_to_schema"""
 
     # pylint: disable=protected-access
 
@@ -705,14 +699,14 @@ class TestCreateXBackrefs:
         [
             pytest.param([], {"type": "object", "x-backrefs": {}}, id="empty"),
             pytest.param(
-                [CalcSchemaRet("Schema1", "prop_1", {"key_1": "value 1"})],
+                [BackArt("Schema1", "prop_1", {"key_1": "value 1"})],
                 {"type": "object", "x-backrefs": {"prop_1": {"key_1": "value 1"}}},
                 id="single",
             ),
             pytest.param(
                 [
-                    CalcSchemaRet("Schema1", "prop_1", {"key_1": "value 1"}),
-                    CalcSchemaRet("Schema1", "prop_2", {"key_2": "value 2"}),
+                    BackArt("Schema1", "prop_1", {"key_1": "value 1"}),
+                    BackArt("Schema1", "prop_2", {"key_2": "value 2"}),
                 ],
                 {
                     "type": "object",
@@ -729,10 +723,10 @@ class TestCreateXBackrefs:
     def test_(backrefs, expected_schema):
         """
         GIVEN backrefs and expected schema
-        WHEN _create_x_backrefs is called with the backrefs
+        WHEN _backrefs_to_schema is called with the backrefs
         THEN the expected schema is returned.
         """
-        returned_schema = backref._create_x_backrefs(backrefs)
+        returned_schema = backref._backrefs_to_schema(backrefs)
 
         print(returned_schema)
         print(expected_schema)
