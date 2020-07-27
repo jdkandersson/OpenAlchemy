@@ -690,6 +690,51 @@ class TestGroupBackrefs:
         returned_backrefs = [
             (name, list(backref_group)) for name, backref_group in returned_backrefs
         ]
-        print(returned_backrefs)
 
         assert returned_backrefs == expected_backrefs
+
+
+class TestCreateXBackrefs:
+    """Tests for _create_x_backrefs"""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "backrefs, expected_schema",
+        [
+            pytest.param([], {"type": "object", "x-backrefs": {}}, id="empty"),
+            pytest.param(
+                [CalcSchemaRet("Schema1", "prop_1", {"key_1": "value 1"})],
+                {"type": "object", "x-backrefs": {"prop_1": {"key_1": "value 1"}}},
+                id="single",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {"key_1": "value 1"}),
+                    CalcSchemaRet("Schema1", "prop_2", {"key_2": "value 2"}),
+                ],
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "prop_1": {"key_1": "value 1"},
+                        "prop_2": {"key_2": "value 2"},
+                    },
+                },
+                id="multiple",
+            ),
+        ],
+    )
+    @pytest.mark.schemas
+    def test_(backrefs, expected_schema):
+        """
+        GIVEN backrefs and expected schema
+        WHEN _create_x_backrefs is called with the backrefs
+        THEN the expected schema is returned.
+        """
+        returned_schema = backref._create_x_backrefs(backrefs)
+
+        print(returned_schema)
+        print(expected_schema)
+
+        assert returned_schema == expected_schema

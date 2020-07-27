@@ -185,4 +185,18 @@ def _group_backrefs(
     return itertools.groupby(sorted_backrefs, lambda backref: backref.ref_schema_name)
 
 
-# def _record_backrefs(backrefs: _CalculateSchemaReturnGroupedIter)
+def _create_x_backrefs(backrefs: _CalculateSchemaReturnIter) -> types.Schema:
+    """
+    Convert to the schema with the x-backrefs value from backrefs.
+
+    Args:
+        backrefs: The back references to convert.
+
+    Returns:
+        The schema with the x-backrefs value.
+
+    """
+    return {
+        "type": "object",
+        "x-backrefs": {property_name: schema for _, property_name, schema in backrefs},
+    }
