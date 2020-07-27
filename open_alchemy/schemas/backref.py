@@ -213,3 +213,24 @@ def _grouped_backrefs_to_schemas(
 
     """
     return map(lambda args: (args[0], _backrefs_to_schema(args[1])), grouped_backrefs)
+
+
+def execute(*, schemas: types.Schemas):
+    """
+    Pre-process the schemas to add backreferences as required.
+
+    Args:
+        schemas: The schemas to process.
+
+    """
+    # Retrieve back references
+    backrefs = _get_backrefs(schemas=schemas)
+    # Group by schema name
+    grouped_backrefs = _group_backrefs(backrefs=backrefs)
+    # Map to a schema for each grouped backreference
+    backref_schemas = _grouped_backrefs_to_schemas(grouped_backrefs=grouped_backrefs)
+    # Convert to list to resolve iterator
+    backref_schemas = list(backref_schemas)
+    # Add backreferences to schemas
+    for name, backref_schema in backref_schemas:
+        schemas[name] = {"allOf": [schemas[name], backref_schema]}
