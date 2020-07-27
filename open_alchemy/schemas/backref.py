@@ -50,7 +50,9 @@ class _CalculateSchemaReturn(typing.NamedTuple):
 
 
 _CalculateSchemaReturnIter = typing.Iterable[_CalculateSchemaReturn]
-_CalculateSchemaReturnGroupedIter = typing.Iterable[_CalculateSchemaReturnIter]
+_CalculateSchemaReturnGroupedIter = typing.Iterable[
+    typing.Tuple[str, _CalculateSchemaReturnIter]
+]
 
 
 def _calculate_schema(
@@ -180,7 +182,7 @@ def _group_backrefs(
 
     """
     sorted_backrefs = sorted(backrefs, key=lambda backref: backref.ref_schema_name)
-    grouped_backrefs = itertools.groupby(
-        sorted_backrefs, lambda backref: backref.ref_schema_name
-    )
-    return map(lambda arg: arg[1], grouped_backrefs)
+    return itertools.groupby(sorted_backrefs, lambda backref: backref.ref_schema_name)
+
+
+# def _record_backrefs(backrefs: _CalculateSchemaReturnGroupedIter)

@@ -593,7 +593,7 @@ class TestGroupBackrefs:
             pytest.param([], [], id="empty",),
             pytest.param(
                 [CalcSchemaRet("Schema1", "prop_1", {})],
-                [[CalcSchemaRet("Schema1", "prop_1", {})]],
+                [("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})])],
                 id="single",
             ),
             pytest.param(
@@ -602,8 +602,8 @@ class TestGroupBackrefs:
                     CalcSchemaRet("Schema2", "prop_1", {}),
                 ],
                 [
-                    [CalcSchemaRet("Schema1", "prop_1", {})],
-                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                    ("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})]),
+                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
                 ],
                 id="multiple different",
             ),
@@ -614,11 +614,14 @@ class TestGroupBackrefs:
                     CalcSchemaRet("Schema2", "prop_1", {}),
                 ],
                 [
-                    [
-                        CalcSchemaRet("Schema1", "prop_1", {}),
-                        CalcSchemaRet("Schema1", "prop_2", {}),
-                    ],
-                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                    (
+                        "Schema1",
+                        [
+                            CalcSchemaRet("Schema1", "prop_1", {}),
+                            CalcSchemaRet("Schema1", "prop_2", {}),
+                        ],
+                    ),
+                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
                 ],
                 id="multiple some different first multiple ordered",
             ),
@@ -629,11 +632,14 @@ class TestGroupBackrefs:
                     CalcSchemaRet("Schema1", "prop_2", {}),
                 ],
                 [
-                    [
-                        CalcSchemaRet("Schema1", "prop_1", {}),
-                        CalcSchemaRet("Schema1", "prop_2", {}),
-                    ],
-                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                    (
+                        "Schema1",
+                        [
+                            CalcSchemaRet("Schema1", "prop_1", {}),
+                            CalcSchemaRet("Schema1", "prop_2", {}),
+                        ],
+                    ),
+                    ("Schema2", [CalcSchemaRet("Schema2", "prop_1", {})]),
                 ],
                 id="multiple some different first multiple not ordered",
             ),
@@ -644,11 +650,14 @@ class TestGroupBackrefs:
                     CalcSchemaRet("Schema2", "prop_2", {}),
                 ],
                 [
-                    [CalcSchemaRet("Schema1", "prop_1", {})],
-                    [
-                        CalcSchemaRet("Schema2", "prop_1", {}),
-                        CalcSchemaRet("Schema2", "prop_2", {}),
-                    ],
+                    ("Schema1", [CalcSchemaRet("Schema1", "prop_1", {})]),
+                    (
+                        "Schema2",
+                        [
+                            CalcSchemaRet("Schema2", "prop_1", {}),
+                            CalcSchemaRet("Schema2", "prop_2", {}),
+                        ],
+                    ),
                 ],
                 id="multiple some different second multiple",
             ),
@@ -658,10 +667,13 @@ class TestGroupBackrefs:
                     CalcSchemaRet("Schema1", "prop_2", {}),
                 ],
                 [
-                    [
-                        CalcSchemaRet("Schema1", "prop_1", {}),
-                        CalcSchemaRet("Schema1", "prop_2", {}),
-                    ]
+                    (
+                        "Schema1",
+                        [
+                            CalcSchemaRet("Schema1", "prop_1", {}),
+                            CalcSchemaRet("Schema1", "prop_2", {}),
+                        ],
+                    )
                 ],
                 id="multiple same",
             ),
@@ -675,6 +687,9 @@ class TestGroupBackrefs:
         THEN the expected backrefs are returned.
         """
         returned_backrefs = backref._group_backrefs(backrefs=backrefs)
-        returned_backrefs = [list(backref_group) for backref_group in returned_backrefs]
+        returned_backrefs = [
+            (name, list(backref_group)) for name, backref_group in returned_backrefs
+        ]
+        print(returned_backrefs)
 
         assert returned_backrefs == expected_backrefs
