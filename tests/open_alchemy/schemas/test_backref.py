@@ -573,10 +573,108 @@ class TestGetBackrefs:
         WHEN _get_backrefs is called with the schemas
         THEN the expected backrefs are returned.
         """
-        returned_backrefs = list(backref._get_backrefs(schemas=schemas))
-
-        print(schemas)
-        print(returned_backrefs)
-        print(expected_backrefs)
+        returned_backrefs = backref._get_backrefs(schemas=schemas)
 
         assert list(returned_backrefs) == expected_backrefs
+
+
+CalcSchemaRet = backref._CalculateSchemaReturn  # pylint: disable=protected-access
+
+
+class TestGroupBackrefs:
+    """Tests for _group_backrefs"""
+
+    # pylint: disable=protected-access
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "backrefs, expected_backrefs",
+        [
+            pytest.param([], [], id="empty",),
+            pytest.param(
+                [CalcSchemaRet("Schema1", "prop_1", {})],
+                [[CalcSchemaRet("Schema1", "prop_1", {})]],
+                id="single",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {}),
+                    CalcSchemaRet("Schema2", "prop_1", {}),
+                ],
+                [
+                    [CalcSchemaRet("Schema1", "prop_1", {})],
+                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                ],
+                id="multiple different",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {}),
+                    CalcSchemaRet("Schema1", "prop_2", {}),
+                    CalcSchemaRet("Schema2", "prop_1", {}),
+                ],
+                [
+                    [
+                        CalcSchemaRet("Schema1", "prop_1", {}),
+                        CalcSchemaRet("Schema1", "prop_2", {}),
+                    ],
+                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                ],
+                id="multiple some different first multiple ordered",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {}),
+                    CalcSchemaRet("Schema2", "prop_1", {}),
+                    CalcSchemaRet("Schema1", "prop_2", {}),
+                ],
+                [
+                    [
+                        CalcSchemaRet("Schema1", "prop_1", {}),
+                        CalcSchemaRet("Schema1", "prop_2", {}),
+                    ],
+                    [CalcSchemaRet("Schema2", "prop_1", {})],
+                ],
+                id="multiple some different first multiple not ordered",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {}),
+                    CalcSchemaRet("Schema2", "prop_1", {}),
+                    CalcSchemaRet("Schema2", "prop_2", {}),
+                ],
+                [
+                    [CalcSchemaRet("Schema1", "prop_1", {})],
+                    [
+                        CalcSchemaRet("Schema2", "prop_1", {}),
+                        CalcSchemaRet("Schema2", "prop_2", {}),
+                    ],
+                ],
+                id="multiple some different second multiple",
+            ),
+            pytest.param(
+                [
+                    CalcSchemaRet("Schema1", "prop_1", {}),
+                    CalcSchemaRet("Schema1", "prop_2", {}),
+                ],
+                [
+                    [
+                        CalcSchemaRet("Schema1", "prop_1", {}),
+                        CalcSchemaRet("Schema1", "prop_2", {}),
+                    ]
+                ],
+                id="multiple same",
+            ),
+        ],
+    )
+    @pytest.mark.schemas
+    def test_(backrefs, expected_backrefs):
+        """
+        GIVEN backrefs and expected backrefs
+        WHEN _group_backrefs is called with the backrefs
+        THEN the expected backrefs are returned.
+        """
+        returned_backrefs = backref._group_backrefs(backrefs=backrefs)
+        returned_backrefs = [list(backref_group) for backref_group in returned_backrefs]
+
+        assert returned_backrefs == expected_backrefs

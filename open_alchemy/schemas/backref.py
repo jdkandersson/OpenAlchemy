@@ -160,3 +160,23 @@ def _get_backrefs(*, schemas: types.Schemas) -> typing.Iterable[_CalculateSchema
         lambda args: _get_schema_backrefs_schemas(*args), constructables
     )
     return itertools.chain(*backrefs_iters)
+
+
+def _group_backrefs(
+    *, backrefs: typing.Iterable[_CalculateSchemaReturn]
+) -> typing.Iterable[typing.Iterable[_CalculateSchemaReturn]]:
+    """
+    Group back references by schema name.
+
+    Args:
+        backrefs: The back references to group.
+
+    Returns:
+        The grouped back references.
+
+    """
+    sorted_backrefs = sorted(backrefs, key=lambda backref: backref.ref_schema_name)
+    grouped_backrefs = itertools.groupby(
+        sorted_backrefs, lambda backref: backref.ref_schema_name
+    )
+    return map(lambda arg: arg[1], grouped_backrefs)
