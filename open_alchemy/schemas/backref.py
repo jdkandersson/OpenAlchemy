@@ -49,6 +49,10 @@ class _CalculateSchemaReturn(typing.NamedTuple):
     schema: types.Schema
 
 
+_CalculateSchemaReturnIter = typing.Iterable[_CalculateSchemaReturn]
+_CalculateSchemaReturnGroupedIter = typing.Iterable[_CalculateSchemaReturnIter]
+
+
 def _calculate_schema(
     schema_name: str, schemas: types.Schemas, schema: types.Schema
 ) -> _CalculateSchemaReturn:
@@ -111,7 +115,7 @@ def _calculate_schema(
 
 def _get_schema_backrefs(
     schemas: types.Schemas, schema_name: str, schema: types.Schema,
-) -> typing.Iterable[_CalculateSchemaReturn]:
+) -> _CalculateSchemaReturnIter:
     """
     Get the backrefs for a schema.
 
@@ -138,7 +142,7 @@ def _get_schema_backrefs(
     return map(calculate_schema_schema_name_schemas, backref_properties)
 
 
-def _get_backrefs(*, schemas: types.Schemas) -> typing.Iterable[_CalculateSchemaReturn]:
+def _get_backrefs(*, schemas: types.Schemas) -> _CalculateSchemaReturnIter:
     """
     Get all back reference information from the schemas.
 
@@ -163,8 +167,8 @@ def _get_backrefs(*, schemas: types.Schemas) -> typing.Iterable[_CalculateSchema
 
 
 def _group_backrefs(
-    *, backrefs: typing.Iterable[_CalculateSchemaReturn]
-) -> typing.Iterable[typing.Iterable[_CalculateSchemaReturn]]:
+    *, backrefs: _CalculateSchemaReturnIter
+) -> _CalculateSchemaReturnGroupedIter:
     """
     Group back references by schema name.
 
