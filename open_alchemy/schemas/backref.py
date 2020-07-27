@@ -51,6 +51,7 @@ class _BackrefArtifacts(typing.NamedTuple):
 
 _BackrefArtifactsIter = typing.Iterable[_BackrefArtifacts]
 _BackrefArtifactsGroupedIter = typing.Iterable[typing.Tuple[str, _BackrefArtifactsIter]]
+_BackrefSchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
 
 
 def _calculate_schema(
@@ -198,4 +199,17 @@ def _backrefs_to_schema(backrefs: _BackrefArtifactsIter) -> types.Schema:
     }
 
 
-# def _grouped_backrefs_to_schemas(*, backrefs: _BackrefArtifactsGroupedIter)
+def _grouped_backrefs_to_schemas(
+    *, grouped_backrefs: _BackrefArtifactsGroupedIter
+) -> _BackrefSchemaIter:
+    """
+    Convert grouped backreferences to schema names and backreference schemas.
+
+    Args:
+        grouped_backrefs: The grouped back references.
+
+    Returns:
+        The schema names and backref schemas.
+
+    """
+    return map(lambda args: (args[0], _backrefs_to_schema(args[1])), grouped_backrefs)
