@@ -215,7 +215,7 @@ def _grouped_backrefs_to_schemas(
     return map(lambda args: (args[0], _backrefs_to_schema(args[1])), grouped_backrefs)
 
 
-def execute(*, schemas: types.Schemas):
+def process(*, schemas: types.Schemas):
     """
     Pre-process the schemas to add backreferences as required.
 

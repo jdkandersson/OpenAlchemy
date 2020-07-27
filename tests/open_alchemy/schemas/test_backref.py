@@ -950,13 +950,13 @@ class TestGroupedBackrefsToSchemas:
     ],
 )
 @pytest.mark.schemas
-def test_execute(schemas, expected_schemas):
+def test_process(schemas, expected_schemas):
     """
     GIVEN schemas and expected schemas
-    WHEN execute is called with the schemas
+    WHEN process is called with the schemas
     THEN the expected schemas are modified so that they are equal to the expected
         schemas.
     """
-    backref.execute(schemas=schemas)
+    backref.process(schemas=schemas)
 
     assert schemas == expected_schemas
