@@ -22,7 +22,6 @@ def handle_object(
     schemas: oa_types.Schemas,
     required: typing.Optional[bool],
     logical_name: str,
-    model_name: str,
     model_schema: oa_types.Schema,
 ) -> typing.Tuple[types.TReturnValue, oa_types.ObjectRefSchema]:
     """
@@ -53,14 +52,6 @@ def handle_object(
         raise exceptions.MalformedRelationshipError(
             "Many to one and one to one relationships do not support x-secondary."
         )
-
-    # Record any backref
-    helpers.backref.record(
-        artifacts=obj_artifacts,
-        ref_from_array=False,
-        model_name=model_name,
-        schemas=schemas,
-    )
 
     # Construct foreign key
     fk_logical_name, fk_artifacts = foreign_key.gather_artifacts_helper(

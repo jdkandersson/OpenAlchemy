@@ -39,7 +39,6 @@ def test_handle_object_error(schema, schemas):
             schemas=schemas,
             required=True,
             logical_name="name 1",
-            model_name="schema",
             model_schema={},
         )
 
@@ -69,7 +68,6 @@ def test_integration_object_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="schema",
         required=False,
     )
 
@@ -106,7 +104,6 @@ def test_integration_object_ref_required():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="schema",
         required=True,
     )
 
@@ -136,7 +133,6 @@ def test_integration_object_ref_nullable():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="schema",
         required=None,
     )
 
@@ -168,36 +164,21 @@ def test_integration_object_ref_backref():
     }
     logical_name = "ref_schema"
     model_schema = {"properties": {}}
-    model_name = "Schema"
 
     ([_, (_, relationship)], _) = object_ref.handle_object(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
-        model_name=model_name,
         required=False,
     )
 
     assert relationship.backref == ("schema", {"uselist": None})
     assert schemas == {
         "RefSchema": {
-            "allOf": [
-                {
-                    "type": "object",
-                    "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
-                },
-                {
-                    "type": "object",
-                    "x-backrefs": {
-                        "schema": {
-                            "type": "array",
-                            "items": {"type": "object", "x-de-$ref": model_name},
-                        }
-                    },
-                },
-            ]
+            "type": "object",
+            "x-tablename": "ref_schema",
+            "properties": {"id": {"type": "integer"}},
         }
     }
 
@@ -230,7 +211,6 @@ def test_fk_def():
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
-        model_name="model",
         required=None,
     )
 

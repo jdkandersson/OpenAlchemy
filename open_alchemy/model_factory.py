@@ -55,7 +55,6 @@ def model_factory(
             logical_name=prop_name,
             required=prop_name in required_set if required_exists else None,
             model_schema=schema,
-            model_name=name,
         )
         model_class_vars.append(prop_class_vars)
         dict_ignore = helpers.ext_prop.get(

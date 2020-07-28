@@ -25,11 +25,7 @@ def test_integration_simple(schema, expected_schema):
     """
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema={},
-        model_name="schema",
+        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -74,11 +70,7 @@ def test_integration_simple_json(schema, expected_schema):
     """
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema={},
-        model_name="schema",
+        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -96,11 +88,7 @@ def test_integration_kwargs():
     schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
     ([(_, column)], _) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema={},
-        model_name="schema",
+        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
     )
 
     assert column.doc == "doc 1"
@@ -117,11 +105,7 @@ def test_integration_all_of():
     schema = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema={},
-        model_name="schema",
+        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -140,11 +124,7 @@ def test_integration_ref():
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema={},
-        model_name="schema",
+        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -177,7 +157,6 @@ def test_integration_object_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="schema",
     )
 
     assert fk_logical_name == "ref_schema_id"
@@ -213,7 +192,6 @@ def test_integration_object_ref_read_only():
         schemas=schemas,
         logical_name=logical_name,
         model_schema={"properties": {}},
-        model_name="schema",
     )
 
     assert returned_schema == {
@@ -254,7 +232,6 @@ def test_integration_array_ref():
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
-        model_name="model",
     )
 
     assert tbl_logical_name == logical_name
@@ -318,7 +295,6 @@ def test_integration_array_ref_read_only():
         schemas=schemas,
         logical_name=logical_name,
         model_schema=model_schema,
-        model_name="model",
     )
 
     assert returned_schema == {
