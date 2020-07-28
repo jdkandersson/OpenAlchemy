@@ -2,6 +2,7 @@
 
 import pytest
 
+from open_alchemy import exceptions
 from open_alchemy.schemas import backref
 
 
@@ -791,6 +792,30 @@ class TestGroupedBackrefsToSchemas:
         )
 
         assert list(returned_schemas) == expected_schemas
+
+
+@pytest.mark.schemas
+def test_process_not_found():
+    """
+    GIVEN schemas with a back reference that is not found
+    WHEN process is called with the schemas
+    THEN SchemasNotFoundError is raised.
+    """
+    schemas = {
+        "Schema1": {
+            "x-tablename": "schema1",
+            "properties": {
+                "prop_1": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema1"},
+                        {"x-backref": "schema1"},
+                    ]
+                }
+            },
+        },
+    }
+    with pytest.raises(exceptions.SchemaNotFoundError):
+        backref.process(schemas=schemas)
 
 
 @pytest.mark.parametrize(
