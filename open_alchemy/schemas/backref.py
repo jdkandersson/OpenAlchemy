@@ -20,9 +20,8 @@ def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
     3. Return False.
 
     Args:
-        _: Placeholder for unused name argument.
-        schema: The schema of the property.
         schemas: All the defined schemas.
+        schema: The schema of the property.
 
     Returns:
         Whether the property defines a back reference.
@@ -61,12 +60,13 @@ def _calculate_schema(
     Calculate the schema for a back reference.
 
     Args:
-        schema: The schema of a property with a back reference.
         schema_name: The name of the schema that the property is on.
         schema: All the defines schemas.
+        schema: The schema of a property with a back reference.
 
     Returns:
-        The name of the schema the back reference needs to be added to.
+        The name of the schema that is being referenced, the name of the property to be
+        added and the schema for the back reference.
 
     """
     is_array: bool = False
@@ -124,9 +124,12 @@ def _get_schema_backrefs(
     backref and retrieves the information to define a back reference.
 
     Args:
-        schema: A constructable schema.
-        schema_name: The name of the schema.
         schemas: All schemas.
+        schema_name: The name of the schema.
+        schema: A constructable schema.
+
+    Returns:
+        An iterable with all back references for the schema.
 
     """
     # Get all the properties of the schema
@@ -164,6 +167,7 @@ def _get_backrefs(*, schemas: types.Schemas) -> _BackrefArtifactsIter:
     backrefs_iters = map(
         lambda args: _get_schema_backrefs_schemas(*args), constructables
     )
+    # Unpack nested iterators
     return itertools.chain(*backrefs_iters)
 
 
