@@ -6,7 +6,7 @@ from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import types
 
-from . import ref
+from . import ref as ref_helper
 
 
 def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
@@ -278,6 +278,126 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
     return value
 
 
+def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the backref of the schema.
+
+    Raises MalformedSchemaError if the backref value is not a string.
+
+    Args:
+        schema: The schema to get backref from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The backref or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-backref")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-backref property must be of type string."
+        )
+    return value
+
+
+def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the secondary of the schema.
+
+    Raises MalformedSchemaError if the secondary value is not a string.
+
+    Args:
+        schema: The schema to get secondary from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The secondary or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-secondary")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-secondary property must be of type string."
+        )
+    return value
+
+
+def uselist(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the uselist of the schema.
+
+    Raises MalformedSchemaError if the uselist value is not a boolean.
+
+    Args:
+        schema: The schema to get uselist from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The uselist or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-uselist")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "The x-uselist property must be of type boolean."
+        )
+    return value
+
+
+def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[dict]:
+    """
+    Retrieve the items of the schema.
+
+    Raises MalformedSchemaError if the items value is not a dictionary.
+
+    Args:
+        schema: The schema to get items from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The items or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="items")
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise exceptions.MalformedSchemaError(
+            "The items property must be of type dict."
+        )
+    return value
+
+
+def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
+    """
+    Retrieve the $ref of the schema.
+
+    Raises MalformedSchemaError if the $ref value is not a dictionary.
+
+    Args:
+        schema: The schema to get $ref from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The $ref or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="$ref")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The $ref property must be of type string."
+        )
+    return value
+
+
 def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.
@@ -345,7 +465,7 @@ def _peek_key(
             raise exceptions.MalformedSchemaError("Circular reference detected.")
         seen_refs.add(ref_value)
 
-        _, ref_schema = ref.get_ref(ref=ref_value, schemas=schemas)
+        _, ref_schema = ref_helper.get_ref(ref=ref_value, schemas=schemas)
         return _peek_key(ref_schema, schemas, key, seen_refs)
 
     # Recursive case, look for allOf

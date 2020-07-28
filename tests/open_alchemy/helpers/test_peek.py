@@ -339,6 +339,160 @@ def test_json(schema, expected_json):
     assert returned_json == expected_json
 
 
+@pytest.mark.helper
+def test_backref_wrong_type():
+    """
+    GIVEN schema with backref defined as a boolean
+    WHEN backref is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-backref": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.backref(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_backref",
+    [({}, None), ({"x-backref": "table 1"}, "table 1")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_backref(schema, expected_backref):
+    """
+    GIVEN schema and expected backref
+    WHEN backref is called with the schema
+    THEN the expected backref is returned.
+    """
+    returned_backref = helpers.peek.backref(schema=schema, schemas={})
+
+    assert returned_backref == expected_backref
+
+
+@pytest.mark.helper
+def test_secondary_wrong_type():
+    """
+    GIVEN schema with secondary defined as a boolean
+    WHEN secondary is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-secondary": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.secondary(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_secondary",
+    [({}, None), ({"x-secondary": "table 1"}, "table 1")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_secondary(schema, expected_secondary):
+    """
+    GIVEN schema and expected secondary
+    WHEN secondary is called with the schema
+    THEN the expected secondary is returned.
+    """
+    returned_secondary = helpers.peek.secondary(schema=schema, schemas={})
+
+    assert returned_secondary == expected_secondary
+
+
+@pytest.mark.helper
+def test_uselist_wrong_type():
+    """
+    GIVEN schema with uselist defined as a boolean
+    WHEN uselist is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-uselist": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.uselist(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_uselist",
+    [({}, None), ({"x-uselist": True}, True)],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_uselist(schema, expected_uselist):
+    """
+    GIVEN schema and expected uselist
+    WHEN uselist is called with the schema
+    THEN the expected uselist is returned.
+    """
+    returned_uselist = helpers.peek.uselist(schema=schema, schemas={})
+
+    assert returned_uselist == expected_uselist
+
+
+@pytest.mark.helper
+def test_items_wrong_type():
+    """
+    GIVEN schema with items defined as a boolean
+    WHEN items is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"items": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.items(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_items",
+    [({}, None), ({"items": {"key": "value"}}, {"key": "value"})],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_items(schema, expected_items):
+    """
+    GIVEN schema and expected items
+    WHEN items is called with the schema
+    THEN the expected items is returned.
+    """
+    returned_items = helpers.peek.items(schema=schema, schemas={})
+
+    assert returned_items == expected_items
+
+
+@pytest.mark.helper
+def test_ref_wrong_type():
+    """
+    GIVEN schema with $ref defined as a boolean
+    WHEN $ref is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"$ref": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.ref(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_ref",
+    [
+        ({}, None),
+        ({"$ref": "value"}, "value"),
+        ({"allOf": [{"$ref": "value"}]}, "value"),
+    ],
+    ids=["missing", "defined", "allOf"],
+)
+@pytest.mark.helper
+def test_ref(schema, expected_ref):
+    """
+    GIVEN schema and expected $ref
+    WHEN $ref is called with the schema
+    THEN the expected $ref is returned.
+    """
+    returned_ref = helpers.peek.ref(schema=schema, schemas={})
+
+    assert returned_ref == expected_ref
+
+
 @pytest.mark.parametrize(
     "schema",
     [

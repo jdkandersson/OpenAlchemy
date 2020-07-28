@@ -2,7 +2,6 @@
 # pylint: disable=useless-import-alias
 
 from . import all_of as all_of
-from . import backref as backref
 from . import ext_prop as ext_prop
 from . import inheritance as inheritance
 from . import oa_to_py_type as oa_to_py_type

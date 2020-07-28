@@ -37,7 +37,6 @@ def resolve(
         name: The name of the schema from the last step.
         schema: The specification of the schema from the last step.
         schemas: Dictionary with all defined schemas used to resolve $ref.
-        seen_refs: The references that have already been processed.
         skip_name (optional): Skip the schema and return an empty schema instead.
 
     Returns:
@@ -78,7 +77,7 @@ def get_ref(*, ref: str, schemas: types.Schemas) -> NameSchema:
     """
     Get the schema referenced by ref.
 
-    Raises SchemaNotFoundError is a $ref resolution fails.
+    Raises SchemaNotFoundError if a $ref resolution fails.
 
     Args:
         ref: The reference to the schema.
