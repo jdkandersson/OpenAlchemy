@@ -13,6 +13,7 @@ from . import exceptions
 from . import helpers as _helpers
 from . import model_factory as _model_factory
 from . import models_file as _models_file
+from . import schemas as _schemas_module
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["open_alchemy.models"] = models
@@ -57,6 +58,9 @@ def init_model_factory(
             '"schemas" is a required key in the components of the specification.'
         )
     schemas = components.get("schemas", {})
+
+    # Pre-processing schemas
+    _schemas_module.process(schemas=schemas)
 
     # Binding the base and schemas
     bound_model_factories = functools.partial(

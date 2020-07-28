@@ -15,15 +15,15 @@ from open_alchemy.schemas.helpers import iterate
             [("Schema1", {"x-tablename": "table 1"})],
             id="single is",
         ),
-        pytest.param({"Schema1": {}, "Schema2": {},}, [], id="multiple none"),
+        pytest.param({"Schema1": {}, "Schema2": {}}, [], id="multiple none"),
         pytest.param(
-            {"Schema1": {"x-tablename": "table 1"}, "Schema2": {},},
-            [("Schema1", {"x-tablename": "table 1"}),],
+            {"Schema1": {"x-tablename": "table 1"}, "Schema2": {}},
+            [("Schema1", {"x-tablename": "table 1"})],
             id="multiple first",
         ),
         pytest.param(
-            {"Schema1": {}, "Schema2": {"x-tablename": "table 2"},},
-            [("Schema2", {"x-tablename": "table 2"}),],
+            {"Schema1": {}, "Schema2": {"x-tablename": "table 2"}},
+            [("Schema2", {"x-tablename": "table 2"})],
             id="multiple last",
         ),
         pytest.param(

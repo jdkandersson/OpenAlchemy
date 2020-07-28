@@ -261,10 +261,10 @@ class TestGetSchemaBackrefs:
                 {
                     "properties": {
                         "prop_1": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                         },
                         "prop_2": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema2"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema2"}]
                         },
                     }
                 },
@@ -282,7 +282,7 @@ class TestGetSchemaBackrefs:
                             ]
                         },
                         "prop_2": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema2"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema2"}]
                         },
                     }
                 },
@@ -303,7 +303,7 @@ class TestGetSchemaBackrefs:
                 {
                     "properties": {
                         "prop_1": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                         },
                         "prop_2": {
                             "allOf": [
@@ -427,7 +427,7 @@ class TestGetBackrefs:
                         "x-tablename": "schema1",
                         "properties": {
                             "prop_1": {
-                                "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                                "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                             }
                         },
                     },
@@ -436,7 +436,7 @@ class TestGetBackrefs:
                         "x-tablename": "schema1",
                         "properties": {
                             "prop_2": {
-                                "allOf": [{"$ref": "#/components/schemas/RefSchema2"},]
+                                "allOf": [{"$ref": "#/components/schemas/RefSchema2"}]
                             }
                         },
                     },
@@ -463,7 +463,7 @@ class TestGetBackrefs:
                         "x-tablename": "schema1",
                         "properties": {
                             "prop_2": {
-                                "allOf": [{"$ref": "#/components/schemas/RefSchema2"},]
+                                "allOf": [{"$ref": "#/components/schemas/RefSchema2"}]
                             }
                         },
                     },
@@ -487,7 +487,7 @@ class TestGetBackrefs:
                         "x-tablename": "schema1",
                         "properties": {
                             "prop_1": {
-                                "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                                "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                             }
                         },
                     },
@@ -597,7 +597,7 @@ class TestGroupBackrefs:
                 id="single",
             ),
             pytest.param(
-                [BackArt("Schema1", "prop_1", {}), BackArt("Schema2", "prop_1", {}),],
+                [BackArt("Schema1", "prop_1", {}), BackArt("Schema2", "prop_1", {})],
                 [
                     ("Schema1", [BackArt("Schema1", "prop_1", {})]),
                     ("Schema2", [BackArt("Schema2", "prop_1", {})]),
@@ -659,7 +659,7 @@ class TestGroupBackrefs:
                 id="multiple some different second multiple",
             ),
             pytest.param(
-                [BackArt("Schema1", "prop_1", {}), BackArt("Schema1", "prop_2", {}),],
+                [BackArt("Schema1", "prop_1", {}), BackArt("Schema1", "prop_2", {})],
                 [
                     (
                         "Schema1",
@@ -803,7 +803,7 @@ class TestGroupedBackrefsToSchemas:
                     "x-tablename": "schema1",
                     "properties": {
                         "prop_1": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                         }
                     },
                 },
@@ -814,7 +814,7 @@ class TestGroupedBackrefsToSchemas:
                     "x-tablename": "schema1",
                     "properties": {
                         "prop_1": {
-                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"},]
+                            "allOf": [{"$ref": "#/components/schemas/RefSchema1"}]
                         }
                     },
                 },
