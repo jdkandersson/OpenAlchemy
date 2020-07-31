@@ -183,6 +183,12 @@ def _check_array_root(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
             False,
             "x-kwargs cannot be defined on one-to-many relationship property root",
         )
+    # Check uselist
+    if helpers.peek.uselist(schema=schema, schemas=schemas) is not None:
+        return Result(
+            False,
+            "x-uselist cannot be defined on one-to-many relationship property root",
+        )
 
     return None
 
@@ -201,6 +207,13 @@ def _check_array_items(*, schema: types.Schema, schemas: types.Schemas) -> _OptR
     items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
     if items_nullable is True:
         return Result(False, "one-to-many relationships are not nullable")
+
+    # Check items uselist
+    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    if items_uselist is False:
+        return Result(
+            False, "one-to-many relationship does not support x-uselist False"
+        )
 
     # Check items as object
     object_result = _check_object(schema=schema, schemas=schemas)

@@ -585,7 +585,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "multiple x-kwargs defined in allOf"),
+        (False, "value of items multiple x-kwargs defined in allOf"),
         id="one to many allOf kwargs multiple",
     ),
     pytest.param(
@@ -599,7 +599,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "value of x-kwargs must be a dictionary"),
+        (False, "value of items value of x-kwargs must be a dictionary"),
         id="one to many allOf kwargs key not dict",
     ),
     pytest.param(
@@ -613,7 +613,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-kwargs may not contain the backref key"),
+        (False, "value of items x-kwargs may not contain the backref key"),
         id="one to many allOf kwargs has backref",
     ),
     pytest.param(
@@ -627,7 +627,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-kwargs may not contain the secondary key"),
+        (False, "value of items x-kwargs may not contain the secondary key"),
         id="one to many allOf kwargs has secondary",
     ),
     pytest.param(
