@@ -233,12 +233,12 @@ def _check_many_to_many(*, schema: types.Schema, schemas: types.Schemas) -> _Opt
 def _check_array_items(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     """Check the items schema."""
     # Check items type
-    try:
-        items_type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    except exceptions.TypeMissingError:
-        return Result(False, "value of items must contain a type")
-    if items_type_ != "object":
-        return Result(False, "value of items must be of type object")
+    type_result = _check_type(schema=schema, schemas=schemas)
+    if type_result is not None:
+        return Result(
+            type_result.valid,
+            f"value of items {type_result.reason}".replace(" nor array", ""),
+        )
 
     # Check array item values
     _values_result = _check_array_items_values(schema=schema, schemas=schemas)

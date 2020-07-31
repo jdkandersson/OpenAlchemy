@@ -339,13 +339,19 @@ TESTS = [
     pytest.param(
         {"type": "array", "items": {}},
         {},
-        (False, "value of items must contain a type"),
+        (False, "value of items malformed schema when retrieving the type"),
         id="array items no type",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"type": True}},
+        {},
+        (False, "value of items malformed schema when retrieving the type"),
+        id="array items type not string",
     ),
     pytest.param(
         {"type": "array", "items": {"type": "not object"}},
         {},
-        (False, "value of items must be of type object"),
+        (False, "value of items type not an object"),
         id="array items type not object",
     ),
     pytest.param(
@@ -355,10 +361,22 @@ TESTS = [
         id="array items no $ref",
     ),
     pytest.param(
+        {"type": "array", "items": {"$ref": True}},
+        {},
+        (False, "value of items malformed schema when retrieving the type"),
+        id="array items no $ref not string",
+    ),
+    pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object"}},
         (False, "value of items referenced schema not constructable"),
         id="array items no $ref not constructable",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {},
+        (False, "value of items reference does not resolve"),
+        id="array items no $ref not linked",
     ),
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
