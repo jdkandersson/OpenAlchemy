@@ -439,6 +439,20 @@ TESTS = [
             "items": {
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
+                    {"nullable": "True"},
+                ]
+            },
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "value of nullable must be a boolean"),
+        id="one to many allOf nullable not bool",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "items": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
                     {"nullable": True},
                 ]
             },
@@ -700,6 +714,18 @@ TESTS = [
             "RefSchema": {
                 "type": "object",
                 "x-tablename": "ref_schema",
+                "x-uselist": "True",
+            }
+        },
+        (False, "value of x-uselist must be a boolean"),
+        id="one to many $ref uselist not boolean",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
                 "x-uselist": True,
             }
         },
@@ -715,7 +741,7 @@ TESTS = [
                 "x-uselist": False,
             }
         },
-        (False, "x-to-many relationship does not support x-uselist False"),
+        (False, "x-to-many relationships do not support x-uselist False"),
         id="one to many $ref uselist False",
     ),
     pytest.param(
@@ -743,7 +769,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-to-many relationship does not support x-uselist False"),
+        (False, "x-to-many relationships do not support x-uselist False"),
         id="one to many allOf uselist False",
     ),
     pytest.param(
@@ -798,6 +824,21 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to many allOf nullable False",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "items": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-secondary": "schema_ref_schema"},
+                    {"nullable": "True"},
+                ]
+            },
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "value of nullable must be a boolean"),
+        id="many to many allOf nullable not bool",
     ),
     pytest.param(
         {
@@ -1142,6 +1183,19 @@ TESTS = [
             "RefSchema": {
                 "type": "object",
                 "x-tablename": "ref_schema",
+                "x-uselist": "True",
+                "x-secondary": "ref_schema_schema",
+            }
+        },
+        (False, "value of x-uselist must be a boolean"),
+        id="many to many $ref uselist not boolean",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
                 "x-uselist": True,
                 "x-secondary": "ref_schema_schema",
             }
@@ -1159,7 +1213,7 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "x-to-many relationship does not support x-uselist False"),
+        (False, "x-to-many relationships do not support x-uselist False"),
         id="many to many $ref uselist False",
     ),
     pytest.param(
@@ -1189,7 +1243,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-to-many relationship does not support x-uselist False"),
+        (False, "x-to-many relationships do not support x-uselist False"),
         id="many to many allOf uselist False",
     ),
 ]

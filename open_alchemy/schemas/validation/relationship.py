@@ -224,14 +224,20 @@ def _check_array_items_values(
 ) -> _OptResult:
     """Check individual values of array items."""
     # Check items nullable
-    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
+    try:
+        items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of nullable must be a boolean")
     if items_nullable is True:
         return Result(False, "x-to-many relationships are not nullable")
 
     # Check items uselist
-    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    try:
+        items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-uselist must be a boolean")
     if items_uselist is False:
-        return Result(False, "x-to-many relationship does not support x-uselist False")
+        return Result(False, "x-to-many relationships do not support x-uselist False")
 
     return None
 
