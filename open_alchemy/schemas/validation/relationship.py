@@ -78,24 +78,28 @@ def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
     return None
 
 
-def _check_object_values(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
-    """Check the values of the relationship."""
-    # Check nullable
-    try:
-        helpers.peek.nullable(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return Result(False, "value of nullable must be a boolean")
+def _check_object_backref_uselist(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> _OptResult:
+    """Check backref and uselist for an object."""
     # Check backref
     try:
-        helpers.peek.backref(schema=schema, schemas=schemas)
+        backref = helpers.peek.backref(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
         return Result(False, "value of x-backref must be a string")
-    # Check foreign-key-column
+    # Check uselist
     try:
-        helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
+        uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
-        return Result(False, "value of x-foreign-key-column must be a string")
-    # Check kwargs
+        return Result(False, "value of x-uselist must be a boolean")
+    if uselist is False and backref is None:
+        return Result(False, "a one-to-one relationship must define a back reference")
+
+    return None
+
+
+def _check_kwargs(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check the value of x-kwargs."""
     try:
         kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
@@ -108,6 +112,32 @@ def _check_object_values(*, schema: types.Schema, schemas: types.Schemas) -> _Op
             return Result(
                 False, f"x-kwargs may not contain the {next(iter(intersection))} key"
             )
+
+    return None
+
+
+def _check_object_values(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check the values of the relationship."""
+    # Check nullable
+    try:
+        helpers.peek.nullable(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of nullable must be a boolean")
+    # Check backref and uselist
+    backref_uselist_result = _check_object_backref_uselist(
+        schema=schema, schemas=schemas
+    )
+    if backref_uselist_result is not None:
+        return backref_uselist_result
+    # Check foreign-key-column
+    try:
+        helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-foreign-key-column must be a string")
+    # Check kwargs
+    kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
+    if kwargs_result is not None:
+        return kwargs_result
 
     return None
 
