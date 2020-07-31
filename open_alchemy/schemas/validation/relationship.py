@@ -25,11 +25,33 @@ def _check_type(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     try:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     except exceptions.TypeMissingError:
-        return Result(False, "type missing")
+        return Result(False, "malformed schema when retrieving the type")
     except exceptions.SchemaNotFoundError:
         return Result(False, "reference does not resolve")
+    except exceptions.MalformedSchemaError:
+        return Result(False, "malformed schema when retrieving the type")
     if type_ not in {"object", "array"}:
         return Result(False, "type not an object nor array")
+
+    return None
+
+
+def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """
+    Check whether a $ref is present and points to a constructable object.
+
+    Assume the type of schema is object.
+
+    """
+    # Check for $ref
+    ref = helpers.peek.ref(schema=schema, schemas=schemas)
+    if ref is None:
+        return Result(False, "not a reference to another object")
+
+    # Check referenced schema is constructable
+    _, ref_schema = helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
+    if not helpers.schema.constructable(schema=ref_schema, schemas=schemas):
+        return Result(False, "referenced schema not constructable")
 
     return None
 
@@ -54,26 +76,6 @@ def _check_all_of_duplicates(*, schema: types.Schema) -> _OptResult:
 
         # Add new keys into seen keys
         seen_keys = seen_keys.union(sub_schema_keys)
-
-    return None
-
-
-def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
-    """
-    Check whether a $ref is present and points to a constructable object.
-
-    Assume the type of schema is object.
-
-    """
-    # Check for $ref
-    ref = helpers.peek.ref(schema=schema, schemas=schemas)
-    if ref is None:
-        return Result(False, "not a reference to another object")
-
-    # Check referenced schema is constructable
-    _, ref_schema = helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
-    if not helpers.schema.constructable(schema=ref_schema, schemas=schemas):
-        return Result(False, "referenced schema not constructable")
 
     return None
 

@@ -654,26 +654,25 @@ def test_peek_key(schema, schemas, expected_value):
 @pytest.mark.parametrize(
     "schema, schemas",
     [
-        (
+        pytest.param({"$ref": True}, {}, id="$ref not string"),
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+            id="single step circular $ref",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
                 "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
             },
+            id="multiple step circular $ref",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+            id="allOf single step circular $ref",
         ),
-    ],
-    ids=[
-        "single step circular $ref",
-        "multiple step circular $ref",
-        "allOf single step circular $ref",
     ],
 )
 @pytest.mark.helper

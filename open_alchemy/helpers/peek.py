@@ -510,6 +510,9 @@ def _peek_key(
     # Recursive case, look for $ref
     ref_value = schema.get("$ref")
     if ref_value is not None:
+        # Check that ref is string
+        if not isinstance(ref_value, str):
+            raise exceptions.MalformedSchemaError("The value of $ref must ba a string.")
         # Check for circular $ref
         if ref_value in seen_refs:
             raise exceptions.MalformedSchemaError("Circular reference detected.")

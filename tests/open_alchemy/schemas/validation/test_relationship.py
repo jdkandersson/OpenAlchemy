@@ -7,7 +7,9 @@ import pytest
 from open_alchemy.schemas.validation import relationship
 
 TESTS = [
-    pytest.param({}, {}, (False, "type missing"), id="no type"),
+    pytest.param(
+        {}, {}, (False, "malformed schema when retrieving the type"), id="no type"
+    ),
     pytest.param(
         {"type": "not relationship"},
         {},
@@ -15,10 +17,22 @@ TESTS = [
         id="not object nor array type",
     ),
     pytest.param(
+        {"type": True},
+        {},
+        (False, "malformed schema when retrieving the type"),
+        id="type not a string",
+    ),
+    pytest.param(
         {"type": "object"},
         {},
         (False, "not a reference to another object"),
         id="not object no $ref",
+    ),
+    pytest.param(
+        {"$ref": True},
+        {},
+        (False, "malformed schema when retrieving the type"),
+        id="$ref not string",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
@@ -43,6 +57,20 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to one allOf",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema1"},
+                {"$ref": "#/components/schemas/RefSchema2"},
+            ]
+        },
+        {
+            "RefSchema1": {"type": "object", "x-tablename": "ref_schema_1"},
+            "RefSchema2": {"type": "object", "x-tablename": "ref_schema_2"},
+        },
+        (False, "multiple $ref defined in allOf"),
+        id="many to one allOf multiple $ref",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},

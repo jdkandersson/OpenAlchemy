@@ -105,31 +105,36 @@ def test_resolve_valid_skip(schema, schemas, expected_name, expected_schema):
 @pytest.mark.parametrize(
     "schema, schemas, exception",
     [
-        ({"$ref": "#/components/not/schema"}, {}, exceptions.SchemaNotFoundError),
-        (
+        pytest.param(
+            {"$ref": True}, {}, exceptions.MalformedSchemaError, id="$ref not string"
+        ),
+        pytest.param(
+            {"$ref": "#/components/not/schema"},
+            {},
+            exceptions.SchemaNotFoundError,
+            id="invalid $ref",
+        ),
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {},
             exceptions.SchemaNotFoundError,
+            id="not defined",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
             exceptions.MalformedSchemaError,
+            id="single step circular reference",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
                 "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
             },
             exceptions.MalformedSchemaError,
+            id="multiple step circular reference",
         ),
-    ],
-    ids=[
-        "invalid $ref",
-        "not defined",
-        "single step circular reference",
-        "multiple step circular reference",
     ],
 )
 @pytest.mark.helper
