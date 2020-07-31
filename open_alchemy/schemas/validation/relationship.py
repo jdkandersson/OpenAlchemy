@@ -26,8 +26,34 @@ def _check_type(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     except exceptions.TypeMissingError:
         return Result(False, "type missing")
+    except exceptions.SchemaNotFoundError:
+        return Result(False, "reference does not resolve")
     if type_ not in {"object", "array"}:
         return Result(False, "type not an object nor array")
+
+    return None
+
+
+def _check_all_of_duplicates(*, schema: types.Schema) -> _OptResult:
+    """Check for duplicate keys in allOf."""
+    # Retrieve allOf
+    all_of = schema.get("allOf")
+    if all_of is None:
+        return None
+
+    # Check for duplicate keys
+    seen_keys: typing.Set[str] = set()
+    for sub_schema in all_of:
+        # Check whether any keys have already been seen
+        sub_schema_keys = sub_schema.keys()
+        intersection = seen_keys.intersection(sub_schema_keys)
+        if intersection:
+            return Result(
+                False, f"multiple {next(iter(intersection))} defined in allOf"
+            )
+
+        # Add new keys into seen keys
+        seen_keys = seen_keys.union(sub_schema_keys)
 
     return None
 
@@ -52,10 +78,25 @@ def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
     return None
 
 
-def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
     """Check object property schema."""
     # Check $ref
-    return _check_object_ref(schema=schema, schemas=schemas)
+    ref_result = _check_object_ref(schema=schema, schemas=schemas)
+    if ref_result is not None:
+        return ref_result
+
+    # Check nullable
+    try:
+        helpers.peek.nullable(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of nullable must be a boolean")
+
+    # Check for duplicate keys in allOf
+    all_of_duplicates_result = _check_all_of_duplicates(schema=schema)
+    if all_of_duplicates_result is not None:
+        return all_of_duplicates_result
+
+    return Result(True, None)
 
 
 def _check_array(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:

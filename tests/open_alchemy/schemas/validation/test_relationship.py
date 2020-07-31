@@ -22,6 +22,12 @@ TESTS = [
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
+        {},
+        (False, "reference does not resolve"),
+        id="$ref not resolve",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object"}},
         (False, "referenced schema not constructable"),
         id="object $ref not constructable",
@@ -56,7 +62,7 @@ TESTS = [
             "RefSchema": {
                 "type": "object",
                 "x-tablename": "ref_schema",
-                "nullable": True,
+                "nullable": "True",
             }
         },
         (False, "value of nullable must be a boolean"),
