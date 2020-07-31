@@ -1040,6 +1040,44 @@ TESTS = [
     pytest.param(
         {
             "type": "array",
+            "x-secondary": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (
+            False,
+            "x-secondary cannot be defined on x-to-many relationship property root",
+        ),
+        id="many to many kwargs on root not dict",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "x-secondary": "schema_ref_schema",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (
+            False,
+            "x-secondary cannot be defined on x-to-many relationship property root",
+        ),
+        id="many to many kwargs on root",
+    ),
+    pytest.param(
+        {
+            "type": "array",
             "x-kwargs": True,
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },

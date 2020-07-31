@@ -177,6 +177,15 @@ def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
 
 def _check_array_root(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     """Check for invalid keys at the array schema root."""
+    # Check secondary
+    if (
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-secondary")
+        is not None
+    ):
+        return Result(
+            False,
+            "x-secondary cannot be defined on x-to-many relationship property root",
+        )
     # Check backref
     if (
         helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-backref")
