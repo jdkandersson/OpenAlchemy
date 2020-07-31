@@ -398,6 +398,32 @@ def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]
     return value
 
 
+def foreign_key_column(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the foreign-key-column of the schema.
+
+    Raises MalformedSchemaError if the foreign-key-column value is not a string.
+
+    Args:
+        schema: The schema to get foreign-key-column from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The foreign-key-column or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key-column")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-foreign-key-column property must be of type string."
+        )
+    return value
+
+
 def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.

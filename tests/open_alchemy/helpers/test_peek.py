@@ -493,6 +493,38 @@ def test_ref(schema, expected_ref):
     assert returned_ref == expected_ref
 
 
+@pytest.mark.helper
+def test_foreign_key_column_wrong_type():
+    """
+    GIVEN schema with foreign-key-column defined as a boolean
+    WHEN foreign_key_column is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-foreign-key-column": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key_column(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key_column",
+    [({}, None), ({"x-foreign-key-column": "id"}, "id")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key_column(schema, expected_foreign_key_column):
+    """
+    GIVEN schema and expected foreign-key-column
+    WHEN foreign_key_column is called with the schema
+    THEN the expected foreign_key_column is returned.
+    """
+    returned_foreign_key_column = helpers.peek.foreign_key_column(
+        schema=schema, schemas={}
+    )
+
+    assert returned_foreign_key_column == expected_foreign_key_column
+
+
 @pytest.mark.parametrize(
     "schema",
     [
