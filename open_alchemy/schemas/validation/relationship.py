@@ -162,29 +162,72 @@ def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
     return Result(True, None)
 
 
-def _check_array(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
-    """Check object property schema."""
-    # Retrieve items schema
-    items_schema = helpers.peek.items(schema=schema, schemas=schemas)
-    if items_schema is None:
-        return Result(False, "array type properties must define the items schema")
+def _check_array_root(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check for invalid keys at the array schema root."""
+    # Check backref
+    if helpers.peek.backref(schema=schema, schemas=schemas) is not None:
+        return Result(
+            False,
+            "x-backref cannot be defined on one-to-many relationship property root",
+        )
+    # Check foreign-key-column
+    if helpers.peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
+        return Result(
+            False,
+            "x-foreign-key-column cannot be defined on one-to-many relationship "
+            "property root",
+        )
+    # Check kwargs
+    if helpers.peek.kwargs(schema=schema, schemas=schemas) is not None:
+        return Result(
+            False,
+            "x-kwargs cannot be defined on one-to-many relationship property root",
+        )
 
+    return None
+
+
+def _check_array_items(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check the items schema."""
     # Check items type
     try:
-        items_type_ = helpers.peek.type_(schema=items_schema, schemas=schemas)
+        items_type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     except exceptions.TypeMissingError:
         return Result(False, "value of items must contain a type")
     if items_type_ != "object":
         return Result(False, "value of items must be of type object")
 
-    # Check $ref
-    items_ref_result = _check_object_ref(schema=items_schema, schemas=schemas)
-    if items_ref_result is not None:
-        return Result(
-            items_ref_result.valid, f"value of items {items_ref_result.reason}"
-        )
+    # Check items nullable
+    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
+    if items_nullable is True:
+        return Result(False, "one-to-many relationships are not nullable")
+
+    # Check items as object
+    object_result = _check_object(schema=schema, schemas=schemas)
+    if object_result.valid is False:
+        return Result(object_result.valid, f"value of items {object_result.reason}")
 
     return None
+
+
+def _check_array(*, schema: types.Schema, schemas: types.Schemas) -> Result:
+    """Check object property schema."""
+    # Check root schema
+    root_result = _check_array_root(schema=schema, schemas=schemas)
+    if root_result is not None:
+        return root_result
+
+    # Retrieve items schema
+    items_schema = helpers.peek.items(schema=schema, schemas=schemas)
+    if items_schema is None:
+        return Result(False, "array type properties must define the items schema")
+
+    # Check items
+    items_result = _check_array_items(schema=items_schema, schemas=schemas)
+    if items_result is not None:
+        return items_result
+
+    return Result(True, None)
 
 
 def check(schemas: types.Schemas, schema: types.Schema) -> _OptResult:

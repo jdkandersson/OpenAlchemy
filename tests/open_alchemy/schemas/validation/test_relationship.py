@@ -410,7 +410,7 @@ TESTS = [
                 "nullable": True,
             }
         },
-        (True, None),
+        (False, "one-to-many relationships are not nullable"),
         id="allOf one to many $ref nullable True",
     ),
     pytest.param(
@@ -447,7 +447,7 @@ TESTS = [
                 "x-backref": True,
             }
         },
-        (False, "value of x-backref must be a string"),
+        (False, "value of items value of x-backref must be a string"),
         id="one to many backref $ref not string",
     ),
     pytest.param(
@@ -476,7 +476,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "multiple x-backref defined in allOf"),
+        (False, "value of items multiple x-backref defined in allOf"),
         id="one to many backref allOf multiple",
     ),
     pytest.param(
@@ -514,7 +514,7 @@ TESTS = [
                 "x-foreign-key-column": True,
             }
         },
-        (False, "value of x-foreign-key-column must be a string"),
+        (False, "value of items value of x-foreign-key-column must be a string"),
         id="one to many foreign-key-column $ref not string",
     ),
     pytest.param(
@@ -543,7 +543,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "multiple x-foreign-key-column defined in allOf"),
+        (False, "value of items multiple x-foreign-key-column defined in allOf"),
         id="one to many foreign-key-column allOf multiple",
     ),
     pytest.param(
