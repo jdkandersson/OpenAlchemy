@@ -1,17 +1,16 @@
 """Define validation rules for relationship."""
 
-import typing
+# import typing
 
 # from ... import types
 
+# class Result(typing.NamedTuple):
+#     """Result of checking a schema."""
 
-class Result(typing.NamedTuple):
-    """Result of checking a schema."""
-
-    # Whether the schema is valid
-    valid: bool
-    # If not valid, the reason why it isn't
-    reason: typing.Optional[str]
+#     # Whether the schema is valid
+#     valid: bool
+#     # If not valid, the reason why it isn't
+#     reason: typing.Optional[str]
 
 
 # def check(schemas: types.Schemas, schema: types.Schema) -> Result:
