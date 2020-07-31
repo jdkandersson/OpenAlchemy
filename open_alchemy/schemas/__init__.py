@@ -3,6 +3,7 @@
 from .. import types as _types
 from . import backref
 from . import helpers
+from . import validation
 
 
 def process(*, schemas: _types.Schemas) -> None:
