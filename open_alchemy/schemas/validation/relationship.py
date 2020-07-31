@@ -19,21 +19,32 @@ class Result(typing.NamedTuple):
 _OptResult = typing.Optional[Result]
 
 
+def _check_type_value(*, value: typing.Any) -> _OptResult:
+    """Check whether the type of the property is an object or array."""
+    if value is None:
+        return Result(False, "type not defined")
+    if not isinstance(value, str):
+        return Result(False, "value of type must be a string")
+    if value not in {"object", "array"}:
+        return Result(False, "type not an object nor array")
+
+    return None
+
+
 def _check_type(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     """Check whether the type of the property is an object or array."""
     # Check type
     try:
-        type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+        type_ = helpers.peek.peek_key(schema=schema, schemas=schemas, key="type")
     except exceptions.TypeMissingError:
         return Result(False, "malformed schema when retrieving the type")
     except exceptions.SchemaNotFoundError:
         return Result(False, "reference does not resolve")
     except exceptions.MalformedSchemaError:
         return Result(False, "malformed schema when retrieving the type")
-    if type_ not in {"object", "array"}:
-        return Result(False, "type not an object nor array")
 
-    return None
+    # Check type value
+    return _check_type_value(value=type_)
 
 
 def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:

@@ -7,9 +7,7 @@ import pytest
 from open_alchemy.schemas.validation import relationship
 
 TESTS = [
-    pytest.param(
-        {}, {}, (False, "malformed schema when retrieving the type"), id="no type"
-    ),
+    pytest.param({}, {}, (False, "type not defined"), id="no type"),
     pytest.param(
         {"type": "not relationship"},
         {},
@@ -19,7 +17,7 @@ TESTS = [
     pytest.param(
         {"type": True},
         {},
-        (False, "malformed schema when retrieving the type"),
+        (False, "value of type must be a string"),
         id="type not a string",
     ),
     pytest.param(
@@ -339,13 +337,13 @@ TESTS = [
     pytest.param(
         {"type": "array", "items": {}},
         {},
-        (False, "value of items malformed schema when retrieving the type"),
+        (False, "value of items type not defined"),
         id="array items no type",
     ),
     pytest.param(
         {"type": "array", "items": {"type": True}},
         {},
-        (False, "value of items malformed schema when retrieving the type"),
+        (False, "value of items value of type must be a string"),
         id="array items type not string",
     ),
     pytest.param(
