@@ -4,7 +4,7 @@
 
 import pytest
 
-# from open_alchemy.schemas.validation import relationship
+from open_alchemy.schemas.validation import relationship
 
 
 @pytest.mark.parametrize(
@@ -174,7 +174,7 @@ import pytest
                 ]
             },
             {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-            (True, "multiple x-foreign-key-column defined in allOf"),
+            (False, "multiple x-foreign-key-column defined in allOf"),
             id="many to one foreign-key-column allOf multiple",
         ),
         pytest.param(
@@ -779,7 +779,7 @@ import pytest
                 },
             },
             {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-            (True, "many-to-many relationships are not nullable"),
+            (False, "many-to-many relationships are not nullable"),
             id="many to many allOf nullable True",
         ),
         pytest.param(
@@ -1107,9 +1107,12 @@ import pytest
     ],
 )
 @pytest.mark.schemas
-def test_check():
+def test_check(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result
     WHEN check is called with the schemas and schema
     THEN the expected result is returned.
     """
+    returned_result = relationship.check(schemas, schema)
+
+    assert returned_result == expected_result
