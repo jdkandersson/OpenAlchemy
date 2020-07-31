@@ -56,30 +56,6 @@ def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
     return None
 
 
-def _check_all_of_duplicates(*, schema: types.Schema) -> _OptResult:
-    """Check for duplicate keys in allOf."""
-    # Retrieve allOf
-    all_of = schema.get("allOf")
-    if all_of is None:
-        return None
-
-    # Check for duplicate keys
-    seen_keys: typing.Set[str] = set()
-    for sub_schema in all_of:
-        # Check whether any keys have already been seen
-        sub_schema_keys = sub_schema.keys()
-        intersection = seen_keys.intersection(sub_schema_keys)
-        if intersection:
-            return Result(
-                False, f"multiple {next(iter(intersection))} defined in allOf"
-            )
-
-        # Add new keys into seen keys
-        seen_keys = seen_keys.union(sub_schema_keys)
-
-    return None
-
-
 def _check_object_backref_uselist(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> _OptResult:
@@ -144,6 +120,30 @@ def _check_object_values(*, schema: types.Schema, schemas: types.Schemas) -> _Op
     return None
 
 
+def _check_all_of_duplicates(*, schema: types.Schema) -> _OptResult:
+    """Check for duplicate keys in allOf."""
+    # Retrieve allOf
+    all_of = schema.get("allOf")
+    if all_of is None:
+        return None
+
+    # Check for duplicate keys
+    seen_keys: typing.Set[str] = set()
+    for sub_schema in all_of:
+        # Check whether any keys have already been seen
+        sub_schema_keys = sub_schema.keys()
+        intersection = seen_keys.intersection(sub_schema_keys)
+        if intersection:
+            return Result(
+                False, f"multiple {next(iter(intersection))} defined in allOf"
+            )
+
+        # Add new keys into seen keys
+        seen_keys = seen_keys.union(sub_schema_keys)
+
+    return None
+
+
 def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
     """Check object property schema."""
     # Check $ref
@@ -167,25 +167,39 @@ def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
 def _check_array_root(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     """Check for invalid keys at the array schema root."""
     # Check backref
-    if helpers.peek.backref(schema=schema, schemas=schemas) is not None:
+    if (
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-backref")
+        is not None
+    ):
         return Result(
             False,
             "x-backref cannot be defined on x-to-many relationship property root",
         )
     # Check foreign-key-column
-    if helpers.peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
+    if (
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key="x-foreign-key-column"
+        )
+        is not None
+    ):
         return Result(
             False,
             "x-foreign-key-column cannot be defined on x-to-many relationship "
             "property root",
         )
     # Check kwargs
-    if helpers.peek.kwargs(schema=schema, schemas=schemas) is not None:
+    if (
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-kwargs")
+        is not None
+    ):
         return Result(
             False, "x-kwargs cannot be defined on x-to-many relationship property root",
         )
     # Check uselist
-    if helpers.peek.uselist(schema=schema, schemas=schemas) is not None:
+    if (
+        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-uselist")
+        is not None
+    ):
         return Result(
             False,
             "x-uselist cannot be defined on x-to-many relationship property root",

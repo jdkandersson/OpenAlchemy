@@ -476,6 +476,16 @@ TESTS = [
         id="one to many backref on root",
     ),
     pytest.param(
+        {
+            "type": "array",
+            "x-backref": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        id="one to many backref on root not string",
+    ),
+    pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
@@ -928,6 +938,26 @@ TESTS = [
         id="one to many foreign-key-column on root",
     ),
     pytest.param(
+        {
+            "type": "array",
+            "x-foreign-key-column": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (
+            False,
+            "x-foreign-key-column cannot be defined on x-to-many relationship "
+            "property root",
+        ),
+        id="one to many foreign-key-column on root not string",
+    ),
+    pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
@@ -967,6 +997,22 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (False, "many-to-many relationship does not support x-foreign-key-column"),
         id="one to many foreign-key-column allOf",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "x-kwargs": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        id="many to many kwargs on root not dict",
     ),
     pytest.param(
         {
@@ -1059,6 +1105,22 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (False, "value of items x-kwargs may not contain the secondary key"),
         id="many to many allOf kwargs has secondary",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "x-uselist": "True",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "ref_schema_schema",
+            }
+        },
+        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        id="many to many uselist on root not bool",
     ),
     pytest.param(
         {
