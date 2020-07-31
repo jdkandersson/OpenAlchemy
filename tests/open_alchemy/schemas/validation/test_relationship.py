@@ -355,6 +355,12 @@ TESTS = [
         id="array items type not object",
     ),
     pytest.param(
+        {"type": "array", "items": {"type": "array"}},
+        {},
+        (False, "value of items type not an object"),
+        id="array items type array",
+    ),
+    pytest.param(
         {"type": "array", "items": {"type": "object"}},
         {},
         (False, "value of items not a reference to another object"),

@@ -239,6 +239,9 @@ def _check_array_items(*, schema: types.Schema, schemas: types.Schemas) -> _OptR
             type_result.valid,
             f"value of items {type_result.reason}".replace(" nor array", ""),
         )
+    type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+    if type_ != "object":
+        return Result(False, "value of items type not an object",)
 
     # Check array item values
     _values_result = _check_array_items_values(schema=schema, schemas=schemas)
