@@ -26,7 +26,7 @@ def _check_type(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     except exceptions.TypeMissingError:
         return Result(False, "type missing")
-    if type_ not in {"object", "schema"}:
+    if type_ not in {"object", "array"}:
         return Result(False, "type not an object nor array")
 
     return None
@@ -65,8 +65,22 @@ def _check_array(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
     if items_schema is None:
         return Result(False, "array type properties must define the items schema")
 
+    # Check items type
+    try:
+        items_type_ = helpers.peek.type_(schema=items_schema, schemas=schemas)
+    except exceptions.TypeMissingError:
+        return Result(False, "value of items must contain a type")
+    if items_type_ != "object":
+        return Result(False, "value of items must be of type object")
+
     # Check $ref
-    return _check_object_ref(schema=items_schema, schemas=schemas)
+    items_ref_result = _check_object_ref(schema=items_schema, schemas=schemas)
+    if items_ref_result is not None:
+        return Result(
+            items_ref_result.valid, f"value of items {items_ref_result.reason}"
+        )
+
+    return None
 
 
 def check(schemas: types.Schemas, schema: types.Schema) -> _OptResult:
