@@ -90,6 +90,11 @@ def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
         helpers.peek.nullable(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
         return Result(False, "value of nullable must be a boolean")
+    # Check backref
+    try:
+        helpers.peek.backref(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-backref must be a string")
 
     # Check for duplicate keys in allOf
     all_of_duplicates_result = _check_all_of_duplicates(schema=schema)
