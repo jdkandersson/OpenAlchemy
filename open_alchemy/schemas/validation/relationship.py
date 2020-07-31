@@ -168,26 +168,61 @@ def _check_array_root(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
     if helpers.peek.backref(schema=schema, schemas=schemas) is not None:
         return Result(
             False,
-            "x-backref cannot be defined on one-to-many relationship property root",
+            "x-backref cannot be defined on x-to-many relationship property root",
         )
     # Check foreign-key-column
     if helpers.peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
         return Result(
             False,
-            "x-foreign-key-column cannot be defined on one-to-many relationship "
+            "x-foreign-key-column cannot be defined on x-to-many relationship "
             "property root",
         )
     # Check kwargs
     if helpers.peek.kwargs(schema=schema, schemas=schemas) is not None:
         return Result(
-            False,
-            "x-kwargs cannot be defined on one-to-many relationship property root",
+            False, "x-kwargs cannot be defined on x-to-many relationship property root",
         )
     # Check uselist
     if helpers.peek.uselist(schema=schema, schemas=schemas) is not None:
         return Result(
             False,
-            "x-uselist cannot be defined on one-to-many relationship property root",
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        )
+
+    return None
+
+
+def _check_array_items_values(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> _OptResult:
+    """Check individual values of array items."""
+    # Check items nullable
+    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
+    if items_nullable is True:
+        return Result(False, "x-to-many relationships are not nullable")
+
+    # Check items uselist
+    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    if items_uselist is False:
+        return Result(False, "x-to-many relationship does not support x-uselist False")
+
+    return None
+
+
+def _check_many_to_many(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check many to many schema."""
+    # Check items secondary
+    try:
+        secondary = helpers.peek.secondary(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-secondary must be a string")
+    if secondary is None:
+        return None
+
+    # Check for foreign key column
+    if helpers.peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
+        return Result(
+            False, "many-to-many relationship does not support x-foreign-key-column"
         )
 
     return None
@@ -203,22 +238,20 @@ def _check_array_items(*, schema: types.Schema, schemas: types.Schemas) -> _OptR
     if items_type_ != "object":
         return Result(False, "value of items must be of type object")
 
-    # Check items nullable
-    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
-    if items_nullable is True:
-        return Result(False, "one-to-many relationships are not nullable")
-
-    # Check items uselist
-    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
-    if items_uselist is False:
-        return Result(
-            False, "one-to-many relationship does not support x-uselist False"
-        )
+    # Check array item values
+    _values_result = _check_array_items_values(schema=schema, schemas=schemas)
+    if _values_result is not None:
+        return _values_result
 
     # Check items as object
     object_result = _check_object(schema=schema, schemas=schemas)
     if object_result.valid is False:
         return Result(object_result.valid, f"value of items {object_result.reason}")
+
+    # Check many to many relationship
+    m2m_result = _check_many_to_many(schema=schema, schemas=schemas)
+    if m2m_result is not None:
+        return m2m_result
 
     return None
 
@@ -243,7 +276,7 @@ def _check_array(*, schema: types.Schema, schemas: types.Schemas) -> Result:
     return Result(True, None)
 
 
-def check(schemas: types.Schemas, schema: types.Schema) -> _OptResult:
+def check(schemas: types.Schemas, schema: types.Schema) -> Result:
     """
     Check whether a property schema is a valid relationship schema.
 
