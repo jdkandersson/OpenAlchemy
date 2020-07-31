@@ -78,13 +78,8 @@ def _check_object_ref(*, schema: types.Schema, schemas: types.Schemas) -> _OptRe
     return None
 
 
-def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
-    """Check object property schema."""
-    # Check $ref
-    ref_result = _check_object_ref(schema=schema, schemas=schemas)
-    if ref_result is not None:
-        return ref_result
-
+def _check_object_values(*, schema: types.Schema, schemas: types.Schemas) -> _OptResult:
+    """Check the values of the relationship."""
     # Check nullable
     try:
         helpers.peek.nullable(schema=schema, schemas=schemas)
@@ -95,6 +90,39 @@ def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
         helpers.peek.backref(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
         return Result(False, "value of x-backref must be a string")
+    # Check foreign-key-column
+    try:
+        helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-foreign-key-column must be a string")
+    # Check kwargs
+    try:
+        kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return Result(False, "value of x-kwargs must be a dictionary")
+    # Check for unexpected keys
+    if kwargs is not None:
+        unexpected_keys = {"backref", "secondary"}
+        intersection = unexpected_keys.intersection(kwargs.keys())
+        if intersection:
+            return Result(
+                False, f"x-kwargs may not contain the {next(iter(intersection))} key"
+            )
+
+    return None
+
+
+def _check_object(*, schema: types.Schema, schemas: types.Schemas) -> Result:
+    """Check object property schema."""
+    # Check $ref
+    ref_result = _check_object_ref(schema=schema, schemas=schemas)
+    if ref_result is not None:
+        return ref_result
+
+    # Check nullable
+    values_result = _check_object_values(schema=schema, schemas=schemas)
+    if values_result is not None:
+        return values_result
 
     # Check for duplicate keys in allOf
     all_of_duplicates_result = _check_all_of_duplicates(schema=schema)

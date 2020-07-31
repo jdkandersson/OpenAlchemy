@@ -374,6 +374,30 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
     return value
 
 
+def kwargs(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[dict]:
+    """
+    Retrieve the x-kwargs of the schema.
+
+    Raises MalformedSchemaError if the x-kwargs value is not a dictionary.
+
+    Args:
+        schema: The schema to get x-kwargs from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-kwargs or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-kwargs")
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise exceptions.MalformedSchemaError(
+            "The x-kwargs property must be of type dict."
+        )
+    return value
+
+
 def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
     Retrieve the $ref of the schema.

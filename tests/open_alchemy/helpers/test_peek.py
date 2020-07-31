@@ -460,6 +460,36 @@ def test_items(schema, expected_items):
 
 
 @pytest.mark.helper
+def test_kwargs_wrong_type():
+    """
+    GIVEN schema with kwargs defined as a boolean
+    WHEN kwargs is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-kwargs": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.kwargs(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_kwargs",
+    [({}, None), ({"x-kwargs": {"key": "value"}}, {"key": "value"})],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_kwargs(schema, expected_kwargs):
+    """
+    GIVEN schema and expected kwargs
+    WHEN kwargs is called with the schema
+    THEN the expected kwargs is returned.
+    """
+    returned_kwargs = helpers.peek.kwargs(schema=schema, schemas={})
+
+    assert returned_kwargs == expected_kwargs
+
+
+@pytest.mark.helper
 def test_ref_wrong_type():
     """
     GIVEN schema with $ref defined as a boolean
