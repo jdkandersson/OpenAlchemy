@@ -715,82 +715,89 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "string",
-                        "maxLength": 1,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "string", "maxLength": 1}},
             },
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "string"}},
-                }
-            },
-            (False, "ref_schema_id defines maxLength but RefSchema.id does not"),
-            id="one-to-many foreign key defined maxLength only on source",
-        ),
-        pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "string",
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
-            },
-            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {
-                "RefSchema": {
-                    "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "string", "maxLength": 2}},
-                }
-            },
-            (False, "ref_schema_id does not define maxLength but RefSchema.id does"),
-            id="one-to-many foreign key defined maxLength only on referenced",
-        ),
-        pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "string",
-                        "maxLength": 1,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
-            },
-            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {
-                "RefSchema": {
-                    "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "string", "maxLength": 2}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "string",
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
             (
                 False,
-                "the maxLength of ref_schema_id must match the maxLength of "
-                "RefSchema.id",
+                "id defines maxLength but RefSchema.schema_ref_schemas_id does not",
+            ),
+            id="one-to-many foreign key defined maxLength only on source",
+        ),
+        pytest.param(
+            {"x-tablename": "schema", "properties": {"id": {"type": "string"}},},
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
+                }
+            },
+            (
+                False,
+                "id does not define maxLength but RefSchema.schema_ref_schemas_id does",
+            ),
+            id="one-to-many foreign key defined maxLength only on referenced",
+        ),
+        pytest.param(
+            {
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "string", "maxLength": 1}},
+            },
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "string",
+                            "maxLength": 2,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
+                }
+            },
+            (
+                False,
+                "the maxLength of id must match the maxLength of "
+                "RefSchema.schema_ref_schemas_id",
             ),
             id="one-to-many foreign key defined different maxLength",
         ),
         pytest.param(
             {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "string",
-                        "maxLength": 2,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "string", "maxLength": 1}},
             },
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "string", "maxLength": 2}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "string",
+                            "maxLength": 1,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
             (True, None),
