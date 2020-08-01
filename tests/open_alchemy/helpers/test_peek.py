@@ -98,6 +98,100 @@ def test_format(schema, expected_format):
 
 
 @pytest.mark.helper
+def test_autoincrement_wrong_type():
+    """
+    GIVEN schema with autoincrement defined as a string
+    WHEN autoincrement is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-autoincrement": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.autoincrement(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_autoincrement",
+    [
+        ({}, None),
+        ({"x-autoincrement": True}, True),
+        ({"x-autoincrement": False}, False),
+    ],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_autoincrement(schema, expected_autoincrement):
+    """
+    GIVEN schema and expected autoincrement
+    WHEN autoincrement is called with the schema
+    THEN the expected autoincrement is returned.
+    """
+    returned_autoincrement = helpers.peek.autoincrement(schema=schema, schemas={})
+
+    assert returned_autoincrement == expected_autoincrement
+
+
+@pytest.mark.helper
+def test_index_wrong_type():
+    """
+    GIVEN schema with index defined as a string
+    WHEN index is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-index": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.index(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_index",
+    [({}, None), ({"x-index": True}, True), ({"x-index": False}, False)],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_index(schema, expected_index):
+    """
+    GIVEN schema and expected index
+    WHEN index is called with the schema
+    THEN the expected index is returned.
+    """
+    returned_index = helpers.peek.index(schema=schema, schemas={})
+
+    assert returned_index == expected_index
+
+
+@pytest.mark.helper
+def test_unique_wrong_type():
+    """
+    GIVEN schema with unique defined as a string
+    WHEN unique is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-unique": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.unique(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_unique",
+    [({}, None), ({"x-unique": True}, True), ({"x-unique": False}, False)],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_unique(schema, expected_unique):
+    """
+    GIVEN schema and expected unique
+    WHEN unique is called with the schema
+    THEN the expected unique is returned.
+    """
+    returned_unique = helpers.peek.unique(schema=schema, schemas={})
+
+    assert returned_unique == expected_unique
+
+
+@pytest.mark.helper
 def test_max_length_wrong_type():
     """
     GIVEN schema with max_length defined as a boolean
@@ -521,6 +615,36 @@ def test_ref(schema, expected_ref):
     returned_ref = helpers.peek.ref(schema=schema, schemas={})
 
     assert returned_ref == expected_ref
+
+
+@pytest.mark.helper
+def test_foreign_key_wrong_type():
+    """
+    GIVEN schema with foreign-key defined as a boolean
+    WHEN foreign_key is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-foreign-key": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key",
+    [({}, None), ({"x-foreign-key": "id"}, "id")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key(schema, expected_foreign_key):
+    """
+    GIVEN schema and expected foreign-key
+    WHEN foreign_key is called with the schema
+    THEN the expected foreign_key is returned.
+    """
+    returned_foreign_key = helpers.peek.foreign_key(schema=schema, schemas={})
+
+    assert returned_foreign_key == expected_foreign_key
 
 
 @pytest.mark.helper

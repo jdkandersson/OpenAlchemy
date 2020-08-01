@@ -8,21 +8,13 @@ TESTS = [
     pytest.param(
         {},
         {},
-        (
-            False,
-            "malformed schema when retrieving the type: Every property requires a "
-            "type. ",
-        ),
+        (False, "malformed schema: Every property requires a type. ",),
         id="type missing",
     ),
     pytest.param(
         {"type": True},
         {},
-        (
-            False,
-            "malformed schema when retrieving the type: A type property value must be "
-            "of type string. ",
-        ),
+        (False, "malformed schema: A type property value must be of type string. ",),
         id="type not a string",
     ),
     pytest.param(
@@ -44,17 +36,13 @@ TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (
-            False,
-            "malformed schema when retrieving the type: The value of $ref must ba a "
-            "string. ",
-        ),
+        (False, "malformed schema: The value of $ref must ba a string. ",),
         id="$ref not string",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {},
-        (False, "reference does not resolve"),
+        (False, "could not resolve reference"),
         id="type integer $ref",
     ),
     pytest.param(
@@ -66,21 +54,13 @@ TESTS = [
     pytest.param(
         {"allOf": True},
         {},
-        (
-            False,
-            "malformed schema when retrieving the type: The value of allOf must be a "
-            "list. ",
-        ),
+        (False, "malformed schema: The value of allOf must be a list. ",),
         id="allOf not list",
     ),
     pytest.param(
         {"allOf": [True]},
         {},
-        (
-            False,
-            "malformed schema when retrieving the type: The elements of allOf must be "
-            "dictionaries. ",
-        ),
+        (False, "malformed schema: The elements of allOf must be dictionaries. ",),
         id="allOf element not dictionary",
     ),
     pytest.param(
@@ -91,7 +71,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "format": True},
         {},
-        (False, "value of format must be of type string"),
+        (False, "malformed schema: A format value must be of type string. "),
         id="format not string",
     ),
     pytest.param(
@@ -155,15 +135,15 @@ TESTS = [
         id="string format date-time",
     ),
     pytest.param(
-        {"type": "boolean", "format": ""},
+        {"type": "boolean", "format": "unsupported"},
         {},
-        (True, None),
-        id="boolean does not support format",
+        (False, "unsupported format is not supported for boolean"),
+        id="boolean format",
     ),
     pytest.param(
         {"type": "string", "maxLength": "1"},
         {},
-        (False, "value of maxLength must be an integer"),
+        (False, "malformed schema: A maxLength value must be of type integer. "),
         id="string maxLength not integer",
     ),
     pytest.param(
@@ -202,7 +182,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "nullable": "True"},
         {},
-        (False, "value of nullable must be of type boolean"),
+        (False, "malformed schema: A nullable value must be of type boolean. "),
         id="integer nullable not boolean",
     ),
     pytest.param(
@@ -220,8 +200,8 @@ TESTS = [
     pytest.param(
         {"type": "integer", "description": True},
         {},
-        (False, "value of description must be of type string"),
-        id="integer description not boolean",
+        (False, "malformed schema: A description value must be of type string. "),
+        id="integer description not string",
     ),
     pytest.param(
         {"type": "integer", "description": "description 1"},
@@ -250,7 +230,10 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-primary-key": "True"},
         {},
-        (False, "value of x-primary-key must be of type boolean"),
+        (
+            False,
+            "malformed schema: The x-primary-key property must be of type boolean. ",
+        ),
         id="integer x-primary-key not boolean",
     ),
     pytest.param(
@@ -280,7 +263,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-autoincrement": "True"},
         {},
-        (False, "value of x-autoincrement must be of type boolean"),
+        (False, "malformed schema: A autoincrement value must be of type boolean. "),
         id="integer x-autoincrement not boolean",
     ),
     pytest.param(
@@ -298,19 +281,19 @@ TESTS = [
     pytest.param(
         {"type": "string", "x-autoincrement": True},
         {},
-        (False, "number does not support x-autoincrement"),
+        (False, "string does not support x-autoincrement"),
         id="string x-autoincrement",
     ),
     pytest.param(
         {"type": "boolean", "x-autoincrement": True},
         {},
-        (False, "number does not support x-autoincrement"),
+        (False, "boolean does not support x-autoincrement"),
         id="boolean x-autoincrement",
     ),
     pytest.param(
         {"type": "integer", "x-index": "True"},
         {},
-        (False, "value of x-index must be of type boolean"),
+        (False, "malformed schema: A index value must be of type boolean. "),
         id="integer x-index not boolean",
     ),
     pytest.param(
@@ -328,7 +311,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-unique": "True"},
         {},
-        (False, "value of x-unique must be of type boolean"),
+        (False, "malformed schema: A unique value must be of type boolean. "),
         id="integer x-unique not boolean",
     ),
     pytest.param(
@@ -346,8 +329,11 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-foreign-key": True},
         {},
-        (False, "value of x-foreign-key must be of type string"),
-        id="integer x-foreign-key not boolean",
+        (
+            False,
+            "malformed schema: The x-foreign-key property must be of type string. ",
+        ),
+        id="integer x-foreign-key not string",
     ),
     pytest.param(
         {"type": "integer", "x-foreign-key": "foreign.key"},

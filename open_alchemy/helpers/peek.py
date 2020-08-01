@@ -80,6 +80,76 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
     return value
 
 
+def autoincrement(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[bool]:
+    """
+    Retrieve the autoincrement property from a property schema.
+
+    Raises MalformedSchemaError if the autoincrement value is not a boolean.
+
+    Args:
+        schema: The schema to get the autoincrement from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The autoincrement value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-autoincrement")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "A autoincrement value must be of type boolean."
+        )
+    return value
+
+
+def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the index property from a property schema.
+
+    Raises MalformedSchemaError if the index value is not a boolean.
+
+    Args:
+        schema: The schema to get the index from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The index value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-index")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError("A index value must be of type boolean.")
+    return value
+
+
+def unique(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the unique property from a property schema.
+
+    Raises MalformedSchemaError if the unique value is not a boolean.
+
+    Args:
+        schema: The schema to get the unique from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The unique value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-unique")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError("A unique value must be of type boolean.")
+    return value
+
+
 def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[int]:
     """
     Retrieve the maxLength property from a property schema.
@@ -418,6 +488,32 @@ def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]
     if not isinstance(value, str):
         raise exceptions.MalformedSchemaError(
             "The $ref property must be of type string."
+        )
+    return value
+
+
+def foreign_key(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the foreign-key of the schema.
+
+    Raises MalformedSchemaError if the foreign-key value is not a string.
+
+    Args:
+        schema: The schema to get foreign-key from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The foreign-key or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-foreign-key property must be of type string."
         )
     return value
 
