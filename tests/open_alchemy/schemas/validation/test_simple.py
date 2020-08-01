@@ -5,11 +5,24 @@ import pytest
 from open_alchemy.schemas.validation import simple
 
 TESTS = [
-    pytest.param({}, {}, (False, "must define a type"), id="type missing",),
+    pytest.param(
+        {},
+        {},
+        (
+            False,
+            "malformed schema when retrieving the type: Every property requires a "
+            "type. ",
+        ),
+        id="type missing",
+    ),
     pytest.param(
         {"type": True},
         {},
-        (False, "value of type must be of type string"),
+        (
+            False,
+            "malformed schema when retrieving the type: A type property value must be "
+            "of type string. ",
+        ),
         id="type not a string",
     ),
     pytest.param(

@@ -8,32 +8,22 @@ from .... import types as oa_types
 from .. import types
 
 
-def _check_type_value(*, value: typing.Any) -> types.OptResult:
-    """Check whether the type of the property is an object or array."""
-    if value is None:
-        return types.Result(False, "type not defined")
-    if not isinstance(value, str):
-        return types.Result(False, "value of type must be a string")
-    if value not in {"object", "array"}:
-        return types.Result(False, "type not an object nor array")
-
-    return None
-
-
 def _check_type(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check whether the type of the property is an object or array."""
     # Check type
     try:
-        type_ = helpers.peek.peek_key(schema=schema, schemas=schemas, key="type")
+        type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     except exceptions.SchemaNotFoundError:
         return types.Result(False, "reference does not resolve")
-    except exceptions.MalformedSchemaError as exc:
+    except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema when retrieving the type: {exc}")
+    if type_ not in {"object", "array"}:
+        return types.Result(False, "type not an object nor array")
 
     # Check type value
-    return _check_type_value(value=type_)
+    return None
 
 
 def _check_object_ref(

@@ -14,13 +14,21 @@ TESTS = [
     pytest.param(
         {"type": "array", "items": {}},
         {},
-        (False, "value of items type not defined"),
+        (
+            False,
+            "value of items malformed schema when retrieving the type: Every property "
+            "requires a type. ",
+        ),
         id="array items no type",
     ),
     pytest.param(
         {"type": "array", "items": {"type": True}},
         {},
-        (False, "value of items value of type must be a string"),
+        (
+            False,
+            "value of items malformed schema when retrieving the type: A type property "
+            "value must be of type string. ",
+        ),
         id="array items type not string",
     ),
     pytest.param(

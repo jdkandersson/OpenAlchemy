@@ -5,7 +5,16 @@ import pytest
 from open_alchemy.schemas.validation.relationship import property_
 
 TESTS = [
-    pytest.param({}, {}, (False, "type not defined"), id="no type"),
+    pytest.param(
+        {},
+        {},
+        (
+            False,
+            "malformed schema when retrieving the type: Every property requires a "
+            "type. ",
+        ),
+        id="no type",
+    ),
     pytest.param(
         {"type": "not relationship"},
         {},
@@ -15,7 +24,11 @@ TESTS = [
     pytest.param(
         {"type": True},
         {},
-        (False, "value of type must be a string"),
+        (
+            False,
+            "malformed schema when retrieving the type: A type property value must be "
+            "of type string. ",
+        ),
         id="type not a string",
     ),
     pytest.param(
