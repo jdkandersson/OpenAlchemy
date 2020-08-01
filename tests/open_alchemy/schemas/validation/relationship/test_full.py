@@ -135,7 +135,14 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined property invalid",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -147,7 +154,18 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined same type",
         ),
         pytest.param(
-            {"allOf": [{"properties": {"ref_schema_id": {"type": "integer"}}}]},
+            {
+                "allOf": [
+                    {
+                        "properties": {
+                            "ref_schema_id": {
+                                "type": "integer",
+                                "x-foreign-key": "ref_schema.id",
+                            }
+                        }
+                    }
+                ]
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -159,7 +177,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one allOf foreign key defined same type",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "format": "int64"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -171,7 +197,14 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined format only on source",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -183,7 +216,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined format only on referenced",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "format": "int64"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -198,7 +239,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined different format",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "format": "int32"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -210,7 +259,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined same format",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "string", "maxLength": 1}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "string",
+                        "maxLength": 1,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -222,7 +279,14 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined maxLength only on source",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "string"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "string",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -234,7 +298,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined maxLength only on referenced",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "string", "maxLength": 1}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "string",
+                        "maxLength": 1,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -250,7 +322,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined different maxLength",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "string", "maxLength": 2}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -262,7 +342,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined same maxLength",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "default": 1}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "default": 1,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -274,7 +362,14 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined default only on source",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -286,7 +381,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined default only on referenced",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "default": 1}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "default": 1,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -302,7 +405,15 @@ from open_alchemy.schemas.validation.relationship import full
             id="x-to-one foreign key defined different default",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer", "default": 2}}},
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "default": 2,
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -313,8 +424,53 @@ from open_alchemy.schemas.validation.relationship import full
             (True, None),
             id="x-to-one foreign key defined same default",
         ),
-        pytest.param(id="x-to-one foreign key defined wrong foreign key"),
-        pytest.param(id="x-to-one foreign key defined right foreign key"),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "ref_schema_id must define a foreign key"),
+            id="x-to-one foreign key defined no foreign key",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "ref_schema_id": {"type": "integer", "x-foreign-key": "wrong key"}
+                }
+            },
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "ref_schema_id must define a foreign key to RefSchema.id"),
+            id="x-to-one foreign key defined wrong foreign key",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "ref_schema_id": {
+                        "type": "integer",
+                        "x-foreign-key": "ref_schema.id",
+                    }
+                }
+            },
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key defined right foreign key",
+        ),
         pytest.param(id="one-to-many source schema no tablenamed"),
         pytest.param(id="one-to-many foreign key default not present"),
         pytest.param(id="one-to-many foreign key default present"),
