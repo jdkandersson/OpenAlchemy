@@ -444,6 +444,22 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
     return value
 
 
+def _check_kwargs(*, value: typing.Any, key: str) -> typing.Dict[str, typing.Any]:
+    """Check the kwargs value."""
+    # Check value
+    if not isinstance(value, dict):
+        raise exceptions.MalformedSchemaError(
+            f"The {key} property must be of type dict."
+        )
+    # Check keys
+    not_str_keys = filter(lambda key: not isinstance(key, str), value.keys())
+    if next(not_str_keys, None) is not None:
+        raise exceptions.MalformedSchemaError(
+            f"The {key} property must have string keys."
+        )
+    return value
+
+
 def kwargs(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[dict]:
     """
     Retrieve the x-kwargs of the schema.
@@ -458,21 +474,36 @@ def kwargs(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[d
         The x-kwargs or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-kwargs")
+    key = "x-kwargs"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
     # Check value
-    if not isinstance(value, dict):
-        raise exceptions.MalformedSchemaError(
-            "The x-kwargs property must be of type dict."
-        )
-    # Check keys
-    not_str_keys = filter(lambda key: not isinstance(key, str), value.keys())
-    if next(not_str_keys, None) is not None:
-        raise exceptions.MalformedSchemaError(
-            "The x-kwargs property must have string keys."
-        )
-    return value
+    return _check_kwargs(value=value, key=key)
+
+
+def foreign_key_kwargs(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[dict]:
+    """
+    Retrieve the x-foreign-key-kwargs of the schema.
+
+    Raises MalformedSchemaError if the x-foreign-key-kwargs value is not a dictionary.
+
+    Args:
+        schema: The schema to get x-foreign-key-kwargs from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-foreign-key-kwargs or None.
+
+    """
+    key = "x-foreign-key-kwargs"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    return _check_kwargs(value=value, key=key)
 
 
 def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
@@ -577,7 +608,8 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
         facades.jsonschema.validate(value, resolved_schema)
     except facades.jsonschema.ValidationError:
         raise exceptions.MalformedSchemaError(
-            f"The default value does not conform to the schema. The value is: {value}"
+            "The default value does not conform to the schema. "
+            f"The value is: {repr(value)}"
         )
     return value
 

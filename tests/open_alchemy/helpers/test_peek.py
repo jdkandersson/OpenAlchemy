@@ -597,6 +597,55 @@ def test_kwargs(schema, expected_kwargs):
     assert returned_kwargs == expected_kwargs
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        pytest.param({"x-foreign-key-kwargs": True}, id="not dict"),
+        pytest.param({"x-foreign-key-kwargs": {1: True}}, id="single key not string"),
+        pytest.param(
+            {"x-foreign-key-kwargs": {1: True, "key": "value"}},
+            id="multiple key first not string",
+        ),
+        pytest.param(
+            {"x-foreign-key-kwargs": {"key": "value", 1: True}},
+            id="multiple key second not string",
+        ),
+        pytest.param(
+            {"x-foreign-key-kwargs": {1: True, 2: False}},
+            id="multiple key all not string",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_foreign_key_kwargs_wrong_type(schema):
+    """
+    GIVEN schema
+    WHEN foreign_key_kwargs is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key_kwargs(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key_kwargs",
+    [({}, None), ({"x-foreign-key-kwargs": {"key": "value"}}, {"key": "value"})],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key_kwargs(schema, expected_foreign_key_kwargs):
+    """
+    GIVEN schema and expected foreign_key_kwargs
+    WHEN foreign_key_kwargs is called with the schema
+    THEN the expected foreign_key_kwargs is returned.
+    """
+    returned_foreign_key_kwargs = helpers.peek.foreign_key_kwargs(
+        schema=schema, schemas={}
+    )
+
+    assert returned_foreign_key_kwargs == expected_foreign_key_kwargs
+
+
 @pytest.mark.helper
 def test_ref_wrong_type():
     """

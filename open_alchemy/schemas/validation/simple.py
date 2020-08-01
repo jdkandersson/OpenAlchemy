@@ -65,6 +65,41 @@ def _check_modifiers(
     return None
 
 
+def _check_kwargs(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check the value of kwargs."""
+    # Check kwargs
+    kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
+    # Check for unexpected keys
+    if kwargs is not None:
+        unexpected_keys = {
+            "nullable",
+            "default",
+            "primary_key",
+            "autoincrement",
+            "index",
+            "unique",
+        }
+        intersection = unexpected_keys.intersection(kwargs.keys())
+        if intersection:
+            return types.Result(
+                False, f"x-kwargs may not contain the {next(iter(intersection))} key"
+            )
+
+    # Check foreign_key
+    foreign_key = helpers.peek.foreign_key(schema=schema, schemas=schemas)
+
+    # Check foreign key kwargs
+    foreign_key_kwargs = helpers.peek.foreign_key_kwargs(schema=schema, schemas=schemas)
+    if foreign_key_kwargs is not None and foreign_key is None:
+        return types.Result(
+            False, "x-foreign-key-kwargs can only be defined alongside x-foreign-key"
+        )
+
+    return None
+
+
 def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     """
     Check the schema of a simple property (not an object nor an array).
@@ -78,9 +113,15 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
+        # Check modifiers
         modifiers_result = _check_modifiers(schema=schema, schemas=schemas)
         if modifiers_result is not None:
             return modifiers_result
+
+        # Check kwargs
+        kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
+        if kwargs_result is not None:
+            return kwargs_result
 
         # Check nullable
         helpers.peek.nullable(schema=schema, schemas=schemas)
@@ -90,10 +131,10 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         helpers.peek.index(schema=schema, schemas=schemas)
         # Check unique
         helpers.peek.unique(schema=schema, schemas=schemas)
-        # Check foreign_key
-        helpers.peek.foreign_key(schema=schema, schemas=schemas)
         # Check description
         helpers.peek.description(schema=schema, schemas=schemas)
+        # Check default
+        helpers.peek.default(schema=schema, schemas=schemas)
 
     except exceptions.SchemaNotFoundError:
         return types.Result(False, "could not resolve reference")

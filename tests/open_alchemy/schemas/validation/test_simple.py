@@ -362,7 +362,11 @@ TESTS = [
     pytest.param(
         {"type": "integer", "default": True},
         {},
-        (False, "the default for an integer must be of type integer"),
+        (
+            False,
+            "malformed schema: The default value does not conform to the schema. The "
+            "value is: True ",
+        ),
         id="integer default invalid",
     ),
     pytest.param(
@@ -371,16 +375,27 @@ TESTS = [
     pytest.param(
         {"type": "number", "default": True},
         {},
-        (False, "the default for an number must be of type number"),
+        (
+            False,
+            "malformed schema: The default value does not conform to the schema. The "
+            "value is: True ",
+        ),
         id="number default invalid",
     ),
     pytest.param(
-        {"type": "number", "default": 1.1}, {}, (True, None), id="number default",
+        {"type": "number", "default": 1.1}, {}, (True, None), id="number default float",
+    ),
+    pytest.param(
+        {"type": "number", "default": 1}, {}, (True, None), id="number default integer",
     ),
     pytest.param(
         {"type": "string", "default": True},
         {},
-        (False, "the default for an string must be of type string"),
+        (
+            False,
+            "malformed schema: The default value does not conform to the schema. The "
+            "value is: True ",
+        ),
         id="string default invalid",
     ),
     pytest.param(
@@ -389,61 +404,62 @@ TESTS = [
     pytest.param(
         {"type": "boolean", "default": "True"},
         {},
-        (False, "the default for an boolean must be of type boolean"),
+        (
+            False,
+            "malformed schema: The default value does not conform to the schema. The "
+            "value is: 'True' ",
+        ),
         id="boolean default invalid",
     ),
     pytest.param(
-        {"type": "boolean", "default": "value 1"},
-        {},
-        (True, None),
-        id="boolean default",
+        {"type": "boolean", "default": True}, {}, (True, None), id="boolean default",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": 1},
         {},
-        (False, "the value of x-kwargs must be a dictionary"),
+        (False, "malformed schema: The x-kwargs property must be of type dict. "),
         id="x-kwargs not dict",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {1: True}},
         {},
-        (False, "the keys of x-dict must be a string"),
+        (False, "malformed schema: The x-kwargs property must have string keys. "),
         id="x-kwargs keys not dict",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"nullable": True}},
         {},
-        (False, "x-kwargs cannot define nullable"),
+        (False, "x-kwargs may not contain the nullable key"),
         id="x-kwargs has nullable",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"default": 1}},
         {},
-        (False, "x-kwargs cannot define default"),
+        (False, "x-kwargs may not contain the default key"),
         id="x-kwargs has default",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"primary_key": True}},
         {},
-        (False, "x-kwargs cannot define primary_key"),
+        (False, "x-kwargs may not contain the primary_key key"),
         id="x-kwargs has primary_key",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"autoincrement": True}},
         {},
-        (False, "x-kwargs cannot define autoincrement"),
+        (False, "x-kwargs may not contain the autoincrement key"),
         id="x-kwargs has autoincrement",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"index": True}},
         {},
-        (False, "x-kwargs cannot define index"),
+        (False, "x-kwargs may not contain the index key"),
         id="x-kwargs has index",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"unique": True}},
         {},
-        (False, "x-kwargs cannot define unique"),
+        (False, "x-kwargs may not contain the unique key"),
         id="x-kwargs has unique",
     ),
     pytest.param(
@@ -455,13 +471,17 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-foreign-key-kwargs": {"key": "value"}},
         {},
-        (False, "the value of x-foreign-key-kwargs must be a dictionary"),
-        id="x-foreign-key-kwargs can only be defined alongside x-foreign-key",
+        (False, "x-foreign-key-kwargs can only be defined alongside x-foreign-key"),
+        id="x-foreign-key-kwargs without x-foreign-key",
     ),
     pytest.param(
         {"type": "integer", "x-foreign-key-kwargs": 1, "x-foreign-key": "foreign.key"},
         {},
-        (False, "the value of x-foreign-key-kwargs must be a dictionary"),
+        (
+            False,
+            "malformed schema: The x-foreign-key-kwargs property must be of type "
+            "dict. ",
+        ),
         id="x-foreign-key-kwargs not dict",
     ),
     pytest.param(
@@ -471,7 +491,11 @@ TESTS = [
             "x-foreign-key": "foreign.key",
         },
         {},
-        (False, "the keys of x-dict must be a string"),
+        (
+            False,
+            "malformed schema: The x-foreign-key-kwargs property must have string "
+            "keys. ",
+        ),
         id="x-foreign-key-kwargs keys not dict",
     ),
     pytest.param(
@@ -482,7 +506,7 @@ TESTS = [
         },
         {},
         (True, None),
-        id="x-foreign-key-kwargs keys not dict",
+        id="x-foreign-key-kwargs",
     ),
 ]
 
