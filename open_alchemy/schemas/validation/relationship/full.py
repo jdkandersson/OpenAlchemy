@@ -21,6 +21,8 @@ def _check_pre_defined_property_schema(
     """
     Check for a pre-defined property on a schema.
 
+    Assume property_schema has already been checked for validity.
+
     Args:
         property_name: The expected foreign key property name to check for.
         property_schema: The schema for the foreign key.
