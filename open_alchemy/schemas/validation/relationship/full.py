@@ -36,7 +36,7 @@ def _check_foreign_key_target_schema(
 
     # Check properties
     properties = helpers.iterate.properties(schema=schema, schemas=schemas)
-    has_one_property = next(iter(properties), None)
+    has_one_property = next(properties, None)
     if has_one_property is None:
         return types.Result(False, "referenced schema must have properties")
     properties = itertools.chain([has_one_property], properties)
