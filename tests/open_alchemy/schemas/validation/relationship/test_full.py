@@ -805,82 +805,86 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "integer",
-                        "default": 1,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "integer", "default": 1}},
             },
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
-            (False, "ref_schema_id defines default but RefSchema.id does not"),
+            (False, "id defines default but RefSchema.schema_ref_schemas_id does not"),
             id="one-to-many foreign key defined default only on source",
         ),
         pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "integer",
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
-            },
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer", "default": 2}},
-                }
-            },
-            (False, "ref_schema_id does not define default but RefSchema.id does"),
-            id="one-to-many foreign key defined default only on referenced",
-        ),
-        pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "integer",
-                        "default": 1,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
-            },
-            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {
-                "RefSchema": {
-                    "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer", "default": 2}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "default": 2,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
             (
                 False,
-                "the default of ref_schema_id must match the default of "
-                "RefSchema.id",
+                "id does not define default but RefSchema.schema_ref_schemas_id does",
+            ),
+            id="one-to-many foreign key defined default only on referenced",
+        ),
+        pytest.param(
+            {
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "integer", "default": 1}},
+            },
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "default": 2,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
+                }
+            },
+            (
+                False,
+                "the default of id must match the default of "
+                "RefSchema.schema_ref_schemas_id",
             ),
             id="one-to-many foreign key defined different default",
         ),
         pytest.param(
             {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "integer",
-                        "default": 2,
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "integer", "default": 1}},
             },
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer", "default": 2}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "default": 1,
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
             (True, None),
