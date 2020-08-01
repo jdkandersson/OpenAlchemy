@@ -299,7 +299,7 @@ TESTS = [
         id="many to one $ref uselist",
     ),
     pytest.param(
-        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": True},]},
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": True}]},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to one allOf uselist",
@@ -342,7 +342,7 @@ TESTS = [
         id="one to one allOf",
     ),
     pytest.param(
-        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": False},]},
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": False}]},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (False, "a one-to-one relationship must define a back reference"),
         id="one to one allOf no backref",

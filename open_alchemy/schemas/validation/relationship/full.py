@@ -380,5 +380,3 @@ def check(
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema: {exc}")
-
-    return types.Result(True, None)

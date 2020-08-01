@@ -92,7 +92,7 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"},}
+                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
             ]
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
@@ -153,7 +153,7 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"},}
+                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
             ]
         },
         {
