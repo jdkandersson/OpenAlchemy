@@ -252,6 +252,227 @@ TESTS = [
         (True, None),
         id="boolean x-primary-key",
     ),
+    pytest.param(
+        {"type": "integer", "x-autoincrement": "True"},
+        {},
+        (False, "value of x-autoincrement must be of type boolean"),
+        id="integer x-autoincrement not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "x-autoincrement": True},
+        {},
+        (True, None),
+        id="integer x-autoincrement",
+    ),
+    pytest.param(
+        {"type": "number", "x-autoincrement": True},
+        {},
+        (False, "number does not support x-autoincrement"),
+        id="number x-autoincrement",
+    ),
+    pytest.param(
+        {"type": "string", "x-autoincrement": True},
+        {},
+        (False, "number does not support x-autoincrement"),
+        id="string x-autoincrement",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-autoincrement": True},
+        {},
+        (False, "number does not support x-autoincrement"),
+        id="boolean x-autoincrement",
+    ),
+    pytest.param(
+        {"type": "integer", "x-index": "True"},
+        {},
+        (False, "value of x-index must be of type boolean"),
+        id="integer x-index not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "x-index": True}, {}, (True, None), id="integer x-index",
+    ),
+    pytest.param(
+        {"type": "number", "x-index": True}, {}, (True, None), id="number x-index",
+    ),
+    pytest.param(
+        {"type": "string", "x-index": True}, {}, (True, None), id="string x-index",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-index": True}, {}, (True, None), id="boolean x-index",
+    ),
+    pytest.param(
+        {"type": "integer", "x-unique": "True"},
+        {},
+        (False, "value of x-unique must be of type boolean"),
+        id="integer x-unique not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "x-unique": True}, {}, (True, None), id="integer x-unique",
+    ),
+    pytest.param(
+        {"type": "number", "x-unique": True}, {}, (True, None), id="number x-unique",
+    ),
+    pytest.param(
+        {"type": "string", "x-unique": True}, {}, (True, None), id="string x-unique",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-unique": True}, {}, (True, None), id="boolean x-unique",
+    ),
+    pytest.param(
+        {"type": "integer", "x-foreign-key": True},
+        {},
+        (False, "value of x-foreign-key must be of type string"),
+        id="integer x-foreign-key not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "x-foreign-key": "foreign.key"},
+        {},
+        (True, None),
+        id="integer x-foreign-key",
+    ),
+    pytest.param(
+        {"type": "number", "x-foreign-key": "foreign.key"},
+        {},
+        (True, None),
+        id="number x-foreign-key",
+    ),
+    pytest.param(
+        {"type": "string", "x-foreign-key": "foreign.key"},
+        {},
+        (True, None),
+        id="string x-foreign-key",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-foreign-key": "foreign.key"},
+        {},
+        (True, None),
+        id="boolean x-foreign-key",
+    ),
+    pytest.param(
+        {"type": "integer", "default": True},
+        {},
+        (False, "the default for an integer must be of type integer"),
+        id="integer default invalid",
+    ),
+    pytest.param(
+        {"type": "integer", "default": 1}, {}, (True, None), id="integer default",
+    ),
+    pytest.param(
+        {"type": "number", "default": True},
+        {},
+        (False, "the default for an number must be of type number"),
+        id="number default invalid",
+    ),
+    pytest.param(
+        {"type": "number", "default": 1.1}, {}, (True, None), id="number default",
+    ),
+    pytest.param(
+        {"type": "string", "default": True},
+        {},
+        (False, "the default for an string must be of type string"),
+        id="string default invalid",
+    ),
+    pytest.param(
+        {"type": "string", "default": "value 1"}, {}, (True, None), id="string default",
+    ),
+    pytest.param(
+        {"type": "boolean", "default": "True"},
+        {},
+        (False, "the default for an boolean must be of type boolean"),
+        id="boolean default invalid",
+    ),
+    pytest.param(
+        {"type": "boolean", "default": "value 1"},
+        {},
+        (True, None),
+        id="boolean default",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": 1},
+        {},
+        (False, "the value of x-kwargs must be a dictionary"),
+        id="x-kwargs not dict",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {1: True}},
+        {},
+        (False, "the keys of x-dict must be a string"),
+        id="x-kwargs keys not dict",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"nullable": True}},
+        {},
+        (False, "x-kwargs cannot define nullable"),
+        id="x-kwargs has nullable",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"default": 1}},
+        {},
+        (False, "x-kwargs cannot define default"),
+        id="x-kwargs has default",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"primary_key": True}},
+        {},
+        (False, "x-kwargs cannot define primary_key"),
+        id="x-kwargs has primary_key",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"autoincrement": True}},
+        {},
+        (False, "x-kwargs cannot define autoincrement"),
+        id="x-kwargs has autoincrement",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"index": True}},
+        {},
+        (False, "x-kwargs cannot define index"),
+        id="x-kwargs has index",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"unique": True}},
+        {},
+        (False, "x-kwargs cannot define unique"),
+        id="x-kwargs has unique",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"key": "value"}},
+        {},
+        (True, None),
+        id="x-kwargs",
+    ),
+    pytest.param(
+        {"type": "integer", "x-foreign-key-kwargs": {"key": "value"}},
+        {},
+        (False, "the value of x-foreign-key-kwargs must be a dictionary"),
+        id="x-foreign-key-kwargs can only be defined alongside x-foreign-key",
+    ),
+    pytest.param(
+        {"type": "integer", "x-foreign-key-kwargs": 1, "x-foreign-key": "foreign.key"},
+        {},
+        (False, "the value of x-foreign-key-kwargs must be a dictionary"),
+        id="x-foreign-key-kwargs not dict",
+    ),
+    pytest.param(
+        {
+            "type": "integer",
+            "x-foreign-key-kwargs": {1: True},
+            "x-foreign-key": "foreign.key",
+        },
+        {},
+        (False, "the keys of x-dict must be a string"),
+        id="x-foreign-key-kwargs keys not dict",
+    ),
+    pytest.param(
+        {
+            "type": "integer",
+            "x-foreign-key-kwargs": {"key": "value"},
+            "x-foreign-key": "foreign.key",
+        },
+        {},
+        (True, None),
+        id="x-foreign-key-kwargs keys not dict",
+    ),
 ]
 
 
