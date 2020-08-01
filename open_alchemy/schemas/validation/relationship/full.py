@@ -48,6 +48,31 @@ def _check_pre_defined_property_schema(
             f"malformed schema for {property_name} property: {schema_result.reason}",
         )
 
+    # Check that key information is correct
+    checks = (
+        ("type", oa_helpers.peek.type_),
+        ("format", oa_helpers.peek.format_),
+        ("maxLength", oa_helpers.peek.max_length),
+        ("default", oa_helpers.peek.default),
+    )
+    for key, func in checks:
+        expected_value = func(schema=property_schema, schemas=schemas)
+        if expected_value is None:
+            expected_value_str = "not to be defined"
+        else:
+            expected_value_str = str(expected_value)
+        actual_value = func(schema=defined_property_schema, schemas=schemas)
+        if actual_value is None:
+            actual_value_str = "not defined"
+        else:
+            actual_value_str = str(actual_value)
+        if expected_value != actual_value:
+            return types.Result(
+                False,
+                f"the {key} of {property_name} is wrong, expected "
+                f"{expected_value_str}, actual is {actual_value_str}.",
+            )
+
     return None
 
 

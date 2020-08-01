@@ -173,7 +173,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "the type of ref_schema_id must match the type of RefSchema.id"),
+        (
+            False,
+            "the type of ref_schema_id is wrong, expected integer, actual is string.",
+        ),
         id="x-to-one foreign key defined different type",
     ),
     pytest.param(
@@ -183,10 +186,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "ref_schema_id must define a type"),
+        (
+            False,
+            "malformed schema for ref_schema_id property: malformed schema: Every "
+            "property requires a type. ",
+        ),
         id="x-to-one foreign key defined property invalid",
     ),
     pytest.param(
@@ -200,6 +208,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
@@ -224,6 +233,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
@@ -245,10 +255,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "ref_schema_id defines format but RefSchema.id does not"),
+        (
+            False,
+            "the format of ref_schema_id is wrong, expected not to be defined, actual "
+            "is int64.",
+        ),
         id="x-to-one foreign key defined format only on source",
     ),
     pytest.param(
@@ -262,10 +277,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (False, "ref_schema_id does not define format but RefSchema.id does"),
+        (
+            False,
+            "the format of ref_schema_id is wrong, expected int32, actual is not "
+            "defined.",
+        ),
         id="x-to-one foreign key defined format only on referenced",
     ),
     pytest.param(
@@ -283,10 +303,14 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (False, "the format of ref_schema_id must match the format of RefSchema.id",),
+        (
+            False,
+            "the format of ref_schema_id is wrong, expected int32, actual is int64.",
+        ),
         id="x-to-one foreign key defined different format",
     ),
     pytest.param(
@@ -304,6 +328,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
@@ -325,10 +350,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "string"}},
             }
         },
-        (False, "ref_schema_id defines maxLength but RefSchema.id does not"),
+        (
+            False,
+            "the maxLength of ref_schema_id is wrong, expected not to be defined, "
+            "actual is 1.",
+        ),
         id="x-to-one foreign key defined maxLength only on source",
     ),
     pytest.param(
@@ -342,10 +372,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (False, "ref_schema_id does not define maxLength but RefSchema.id does"),
+        (
+            False,
+            "the maxLength of ref_schema_id is wrong, expected 2, actual is not "
+            "defined.",
+        ),
         id="x-to-one foreign key defined maxLength only on referenced",
     ),
     pytest.param(
@@ -363,14 +398,11 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (
-            False,
-            "the maxLength of ref_schema_id must match the maxLength of "
-            "RefSchema.id",
-        ),
+        (False, "the maxLength of ref_schema_id is wrong, expected 2, actual is 1.",),
         id="x-to-one foreign key defined different maxLength",
     ),
     pytest.param(
@@ -388,6 +420,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
@@ -409,10 +442,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "ref_schema_id defines default but RefSchema.id does not"),
+        (
+            False,
+            "the default of ref_schema_id is wrong, expected not to be defined, actual "
+            "is 1.",
+        ),
         id="x-to-one foreign key defined default only on source",
     ),
     pytest.param(
@@ -426,10 +464,14 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (False, "ref_schema_id does not define default but RefSchema.id does"),
+        (
+            False,
+            "the default of ref_schema_id is wrong, expected 2, actual is not defined.",
+        ),
         id="x-to-one foreign key defined default only on referenced",
     ),
     pytest.param(
@@ -447,10 +489,11 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (False, "the default of ref_schema_id must match the default of RefSchema.id",),
+        (False, "the default of ref_schema_id is wrong, expected 2, actual is 1.",),
         id="x-to-one foreign key defined different default",
     ),
     pytest.param(
@@ -468,6 +511,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
