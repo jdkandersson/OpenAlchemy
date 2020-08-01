@@ -34,6 +34,8 @@ def _check_pre_defined_property_schema(
         A result if something is wrong with the reason or None otherwise.
 
     """
+    print(schema)
+    print(property_name)
     # Get the pre-defined property schema if it exists
     properties = helpers.iterate.properties(schema=schema, schemas=schemas)
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
@@ -45,10 +47,7 @@ def _check_pre_defined_property_schema(
     _, defined_property_schema = defined_property
     schema_result = simple.check(schemas, defined_property_schema)
     if not schema_result.valid:
-        return types.Result(
-            False,
-            f"malformed schema for {property_name} property: {schema_result.reason}",
-        )
+        return types.Result(False, f"{property_name} property: {schema_result.reason}",)
 
     # Check that key information matches
     checks = (
@@ -93,7 +92,7 @@ def _check_pre_defined_property_schema(
 
 def _check_foreign_key_target_schema(
     *,
-    schema: oa_types.Schema,
+    foreign_key_target_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
     foreign_key_column: str,
     modify_schema: oa_types.Schema,
@@ -103,7 +102,7 @@ def _check_foreign_key_target_schema(
     Check the schema that is targeted by a foreign key.
 
     Args:
-        schema: The schema targeted by a foreign key.
+        foreign_key_target_schema: The schema targeted by a foreign key.
         schemas: The schemas used to resolve any $ref.
         foreign_key_column: The name of the foreign key column.
         modify_schema: The schema to add the foreign key property to.
@@ -114,15 +113,21 @@ def _check_foreign_key_target_schema(
 
     """
     # Check tablename
-    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
+    tablename = oa_helpers.peek.tablename(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
     if tablename is None:
-        return types.Result(False, "referenced schema must have a x-tablename value")
+        return types.Result(
+            False, "foreign key targeted schema must have a x-tablename value"
+        )
 
     # Check properties
-    properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    properties = helpers.iterate.properties(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
     has_one_property = next(properties, None)
     if has_one_property is None:
-        return types.Result(False, "referenced schema must have properties")
+        return types.Result(False, "foreign key targeted schema must have properties")
     properties = itertools.chain([has_one_property], properties)
 
     # Look for foreign key property schema
@@ -130,7 +135,8 @@ def _check_foreign_key_target_schema(
     foreign_key_target_property = next(filtered_properties, None)
     if foreign_key_target_property is None:
         return types.Result(
-            False, f"referenced schema must have the {foreign_key_column} property"
+            False,
+            f"foreign key targeted schema must have the {foreign_key_column} property",
         )
 
     # Validate the schema
@@ -142,8 +148,8 @@ def _check_foreign_key_target_schema(
     if not schema_result.valid:
         return types.Result(
             False,
-            f"malformed referenced schema for {foreign_key_target_property_name} "
-            f"property: {schema_result.reason}",
+            f"malformed foreign key targeted schema for "
+            f"{foreign_key_target_property_name} property: {schema_result.reason}",
         )
 
     # Check for pre-defined foreign key property
@@ -161,14 +167,14 @@ def _check_foreign_key_target_schema(
     return None
 
 
-def _check_x_to_many(
+def _check_x_to_one(
     *,
     schemas: oa_types.Schemas,
-    source_schema: oa_types.Schema,
+    modify_schema: oa_types.Schema,
     property_name: str,
     property_schema: oa_types.Schema,
 ) -> types.Result:
-    """Check x-to-many relationships."""
+    """Check x-to-one relationships."""
     foreign_key_target_name, foreign_key_target_schema = oa_helpers.ref.resolve(
         name=property_name, schema=property_schema, schemas=schemas
     )
@@ -183,10 +189,53 @@ def _check_x_to_many(
     # Check foreign key target schema
     foreign_key_property_name = f"{property_name}_{foreign_key_column}"
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
-        schema=foreign_key_target_schema,
+        foreign_key_target_schema=foreign_key_target_schema,
         schemas=schemas,
         foreign_key_column=foreign_key_column,
-        modify_schema=source_schema,
+        modify_schema=modify_schema,
+        foreign_key_property_name=foreign_key_property_name,
+    )
+    if foreign_key_target_schema_result is not None:
+        return foreign_key_target_schema_result
+
+    return types.Result(True, None)
+
+
+def _check_one_to_many(
+    *,
+    schemas: oa_types.Schemas,
+    foreign_key_target_schema: oa_types.Schema,
+    property_name: str,
+    property_schema: oa_types.Schema,
+) -> types.Result:
+    """Check one-to-many relationships."""
+    # Retrieve the items schema
+    items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+    assert items_schema is not None
+
+    # Calculate the foreign key name
+    foreign_key_column = oa_helpers.peek.foreign_key_column(
+        schema=items_schema, schemas=schemas
+    )
+    if foreign_key_column is None:
+        foreign_key_column = "id"
+
+    # Retrieve the schema the foreign key needs to go onto
+    modify_schema_ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
+    _, modify_schema = oa_helpers.ref.resolve(
+        schema={"$ref": modify_schema_ref}, schemas=schemas, name=""
+    )
+
+    # Calculate the foreign key property name
+    tablename = oa_helpers.peek.tablename(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
+    foreign_key_property_name = f"{tablename}_{property_name}_{foreign_key_column}"
+    foreign_key_target_schema_result = _check_foreign_key_target_schema(
+        foreign_key_target_schema=foreign_key_target_schema,
+        schemas=schemas,
+        foreign_key_column=foreign_key_column,
+        modify_schema=modify_schema,
         foreign_key_property_name=foreign_key_property_name,
     )
     if foreign_key_target_schema_result is not None:
@@ -241,12 +290,19 @@ def check(
     try:
         type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
         if type_ == "object":
-            return _check_x_to_many(
+            return _check_x_to_one(
                 schemas=schemas,
-                source_schema=source_schema,
+                modify_schema=source_schema,
                 property_name=property_name,
                 property_schema=property_schema,
             )
+
+        return _check_one_to_many(
+            schemas=schemas,
+            foreign_key_target_schema=source_schema,
+            property_name=property_name,
+            property_schema=property_schema,
+        )
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema: {exc}")
