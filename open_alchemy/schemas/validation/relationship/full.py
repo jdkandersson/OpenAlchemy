@@ -18,6 +18,7 @@ def _check_pre_defined_property_schema(
     property_schema: oa_types.Schema,
     schema: oa_types.Schema,
     schemas: oa_types.Schemas,
+    foreign_key: str,
 ):
     """
     Check for a pre-defined property on a schema.
@@ -27,6 +28,7 @@ def _check_pre_defined_property_schema(
         property_schema: The schema for the foreign key.
         schema: The schema to check for the property on.
         schemas: Used to resolve any $ref.
+        foreign_key: The foreign key value.
 
     Returns:
         A result if something is wrong with the reason or None otherwise.
@@ -48,7 +50,7 @@ def _check_pre_defined_property_schema(
             f"malformed schema for {property_name} property: {schema_result.reason}",
         )
 
-    # Check that key information is correct
+    # Check that key information matches
     checks = (
         ("type", oa_helpers.peek.type_),
         ("format", oa_helpers.peek.format_),
@@ -72,6 +74,19 @@ def _check_pre_defined_property_schema(
                 f"the {key} of {property_name} is wrong, expected "
                 f"{expected_value_str}, actual is {actual_value_str}.",
             )
+
+    # Check the foreign key
+    actual_foreign_key = oa_helpers.peek.foreign_key(
+        schema=defined_property_schema, schemas=schemas
+    )
+    if actual_foreign_key is None:
+        return types.Result(False, f"{property_name} must define a foreign key",)
+    if actual_foreign_key != foreign_key:
+        return types.Result(
+            False,
+            f"the x-foreign-key of {property_name} is wrong, expected {foreign_key}, "
+            f"the actual is {actual_foreign_key}",
+        )
 
     return None
 
@@ -132,11 +147,13 @@ def _check_foreign_key_target_schema(
         )
 
     # Check for pre-defined foreign key property
+    foreign_key = f"{tablename}.{foreign_key_column}"
     pre_defined_result = _check_pre_defined_property_schema(
         property_name=foreign_key_property_name,
         property_schema=foreign_key_target_property_schema,
         schema=modify_schema,
         schemas=schemas,
+        foreign_key=foreign_key,
     )
     if pre_defined_result is not None:
         return pre_defined_result

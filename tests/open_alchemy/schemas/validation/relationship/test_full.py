@@ -525,6 +525,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
@@ -542,10 +543,15 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "ref_schema_id must define a foreign key to RefSchema.id"),
+        (
+            False,
+            "the x-foreign-key of ref_schema_id is wrong, expected ref_schema.id, the "
+            "actual is wrong key",
+        ),
         id="x-to-one foreign key defined wrong foreign key",
     ),
     pytest.param(
@@ -559,6 +565,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
