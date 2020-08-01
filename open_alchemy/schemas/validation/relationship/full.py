@@ -32,8 +32,6 @@ def _check_pre_defined_property_schema(
         A result if something is wrong with the reason or None otherwise.
 
     """
-    print(schema)
-    print(property_name)
     # Get the pre-defined property schema if it exists
     properties = helpers.iterate.properties(schema=schema, schemas=schemas)
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
