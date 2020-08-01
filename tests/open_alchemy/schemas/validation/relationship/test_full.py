@@ -6,19 +6,209 @@ from open_alchemy.schemas.validation.relationship import full
 
 
 @pytest.mark.parametrize(
-    "schemas, source_schema, property_schema, expected_result",
+    "source_schema, property_schema, schemas, expected_result",
     [
-        pytest.param(id="x-to-one referenced schema no tablenamed"),
-        pytest.param(id="x-to-one foreign key default not present"),
-        pytest.param(id="x-to-one foreign key default present"),
-        pytest.param(id="x-to-one foreign key configured not present"),
-        pytest.param(id="x-to-one foreign key configured present"),
-        pytest.param(id="x-to-one foreign key property invalid"),
-        pytest.param(id="x-to-one foreign key property valid"),
-        pytest.param(id="x-to-one foreign key defined different type"),
-        pytest.param(id="x-to-one foreign key defined same type"),
-        pytest.param(id="x-to-one foreign key defined different format"),
-        pytest.param(id="x-to-one foreign key defined same format"),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {}},
+            (False, "referenced schema must have a x-tablename value"),
+            id="x-to-one referenced schema no tablenamed",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": True}},
+            (False, "value of x-tablename must be a string"),
+            id="x-to-one referenced schema tablenamed not string",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": "ref_schema"}},
+            (False, "referenced schema must have properties"),
+            id="x-to-one referenced schema no properties",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": "ref_schema", "properties": {}}},
+            (False, "referenced schema must have the id property"),
+            id="x-to-one foreign key default not present",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "x-foreign-key-column": "name",
+                    "properties": {},
+                }
+            },
+            (False, "referenced schema must have the name property"),
+            id="x-to-one foreign key configured not present",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": "ref_schema", "properties": {"id": {}}}},
+            (False, "referenced schema id property must define a type"),
+            id="x-to-one foreign key default property invalid",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "x-foreign-key": "name",
+                    "properties": {"name": {}},
+                }
+            },
+            (False, "referenced schema name property must define a type"),
+            id="x-to-one foreign key configured property invalid",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key property default valid",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "x-foreign-key-column": "name",
+                    "properties": {"name": {"type": "string"}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key property configured valid",
+        ),
+        pytest.param(
+            {},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "allOf": [
+                        {
+                            "x-tablename": "ref_schema",
+                            "properties": {"id": {"type": "integer"}},
+                        }
+                    ]
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key allOf property valid",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "string"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "the type of ref_schema_id must match the type of RefSchema.id"),
+            id="x-to-one foreign key defined different type",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "ref_schema_id must define a type"),
+            id="x-to-one foreign key defined property invalid",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key defined same type",
+        ),
+        pytest.param(
+            {"allOf": [{"properties": {"ref_schema_id": {"type": "integer"}}}]},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (True, None),
+            id="x-to-one allOf foreign key defined same type",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "format": "int64"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "ref_schema_id defines format but RefSchema.id does not"),
+            id="x-to-one foreign key defined format only on source",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "format": "int32"}},
+                }
+            },
+            (False, "ref_schema_id does not define format but RefSchema.id does"),
+            id="x-to-one foreign key defined format only on referenced",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "format": "int64"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "format": "int32"}},
+                }
+            },
+            (
+                False,
+                "the format of ref_schema_id must match the format of RefSchema.id",
+            ),
+            id="x-to-one foreign key defined different format",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "format": "int32"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "format": "int32"}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key defined same format",
+        ),
         pytest.param(id="x-to-one foreign key defined different maxLength"),
         pytest.param(id="x-to-one foreign key defined same maxLength"),
         pytest.param(id="x-to-one foreign key defined different default"),
@@ -54,7 +244,7 @@ from open_alchemy.schemas.validation.relationship import full
     ],
 )
 @pytest.mark.schemas
-def test_check(schemas, source_schema, property_schema, expected_result):
+def test_check(source_schema, property_schema, schemas, expected_result):
     """
     GIVEN schemas, the source and property schema and the expected result
     WHEN check is called with the schemas and source and property schema
