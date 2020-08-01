@@ -195,7 +195,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "description": True},
         {},
-        (False, "value of description must be of type boolean"),
+        (False, "value of description must be of type string"),
         id="integer description not boolean",
     ),
     pytest.param(
@@ -221,6 +221,36 @@ TESTS = [
         {},
         (True, None),
         id="boolean description",
+    ),
+    pytest.param(
+        {"type": "integer", "x-primary-key": "True"},
+        {},
+        (False, "value of x-primary-key must be of type boolean"),
+        id="integer x-primary-key not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "x-primary-key": True},
+        {},
+        (True, None),
+        id="integer x-primary-key",
+    ),
+    pytest.param(
+        {"type": "number", "x-primary-key": True},
+        {},
+        (True, None),
+        id="number x-primary-key",
+    ),
+    pytest.param(
+        {"type": "string", "x-primary-key": True},
+        {},
+        (True, None),
+        id="string x-primary-key",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-primary-key": True},
+        {},
+        (True, None),
+        id="boolean x-primary-key",
     ),
 ]
 
