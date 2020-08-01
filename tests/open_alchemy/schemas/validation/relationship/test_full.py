@@ -502,7 +502,7 @@ from open_alchemy.schemas.validation.relationship import full
         pytest.param(
             {"x-tablename": "schema", "properties": {},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {"x-foreign-key-column": "name",}},
+            {"RefSchema": {"x-foreign-key-column": "name"}},
             (False, "source schema must have the name property"),
             id="one-to-many foreign key configured not present",
         ),
@@ -516,7 +516,7 @@ from open_alchemy.schemas.validation.relationship import full
         pytest.param(
             {"x-tablename": "schema", "properties": {"name": {}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {"x-foreign-key": "name",}},
+            {"RefSchema": {"x-foreign-key": "name"}},
             (False, "source schema name property must define a type"),
             id="one-to-many foreign key configured property invalid",
         ),
@@ -524,13 +524,32 @@ from open_alchemy.schemas.validation.relationship import full
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
+            (False, "referenced schema must have a x-tablename value"),
+            id="one-to-many referenced no tablename",
+        ),
+        pytest.param(
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"x-tablename": True}},
+            (False, "value of x-tablename must be a string"),
+            id="one-to-many referenced tablename not string",
+        ),
+        pytest.param(
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"x-tablename": "ref_schema"}},
             (True, None),
             id="one-to-many foreign key property default valid",
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"name": {"type": "string"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {"x-foreign-key-column": "name",}},
+            {
+                "RefSchema": {
+                    "x-foreign-key-column": "name",
+                    "x-tablename": "ref_schema",
+                }
+            },
             (True, None),
             id="one-to-many foreign key property configured valid",
         ),
@@ -544,7 +563,7 @@ from open_alchemy.schemas.validation.relationship import full
                 ]
             },
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-            {"RefSchema": {}},
+            {"RefSchema": {"x-tablename": "ref_schema"}},
             (True, None),
             id="one-to-many foreign key allOf property valid",
         ),
