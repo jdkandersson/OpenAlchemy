@@ -8,7 +8,7 @@ from ... import types
 
 def constructable(
     *, schemas: types.Schemas
-) -> typing.Iterable[typing.Tuple[str, types.Schema]]:
+) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
     """
     Create an iterable with all constructable schemas from all schemas.
 
@@ -31,7 +31,7 @@ def constructable(
 
 def properties(
     *, schema: types.Schema, schemas: types.Schemas
-) -> typing.Iterable[typing.Tuple[str, types.Schema]]:
+) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
     """
     Create an iterable with all properties of a schema from a constructable schema.
 
