@@ -891,47 +891,50 @@ from open_alchemy.schemas.validation.relationship import full
             id="one-to-many foreign key defined same default",
         ),
         pytest.param(
-            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
+                    "properties": {"schema_ref_schemas_id": {"type": "integer",}},
                 }
             },
-            (False, "ref_schema_id must define a foreign key"),
+            (False, "RefSchema.schema_ref_schemas_id must define a foreign key"),
             id="one-to-many foreign key defined no foreign key",
         ),
         pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {"type": "integer", "x-foreign-key": "wrong key"}
-                }
-            },
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "x-foreign-key": "wrong key",
+                        }
+                    },
                 }
             },
-            (False, "ref_schema_id must define a foreign key to RefSchema.id"),
+            (
+                False,
+                "RefSchema.schema_ref_schemas_id must define a foreign key to "
+                "Schema.id",
+            ),
             id="one-to-many foreign key defined wrong foreign key",
         ),
         pytest.param(
-            {
-                "properties": {
-                    "ref_schema_id": {
-                        "type": "integer",
-                        "x-foreign-key": "ref_schema.id",
-                    }
-                }
-            },
+            {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
                     "x-tablename": "ref_schema",
-                    "properties": {"id": {"type": "integer"}},
+                    "properties": {
+                        "schema_ref_schemas_id": {
+                            "type": "integer",
+                            "x-foreign-key": "schema.id",
+                        }
+                    },
                 }
             },
             (True, None),
