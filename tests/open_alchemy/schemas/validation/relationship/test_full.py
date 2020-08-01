@@ -64,8 +64,18 @@ TESTS = [
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
-        {"RefSchema": {"x-tablename": "ref_schema", "properties": {"id": {}}}},
-        (False, "referenced schema id property must define a type"),
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {}},
+            }
+        },
+        (
+            False,
+            "malformed referenced schema for id property: malformed schema: Every "
+            "property requires a type. ",
+        ),
         id="x-to-one foreign key default property invalid",
     ),
     pytest.param(
@@ -75,11 +85,16 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
-                "x-foreign-key": "name",
+                "type": "object",
+                "x-foreign-key-column": "name",
                 "properties": {"name": {}},
             }
         },
-        (False, "referenced schema name property must define a type"),
+        (
+            False,
+            "malformed referenced schema for name property: malformed schema: Every "
+            "property requires a type. ",
+        ),
         id="x-to-one foreign key configured property invalid",
     ),
     pytest.param(
@@ -89,6 +104,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },
@@ -102,6 +118,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-foreign-key-column": "name",
                 "properties": {"name": {"type": "string"}},
             }
@@ -118,6 +135,7 @@ TESTS = [
                 "allOf": [
                     {
                         "x-tablename": "ref_schema",
+                        "type": "object",
                         "properties": {"id": {"type": "integer"}},
                     }
                 ]
@@ -133,6 +151,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer"}},
             }
         },

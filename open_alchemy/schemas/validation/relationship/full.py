@@ -8,6 +8,7 @@ from .... import exceptions
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
+from .. import simple
 from .. import types
 
 
@@ -47,6 +48,19 @@ def _check_foreign_key_target_schema(
     if foreign_key_target_property is None:
         return types.Result(
             False, f"referenced schema must have the {foreign_key_column} property"
+        )
+
+    # Validate the schema
+    (
+        foreign_key_target_property_name,
+        foreign_key_target_property_schema,
+    ) = foreign_key_target_property
+    schema_result = simple.check(schemas, foreign_key_target_property_schema)
+    if not schema_result.valid:
+        return types.Result(
+            False,
+            f"malformed referenced schema for {foreign_key_target_property_name} "
+            f"property: {schema_result.reason}",
         )
 
     return None
