@@ -655,6 +655,8 @@ def test_peek_key(schema, schemas, expected_value):
     "schema, schemas",
     [
         pytest.param({"$ref": True}, {}, id="$ref not string"),
+        pytest.param({"allOf": True}, {}, id="allOf list"),
+        pytest.param({"allOf": [True]}, {}, id="allOf element not dict"),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},

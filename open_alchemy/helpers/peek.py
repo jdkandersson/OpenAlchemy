@@ -524,7 +524,17 @@ def _peek_key(
     # Recursive case, look for allOf
     all_of = schema.get("allOf")
     if all_of is not None:
+        # Check value of allOf
+        if not isinstance(all_of, list):
+            raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
+
         for sub_schema in all_of:
+            # Check value
+            if not isinstance(sub_schema, dict):
+                raise exceptions.MalformedSchemaError(
+                    "The elements of allOf must be dictionaries."
+                )
+
             value = _peek_key(sub_schema, schemas, key, seen_refs)
             if value is not None:
                 return value
