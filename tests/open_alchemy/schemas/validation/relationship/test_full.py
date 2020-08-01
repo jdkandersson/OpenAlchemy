@@ -52,8 +52,9 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-foreign-key-column": "name",
-                "properties": {},
+                "properties": {"id": {"type": "integer"}},
             }
         },
         (False, "referenced schema must have the name property"),
