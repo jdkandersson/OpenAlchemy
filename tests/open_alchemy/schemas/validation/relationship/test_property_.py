@@ -4,7 +4,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation import relationship
+from open_alchemy.schemas.validation.relationship import property_
 
 TESTS = [
     pytest.param({}, {}, (False, "type not defined"), id="no type"),
@@ -1297,6 +1297,6 @@ def test_check(schema, schemas, expected_result):
     WHEN check is called with the schemas and schema
     THEN the expected result is returned.
     """
-    returned_result = relationship.check(schemas, schema)
+    returned_result = property_.check(schemas, schema)
 
     assert returned_result == expected_result

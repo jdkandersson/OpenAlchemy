@@ -1,10 +1,10 @@
-"""Define validation rules for relationship."""
+"""Define validation rules for relationship property schema."""
 
 import typing
 
-from ... import exceptions
-from ... import helpers
-from ... import types
+from .... import exceptions
+from .... import helpers
+from .... import types
 
 
 class Result(typing.NamedTuple):
