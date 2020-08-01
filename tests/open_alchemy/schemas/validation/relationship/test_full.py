@@ -209,8 +209,58 @@ from open_alchemy.schemas.validation.relationship import full
             (True, None),
             id="x-to-one foreign key defined same format",
         ),
-        pytest.param(id="x-to-one foreign key defined different maxLength"),
-        pytest.param(id="x-to-one foreign key defined same maxLength"),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "maxLength": 1}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            },
+            (False, "ref_schema_id defines maxLength but RefSchema.id does not"),
+            id="x-to-one foreign key defined maxLength only on source",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer"}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "maxLength": 2}},
+                }
+            },
+            (False, "ref_schema_id does not define maxLength but RefSchema.id does"),
+            id="x-to-one foreign key defined maxLength only on referenced",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "maxLength": 1}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "maxLength": 2}},
+                }
+            },
+            (
+                False,
+                "the maxLength of ref_schema_id must match the maxLength of "
+                "RefSchema.id",
+            ),
+            id="x-to-one foreign key defined different maxLength",
+        ),
+        pytest.param(
+            {"properties": {"ref_schema_id": {"type": "integer", "maxLength": 2}}},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "properties": {"id": {"type": "integer", "maxLength": 2}},
+                }
+            },
+            (True, None),
+            id="x-to-one foreign key defined same maxLength",
+        ),
         pytest.param(id="x-to-one foreign key defined different default"),
         pytest.param(id="x-to-one foreign key defined same default"),
         pytest.param(id="x-to-one foreign key defined wrong foreign key"),
