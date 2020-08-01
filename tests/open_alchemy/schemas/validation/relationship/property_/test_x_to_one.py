@@ -27,7 +27,11 @@ TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema when retrieving the type"),
+        (
+            False,
+            "malformed schema when retrieving the type: The value of $ref must ba a "
+            "string. ",
+        ),
         id="$ref not string",
     ),
     pytest.param(
@@ -47,6 +51,16 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to one $ref",
+    ),
+    pytest.param(
+        {"allOf": True},
+        {},
+        (
+            False,
+            "malformed schema when retrieving the type: The value of allOf must be a "
+            "list. ",
+        ),
+        id="many to one allOf",
     ),
     pytest.param(
         {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},

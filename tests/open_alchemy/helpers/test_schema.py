@@ -8,38 +8,36 @@ from open_alchemy import helpers
 @pytest.mark.parametrize(
     "schema, schemas, expected_result",
     [
-        ({}, {}, False),
-        ({"x-tablename": "table 1"}, {}, True),
-        ({"x-inherits": "Schema1"}, {}, True),
-        ({"x-inherits": True}, {}, True),
-        ({"x-inherits": False}, {}, False),
-        (
+        pytest.param({}, {}, False, id="empty",),
+        pytest.param({"x-tablename": "table 1"}, {}, True, id="x-tablename",),
+        pytest.param({"x-inherits": "Schema1"}, {}, True, id="x-inherits string",),
+        pytest.param({"x-inherits": True}, {}, True, id="x-inherits bool true",),
+        pytest.param({"x-inherits": False}, {}, False, id="x-inherits bool false",),
+        pytest.param({"$ref": True}, {}, False, id="$ref not string",),
+        pytest.param(
+            {"$ref": "#/components/schemas/Schema1"}, {}, False, id="$ref not resolve",
+        ),
+        pytest.param(
             {"$ref": "#/components/schemas/Schema1"},
             {"Schema1": {"x-tablename": "table 1"}},
             False,
+            id="x-tablename $ref only",
         ),
-        ({"allOf": []}, {}, False),
-        (
+        pytest.param({"allOf": []}, {}, False, id="allOf empty",),
+        pytest.param({"allOf": True}, {}, False, id="allOf not list",),
+        pytest.param({"allOf": [True]}, {}, False, id="allOf elements not dict",),
+        pytest.param(
             {"allOf": [{"$ref": "#/components/schemas/Schema1"}]},
             {"Schema1": {"x-tablename": "table 1"}},
             False,
+            id="allOf x-tablename",
         ),
-        (
+        pytest.param(
             {"allOf": [{"$ref": "#/components/schemas/Schema1"}, {"key": "value"}]},
             {"Schema1": {"x-tablename": "table 1"}},
             True,
+            id="allOf x-tablename with additional",
         ),
-    ],
-    ids=[
-        "empty",
-        "x-tablename",
-        "x-inherits string",
-        "x-inherits bool true",
-        "x-inherits bool false",
-        "x-tablename $ref only",
-        "allOf empty",
-        "allOf x-tablename",
-        "allOf x-tablename with additional",
     ],
 )
 @pytest.mark.helper

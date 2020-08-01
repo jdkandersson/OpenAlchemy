@@ -55,6 +55,7 @@ def test_constructable(schemas, expected_schemas):
 @pytest.mark.parametrize(
     "schema, schemas, expected_properties",
     [
+        pytest.param(True, {}, [], id="not dict"),
         pytest.param({}, {}, [], id="no properties"),
         pytest.param({"properties": {}}, {}, [], id="empty properties"),
         pytest.param(
@@ -69,13 +70,19 @@ def test_constructable(schemas, expected_schemas):
             [("prop_1", "value 1"), ("prop_2", "value 2")],
             id="multiple property",
         ),
+        pytest.param({"$ref": True}, {}, [], id="$ref not string",),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"properties": {"prop_1": "value 1"}}},
             [("prop_1", "value 1")],
             id="$ref",
         ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"}, {}, [], id="$ref not resolve",
+        ),
+        pytest.param({"allOf": True}, {}, [], id="allOf not list"),
         pytest.param({"allOf": []}, {}, [], id="allOf empty"),
+        pytest.param({"allOf": [True]}, {}, [], id="allOf elements not dict"),
         pytest.param(
             {"allOf": [{"properties": {"prop_1": "value 1"}}]},
             {},

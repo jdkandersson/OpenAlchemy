@@ -2,6 +2,7 @@
 
 import typing
 
+from ... import exceptions
 from ... import helpers
 from ... import types
 
@@ -48,14 +49,22 @@ def properties(
         An interator with all properties of a schema.
 
     """
+    if not isinstance(schema, dict):
+        return
+
     # Handle $ref
     if schema.get("$ref") is not None:
-        _, ref_schema = helpers.ref.resolve(name="", schema=schema, schemas=schemas)
+        try:
+            _, ref_schema = helpers.ref.resolve(name="", schema=schema, schemas=schemas)
+        except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
+            return
         yield from properties(schema=ref_schema, schemas=schemas)
 
     # Handle allOf
     all_of = schema.get("allOf")
     if all_of is not None:
+        if not isinstance(all_of, list):
+            return
         for sub_schema in all_of:
             yield from properties(schema=sub_schema, schemas=schemas)
 

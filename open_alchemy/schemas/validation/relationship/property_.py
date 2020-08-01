@@ -29,8 +29,8 @@ def _check_type(
         type_ = helpers.peek.peek_key(schema=schema, schemas=schemas, key="type")
     except exceptions.SchemaNotFoundError:
         return types.Result(False, "reference does not resolve")
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "malformed schema when retrieving the type")
+    except exceptions.MalformedSchemaError as exc:
+        return types.Result(False, f"malformed schema when retrieving the type: {exc}")
 
     # Check type value
     return _check_type_value(value=type_)

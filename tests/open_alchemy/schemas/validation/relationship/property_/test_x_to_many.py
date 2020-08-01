@@ -44,7 +44,11 @@ TESTS = [
     pytest.param(
         {"type": "array", "items": {"$ref": True}},
         {},
-        (False, "value of items malformed schema when retrieving the type"),
+        (
+            False,
+            "value of items malformed schema when retrieving the type: The value of "
+            "$ref must ba a string. ",
+        ),
         id="array items no $ref not string",
     ),
     pytest.param(
