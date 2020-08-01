@@ -553,15 +553,29 @@ def test_items(schema, expected_items):
     assert returned_items == expected_items
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        pytest.param({"x-kwargs": True}, id="not dict"),
+        pytest.param({"x-kwargs": {1: True}}, id="single key not string"),
+        pytest.param(
+            {"x-kwargs": {1: True, "key": "value"}}, id="multiple key first not string"
+        ),
+        pytest.param(
+            {"x-kwargs": {"key": "value", 1: True}}, id="multiple key second not string"
+        ),
+        pytest.param(
+            {"x-kwargs": {1: True, 2: False}}, id="multiple key all not string"
+        ),
+    ],
+)
 @pytest.mark.helper
-def test_kwargs_wrong_type():
+def test_kwargs_wrong_type(schema):
     """
-    GIVEN schema with kwargs defined as a boolean
+    GIVEN schema
     WHEN kwargs is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-kwargs": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.kwargs(schema=schema, schemas={})
 

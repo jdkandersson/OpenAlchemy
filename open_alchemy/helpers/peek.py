@@ -461,9 +461,16 @@ def kwargs(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[d
     value = peek_key(schema=schema, schemas=schemas, key="x-kwargs")
     if value is None:
         return None
+    # Check value
     if not isinstance(value, dict):
         raise exceptions.MalformedSchemaError(
             "The x-kwargs property must be of type dict."
+        )
+    # Check keys
+    not_str_keys = filter(lambda key: not isinstance(key, str), value.keys())
+    if next(not_str_keys, None) is not None:
+        raise exceptions.MalformedSchemaError(
+            "The x-kwargs property must have string keys."
         )
     return value
 
