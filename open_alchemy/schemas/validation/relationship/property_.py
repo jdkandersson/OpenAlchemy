@@ -53,15 +53,9 @@ def _check_object_backref_uselist(
 ) -> types.OptResult:
     """Check backref and uselist for an object."""
     # Check backref
-    try:
-        backref = helpers.peek.backref(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-backref must be a string")
+    backref = helpers.peek.backref(schema=schema, schemas=schemas)
     # Check uselist
-    try:
-        uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-uselist must be a boolean")
+    uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
     if uselist is False and backref is None:
         return types.Result(
             False, "a one-to-one relationship must define a back reference"
@@ -74,10 +68,7 @@ def _check_kwargs(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the value of x-kwargs."""
-    try:
-        kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-kwargs must be a dictionary")
+    kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
     # Check for unexpected keys
     if kwargs is not None:
         unexpected_keys = {"backref", "secondary"}
@@ -95,10 +86,7 @@ def _check_object_values(
 ) -> types.OptResult:
     """Check the values of the relationship."""
     # Check nullable
-    try:
-        helpers.peek.nullable(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of nullable must be a boolean")
+    helpers.peek.nullable(schema=schema, schemas=schemas)
     # Check backref and uselist
     backref_uselist_result = _check_object_backref_uselist(
         schema=schema, schemas=schemas
@@ -106,10 +94,7 @@ def _check_object_values(
     if backref_uselist_result is not None:
         return backref_uselist_result
     # Check foreign-key-column
-    try:
-        helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-foreign-key-column must be a string")
+    helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
     # Check kwargs
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
     if kwargs_result is not None:
@@ -146,20 +131,24 @@ def _check_object(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.Result:
     """Check object property schema."""
-    # Check $ref
-    ref_result = _check_object_ref(schema=schema, schemas=schemas)
-    if ref_result is not None:
-        return ref_result
+    try:
+        # Check $ref
+        ref_result = _check_object_ref(schema=schema, schemas=schemas)
+        if ref_result is not None:
+            return ref_result
 
-    # Check nullable
-    values_result = _check_object_values(schema=schema, schemas=schemas)
-    if values_result is not None:
-        return values_result
+        # Check nullable
+        values_result = _check_object_values(schema=schema, schemas=schemas)
+        if values_result is not None:
+            return values_result
 
-    # Check for duplicate keys in allOf
-    all_of_duplicates_result = _check_all_of_duplicates(schema=schema)
-    if all_of_duplicates_result is not None:
-        return all_of_duplicates_result
+        # Check for duplicate keys in allOf
+        all_of_duplicates_result = _check_all_of_duplicates(schema=schema)
+        if all_of_duplicates_result is not None:
+            return all_of_duplicates_result
+
+    except exceptions.MalformedSchemaError as exc:
+        return types.Result(False, f"malformed schema: {exc}")
 
     return types.Result(True, None)
 
@@ -224,18 +213,12 @@ def _check_array_items_values(
 ) -> types.OptResult:
     """Check individual values of array items."""
     # Check items nullable
-    try:
-        items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of nullable must be a boolean")
+    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
     if items_nullable is True:
         return types.Result(False, "x-to-many relationships are not nullable")
 
     # Check items uselist
-    try:
-        items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-uselist must be a boolean")
+    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
     if items_uselist is False:
         return types.Result(
             False, "x-to-many relationships do not support x-uselist False"
@@ -249,10 +232,7 @@ def _check_many_to_many(
 ) -> types.OptResult:
     """Check many to many schema."""
     # Check items secondary
-    try:
-        secondary = helpers.peek.secondary(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-secondary must be a string")
+    secondary = helpers.peek.secondary(schema=schema, schemas=schemas)
     if secondary is None:
         return None
 
@@ -302,20 +282,26 @@ def _check_array_items(
 
 def _check_array(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types.Result:
     """Check object property schema."""
-    # Check root schema
-    root_result = _check_array_root(schema=schema, schemas=schemas)
-    if root_result is not None:
-        return root_result
+    try:
+        # Check root schema
+        root_result = _check_array_root(schema=schema, schemas=schemas)
+        if root_result is not None:
+            return root_result
 
-    # Retrieve items schema
-    items_schema = helpers.peek.items(schema=schema, schemas=schemas)
-    if items_schema is None:
-        return types.Result(False, "array type properties must define the items schema")
+        # Retrieve items schema
+        items_schema = helpers.peek.items(schema=schema, schemas=schemas)
+        if items_schema is None:
+            return types.Result(
+                False, "array type properties must define the items schema"
+            )
 
-    # Check items
-    items_result = _check_array_items(schema=items_schema, schemas=schemas)
-    if items_result is not None:
-        return items_result
+        # Check items
+        items_result = _check_array_items(schema=items_schema, schemas=schemas)
+        if items_result is not None:
+            return items_result
+
+    except exceptions.MalformedSchemaError as exc:
+        return types.Result(False, f"malformed schema: {exc}")
 
     return types.Result(True, None)
 

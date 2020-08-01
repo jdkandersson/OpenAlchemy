@@ -76,7 +76,11 @@ TESTS = [
     pytest.param(
         {"allOf": [True]},
         {},
-        (False, "value of allOf must have dictionary elements"),
+        (
+            False,
+            "malformed schema when retrieving the type: The elements of allOf must be "
+            "dictionaries. ",
+        ),
         id="allOf element not dictionary",
     ),
     pytest.param(
