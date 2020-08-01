@@ -167,12 +167,25 @@ def _check_foreign_key_target_schema(
 
 def _check_x_to_one(
     *,
-    schemas: oa_types.Schemas,
     modify_schema: oa_types.Schema,
     property_name: str,
     property_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
 ) -> types.Result:
-    """Check x-to-one relationships."""
+    """
+    Check x-to-one relationships.
+
+    Args:
+        modify_schema: The schema to which the foreign key property needs to be added.
+        property_name: The name of the property that defines the x-to-one relationship.
+        property_schema: The schema of the property that defines the x-to-one
+            relationship.
+        schemas: Used to result any $ref.
+
+    Returns:
+        Whether the relationship is valid and the reason if it is not.
+
+    """
     _, foreign_key_target_schema = oa_helpers.ref.resolve(
         name=property_name, schema=property_schema, schemas=schemas
     )
@@ -201,12 +214,26 @@ def _check_x_to_one(
 
 def _check_one_to_many(
     *,
-    schemas: oa_types.Schemas,
     foreign_key_target_schema: oa_types.Schema,
     property_name: str,
     property_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
 ) -> types.Result:
-    """Check one-to-many relationships."""
+    """
+    Check one-to-many relationships.
+
+    Args:
+        foreign_key_target_schema: The schema targeted by the foreign key.
+        property_name: The name of the property that defines the one-to-many
+            relationship.
+        property_schema: The schema of the property that defines the one-to-many
+            relationship.
+        schemas: Used to result any $ref.
+
+    Returns:
+        Whether the relationship is valid and the reason if it is not.
+
+    """
     # Retrieve the items schema
     items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
     assert items_schema is not None
@@ -245,7 +272,17 @@ def _check_one_to_many(
 def _check_many_to_many_schema(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
-    """Check one of the many to many schemas."""
+    """
+    Check one of the many to many schemas.
+
+    Args:
+        schema: The schema to check.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        A result of the schema is not valid with a reason or None.
+
+    """
     tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
     if tablename is None:
         return types.Result(False, "schema must define x-tablename")
@@ -287,7 +324,19 @@ def _check_many_to_many(
     items_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
-    """Check many-to-many relationship."""
+    """
+    Check many-to-many relationships.
+
+    Args:
+        source_schema: The schema that has the property that defines the relationship.
+        items_schema: The schema of the items for the property that defines the
+            relationship.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        Whether the relationship is valid and the reason if it is not.
+
+    """
     # Checking source schema
     source_result = _check_many_to_many_schema(schema=source_schema, schemas=schemas)
     if source_result is not None:
