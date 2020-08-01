@@ -1,9 +1,86 @@
 """Validate the full schema (property, source and referenced)."""
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,unused-variable
 
+import itertools
+
+from .... import exceptions
+from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ... import helpers
 from .. import types
+
+
+def _check_foreign_key_target_schema(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas, foreign_key_column: str
+) -> types.OptResult:
+    """
+    Check the schema that is targeted by a foreign key.
+
+    Args:
+        schema: The schema targeted by a foreign key.
+        schemas: The schemas used to resolve any $ref.
+        foreign_key_column: The name of the foreign key column.
+
+    Returns:
+        A result if something is wrong with the reason or None otherwise.
+
+    """
+    # Check tablename
+    try:
+        tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
+        return types.Result(False, "value of x-tablename must be a string")
+    if tablename is None:
+        return types.Result(False, "referenced schema must have a x-tablename value")
+
+    # Check properties
+    properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    has_one_property = next(iter(properties), None)
+    if has_one_property is None:
+        return types.Result(False, "referenced schema must have properties")
+    properties = itertools.chain([has_one_property], properties)
+
+    # Look for foreign key property schema
+    filtered_properties = filter(lambda arg: arg[0] == foreign_key_column, properties)
+    foreign_key_target_property = next(filtered_properties, None)
+    if foreign_key_target_property is None:
+        return types.Result(
+            False, f"referenced schema must have the {foreign_key_column} property"
+        )
+
+    return None
+
+
+def _check_x_to_many(
+    *,
+    schemas: oa_types.Schemas,
+    source_schema: oa_types.Schema,
+    property_name: str,
+    property_schema: oa_types.Schema,
+) -> types.Result:
+    """Check x-to-many relationships."""
+    foreign_key_target_name, foreign_key_target_schema = oa_helpers.ref.resolve(
+        name=property_name, schema=property_schema, schemas=schemas
+    )
+
+    # Calculate the foreign key name
+    foreign_key_column = oa_helpers.peek.foreign_key_column(
+        schema=property_schema, schemas=schemas
+    )
+    if foreign_key_column is None:
+        foreign_key_column = "id"
+
+    # Check foreign key target schema
+    foreign_key_target_schema_result = _check_foreign_key_target_schema(
+        schema=foreign_key_target_schema,
+        schemas=schemas,
+        foreign_key_column=foreign_key_column,
+    )
+    if foreign_key_target_schema_result is not None:
+        return foreign_key_target_schema_result
+
+    return types.Result(True, None)
 
 
 def check(
@@ -49,3 +126,13 @@ def check(
         WHether the full relationship schema is valid and, if not, why it isn't.
 
     """
+    type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
+    if type_ == "object":
+        return _check_x_to_many(
+            schemas=schemas,
+            source_schema=source_schema,
+            property_name=property_name,
+            property_schema=property_schema,
+        )
+
+    return types.Result(True, None)
