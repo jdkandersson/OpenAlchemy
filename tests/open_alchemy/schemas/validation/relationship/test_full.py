@@ -1,5 +1,7 @@
 """Tests for full relationship schema checking."""
 
+# pylint: disable=too-many-lines
+
 import pytest
 
 from open_alchemy.schemas.validation.relationship import full
@@ -948,7 +950,21 @@ from open_alchemy.schemas.validation.relationship import full
         pytest.param(id="many-to-many referenced no primary key property"),
         pytest.param(id="many-to-many referenced invalid primary key property"),
         pytest.param(id="many-to-many referenced multiple primary key property"),
-        pytest.param(id="many-to-many valid"),
+        pytest.param(
+            {
+                "x-tablename": "schema",
+                "properties": {"id": {"type": "integer", "x-primary-key": True}},
+            },
+            {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+            {
+                "RefSchema": {
+                    "x-tablename": "ref_schema",
+                    "x-secondary": "schema_ref_schema",
+                    "properties": {"id": {"type": "integer", "x-primary-key": True,}},
+                }
+            },
+            id="many-to-many valid",
+        ),
     ],
 )
 @pytest.mark.schemas
