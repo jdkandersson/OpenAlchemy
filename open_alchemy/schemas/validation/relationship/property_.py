@@ -336,6 +336,19 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     """
     Check whether a property schema is a valid relationship schema.
 
+    At a high level:
+    1. the type of the property must be an array or object,
+    2. the property must reference a constructable schema (at the root for x-to-one and
+        at the items level for x-to-many relationships),
+    3. any parameters configuring the relationship must have the expected type,
+    4. in the allOf list no repeated keys are allowed,
+    5. one-to-one relationship must define both x-uselist and x-backref,
+    6. x-uselist and nullable is not allowed on x-to-many relationships,
+    7. x-foreign-key-column is not allowed on many-to-many relationships,
+    8. x-kwargs is not allowed to define backref and secondary and
+    9. x-to-many relationships must define property configuration keys at the items
+        level.
+
     Args:
         schemas: All the defined schemas used to resolve any $ref.
         schema: The schema to check.
