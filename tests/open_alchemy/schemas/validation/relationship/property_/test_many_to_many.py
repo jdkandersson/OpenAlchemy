@@ -529,6 +529,26 @@ TESTS = [
         (False, "x-to-many relationships do not support x-uselist False"),
         id="many to many allOf uselist False",
     ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefSchema"},
+                            {"x-uselist": True},
+                            {"x-secondary": "ref_schema_schema"},
+                        ]
+                    },
+                },
+                {"$ref": "#/components/schemas/RefRefSchema"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "could not resolve reference"),
+        id="many to many allOf $ref not for type no resolve",
+    ),
 ]
 
 

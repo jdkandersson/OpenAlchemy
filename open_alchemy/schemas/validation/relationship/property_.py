@@ -149,6 +149,8 @@ def _check_object(
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema: {exc}")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, "could not resolve reference")
 
     return types.Result(True, None)
 
@@ -302,6 +304,8 @@ def _check_array(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema: {exc}")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, "could not resolve reference")
 
     return types.Result(True, None)
 

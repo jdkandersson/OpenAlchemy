@@ -308,6 +308,19 @@ TESTS = [
         {"$ref": "#/components/schemas/RefSchema"},
         {
             "RefSchema": {
+                "allOf": [
+                    {"type": "object", "x-tablename": "ref_schema"},
+                    {"$ref": "#/components/schemas/RefRefSchema"},
+                ]
+            }
+        },
+        (False, "could not resolve reference"),
+        id="many to one $ref not for type not resolve",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
                 "type": "object",
                 "x-tablename": "ref_schema",
                 "x-uselist": False,
