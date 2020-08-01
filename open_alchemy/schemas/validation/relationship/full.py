@@ -12,8 +12,52 @@ from .. import simple
 from .. import types
 
 
+def _check_pre_defined_property_schema(
+    *,
+    property_name: str,
+    property_schema: oa_types.Schema,
+    schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
+):
+    """
+    Check for a pre-defined property on a schema.
+
+    Args:
+        property_name: The expected foreign key property name to check for.
+        property_schema: The schema for the foreign key.
+        schema: The schema to check for the property on.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        A result if something is wrong with the reason or None otherwise.
+
+    """
+    # Get the pre-defined property schema if it exists
+    properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
+    defined_property = next(filtered_properties, None)
+    if defined_property is None:
+        return None
+
+    # Validate the schema
+    _, defined_property_schema = defined_property
+    schema_result = simple.check(schemas, defined_property_schema)
+    if not schema_result.valid:
+        return types.Result(
+            False,
+            f"malformed schema for {property_name} property: {schema_result.reason}",
+        )
+
+    return None
+
+
 def _check_foreign_key_target_schema(
-    *, schema: oa_types.Schema, schemas: oa_types.Schemas, foreign_key_column: str
+    *,
+    schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
+    foreign_key_column: str,
+    modify_schema: oa_types.Schema,
+    foreign_key_property_name: str,
 ) -> types.OptResult:
     """
     Check the schema that is targeted by a foreign key.
@@ -22,16 +66,15 @@ def _check_foreign_key_target_schema(
         schema: The schema targeted by a foreign key.
         schemas: The schemas used to resolve any $ref.
         foreign_key_column: The name of the foreign key column.
+        modify_schema: The schema to add the foreign key property to.
+        foreign_key_property_name: The name of the foreign key property to define.
 
     Returns:
         A result if something is wrong with the reason or None otherwise.
 
     """
     # Check tablename
-    try:
-        tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
-    except exceptions.MalformedSchemaError:
-        return types.Result(False, "value of x-tablename must be a string")
+    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
     if tablename is None:
         return types.Result(False, "referenced schema must have a x-tablename value")
 
@@ -63,6 +106,16 @@ def _check_foreign_key_target_schema(
             f"property: {schema_result.reason}",
         )
 
+    # Check for pre-defined foreign key property
+    pre_defined_result = _check_pre_defined_property_schema(
+        property_name=foreign_key_property_name,
+        property_schema=foreign_key_target_property_schema,
+        schema=modify_schema,
+        schemas=schemas,
+    )
+    if pre_defined_result is not None:
+        return pre_defined_result
+
     return None
 
 
@@ -86,10 +139,13 @@ def _check_x_to_many(
         foreign_key_column = "id"
 
     # Check foreign key target schema
+    foreign_key_property_name = f"{property_name}_{foreign_key_column}"
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         schema=foreign_key_target_schema,
         schemas=schemas,
         foreign_key_column=foreign_key_column,
+        modify_schema=source_schema,
+        foreign_key_property_name=foreign_key_property_name,
     )
     if foreign_key_target_schema_result is not None:
         return foreign_key_target_schema_result
@@ -140,13 +196,17 @@ def check(
         WHether the full relationship schema is valid and, if not, why it isn't.
 
     """
-    type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
-    if type_ == "object":
-        return _check_x_to_many(
-            schemas=schemas,
-            source_schema=source_schema,
-            property_name=property_name,
-            property_schema=property_schema,
-        )
+    try:
+        type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
+        if type_ == "object":
+            return _check_x_to_many(
+                schemas=schemas,
+                source_schema=source_schema,
+                property_name=property_name,
+                property_schema=property_schema,
+            )
+
+    except exceptions.MalformedSchemaError as exc:
+        return types.Result(False, f"malformed schema: {exc}")
 
     return types.Result(True, None)

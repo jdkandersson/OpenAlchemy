@@ -112,7 +112,6 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         A result with whether the schema is valid and a reason if it is not.
 
     """
-    print(schema)
     try:
         # Check modifiers
         modifiers_result = _check_modifiers(schema=schema, schemas=schemas)

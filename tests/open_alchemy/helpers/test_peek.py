@@ -841,6 +841,8 @@ def test_peek_key(schema, schemas, expected_value):
 @pytest.mark.parametrize(
     "schema, schemas",
     [
+        pytest.param(True, {}, id="schema not dictionary"),
+        pytest.param({}, True, id="schemas not dictionary"),
         pytest.param({"$ref": True}, {}, id="$ref not string"),
         pytest.param({"allOf": True}, {}, id="allOf list"),
         pytest.param({"allOf": [True]}, {}, id="allOf element not dict"),

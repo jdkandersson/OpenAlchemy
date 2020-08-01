@@ -637,6 +637,12 @@ def _peek_key(
     schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
 ) -> typing.Any:
     """Implement peek_key."""
+    # Check schema and schemas are dict
+    if not isinstance(schema, dict):
+        raise exceptions.MalformedSchemaError("The schema must be a dictionary.")
+    if not isinstance(schemas, dict):
+        raise exceptions.MalformedSchemaError("The schemas must be a dictionary.")
+
     # Base case, look for type key
     value = schema.get(key)
     if value is not None:

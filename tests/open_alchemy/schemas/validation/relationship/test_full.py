@@ -20,7 +20,7 @@ TESTS = [
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"x-tablename": True, "type": "object"}},
-        (False, "value of x-tablename must be a string"),
+        (False, "malformed schema: The x-tablename property must be of type string. "),
         id="x-to-one referenced schema tablenamed not string",
     ),
     pytest.param(
@@ -143,6 +143,24 @@ TESTS = [
         },
         (True, None),
         id="x-to-one foreign key allOf property valid",
+    ),
+    pytest.param(
+        {"properties": {"ref_schema_id": {}}},
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+        (
+            False,
+            "malformed schema for ref_schema_id property: malformed schema: Every "
+            "property requires a type. ",
+        ),
+        id="x-to-one foreign key defined invalid",
     ),
     pytest.param(
         {"properties": {"ref_schema_id": {"type": "string"}}},
