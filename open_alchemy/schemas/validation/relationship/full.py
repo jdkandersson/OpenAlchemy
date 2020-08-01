@@ -9,6 +9,7 @@ from .. import types
 def check(
     schemas: oa_types.Schemas,
     source_schema: oa_types.Schema,
+    property_name: str,
     property_schema: oa_types.Schema,
 ) -> types.Result:
     """
@@ -41,6 +42,7 @@ def check(
     Args:
         schemas: All defined schemas used to resolve any $ref.
         source_schema: The schema that has the property embedded in it.
+        property_name: The name of the property.
         property_schema: The schema of the property.
 
     Returns:

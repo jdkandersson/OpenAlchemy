@@ -8,10 +8,11 @@ from open_alchemy.schemas.validation.relationship import full
 
 
 @pytest.mark.parametrize(
-    "source_schema, property_schema, schemas, expected_result",
+    "source_schema, property_name, property_schema, schemas, expected_result",
     [
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {}},
             (False, "referenced schema must have a x-tablename value"),
@@ -19,6 +20,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-tablename": True}},
             (False, "value of x-tablename must be a string"),
@@ -26,6 +28,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-tablename": "ref_schema"}},
             (False, "referenced schema must have properties"),
@@ -33,6 +36,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-tablename": "ref_schema", "properties": {}}},
             (False, "referenced schema must have the id property"),
@@ -40,6 +44,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -53,6 +58,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-tablename": "ref_schema", "properties": {"id": {}}}},
             (False, "referenced schema id property must define a type"),
@@ -60,6 +66,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -73,6 +80,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -85,6 +93,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -98,6 +107,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -114,6 +124,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"properties": {"ref_schema_id": {"type": "string"}}},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -126,6 +137,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"properties": {"ref_schema_id": {}}},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -145,6 +157,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -168,6 +181,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 ]
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -188,6 +202,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -207,6 +222,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -227,6 +243,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -250,6 +267,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -270,6 +288,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -289,6 +308,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -309,6 +329,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -333,6 +354,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -353,6 +375,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -372,6 +395,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -392,6 +416,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -416,6 +441,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -428,6 +454,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"properties": {"ref_schema_id": {"type": "integer"}}},
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -444,6 +471,7 @@ from open_alchemy.schemas.validation.relationship import full
                     "ref_schema_id": {"type": "integer", "x-foreign-key": "wrong key"}
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -463,6 +491,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 }
             },
+            "ref_schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {
@@ -475,6 +504,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "source schema must have a x-tablename value"),
@@ -482,6 +512,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": True},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "value of x-tablename must be a string"),
@@ -489,6 +520,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema"},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "source schema must have properties"),
@@ -496,6 +528,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {}},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "source schema must have the id property"),
@@ -503,6 +536,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-foreign-key-column": "name"}},
             (False, "source schema must have the name property"),
@@ -510,6 +544,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {}}},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "source schema id property must define a type"),
@@ -517,6 +552,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"name": {}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-foreign-key": "name"}},
             (False, "source schema name property must define a type"),
@@ -524,6 +560,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             (False, "referenced schema must have a x-tablename value"),
@@ -531,6 +568,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-tablename": True}},
             (False, "value of x-tablename must be a string"),
@@ -538,6 +576,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-tablename": "ref_schema"}},
             (True, None),
@@ -545,6 +584,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"name": {"type": "string"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -564,6 +604,7 @@ from open_alchemy.schemas.validation.relationship import full
                     }
                 ]
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-tablename": "ref_schema"}},
             (True, None),
@@ -571,6 +612,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"properties": {"schema_ref_schemas_id": {}}}},
             (False, "RefSchema.schema_ref_schemas_id must define a type"),
@@ -578,6 +620,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -592,6 +635,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -609,6 +653,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -633,6 +678,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -650,6 +696,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -674,6 +721,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -699,6 +747,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -720,6 +769,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "string", "maxLength": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -740,6 +790,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "string"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -764,6 +815,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "string", "maxLength": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -789,6 +841,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "string", "maxLength": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -810,6 +863,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "default": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -827,6 +881,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -851,6 +906,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "default": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -876,6 +932,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "default": 1}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -894,6 +951,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -906,6 +964,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -927,6 +986,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -944,6 +1004,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"properties": {"id": {"type": "integer", "x-primary-key": True}},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -960,6 +1021,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": True,
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -976,6 +1038,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -991,6 +1054,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1004,6 +1068,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"type": "integer"},},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1017,6 +1082,7 @@ from open_alchemy.schemas.validation.relationship import full
         ),
         pytest.param(
             {"x-tablename": "schema", "properties": {"id": {"x-primary-key": True},},},
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1036,6 +1102,7 @@ from open_alchemy.schemas.validation.relationship import full
                     "name": {"type": "string", "x-primary-key": True},
                 },
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1056,6 +1123,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1072,6 +1140,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1088,6 +1157,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1111,6 +1181,7 @@ from open_alchemy.schemas.validation.relationship import full
                 "x-tablename": "schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             },
+            "ref_schemas",
             {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
             {
                 "RefSchema": {
@@ -1125,13 +1196,13 @@ from open_alchemy.schemas.validation.relationship import full
     ],
 )
 @pytest.mark.schemas
-def test_check(source_schema, property_schema, schemas, expected_result):
+def test_check(source_schema, property_name, property_schema, schemas, expected_result):
     """
     GIVEN schemas, the source and property schema and the expected result
     WHEN check is called with the schemas and source and property schema
     THEN the expected result is returned.
     """
     # pylint: disable=assignment-from-no-return
-    returned_result = full.check(schemas, source_schema, property_schema)
+    returned_result = full.check(schemas, source_schema, property_name, property_schema)
 
     assert returned_result == expected_result
