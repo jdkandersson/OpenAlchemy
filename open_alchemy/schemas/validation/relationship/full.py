@@ -1,7 +1,5 @@
 """Validate the full schema (property, source and referenced)."""
 
-# pylint: disable=unused-argument,unused-variable
-
 import itertools
 
 from .... import exceptions
@@ -175,7 +173,7 @@ def _check_x_to_one(
     property_schema: oa_types.Schema,
 ) -> types.Result:
     """Check x-to-one relationships."""
-    foreign_key_target_name, foreign_key_target_schema = oa_helpers.ref.resolve(
+    _, foreign_key_target_schema = oa_helpers.ref.resolve(
         name=property_name, schema=property_schema, schemas=schemas
     )
 
@@ -244,6 +242,71 @@ def _check_one_to_many(
     return types.Result(True, None)
 
 
+def _check_many_to_many_schema(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check one of the many to many schemas."""
+    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
+    if tablename is None:
+        return types.Result(False, "schema must define x-tablename")
+
+    # Check for primary key
+    properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    primary_key_properties = filter(
+        lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)
+        is True,
+        properties,
+    )
+    primary_key_property = next(primary_key_properties, None)
+    if primary_key_property is None:
+        return types.Result(False, "schema must have a primary key")
+
+    # Check for multiple primary keys
+    next_primary_key_property = next(primary_key_properties, None)
+    if next_primary_key_property is not None:
+        return types.Result(
+            False,
+            "many-to-many relationships currently only support single primary key "
+            "schemas",
+        )
+
+    # Check property schema
+    primary_key_property_name, primary_key_property_schema = primary_key_property
+    schema_result = simple.check(schemas, primary_key_property_schema)
+    if schema_result.valid is False:
+        return types.Result(
+            False, f"{primary_key_property_name} property: {schema_result.reason}"
+        )
+
+    return None
+
+
+def _check_many_to_many(
+    *,
+    source_schema: oa_types.Schema,
+    items_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """Check many-to-many relationship."""
+    # Checking source schema
+    source_result = _check_many_to_many_schema(schema=source_schema, schemas=schemas)
+    if source_result is not None:
+        return types.Result(
+            source_result.valid, f"source schema: {source_result.reason}"
+        )
+
+    # Checking referenced schema
+    ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
+    _, ref_schema = oa_helpers.ref.resolve(
+        schema={"$ref": ref}, schemas=schemas, name=""
+    )
+    ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
+    if ref_result is not None:
+        return types.Result(ref_result.valid, f"referenced schema: {ref_result.reason}")
+
+    return types.Result(True, None)
+
+
 def check(
     schemas: oa_types.Schemas,
     source_schema: oa_types.Schema,
@@ -289,12 +352,23 @@ def check(
     """
     try:
         type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
+
+        # Handle x-to-one
         if type_ == "object":
             return _check_x_to_one(
                 schemas=schemas,
                 modify_schema=source_schema,
                 property_name=property_name,
                 property_schema=property_schema,
+            )
+
+        # Handle many-to-many
+        items = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+        assert items is not None
+        secondary = oa_helpers.peek.secondary(schema=items, schemas=schemas)
+        if secondary is not None:
+            return _check_many_to_many(
+                source_schema=source_schema, items_schema=items, schemas=schemas
             )
 
         return _check_one_to_many(

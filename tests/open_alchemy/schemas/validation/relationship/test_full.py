@@ -1078,8 +1078,8 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "foreign key targeted schema must define x-tablename"),
-        id="many-to-many referenced no tablename",
+        (False, "source schema: schema must define x-tablename"),
+        id="many-to-many source no tablename",
     ),
     pytest.param(
         {
@@ -1095,7 +1095,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "value of x-tablename must be a string"),
+        (False, "malformed schema: The x-tablename property must be of type string. "),
         id="many-to-many referenced invalid tablename",
     ),
     pytest.param(
@@ -1111,7 +1111,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "foreign key targeted schema must define x-tablename"),
+        (False, "referenced schema: schema must define x-tablename"),
         id="many-to-many referenced no tablename",
     ),
     pytest.param(
@@ -1128,7 +1128,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "value of x-tablename must be a string"),
+        (False, "malformed schema: The x-tablename property must be of type string. "),
         id="many-to-many referenced invalid tablename",
     ),
     pytest.param(
@@ -1142,7 +1142,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "source schema must have a primary key"),
+        (False, "source schema: schema must have a primary key"),
         id="many-to-many source no primary key property",
     ),
     pytest.param(
@@ -1156,7 +1156,11 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True,}},
             }
         },
-        (False, "id must define a type"),
+        (
+            False,
+            "source schema: id property: malformed schema: Every property requires a "
+            "type. ",
+        ),
         id="many-to-many source invalid primary key property",
     ),
     pytest.param(
@@ -1178,7 +1182,7 @@ TESTS = [
         },
         (
             False,
-            "many-to-many relationships currently only support single "
+            "source schema: many-to-many relationships currently only support single "
             "primary key schemas",
         ),
         id="many-to-many source multiple primary key property",
@@ -1197,7 +1201,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer"},},
             }
         },
-        (False, "foreign key targeted schema must have a primary key"),
+        (False, "referenced schema: schema must have a primary key"),
         id="many-to-many referenced no primary key property",
     ),
     pytest.param(
@@ -1214,7 +1218,11 @@ TESTS = [
                 "properties": {"id": {"x-primary-key": True,},},
             }
         },
-        (False, "RefSchema.id must define a type"),
+        (
+            False,
+            "referenced schema: id property: malformed schema: Every property requires "
+            "a type. ",
+        ),
         id="many-to-many referenced invalid primary key property",
     ),
     pytest.param(
@@ -1236,8 +1244,8 @@ TESTS = [
         },
         (
             False,
-            "many-to-many relationships currently only support single "
-            "primary key schemas",
+            "referenced schema: many-to-many relationships currently only support "
+            "single primary key schemas",
         ),
         id="many-to-many referenced multiple primary key property",
     ),
