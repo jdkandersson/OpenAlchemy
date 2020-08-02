@@ -190,10 +190,39 @@ TESTS = [
                 "type": "object",
                 "properties": {"id": {"type": "integer"}},
             },
-            "ParentSchema": {"properties": {"ref_schema_id": {"type": "string"}}},
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "properties": {"ref_schema_id": {"type": "string"}},
+            },
         },
         (True, None,),
-        id="x-to-one foreign key defined different type joined inheritance",
+        id="x-to-one foreign key defined different type joined table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"x-inherits": True, "properties": {}},
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            },
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "properties": {"ref_schema_id": {"type": "string"}},
+            },
+        },
+        (
+            False,
+            "the type of ref_schema_id is wrong, expected integer, actual is string.",
+        ),
+        id="x-to-one foreign key defined different type single table inheritance",
     ),
     pytest.param(
         {"properties": {"ref_schema_id": {}}},
