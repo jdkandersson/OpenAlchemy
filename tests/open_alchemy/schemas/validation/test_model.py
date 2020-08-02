@@ -429,6 +429,49 @@ TESTS = [
         (True, None),
         id="required has elements not in properties",
     ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-inherits": True,
+                    "type": "object",
+                    "required": ["parent_key"],
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (False, "required :: all items must be properties, parent_key is not"),
+        id="required property on parent model in single table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "type": "object",
+                    "required": ["parent_key"],
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (True, None),
+        id="required similar to single table inheritance without inheritance",
+    ),
     # pytest.param(
     #     {
     #         "description": True,
