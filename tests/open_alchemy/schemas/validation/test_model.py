@@ -235,6 +235,28 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
+                {
+                    "x-tablename": "schema",
+                    "x-inherits": True,
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"key": "value"},
+            }
+        },
+        (True, None),
+        id="properties multiple on joined table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
                 {"x-inherits": True, "type": "object"},
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -248,6 +270,23 @@ TESTS = [
         },
         (False, "models must have at least 1 property themself"),
         id="properties single on single table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"x-inherits": True, "type": "object", "properties": {"key": "value"}},
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"key": "value"},
+            }
+        },
+        (True, None),
+        id="properties multiple on single table inheritance",
     ),
     pytest.param(
         {
