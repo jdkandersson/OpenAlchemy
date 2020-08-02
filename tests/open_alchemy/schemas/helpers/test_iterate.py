@@ -126,10 +126,95 @@ def test_properties(schema, schemas, expected_properties):
     assert list(returned_properties) == expected_properties
 
 
-# @pytest.mark.parametrize(
-#     "schema, schemas, expected_properties",
-#     [
-#         pytest.param(id="x-inherits not string nor boolean"),
-#         pytest.param(id="x-inherits True"),
-#     ]
-# )
+@pytest.mark.parametrize(
+    "schema, schemas, expected_properties",
+    [
+        pytest.param(
+            {"x-inherits": 1, "properties": {"prop_1": "value 1"}},
+            {},
+            [],
+            id="x-inherits causes MalformedSchemaError",
+        ),
+        pytest.param(
+            {"x-inherits": "ParentSchema", "properties": {"prop_1": "value 1"}},
+            {},
+            [],
+            id="x-inherits causes InheritanceError",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-inherits": "ParentSchema", "properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {},
+            [],
+            id="x-inherits causes SchemaNotFoundError",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {
+                        "x-inherits": "ParentSchema",
+                        "x-tablename": "schema",
+                        "properties": {"prop_1": "value 1"},
+                    },
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {
+                "ParentSchema": {
+                    "x-tablename": "parent_schema",
+                    "properties": {"prop_2": "value 2"},
+                }
+            },
+            [("prop_1", "value 1")],
+            id="skip",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-tablename": "schema", "properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {
+                "ParentSchema": {
+                    "x-tablename": "parent_schema",
+                    "properties": {"prop_2": "value 2"},
+                }
+            },
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="no inheritance not skip",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {
+                "ParentSchema": {
+                    "x-tablename": "parent_schema",
+                    "properties": {"prop_2": "value 2"},
+                }
+            },
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="single table not skip",
+        ),
+    ],
+)
+@pytest.mark.schemas
+def test_properties_joined(schema, schemas, expected_properties):
+    """
+    GIVEN schema, schemas and expected properties
+    WHEN properties is called with the schema and schemas
+    THEN the expected name and property schema are returned.
+    """
+    returned_properties = iterate.properties(
+        schema=schema, schemas=schemas, stay_within_tablename_scope=True
+    )
+
+    assert list(returned_properties) == expected_properties

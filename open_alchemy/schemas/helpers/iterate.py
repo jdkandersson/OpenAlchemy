@@ -1,7 +1,5 @@
 """Functions to expose iterables for schemas."""
 
-# pylint: disable=unused-argument
-
 import typing
 
 from ... import exceptions
@@ -60,16 +58,49 @@ def properties(
         An interator with all properties of a schema.
 
     """
+    skip_name: typing.Optional[str] = None
+    if stay_within_tablename_scope or stay_within_model:
+        try:
+            inheritance_type = helpers.inheritance.calculate_type(
+                schema=schema, schemas=schemas
+            )
+            if inheritance_type != helpers.inheritance.Type.NONE:
+                parent_name = helpers.inheritance.retrieve_parent(
+                    schema=schema, schemas=schemas
+                )
+
+                # Check for JOINED
+                if (
+                    inheritance_type == helpers.inheritance.Type.JOINED_TABLE
+                    and stay_within_tablename_scope
+                ):
+                    skip_name = parent_name
+        except (
+            exceptions.MalformedSchemaError,
+            exceptions.InheritanceError,
+            exceptions.SchemaNotFoundError,
+        ):
+            return
+
+    yield from _properties(schema=schema, schemas=schemas, skip_name=skip_name)
+
+
+def _properties(
+    *, schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str],
+) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
+    """Private interface for properties."""
     if not isinstance(schema, dict):
         return
 
     # Handle $ref
     if schema.get("$ref") is not None:
         try:
-            _, ref_schema = helpers.ref.resolve(name="", schema=schema, schemas=schemas)
+            _, ref_schema = helpers.ref.resolve(
+                name="", schema=schema, schemas=schemas, skip_name=skip_name
+            )
         except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
             return
-        yield from properties(schema=ref_schema, schemas=schemas)
+        yield from _properties(schema=ref_schema, schemas=schemas, skip_name=skip_name)
 
     # Handle allOf
     all_of = schema.get("allOf")
@@ -77,7 +108,9 @@ def properties(
         if not isinstance(all_of, list):
             return
         for sub_schema in all_of:
-            yield from properties(schema=sub_schema, schemas=schemas)
+            yield from _properties(
+                schema=sub_schema, schemas=schemas, skip_name=skip_name
+            )
 
     # Handle simple case
     schema_properties = schema.get("properties")
