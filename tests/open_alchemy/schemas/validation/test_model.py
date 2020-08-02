@@ -779,6 +779,8 @@ TESTS = [
         (True, None),
         id="x-composite-unique",
     ),
+    # ADD TESTS where composite index and unique keys are not properties and also when
+    # they are on a joined table find on single table
 ]
 
 
