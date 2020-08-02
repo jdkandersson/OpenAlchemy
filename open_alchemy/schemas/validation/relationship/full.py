@@ -203,7 +203,9 @@ def _check_x_to_one(
     )
 
     # Check foreign key target schema
-    foreign_key_property_name = f"{property_name}_{foreign_key_column_name}"
+    foreign_key_property_name = oa_helpers.foreign_key.calculate_property_name_x_to_one(
+        property_name=property_name, foreign_key_column_name=foreign_key_column_name
+    )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
         schemas=schemas,
