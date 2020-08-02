@@ -190,7 +190,7 @@ TESTS = [
                 "properties": {"key": "value"},
             }
         },
-        (False, ""),
+        (False, "models must have at least 1 property themself."),
         id="properties single on single table inheritance",
     ),
     pytest.param(
