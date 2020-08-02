@@ -341,7 +341,7 @@ def _check_many_to_many_schema(
 def _check_many_to_many(
     *,
     parent_schema: oa_types.Schema,
-    items_schema: oa_types.Schema,
+    property_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -349,7 +349,7 @@ def _check_many_to_many(
 
     Args:
         parent_schema: The schema that has the property that defines the relationship.
-        items_schema: The schema of the items for the property that defines the
+        property_schema: The schema of the items for the property that defines the
             relationship.
         schemas: Used to resolve any $ref.
 
@@ -365,6 +365,8 @@ def _check_many_to_many(
         )
 
     # Checking referenced schema
+    items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+    assert items_schema is not None
     ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
     _, ref_schema = oa_helpers.ref.resolve(
         schema={"$ref": ref}, schemas=schemas, name=""
@@ -422,31 +424,30 @@ def check(
 
     """
     try:
-        type_ = oa_helpers.peek.type_(schema=property_schema, schemas=schemas)
-
-        # Handle x-to-one
-        if type_ == "object":
+        type_ = oa_helpers.relationship.calculate_type(
+            schema=property_schema, schemas=schemas
+        )
+        if type_ in {
+            oa_helpers.relationship.Type.MANY_TO_ONE,
+            oa_helpers.relationship.Type.ONE_TO_ONE,
+        }:
             return _check_x_to_one(
                 schemas=schemas,
                 modify_schema=parent_schema,
                 property_name=property_name,
                 property_schema=property_schema,
             )
-
-        # Handle many-to-many
-        items = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
-        assert items is not None
-        secondary = oa_helpers.peek.secondary(schema=items, schemas=schemas)
-        if secondary is not None:
-            return _check_many_to_many(
-                parent_schema=parent_schema, items_schema=items, schemas=schemas
+        if type_ == oa_helpers.relationship.Type.ONE_TO_MANY:
+            return _check_one_to_many(
+                schemas=schemas,
+                foreign_key_target_schema=parent_schema,
+                property_name=property_name,
+                property_schema=property_schema,
             )
-
-        return _check_one_to_many(
-            schemas=schemas,
-            foreign_key_target_schema=parent_schema,
-            property_name=property_name,
+        return _check_many_to_many(
+            parent_schema=parent_schema,
             property_schema=property_schema,
+            schemas=schemas,
         )
 
     except exceptions.MalformedSchemaError as exc:
