@@ -203,7 +203,7 @@ def _check_x_to_one(
     )
 
     # Check foreign key target schema
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_property_name_x_to_one(
+    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name_x_to_one(
         property_name=property_name, foreign_key_column_name=foreign_key_column_name
     )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
@@ -228,6 +228,8 @@ def _check_one_to_many(
 ) -> types.Result:
     """
     Check one-to-many relationships.
+
+    Assume foreign_key_target_schema has already been validated.
 
     Args:
         foreign_key_target_schema: The schema targeted by the foreign key.
@@ -263,7 +265,15 @@ def _check_one_to_many(
     tablename = oa_helpers.peek.tablename(
         schema=foreign_key_target_schema, schemas=schemas
     )
-    foreign_key_property_name = f"{tablename}_{property_name}_{foreign_key_column_name}"
+    if tablename is None:
+        return types.Result(
+            False, "foreign key targeted schema must have a x-tablename value"
+        )
+    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name_one_to_many(
+        tablename=tablename,
+        property_name=property_name,
+        foreign_key_column_name=foreign_key_column_name,
+    )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
         schemas=schemas,
