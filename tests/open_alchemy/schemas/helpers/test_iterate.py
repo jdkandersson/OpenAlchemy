@@ -301,63 +301,28 @@ def test_properties_single(schema, schemas, expected_properties):
 @pytest.mark.parametrize(
     "schema, schemas, expected_required_lists",
     [
-        pytest.param(True, {}, [], id="not dict"),
-        pytest.param({}, {}, [], id="no properties"),
-        pytest.param({"properties": {}}, {}, [], id="empty properties"),
-        pytest.param({"properties": True}, {}, [], id="properties not dictionary",),
+        pytest.param({}, {}, [], id="no required"),
+        pytest.param({"required": "value 1"}, {}, ["value 1"], id="single required",),
         pytest.param(
-            {"properties": {"prop_1": "value 1"}},
+            {"x-inherits": False, "required": "value 1"},
             {},
-            [("prop_1", "value 1")],
-            id="single property",
+            ["value 1"],
+            id="single required x-inherits False",
         ),
-        pytest.param(
-            {"x-inherits": False, "properties": {"prop_1": "value 1"}},
-            {},
-            [("prop_1", "value 1")],
-            id="single property x-inherits False",
-        ),
-        pytest.param(
-            {"properties": {"prop_1": "value 1", "prop_2": "value 2"}},
-            {},
-            [("prop_1", "value 1"), ("prop_2", "value 2")],
-            id="multiple property",
-        ),
-        pytest.param({"$ref": True}, {}, [], id="$ref not string",),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
-            {"RefSchema": {"properties": {"prop_1": "value 1"}}},
-            [("prop_1", "value 1")],
+            {"RefSchema": {"required": "value 1"}},
+            ["value 1"],
             id="$ref",
         ),
         pytest.param(
-            {"$ref": "#/components/schemas/RefSchema"}, {}, [], id="$ref not resolve",
-        ),
-        pytest.param({"allOf": True}, {}, [], id="allOf not list"),
-        pytest.param({"allOf": []}, {}, [], id="allOf empty"),
-        pytest.param({"allOf": [True]}, {}, [], id="allOf elements not dict"),
-        pytest.param(
-            {"allOf": [{"properties": {"prop_1": "value 1"}}]},
-            {},
-            [("prop_1", "value 1")],
-            id="allOf single",
+            {"allOf": [{"required": "value 1"}]}, {}, ["value 1"], id="allOf single",
         ),
         pytest.param(
-            {
-                "allOf": [
-                    {"properties": {"prop_1": "value 1"}},
-                    {"properties": {"prop_2": "value 2"}},
-                ]
-            },
+            {"allOf": [{"required": "value 1"}, {"required": "value 2"},]},
             {},
-            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            ["value 1", "value 2"],
             id="allOf multiple",
-        ),
-        pytest.param(
-            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
-            {"RefSchema": {"properties": {"prop_1": "value 1"}}},
-            [("prop_1", "value 1")],
-            id="allOf $ref",
         ),
     ],
 )
@@ -369,5 +334,84 @@ def test_required_lists(schema, schemas, expected_required_lists):
     THEN the expected name and property schema are returned.
     """
     returned_required_lists = iterate.required_lists(schema=schema, schemas=schemas)
+
+    assert list(returned_required_lists) == expected_required_lists
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_required_lists",
+    [
+        pytest.param(
+            {"x-inherits": 1, "required": "value 1"},
+            {},
+            [],
+            id="x-inherits causes MalformedSchemaError",
+        ),
+        pytest.param(
+            {"x-inherits": "ParentSchema", "required": "value 1"},
+            {},
+            [],
+            id="x-inherits causes InheritanceError",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-inherits": "ParentSchema", "required": "value 1"},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {},
+            [],
+            id="x-inherits causes SchemaNotFoundError",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {
+                        "x-inherits": "ParentSchema",
+                        "x-tablename": "schema",
+                        "required": "value 1",
+                    },
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            ["value 1"],
+            id="skip",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"required": "value 1", "x-inherits": "ParentSchema",},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            ["value 1"],
+            id="single table skip",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-tablename": "schema", "required": "value 1"},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            ["value 1", "value 2"],
+            id="no inheritance not skip",
+        ),
+    ],
+)
+@pytest.mark.schemas
+def test_required_lists_single(schema, schemas, expected_required_lists):
+    """
+    GIVEN schema, schemas and expected required lists
+    WHEN required_lists is called with the schema and schemas
+    THEN the expected name and property schema are returned.
+    """
+    returned_required_lists = iterate.required_lists(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
 
     assert list(returned_required_lists) == expected_required_lists
