@@ -134,7 +134,7 @@ def _properties(
     )
     for schema_properties in properties_iterator:
         if not isinstance(schema_properties, dict):
-            return
+            continue
         yield from schema_properties.items()
 
 
@@ -181,7 +181,7 @@ def _any_key(
     yield value
 
 
-def required_lists(
+def required_values(
     *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Any]:
     """
@@ -221,3 +221,34 @@ def required_lists(
     yield from _any_key(
         schema=schema, schemas=schemas, skip_name=skip_name, key="required"
     )
+
+
+def required_value_items(
+    *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
+) -> typing.Iterator[typing.Any]:
+    """
+    Return iterable with all items of the required key of the constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise yields the required key value.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+        stay_within_model: Ensures that each required value is only returned once. For
+            both single and joined table inheritance no reference to the parent is
+            followed.
+
+    Returns:
+        An interator with all items of the required key.
+
+    """
+    required_values_iterator = required_values(
+        schema=schema, schemas=schemas, stay_within_model=stay_within_model
+    )
+    for required_value in required_values_iterator:
+        if not isinstance(required_value, list):
+            continue
+        yield from required_value

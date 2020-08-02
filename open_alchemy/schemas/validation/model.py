@@ -40,7 +40,17 @@ def _check_properties(
     # Check there is at least a single property
     first_property = next(properties, None)
     if first_property is None:
-        return types.Result(False, "models must have at least 1 property themself.")
+        return types.Result(False, "models must have at least 1 property themself")
+
+    # Check that all required values are lists
+    required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
+    required_value_not_list = any(
+        filter(
+            lambda required_value: not isinstance(required_value, list), required_values
+        )
+    )
+    if required_value_not_list:
+        return types.Result(False, "value of required must be a list")
 
     return None
 

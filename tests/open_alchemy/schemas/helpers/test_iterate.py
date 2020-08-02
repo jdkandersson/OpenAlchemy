@@ -108,6 +108,18 @@ def test_constructable(schemas, expected_schemas):
             id="allOf multiple",
         ),
         pytest.param(
+            {"allOf": [{"properties": True}, {"properties": {"prop_2": "value 2"}},]},
+            {},
+            [("prop_2", "value 2")],
+            id="allOf multiple first not dict",
+        ),
+        pytest.param(
+            {"allOf": [{"properties": {"prop_1": "value 1"}}, {"properties": True},]},
+            {},
+            [("prop_1", "value 1")],
+            id="allOf multiple second not dict",
+        ),
+        pytest.param(
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"properties": {"prop_1": "value 1"}}},
             [("prop_1", "value 1")],
@@ -299,7 +311,7 @@ def test_properties_single(schema, schemas, expected_properties):
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_required_lists",
+    "schema, schemas, expected_required_values",
     [
         pytest.param({}, {}, [], id="no required"),
         pytest.param({"required": "value 1"}, {}, ["value 1"], id="single required",),
@@ -327,19 +339,19 @@ def test_properties_single(schema, schemas, expected_properties):
     ],
 )
 @pytest.mark.schemas
-def test_required_lists(schema, schemas, expected_required_lists):
+def test_required_values(schema, schemas, expected_required_values):
     """
     GIVEN schema, schemas and expected required lists
-    WHEN required_lists is called with the schema and schemas
+    WHEN required_values is called with the schema and schemas
     THEN the expected name and property schema are returned.
     """
-    returned_required_lists = iterate.required_lists(schema=schema, schemas=schemas)
+    returned_required_values = iterate.required_values(schema=schema, schemas=schemas)
 
-    assert list(returned_required_lists) == expected_required_lists
+    assert list(returned_required_values) == expected_required_values
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_required_lists",
+    "schema, schemas, expected_required_values",
     [
         pytest.param(
             {"x-inherits": 1, "required": "value 1"},
@@ -404,14 +416,111 @@ def test_required_lists(schema, schemas, expected_required_lists):
     ],
 )
 @pytest.mark.schemas
-def test_required_lists_single(schema, schemas, expected_required_lists):
+def test_required_values_single(schema, schemas, expected_required_values):
     """
     GIVEN schema, schemas and expected required lists
-    WHEN required_lists is called with the schema and schemas
+    WHEN required_values is called with the schema and schemas and
+        stay_within_model set
     THEN the expected name and property schema are returned.
     """
-    returned_required_lists = iterate.required_lists(
+    returned_required_values = iterate.required_values(
         schema=schema, schemas=schemas, stay_within_model=True
     )
 
-    assert list(returned_required_lists) == expected_required_lists
+    assert list(returned_required_values) == expected_required_values
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_values",
+    [
+        pytest.param({"required": True}, {}, [], id="required not list"),
+        pytest.param({"required": []}, {}, [], id="required empty"),
+        pytest.param({"required": ["value 1"]}, {}, ["value 1"], id="required single"),
+        pytest.param(
+            {"required": ["value 1", "value 2"]},
+            {},
+            ["value 1", "value 2"],
+            id="required multiple",
+        ),
+        pytest.param(
+            {"allOf": [{"required": ["value 1"]}, {"required": ["value 2"]}]},
+            {},
+            ["value 1", "value 2"],
+            id="multiple required single",
+        ),
+        pytest.param(
+            {"allOf": [{"required": True}, {"required": ["value 2"]}]},
+            {},
+            ["value 2"],
+            id="multiple required first not list",
+        ),
+        pytest.param(
+            {"allOf": [{"required": ["value 1"]}, {"required": True}]},
+            {},
+            ["value 1"],
+            id="multiple required second not list",
+        ),
+    ],
+)
+@pytest.mark.schemas
+def test_required_value_items(schema, schemas, expected_values):
+    """
+    GIVEN schema, schemas and expected values
+    WHEN required_value_items is called with the schema and schemas
+    THEN the expected name and property schema are returned.
+    """
+    returned_values = iterate.required_value_items(schema=schema, schemas=schemas)
+
+    assert list(returned_values) == expected_values
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_values",
+    [
+        pytest.param(
+            {
+                "allOf": [
+                    {"required": ["value 1"], "x-inherits": "ParentSchema",},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {
+                "ParentSchema": {
+                    "x-tablename": "parent_schema",
+                    "required": ["value 2"],
+                }
+            },
+            ["value 1"],
+            id="single table skip",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-tablename": "schema", "required": ["value 1"]},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {
+                "ParentSchema": {
+                    "x-tablename": "parent_schema",
+                    "required": ["value 2"],
+                }
+            },
+            ["value 1", "value 2"],
+            id="no inheritance not skip",
+        ),
+    ],
+)
+@pytest.mark.schemas
+def test_required_value_items_single(schema, schemas, expected_values):
+    """
+    GIVEN schema, schemas and expected values
+    WHEN required_value_items is called with the schema and schemas and
+        stay_within_model set
+    THEN the expected name and property schema are returned.
+    """
+    returned_values = iterate.required_value_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+
+    assert list(returned_values) == expected_values
