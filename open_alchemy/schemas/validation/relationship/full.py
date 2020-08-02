@@ -94,7 +94,7 @@ def _check_foreign_key_target_schema(
     *,
     foreign_key_target_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
-    foreign_key_column: str,
+    foreign_key_column_name: str,
     modify_schema: oa_types.Schema,
     foreign_key_property_name: str,
 ) -> types.OptResult:
@@ -104,7 +104,7 @@ def _check_foreign_key_target_schema(
     Args:
         foreign_key_target_schema: The schema targeted by a foreign key.
         schemas: The schemas used to resolve any $ref.
-        foreign_key_column: The name of the foreign key column.
+        foreign_key_column_name: The name of the foreign key column.
         modify_schema: The schema to add the foreign key property to.
         foreign_key_property_name: The name of the foreign key property to define.
 
@@ -131,12 +131,15 @@ def _check_foreign_key_target_schema(
     properties = itertools.chain([has_one_property], properties)
 
     # Look for foreign key property schema
-    filtered_properties = filter(lambda arg: arg[0] == foreign_key_column, properties)
+    filtered_properties = filter(
+        lambda arg: arg[0] == foreign_key_column_name, properties
+    )
     foreign_key_target_property = next(filtered_properties, None)
     if foreign_key_target_property is None:
         return types.Result(
             False,
-            f"foreign key targeted schema must have the {foreign_key_column} property",
+            f"foreign key targeted schema must have the {foreign_key_column_name} "
+            "property",
         )
 
     # Validate the schema
@@ -152,7 +155,7 @@ def _check_foreign_key_target_schema(
         )
 
     # Check for pre-defined foreign key property
-    foreign_key = f"{tablename}.{foreign_key_column}"
+    foreign_key = f"{tablename}.{foreign_key_column_name}"
     pre_defined_result = _check_pre_defined_property_schema(
         property_name=foreign_key_property_name,
         property_schema=foreign_key_target_property_schema,
@@ -195,16 +198,16 @@ def _check_x_to_one(
     foreign_key_column = oa_helpers.peek.foreign_key_column(
         schema=property_schema, schemas=schemas
     )
-    foreign_key_column = oa_helpers.foreign_key.calculate_column_name(
+    foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
         x_foreign_key_column=foreign_key_column
     )
 
     # Check foreign key target schema
-    foreign_key_property_name = f"{property_name}_{foreign_key_column}"
+    foreign_key_property_name = f"{property_name}_{foreign_key_column_name}"
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
         schemas=schemas,
-        foreign_key_column=foreign_key_column,
+        foreign_key_column_name=foreign_key_column_name,
         modify_schema=modify_schema,
         foreign_key_property_name=foreign_key_property_name,
     )
@@ -244,7 +247,7 @@ def _check_one_to_many(
     foreign_key_column = oa_helpers.peek.foreign_key_column(
         schema=items_schema, schemas=schemas
     )
-    foreign_key_column = oa_helpers.foreign_key.calculate_column_name(
+    foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
         x_foreign_key_column=foreign_key_column
     )
 
@@ -258,11 +261,11 @@ def _check_one_to_many(
     tablename = oa_helpers.peek.tablename(
         schema=foreign_key_target_schema, schemas=schemas
     )
-    foreign_key_property_name = f"{tablename}_{property_name}_{foreign_key_column}"
+    foreign_key_property_name = f"{tablename}_{property_name}_{foreign_key_column_name}"
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
         schemas=schemas,
-        foreign_key_column=foreign_key_column,
+        foreign_key_column_name=foreign_key_column_name,
         modify_schema=modify_schema,
         foreign_key_property_name=foreign_key_property_name,
     )
