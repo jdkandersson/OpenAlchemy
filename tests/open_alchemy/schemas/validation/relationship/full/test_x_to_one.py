@@ -176,6 +176,26 @@ TESTS = [
         id="x-to-one foreign key defined different type",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"x-inherits": True, "x-tablename": "schema", "properties": {}},
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            },
+            "ParentSchema": {"properties": {"ref_schema_id": {"type": "string"}}},
+        },
+        (True, None,),
+        id="x-to-one foreign key defined different type joined inheritance",
+    ),
+    pytest.param(
         {"properties": {"ref_schema_id": {}}},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
