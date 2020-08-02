@@ -197,11 +197,10 @@ def _check_x_to_one(
     )
 
     # Calculate the foreign key name
-    foreign_key_column = oa_helpers.peek.foreign_key_column(
-        schema=property_schema, schemas=schemas
-    )
     foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        x_foreign_key_column=foreign_key_column
+        type_=oa_helpers.relationship.Type.MANY_TO_ONE,
+        schema=property_schema,
+        schemas=schemas,
     )
 
     # Check foreign key target schema
@@ -250,11 +249,10 @@ def _check_one_to_many(
     assert items_schema is not None
 
     # Calculate the foreign key name
-    foreign_key_column = oa_helpers.peek.foreign_key_column(
-        schema=items_schema, schemas=schemas
-    )
     foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        x_foreign_key_column=foreign_key_column
+        type_=oa_helpers.relationship.Type.ONE_TO_MANY,
+        schema=property_schema,
+        schemas=schemas,
     )
 
     # Retrieve the schema the foreign key needs to go onto

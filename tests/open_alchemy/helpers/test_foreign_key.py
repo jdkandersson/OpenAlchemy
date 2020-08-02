@@ -3,23 +3,61 @@
 import pytest
 
 from open_alchemy.helpers import foreign_key
+from open_alchemy.helpers import relationship
 
 
 @pytest.mark.parametrize(
-    "x_foreign_key_column, expected_name", [(None, "id"), ("name", "name"),]
+    "type_, schema, schemas, expected_column_name",
+    [
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {}},
+            "id",
+            id="many-to-one not defined",
+        ),
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-foreign-key-column": "name"}},
+            "name",
+            id="many-to-one defined",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            {"items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {}},
+            "id",
+            id="one-to-many not defined",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            {"items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"x-foreign-key-column": "name"}},
+            "name",
+            id="one-to-many defined",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
+            {"RefSchema": {"x-foreign-key-column": "name"}},
+            "name",
+            id="allOf one-to-many defined",
+        ),
+    ],
 )
 @pytest.mark.helper
-def test_calculate_column_name(x_foreign_key_column, expected_name):
+def test_calculate_column_name(type_, schema, schemas, expected_column_name):
     """
-    GIVEN x-foreign-key-column value and expected foreign key column name
-    WHEN calculate_column_name is called with the x-foreign-key-column value
+    GIVEN relationship type, schema, schemas and expected column name
+    WHEN calculate_column_name is called with the type, schema and schemas
     THEN the expected foreign key column name is returned.
     """
     returned_name = foreign_key.calculate_column_name(
-        x_foreign_key_column=x_foreign_key_column
+        type_=type_, schema=schema, schemas=schemas
     )
 
-    assert returned_name == expected_name
+    assert returned_name == expected_column_name
 
 
 @pytest.mark.helper

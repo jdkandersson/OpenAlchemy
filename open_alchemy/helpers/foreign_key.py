@@ -1,19 +1,34 @@
 """Helpers for foreign keys."""
 
-import typing
+from .. import types
+from . import peek
+from . import relationship
 
 
-def calculate_column_name(*, x_foreign_key_column: typing.Optional[str]) -> str:
+def calculate_column_name(
+    *, type_: relationship.Type, schema: types.Schema, schemas: types.Schemas
+) -> str:
     """
-    Calculate the column name based on the value of x-foreign-key-column.
+    Calculate the column name based on the relationship property schema.
+
+    Assume the property is a x-to-one or one-to-many relationship.
+    Assume the relationship property schema is valid.
 
     Args:
-        x_foreign_key_column: The value of x-foreign-key column.
+        schema: The schema of the relationship property.
 
     Returns:
         The name of the foreign key column.
 
     """
+    assert type_ != relationship.Type.MANY_TO_MANY
+
+    if type_ == relationship.Type.ONE_TO_MANY:
+        items_schema = peek.items(schema=schema, schemas=schemas)
+        assert items_schema is not None
+        schema = items_schema
+
+    x_foreign_key_column = peek.foreign_key_column(schema=schema, schemas=schemas)
     return x_foreign_key_column if x_foreign_key_column is not None else "id"
 
 
