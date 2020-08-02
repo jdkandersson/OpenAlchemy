@@ -133,7 +133,9 @@ def _get_schema_backrefs(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    names_properties = helpers.iterate.properties(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
     # Remove property name
     properties = map(lambda arg: arg[1], names_properties)
     # Remove properties that don't define back references
