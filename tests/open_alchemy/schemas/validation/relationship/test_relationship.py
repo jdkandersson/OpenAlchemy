@@ -6,7 +6,7 @@ from open_alchemy.schemas.validation import relationship
 
 
 @pytest.mark.parametrize(
-    "property_name, property_schema, source_schema, schemas, expected_result",
+    "property_name, property_schema, parent_schema, schemas, expected_result",
     [
         pytest.param(
             "schema",
@@ -38,7 +38,7 @@ from open_alchemy.schemas.validation import relationship
     ],
 )
 @pytest.mark.schemas
-def test_check(property_name, property_schema, source_schema, schemas, expected_result):
+def test_check(property_name, property_schema, parent_schema, schemas, expected_result):
     """
     GIVEN property name, schema, source schema, schemas and expected result
     WHEN check is called with the schemas, source schema, property name and property
@@ -46,7 +46,7 @@ def test_check(property_name, property_schema, source_schema, schemas, expected_
     THEN the expected result is returned.
     """
     returned_result = relationship.check(
-        schemas, source_schema, property_name, property_schema
+        schemas, parent_schema, property_name, property_schema
     )
 
     assert returned_result == expected_result

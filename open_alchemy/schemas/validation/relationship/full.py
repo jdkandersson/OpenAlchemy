@@ -340,7 +340,7 @@ def _check_many_to_many_schema(
 
 def _check_many_to_many(
     *,
-    source_schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
     items_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
@@ -348,7 +348,7 @@ def _check_many_to_many(
     Check many-to-many relationships.
 
     Args:
-        source_schema: The schema that has the property that defines the relationship.
+        parent_schema: The schema that has the property that defines the relationship.
         items_schema: The schema of the items for the property that defines the
             relationship.
         schemas: Used to resolve any $ref.
@@ -358,7 +358,7 @@ def _check_many_to_many(
 
     """
     # Checking source schema
-    source_result = _check_many_to_many_schema(schema=source_schema, schemas=schemas)
+    source_result = _check_many_to_many_schema(schema=parent_schema, schemas=schemas)
     if source_result is not None:
         return types.Result(
             source_result.valid, f"source schema :: {source_result.reason}"
@@ -380,7 +380,7 @@ def _check_many_to_many(
 
 def check(
     schemas: oa_types.Schemas,
-    source_schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
     property_name: str,
     property_schema: oa_types.Schema,
 ) -> types.Result:
@@ -413,7 +413,7 @@ def check(
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
-        source_schema: The schema that has the property embedded in it.
+        parent_schema: The schema that has the property embedded in it.
         property_name: The name of the property.
         property_schema: The schema of the property.
 
@@ -428,7 +428,7 @@ def check(
         if type_ == "object":
             return _check_x_to_one(
                 schemas=schemas,
-                modify_schema=source_schema,
+                modify_schema=parent_schema,
                 property_name=property_name,
                 property_schema=property_schema,
             )
@@ -439,12 +439,12 @@ def check(
         secondary = oa_helpers.peek.secondary(schema=items, schemas=schemas)
         if secondary is not None:
             return _check_many_to_many(
-                source_schema=source_schema, items_schema=items, schemas=schemas
+                parent_schema=parent_schema, items_schema=items, schemas=schemas
             )
 
         return _check_one_to_many(
             schemas=schemas,
-            foreign_key_target_schema=source_schema,
+            foreign_key_target_schema=parent_schema,
             property_name=property_name,
             property_schema=property_schema,
         )

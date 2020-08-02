@@ -49,3 +49,9 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
         return False
 
     return True
+
+
+# def _foreign_key_defined(schemas: types.Schemas, ) -> bool:
+#     """
+#     Check whether a foreign key has already been defined.
+#     """

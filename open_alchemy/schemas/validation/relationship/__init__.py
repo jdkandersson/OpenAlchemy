@@ -9,7 +9,7 @@ from . import property_
 
 def check(
     schemas: oa_types.Schemas,
-    source_schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
     property_name: str,
     property_schema: oa_types.Schema,
 ) -> types.Result:
@@ -18,7 +18,7 @@ def check(
 
     Args:
         schemas: All the schemas used to resolve any $ref.
-        source_schema: The schema with the embedded relationship property.
+        parent_schema: The schema with the embedded relationship property.
         property_name: The name of the relationship property.
         property_schema: The schema of the relationship property.
 
@@ -32,4 +32,4 @@ def check(
         return property_result
 
     # Validate the full schema
-    return full.check(schemas, source_schema, property_name, property_schema)
+    return full.check(schemas, parent_schema, property_name, property_schema)

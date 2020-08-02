@@ -214,16 +214,16 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "source_schema, property_name, property_schema, schemas, expected_result", TESTS,
+    "parent_schema, property_name, property_schema, schemas, expected_result", TESTS,
 )
 @pytest.mark.schemas
-def test_check(source_schema, property_name, property_schema, schemas, expected_result):
+def test_check(parent_schema, property_name, property_schema, schemas, expected_result):
     """
-    GIVEN schemas, the source and property schema and the expected result
-    WHEN check is called with the schemas and source and property schema
+    GIVEN schemas, the parent and property schema and the expected result
+    WHEN check is called with the schemas and parent and property schema
     THEN the expected result is returned.
     """
     # pylint: disable=assignment-from-no-return
-    returned_result = full.check(schemas, source_schema, property_name, property_schema)
+    returned_result = full.check(schemas, parent_schema, property_name, property_schema)
 
     assert returned_result == expected_result
