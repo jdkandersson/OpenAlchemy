@@ -65,6 +65,12 @@ def test_constructable(schemas, expected_schemas):
             id="single property",
         ),
         pytest.param(
+            {"x-inherits": False, "properties": {"prop_1": "value 1"}},
+            {},
+            [("prop_1", "value 1")],
+            id="single property x-inherits False",
+        ),
+        pytest.param(
             {"properties": {"prop_1": "value 1", "prop_2": "value 2"}},
             {},
             [("prop_1", "value 1"), ("prop_2", "value 2")],
@@ -118,3 +124,12 @@ def test_properties(schema, schemas, expected_properties):
     returned_properties = iterate.properties(schema=schema, schemas=schemas)
 
     assert list(returned_properties) == expected_properties
+
+
+# @pytest.mark.parametrize(
+#     "schema, schemas, expected_properties",
+#     [
+#         pytest.param(id="x-inherits not string nor boolean"),
+#         pytest.param(id="x-inherits True"),
+#     ]
+# )

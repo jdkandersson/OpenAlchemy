@@ -1,5 +1,7 @@
 """Functions to expose iterables for schemas."""
 
+# pylint: disable=unused-argument
+
 import typing
 
 from ... import exceptions
@@ -31,7 +33,11 @@ def constructable(
 
 
 def properties(
-    *, schema: types.Schema, schemas: types.Schemas
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    stay_within_tablename_scope: bool = False,
+    stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
     """
     Create an iterable with all properties of a schema from a constructable schema.
@@ -44,6 +50,11 @@ def properties(
     Args:
         schema: The constructable schems.
         schemas: All defined schemas (not just the constructable ones).
+        stay_within_tablename_scope: Ensures that on properties on the same table are
+            iterated over. For joined table inheritance, the reference to the parent is
+            not followed.
+        stay_within_model: Ensures that each property is only returned once. For both
+            single and joined table inheritance no reference to the parent is followed.
 
     Returns:
         An interator with all properties of a schema.
