@@ -45,7 +45,9 @@ def _check_pre_defined_property_schema(
     _, defined_property_schema = defined_property
     schema_result = simple.check(schemas, defined_property_schema)
     if not schema_result.valid:
-        return types.Result(False, f"{property_name} property: {schema_result.reason}",)
+        return types.Result(
+            False, f"{property_name} property :: {schema_result.reason}",
+        )
 
     # Check that key information matches
     checks = (
@@ -146,8 +148,7 @@ def _check_foreign_key_target_schema(
     if not schema_result.valid:
         return types.Result(
             False,
-            f"malformed foreign key targeted schema for "
-            f"{foreign_key_target_property_name} property: {schema_result.reason}",
+            f"{foreign_key_target_property_name} property :: {schema_result.reason}",
         )
 
     # Check for pre-defined foreign key property
@@ -312,7 +313,7 @@ def _check_many_to_many_schema(
     schema_result = simple.check(schemas, primary_key_property_schema)
     if schema_result.valid is False:
         return types.Result(
-            False, f"{primary_key_property_name} property: {schema_result.reason}"
+            False, f"{primary_key_property_name} property :: {schema_result.reason}"
         )
 
     return None
@@ -341,7 +342,7 @@ def _check_many_to_many(
     source_result = _check_many_to_many_schema(schema=source_schema, schemas=schemas)
     if source_result is not None:
         return types.Result(
-            source_result.valid, f"source schema: {source_result.reason}"
+            source_result.valid, f"source schema :: {source_result.reason}"
         )
 
     # Checking referenced schema
@@ -351,7 +352,9 @@ def _check_many_to_many(
     )
     ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
     if ref_result is not None:
-        return types.Result(ref_result.valid, f"referenced schema: {ref_result.reason}")
+        return types.Result(
+            ref_result.valid, f"referenced schema :: {ref_result.reason}"
+        )
 
     return types.Result(True, None)
 
@@ -428,4 +431,4 @@ def check(
         )
 
     except exceptions.MalformedSchemaError as exc:
-        return types.Result(False, f"malformed schema: {exc}")
+        return types.Result(False, f"malformed schema :: {exc}")

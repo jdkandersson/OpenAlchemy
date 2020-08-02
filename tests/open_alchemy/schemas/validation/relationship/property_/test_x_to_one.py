@@ -8,7 +8,7 @@ TESTS = [
     pytest.param(
         {},
         {},
-        (False, "malformed schema: Every property requires a type. ",),
+        (False, "malformed schema :: Every property requires a type. ",),
         id="no type",
     ),
     pytest.param(
@@ -20,7 +20,7 @@ TESTS = [
     pytest.param(
         {"type": True},
         {},
-        (False, "malformed schema: A type property value must be of type string. ",),
+        (False, "malformed schema :: A type property value must be of type string. ",),
         id="type not a string",
     ),
     pytest.param(
@@ -32,7 +32,7 @@ TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema: The value of $ref must ba a string. ",),
+        (False, "malformed schema :: The value of $ref must ba a string. ",),
         id="$ref not string",
     ),
     pytest.param(
@@ -56,7 +56,7 @@ TESTS = [
     pytest.param(
         {"allOf": True},
         {},
-        (False, "malformed schema: The value of allOf must be a list. ",),
+        (False, "malformed schema :: The value of allOf must be a list. ",),
         id="many to one allOf",
     ),
     pytest.param(
@@ -100,7 +100,7 @@ TESTS = [
                 "nullable": "True",
             }
         },
-        (False, "malformed schema: A nullable value must be of type boolean. "),
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
         id="many to one nullable $ref not bool",
     ),
     pytest.param(
@@ -142,7 +142,7 @@ TESTS = [
                 "x-backref": True,
             }
         },
-        (False, "malformed schema: The x-backref property must be of type string. "),
+        (False, "malformed schema :: The x-backref property must be of type string. "),
         id="many to one backref $ref not string",
     ),
     pytest.param(
@@ -191,7 +191,7 @@ TESTS = [
         },
         (
             False,
-            "malformed schema: The x-foreign-key-column property must be of type "
+            "malformed schema :: The x-foreign-key-column property must be of type "
             "string. ",
         ),
         id="many to one foreign-key-column $ref not string",
@@ -245,7 +245,7 @@ TESTS = [
     pytest.param(
         {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-kwargs": True}]},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "malformed schema: The x-kwargs property must be of type dict. "),
+        (False, "malformed schema :: The x-kwargs property must be of type dict. "),
         id="many to one allOf kwargs not dict",
     ),
     pytest.param(
@@ -339,7 +339,7 @@ TESTS = [
             ]
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "malformed schema: The x-uselist property must be of type boolean. "),
+        (False, "malformed schema :: The x-uselist property must be of type boolean. "),
         id="one to one allOf uselist not boolean",
     ),
     pytest.param(

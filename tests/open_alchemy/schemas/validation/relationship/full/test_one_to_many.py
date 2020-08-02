@@ -18,7 +18,10 @@ TESTS = [
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
-        (False, "malformed schema: The x-tablename property must be of type string. "),
+        (
+            False,
+            "malformed schema :: The x-tablename property must be of type string. ",
+        ),
         id="one-to-many source schema tablenamed not string",
     ),
     pytest.param(
@@ -50,11 +53,7 @@ TESTS = [
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
-        (
-            False,
-            "malformed foreign key targeted schema for id property: malformed schema: "
-            "Every property requires a type. ",
-        ),
+        (False, "id property :: malformed schema :: Every property requires a type. ",),
         id="one-to-many foreign key default property invalid",
     ),
     pytest.param(
@@ -64,8 +63,7 @@ TESTS = [
         {"RefSchema": {"x-foreign-key-column": "name"}},
         (
             False,
-            "malformed foreign key targeted schema for name property: malformed "
-            "schema: Every property requires a type. ",
+            "name property :: malformed schema :: Every property requires a type. ",
         ),
         id="one-to-many foreign key configured property invalid",
     ),
@@ -104,8 +102,8 @@ TESTS = [
         {"RefSchema": {"properties": {"schema_ref_schemas_id": {}}}},
         (
             False,
-            "schema_ref_schemas_id property: malformed schema: Every property requires "
-            "a type. ",
+            "schema_ref_schemas_id property :: malformed schema :: Every property "
+            "requires a type. ",
         ),
         id="one-to-many foreign key defined property invalid",
     ),

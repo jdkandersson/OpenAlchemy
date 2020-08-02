@@ -1,7 +1,5 @@
 """Define validation rules for simple properties."""
 
-# pylint: disable=unused-argument,unused-variable
-
 from ... import exceptions
 from ... import helpers
 from ... import types as oa_types
@@ -139,6 +137,6 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     except exceptions.SchemaNotFoundError:
         return types.Result(False, "could not resolve reference")
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
-        return types.Result(False, f"malformed schema: {exc}")
+        return types.Result(False, f"malformed schema :: {exc}")
 
     return types.Result(True, None)

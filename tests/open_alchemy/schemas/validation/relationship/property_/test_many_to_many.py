@@ -26,7 +26,10 @@ TESTS = [
                 "x-secondary": True,
             }
         },
-        (False, "malformed schema: The x-secondary property must be of type string. "),
+        (
+            False,
+            "malformed schema :: The x-secondary property must be of type string. ",
+        ),
         id="many to many $ref secondary not string",
     ),
     pytest.param(
@@ -70,7 +73,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "malformed schema: A nullable value must be of type boolean. "),
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
         id="many to many allOf nullable not bool",
     ),
     pytest.param(
@@ -113,7 +116,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "items property: multiple x-secondary defined in allOf"),
+        (False, "items property :: multiple x-secondary defined in allOf"),
         id="many to many allOf multiple secondary",
     ),
     pytest.param(
@@ -157,8 +160,8 @@ TESTS = [
         },
         (
             False,
-            "items property: malformed schema: The x-backref property must be of type "
-            "string. ",
+            "items property :: malformed schema :: The x-backref property must be of "
+            "type string. ",
         ),
         id="many to many backref $ref not string",
     ),
@@ -190,7 +193,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "items property: multiple x-backref defined in allOf"),
+        (False, "items property :: multiple x-backref defined in allOf"),
         id="many to many backref allOf multiple",
     ),
     pytest.param(
@@ -245,8 +248,8 @@ TESTS = [
         },
         (
             False,
-            "items property: malformed schema: The x-foreign-key-column property must "
-            "be of type string. ",
+            "items property :: malformed schema :: The x-foreign-key-column property "
+            "must be of type string. ",
         ),
         id="many to many $ref foreign-key-column not string",
     ),
@@ -376,7 +379,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "items property: multiple x-kwargs defined in allOf"),
+        (False, "items property :: multiple x-kwargs defined in allOf"),
         id="many to many allOf kwargs multiple",
     ),
     pytest.param(
@@ -393,8 +396,8 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (
             False,
-            "items property: malformed schema: The x-kwargs property must be of type "
-            "dict. ",
+            "items property :: malformed schema :: The x-kwargs property must be of "
+            "type dict. ",
         ),
         id="many to many allOf kwargs key not dict",
     ),
@@ -410,7 +413,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "items property: x-kwargs may not contain the backref key"),
+        (False, "items property :: x-kwargs may not contain the backref key"),
         id="many to many allOf kwargs has backref",
     ),
     pytest.param(
@@ -425,7 +428,7 @@ TESTS = [
             },
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "items property: x-kwargs may not contain the secondary key"),
+        (False, "items property :: x-kwargs may not contain the secondary key"),
         id="many to many allOf kwargs has secondary",
     ),
     pytest.param(
@@ -470,7 +473,7 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "malformed schema: The x-uselist property must be of type boolean. "),
+        (False, "malformed schema :: The x-uselist property must be of type boolean. "),
         id="many to many $ref uselist not boolean",
     ),
     pytest.param(

@@ -8,13 +8,13 @@ TESTS = [
     pytest.param(
         {},
         {},
-        (False, "malformed schema: Every property requires a type. ",),
+        (False, "malformed schema :: Every property requires a type. ",),
         id="type missing",
     ),
     pytest.param(
         {"type": True},
         {},
-        (False, "malformed schema: A type property value must be of type string. ",),
+        (False, "malformed schema :: A type property value must be of type string. ",),
         id="type not a string",
     ),
     pytest.param(
@@ -36,7 +36,7 @@ TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema: The value of $ref must ba a string. ",),
+        (False, "malformed schema :: The value of $ref must ba a string. ",),
         id="$ref not string",
     ),
     pytest.param(
@@ -54,13 +54,13 @@ TESTS = [
     pytest.param(
         {"allOf": True},
         {},
-        (False, "malformed schema: The value of allOf must be a list. ",),
+        (False, "malformed schema :: The value of allOf must be a list. ",),
         id="allOf not list",
     ),
     pytest.param(
         {"allOf": [True]},
         {},
-        (False, "malformed schema: The elements of allOf must be dictionaries. ",),
+        (False, "malformed schema :: The elements of allOf must be dictionaries. ",),
         id="allOf element not dictionary",
     ),
     pytest.param(
@@ -71,7 +71,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "format": True},
         {},
-        (False, "malformed schema: A format value must be of type string. "),
+        (False, "malformed schema :: A format value must be of type string. "),
         id="format not string",
     ),
     pytest.param(
@@ -143,7 +143,7 @@ TESTS = [
     pytest.param(
         {"type": "string", "maxLength": "1"},
         {},
-        (False, "malformed schema: A maxLength value must be of type integer. "),
+        (False, "malformed schema :: A maxLength value must be of type integer. "),
         id="string maxLength not integer",
     ),
     pytest.param(
@@ -182,7 +182,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "nullable": "True"},
         {},
-        (False, "malformed schema: A nullable value must be of type boolean. "),
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
         id="integer nullable not boolean",
     ),
     pytest.param(
@@ -200,7 +200,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "description": True},
         {},
-        (False, "malformed schema: A description value must be of type string. "),
+        (False, "malformed schema :: A description value must be of type string. "),
         id="integer description not string",
     ),
     pytest.param(
@@ -232,7 +232,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The x-primary-key property must be of type boolean. ",
+            "malformed schema :: The x-primary-key property must be of type boolean. ",
         ),
         id="integer x-primary-key not boolean",
     ),
@@ -263,7 +263,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-autoincrement": "True"},
         {},
-        (False, "malformed schema: A autoincrement value must be of type boolean. "),
+        (False, "malformed schema :: A autoincrement value must be of type boolean. "),
         id="integer x-autoincrement not boolean",
     ),
     pytest.param(
@@ -293,7 +293,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-index": "True"},
         {},
-        (False, "malformed schema: A index value must be of type boolean. "),
+        (False, "malformed schema :: A index value must be of type boolean. "),
         id="integer x-index not boolean",
     ),
     pytest.param(
@@ -311,7 +311,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-unique": "True"},
         {},
-        (False, "malformed schema: A unique value must be of type boolean. "),
+        (False, "malformed schema :: A unique value must be of type boolean. "),
         id="integer x-unique not boolean",
     ),
     pytest.param(
@@ -331,7 +331,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The x-foreign-key property must be of type string. ",
+            "malformed schema :: The x-foreign-key property must be of type string. ",
         ),
         id="integer x-foreign-key not string",
     ),
@@ -364,7 +364,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The default value does not conform to the schema. The "
+            "malformed schema :: The default value does not conform to the schema. The "
             "value is: True ",
         ),
         id="integer default invalid",
@@ -377,7 +377,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The default value does not conform to the schema. The "
+            "malformed schema :: The default value does not conform to the schema. The "
             "value is: True ",
         ),
         id="number default invalid",
@@ -393,7 +393,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The default value does not conform to the schema. The "
+            "malformed schema :: The default value does not conform to the schema. The "
             "value is: True ",
         ),
         id="string default invalid",
@@ -406,7 +406,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The default value does not conform to the schema. The "
+            "malformed schema :: The default value does not conform to the schema. The "
             "value is: 'True' ",
         ),
         id="boolean default invalid",
@@ -417,13 +417,13 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-kwargs": 1},
         {},
-        (False, "malformed schema: The x-kwargs property must be of type dict. "),
+        (False, "malformed schema :: The x-kwargs property must be of type dict. "),
         id="x-kwargs not dict",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {1: True}},
         {},
-        (False, "malformed schema: The x-kwargs property must have string keys. "),
+        (False, "malformed schema :: The x-kwargs property must have string keys. "),
         id="x-kwargs keys not dict",
     ),
     pytest.param(
@@ -479,7 +479,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The x-foreign-key-kwargs property must be of type "
+            "malformed schema :: The x-foreign-key-kwargs property must be of type "
             "dict. ",
         ),
         id="x-foreign-key-kwargs not dict",
@@ -493,7 +493,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema: The x-foreign-key-kwargs property must have string "
+            "malformed schema :: The x-foreign-key-kwargs property must have string "
             "keys. ",
         ),
         id="x-foreign-key-kwargs keys not dict",
