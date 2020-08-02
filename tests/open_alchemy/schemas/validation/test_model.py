@@ -604,72 +604,72 @@ TESTS = [
         (True, None),
         id="kwargs multiple",
     ),
-    # pytest.param(
-    #     {
-    #         "x-primary-key": "True",
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-primary-key",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-autoincrement": "True",
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-autoincrement",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-index": "True",
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-index",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-unique": "True",
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-unique",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-foreign-key": True,
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-foreign-key",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-foreign-key-kwargs": True,
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="has x-foreign-key-kwargs",
-    # ),
+    pytest.param(
+        {
+            "x-primary-key": "True",
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-primary-key",
+    ),
+    pytest.param(
+        {
+            "x-autoincrement": "True",
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-autoincrement",
+    ),
+    pytest.param(
+        {
+            "x-index": "True",
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-index",
+    ),
+    pytest.param(
+        {
+            "x-unique": "True",
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-unique",
+    ),
+    pytest.param(
+        {
+            "x-foreign-key": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-foreign-key",
+    ),
+    pytest.param(
+        {
+            "x-foreign-key-kwargs": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="has x-foreign-key-kwargs",
+    ),
     # pytest.param(
     #     {
     #         "x-composite-index": True,

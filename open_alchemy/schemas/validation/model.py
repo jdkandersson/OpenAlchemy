@@ -14,7 +14,7 @@ from . import types
 def _check_properties(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
-    """Check the properties."""
+    """Check properties."""
     # Check property values
     properties_values = helpers.iterate.properties_values(
         schema=schema, schemas=schemas, stay_within_model=True
@@ -51,7 +51,7 @@ def _check_properties(
 def _check_required(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
-    """Check the required."""
+    """Check required."""
     # Retrieve property names
     properties_items = helpers.iterate.property_items(
         schema=schema, schemas=schemas, stay_within_model=True
@@ -96,7 +96,7 @@ def _check_required(
 def _check_mandatory(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
-    """Check basics related to tablename, inheritance and type."""
+    """Check mandatory keys of the model schema."""
     # Check for inheritance
     inherits = oa_helpers.schema.inherits(schema=schema, schemas=schemas)
     if inherits:
@@ -117,6 +117,31 @@ def _check_mandatory(
     return None
 
 
+def _check_kwargs(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check kwargs value of it exists."""
+    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    if kwargs is None:
+        return None
+
+    def invalid_key(key) -> bool:
+        """Check value of key is valid."""
+        assert isinstance(key, str)
+        return not key.startswith("__") or not key.endswith("__")
+
+    kwargs_keys = list(kwargs.keys())
+    any_kwargs_keys_invalid = any(filter(invalid_key, kwargs_keys,))
+    if any_kwargs_keys_invalid:
+        return types.Result(
+            False, "models x-kwargs must have keys that start and end with __"
+        )
+    if "__table_args__" in kwargs:
+        return types.Result(False, "models x-kwargs cannot define __table_args__")
+
+    return None
+
+
 def _check_modifiers(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
@@ -129,22 +154,9 @@ def _check_modifiers(
     oa_helpers.peek.description(schema=schema, schemas=schemas)
 
     # Check kwargs
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
-    if kwargs is not None:
-
-        def invalid_key(key) -> bool:
-            """Check value of key is valid."""
-            assert isinstance(key, str)
-            return not key.startswith("__") or not key.endswith("__")
-
-        kwargs_keys = list(kwargs.keys())
-        any_kwargs_keys_invalid = any(filter(invalid_key, kwargs_keys,))
-        if any_kwargs_keys_invalid:
-            return types.Result(
-                False, "models x-kwargs must have keys that start and end with __"
-            )
-        if "__table_args__" in kwargs:
-            return types.Result(False, "models x-kwargs cannot define __table_args__")
+    kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
+    if kwargs_result is not None:
+        return kwargs_result
 
     return None
 
