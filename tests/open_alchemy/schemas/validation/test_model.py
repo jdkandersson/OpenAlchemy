@@ -118,7 +118,7 @@ TESTS = [
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": True},
         {},
-        (False, "models must have at least 1 property themself"),
+        (False, "value of properties must be a dictionary"),
         id="properties not dict",
     ),
     pytest.param(
@@ -130,7 +130,7 @@ TESTS = [
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {True: "value"}},
         {},
-        (False, None),
+        (False, "properties :: all property keys must be strings"),
         id="properties single key not string",
     ),
     pytest.param(
@@ -140,7 +140,7 @@ TESTS = [
             "properties": {True: "value 1", "key_2": "value 2"},
         },
         {},
-        (False, None),
+        (False, "properties :: all property keys must be strings"),
         id="properties multiple first key not string",
     ),
     pytest.param(
@@ -150,7 +150,7 @@ TESTS = [
             "properties": {"key_1": "value 1", True: "value 2"},
         },
         {},
-        (False, None),
+        (False, "properties :: all property keys must be strings"),
         id="properties multiple second key not string",
     ),
     pytest.param(
@@ -182,8 +182,23 @@ TESTS = [
             ]
         },
         {},
-        (False, None),
-        id="allOf property key not string",
+        (True, None),
+        id="allOf properties single",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"x-tablename": "schema", "type": "object", "properties": True,},
+                {
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+            ]
+        },
+        {},
+        (False, "value of properties must be a dictionary"),
+        id="allOf multiple first property key not string",
     ),
     pytest.param(
         {
@@ -192,12 +207,13 @@ TESTS = [
                     "x-tablename": "schema",
                     "type": "object",
                     "properties": {"key": "value"},
-                }
+                },
+                {"x-tablename": "schema", "type": "object", "properties": True,},
             ]
         },
         {},
-        (True, None),
-        id="allOf properties single",
+        (False, "value of properties must be a dictionary"),
+        id="allOf multiple second property key not string",
     ),
     pytest.param(
         {

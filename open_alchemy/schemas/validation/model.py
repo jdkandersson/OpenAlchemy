@@ -35,6 +35,18 @@ def _check_properties(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the properties."""
+    properties_values = helpers.iterate.properties_values(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    any_properties_value_not_list = any(
+        filter(
+            lambda properties_value: not isinstance(properties_value, dict),
+            properties_values,
+        )
+    )
+    if any_properties_value_not_list:
+        return types.Result(False, "value of properties must be a dictionary")
+
     properties = helpers.iterate.property_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )

@@ -85,7 +85,7 @@ def property_items(
     schemas: types.Schemas,
     stay_within_tablename: bool = False,
     stay_within_model: bool = False,
-) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
+) -> typing.Iterator[typing.Any]:
     """
     Create an iterable with all properties of a schema from a constructable schema.
 
@@ -107,6 +107,47 @@ def property_items(
         An interator with all properties of a schema.
 
     """
+    properties_values_iterator = properties_values(
+        schema=schema,
+        schemas=schemas,
+        stay_within_tablename=stay_within_tablename,
+        stay_within_model=stay_within_model,
+    )
+    for properties_value in properties_values_iterator:
+        if not isinstance(properties_value, dict):
+            continue
+        yield from properties_value.items()
+
+
+def properties_values(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    stay_within_tablename: bool = False,
+    stay_within_model: bool = False,
+) -> typing.Iterator[typing.Any]:
+    """
+    Return iterable with all values of the properties key of the constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise yields the properties key value.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+        stay_within_tablename: Ensures that only properties on the same table are
+            iterated over. For joined table inheritance, the reference to the parent is
+            not followed.
+        stay_within_model: Ensures that each properties value is only returned once. For
+            both single and joined table inheritance no reference to the parent is
+            followed.
+
+    Returns:
+        An interator with all properties key values.
+
+    """
     skip_name: typing.Optional[str] = None
     try:
         skip_name = _calculate_skip_name(
@@ -122,23 +163,9 @@ def property_items(
     ):
         return
 
-    yield from _property_items(schema=schema, schemas=schemas, skip_name=skip_name)
-
-
-def _property_items(
-    *, schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str]
-) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
-    """Private interface for properties."""
-    properties_iterator = _any_key(
+    yield from _any_key(
         schema=schema, schemas=schemas, skip_name=skip_name, key="properties"
     )
-    for schema_properties in properties_iterator:
-        if not isinstance(schema_properties, dict):
-            continue
-        yield from schema_properties.items()
-
-
-_TValueType = typing.TypeVar("_TValueType")
 
 
 def _any_key(
