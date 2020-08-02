@@ -97,7 +97,7 @@ def properties(
     Args:
         schema: The constructable schems.
         schemas: All defined schemas (not just the constructable ones).
-        stay_within_tablename: Ensures that on properties on the same table are
+        stay_within_tablename: Ensures that only properties on the same table are
             iterated over. For joined table inheritance, the reference to the parent is
             not followed.
         stay_within_model: Ensures that each property is only returned once. For both
@@ -126,8 +126,28 @@ def properties(
 
 
 def _properties(
-    *, schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str],
+    *, schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str]
 ) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
+    """Private interface for properties."""
+    properties_iterator = _any_key(
+        schema=schema, schemas=schemas, skip_name=skip_name, key="properties"
+    )
+    for schema_properties in properties_iterator:
+        if not isinstance(schema_properties, dict):
+            return
+        yield from schema_properties.items()
+
+
+_TValueType = typing.TypeVar("_TValueType")
+
+
+def _any_key(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    skip_name: typing.Optional[str],
+    key: str,
+) -> typing.Iterator[typing.Any]:
     """Private interface for properties."""
     if not isinstance(schema, dict):
         return
@@ -140,7 +160,9 @@ def _properties(
             )
         except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
             return
-        yield from _properties(schema=ref_schema, schemas=schemas, skip_name=skip_name)
+        yield from _any_key(
+            schema=ref_schema, schemas=schemas, skip_name=skip_name, key=key
+        )
 
     # Handle allOf
     all_of = schema.get("allOf")
@@ -148,12 +170,54 @@ def _properties(
         if not isinstance(all_of, list):
             return
         for sub_schema in all_of:
-            yield from _properties(
-                schema=sub_schema, schemas=schemas, skip_name=skip_name
+            yield from _any_key(
+                schema=sub_schema, schemas=schemas, skip_name=skip_name, key=key
             )
 
     # Handle simple case
-    schema_properties = schema.get("properties")
-    if not isinstance(schema_properties, dict):
+    value = schema.get(key)
+    if value is None:
         return
-    yield from schema_properties.items()
+    yield value
+
+
+def required_lists(
+    *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
+) -> typing.Iterator[typing.Any]:
+    """
+    Return iterable with all values of the required key of the constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise yields the required key value.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+        stay_within_model: Ensures that each required value is only returned once. For
+            both single and joined table inheritance no reference to the parent is
+            followed.
+
+    Returns:
+        An interator with all required key values.
+
+    """
+    skip_name: typing.Optional[str] = None
+    try:
+        skip_name = _calculate_skip_name(
+            schema=schema,
+            schemas=schemas,
+            stay_within_tablename=False,
+            stay_within_model=stay_within_model,
+        )
+    except (
+        exceptions.MalformedSchemaError,
+        exceptions.InheritanceError,
+        exceptions.SchemaNotFoundError,
+    ):
+        return
+
+    yield from _any_key(
+        schema=schema, schemas=schemas, skip_name=skip_name, key="required"
+    )
