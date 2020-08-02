@@ -52,3 +52,18 @@ def test_calculate_prop_name_one_to_many():
     )
 
     assert returned_name == "table_1_property_1_fk_column"
+
+
+@pytest.mark.helper
+def test_calculate_foreign_key():
+    """
+    GIVEN the tablename and foreign key column name
+    WHEN calculate_foreign_key is called with tablename and foreign key
+        column name
+    THEN the expected foreign key is returned.
+    """
+    returned_key = foreign_key.calculate_foreign_key(
+        tablename="table_1", foreign_key_column_name="fk_column"
+    )
+
+    assert returned_key == "table_1.fk_column"

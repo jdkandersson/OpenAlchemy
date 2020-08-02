@@ -155,7 +155,9 @@ def _check_foreign_key_target_schema(
         )
 
     # Check for pre-defined foreign key property
-    foreign_key = f"{tablename}.{foreign_key_column_name}"
+    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+        tablename=tablename, foreign_key_column_name=foreign_key_column_name
+    )
     pre_defined_result = _check_pre_defined_property_schema(
         property_name=foreign_key_property_name,
         property_schema=foreign_key_target_property_schema,
