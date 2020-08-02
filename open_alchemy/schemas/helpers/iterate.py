@@ -69,9 +69,14 @@ def properties(
                     schema=schema, schemas=schemas
                 )
 
+                # Check for single
+                if stay_within_model:
+                    skip_name = parent_name
+
                 # Check for JOINED
                 if (
-                    inheritance_type == helpers.inheritance.Type.JOINED_TABLE
+                    not stay_within_model
+                    and inheritance_type == helpers.inheritance.Type.JOINED_TABLE
                     and stay_within_tablename_scope
                 ):
                     skip_name = parent_name
