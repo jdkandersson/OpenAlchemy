@@ -142,6 +142,30 @@ def _check_kwargs(
     return None
 
 
+def _check_invalid_keys(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check for keys that are not valid on a model."""
+    invalid_keys = (
+        "x-primary-key",
+        "x-autoincrement",
+        "x-index",
+        "x-unique",
+        "x-foreign-key",
+        "x-foreign-key-kwargs",
+    )
+    seen_invalid_keys = filter(
+        lambda key: oa_helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)
+        is not None,
+        invalid_keys,
+    )
+    invalid_key = next(seen_invalid_keys, None)
+    if invalid_key is not None:
+        return types.Result(False, f"models do not support the {invalid_key} key")
+
+    return None
+
+
 def _check_modifiers(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
@@ -157,6 +181,11 @@ def _check_modifiers(
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
     if kwargs_result is not None:
         return kwargs_result
+
+    # Check for invalid keys
+    invalid_keys_result = _check_invalid_keys(schema=schema, schemas=schemas)
+    if invalid_keys_result is not None:
+        return invalid_keys_result
 
     return None
 

@@ -612,8 +612,19 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
-        id="has x-primary-key",
+        (False, "models do not support the x-primary-key key"),
+        id="has x-primary-key invalid",
+    ),
+    pytest.param(
+        {
+            "x-primary-key": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (False, "models do not support the x-primary-key key"),
+        id="has x-primary-key valid",
     ),
     pytest.param(
         {
@@ -623,7 +634,7 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
+        (False, "models do not support the x-autoincrement key"),
         id="has x-autoincrement",
     ),
     pytest.param(
@@ -634,7 +645,7 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
+        (False, "models do not support the x-index key"),
         id="has x-index",
     ),
     pytest.param(
@@ -645,7 +656,7 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
+        (False, "models do not support the x-unique key"),
         id="has x-unique",
     ),
     pytest.param(
@@ -656,7 +667,7 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
+        (False, "models do not support the x-foreign-key key"),
         id="has x-foreign-key",
     ),
     pytest.param(
@@ -667,7 +678,7 @@ TESTS = [
             "properties": {"key": "value"},
         },
         {},
-        (True, None),
+        (False, "models do not support the x-foreign-key-kwargs key"),
         id="has x-foreign-key-kwargs",
     ),
     # pytest.param(
