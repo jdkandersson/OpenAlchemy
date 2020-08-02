@@ -80,18 +80,18 @@ def _calculate_schema(
             is_array = True
 
         ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
-        backref = helpers.prefer_local.get(
+        backref = oa_helpers.peek.prefer_local(
             get_value=oa_helpers.peek.backref, schema=items_schema, schemas=schemas
         )
     # Handle object
     else:
-        uselist: typing.Optional[bool] = helpers.prefer_local.get(
+        uselist: typing.Optional[bool] = oa_helpers.peek.prefer_local(
             get_value=oa_helpers.peek.uselist, schema=schema, schemas=schemas
         )
         if uselist is not False:
             is_array = True
         ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
-        backref = helpers.prefer_local.get(
+        backref = oa_helpers.peek.prefer_local(
             get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
         )
 

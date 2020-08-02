@@ -51,7 +51,25 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
     return True
 
 
-# def _foreign_key_defined(schemas: types.Schemas, ) -> bool:
+# def _foreign_key_defined(
+#     schemas: types.Schemas,
+#     parent_schema: types.Schema,
+#     property_name: str,
+#     property_schema: types.Schema,
+# ) -> bool:
 #     """
 #     Check whether a foreign key has already been defined.
+
+#     Assume that the property defines a x-to-one or one-to-many relationship.
+#     Assume that the schema has already been verified.
+
+#     Args:
+#         schemas: All defined schemas used to resolve any $ref.
+#         parent_schema: The schema the property is embedded in.
+#         property_name: The name of the property.
+#         property_schema: The schema of the propert.
+
+#     Returns:
+#         Whether a foreign key has already been defined.
+
 #     """

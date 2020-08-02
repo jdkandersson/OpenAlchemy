@@ -875,3 +875,54 @@ def test_peek_key_invalid(schema, schemas):
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_value",
+    [
+        pytest.param({}, {}, None, id="not found",),
+        pytest.param({"x-backref": "schema"}, {}, "schema", id="present locally",),
+        pytest.param({"allOf": []}, {}, None, id="not present locally in allOf",),
+        pytest.param(
+            {"allOf": [{"x-backref": "schema"}]},
+            {},
+            "schema",
+            id="present locally in allOf",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {}},
+            None,
+            id="not present behind $ref",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-backref": "schema"}},
+            "schema",
+            id="present behind $ref",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-backref": "schema"},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"x-backref": "wrong_schema"}},
+            "schema",
+            id="present locally in allOf and behind $ref",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_get(schema, schemas, expected_value):
+    """
+    GIVEN schema, schemas and expected value
+    WHEN get is called with the backref peek helper and the schema and schemas
+    THEN the expected value is returned.
+    """
+    returned_value = helpers.peek.prefer_local(
+        get_value=helpers.peek.backref, schema=schema, schemas=schemas
+    )
+
+    assert returned_value == expected_value
