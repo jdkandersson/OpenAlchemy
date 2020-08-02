@@ -18,7 +18,7 @@ def _check_type(
     except exceptions.SchemaNotFoundError:
         return types.Result(False, "reference does not resolve")
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
-        return types.Result(False, f"malformed schema when retrieving the type: {exc}")
+        return types.Result(False, f"malformed schema: {exc}")
     if type_ not in {"object", "array"}:
         return types.Result(False, "type not an object nor array")
 
@@ -256,11 +256,11 @@ def _check_array_items(
     if type_result is not None:
         return types.Result(
             type_result.valid,
-            f"value of items {type_result.reason}".replace(" nor array", ""),
+            f"items property: {type_result.reason}".replace(" nor array", ""),
         )
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     if type_ != "object":
-        return types.Result(False, "value of items type not an object",)
+        return types.Result(False, "items property: type not an object",)
 
     # Check array item values
     _values_result = _check_array_items_values(schema=schema, schemas=schemas)
@@ -271,7 +271,7 @@ def _check_array_items(
     object_result = _check_object(schema=schema, schemas=schemas)
     if object_result.valid is False:
         return types.Result(
-            object_result.valid, f"value of items {object_result.reason}"
+            object_result.valid, f"items property: {object_result.reason}"
         )
 
     # Check many to many relationship

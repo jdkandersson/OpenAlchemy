@@ -13,11 +13,7 @@ from open_alchemy.schemas.validation import relationship
             {},
             {},
             {},
-            (
-                False,
-                "malformed schema when retrieving the type: Every property requires a "
-                "type. ",
-            ),
+            (False, "malformed schema: Every property requires a type. ",),
         ),
         pytest.param(
             "schema",
