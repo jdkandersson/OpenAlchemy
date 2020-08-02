@@ -210,6 +210,61 @@ TESTS = [
         (True, None),
         id="many-to-many valid",
     ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
+        "ref_schemas",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "allOf": [
+                    {
+                        "x-tablename": "ref_schema",
+                        "x-inherits": True,
+                        "x-secondary": "schema_ref_schema",
+                        "properties": {},
+                    },
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "x-secondary": "schema_ref_schema",
+                "properties": {"id": {"type": "integer", "x-primary-key": True}},
+            },
+        },
+        (False, "referenced schema :: schema must have a primary key"),
+        id="many-to-many joined table inheritance",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
+        "ref_schemas",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "allOf": [
+                    {
+                        "x-inherits": True,
+                        "x-secondary": "schema_ref_schema",
+                        "properties": {},
+                    },
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "x-secondary": "schema_ref_schema",
+                "properties": {"id": {"type": "integer", "x-primary-key": True}},
+            },
+        },
+        (True, None),
+        id="many-to-many single table inheritance",
+    ),
 ]
 
 

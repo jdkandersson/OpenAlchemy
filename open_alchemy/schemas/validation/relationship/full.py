@@ -310,7 +310,9 @@ def _check_many_to_many_schema(
         return types.Result(False, "schema must define x-tablename")
 
     # Check for primary key
-    properties = helpers.iterate.properties(schema=schema, schemas=schemas)
+    properties = helpers.iterate.properties(
+        schema=schema, schemas=schemas, stay_within_tablename_scope=True
+    )
     primary_key_properties = filter(
         lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)
         is True,
