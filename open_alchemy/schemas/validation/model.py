@@ -2,6 +2,8 @@
 
 # pylint: disable=unused-argument
 
+import itertools
+
 from ... import exceptions
 from ... import helpers as oa_helpers
 from ... import types as oa_types
@@ -33,7 +35,7 @@ def _check_properties(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the properties."""
-    properties = helpers.iterate.properties(
+    properties = helpers.iterate.property_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
 
@@ -41,15 +43,26 @@ def _check_properties(
     first_property = next(properties, None)
     if first_property is None:
         return types.Result(False, "models must have at least 1 property themself")
+    properties = itertools.chain([first_property], properties)
+
+    # Check that all property names are sterings
+    property_name_set = set(map(lambda prop: prop[0], properties))
+    any_property_name_not_string = any(
+        filter(
+            lambda property_name: not isinstance(property_name, str), property_name_set
+        )
+    )
+    if any_property_name_not_string:
+        return types.Result(False, "properties :: all property keys must be strings")
 
     # Check that all required values are lists
     required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
-    required_value_not_list = any(
+    any_required_value_not_list = any(
         filter(
             lambda required_value: not isinstance(required_value, list), required_values
         )
     )
-    if required_value_not_list:
+    if any_required_value_not_list:
         return types.Result(False, "value of required must be a list")
 
     return None

@@ -128,6 +128,32 @@ TESTS = [
         id="properties empty",
     ),
     pytest.param(
+        {"x-tablename": "schema", "type": "object", "properties": {True: "value"}},
+        {},
+        (False, None),
+        id="properties single key not string",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {True: "value 1", "key_2": "value 2"},
+        },
+        {},
+        (False, None),
+        id="properties multiple first key not string",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key_1": "value 1", True: "value 2"},
+        },
+        {},
+        (False, None),
+        id="properties multiple second key not string",
+    ),
+    pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {"key": "value"}},
         {},
         (True, None),
@@ -144,6 +170,20 @@ TESTS = [
         },
         (True, None),
         id="$ref properties single",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                }
+            ]
+        },
+        {},
+        (False, None),
+        id="allOf property key not string",
     ),
     pytest.param(
         {

@@ -35,7 +35,7 @@ def _check_pre_defined_property_schema(
 
     """
     # Get the pre-defined property schema if it exists
-    properties = helpers.iterate.properties(
+    properties = helpers.iterate.property_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
@@ -124,7 +124,7 @@ def _check_foreign_key_target_schema(
         )
 
     # Check properties
-    properties = helpers.iterate.properties(
+    properties = helpers.iterate.property_items(
         schema=foreign_key_target_schema, schemas=schemas, stay_within_tablename=True,
     )
     has_one_property = next(properties, None)
@@ -308,7 +308,7 @@ def _check_many_to_many_schema(
         return types.Result(False, "schema must define x-tablename")
 
     # Check for primary key
-    properties = helpers.iterate.properties(
+    properties = helpers.iterate.property_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(

@@ -79,7 +79,7 @@ def _calculate_skip_name(
     return None
 
 
-def properties(
+def property_items(
     *,
     schema: types.Schema,
     schemas: types.Schemas,
@@ -122,10 +122,10 @@ def properties(
     ):
         return
 
-    yield from _properties(schema=schema, schemas=schemas, skip_name=skip_name)
+    yield from _property_items(schema=schema, schemas=schemas, skip_name=skip_name)
 
 
-def _properties(
+def _property_items(
     *, schema: types.Schema, schemas: types.Schemas, skip_name: typing.Optional[str]
 ) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
     """Private interface for properties."""
