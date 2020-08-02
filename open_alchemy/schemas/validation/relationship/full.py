@@ -195,8 +195,9 @@ def _check_x_to_one(
     foreign_key_column = oa_helpers.peek.foreign_key_column(
         schema=property_schema, schemas=schemas
     )
-    if foreign_key_column is None:
-        foreign_key_column = "id"
+    foreign_key_column = oa_helpers.foreign_key.calculate_column_name(
+        x_foreign_key_column=foreign_key_column
+    )
 
     # Check foreign key target schema
     foreign_key_property_name = f"{property_name}_{foreign_key_column}"
@@ -243,8 +244,9 @@ def _check_one_to_many(
     foreign_key_column = oa_helpers.peek.foreign_key_column(
         schema=items_schema, schemas=schemas
     )
-    if foreign_key_column is None:
-        foreign_key_column = "id"
+    foreign_key_column = oa_helpers.foreign_key.calculate_column_name(
+        x_foreign_key_column=foreign_key_column
+    )
 
     # Retrieve the schema the foreign key needs to go onto
     modify_schema_ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
