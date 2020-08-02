@@ -36,7 +36,7 @@ def _check_pre_defined_property_schema(
     """
     # Get the pre-defined property schema if it exists
     properties = helpers.iterate.properties(
-        schema=schema, schemas=schemas, stay_within_tablename_scope=True
+        schema=schema, schemas=schemas, stay_within_tablename=True
     )
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
     defined_property = next(filtered_properties, None)
@@ -125,9 +125,7 @@ def _check_foreign_key_target_schema(
 
     # Check properties
     properties = helpers.iterate.properties(
-        schema=foreign_key_target_schema,
-        schemas=schemas,
-        stay_within_tablename_scope=True,
+        schema=foreign_key_target_schema, schemas=schemas, stay_within_tablename=True,
     )
     has_one_property = next(properties, None)
     if has_one_property is None:
@@ -311,7 +309,7 @@ def _check_many_to_many_schema(
 
     # Check for primary key
     properties = helpers.iterate.properties(
-        schema=schema, schemas=schemas, stay_within_tablename_scope=True
+        schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
         lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)

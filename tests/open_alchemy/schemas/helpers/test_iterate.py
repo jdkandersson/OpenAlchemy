@@ -58,6 +58,7 @@ def test_constructable(schemas, expected_schemas):
         pytest.param(True, {}, [], id="not dict"),
         pytest.param({}, {}, [], id="no properties"),
         pytest.param({"properties": {}}, {}, [], id="empty properties"),
+        pytest.param({"properties": True}, {}, [], id="properties not dictionary",),
         pytest.param(
             {"properties": {"prop_1": "value 1"}},
             {},
@@ -217,7 +218,7 @@ def test_properties_joined(schema, schemas, expected_properties):
     THEN the expected name and property schema are returned.
     """
     returned_properties = iterate.properties(
-        schema=schema, schemas=schemas, stay_within_tablename_scope=True
+        schema=schema, schemas=schemas, stay_within_tablename=True
     )
 
     assert list(returned_properties) == expected_properties

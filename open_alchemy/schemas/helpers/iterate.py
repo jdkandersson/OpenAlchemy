@@ -34,7 +34,7 @@ def properties(
     *,
     schema: types.Schema,
     schemas: types.Schemas,
-    stay_within_tablename_scope: bool = False,
+    stay_within_tablename: bool = False,
     stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
     """
@@ -48,7 +48,7 @@ def properties(
     Args:
         schema: The constructable schems.
         schemas: All defined schemas (not just the constructable ones).
-        stay_within_tablename_scope: Ensures that on properties on the same table are
+        stay_within_tablename: Ensures that on properties on the same table are
             iterated over. For joined table inheritance, the reference to the parent is
             not followed.
         stay_within_model: Ensures that each property is only returned once. For both
@@ -59,7 +59,7 @@ def properties(
 
     """
     skip_name: typing.Optional[str] = None
-    if stay_within_tablename_scope or stay_within_model:
+    if stay_within_tablename or stay_within_model:
         try:
             inheritance_type = helpers.inheritance.calculate_type(
                 schema=schema, schemas=schemas
@@ -77,7 +77,7 @@ def properties(
                 if (
                     not stay_within_model
                     and inheritance_type == helpers.inheritance.Type.JOINED_TABLE
-                    and stay_within_tablename_scope
+                    and stay_within_tablename
                 ):
                     skip_name = parent_name
         except (
@@ -119,6 +119,6 @@ def _properties(
 
     # Handle simple case
     schema_properties = schema.get("properties")
-    if schema_properties is None:
+    if not isinstance(schema_properties, dict):
         return
     yield from schema_properties.items()
