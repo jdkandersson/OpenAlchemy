@@ -138,7 +138,6 @@ def _check_modifiers(
             return not key.startswith("__") or not key.endswith("__")
 
         kwargs_keys = list(kwargs.keys())
-        # reveal_type(kwargs_keys)
         any_kwargs_keys_invalid = any(filter(invalid_key, kwargs_keys,))
         if any_kwargs_keys_invalid:
             return types.Result(
