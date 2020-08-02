@@ -125,7 +125,9 @@ def _check_foreign_key_target_schema(
 
     # Check properties
     properties = helpers.iterate.properties(
-        schema=foreign_key_target_schema, schemas=schemas
+        schema=foreign_key_target_schema,
+        schemas=schemas,
+        stay_within_tablename_scope=True,
     )
     has_one_property = next(properties, None)
     if has_one_property is None:

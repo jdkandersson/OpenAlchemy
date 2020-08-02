@@ -115,9 +115,53 @@ TESTS = [
             "RefSchema": {
                 "x-tablename": "ref_schema",
                 "type": "object",
-                "x-foreign-key-column": "name",
-                "properties": {"name": {"type": "string"}},
+                "properties": {"id": {"type": "integer"}},
             }
+        },
+        (True, None),
+        id="x-to-one foreign key property default joined table inheritance",
+    ),
+    pytest.param(
+        {},
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "allOf": [
+                    {
+                        "x-tablename": "ref_schema",
+                        "x-inherits": True,
+                        "type": "object",
+                        "properties": {},
+                    },
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            },
+        },
+        (False, "foreign key targeted schema must have properties"),
+        id="x-to-one foreign key property default single table inheritance",
+    ),
+    pytest.param(
+        {},
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "allOf": [
+                    {"x-inherits": True, "type": "object", "properties": {},},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            },
         },
         (True, None),
         id="x-to-one foreign key property configured valid",
