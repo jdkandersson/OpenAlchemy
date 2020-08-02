@@ -187,6 +187,11 @@ def _check_modifiers(
     if invalid_keys_result is not None:
         return invalid_keys_result
 
+    # Check composite index
+    oa_helpers.peek.composite_index(schema=schema, schemas=schemas)
+    # Check composite unique
+    oa_helpers.peek.composite_unique(schema=schema, schemas=schemas)
+
     return None
 
 

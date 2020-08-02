@@ -681,50 +681,104 @@ TESTS = [
         (False, "models do not support the x-foreign-key-kwargs key"),
         id="has x-foreign-key-kwargs",
     ),
-    # pytest.param(
-    #     {
-    #         "x-composite-index": True,
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="x-composite-index invalid",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-composite-index": [],
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="x-composite-index",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-composite-unique": True,
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="x-composite-unique invalid",
-    # ),
-    # pytest.param(
-    #     {
-    #         "x-composite-unique": [],
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #     },
-    #     {},
-    #     (True, None),
-    #     id="x-composite-unique",
-    # ),
+    pytest.param(
+        {
+            "x-composite-index": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (
+            False,
+            'sextension property :: The value of the "x-composite-index" extension '
+            'property is not valid. The expected schema is {"description": "Add '
+            'composite index to a table.", "$ref": "#/CompositeIndex"}. The given '
+            "value is true. ",
+        ),
+        id="x-composite-index invalid",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-index": True,
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                }
+            ]
+        },
+        {},
+        (
+            False,
+            'sextension property :: The value of the "x-composite-index" extension '
+            'property is not valid. The expected schema is {"description": "Add '
+            'composite index to a table.", "$ref": "#/CompositeIndex"}. The given '
+            "value is true. ",
+        ),
+        id="allOf x-composite-index invalid",
+    ),
+    pytest.param(
+        {
+            "x-composite-index": ["key"],
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="x-composite-index",
+    ),
+    pytest.param(
+        {
+            "x-composite-unique": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (
+            False,
+            'sextension property :: The value of the "x-composite-unique" extension '
+            'property is not valid. The expected schema is {"description": "Add '
+            'composite unique constraint to a table.", "$ref": "#/CompositeUnique"}. '
+            "The given value is true. ",
+        ),
+        id="x-composite-unique invalid",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-unique": True,
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                }
+            ]
+        },
+        {},
+        (
+            False,
+            'sextension property :: The value of the "x-composite-unique" extension '
+            'property is not valid. The expected schema is {"description": "Add '
+            'composite unique constraint to a table.", "$ref": "#/CompositeUnique"}. '
+            "The given value is true. ",
+        ),
+        id="allOf x-composite-unique invalid",
+    ),
+    pytest.param(
+        {
+            "x-composite-unique": ["key"],
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (True, None),
+        id="x-composite-unique",
+    ),
 ]
 
 

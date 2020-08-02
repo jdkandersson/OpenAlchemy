@@ -6,6 +6,7 @@ from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import types
 
+from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
 
 
@@ -589,6 +590,58 @@ def foreign_key_column(
         raise exceptions.MalformedSchemaError(
             "The x-foreign-key-column property must be of type string."
         )
+    return value
+
+
+def composite_index(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.List]:
+    """
+    Retrieve the x-composite-index of the schema.
+
+    Raises MalformedExtensionPropertyError if the x-composite-index value does not
+        conform with the schema.
+
+    Args:
+        schema: The schema to get x-composite-index from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-composite-index or None.
+
+    """
+    key = "x-composite-index"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    ext_prop_helper.get(source={key: value}, name=key)  # type: ignore
+    return value
+
+
+def composite_unique(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.List]:
+    """
+    Retrieve the x-composite-unique of the schema.
+
+    Raises MalformedExtensionPropertyError if the x-composite-unique value does not
+        conform with the schema.
+
+    Args:
+        schema: The schema to get x-composite-unique from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-composite-unique or None.
+
+    """
+    key = "x-composite-unique"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    ext_prop_helper.get(source={key: value}, name=key)  # type: ignore
     return value
 
 

@@ -742,6 +742,66 @@ def test_foreign_key_column(schema, expected_foreign_key_column):
     assert returned_foreign_key_column == expected_foreign_key_column
 
 
+@pytest.mark.helper
+def test_composite_index_wrong_type():
+    """
+    GIVEN schema with composite-index defined as a boolean
+    WHEN composite_index is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schema = {"x-composite-index": True}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.peek.composite_index(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_composite_index",
+    [({}, None), ({"x-composite-index": ["id"]}, ["id"])],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_composite_index(schema, expected_composite_index):
+    """
+    GIVEN schema and expected composite-index
+    WHEN composite_index is called with the schema
+    THEN the expected composite_index is returned.
+    """
+    returned_composite_index = helpers.peek.composite_index(schema=schema, schemas={})
+
+    assert returned_composite_index == expected_composite_index
+
+
+@pytest.mark.helper
+def test_composite_unique_wrong_type():
+    """
+    GIVEN schema with composite-unique defined as a boolean
+    WHEN composite_unique is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schema = {"x-composite-unique": True}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.peek.composite_unique(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_composite_unique",
+    [({}, None), ({"x-composite-unique": ["id"]}, ["id"])],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_composite_unique(schema, expected_composite_unique):
+    """
+    GIVEN schema and expected composite-unique
+    WHEN composite_unique is called with the schema
+    THEN the expected composite_unique is returned.
+    """
+    returned_composite_unique = helpers.peek.composite_unique(schema=schema, schemas={})
+
+    assert returned_composite_unique == expected_composite_unique
+
+
 @pytest.mark.parametrize(
     "schema",
     [
