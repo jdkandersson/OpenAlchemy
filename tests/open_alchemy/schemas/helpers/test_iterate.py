@@ -463,13 +463,13 @@ def test_required_values_single(schema, schemas, expected_required_values):
     ],
 )
 @pytest.mark.schemas
-def test_required_value_items(schema, schemas, expected_values):
+def test_required_items(schema, schemas, expected_values):
     """
     GIVEN schema, schemas and expected values
-    WHEN required_value_items is called with the schema and schemas
+    WHEN required_items is called with the schema and schemas
     THEN the expected name and property schema are returned.
     """
-    returned_values = iterate.required_value_items(schema=schema, schemas=schemas)
+    returned_values = iterate.required_items(schema=schema, schemas=schemas)
 
     assert list(returned_values) == expected_values
 
@@ -512,14 +512,14 @@ def test_required_value_items(schema, schemas, expected_values):
     ],
 )
 @pytest.mark.schemas
-def test_required_value_items_single(schema, schemas, expected_values):
+def test_required_items_single(schema, schemas, expected_values):
     """
     GIVEN schema, schemas and expected values
-    WHEN required_value_items is called with the schema and schemas and
+    WHEN required_items is called with the schema and schemas and
         stay_within_model set
     THEN the expected name and property schema are returned.
     """
-    returned_values = iterate.required_value_items(
+    returned_values = iterate.required_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
 

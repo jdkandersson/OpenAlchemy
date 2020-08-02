@@ -352,17 +352,83 @@ TESTS = [
         (False, "value of required must be a list"),
         id="multiple required second not list",
     ),
-    # pytest.param(
-    #     {
-    #         "x-tablename": "schema",
-    #         "type": "object",
-    #         "properties": {"key": "value"},
-    #         "required": ["not a property"],
-    #     },
-    #     {},
-    #     (False, None),
-    #     id="required has elements not in properties",
-    # ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": [True],
+        },
+        {},
+        (False, "required :: all items must be strings"),
+        id="required single element not string",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": [True, "value 2"],
+        },
+        {},
+        (False, "required :: all items must be strings"),
+        id="required multiple element first not string",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": ["value 1", True],
+        },
+        {},
+        (False, "required :: all items must be strings"),
+        id="required multiple element second not string",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": ["not a property"],
+        },
+        {},
+        (False, "required :: all items must be properties, not a property is not"),
+        id="required has elements not in properties",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": ["not a property", "key"],
+        },
+        {},
+        (False, "required :: all items must be properties, not a property is not"),
+        id="required has multiple elements first not in properties",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": ["key", "not a property"],
+        },
+        {},
+        (False, "required :: all items must be properties, not a property is not"),
+        id="required has multiple elements second not in properties",
+    ),
+    pytest.param(
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+            "required": ["key"],
+        },
+        {},
+        (True, None),
+        id="required has elements not in properties",
+    ),
     # pytest.param(
     #     {
     #         "description": True,

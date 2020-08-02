@@ -11,7 +11,89 @@ from .. import helpers
 from . import types
 
 
-def _check_basics(
+def _check_properties(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check the properties."""
+    # Check property values
+    properties_values = helpers.iterate.properties_values(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    any_properties_value_not_list = any(
+        filter(
+            lambda properties_value: not isinstance(properties_value, dict),
+            properties_values,
+        )
+    )
+    if any_properties_value_not_list:
+        return types.Result(False, "value of properties must be a dictionary")
+
+    # Check there is at least a single property
+    properties_items = helpers.iterate.property_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    first_property = next(properties_items, None)
+    if first_property is None:
+        return types.Result(False, "models must have at least 1 property themself")
+    properties_items = itertools.chain([first_property], properties_items)
+
+    # Check that all property names are strings
+    property_names = map(lambda prop: prop[0], properties_items)
+    any_property_name_not_string = any(
+        filter(lambda property_name: not isinstance(property_name, str), property_names)
+    )
+    if any_property_name_not_string:
+        return types.Result(False, "properties :: all property keys must be strings")
+
+    return None
+
+
+def _check_required(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check the required."""
+    # Retrieve property names
+    properties_items = helpers.iterate.property_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    property_name_set = set(map(lambda prop: prop[0], properties_items))
+
+    # Check that all required values are lists
+    required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
+    any_required_value_not_list = any(
+        filter(
+            lambda required_value: not isinstance(required_value, list), required_values
+        )
+    )
+    if any_required_value_not_list:
+        return types.Result(False, "value of required must be a list")
+
+    # Check required values
+    required_items = helpers.iterate.required_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    required_items_set = set(required_items)
+    any_required_items_not_string = any(
+        filter(
+            lambda required_item: not isinstance(required_item, str), required_items_set
+        )
+    )
+    if any_required_items_not_string:
+        return types.Result(False, "required :: all items must be strings")
+
+    # Check that all required items are property names
+    required_not_properties = required_items_set - property_name_set
+    if required_not_properties:
+        return types.Result(
+            False,
+            "required :: all items must be properties, "
+            f"{next(iter(required_not_properties))} is not",
+        )
+
+    return None
+
+
+def _check_schema(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check basics related to tablename, inheritance and type."""
@@ -28,54 +110,13 @@ def _check_basics(
     if type_ != "object":
         return types.Result(False, "models must have the object type")
 
-    return None
+    properties_result = _check_properties(schema=schema, schemas=schemas)
+    if properties_result is not None:
+        return properties_result
 
-
-def _check_properties(
-    *, schema: oa_types.Schema, schemas: oa_types.Schemas
-) -> types.OptResult:
-    """Check the properties."""
-    properties_values = helpers.iterate.properties_values(
-        schema=schema, schemas=schemas, stay_within_model=True
-    )
-    any_properties_value_not_list = any(
-        filter(
-            lambda properties_value: not isinstance(properties_value, dict),
-            properties_values,
-        )
-    )
-    if any_properties_value_not_list:
-        return types.Result(False, "value of properties must be a dictionary")
-
-    properties = helpers.iterate.property_items(
-        schema=schema, schemas=schemas, stay_within_model=True
-    )
-
-    # Check there is at least a single property
-    first_property = next(properties, None)
-    if first_property is None:
-        return types.Result(False, "models must have at least 1 property themself")
-    properties = itertools.chain([first_property], properties)
-
-    # Check that all property names are sterings
-    property_name_set = set(map(lambda prop: prop[0], properties))
-    any_property_name_not_string = any(
-        filter(
-            lambda property_name: not isinstance(property_name, str), property_name_set
-        )
-    )
-    if any_property_name_not_string:
-        return types.Result(False, "properties :: all property keys must be strings")
-
-    # Check that all required values are lists
-    required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
-    any_required_value_not_list = any(
-        filter(
-            lambda required_value: not isinstance(required_value, list), required_values
-        )
-    )
-    if any_required_value_not_list:
-        return types.Result(False, "value of required must be a list")
+    required_result = _check_required(schema=schema, schemas=schemas)
+    if required_result is not None:
+        return required_result
 
     return None
 
@@ -93,13 +134,9 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
-        basics_result = _check_basics(schema=schema, schemas=schemas)
+        basics_result = _check_schema(schema=schema, schemas=schemas)
         if basics_result is not None:
             return basics_result
-
-        properties_result = _check_properties(schema=schema, schemas=schemas)
-        if properties_result is not None:
-            return properties_result
 
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")

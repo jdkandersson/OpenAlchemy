@@ -250,7 +250,7 @@ def required_values(
     )
 
 
-def required_value_items(
+def required_items(
     *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Any]:
     """
