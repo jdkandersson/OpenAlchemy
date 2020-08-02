@@ -3,6 +3,7 @@
 
 from . import all_of as all_of
 from . import ext_prop as ext_prop
+from . import foreign_key as foreign_key
 from . import inheritance as inheritance
 from . import oa_to_py_type as oa_to_py_type
 from . import peek as peek
