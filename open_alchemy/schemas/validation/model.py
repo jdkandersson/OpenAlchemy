@@ -93,7 +93,7 @@ def _check_required(
     return None
 
 
-def _check_schema(
+def _check_mandatory(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check basics related to tablename, inheritance and type."""
@@ -114,9 +114,38 @@ def _check_schema(
     if properties_result is not None:
         return properties_result
 
+    return None
+
+
+def _check_modifiers(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> types.OptResult:
+    """Check basics related to tablename, inheritance and type."""
     required_result = _check_required(schema=schema, schemas=schemas)
     if required_result is not None:
         return required_result
+
+    # Check description value
+    oa_helpers.peek.description(schema=schema, schemas=schemas)
+
+    # Check kwargs
+    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    if kwargs is not None:
+
+        def invalid_key(key) -> bool:
+            """Check value of key is valid."""
+            assert isinstance(key, str)
+            return not key.startswith("__") or not key.endswith("__")
+
+        kwargs_keys = list(kwargs.keys())
+        # reveal_type(kwargs_keys)
+        any_kwargs_keys_invalid = any(filter(invalid_key, kwargs_keys,))
+        if any_kwargs_keys_invalid:
+            return types.Result(
+                False, "models x-kwargs must have keys that start and end with __"
+            )
+        if "__table_args__" in kwargs:
+            return types.Result(False, "models x-kwargs cannot define __table_args__")
 
     return None
 
@@ -134,9 +163,12 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
-        basics_result = _check_schema(schema=schema, schemas=schemas)
-        if basics_result is not None:
-            return basics_result
+        mandatory_result = _check_mandatory(schema=schema, schemas=schemas)
+        if mandatory_result is not None:
+            return mandatory_result
+        modifiers_result = _check_modifiers(schema=schema, schemas=schemas)
+        if modifiers_result is not None:
+            return modifiers_result
 
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")

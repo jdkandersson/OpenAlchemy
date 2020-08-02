@@ -468,7 +468,9 @@ def _check_kwargs(*, value: typing.Any, key: str) -> typing.Dict[str, typing.Any
     return value
 
 
-def kwargs(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[dict]:
+def kwargs(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """
     Retrieve the x-kwargs of the schema.
 
