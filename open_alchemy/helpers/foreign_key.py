@@ -36,57 +36,19 @@ def calculate_column_name(
     return x_foreign_key_column if x_foreign_key_column is not None else "id"
 
 
-def calculate_prop_name_x_to_one(
-    *, property_name: str, foreign_key_column_name: str
-) -> str:
-    """
-    Calculate the foreign key property name.
-
-    Args:
-        property_name: The name of the property that defines the relationship.
-        foreign_key_column_name: The name of the foreign key column.
-
-    Returns:
-        The name of the foreign key property.
-
-    """
-    return f"{property_name}_{foreign_key_column_name}"
-
-
-def calculate_prop_name_one_to_many(
-    *, tablename: str, property_name: str, foreign_key_column_name: str
-) -> str:
-    """
-    Calculate the foreign key property name.
-
-    Args:
-        tablename: The name of the table targeted by the foreign key.
-        property_name: The name of the property that defines the relationship.
-        foreign_key_column_name: The name of the foreign key column.
-
-    Returns:
-        The name of the foreign key property.
-
-    """
-    x_to_one_property_name = calculate_prop_name_x_to_one(
-        property_name=property_name, foreign_key_column_name=foreign_key_column_name
-    )
-    return f"{tablename}_{x_to_one_property_name}"
-
-
 def calculate_prop_name(
     *,
     type_: relationship.Type,
     column_name: str,
     property_name: str,
-    foreign_key_targeted_schema: types.Schema,
+    foreign_key_target_schema: types.Schema,
     schemas: types.Schemas,
 ) -> str:
     """
     Calculate the foreign key property name based on the relationship type.
 
     Assume type_ is not a many to many relationship.
-    Assume foreign_key_targeted_schema is a valid model.
+    Assume foreign_key_target_schema is a valid model.
 
     For x-to-one use the column and property name, for one-to-many also use the
     tablename.
@@ -95,7 +57,7 @@ def calculate_prop_name(
         type_: The type of relationship.
         column_name: The foreign key column name.
         property_name: The name of the property that defines the relationship.
-        foreign_key_targeted_schema: The schema of the model targeted by the foreign key
+        foreign_key_target_schema: The schema of the model targeted by the foreign key
             of the relationship.
         schema: All defines schemas used to resolve any $ref.
 
@@ -106,7 +68,7 @@ def calculate_prop_name(
     assert type_ != relationship.Type.MANY_TO_MANY
 
     if type_ == relationship.Type.ONE_TO_MANY:
-        tablename = peek.tablename(schema=foreign_key_targeted_schema, schemas=schemas)
+        tablename = peek.tablename(schema=foreign_key_target_schema, schemas=schemas)
         assert tablename is not None
         property_name = f"{tablename}_{property_name}"
 

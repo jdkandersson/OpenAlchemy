@@ -194,20 +194,24 @@ def _check_x_to_one(
         Whether the relationship is valid and the reason if it is not.
 
     """
+    type_ = oa_helpers.relationship.Type.MANY_TO_ONE
+
     _, foreign_key_target_schema = oa_helpers.ref.resolve(
         name=property_name, schema=property_schema, schemas=schemas
     )
 
     # Calculate the foreign key name
     foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=oa_helpers.relationship.Type.MANY_TO_ONE,
-        property_schema=property_schema,
-        schemas=schemas,
+        type_=type_, property_schema=property_schema, schemas=schemas,
     )
 
     # Check foreign key target schema
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name_x_to_one(
-        property_name=property_name, foreign_key_column_name=foreign_key_column_name
+    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+        type_=type_,
+        column_name=foreign_key_column_name,
+        property_name=property_name,
+        foreign_key_target_schema=foreign_key_target_schema,
+        schemas=schemas,
     )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
@@ -246,15 +250,15 @@ def _check_one_to_many(
         Whether the relationship is valid and the reason if it is not.
 
     """
+    type_ = oa_helpers.relationship.Type.ONE_TO_MANY
+
     # Retrieve the items schema
     items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
     assert items_schema is not None
 
     # Calculate the foreign key name
     foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=oa_helpers.relationship.Type.ONE_TO_MANY,
-        property_schema=property_schema,
-        schemas=schemas,
+        type_=type_, property_schema=property_schema, schemas=schemas,
     )
 
     # Retrieve the schema the foreign key needs to go onto
@@ -271,10 +275,12 @@ def _check_one_to_many(
         return types.Result(
             False, "foreign key targeted schema must have a x-tablename value"
         )
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name_one_to_many(
-        tablename=tablename,
+    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+        type_=type_,
+        column_name=foreign_key_column_name,
         property_name=property_name,
-        foreign_key_column_name=foreign_key_column_name,
+        foreign_key_target_schema=foreign_key_target_schema,
+        schemas=schemas,
     )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
         foreign_key_target_schema=foreign_key_target_schema,
