@@ -10,30 +10,15 @@ TESTS = [
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
-        (False, "foreign key targeted schema must have a x-tablename value"),
+        (False, "foreign key target schema :: every model must define x-tablename"),
         id="one-to-many source schema no tablenamed",
     ),
     pytest.param(
-        {"x-tablename": True},
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {"RefSchema": {}},
-        (
-            False,
-            "malformed schema :: The x-tablename property must be of type string. ",
-        ),
-        id="one-to-many source schema tablenamed not string",
-    ),
-    pytest.param(
-        {"x-tablename": "schema"},
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {"RefSchema": {}},
-        (False, "foreign key targeted schema must have properties"),
-        id="one-to-many source schema no properties",
-    ),
-    pytest.param(
-        {"x-tablename": "schema", "properties": {"name": {"type": "string"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
@@ -41,7 +26,11 @@ TESTS = [
         id="one-to-many foreign key default not present",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-foreign-key-column": "name"}},
@@ -49,7 +38,7 @@ TESTS = [
         id="one-to-many foreign key configured not present",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {}}},
+        {"x-tablename": "schema", "type": "object", "properties": {"id": {}}},
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
@@ -57,7 +46,7 @@ TESTS = [
         id="one-to-many foreign key default property invalid",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"name": {}}},
+        {"x-tablename": "schema", "type": "object", "properties": {"name": {}}},
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-foreign-key-column": "name"}},
@@ -68,7 +57,11 @@ TESTS = [
         id="one-to-many foreign key configured property invalid",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-tablename": "ref_schema"}},
@@ -76,7 +69,11 @@ TESTS = [
         id="one-to-many foreign key property default valid",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"name": {"type": "string"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-foreign-key-column": "name", "x-tablename": "ref_schema"}},
@@ -86,7 +83,11 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}}
+                {
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"id": {"type": "integer"}},
+                }
             ]
         },
         "ref_schemas",
@@ -96,7 +97,11 @@ TESTS = [
         id="one-to-many foreign key allOf property valid",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"properties": {"schema_ref_schemas_id": {}}}},
@@ -108,7 +113,11 @@ TESTS = [
         id="one-to-many foreign key defined property invalid",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"properties": {"schema_ref_schemas_id": {"type": "string"}}}},
@@ -120,7 +129,11 @@ TESTS = [
         id="one-to-many foreign key defined different type",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -138,7 +151,11 @@ TESTS = [
         id="one-to-many foreign key defined same type",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -162,6 +179,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "format": "int32"}},
         },
         "ref_schemas",
@@ -185,7 +203,11 @@ TESTS = [
         id="one-to-many foreign key defined format only on source",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -210,6 +232,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "format": "int32"}},
         },
         "ref_schemas",
@@ -236,6 +259,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "format": "int32"}},
         },
         "ref_schemas",
@@ -258,6 +282,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "string", "maxLength": 1}},
         },
         "ref_schemas",
@@ -281,7 +306,11 @@ TESTS = [
         id="one-to-many foreign key defined maxLength only on source",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "string"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "string"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -306,6 +335,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "string", "maxLength": 1}},
         },
         "ref_schemas",
@@ -331,6 +361,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "string", "maxLength": 1}},
         },
         "ref_schemas",
@@ -353,6 +384,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "default": 1}},
         },
         "ref_schemas",
@@ -376,7 +408,11 @@ TESTS = [
         id="one-to-many foreign key defined default only on source",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -401,6 +437,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "default": 1}},
         },
         "ref_schemas",
@@ -426,6 +463,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "default": 1}},
         },
         "ref_schemas",
@@ -446,7 +484,11 @@ TESTS = [
         id="one-to-many foreign key defined same default",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -459,7 +501,11 @@ TESTS = [
         id="one-to-many foreign key defined no foreign key",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
@@ -481,7 +527,11 @@ TESTS = [
         id="one-to-many foreign key defined wrong foreign key",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {

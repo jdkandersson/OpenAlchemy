@@ -6,6 +6,7 @@ from .... import exceptions
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
+from .. import model
 from .. import simple
 from .. import types
 
@@ -267,14 +268,14 @@ def _check_one_to_many(
         schema={"$ref": modify_schema_ref}, schemas=schemas, name=""
     )
 
-    # Calculate the foreign key property name
-    tablename = oa_helpers.peek.tablename(
-        schema=foreign_key_target_schema, schemas=schemas
-    )
-    if tablename is None:
+    # Check the foreign key target schema
+    model_result = model.check(schema=foreign_key_target_schema, schemas=schemas)
+    if not model_result.valid:
         return types.Result(
-            False, "foreign key targeted schema must have a x-tablename value"
+            False, f"foreign key target schema :: {model_result.reason}"
         )
+
+    # Calculate the foreign key property name
     foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
         type_=type_,
         column_name=foreign_key_column_name,
