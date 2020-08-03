@@ -41,14 +41,14 @@ def calculate_prop_name(
     type_: relationship.Type,
     column_name: str,
     property_name: str,
-    foreign_key_target_schema: types.Schema,
+    target_schema: types.Schema,
     schemas: types.Schemas,
 ) -> str:
     """
     Calculate the foreign key property name based on the relationship type.
 
     Assume type_ is not a many to many relationship.
-    Assume foreign_key_target_schema is a valid model.
+    Assume target_schema is a valid model.
 
     For x-to-one use the column and property name, for one-to-many also use the
     tablename.
@@ -57,7 +57,7 @@ def calculate_prop_name(
         type_: The type of relationship.
         column_name: The foreign key column name.
         property_name: The name of the property that defines the relationship.
-        foreign_key_target_schema: The schema of the model targeted by the foreign key
+        target_schema: The schema of the model targeted by the foreign key
             of the relationship.
         schema: All defines schemas used to resolve any $ref.
 
@@ -68,7 +68,7 @@ def calculate_prop_name(
     assert type_ != relationship.Type.MANY_TO_MANY
 
     if type_ == relationship.Type.ONE_TO_MANY:
-        tablename = peek.tablename(schema=foreign_key_target_schema, schemas=schemas)
+        tablename = peek.tablename(schema=target_schema, schemas=schemas)
         assert tablename is not None
         property_name = f"{tablename}_{property_name}"
 

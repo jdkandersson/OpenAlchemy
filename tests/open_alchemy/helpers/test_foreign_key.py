@@ -119,7 +119,7 @@ def test_calculate_prop_name(
         type_=type_,
         column_name=column_name,
         property_name=property_name,
-        foreign_key_target_schema=schema,
+        target_schema=schema,
         schemas=schemas,
     )
 

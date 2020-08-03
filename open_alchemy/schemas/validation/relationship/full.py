@@ -210,7 +210,7 @@ def _check_x_to_one(
         type_=type_,
         column_name=foreign_key_column_name,
         property_name=property_name,
-        foreign_key_target_schema=foreign_key_target_schema,
+        target_schema=foreign_key_target_schema,
         schemas=schemas,
     )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
@@ -279,7 +279,7 @@ def _check_one_to_many(
         type_=type_,
         column_name=foreign_key_column_name,
         property_name=property_name,
-        foreign_key_target_schema=foreign_key_target_schema,
+        target_schema=foreign_key_target_schema,
         schemas=schemas,
     )
     foreign_key_target_schema_result = _check_foreign_key_target_schema(
