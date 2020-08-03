@@ -14,13 +14,19 @@ from open_alchemy.schemas.validation import relationship
             {},
             {},
             (False, "malformed schema :: Every property requires a type. ",),
+            id="malformed relationship",
         ),
         pytest.param(
             "schema",
             {"$ref": "#/components/schemas/RefSchema"},
             {},
             {"RefSchema": {"x-tablename": "ref_schema", "type": "object"}},
-            (False, "foreign key targeted schema must have properties",),
+            (
+                False,
+                "foreign key target schema :: models must have at least 1 property "
+                "themself",
+            ),
+            id="malformed foreign key target",
         ),
         pytest.param(
             "schema",
@@ -34,6 +40,7 @@ from open_alchemy.schemas.validation import relationship
                 }
             },
             (True, None,),
+            id="valid",
         ),
     ],
 )

@@ -115,14 +115,18 @@ def _check_foreign_key_target_schema(
         A result if something is wrong with the reason or None otherwise.
 
     """
-    # Check tablename
+    # Check the foreign key target schema
+    model_result = model.check(schema=foreign_key_target_schema, schemas=schemas)
+    if not model_result.valid:
+        return types.Result(
+            False, f"foreign key target schema :: {model_result.reason}"
+        )
+
+    # Get tablename
     tablename = oa_helpers.peek.tablename(
         schema=foreign_key_target_schema, schemas=schemas
     )
-    if tablename is None:
-        return types.Result(
-            False, "foreign key targeted schema must have a x-tablename value"
-        )
+    assert tablename is not None
 
     # Check properties
     properties = helpers.iterate.property_items(

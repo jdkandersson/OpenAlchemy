@@ -10,27 +10,8 @@ TESTS = [
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object"}},
-        (False, "foreign key targeted schema must have a x-tablename value"),
+        (False, "foreign key target schema :: every model must define x-tablename"),
         id="x-to-one referenced schema no tablenamed",
-    ),
-    pytest.param(
-        {},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {"RefSchema": {"x-tablename": True, "type": "object"}},
-        (
-            False,
-            "malformed schema :: The x-tablename property must be of type string. ",
-        ),
-        id="x-to-one referenced schema tablenamed not string",
-    ),
-    pytest.param(
-        {},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {"RefSchema": {"x-tablename": "ref_schema", "type": "object"}},
-        (False, "foreign key targeted schema must have properties"),
-        id="x-to-one referenced schema no properties",
     ),
     pytest.param(
         {},
@@ -143,7 +124,11 @@ TESTS = [
                 "properties": {"id": {"type": "integer"}},
             },
         },
-        (False, "foreign key targeted schema must have properties"),
+        (
+            False,
+            "foreign key target schema :: models must have at least 1 property "
+            "themself",
+        ),
         id="x-to-one foreign key property default single table inheritance",
     ),
     pytest.param(
@@ -153,7 +138,11 @@ TESTS = [
         {
             "RefSchema": {
                 "allOf": [
-                    {"x-inherits": True, "type": "object", "properties": {},},
+                    {
+                        "x-inherits": True,
+                        "type": "object",
+                        "properties": {"other": {}},
+                    },
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
@@ -164,7 +153,7 @@ TESTS = [
             },
         },
         (True, None),
-        id="x-to-one foreign key property configured valid",
+        id="x-to-one foreign key property default single table valid",
     ),
     pytest.param(
         {},
