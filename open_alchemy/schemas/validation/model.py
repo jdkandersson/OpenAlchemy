@@ -1,7 +1,5 @@
 """Validate the schema of a model."""
 
-# pylint: disable=unused-argument
-
 import itertools
 import typing
 
