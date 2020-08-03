@@ -75,6 +75,63 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
 
 
 @pytest.mark.parametrize(
+    "type_, parent_schema, property_schema, schemas, expected_schema",
+    [
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {"parent_key": "parent value"},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"ref_key": "ref value"}},
+            {"ref_key": "ref value"},
+            id="one-to-many",
+        ),
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {"parent_key": "parent value"},
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"ref_key": "ref value"}},
+            {"ref_key": "ref value"},
+            id="one-to-many allOf",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_ONE,
+            {"parent_key": "parent value"},
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"ref_key": "ref value"}},
+            {"ref_key": "ref value"},
+            id="one-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            {"parent_key": "parent value"},
+            {"items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"ref_key": "ref value"}},
+            {"parent_key": "parent value"},
+            id="many-to-one",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_get_target_schema(
+    type_, parent_schema, property_schema, schemas, expected_schema
+):
+    """
+    GIVEN relationship type, parent and property schema, schemas and expected schema
+    WHEN get_target_schema is called with the type, parent and property schema and
+        schemas
+    THEN the expected schema is returned.
+    """
+    returned_schema = foreign_key.get_target_schema(
+        type_=type_,
+        parent_schema=parent_schema,
+        property_schema=property_schema,
+        schemas=schemas,
+    )
+
+    assert returned_schema == expected_schema
+
+
+@pytest.mark.parametrize(
     "type_, column_name, property_name, schema, schemas, expected_prop_name",
     [
         pytest.param(
