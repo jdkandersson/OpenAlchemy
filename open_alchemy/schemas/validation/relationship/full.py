@@ -104,6 +104,8 @@ def _check_target_schema(
     """
     Check the schema that is targeted by a foreign key.
 
+    Assume target_schema is valid.
+
     Args:
         target_schema: The schema targeted by a foreign key.
         schemas: The schemas used to resolve any $ref.
@@ -115,13 +117,6 @@ def _check_target_schema(
         A result if something is wrong with the reason or None otherwise.
 
     """
-    # Check the foreign key target schema
-    model_result = model.check(schema=target_schema, schemas=schemas)
-    if not model_result.valid:
-        return types.Result(
-            False, f"foreign key target schema :: {model_result.reason}"
-        )
-
     # Check properties
     properties = helpers.iterate.property_items(
         schema=target_schema, schemas=schemas, stay_within_tablename=True,
@@ -183,9 +178,9 @@ def _check_many_to_many_schema(
         A result of the schema is not valid with a reason or None.
 
     """
-    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
-    if tablename is None:
-        return types.Result(False, "schema must define x-tablename")
+    model_result = model.check(schema=schema, schemas=schemas)
+    if not model_result.valid:
+        return model_result
 
     # Check for primary key
     properties = helpers.iterate.property_items(
@@ -309,11 +304,14 @@ def check(
         type_ = oa_helpers.relationship.calculate_type(
             schema=property_schema, schemas=schemas
         )
+
         if type_ in {
             oa_helpers.relationship.Type.MANY_TO_ONE,
             oa_helpers.relationship.Type.ONE_TO_ONE,
             oa_helpers.relationship.Type.ONE_TO_MANY,
         }:
+            # Retrieve information required to check x-to-one and one-to-many
+            # relationships
             column_name = oa_helpers.foreign_key.calculate_column_name(
                 type_=type_, property_schema=property_schema, schemas=schemas,
             )
@@ -351,6 +349,7 @@ def check(
                 modify_schema=modify_schema,
                 foreign_key_property_name=foreign_key_property_name,
             )
+
         return _check_many_to_many(
             parent_schema=parent_schema,
             property_schema=property_schema,

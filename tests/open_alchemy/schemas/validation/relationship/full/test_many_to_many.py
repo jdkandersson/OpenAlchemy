@@ -6,42 +6,27 @@ from open_alchemy.schemas.validation.relationship import full
 
 TESTS = [
     pytest.param(
-        {"properties": {"id": {"type": "integer", "x-primary-key": True}}},
+        {
+            "type": "object",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
         },
-        (False, "source schema :: schema must define x-tablename"),
+        (False, "source schema :: every model must define x-tablename"),
         id="many-to-many source no tablename",
     ),
     pytest.param(
         {
-            "x-tablename": True,
-            "properties": {"id": {"type": "integer", "x-primary-key": True}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-secondary": "schema_ref_schema",
-                "properties": {"id": {"type": "integer", "x-primary-key": True}},
-            }
-        },
-        (
-            False,
-            "malformed schema :: The x-tablename property must be of type string. ",
-        ),
-        id="many-to-many referenced invalid tablename",
-    ),
-    pytest.param(
-        {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -49,38 +34,24 @@ TESTS = [
         {
             "RefSchema": {
                 "x-secondary": "schema_ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
         },
-        (False, "referenced schema :: schema must define x-tablename"),
+        (False, "referenced schema :: every model must define x-tablename"),
         id="many-to-many referenced no tablename",
     ),
     pytest.param(
         {
             "x-tablename": "schema",
-            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
         },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
-                "x-secondary": "schema_ref_schema",
-                "x-tablename": True,
-                "properties": {"id": {"type": "integer", "x-primary-key": True}},
-            }
-        },
-        (
-            False,
-            "malformed schema :: The x-tablename property must be of type string. ",
-        ),
-        id="many-to-many referenced invalid tablename",
-    ),
-    pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"type": "integer"}}},
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
+                "type": "object",
                 "x-tablename": "ref_schema",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
@@ -90,11 +61,16 @@ TESTS = [
         id="many-to-many source no primary key property",
     ),
     pytest.param(
-        {"x-tablename": "schema", "properties": {"id": {"x-primary-key": True}}},
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"x-primary-key": True}},
+        },
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
+                "type": "object",
                 "x-tablename": "ref_schema",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
@@ -110,6 +86,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {
                 "id": {"type": "integer", "x-primary-key": True},
                 "name": {"type": "string", "x-primary-key": True},
@@ -120,6 +97,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
@@ -134,6 +112,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -141,6 +120,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer"}},
             }
@@ -151,6 +131,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -158,6 +139,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"x-primary-key": True}},
             }
@@ -172,6 +154,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -179,6 +162,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {
                     "id": {"type": "integer", "x-primary-key": True},
@@ -196,6 +180,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -203,6 +188,7 @@ TESTS = [
         {
             "RefSchema": {
                 "x-tablename": "ref_schema",
+                "type": "object",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
@@ -213,6 +199,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -224,12 +211,13 @@ TESTS = [
                         "x-tablename": "ref_schema",
                         "x-inherits": True,
                         "x-secondary": "schema_ref_schema",
-                        "properties": {},
+                        "properties": {"other": {}},
                     },
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
             "ParentSchema": {
+                "type": "object",
                 "x-tablename": "parent_schema",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
@@ -241,6 +229,7 @@ TESTS = [
     pytest.param(
         {
             "x-tablename": "schema",
+            "type": "object",
             "properties": {"id": {"type": "integer", "x-primary-key": True}},
         },
         "ref_schemas",
@@ -251,12 +240,13 @@ TESTS = [
                     {
                         "x-inherits": True,
                         "x-secondary": "schema_ref_schema",
-                        "properties": {},
+                        "properties": {"other": {}},
                     },
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
             "ParentSchema": {
+                "type": "object",
                 "x-tablename": "parent_schema",
                 "x-secondary": "schema_ref_schema",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
