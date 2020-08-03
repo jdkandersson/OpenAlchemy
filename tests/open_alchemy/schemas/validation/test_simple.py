@@ -42,8 +42,8 @@ TESTS = [
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {},
-        (False, "could not resolve reference"),
-        id="type integer $ref",
+        (False, "reference :: 'RefSchema was not found in schemas.' "),
+        id="type integer $ref not resolve",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},

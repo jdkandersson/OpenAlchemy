@@ -38,7 +38,7 @@ TESTS = [
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {},
-        (False, "reference does not resolve"),
+        (False, "reference :: 'RefSchema was not found in schemas.' "),
         id="$ref not resolve",
     ),
     pytest.param(
@@ -46,6 +46,12 @@ TESTS = [
         {"RefSchema": {"type": "object"}},
         (False, "referenced schema not constructable"),
         id="object $ref not constructable",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema", "x-json": True}},
+        (False, "property is JSON"),
+        id="many to one $ref JSON",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
@@ -293,12 +299,12 @@ TESTS = [
         {
             "RefSchema": {
                 "allOf": [
-                    {"type": "object", "x-tablename": "ref_schema"},
+                    {"type": "object", "x-tablename": "ref_schema", "x-json": False},
                     {"$ref": "#/components/schemas/RefRefSchema"},
                 ]
             }
         },
-        (False, "could not resolve reference"),
+        (False, "reference :: 'RefRefSchema was not found in schemas.' "),
         id="many to one $ref not for type not resolve",
     ),
     pytest.param(

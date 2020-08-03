@@ -6,6 +6,35 @@ from open_alchemy.schemas.validation.relationship import property_
 
 TESTS = [
     pytest.param(
+        {
+            "type": "array",
+            "x-json": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "property is JSON"),
+        id="many to many JSON",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-json": True,
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "items property :: property is JSON"),
+        id="many to many $ref JSON",
+    ),
+    pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {
             "RefSchema": {
@@ -16,6 +45,35 @@ TESTS = [
         },
         (True, None),
         id="many to many $ref",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "x-json": False,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (True, None),
+        id="many to many JSON False $ref",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-json": False,
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (True, None),
+        id="many to many $ref JSON False ",
     ),
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
@@ -549,7 +607,7 @@ TESTS = [
             ]
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "could not resolve reference"),
+        (False, "reference :: 'RefRefSchema was not found in schemas.' "),
         id="many to many allOf $ref not for type no resolve",
     ),
 ]

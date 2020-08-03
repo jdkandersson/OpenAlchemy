@@ -67,14 +67,39 @@ TESTS = [
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {},
-        (False, "items property :: reference does not resolve"),
+        (
+            False,
+            "items property :: reference :: 'RefSchema was not found in schemas.' ",
+        ),
         id="array items no $ref not linked",
+    ),
+    pytest.param(
+        {
+            "type": "array",
+            "x-json": True,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "property is JSON"),
+        id="one to many JSON",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-json": True, "x-tablename": "ref_schema"}},
+        (False, "items property :: property is JSON"),
+        id="one to many JSON",
     ),
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="one to many $ref",
+    ),
+    pytest.param(
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-json": False, "x-tablename": "ref_schema"}},
+        (True, None),
+        id="one to many $ref JSON False",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/ArraySchema"},

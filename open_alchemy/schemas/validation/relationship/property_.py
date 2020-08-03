@@ -15,14 +15,17 @@ def _check_type(
     # Check type
     try:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    except exceptions.SchemaNotFoundError:
-        return types.Result(False, "reference does not resolve")
+        # Check type value
+        if type_ not in {"object", "array"}:
+            return types.Result(False, "type not an object nor array")
+        # Check for JSON
+        if helpers.peek.json(schema=schema, schemas=schemas) is True:
+            return types.Result(False, "property is JSON")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, f"reference :: {exc}")
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")
-    if type_ not in {"object", "array"}:
-        return types.Result(False, "type not an object nor array")
 
-    # Check type value
     return None
 
 
@@ -149,8 +152,8 @@ def _check_object(
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema :: {exc}")
-    except exceptions.SchemaNotFoundError:
-        return types.Result(False, "could not resolve reference")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, f"reference :: {exc}")
 
     return types.Result(True, None)
 
@@ -304,8 +307,8 @@ def _check_array(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types
 
     except exceptions.MalformedSchemaError as exc:
         return types.Result(False, f"malformed schema :: {exc}")
-    except exceptions.SchemaNotFoundError:
-        return types.Result(False, "could not resolve reference")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, f"reference :: {exc}")
 
     return types.Result(True, None)
 
@@ -315,7 +318,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     Check whether a property schema is a valid relationship schema.
 
     At a high level:
-    1. the type of the property must be an array or object,
+    1. the type of the property must be an array or object and not JSON,
     2. the property must reference a constructable schema (at the root for x-to-one and
         at the items level for x-to-many relationships),
     3. any parameters configuring the relationship must have the expected type,

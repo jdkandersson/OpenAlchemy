@@ -134,8 +134,8 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         # Check default
         helpers.peek.default(schema=schema, schemas=schemas)
 
-    except exceptions.SchemaNotFoundError:
-        return types.Result(False, "could not resolve reference")
+    except exceptions.SchemaNotFoundError as exc:
+        return types.Result(False, f"reference :: {exc}")
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")
 
