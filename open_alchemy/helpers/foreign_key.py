@@ -110,7 +110,7 @@ def calculate_prop_name(
 
 
 def calculate_foreign_key(
-    *, foreign_key_column_name: str, target_schema: types.Schema, schemas: types.Schemas
+    *, column_name: str, target_schema: types.Schema, schemas: types.Schemas
 ) -> str:
     """
     Calculate the foreign key.
@@ -118,7 +118,7 @@ def calculate_foreign_key(
     Assume target_schema is a valid model.
 
     Args:
-        foreign_key_column_name: The name of the foreign key column.
+        column_name: The name of the foreign key column.
         target_schema: The schema of the model targeted by the foreign key
             of the relationship.
         schema: All defines schemas used to resolve any $ref.
@@ -129,7 +129,7 @@ def calculate_foreign_key(
     """
     tablename = peek.tablename(schema=target_schema, schemas=schemas)
     assert tablename is not None
-    return f"{tablename}.{foreign_key_column_name}"
+    return f"{tablename}.{column_name}"
 
 
 def get_modify_schema(
