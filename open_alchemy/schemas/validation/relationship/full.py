@@ -100,7 +100,7 @@ def _check_foreign_key_target_schema(
     foreign_key_column_name: str,
     modify_schema: oa_types.Schema,
     foreign_key_property_name: str,
-) -> types.OptResult:
+) -> types.Result:
     """
     Check the schema that is targeted by a foreign key.
 
@@ -170,129 +170,6 @@ def _check_foreign_key_target_schema(
     )
     if pre_defined_result is not None:
         return pre_defined_result
-
-    return None
-
-
-def _check_x_to_one(
-    *,
-    modify_schema: oa_types.Schema,
-    property_name: str,
-    property_schema: oa_types.Schema,
-    schemas: oa_types.Schemas,
-) -> types.Result:
-    """
-    Check x-to-one relationships.
-
-    Args:
-        modify_schema: The schema to which the foreign key property needs to be added.
-        property_name: The name of the property that defines the x-to-one relationship.
-        property_schema: The schema of the property that defines the x-to-one
-            relationship.
-        schemas: Used to result any $ref.
-
-    Returns:
-        Whether the relationship is valid and the reason if it is not.
-
-    """
-    type_ = oa_helpers.relationship.Type.MANY_TO_ONE
-
-    foreign_key_target_schema = oa_helpers.foreign_key.get_target_schema(
-        type_=type_,
-        parent_schema=modify_schema,
-        property_schema=property_schema,
-        schemas=schemas,
-    )
-
-    # Calculate the foreign key name
-    foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=type_, property_schema=property_schema, schemas=schemas,
-    )
-
-    # Check foreign key target schema
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
-        type_=type_,
-        column_name=foreign_key_column_name,
-        property_name=property_name,
-        target_schema=foreign_key_target_schema,
-        schemas=schemas,
-    )
-    foreign_key_target_schema_result = _check_foreign_key_target_schema(
-        foreign_key_target_schema=foreign_key_target_schema,
-        schemas=schemas,
-        foreign_key_column_name=foreign_key_column_name,
-        modify_schema=modify_schema,
-        foreign_key_property_name=foreign_key_property_name,
-    )
-    if foreign_key_target_schema_result is not None:
-        return foreign_key_target_schema_result
-
-    return types.Result(True, None)
-
-
-def _check_one_to_many(
-    *,
-    foreign_key_target_schema: oa_types.Schema,
-    property_name: str,
-    property_schema: oa_types.Schema,
-    schemas: oa_types.Schemas,
-) -> types.Result:
-    """
-    Check one-to-many relationships.
-
-    Assume foreign_key_target_schema has already been validated.
-
-    Args:
-        foreign_key_target_schema: The schema targeted by the foreign key.
-        property_name: The name of the property that defines the one-to-many
-            relationship.
-        property_schema: The schema of the property that defines the one-to-many
-            relationship.
-        schemas: Used to result any $ref.
-
-    Returns:
-        Whether the relationship is valid and the reason if it is not.
-
-    """
-    type_ = oa_helpers.relationship.Type.ONE_TO_MANY
-
-    # Calculate the foreign key name
-    foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=type_, property_schema=property_schema, schemas=schemas,
-    )
-
-    # Retrieve the schema the foreign key needs to go onto
-    modify_schema = oa_helpers.foreign_key.get_modify_schema(
-        type_=type_,
-        parent_schema=foreign_key_target_schema,
-        property_schema=property_schema,
-        schemas=schemas,
-    )
-
-    # Check the foreign key target schema
-    model_result = model.check(schema=foreign_key_target_schema, schemas=schemas)
-    if not model_result.valid:
-        return types.Result(
-            False, f"foreign key target schema :: {model_result.reason}"
-        )
-
-    # Calculate the foreign key property name
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
-        type_=type_,
-        column_name=foreign_key_column_name,
-        property_name=property_name,
-        target_schema=foreign_key_target_schema,
-        schemas=schemas,
-    )
-    foreign_key_target_schema_result = _check_foreign_key_target_schema(
-        foreign_key_target_schema=foreign_key_target_schema,
-        schemas=schemas,
-        foreign_key_column_name=foreign_key_column_name,
-        modify_schema=modify_schema,
-        foreign_key_property_name=foreign_key_property_name,
-    )
-    if foreign_key_target_schema_result is not None:
-        return foreign_key_target_schema_result
 
     return types.Result(True, None)
 
@@ -440,19 +317,44 @@ def check(
         if type_ in {
             oa_helpers.relationship.Type.MANY_TO_ONE,
             oa_helpers.relationship.Type.ONE_TO_ONE,
+            oa_helpers.relationship.Type.ONE_TO_MANY,
         }:
-            return _check_x_to_one(
-                schemas=schemas,
-                modify_schema=parent_schema,
-                property_name=property_name,
-                property_schema=property_schema,
+            foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
+                type_=type_, property_schema=property_schema, schemas=schemas,
             )
-        if type_ == oa_helpers.relationship.Type.ONE_TO_MANY:
-            return _check_one_to_many(
-                schemas=schemas,
-                foreign_key_target_schema=parent_schema,
-                property_name=property_name,
+            foreign_key_target_schema = oa_helpers.foreign_key.get_target_schema(
+                type_=type_,
+                parent_schema=parent_schema,
                 property_schema=property_schema,
+                schemas=schemas,
+            )
+            target_schema_model_result = model.check(
+                schema=foreign_key_target_schema, schemas=schemas
+            )
+            if not target_schema_model_result.valid:
+                return types.Result(
+                    False,
+                    f"foreign key target schema :: {target_schema_model_result.reason}",
+                )
+            modify_schema = oa_helpers.foreign_key.get_modify_schema(
+                type_=type_,
+                parent_schema=parent_schema,
+                property_schema=property_schema,
+                schemas=schemas,
+            )
+            foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+                type_=type_,
+                column_name=foreign_key_column_name,
+                property_name=property_name,
+                target_schema=foreign_key_target_schema,
+                schemas=schemas,
+            )
+            return _check_foreign_key_target_schema(
+                foreign_key_target_schema=foreign_key_target_schema,
+                schemas=schemas,
+                foreign_key_column_name=foreign_key_column_name,
+                modify_schema=modify_schema,
+                foreign_key_property_name=foreign_key_property_name,
             )
         return _check_many_to_many(
             parent_schema=parent_schema,
