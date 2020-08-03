@@ -130,3 +130,40 @@ def calculate_foreign_key(
     tablename = peek.tablename(schema=target_schema, schemas=schemas)
     assert tablename is not None
     return f"{tablename}.{foreign_key_column_name}"
+
+
+def get_modify_schema(
+    *,
+    type_: relationship.Type,
+    parent_schema: types.Schema,
+    property_schema: types.Schema,
+    schemas: types.Schemas,
+) -> types.Schema:
+    """
+    Get the schema the foreign key needs to be added to.
+
+    Assume type_ is not many-to-many.
+    Assume property schema is a valid relationship.
+
+    Args:
+        type: The type of relationship.
+        parent_schema: The schema the relationship property is embedded in.
+        property_schema: The schema of the relationship property.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        The schema the foreign key needs to be defined on.
+
+    """
+    assert type_ != relationship.Type.MANY_TO_MANY
+
+    if type_ == relationship.Type.ONE_TO_MANY:
+        items_schema = peek.items(schema=property_schema, schemas=schemas)
+        assert items_schema is not None
+        ref = peek.ref(schema=items_schema, schemas=schemas)
+        _, ref_schema = ref_helper.resolve(
+            schema={"$ref": ref}, schemas=schemas, name=""
+        )
+        return ref_schema
+
+    return parent_schema
