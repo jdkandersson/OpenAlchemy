@@ -16,82 +16,42 @@ class TestDefinesBackref:
         [
             pytest.param({}, {}, False, id="empty"),
             pytest.param(
-                {"type": "not relationship"},
-                {},
-                False,
-                id="property not object nor array type",
-            ),
-            pytest.param({"type": "array"}, {}, False, id="array no items"),
-            pytest.param(
-                {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "not relationship"}},
-                False,
-                id="$ref property not object nor array type",
+                {"type": "not relationship"}, {}, False, id="invalid relationship",
             ),
             pytest.param(
                 {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "object", "x-json": True}},
-                False,
-                id="many-to-one JSON",
-            ),
-            pytest.param(
-                {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "object", "x-json": False}},
+                {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
                 True,
-                id="many-to-one x-json False",
+                id="many-to-one",
             ),
             pytest.param(
                 {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "object"}},
-                True,
-                id="many-to-one no x-json",
-            ),
-            pytest.param(
-                {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
-                {"RefSchema": {"type": "object"}},
-                True,
-                id="many-to-one allOf",
-            ),
-            pytest.param(
-                {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "object", "x-uselist": False, "x-json": True}},
-                False,
-                id="one-to-one JSON",
-            ),
-            pytest.param(
-                {"$ref": "#/components/schemas/RefSchema"},
-                {"RefSchema": {"type": "object", "x-uselist": False}},
+                {
+                    "RefSchema": {
+                        "type": "object",
+                        "x-uselist": False,
+                        "x-tablename": "ref_schema",
+                        "x-backref": "schema",
+                    }
+                },
                 True,
                 id="one-to-one",
             ),
             pytest.param(
                 {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-                {"RefSchema": {"type": "object", "x-json": True}},
-                False,
-                id="one-to-many JSON",
-            ),
-            pytest.param(
-                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-                {"RefSchema": {"type": "object"}},
+                {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
                 True,
                 id="one-to-many",
             ),
             pytest.param(
-                {
-                    "allOf": [
-                        {
-                            "type": "array",
-                            "items": {"$ref": "#/components/schemas/RefSchema"},
-                        }
-                    ]
-                },
-                {"RefSchema": {"type": "object"}},
-                True,
-                id="one-to-many allOf",
-            ),
-            pytest.param(
                 {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-                {"RefSchema": {"type": "object", "x-secondary": "schema_ref_schema"}},
+                {
+                    "RefSchema": {
+                        "type": "object",
+                        "x-secondary": "schema_ref_schema",
+                        "x-tablename": "ref_schema",
+                    }
+                },
                 False,
                 id="many-to-many",
             ),
