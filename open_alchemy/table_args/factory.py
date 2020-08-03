@@ -145,6 +145,22 @@ def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     return _INDEX_MAPPING[name](spec)
 
 
+def iter_index_expressions(*, spec: types.AnyIndex) -> typing.Iterator[str]:
+    """
+    Iterate over all expressions in the composite index constraint.
+
+    Args:
+        spec: The specification to iterator over.
+
+    Returns:
+        An iterator with all expressions of the index constraint.
+
+    """
+    mapped_specs = _map_index(spec=spec)
+    column_lists = map(lambda index_spec: index_spec["expressions"], mapped_specs)
+    return itertools.chain(*column_lists)
+
+
 def _construct_unique(spec: types.Unique) -> schema.UniqueConstraint:
     """
     Construct unique constraints.
