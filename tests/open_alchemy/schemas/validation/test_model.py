@@ -732,6 +732,69 @@ TESTS = [
     ),
     pytest.param(
         {
+            "x-composite-index": ["not a key"],
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (
+            False,
+            "x-composite-index :: all expressions must be properties, not a key is not",
+        ),
+        id="x-composite-index column not in properties",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-index": ["parent_key"],
+                    "x-inherits": True,
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (
+            False,
+            "x-composite-index :: all expressions must be properties, parent_key is "
+            "not",
+        ),
+        id="x-composite-index column in parent joined table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-index": ["parent_key"],
+                    "x-inherits": True,
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (True, None),
+        id="x-composite-index column in parent single table inheritance",
+    ),
+    pytest.param(
+        {
             "x-composite-unique": True,
             "x-tablename": "schema",
             "type": "object",
@@ -779,8 +842,68 @@ TESTS = [
         (True, None),
         id="x-composite-unique",
     ),
-    # ADD TESTS where composite index and unique keys are not properties and also when
-    # they are on a joined table find on single table
+    pytest.param(
+        {
+            "x-composite-unique": ["not a key"],
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": "value"},
+        },
+        {},
+        (
+            False,
+            "x-composite-unique :: all columns must be properties, not a key is not",
+        ),
+        id="x-composite-unique column not in properties",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-unique": ["parent_key"],
+                    "x-inherits": True,
+                    "x-tablename": "schema",
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (
+            False,
+            "x-composite-unique :: all columns must be properties, parent_key is not",
+        ),
+        id="x-composite-unique column in parent joined table inheritance",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "x-composite-unique": ["parent_key"],
+                    "x-inherits": True,
+                    "type": "object",
+                    "properties": {"key": "value"},
+                },
+                {"$ref": "#/components/schemas/ParentSchema"},
+            ]
+        },
+        {
+            "ParentSchema": {
+                "x-tablename": "parent_schema",
+                "type": "object",
+                "properties": {"parent_key": "parent value"},
+            }
+        },
+        (True, None),
+        id="x-composite-unique column in parent single table inheritance",
+    ),
 ]
 
 

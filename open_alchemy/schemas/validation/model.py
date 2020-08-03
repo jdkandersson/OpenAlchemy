@@ -3,9 +3,11 @@
 # pylint: disable=unused-argument
 
 import itertools
+import typing
 
 from ... import exceptions
 from ... import helpers as oa_helpers
+from ... import table_args
 from ... import types as oa_types
 from .. import helpers
 from . import types
@@ -48,15 +50,22 @@ def _check_properties(
     return None
 
 
+def _get_property_names_model(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Iterator[str]:
+    """Retrieve all property names."""
+    properties_items = helpers.iterate.property_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    return map(lambda prop: prop[0], properties_items)
+
+
 def _check_required(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check required."""
     # Retrieve property names
-    properties_items = helpers.iterate.property_items(
-        schema=schema, schemas=schemas, stay_within_model=True
-    )
-    property_name_set = set(map(lambda prop: prop[0], properties_items))
+    property_name_set = set(_get_property_names_model(schema=schema, schemas=schemas))
 
     # Check that all required values are lists
     required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
@@ -166,6 +175,16 @@ def _check_invalid_keys(
     return None
 
 
+def _get_property_names_table(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Iterator[str]:
+    """Retrieve all property names."""
+    properties_items = helpers.iterate.property_items(
+        schema=schema, schemas=schemas, stay_within_tablename=True
+    )
+    return map(lambda prop: prop[0], properties_items)
+
+
 def _check_modifiers(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
@@ -188,9 +207,32 @@ def _check_modifiers(
         return invalid_keys_result
 
     # Check composite index
-    oa_helpers.peek.composite_index(schema=schema, schemas=schemas)
+    index_spec = oa_helpers.peek.composite_index(schema=schema, schemas=schemas)
+    if index_spec is not None:
+        index_expressions = set(
+            table_args.factory.iter_index_expressions(spec=index_spec)
+        )
+        property_names = set(_get_property_names_table(schema=schema, schemas=schemas))
+        index_not_properties = index_expressions - property_names
+        if index_not_properties:
+            return types.Result(
+                False,
+                "x-composite-index :: all expressions must be properties, "
+                f"{next(iter(index_not_properties))} is not",
+            )
+
     # Check composite unique
-    oa_helpers.peek.composite_unique(schema=schema, schemas=schemas)
+    unique_spec = oa_helpers.peek.composite_unique(schema=schema, schemas=schemas)
+    if unique_spec is not None:
+        unique_columns = set(table_args.factory.iter_unique_columns(spec=unique_spec))
+        property_names = set(_get_property_names_table(schema=schema, schemas=schemas))
+        unique_not_properties = unique_columns - property_names
+        if unique_not_properties:
+            return types.Result(
+                False,
+                "x-composite-unique :: all columns must be properties, "
+                f"{next(iter(unique_not_properties))} is not",
+            )
 
     return None
 
