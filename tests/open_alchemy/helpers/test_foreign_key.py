@@ -129,13 +129,17 @@ def test_calculate_prop_name(
 @pytest.mark.helper
 def test_calculate_foreign_key():
     """
-    GIVEN the tablename and foreign key column name
-    WHEN calculate_foreign_key is called with tablename and foreign key
-        column name
+    GIVEN the target schema and foreign key column name
+    WHEN calculate_foreign_key is called with target schema and foreign key column name
     THEN the expected foreign key is returned.
     """
+    target_schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {"RefSchema": {"x-tablename": "table_1"}}
+
     returned_key = foreign_key.calculate_foreign_key(
-        tablename="table_1", foreign_key_column_name="fk_column"
+        foreign_key_column_name="fk_column",
+        target_schema=target_schema,
+        schemas=schemas,
     )
 
     assert returned_key == "table_1.fk_column"

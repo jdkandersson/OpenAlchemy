@@ -122,12 +122,6 @@ def _check_foreign_key_target_schema(
             False, f"foreign key target schema :: {model_result.reason}"
         )
 
-    # Get tablename
-    tablename = oa_helpers.peek.tablename(
-        schema=foreign_key_target_schema, schemas=schemas
-    )
-    assert tablename is not None
-
     # Check properties
     properties = helpers.iterate.property_items(
         schema=foreign_key_target_schema, schemas=schemas, stay_within_tablename=True,
@@ -163,7 +157,9 @@ def _check_foreign_key_target_schema(
 
     # Check for pre-defined foreign key property
     foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
-        tablename=tablename, foreign_key_column_name=foreign_key_column_name
+        foreign_key_column_name=foreign_key_column_name,
+        target_schema=foreign_key_target_schema,
+        schemas=schemas,
     )
     pre_defined_result = _check_pre_defined_property_schema(
         property_name=foreign_key_property_name,
