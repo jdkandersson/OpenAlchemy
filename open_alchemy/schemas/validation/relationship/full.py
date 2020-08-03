@@ -197,8 +197,11 @@ def _check_x_to_one(
     """
     type_ = oa_helpers.relationship.Type.MANY_TO_ONE
 
-    _, foreign_key_target_schema = oa_helpers.ref.resolve(
-        name=property_name, schema=property_schema, schemas=schemas
+    foreign_key_target_schema = oa_helpers.foreign_key.get_target_schema(
+        type_=type_,
+        parent_schema=modify_schema,
+        property_schema=property_schema,
+        schemas=schemas,
     )
 
     # Calculate the foreign key name
@@ -253,19 +256,17 @@ def _check_one_to_many(
     """
     type_ = oa_helpers.relationship.Type.ONE_TO_MANY
 
-    # Retrieve the items schema
-    items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
-    assert items_schema is not None
-
     # Calculate the foreign key name
     foreign_key_column_name = oa_helpers.foreign_key.calculate_column_name(
         type_=type_, property_schema=property_schema, schemas=schemas,
     )
 
     # Retrieve the schema the foreign key needs to go onto
-    modify_schema_ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
-    _, modify_schema = oa_helpers.ref.resolve(
-        schema={"$ref": modify_schema_ref}, schemas=schemas, name=""
+    modify_schema = oa_helpers.foreign_key.get_modify_schema(
+        type_=type_,
+        parent_schema=foreign_key_target_schema,
+        property_schema=property_schema,
+        schemas=schemas,
     )
 
     # Check the foreign key target schema
