@@ -24,6 +24,20 @@ from open_alchemy.helpers import relationship
             id="many-to-one defined",
         ),
         pytest.param(
+            relationship.Type.ONE_TO_ONE,
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-uselist": False}},
+            "id",
+            id="one-to-one not defined",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_ONE,
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-foreign-key-column": "name", "x-uselist": False}},
+            "name",
+            id="one-to-one defined",
+        ),
+        pytest.param(
             relationship.Type.ONE_TO_MANY,
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
@@ -90,6 +104,58 @@ def test_calculate_prop_name_one_to_many():
     )
 
     assert returned_name == "table_1_property_1_fk_column"
+
+
+@pytest.mark.parametrize(
+    "type_, column_name, property_name, schema, schemas, expected_prop_name",
+    [
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            "column_1",
+            "prop_1",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {}},
+            "prop_1_column_1",
+            id="many-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_ONE,
+            "column_1",
+            "prop_1",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-uselist": False}},
+            "prop_1_column_1",
+            id="one-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "column_1",
+            "prop_1",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": "ref_schema"}},
+            "ref_schema_prop_1_column_1",
+            id="one-to-many not defined",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_calculate_prop_name(
+    type_, column_name, property_name, schema, schemas, expected_prop_name
+):
+    """
+    GIVEN relationship type, schema, schemas and expected prop name
+    WHEN calculate_prop_name is called with the type, schema and schemas
+    THEN the expected foreign key prop name is returned.
+    """
+    returned_name = foreign_key.calculate_prop_name(
+        type_=type_,
+        column_name=column_name,
+        property_name=property_name,
+        foreign_key_targeted_schema=schema,
+        schemas=schemas,
+    )
+
+    assert returned_name == expected_prop_name
 
 
 @pytest.mark.helper
