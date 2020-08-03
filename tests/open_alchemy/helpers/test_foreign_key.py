@@ -54,7 +54,7 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
     THEN the expected foreign key column name is returned.
     """
     returned_name = foreign_key.calculate_column_name(
-        type_=type_, schema=schema, schemas=schemas
+        type_=type_, property_schema=schema, schemas=schemas
     )
 
     assert returned_name == expected_column_name
