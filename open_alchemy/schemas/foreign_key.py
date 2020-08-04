@@ -1,19 +1,22 @@
 """Pre-processor that defines any foreign keys."""
 
+from .. import exceptions
 from .. import helpers
 from .. import types
-from .validation.property_ import relationship
+from .validation import property_
 
 
 def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
     """
     Check whether the property requires a foreign key to be defined.
 
+    Raise MalformedSchemaError if the property is not valid.
+    Raise MalformedSchemaError if the property is a relationship but it is not valid.
+
     Foreign keys are required for many-to-one, one-to-one and one-to-many relationships.
     The following rules capture this:
-    1. not JSON,
-    2. object or array type and
-    3. no secondary table.
+    1. relationship property that is not
+    2. a many-to-many relationship.
 
     Args:
         schemas: All the defined schemas used to resolve any $ref.
@@ -23,12 +26,28 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
         Whether the property requires a foreign key.
 
     """
-    # Check for valid relationship
-    relationship_result = relationship.property_.check(schema=schema, schemas=schemas)
-    if not relationship_result.valid:
+    # Check for valid property
+    type_result = property_.check_type(schemas, schema)
+    if not type_result.valid:
+        raise exceptions.MalformedSchemaError(type_result.reason)
+
+    # Filter for relationship properties
+    property_type = property_.calculate_type(schemas, schema)
+    if property_type != property_.Type.RELATIONSHIP:
         return False
-    type_ = helpers.relationship.calculate_type(schema=schema, schemas=schemas)
-    if type_ == helpers.relationship.Type.MANY_TO_MANY:
+
+    # Check for valid relationship
+    relationship_result = property_.relationship.property_.check(
+        schema=schema, schemas=schemas
+    )
+    if not relationship_result.valid:
+        raise exceptions.MalformedSchemaError(relationship_result.reason)
+
+    # Filter for not many-to-many relationship
+    relationship_type = helpers.relationship.calculate_type(
+        schema=schema, schemas=schemas
+    )
+    if relationship_type == helpers.relationship.Type.MANY_TO_MANY:
         return False
     return True
 
