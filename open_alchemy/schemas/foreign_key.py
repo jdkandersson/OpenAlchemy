@@ -1,5 +1,7 @@
 """Pre-processor that defines any foreign keys."""
 
+import typing
+
 from .. import exceptions
 from .. import helpers as oa_helpers
 from .. import types
@@ -117,3 +119,95 @@ def _foreign_key_property_not_defined(
     if contains_foreign_key_property_name:
         return False
     return True
+
+
+def _calculate_foreign_key_property_schema(
+    schemas: types.Schema,
+    parent_schema: types.Schema,
+    property_name: str,
+    property_schema: types.Schema,
+) -> types.ColumnSchema:
+    """
+    Calculate the schema for the foreign key property.
+
+    Assume the full relationship schema is valid.
+    Assume that the relationship is not many-to-many
+
+    Args:
+        schemas: All defined schemas used to resolve any $ref.
+        parent_schema: The schema that contains the relationship property.
+        property_name: The name of the property.
+        property_schema: The schema of the property.
+
+    Returns:
+        The schema of the foreign key property.
+
+    """
+    # Retrieve the schema of the property that is targeted by the foreign key
+    relationship_type = oa_helpers.relationship.calculate_type(
+        schema=property_schema, schemas=schemas
+    )
+    assert relationship_type != oa_helpers.relationship.Type.MANY_TO_MANY
+
+    column_name = oa_helpers.foreign_key.calculate_column_name(
+        type_=relationship_type, property_schema=property_schema, schemas=schemas,
+    )
+    target_schema = oa_helpers.foreign_key.get_target_schema(
+        type_=relationship_type,
+        parent_schema=parent_schema,
+        property_schema=property_schema,
+        schemas=schemas,
+    )
+    target_schema_properties = helpers.iterate.property_items(
+        schema=target_schema, schemas=schemas
+    )
+    foreign_key_target = next(
+        filter(lambda arg: arg[0] == column_name, target_schema_properties), None
+    )
+    assert foreign_key_target is not None
+    _, foreign_key_target_schema = foreign_key_target
+
+    # Check whether the property is required
+    required: typing.Optional[bool] = None
+    if relationship_type != oa_helpers.relationship.Type.ONE_TO_MANY:
+        required_items = helpers.iterate.required_items(
+            schema=parent_schema, schemas=schemas
+        )
+        required = any(filter(lambda name: name == property_name, required_items))
+    nullable = oa_helpers.peek.nullable(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
+    default = oa_helpers.peek.default(schema=foreign_key_target_schema, schemas=schemas)
+    nullable = oa_helpers.calculate_nullable(
+        nullable=nullable,
+        generated=False,
+        defaulted=default is not None,
+        required=required,
+    )
+
+    # Retrieve information about the foreign key schema
+    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+        column_name=column_name, target_schema=target_schema, schemas=schemas,
+    )
+    property_type = oa_helpers.peek.type_(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
+    format_ = oa_helpers.peek.format_(schema=foreign_key_target_schema, schemas=schemas)
+    max_length = oa_helpers.peek.max_length(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
+
+    # Calculate the schema
+    return_schema: types.ColumnSchema = {
+        "type": property_type,
+        "x-dict-ignore": True,
+        "nullable": nullable,
+        "x-foreign-key": foreign_key,
+    }
+    if format_ is not None:
+        return_schema["format"] = format_
+    if max_length is not None:
+        return_schema["maxLength"] = max_length
+    if default is not None:
+        return_schema["default"] = default
+    return return_schema
