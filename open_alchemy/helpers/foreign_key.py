@@ -167,3 +167,40 @@ def get_modify_schema(
         return ref_schema
 
     return parent_schema
+
+
+def get_modify_name(
+    *,
+    type_: relationship.Type,
+    parent_name: str,
+    property_schema: types.Schema,
+    schemas: types.Schemas,
+) -> str:
+    """
+    Get the name of the schema the foreign key needs to be added to.
+
+    Assume type_ is not many-to-many.
+    Assume property schema is a valid relationship.
+
+    Args:
+        type: The type of relationship.
+        parent_name: The name of the parent schema.
+        property_schema: The schema of the relationship property.
+        schemas: Used to resolve any $ref.
+
+    Returns:
+        The schema the foreign key needs to be defined on.
+
+    """
+    assert type_ != relationship.Type.MANY_TO_MANY
+
+    if type_ == relationship.Type.ONE_TO_MANY:
+        items_schema = peek.items(schema=property_schema, schemas=schemas)
+        assert items_schema is not None
+        ref = peek.ref(schema=items_schema, schemas=schemas)
+        ref_name, _ = ref_helper.resolve(
+            schema={"$ref": ref}, schemas=schemas, name=parent_name
+        )
+        return ref_name
+
+    return parent_name

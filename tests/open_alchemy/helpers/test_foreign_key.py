@@ -263,3 +263,66 @@ def test_get_modify_schema(
     )
 
     assert returned_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "type_, parent_name, property_schema, schemas, expected_schema",
+    [
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            "ParentSchema",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"ref_key": "ref value"}},
+            "ParentSchema",
+            id="one-to-many",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_ONE,
+            "ParentSchema",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"ref_key": "ref value"}},
+            "ParentSchema",
+            id="one-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "ParentSchema",
+            {"items": {"$ref": "#/components/schemas/RefSchema"}},
+            {"RefSchema": {"ref_key": "ref value"}},
+            "RefSchema",
+            id="many-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "ParentSchema",
+            {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
+            {"RefSchema": {"ref_key": "ref value"}},
+            "RefSchema",
+            id="allOf many-to-one",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "ParentSchema",
+            {"items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+            {"RefSchema": {"ref_key": "ref value"}},
+            "RefSchema",
+            id="many-to-one allOf",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_get_modify_name(type_, parent_name, property_schema, schemas, expected_schema):
+    """
+    GIVEN relationship type, parent name, property schema, schemas and expected name
+    WHEN get_modify_name is called with the type, parent name, property schema and
+        schemas
+    THEN the expected name is returned.
+    """
+    returned_schema = foreign_key.get_modify_name(
+        type_=type_,
+        parent_name=parent_name,
+        property_schema=property_schema,
+        schemas=schemas,
+    )
+
+    assert returned_schema == expected_schema
