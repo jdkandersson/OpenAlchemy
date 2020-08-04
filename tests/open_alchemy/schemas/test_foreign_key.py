@@ -171,7 +171,7 @@ class TestForeignKeyPropertyNotDefined:
         assert returned_result == expected_result
 
 
-CALC_F_K_PROP_SCHEMA_TESTS = [
+CALC_F_K_PROP_ART_TESTS = [
     pytest.param(
         "Schema",
         {},
@@ -489,8 +489,8 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
 ]
 
 
-class TestCalculateForeignKeyPropertySchema:
-    """Tests for _calculate_foreign_key_property_schema"""
+class TestCalculateForeignKeyPropertyArtifacts:
+    """Tests for _calculate_foreign_key_property_artifacts"""
 
     # pylint: disable=protected-access
 
@@ -498,7 +498,7 @@ class TestCalculateForeignKeyPropertySchema:
     @pytest.mark.parametrize(
         "parent_name, parent_schema, property_name, property_schema, schemas, "
         "expected_schema",
-        CALC_F_K_PROP_SCHEMA_TESTS,
+        CALC_F_K_PROP_ART_TESTS,
     )
     @pytest.mark.schemas
     def test_(
@@ -511,11 +511,11 @@ class TestCalculateForeignKeyPropertySchema:
     ):
         """
         GIVEN schemas, parent schema, property name and schema and expected schema
-        WHEN _calculate_foreign_key_property_schema is called with the schemas, parent
-            schema and property name and schema
+        WHEN _calculate_foreign_key_property_artifacts is called with the schemas,
+            parent schema and property name and schema
         THEN the expected schema is returned.
         """
-        returned_schema = foreign_key._calculate_foreign_key_property_schema(
+        returned_schema = foreign_key._calculate_foreign_key_property_artifacts(
             schemas, parent_name, parent_schema, property_name, property_schema
         )
 

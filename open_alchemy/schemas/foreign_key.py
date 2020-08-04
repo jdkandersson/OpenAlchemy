@@ -129,7 +129,7 @@ class _ForeignKeyArtifacts(typing.NamedTuple):
     foreign_key_property_schema: types.ColumnSchema
 
 
-def _calculate_foreign_key_property_schema(
+def _calculate_foreign_key_property_artifacts(
     schemas: types.Schema,
     parent_name: str,
     parent_schema: types.Schema,
