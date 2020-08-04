@@ -8,6 +8,14 @@ TESTS = [
     pytest.param(
         {},
         "ref_schemas",
+        {"type": "array", "items": True},
+        {"RefSchema": {}},
+        (False, "malformed schema :: The items property must be of type dict. "),
+        id="one-to-many property schema malformed",
+    ),
+    pytest.param(
+        {},
+        "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
         (False, "foreign key target schema :: every model must define x-tablename"),

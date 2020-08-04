@@ -1,7 +1,5 @@
 """Validate the full schema (property, source and referenced)."""
 
-import itertools
-
 from ..... import exceptions
 from ..... import helpers as oa_helpers
 from ..... import types as oa_types
@@ -117,16 +115,10 @@ def _check_target_schema(
         A result if something is wrong with the reason or None otherwise.
 
     """
-    # Check properties
+    # Look for foreign key property schema
     properties = helpers.iterate.property_items(
         schema=target_schema, schemas=schemas, stay_within_tablename=True,
     )
-    has_one_property = next(properties, None)
-    if has_one_property is None:
-        return types.Result(False, "foreign key targeted schema must have properties")
-    properties = itertools.chain([has_one_property], properties)
-
-    # Look for foreign key property schema
     filtered_properties = filter(lambda arg: arg[0] == column_name, properties)
     foreign_key_target_property = next(filtered_properties, None)
     if foreign_key_target_property is None:

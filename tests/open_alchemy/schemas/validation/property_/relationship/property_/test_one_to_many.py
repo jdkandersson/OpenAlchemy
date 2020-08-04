@@ -96,6 +96,21 @@ TESTS = [
         id="one to many $ref",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {
+                    "type": "array",
+                    "x-json": False,
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                },
+                {"$ref": "#/components/schemas/RefOtherSchema"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "reference :: 'RefOtherSchema was not found in schemas.' "),
+        id="one to many allOf $ref fail",
+    ),
+    pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object", "x-json": False, "x-tablename": "ref_schema"}},
         (True, None),

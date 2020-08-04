@@ -755,7 +755,7 @@ class TestRetrieveModelParentsSchema:
             {
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
-                    {"x-inherits": True,},
+                    {"x-inherits": True},
                 ]
             },
             {"RefSchema": {"x-tablename": "ref_schema"}},

@@ -108,13 +108,13 @@ def test_constructable(schemas, expected_schemas):
             id="allOf multiple",
         ),
         pytest.param(
-            {"allOf": [{"properties": True}, {"properties": {"prop_2": "value 2"}},]},
+            {"allOf": [{"properties": True}, {"properties": {"prop_2": "value 2"}}]},
             {},
             [("prop_2", "value 2")],
             id="allOf multiple first not dict",
         ),
         pytest.param(
-            {"allOf": [{"properties": {"prop_1": "value 1"}}, {"properties": True},]},
+            {"allOf": [{"properties": {"prop_1": "value 1"}}, {"properties": True}]},
             {},
             [("prop_1", "value 1")],
             id="allOf multiple second not dict",
@@ -331,7 +331,7 @@ def test_properties_single(schema, schemas, expected_properties):
             {"allOf": [{"required": "value 1"}]}, {}, ["value 1"], id="allOf single",
         ),
         pytest.param(
-            {"allOf": [{"required": "value 1"}, {"required": "value 2"},]},
+            {"allOf": [{"required": "value 1"}, {"required": "value 2"}]},
             {},
             ["value 1", "value 2"],
             id="allOf multiple",
@@ -387,18 +387,18 @@ def test_required_values(schema, schemas, expected_required_values):
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
-            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2"}},
             ["value 1"],
             id="skip",
         ),
         pytest.param(
             {
                 "allOf": [
-                    {"required": "value 1", "x-inherits": "ParentSchema",},
+                    {"required": "value 1", "x-inherits": "ParentSchema"},
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
-            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2"}},
             ["value 1"],
             id="single table skip",
         ),
@@ -409,7 +409,7 @@ def test_required_values(schema, schemas, expected_required_values):
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
-            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2",}},
+            {"ParentSchema": {"x-tablename": "parent_schema", "required": "value 2"}},
             ["value 1", "value 2"],
             id="no inheritance not skip",
         ),
@@ -480,7 +480,7 @@ def test_required_items(schema, schemas, expected_values):
         pytest.param(
             {
                 "allOf": [
-                    {"required": ["value 1"], "x-inherits": "ParentSchema",},
+                    {"required": ["value 1"], "x-inherits": "ParentSchema"},
                     {"$ref": "#/components/schemas/ParentSchema"},
                 ]
             },
