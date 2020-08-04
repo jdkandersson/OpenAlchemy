@@ -53,11 +53,11 @@ _BackrefArtifactsGroupedIter = typing.Iterable[typing.Tuple[str, _BackrefArtifac
 _BackrefSchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
 
 
-def _calculate_schema(
+def _calculate_artifacts(
     schema_name: str, schemas: types.Schemas, schema: types.Schema
 ) -> _BackrefArtifacts:
     """
-    Calculate the schema for a back reference.
+    Calculate the artifacts for the schema for a back reference.
 
     Args:
         schema_name: The name of the schema that the property is on.
@@ -142,10 +142,10 @@ def _get_schema_backrefs(
     defines_backref_schemas = functools.partial(_defines_backref, schemas)
     backref_properties = filter(defines_backref_schemas, properties)
     # Capture information for back references
-    calculate_schema_schema_name_schemas = functools.partial(
-        _calculate_schema, schema_name, schemas
+    calculate_artifacts_schema_name_schemas = functools.partial(
+        _calculate_artifacts, schema_name, schemas
     )
-    return map(calculate_schema_schema_name_schemas, backref_properties)
+    return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
 def _get_backrefs(*, schemas: types.Schemas) -> _BackrefArtifactsIter:

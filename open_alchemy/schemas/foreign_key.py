@@ -129,6 +129,13 @@ class _ForeignKeyArtifacts(typing.NamedTuple):
     foreign_key_property_schema: types.ColumnSchema
 
 
+_ForeignKeyArtifactsIter = typing.Iterable[_ForeignKeyArtifacts]
+_ForeignKeyArtifactsGroupedIter = typing.Iterable[
+    typing.Tuple[str, _ForeignKeyArtifactsIter]
+]
+_ForeignKeySchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
+
+
 def _calculate_foreign_key_property_artifacts(
     schemas: types.Schema,
     parent_name: str,

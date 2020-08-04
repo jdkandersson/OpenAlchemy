@@ -5,8 +5,8 @@ import pytest
 from open_alchemy.schemas import backref
 
 
-class TestCalculateSchema:
-    """Tests for _calculate_schema"""
+class TestCalculateArtifacts:
+    """Tests for _calculate_artifacts"""
 
     # pylint: disable=protected-access
 
@@ -118,9 +118,9 @@ class TestCalculateSchema:
     def test_(schema, schemas, expected_schema):
         """
         GIVEN schema, schemas and expected schema
-        WHEN _calculate_schema is called with the schema and schemas
+        WHEN _calculate_artifacts is called with the schema and schemas
         THEN the expected schema is returned.
         """
-        returned_schema = backref._calculate_schema("Schema", schemas, schema)
+        returned_schema = backref._calculate_artifacts("Schema", schemas, schema)
 
         assert returned_schema == expected_schema
