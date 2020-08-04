@@ -1,5 +1,7 @@
 """Validation for properties."""
 
+import enum
+
 from .... import exceptions
 from .... import helpers
 from .... import types as oa_types
@@ -39,3 +41,40 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
         return types.Result(False, f"reference :: {exc}")
 
     return types.Result(True, None)
+
+
+class Type(enum.Enum):
+    """The type of a property."""
+
+    SIMPLE = 1
+    JSON = 2
+    RELATIONSHIP = 3
+
+
+def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
+    """
+    Calculate the type of the property.
+
+    Assume the property has a valid type.
+
+    The rules are:
+    1. if x-json is True it is JSON,
+    2. if it is type object or array it is RELATIONSHIP and
+    3. otherwise it is SIMPLE.
+
+    Args:
+        schemas: All defined schemas used to resolve any $ref.
+        schema: The schema to calculate the type for.
+
+    Returns:
+        The type of the property.
+
+    """
+    json = helpers.peek.json(schema=schema, schemas=schemas)
+    if json is True:
+        return Type.JSON
+
+    type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+    if type_ in {"object", "array"}:
+        return Type.RELATIONSHIP
+    return Type.SIMPLE

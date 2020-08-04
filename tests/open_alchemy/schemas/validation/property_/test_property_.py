@@ -4,7 +4,7 @@ import pytest
 
 from open_alchemy.schemas.validation import property_
 
-TESTS = [
+CHECK_TYPE_TESTS = [
     pytest.param(
         True,
         {},
@@ -82,7 +82,7 @@ TESTS = [
 ]
 
 
-@pytest.mark.parametrize("schema, schemas, expected_result", TESTS)
+@pytest.mark.parametrize("schema, schemas, expected_result", CHECK_TYPE_TESTS)
 @pytest.mark.schemas
 def test_check_type(schema, schemas, expected_result):
     """
@@ -93,3 +93,44 @@ def test_check_type(schema, schemas, expected_result):
     returned_result = property_.check_type(schema=schema, schemas=schemas)
 
     assert returned_result == expected_result
+
+
+CALCULATE_TYPE_TESTS = [
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True",),
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True $ref",),
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True allOf",),
+    pytest.param(
+        {"x-json": False, "type": "object"},
+        {},
+        property_.Type.RELATIONSHIP,
+        id="object json false",
+    ),
+    pytest.param({"type": "object"}, {}, property_.Type.RELATIONSHIP, id="object",),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object"}},
+        property_.Type.RELATIONSHIP,
+        id="object $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"type": "object"}]},
+        {},
+        property_.Type.RELATIONSHIP,
+        id="object allOf",
+    ),
+    pytest.param({"type": "array"}, {}, property_.Type.RELATIONSHIP, id="array",),
+    pytest.param({"type": "integer"}, {}, property_.Type.SIMPLE, id="simple",),
+]
+
+
+@pytest.mark.parametrize("schema, schemas, expected_type", CALCULATE_TYPE_TESTS)
+@pytest.mark.schemas
+def test_calculate_type(schema, schemas, expected_type):
+    """
+    GIVEN schema, schemas and expected type
+    WHEN calculate_type is called with the schema and schemas
+    THEN the expected type is returned.
+    """
+    returned_type = property_.calculate_type(schema=schema, schemas=schemas)
+
+    assert returned_type == expected_type
