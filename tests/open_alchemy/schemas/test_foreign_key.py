@@ -173,6 +173,7 @@ class TestForeignKeyPropertyNotDefined:
 
 CALC_F_K_PROP_SCHEMA_TESTS = [
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -183,15 +184,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one",
     ),
     pytest.param(
+        "Schema",
         {"required": []},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -202,15 +208,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one not required",
     ),
     pytest.param(
+        "Schema",
         {"required": ["ref_schema"]},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -221,15 +232,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": False,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": False,
+            },
+        ),
         id="many-to-one required",
     ),
     pytest.param(
+        "Schema",
         {
             "x-tablename": "schema",
             "required": ["ref_schema"],
@@ -239,15 +255,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
         "ref_schema",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-tablename": "ref_schema"}},
-        {
-            "type": "integer",
-            "x-foreign-key": "schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "RefSchema",
+            "schema_ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="one-to-many required",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -258,16 +279,21 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        {
-            "type": "integer",
-            "format": "int32",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "format": "int32",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one format",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -278,16 +304,21 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "string", "maxLength": 1}},
             }
         },
-        {
-            "type": "string",
-            "maxLength": 1,
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "string",
+                "maxLength": 1,
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one maxLength",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -298,16 +329,21 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "default": 1}},
             }
         },
-        {
-            "type": "integer",
-            "default": 1,
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": False,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "default": 1,
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": False,
+            },
+        ),
         id="many-to-one default",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -318,15 +354,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-primary-key",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -337,15 +378,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-autoincrement": True}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-autoincrement",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -356,15 +402,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-index": True}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-index",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -375,15 +426,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-unique": True}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-unique",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -394,15 +450,20 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-foreign-key": "other.key"}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-foreign-key",
     ),
     pytest.param(
+        "Schema",
         {},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -413,12 +474,16 @@ CALC_F_K_PROP_SCHEMA_TESTS = [
                 "properties": {"id": {"type": "integer", "x-kwargs": {}}},
             }
         },
-        {
-            "type": "integer",
-            "x-foreign-key": "ref_schema.id",
-            "x-dict-ignore": True,
-            "nullable": True,
-        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
         id="many-to-one x-kwargs",
     ),
 ]
@@ -431,11 +496,19 @@ class TestCalculateForeignKeyPropertySchema:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "parent_schema, property_name, property_schema, schemas, expected_schema",
+        "parent_name, parent_schema, property_name, property_schema, schemas, "
+        "expected_schema",
         CALC_F_K_PROP_SCHEMA_TESTS,
     )
     @pytest.mark.schemas
-    def test_(parent_schema, property_name, property_schema, schemas, expected_schema):
+    def test_(
+        parent_name,
+        parent_schema,
+        property_name,
+        property_schema,
+        schemas,
+        expected_schema,
+    ):
         """
         GIVEN schemas, parent schema, property name and schema and expected schema
         WHEN _calculate_foreign_key_property_schema is called with the schemas, parent
@@ -443,7 +516,7 @@ class TestCalculateForeignKeyPropertySchema:
         THEN the expected schema is returned.
         """
         returned_schema = foreign_key._calculate_foreign_key_property_schema(
-            schemas, parent_schema, property_name, property_schema
+            schemas, parent_name, parent_schema, property_name, property_schema
         )
 
         assert returned_schema == expected_schema
