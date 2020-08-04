@@ -1,9 +1,9 @@
 """Define validation rules for simple properties."""
 
-from ... import exceptions
-from ... import helpers
-from ... import types as oa_types
-from . import types
+from .... import exceptions
+from .... import helpers
+from .... import types as oa_types
+from .. import types
 
 # Set of valid type and format combinations
 _VALID_TYPE_FORMAT = {

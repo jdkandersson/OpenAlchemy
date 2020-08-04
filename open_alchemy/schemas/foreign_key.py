@@ -2,7 +2,7 @@
 
 from .. import helpers
 from .. import types
-from .validation import relationship
+from .validation.property_ import relationship
 
 
 def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:

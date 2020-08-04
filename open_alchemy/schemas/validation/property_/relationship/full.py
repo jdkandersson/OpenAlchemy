@@ -2,13 +2,13 @@
 
 import itertools
 
-from .... import exceptions
-from .... import helpers as oa_helpers
-from .... import types as oa_types
-from ... import helpers
-from .. import model
+from ..... import exceptions
+from ..... import helpers as oa_helpers
+from ..... import types as oa_types
+from .... import helpers
+from ... import model
+from ... import types
 from .. import simple
-from .. import types
 
 
 def _check_pre_defined_property_schema(

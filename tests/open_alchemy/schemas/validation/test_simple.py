@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation import simple
+from open_alchemy.schemas.validation.property_ import simple
 
 TESTS = [
     pytest.param(

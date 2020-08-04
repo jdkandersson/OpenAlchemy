@@ -1,8 +1,8 @@
 """Define validation rules for relationship."""
 
 
-from .... import types as oa_types
-from .. import types
+from ..... import types as oa_types
+from ... import types
 from . import full
 from . import property_
 

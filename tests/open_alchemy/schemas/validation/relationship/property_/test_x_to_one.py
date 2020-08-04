@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation.relationship import property_
+from open_alchemy.schemas.validation.property_.relationship import property_
 
 TESTS = [
     pytest.param(

@@ -2,10 +2,10 @@
 
 import typing
 
-from .... import exceptions
-from .... import helpers
-from .... import types as oa_types
-from .. import types
+from ..... import exceptions
+from ..... import helpers
+from ..... import types as oa_types
+from ... import types
 
 
 def _check_type(

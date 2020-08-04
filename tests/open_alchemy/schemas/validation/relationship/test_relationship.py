@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation import relationship
+from open_alchemy.schemas.validation.property_ import relationship
 
 
 @pytest.mark.parametrize(
