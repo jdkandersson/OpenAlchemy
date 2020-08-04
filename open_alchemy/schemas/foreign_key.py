@@ -144,7 +144,7 @@ def _calculate_foreign_key_property_artifacts(
     property_schema: types.Schema,
 ) -> _ForeignKeyArtifacts:
     """
-    Calculate the schema for the foreign key property.
+    Calculate the artifacts for the schema for the foreign key property.
 
     Assume the full relationship schema is valid.
     Assume that the relationship is not many-to-many
@@ -157,7 +157,8 @@ def _calculate_foreign_key_property_artifacts(
         property_schema: The schema of the property.
 
     Returns:
-        The schema of the foreign key property.
+        The name of the schema to store the property into and the name and schema of the
+        foreign key property.
 
     """
     # Retrieve the schema of the property that is targeted by the foreign key
@@ -245,4 +246,52 @@ def _calculate_foreign_key_property_artifacts(
 
     return _ForeignKeyArtifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
+    )
+
+
+def _get_schema_foreign_keys(
+    schemas: types.Schemas, schema_name: str, schema: types.Schema,
+) -> _ForeignKeyArtifactsIter:
+    """
+    Retrieve the foreign keys for a schema.
+
+    Assume schema is constructable.
+
+    Algorithm:
+    1. validate property schema and filter for whether a foreign key is required,
+    2. validate the full relationship schema and filter for foreign keys not already
+        defined and
+    3. capture the artifacts for the foreign key.
+
+    Args:
+        schemas: All schemas.
+        schema_name: The name of the schema.
+        schema: A constructable schema.
+
+    Returns:
+        Iterable with all foreign keys of the constructable schema.
+
+    """
+    # Get all the properties of the schema
+    names_properties = helpers.iterate.property_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    # Validate and remove properties that don't require foreign keys
+    foreign_key_name_properties = filter(
+        lambda args: _requires_foreign_key(schemas, args[1]), names_properties
+    )
+    # Validate relationship and remove properties that already have a defined foreign
+    # key
+    undefined_foreign_key_name_properties = filter(
+        lambda args: _foreign_key_property_not_defined(
+            schemas, schema, args[0], args[1]
+        ),
+        foreign_key_name_properties,
+    )
+    # Convert to artifacts
+    return map(
+        lambda args: _calculate_foreign_key_property_artifacts(
+            schemas, schema_name, schema, args[0], args[1]
+        ),
+        undefined_foreign_key_name_properties,
     )
