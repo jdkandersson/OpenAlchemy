@@ -61,8 +61,8 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
     Assume the property has a valid type.
 
     The rules are:
-    1. if x-json is True it is JSON,
-    2. if readOnly is True it is READ_ONLY,
+    1. if readOnly is True it is READ_ONLY,
+    2. if x-json is True it is JSON,
     2. if it is type object or array it is RELATIONSHIP and
     3. otherwise it is SIMPLE.
 
