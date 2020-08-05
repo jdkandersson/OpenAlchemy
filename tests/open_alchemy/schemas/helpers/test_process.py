@@ -77,8 +77,134 @@ def test_get_artifacts(schemas, expected_artifacts):
             lambda args: (schemas_str, schema_name, *args), schema["properties"].items()
         )
 
-    returned_artifacts = list(
-        process.get_artifacts(schemas=schemas, get_schema_artifacts=get_artifacts_func)
+    returned_artifacts = process.get_artifacts(
+        schemas=schemas, get_schema_artifacts=get_artifacts_func
     )
 
     assert list(returned_artifacts) == expected_artifacts
+
+
+Art = process.Artifacts
+
+
+CALCULATE_OUTPUTS_TESTS = [
+    pytest.param([], [], id="empty",),
+    pytest.param(
+        [Art("Schema1", "prop_1", {})],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={})]",
+            )
+        ],
+        id="single",
+    ),
+    pytest.param(
+        [Art("Schema1", "prop_1", {}), Art("Schema2", "prop_1", {})],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={})]",
+            ),
+            (
+                "Schema2",
+                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "property_schema={})]",
+            ),
+        ],
+        id="multiple different",
+    ),
+    pytest.param(
+        [
+            Art("Schema1", "prop_1", {}),
+            Art("Schema1", "prop_2", {}),
+            Art("Schema2", "prop_1", {}),
+        ],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "property_name='prop_2', property_schema={})]",
+            ),
+            (
+                "Schema2",
+                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "property_schema={})]",
+            ),
+        ],
+        id="multiple some different first multiple ordered",
+    ),
+    pytest.param(
+        [
+            Art("Schema1", "prop_1", {}),
+            Art("Schema2", "prop_1", {}),
+            Art("Schema1", "prop_2", {}),
+        ],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "property_name='prop_2', property_schema={})]",
+            ),
+            (
+                "Schema2",
+                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "property_schema={})]",
+            ),
+        ],
+        id="multiple some different first multiple not ordered",
+    ),
+    pytest.param(
+        [
+            Art("Schema1", "prop_1", {}),
+            Art("Schema2", "prop_1", {}),
+            Art("Schema2", "prop_2", {}),
+        ],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={})]",
+            ),
+            (
+                "Schema2",
+                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "property_schema={}), Artifacts(schema_name='Schema2', "
+                "property_name='prop_2', property_schema={})]",
+            ),
+        ],
+        id="multiple some different second multiple",
+    ),
+    pytest.param(
+        [Art("Schema1", "prop_1", {}), Art("Schema1", "prop_2", {})],
+        [
+            (
+                "Schema1",
+                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "property_name='prop_2', property_schema={})]",
+            )
+        ],
+        id="multiple same",
+    ),
+]
+
+
+@pytest.mark.parametrize("artifacts, expected_outputs", CALCULATE_OUTPUTS_TESTS)
+@pytest.mark.schemas
+def test_calculate_outputs(artifacts, expected_outputs):
+    """
+    GIVEN artifacts and expected outputs
+    WHEN calculate_outputs is called with the artifacts and a function that returns the
+        input as a string
+    THEN the expected outputs are returned.
+    """
+    returned_artifacts = process.calculate_outputs(
+        artifacts=artifacts, calculate_output=lambda arg: str(list(arg))
+    )
+
+    assert list(returned_artifacts) == expected_outputs
