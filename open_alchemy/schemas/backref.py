@@ -135,31 +135,6 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _get_backrefs(*, schemas: types.Schemas) -> helpers.process.ArtifactsIter:
-    """
-    Get all back reference information from the schemas.
-
-    Takes all schemas, retrieves all constructable schemas, for each schema retrieves
-    all back references and returns an iterable with all the captured back references.
-
-    Args:
-        schemas: The schemas to process.
-
-    Returns:
-        All backreference information.
-
-    """
-    # Retrieve all constructable schemas
-    constructables = helpers.iterate.constructable(schemas=schemas)
-    # Retrieve all backrefs
-    _get_schema_backrefs_schemas = functools.partial(_get_schema_backrefs, schemas)
-    backrefs_iters = map(
-        lambda args: _get_schema_backrefs_schemas(*args), constructables
-    )
-    # Unpack nested iterators
-    return itertools.chain(*backrefs_iters)
-
-
 def _group_backrefs(
     *, backrefs: helpers.process.ArtifactsIter
 ) -> helpers.process.ArtifactsGroupedIter:
