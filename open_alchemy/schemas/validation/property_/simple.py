@@ -31,7 +31,8 @@ _VALID_MAX_LENGTH_TYPE_FORMAT = {
 def _check_modifiers(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
-    """Check property schema modifiers."""  # check type
+    """Check property schema modifiers."""
+    # check type
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     if type_ not in {"integer", "number", "string", "boolean"}:
         return types.Result(False, f"{type_} type is not supported")
