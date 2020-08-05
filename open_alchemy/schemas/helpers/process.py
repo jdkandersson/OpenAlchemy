@@ -7,7 +7,7 @@ from ... import types
 from . import iterate
 
 
-class Artifacts(typing.NamedTuple):
+class TArtifacts(typing.NamedTuple):
     """The return value of _calculate_schema."""
 
     schema_name: str
@@ -15,15 +15,17 @@ class Artifacts(typing.NamedTuple):
     property_schema: typing.Any
 
 
-ArtifactsIter = typing.Iterator[Artifacts]
-ArtifactsGroupedIter = typing.Iterator[typing.Tuple[str, ArtifactsIter]]
-SchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
-TGetSchemaArtifacts = typing.Callable[[types.Schemas, str, types.Schema], ArtifactsIter]
+TArtifactsIter = typing.Iterator[TArtifacts]
+TArtifactsGroupedIter = typing.Iterator[typing.Tuple[str, TArtifactsIter]]
+TSchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
+TGetSchemaArtifacts = typing.Callable[
+    [types.Schemas, str, types.Schema], TArtifactsIter
+]
 
 
 def get_artifacts(
     *, schemas: types.Schemas, get_schema_artifacts: TGetSchemaArtifacts
-) -> ArtifactsIter:
+) -> TArtifactsIter:
     """
     Get all back reference information from the schemas.
 
@@ -49,11 +51,11 @@ def get_artifacts(
 
 TOutput = typing.TypeVar("TOutput")
 TOutputIter = typing.Iterator[typing.Tuple[str, TOutput]]
-TCalculateOutput = typing.Callable[[ArtifactsIter], TOutput]
+TCalculateOutput = typing.Callable[[TArtifactsIter], TOutput]
 
 
 def calculate_outputs(
-    *, artifacts: ArtifactsIter, calculate_output: TCalculateOutput
+    *, artifacts: TArtifactsIter, calculate_output: TCalculateOutput
 ) -> TOutputIter:
     """
     Convert artifacts iterator to an output iterator.

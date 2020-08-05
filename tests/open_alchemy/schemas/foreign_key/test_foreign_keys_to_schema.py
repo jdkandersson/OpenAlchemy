@@ -5,7 +5,7 @@ import pytest
 from open_alchemy.schemas import foreign_key
 from open_alchemy.schemas import helpers
 
-Art = helpers.process.Artifacts  # pylint: disable=protected-access
+Art = helpers.process.TArtifacts
 
 
 class TestForeignKeysToSchema:

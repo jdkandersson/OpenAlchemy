@@ -39,9 +39,15 @@ def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
     return False
 
 
+class TArtifacts(helpers.process.TArtifacts):
+    """The return value of _calculate_schema."""
+
+    property_schema: types.Schema
+
+
 def _calculate_artifacts(
     schema_name: str, schemas: types.Schemas, schema: types.Schema
-) -> helpers.process.Artifacts:
+) -> TArtifacts:
     """
     Calculate the artifacts for the schema for a back reference.
 
@@ -97,12 +103,12 @@ def _calculate_artifacts(
     if is_array:
         return_schema = {"type": "array", "items": return_schema}
 
-    return helpers.process.Artifacts(ref_schema_name, backref, return_schema)
+    return TArtifacts(ref_schema_name, backref, return_schema)
 
 
 def _get_schema_backrefs(
     schemas: types.Schemas, schema_name: str, schema: types.Schema,
-) -> helpers.process.ArtifactsIter:
+) -> helpers.process.TArtifactsIter:
     """
     Get the backrefs for a schema.
 
@@ -134,7 +140,7 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _backrefs_to_schema(backrefs: helpers.process.ArtifactsIter) -> types.Schema:
+def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schema:
     """
     Convert to the schema with the x-backrefs value from backrefs.
 

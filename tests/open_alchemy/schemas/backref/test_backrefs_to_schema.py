@@ -5,7 +5,7 @@ import pytest
 from open_alchemy.schemas import backref
 from open_alchemy.schemas import helpers
 
-Art = helpers.process.Artifacts  # pylint: disable=protected-access
+TArt = helpers.process.TArtifacts  # pylint: disable=protected-access
 
 
 class TestBackrefsToSchema:
@@ -19,14 +19,14 @@ class TestBackrefsToSchema:
         [
             pytest.param([], {"type": "object", "x-backrefs": {}}, id="empty"),
             pytest.param(
-                [Art("Schema1", "prop_1", {"key_1": "value 1"})],
+                [TArt("Schema1", "prop_1", {"key_1": "value 1"})],
                 {"type": "object", "x-backrefs": {"prop_1": {"key_1": "value 1"}}},
                 id="single",
             ),
             pytest.param(
                 [
-                    Art("Schema1", "prop_1", {"key_1": "value 1"}),
-                    Art("Schema1", "prop_2", {"key_2": "value 2"}),
+                    TArt("Schema1", "prop_1", {"key_1": "value 1"}),
+                    TArt("Schema1", "prop_2", {"key_2": "value 2"}),
                 ],
                 {
                     "type": "object",

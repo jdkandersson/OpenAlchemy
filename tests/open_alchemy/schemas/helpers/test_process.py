@@ -84,33 +84,33 @@ def test_get_artifacts(schemas, expected_artifacts):
     assert list(returned_artifacts) == expected_artifacts
 
 
-Art = process.Artifacts
+TArt = process.TArtifacts
 
 
 CALCULATE_OUTPUTS_TESTS = [
     pytest.param([], [], id="empty",),
     pytest.param(
-        [Art("Schema1", "prop_1", {})],
+        [TArt("Schema1", "prop_1", {})],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
                 "property_schema={})]",
             )
         ],
         id="single",
     ),
     pytest.param(
-        [Art("Schema1", "prop_1", {}), Art("Schema2", "prop_1", {})],
+        [TArt("Schema1", "prop_1", {}), TArt("Schema2", "prop_1", {})],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
                 "property_schema={})]",
             ),
             (
                 "Schema2",
-                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema2', property_name='prop_1', "
                 "property_schema={})]",
             ),
         ],
@@ -118,20 +118,20 @@ CALCULATE_OUTPUTS_TESTS = [
     ),
     pytest.param(
         [
-            Art("Schema1", "prop_1", {}),
-            Art("Schema1", "prop_2", {}),
-            Art("Schema2", "prop_1", {}),
+            TArt("Schema1", "prop_1", {}),
+            TArt("Schema1", "prop_2", {}),
+            TArt("Schema2", "prop_1", {}),
         ],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
-                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), TArtifacts(schema_name='Schema1', "
                 "property_name='prop_2', property_schema={})]",
             ),
             (
                 "Schema2",
-                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema2', property_name='prop_1', "
                 "property_schema={})]",
             ),
         ],
@@ -139,20 +139,20 @@ CALCULATE_OUTPUTS_TESTS = [
     ),
     pytest.param(
         [
-            Art("Schema1", "prop_1", {}),
-            Art("Schema2", "prop_1", {}),
-            Art("Schema1", "prop_2", {}),
+            TArt("Schema1", "prop_1", {}),
+            TArt("Schema2", "prop_1", {}),
+            TArt("Schema1", "prop_2", {}),
         ],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
-                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), TArtifacts(schema_name='Schema1', "
                 "property_name='prop_2', property_schema={})]",
             ),
             (
                 "Schema2",
-                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema2', property_name='prop_1', "
                 "property_schema={})]",
             ),
         ],
@@ -160,32 +160,32 @@ CALCULATE_OUTPUTS_TESTS = [
     ),
     pytest.param(
         [
-            Art("Schema1", "prop_1", {}),
-            Art("Schema2", "prop_1", {}),
-            Art("Schema2", "prop_2", {}),
+            TArt("Schema1", "prop_1", {}),
+            TArt("Schema2", "prop_1", {}),
+            TArt("Schema2", "prop_2", {}),
         ],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
                 "property_schema={})]",
             ),
             (
                 "Schema2",
-                "[Artifacts(schema_name='Schema2', property_name='prop_1', "
-                "property_schema={}), Artifacts(schema_name='Schema2', "
+                "[TArtifacts(schema_name='Schema2', property_name='prop_1', "
+                "property_schema={}), TArtifacts(schema_name='Schema2', "
                 "property_name='prop_2', property_schema={})]",
             ),
         ],
         id="multiple some different second multiple",
     ),
     pytest.param(
-        [Art("Schema1", "prop_1", {}), Art("Schema1", "prop_2", {})],
+        [TArt("Schema1", "prop_1", {}), TArt("Schema1", "prop_2", {})],
         [
             (
                 "Schema1",
-                "[Artifacts(schema_name='Schema1', property_name='prop_1', "
-                "property_schema={}), Artifacts(schema_name='Schema1', "
+                "[TArtifacts(schema_name='Schema1', property_name='prop_1', "
+                "property_schema={}), TArtifacts(schema_name='Schema1', "
                 "property_name='prop_2', property_schema={})]",
             )
         ],

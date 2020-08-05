@@ -121,7 +121,7 @@ def _foreign_key_property_not_defined(
     return True
 
 
-class Artifacts(helpers.process.Artifacts):
+class TArtifacts(helpers.process.TArtifacts):
     """The return value of _calculate_schema."""
 
     property_schema: types.ColumnSchema
@@ -133,7 +133,7 @@ def _calculate_foreign_key_property_artifacts(
     parent_schema: types.Schema,
     property_name: str,
     property_schema: types.Schema,
-) -> Artifacts:
+) -> TArtifacts:
     """
     Calculate the artifacts for the schema for the foreign key property.
 
@@ -239,14 +239,14 @@ def _calculate_foreign_key_property_artifacts(
         schemas=schemas,
     )
 
-    return Artifacts(
+    return TArtifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
     )
 
 
 def _get_schema_foreign_keys(
     schemas: types.Schemas, schema_name: str, schema: types.Schema,
-) -> helpers.process.ArtifactsIter:
+) -> helpers.process.TArtifactsIter:
     """
     Retrieve the foreign keys for a schema.
 
@@ -293,7 +293,7 @@ def _get_schema_foreign_keys(
 
 
 def _foreign_keys_to_schema(
-    foreign_keys: helpers.process.ArtifactsIter,
+    foreign_keys: helpers.process.TArtifactsIter,
 ) -> types.Schema:
     """
     Convert to the schema with the foreign keys from foreign key artifacts.
