@@ -301,3 +301,26 @@ def _foreign_keys_to_schema(
             property_name: schema for _, property_name, schema in foreign_keys
         },
     }
+
+
+def process(*, schemas: types.Schemas):
+    """
+    Pre-process the schemas to add foreign keys as required.
+
+    Args:
+        schemas: The schemas to process.
+
+    """
+    # Retrieve foreign keys
+    foreign_keys = helpers.process.get_artifacts(
+        schemas=schemas, get_schema_artifacts=_get_schema_foreign_keys
+    )
+    # Map to a schema for each grouped foreign keys
+    foreign_key_schemas = helpers.process.calculate_outputs(
+        artifacts=foreign_keys, calculate_output=_foreign_keys_to_schema
+    )
+    # Convert to list to resolve iterator
+    foreign_key_schema_list = list(foreign_key_schemas)
+    # Add foreign keys to schemas
+    for name, foreign_key_schema in foreign_key_schema_list:
+        schemas[name] = {"allOf": [schemas[name], foreign_key_schema]}

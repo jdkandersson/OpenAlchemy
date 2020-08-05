@@ -153,7 +153,7 @@ def _backrefs_to_schema(backrefs: helpers.process.ArtifactsIter) -> types.Schema
 
 def process(*, schemas: types.Schemas):
     """
-    Pre-process the schemas to add backreferences as required.
+    Pre-process the schemas to add back references as required.
 
     Args:
         schemas: The schemas to process.
@@ -163,7 +163,7 @@ def process(*, schemas: types.Schemas):
     backrefs = helpers.process.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_backrefs
     )
-    # Map to a schema for each grouped backreference
+    # Map to a schema for each grouped back references
     backref_schemas = helpers.process.calculate_outputs(
         artifacts=backrefs, calculate_output=_backrefs_to_schema
     )
