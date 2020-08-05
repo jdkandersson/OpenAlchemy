@@ -12,7 +12,6 @@ from open_alchemy import types as oa_types
 from .. import column
 from .. import types
 from . import artifacts as artifacts
-from . import foreign_key as foreign_key
 from . import schema as _schema
 
 
