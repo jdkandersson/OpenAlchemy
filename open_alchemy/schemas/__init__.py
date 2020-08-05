@@ -2,6 +2,7 @@
 
 from .. import types as _types
 from . import backref
+from . import foreign_key
 from . import helpers
 from . import validation
 
@@ -18,3 +19,4 @@ def process(*, schemas: _types.Schemas) -> None:
 
     """
     backref.process(schemas=schemas)
+    foreign_key.process(schemas=schemas)

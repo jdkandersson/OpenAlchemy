@@ -46,9 +46,10 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
 class Type(enum.Enum):
     """The type of a property."""
 
-    SIMPLE = 1
-    JSON = 2
-    RELATIONSHIP = 3
+    READ_ONLY = 1
+    SIMPLE = 2
+    JSON = 3
+    RELATIONSHIP = 4
 
 
 def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:

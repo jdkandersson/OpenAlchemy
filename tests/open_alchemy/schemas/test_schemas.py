@@ -24,26 +24,51 @@ def test_process():
                 }
             },
         },
-        "RefSchema1": {"ref_key_1": "ref_value 1"},
+        "RefSchema1": {
+            "x-tablename": "ref_schema_1",
+            "x-foreign-key-column": "prop_1",
+            "type": "object",
+            "properties": {"prop_1": {"type": "integer"}},
+        },
     }
 
     process(schemas=schemas)
 
-    assert schemas == {
+    expected_schemas = {
         "Schema1": {
-            "x-tablename": "schema1",
-            "properties": {
-                "prop_1": {
-                    "allOf": [
-                        {"$ref": "#/components/schemas/RefSchema1"},
-                        {"x-backref": "schema1"},
-                    ]
-                }
-            },
+            "allOf": [
+                {
+                    "x-tablename": "schema1",
+                    "properties": {
+                        "prop_1": {
+                            "allOf": [
+                                {"$ref": "#/components/schemas/RefSchema1"},
+                                {"x-backref": "schema1"},
+                            ]
+                        }
+                    },
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "prop_1_prop_1": {
+                            "type": "integer",
+                            "x-dict-ignore": True,
+                            "nullable": True,
+                            "x-foreign-key": "ref_schema_1.prop_1",
+                        }
+                    },
+                },
+            ]
         },
         "RefSchema1": {
             "allOf": [
-                {"ref_key_1": "ref_value 1"},
+                {
+                    "x-tablename": "ref_schema_1",
+                    "x-foreign-key-column": "prop_1",
+                    "type": "object",
+                    "properties": {"prop_1": {"type": "integer"}},
+                },
                 {
                     "type": "object",
                     "x-backrefs": {
@@ -56,3 +81,4 @@ def test_process():
             ]
         },
     }
+    assert schemas == expected_schemas
