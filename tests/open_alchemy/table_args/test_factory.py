@@ -123,6 +123,53 @@ def test_map_unique(spec, expected_spec):
 
 
 @pytest.mark.parametrize(
+    "spec, expected_columns",
+    [
+        pytest.param(["column 1"], ["column 1"], id="column list single",),
+        pytest.param(
+            ["column 1", "column 2"],
+            ["column 1", "column 2"],
+            id="column list multiple",
+        ),
+        pytest.param([["column 1"]], ["column 1"], id="column list of list single",),
+        pytest.param(
+            [["column 1"], ["column 2"]],
+            ["column 1", "column 2"],
+            id="column list of list multiple",
+        ),
+        pytest.param(
+            {"columns": ["column 1"]}, ["column 1"], id="unique constraint single",
+        ),
+        pytest.param(
+            {"columns": ["column 1", "column 2"]},
+            ["column 1", "column 2"],
+            id="unique constraint multiple",
+        ),
+        pytest.param(
+            [{"columns": ["column 1"]}],
+            ["column 1"],
+            id="list of unique constraint single",
+        ),
+        pytest.param(
+            [{"columns": ["column 1"]}, {"columns": ["column 2"]}],
+            ["column 1", "column 2"],
+            id="list of unique constraint multiple",
+        ),
+    ],
+)
+@pytest.mark.table_args
+def test_iter_unique_columns(spec, expected_columns):
+    """
+    GIVEN specification and expected columns
+    WHEN iter_unique_columns is called with the specification
+    THEN an iterator with all columns is returned.
+    """
+    returned_columns = factory.iter_unique_columns(spec=spec)
+
+    assert list(returned_columns) == expected_columns
+
+
+@pytest.mark.parametrize(
     "spec, expected_spec",
     [
         (["column 1"], [{"expressions": ["column 1"]}]),
@@ -158,6 +205,53 @@ def test_map_index(spec, expected_spec):
         )
         == "IndexList"
     )
+
+
+@pytest.mark.parametrize(
+    "spec, expected_expressions",
+    [
+        pytest.param(["column 1"], ["column 1"], id="column list single",),
+        pytest.param(
+            ["column 1", "column 2"],
+            ["column 1", "column 2"],
+            id="column list multiple",
+        ),
+        pytest.param([["column 1"]], ["column 1"], id="column list of list single",),
+        pytest.param(
+            [["column 1"], ["column 2"]],
+            ["column 1", "column 2"],
+            id="column list of list multiple",
+        ),
+        pytest.param(
+            {"expressions": ["column 1"]}, ["column 1"], id="unique constraint single",
+        ),
+        pytest.param(
+            {"expressions": ["column 1", "column 2"]},
+            ["column 1", "column 2"],
+            id="unique constraint multiple",
+        ),
+        pytest.param(
+            [{"expressions": ["column 1"]}],
+            ["column 1"],
+            id="list of unique constraint single",
+        ),
+        pytest.param(
+            [{"expressions": ["column 1"]}, {"expressions": ["column 2"]}],
+            ["column 1", "column 2"],
+            id="list of unique constraint multiple",
+        ),
+    ],
+)
+@pytest.mark.table_args
+def test_iter_index_expressions(spec, expected_expressions):
+    """
+    GIVEN specification and expected expressions
+    WHEN iter_index_expressions is called with the specification
+    THEN an iterator with all expressions is returned.
+    """
+    returned_expressions = factory.iter_index_expressions(spec=spec)
+
+    assert list(returned_expressions) == expected_expressions
 
 
 @pytest.mark.parametrize(

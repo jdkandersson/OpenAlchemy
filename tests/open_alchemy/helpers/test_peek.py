@@ -98,6 +98,100 @@ def test_format(schema, expected_format):
 
 
 @pytest.mark.helper
+def test_autoincrement_wrong_type():
+    """
+    GIVEN schema with autoincrement defined as a string
+    WHEN autoincrement is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-autoincrement": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.autoincrement(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_autoincrement",
+    [
+        ({}, None),
+        ({"x-autoincrement": True}, True),
+        ({"x-autoincrement": False}, False),
+    ],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_autoincrement(schema, expected_autoincrement):
+    """
+    GIVEN schema and expected autoincrement
+    WHEN autoincrement is called with the schema
+    THEN the expected autoincrement is returned.
+    """
+    returned_autoincrement = helpers.peek.autoincrement(schema=schema, schemas={})
+
+    assert returned_autoincrement == expected_autoincrement
+
+
+@pytest.mark.helper
+def test_index_wrong_type():
+    """
+    GIVEN schema with index defined as a string
+    WHEN index is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-index": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.index(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_index",
+    [({}, None), ({"x-index": True}, True), ({"x-index": False}, False)],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_index(schema, expected_index):
+    """
+    GIVEN schema and expected index
+    WHEN index is called with the schema
+    THEN the expected index is returned.
+    """
+    returned_index = helpers.peek.index(schema=schema, schemas={})
+
+    assert returned_index == expected_index
+
+
+@pytest.mark.helper
+def test_unique_wrong_type():
+    """
+    GIVEN schema with unique defined as a string
+    WHEN unique is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-unique": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.unique(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_unique",
+    [({}, None), ({"x-unique": True}, True), ({"x-unique": False}, False)],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_unique(schema, expected_unique):
+    """
+    GIVEN schema and expected unique
+    WHEN unique is called with the schema
+    THEN the expected unique is returned.
+    """
+    returned_unique = helpers.peek.unique(schema=schema, schemas={})
+
+    assert returned_unique == expected_unique
+
+
+@pytest.mark.helper
 def test_max_length_wrong_type():
     """
     GIVEN schema with max_length defined as a boolean
@@ -459,6 +553,99 @@ def test_items(schema, expected_items):
     assert returned_items == expected_items
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        pytest.param({"x-kwargs": True}, id="not dict"),
+        pytest.param({"x-kwargs": {1: True}}, id="single key not string"),
+        pytest.param(
+            {"x-kwargs": {1: True, "key": "value"}}, id="multiple key first not string"
+        ),
+        pytest.param(
+            {"x-kwargs": {"key": "value", 1: True}}, id="multiple key second not string"
+        ),
+        pytest.param(
+            {"x-kwargs": {1: True, 2: False}}, id="multiple key all not string"
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_kwargs_wrong_type(schema):
+    """
+    GIVEN schema
+    WHEN kwargs is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.kwargs(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_kwargs",
+    [({}, None), ({"x-kwargs": {"key": "value"}}, {"key": "value"})],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_kwargs(schema, expected_kwargs):
+    """
+    GIVEN schema and expected kwargs
+    WHEN kwargs is called with the schema
+    THEN the expected kwargs is returned.
+    """
+    returned_kwargs = helpers.peek.kwargs(schema=schema, schemas={})
+
+    assert returned_kwargs == expected_kwargs
+
+
+@pytest.mark.parametrize(
+    "schema",
+    [
+        pytest.param({"x-foreign-key-kwargs": True}, id="not dict"),
+        pytest.param({"x-foreign-key-kwargs": {1: True}}, id="single key not string"),
+        pytest.param(
+            {"x-foreign-key-kwargs": {1: True, "key": "value"}},
+            id="multiple key first not string",
+        ),
+        pytest.param(
+            {"x-foreign-key-kwargs": {"key": "value", 1: True}},
+            id="multiple key second not string",
+        ),
+        pytest.param(
+            {"x-foreign-key-kwargs": {1: True, 2: False}},
+            id="multiple key all not string",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_foreign_key_kwargs_wrong_type(schema):
+    """
+    GIVEN schema
+    WHEN foreign_key_kwargs is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key_kwargs(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key_kwargs",
+    [({}, None), ({"x-foreign-key-kwargs": {"key": "value"}}, {"key": "value"})],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key_kwargs(schema, expected_foreign_key_kwargs):
+    """
+    GIVEN schema and expected foreign_key_kwargs
+    WHEN foreign_key_kwargs is called with the schema
+    THEN the expected foreign_key_kwargs is returned.
+    """
+    returned_foreign_key_kwargs = helpers.peek.foreign_key_kwargs(
+        schema=schema, schemas={}
+    )
+
+    assert returned_foreign_key_kwargs == expected_foreign_key_kwargs
+
+
 @pytest.mark.helper
 def test_ref_wrong_type():
     """
@@ -491,6 +678,128 @@ def test_ref(schema, expected_ref):
     returned_ref = helpers.peek.ref(schema=schema, schemas={})
 
     assert returned_ref == expected_ref
+
+
+@pytest.mark.helper
+def test_foreign_key_wrong_type():
+    """
+    GIVEN schema with foreign-key defined as a boolean
+    WHEN foreign_key is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-foreign-key": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key",
+    [({}, None), ({"x-foreign-key": "id"}, "id")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key(schema, expected_foreign_key):
+    """
+    GIVEN schema and expected foreign-key
+    WHEN foreign_key is called with the schema
+    THEN the expected foreign_key is returned.
+    """
+    returned_foreign_key = helpers.peek.foreign_key(schema=schema, schemas={})
+
+    assert returned_foreign_key == expected_foreign_key
+
+
+@pytest.mark.helper
+def test_foreign_key_column_wrong_type():
+    """
+    GIVEN schema with foreign-key-column defined as a boolean
+    WHEN foreign_key_column is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-foreign-key-column": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.foreign_key_column(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_foreign_key_column",
+    [({}, None), ({"x-foreign-key-column": "id"}, "id")],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_foreign_key_column(schema, expected_foreign_key_column):
+    """
+    GIVEN schema and expected foreign-key-column
+    WHEN foreign_key_column is called with the schema
+    THEN the expected foreign_key_column is returned.
+    """
+    returned_foreign_key_column = helpers.peek.foreign_key_column(
+        schema=schema, schemas={}
+    )
+
+    assert returned_foreign_key_column == expected_foreign_key_column
+
+
+@pytest.mark.helper
+def test_composite_index_wrong_type():
+    """
+    GIVEN schema with composite-index defined as a boolean
+    WHEN composite_index is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schema = {"x-composite-index": True}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.peek.composite_index(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_composite_index",
+    [({}, None), ({"x-composite-index": ["id"]}, ["id"])],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_composite_index(schema, expected_composite_index):
+    """
+    GIVEN schema and expected composite-index
+    WHEN composite_index is called with the schema
+    THEN the expected composite_index is returned.
+    """
+    returned_composite_index = helpers.peek.composite_index(schema=schema, schemas={})
+
+    assert returned_composite_index == expected_composite_index
+
+
+@pytest.mark.helper
+def test_composite_unique_wrong_type():
+    """
+    GIVEN schema with composite-unique defined as a boolean
+    WHEN composite_unique is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    schema = {"x-composite-unique": True}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.peek.composite_unique(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_composite_unique",
+    [({}, None), ({"x-composite-unique": ["id"]}, ["id"])],
+    ids=["missing", "defined"],
+)
+@pytest.mark.helper
+def test_composite_unique(schema, expected_composite_unique):
+    """
+    GIVEN schema and expected composite-unique
+    WHEN composite_unique is called with the schema
+    THEN the expected composite_unique is returned.
+    """
+    returned_composite_unique = helpers.peek.composite_unique(schema=schema, schemas={})
+
+    assert returned_composite_unique == expected_composite_unique
 
 
 @pytest.mark.parametrize(
@@ -592,26 +901,29 @@ def test_peek_key(schema, schemas, expected_value):
 @pytest.mark.parametrize(
     "schema, schemas",
     [
-        (
+        pytest.param(True, {}, id="schema not dictionary"),
+        pytest.param({}, True, id="schemas not dictionary"),
+        pytest.param({"$ref": True}, {}, id="$ref not string"),
+        pytest.param({"allOf": True}, {}, id="allOf list"),
+        pytest.param({"allOf": [True]}, {}, id="allOf element not dict"),
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+            id="single step circular $ref",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {
                 "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
                 "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
             },
+            id="multiple step circular $ref",
         ),
-        (
+        pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+            id="allOf single step circular $ref",
         ),
-    ],
-    ids=[
-        "single step circular $ref",
-        "multiple step circular $ref",
-        "allOf single step circular $ref",
     ],
 )
 @pytest.mark.helper
@@ -623,3 +935,54 @@ def test_peek_key_invalid(schema, schemas):
     """
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_value",
+    [
+        pytest.param({}, {}, None, id="not found",),
+        pytest.param({"x-backref": "schema"}, {}, "schema", id="present locally",),
+        pytest.param({"allOf": []}, {}, None, id="not present locally in allOf",),
+        pytest.param(
+            {"allOf": [{"x-backref": "schema"}]},
+            {},
+            "schema",
+            id="present locally in allOf",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {}},
+            None,
+            id="not present behind $ref",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-backref": "schema"}},
+            "schema",
+            id="present behind $ref",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-backref": "schema"},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"x-backref": "wrong_schema"}},
+            "schema",
+            id="present locally in allOf and behind $ref",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_get(schema, schemas, expected_value):
+    """
+    GIVEN schema, schemas and expected value
+    WHEN get is called with the backref peek helper and the schema and schemas
+    THEN the expected value is returned.
+    """
+    returned_value = helpers.peek.prefer_local(
+        get_value=helpers.peek.backref, schema=schema, schemas=schemas
+    )
+
+    assert returned_value == expected_value

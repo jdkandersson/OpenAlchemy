@@ -6,7 +6,16 @@ from open_alchemy import exceptions
 from open_alchemy import facades
 from open_alchemy import types
 
+from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
+
+
+class PeekValue(types.Protocol):
+    """Defines interface for peek functions."""
+
+    def __call__(self, *, schema: types.Schema, schemas: types.Schemas) -> typing.Any:
+        """Call signature for peek functions."""
+        ...
 
 
 def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
@@ -77,6 +86,76 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         return None
     if not isinstance(value, str):
         raise exceptions.MalformedSchemaError("A format value must be of type string.")
+    return value
+
+
+def autoincrement(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[bool]:
+    """
+    Retrieve the x-autoincrement property from a property schema.
+
+    Raises MalformedSchemaError if the x-autoincrement value is not a boolean.
+
+    Args:
+        schema: The schema to get the x-autoincrement from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-autoincrement value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-autoincrement")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "A autoincrement value must be of type boolean."
+        )
+    return value
+
+
+def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the x-index property from a property schema.
+
+    Raises MalformedSchemaError if the x-index value is not a boolean.
+
+    Args:
+        schema: The schema to get the x-index from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-index value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-index")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError("A index value must be of type boolean.")
+    return value
+
+
+def unique(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
+    """
+    Retrieve the x-unique property from a property schema.
+
+    Raises MalformedSchemaError if the x-unique value is not a boolean.
+
+    Args:
+        schema: The schema to get the x-unique from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-unique value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-unique")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError("A unique value must be of type boolean.")
     return value
 
 
@@ -206,16 +285,16 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
 
 def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the tablename of the schema.
+    Retrieve the x-tablename of the schema.
 
-    Raises MalformedSchemaError if the tablename value is not a string.
+    Raises MalformedSchemaError if the x-tablename value is not a string.
 
     Args:
-        schema: The schema to get tablename from.
+        schema: The schema to get x-tablename from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The tablename or None.
+        The x-tablename or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
@@ -280,16 +359,16 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
 
 def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the backref of the schema.
+    Retrieve the x-backref of the schema.
 
-    Raises MalformedSchemaError if the backref value is not a string.
+    Raises MalformedSchemaError if the x-backref value is not a string.
 
     Args:
-        schema: The schema to get backref from.
+        schema: The schema to get x-backref from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The backref or None.
+        The x-backref or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-backref")
@@ -304,16 +383,16 @@ def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
 
 def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the secondary of the schema.
+    Retrieve the x-secondary of the schema.
 
-    Raises MalformedSchemaError if the secondary value is not a string.
+    Raises MalformedSchemaError if the x-secondary value is not a string.
 
     Args:
-        schema: The schema to get secondary from.
+        schema: The schema to get x-secondary from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The secondary or None.
+        The x-secondary or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-secondary")
@@ -328,16 +407,16 @@ def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
 
 def uselist(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
     """
-    Retrieve the uselist of the schema.
+    Retrieve the x-uselist of the schema.
 
-    Raises MalformedSchemaError if the uselist value is not a boolean.
+    Raises MalformedSchemaError if the x-uselist value is not a boolean.
 
     Args:
-        schema: The schema to get uselist from.
+        schema: The schema to get x-uselist from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The uselist or None.
+        The x-uselist or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-uselist")
@@ -374,6 +453,70 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
     return value
 
 
+def _check_kwargs(*, value: typing.Any, key: str) -> typing.Dict[str, typing.Any]:
+    """Check the kwargs value."""
+    # Check value
+    if not isinstance(value, dict):
+        raise exceptions.MalformedSchemaError(
+            f"The {key} property must be of type dict."
+        )
+    # Check keys
+    not_str_keys = filter(lambda key: not isinstance(key, str), value.keys())
+    if next(not_str_keys, None) is not None:
+        raise exceptions.MalformedSchemaError(
+            f"The {key} property must have string keys."
+        )
+    return value
+
+
+def kwargs(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    """
+    Retrieve the x-kwargs of the schema.
+
+    Raises MalformedSchemaError if the x-kwargs value is not a dictionary.
+
+    Args:
+        schema: The schema to get x-kwargs from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-kwargs or None.
+
+    """
+    key = "x-kwargs"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    return _check_kwargs(value=value, key=key)
+
+
+def foreign_key_kwargs(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[dict]:
+    """
+    Retrieve the x-foreign-key-kwargs of the schema.
+
+    Raises MalformedSchemaError if the x-foreign-key-kwargs value is not a dictionary.
+
+    Args:
+        schema: The schema to get x-foreign-key-kwargs from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-foreign-key-kwargs or None.
+
+    """
+    key = "x-foreign-key-kwargs"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    return _check_kwargs(value=value, key=key)
+
+
 def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
     Retrieve the $ref of the schema.
@@ -398,12 +541,121 @@ def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]
     return value
 
 
+def foreign_key(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the x-foreign-key of the schema.
+
+    Raises MalformedSchemaError if the x-foreign-key value is not a string.
+
+    Args:
+        schema: The schema to get x-foreign-key from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-foreign-key or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-foreign-key property must be of type string."
+        )
+    return value
+
+
+def foreign_key_column(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the x-foreign-key-column of the schema.
+
+    Raises MalformedSchemaError if the x-foreign-key-column value is not a string.
+
+    Args:
+        schema: The schema to get x-foreign-key-column from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-foreign-key-column or None.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key-column")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-foreign-key-column property must be of type string."
+        )
+    return value
+
+
+def composite_index(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.List]:
+    """
+    Retrieve the x-composite-index of the schema.
+
+    Raises MalformedSchemaError if the x-composite-index value does not
+        conform with the schema.
+
+    Args:
+        schema: The schema to get x-composite-index from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-composite-index or None.
+
+    """
+    key = "x-composite-index"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    ext_prop_helper.get(source={key: value}, name=key)  # type: ignore
+    return value
+
+
+def composite_unique(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.List]:
+    """
+    Retrieve the x-composite-unique of the schema.
+
+    Raises MalformedSchemaError if the x-composite-unique value does not
+        conform with the schema.
+
+    Args:
+        schema: The schema to get x-composite-unique from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-composite-unique or None.
+
+    """
+    key = "x-composite-unique"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+    # Check value
+    ext_prop_helper.get(source={key: value}, name=key)  # type: ignore
+    return value
+
+
 def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDefault:
     """
     Retrieve the default value and check it against the schema.
 
+    Raises MalformedSchemaError if the default value does not conform with the schema.
+
     Args:
         schema: The schema to retrieve the default value from.
+
+    Returns:
+        The default or None.
 
     """
     # Retrieve value
@@ -424,7 +676,8 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
         facades.jsonschema.validate(value, resolved_schema)
     except facades.jsonschema.ValidationError:
         raise exceptions.MalformedSchemaError(
-            f"The default value does not conform to the schema. The value is: {value}"
+            "The default value does not conform to the schema. "
+            f"The value is: {repr(value)}"
         )
     return value
 
@@ -452,6 +705,12 @@ def _peek_key(
     schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
 ) -> typing.Any:
     """Implement peek_key."""
+    # Check schema and schemas are dict
+    if not isinstance(schema, dict):
+        raise exceptions.MalformedSchemaError("The schema must be a dictionary.")
+    if not isinstance(schemas, dict):
+        raise exceptions.MalformedSchemaError("The schemas must be a dictionary.")
+
     # Base case, look for type key
     value = schema.get(key)
     if value is not None:
@@ -460,6 +719,9 @@ def _peek_key(
     # Recursive case, look for $ref
     ref_value = schema.get("$ref")
     if ref_value is not None:
+        # Check that ref is string
+        if not isinstance(ref_value, str):
+            raise exceptions.MalformedSchemaError("The value of $ref must ba a string.")
         # Check for circular $ref
         if ref_value in seen_refs:
             raise exceptions.MalformedSchemaError("Circular reference detected.")
@@ -471,10 +733,58 @@ def _peek_key(
     # Recursive case, look for allOf
     all_of = schema.get("allOf")
     if all_of is not None:
+        # Check value of allOf
+        if not isinstance(all_of, list):
+            raise exceptions.MalformedSchemaError("The value of allOf must be a list.")
+
         for sub_schema in all_of:
+            # Check value
+            if not isinstance(sub_schema, dict):
+                raise exceptions.MalformedSchemaError(
+                    "The elements of allOf must be dictionaries."
+                )
+
             value = _peek_key(sub_schema, schemas, key, seen_refs)
             if value is not None:
                 return value
 
     # Base case, type or ref not found or no type in allOf
     return None
+
+
+def prefer_local(
+    *, get_value: PeekValue, schema: types.Schema, schemas: types.Schemas
+) -> typing.Any:
+    """
+    Retrieve the value using a function preferably without having to follow a $ref.
+
+    1. Check for allOf:
+        if found, iterate over schemas in allOf and skip any that contain $ref and
+            return the value returned by get_value if it is not None.
+    2. Return output of get_value called on the schema.
+
+    Args:
+        get_value: The function that knows how to retrieve the value.
+        schema: The schema to process.
+        schemas: All the schemas.
+
+    Returns:
+        The value returned by get_value preferably without following any $ref.
+
+    """
+    all_of = schema.get("allOf")
+    if all_of is not None:
+        no_ref = filter(lambda sub_schema: sub_schema.get("$ref") is None, all_of)
+
+        def map_to_value(sub_schema: types.Schema) -> typing.Any:
+            """Use get_value to turn the schema into the value."""
+            return get_value(schema=sub_schema, schemas=schemas)
+
+        retrieved_values = map(map_to_value, no_ref)
+        not_none_retrieved_values = filter(
+            lambda value: value is not None, retrieved_values
+        )
+        retrieved_value = next(not_none_retrieved_values, None)
+        if retrieved_value is not None:
+            return retrieved_value
+    return get_value(schema=schema, schemas=schemas)

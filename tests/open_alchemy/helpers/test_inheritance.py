@@ -734,3 +734,43 @@ class TestRetrieveModelParentsSchema:
         assert mocked_facades_models.get_model_schema.call_count == 2
         mocked_facades_models.get_model_schema.assert_any_call(name="Grandparent")
         mocked_facades_models.get_model_schema.assert_any_call(name="Parent")
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_type",
+    [
+        pytest.param({}, {}, helpers.inheritance.Type.NONE, id="not inherits"),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-inherits": True, "x-tablename": "schema"},
+                ]
+            },
+            {"RefSchema": {"x-tablename": "ref_schema"}},
+            helpers.inheritance.Type.JOINED_TABLE,
+            id="joined table",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-inherits": True},
+                ]
+            },
+            {"RefSchema": {"x-tablename": "ref_schema"}},
+            helpers.inheritance.Type.SINGLE_TABLE,
+            id="single table",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_calculate_type(schema, schemas, expected_type):
+    """
+    GIVEN schema, schemas and expected type
+    WHEN calculate_type is called with the schema and schemas
+    THEN the expected type is returned.
+    """
+    returned_type = helpers.inheritance.calculate_type(schema=schema, schemas=schemas)
+
+    assert returned_type == expected_type

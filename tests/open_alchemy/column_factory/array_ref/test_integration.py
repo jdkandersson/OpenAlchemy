@@ -40,21 +40,7 @@ def test_handle_array():
         "items": {"type": "object", "x-de-$ref": "RefSchema"},
     }
     assert schemas == {
-        "RefSchema": {
-            "allOf": [
-                {"type": "object", "x-tablename": "ref_schema", "properties": {}},
-                {
-                    "type": "object",
-                    "properties": {
-                        f"{tablename}_ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": f"{tablename}.id",
-                            "x-dict-ignore": True,
-                        }
-                    },
-                },
-            ]
-        }
+        "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }
 
 
@@ -94,19 +80,5 @@ def test_handle_array_backref():
 
     assert relationship.backref == ("schema", {"uselist": None})
     assert schemas == {
-        "RefSchema": {
-            "allOf": [
-                {"type": "object", "x-tablename": "ref_schema", "properties": {}},
-                {
-                    "type": "object",
-                    "properties": {
-                        f"{tablename}_ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": f"{tablename}.id",
-                            "x-dict-ignore": True,
-                        }
-                    },
-                },
-            ]
-        }
+        "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }

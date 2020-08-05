@@ -150,7 +150,7 @@ def test_integration_object_ref():
     logical_name = "ref_schema"
 
     (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        [(tbl_logical_name, relationship)],
         returned_schema,
     ) = column_factory.column_factory(
         schema=schema,
@@ -159,9 +159,6 @@ def test_integration_object_ref():
         model_schema={"properties": {}},
     )
 
-    assert fk_logical_name == "ref_schema_id"
-    assert isinstance(fk_column.type, facades.sqlalchemy.column.Integer)
-    assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
@@ -206,8 +203,7 @@ def test_integration_array_ref():
     """
     GIVEN schema that references another object schema from an array and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference  is added to the referenced schema and relationship is
-        returned with the schema.
+    THEN relationship is returned with the schema.
     """
     schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
@@ -242,24 +238,10 @@ def test_integration_array_ref():
     }
     assert schemas == {
         "RefSchema": {
-            "allOf": [
-                {
-                    "type": "object",
-                    "x-tablename": "table 1",
-                    "properties": {"id": {"type": "integer"}},
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "schema_ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": "schema.id",
-                            "x-dict-ignore": True,
-                        }
-                    },
-                },
-            ]
-        }
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+        },
     }
 
 

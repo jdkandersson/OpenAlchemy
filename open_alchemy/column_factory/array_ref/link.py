@@ -4,7 +4,6 @@ from open_alchemy import facades
 from open_alchemy import types
 
 from . import association_table as _association_table
-from . import foreign_key as _foreign_key
 
 
 def construct(
@@ -25,15 +24,7 @@ def construct(
         schemas: Used to retrieve the referenced schema and to resolve any $ref.
 
     """
-    if artifacts.relationship.secondary is None:
-        _foreign_key.set_(
-            ref_model_name=artifacts.relationship.model_name,
-            logical_name=artifacts.logical_name,
-            model_schema=model_schema,
-            schemas=schemas,
-            fk_column=artifacts.fk_column,
-        )
-    else:
+    if artifacts.relationship.secondary is not None:
         table = _association_table.construct(
             parent_schema=model_schema,
             child_schema=artifacts.spec,

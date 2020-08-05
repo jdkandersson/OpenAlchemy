@@ -3,6 +3,7 @@
 ## Version _next_
 
 - Add schemas pre-processor that extracts the required back references.
+- Add foreign key pre-processor that extracts the required back references.
 
 ## Version 1.3.0 - 2020-07-12
 

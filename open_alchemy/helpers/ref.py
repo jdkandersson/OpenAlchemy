@@ -58,6 +58,9 @@ def _resolve(
     ref = schema.get("$ref")
     if ref is None:
         return name, schema
+    # Check that ref is string
+    if not isinstance(ref, str):
+        raise exceptions.MalformedSchemaError("The value of $ref must ba a string.")
 
     # Check for circular $ref
     if ref in seen_refs:

@@ -1,6 +1,7 @@
 """Create table args such as Uniques and Index."""
 
 import functools
+import itertools
 import json
 import os
 import typing
@@ -113,6 +114,22 @@ def _map_unique(*, spec: types.AnyUnique) -> types.UniqueList:
     return _UNIQUE_MAPPING[name](spec)
 
 
+def iter_unique_columns(*, spec: types.AnyUnique) -> typing.Iterator[str]:
+    """
+    Iterate over all columns in the composite unique constraint.
+
+    Args:
+        spec: The specification to iterator over.
+
+    Returns:
+        An iterator with all columns of the unique constraint.
+
+    """
+    mapped_specs = _map_unique(spec=spec)
+    column_lists = map(lambda unique_spec: unique_spec["columns"], mapped_specs)
+    return itertools.chain(*column_lists)
+
+
 def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     """
     Convert any composite index to IndexList.
@@ -126,6 +143,22 @@ def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
     """
     name = _spec_to_schema_name(spec=spec, schema_names=_INDEX_SCHEMA_NAMES)
     return _INDEX_MAPPING[name](spec)
+
+
+def iter_index_expressions(*, spec: types.AnyIndex) -> typing.Iterator[str]:
+    """
+    Iterate over all expressions in the composite index constraint.
+
+    Args:
+        spec: The specification to iterator over.
+
+    Returns:
+        An iterator with all expressions of the index constraint.
+
+    """
+    mapped_specs = _map_index(spec=spec)
+    column_lists = map(lambda index_spec: index_spec["expressions"], mapped_specs)
+    return itertools.chain(*column_lists)
 
 
 def _construct_unique(spec: types.Unique) -> schema.UniqueConstraint:

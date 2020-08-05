@@ -15,7 +15,7 @@ def test_schemas():
     """
     GIVEN schema with array referencing another schema and schemas
     WHEN construct is called
-    THEN foreign key is added to the referenced schema.
+    THEN foreign key is not added to the referenced schema.
     """
     ref_schema = {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     artifacts = types.ObjectArtifacts(
@@ -36,23 +36,7 @@ def test_schemas():
         artifacts=artifacts, model_schema=model_schema, schemas=schemas
     )
 
-    assert schemas == {
-        "RefSchema": {
-            "allOf": [
-                ref_schema,
-                {
-                    "type": "object",
-                    "properties": {
-                        f"{tablename}_ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": f"{tablename}.id",
-                            "x-dict-ignore": True,
-                        }
-                    },
-                },
-            ]
-        }
-    }
+    assert schemas == {"RefSchema": ref_schema}
 
 
 @pytest.mark.column

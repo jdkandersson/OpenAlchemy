@@ -94,6 +94,7 @@ _ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
         "x-generated": bool,
         "readOnly": bool,
         "writeOnly": bool,
+        "x-foreign-key": str,
     },
     total=False,
 )

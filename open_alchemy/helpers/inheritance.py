@@ -1,5 +1,6 @@
 """Helpers to support inheritance."""
 
+import enum
 import typing
 
 from .. import exceptions
@@ -317,3 +318,45 @@ def _retrieve_model_parents_schema(
             raise exceptions.InheritanceError(f"The parent {inherits} is not defined.")
         yield from _retrieve_model_parents_schema(parent_schema)
     yield schema
+
+
+class Type(enum.Enum):
+    """The type of inheritance."""
+
+    NONE = 1
+    JOINED_TABLE = 2
+    SINGLE_TABLE = 3
+
+
+def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:
+    """
+    Calculate the type of inheritance.
+
+    Assume the schema and any parent schema is constructable and valid.
+
+    The rules are:
+    1. if the schema does not inherit return NONE,
+    2. if the parent and child tablename are different return JOINED_TABLE and
+    3. else return SINGLE_TABLE.
+
+    Args:
+        schema: The schema to calculate the type for.
+        schemas: All defined schemas used to resolve any $ref.
+
+    Returns:
+        The type of inheritance.
+
+    """
+    if not schema_helper.inherits(schema=schema, schemas=schemas):
+        return Type.NONE
+
+    parent = retrieve_parent(schema=schema, schemas=schemas)
+    parent_schema = schemas[parent]
+    parent_tablename = peek_helper.tablename(schema=parent_schema, schemas=schemas)
+    tablename = peek_helper.prefer_local(
+        get_value=peek_helper.tablename, schema=schema, schemas=schemas
+    )
+
+    if parent_tablename == tablename:
+        return Type.SINGLE_TABLE
+    return Type.JOINED_TABLE

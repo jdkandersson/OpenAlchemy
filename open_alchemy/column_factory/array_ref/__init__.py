@@ -14,7 +14,6 @@ from .. import object_ref
 from .. import types
 from . import artifacts as _artifacts
 from . import association_table as _association_table
-from . import foreign_key as _foreign_key
 from . import link as _link
 from . import schema as _schema
 
