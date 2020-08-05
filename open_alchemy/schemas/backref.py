@@ -1,7 +1,6 @@
 """Pre-process schemas by adding any back references into the schemas."""
 
 import functools
-import itertools
 import typing
 
 from .. import exceptions
@@ -135,23 +134,6 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _group_backrefs(
-    *, backrefs: helpers.process.ArtifactsIter
-) -> helpers.process.ArtifactsGroupedIter:
-    """
-    Group back references by schema name.
-
-    Args:
-        backrefs: The back references to group.
-
-    Returns:
-        The grouped back references.
-
-    """
-    sorted_backrefs = sorted(backrefs, key=lambda backref: backref.schema_name)
-    return itertools.groupby(sorted_backrefs, lambda backref: backref.schema_name)
-
-
 def _backrefs_to_schema(backrefs: helpers.process.ArtifactsIter) -> types.Schema:
     """
     Convert to the schema with the x-backrefs value from backrefs.
@@ -167,22 +149,6 @@ def _backrefs_to_schema(backrefs: helpers.process.ArtifactsIter) -> types.Schema
         "type": "object",
         "x-backrefs": {property_name: schema for _, property_name, schema in backrefs},
     }
-
-
-def _grouped_backrefs_to_schemas(
-    *, grouped_backrefs: helpers.process.ArtifactsGroupedIter
-) -> helpers.process.SchemaIter:
-    """
-    Convert grouped backreferences to schema names and backreference schemas.
-
-    Args:
-        grouped_backrefs: The grouped back references.
-
-    Returns:
-        The schema names and backref schemas.
-
-    """
-    return map(lambda args: (args[0], _backrefs_to_schema(args[1])), grouped_backrefs)
 
 
 def process(*, schemas: types.Schemas):
