@@ -166,7 +166,6 @@ def gather_artifacts(
             foreign_key=f"{tablename}.{fk_column}"
         ),
     )
-    print(artifacts)
     return return_logical_name, artifacts
 
 

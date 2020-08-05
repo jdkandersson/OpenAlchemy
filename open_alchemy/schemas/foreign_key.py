@@ -233,7 +233,6 @@ def _calculate_foreign_key_property_artifacts(
         schemas=schemas,
     )
 
-    print(foreign_key_property_schema)
     return helpers.process.Artifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
     )
