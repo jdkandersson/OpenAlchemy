@@ -1,5 +1,6 @@
 """Pre-processor that defines any foreign keys."""
 
+import itertools
 import typing
 
 from .. import exceptions
@@ -295,3 +296,27 @@ def _get_schema_foreign_keys(
         ),
         undefined_foreign_key_name_properties,
     )
+
+
+def _get_foreign_keys(*, schemas: types.Schemas) -> _ForeignKeyArtifactsIter:
+    """
+    Get all foreign key information from the schemas.
+
+    Takes all schemas, retrieves all constructable schemas, for each schema retrieves
+    all foreign keys and return an iterable with all the captured foreign keys.
+
+    Args:
+        schemas: The schemas to process.
+
+    Returns:
+        All foreign key information.
+
+    """
+    # Retrieve all constructable schemas
+    constructables = helpers.iterate.constructable(schemas=schemas)
+    # Retrieve all foreign_keys
+    foreign_keys_iters = map(
+        lambda args: _get_schema_foreign_keys(schemas, *args), constructables
+    )
+    # Unpack nested iterators
+    return itertools.chain(*foreign_keys_iters)
