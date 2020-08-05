@@ -1,6 +1,5 @@
 """Pre-processor that defines any foreign keys."""
 
-import itertools
 import typing
 
 from .. import exceptions
@@ -122,28 +121,13 @@ def _foreign_key_property_not_defined(
     return True
 
 
-class _ForeignKeyArtifacts(typing.NamedTuple):
-    """The return value of _calculate_schema."""
-
-    schema_name: str
-    property_name: str
-    property_schema: types.ColumnSchema
-
-
-_ForeignKeyArtifactsIter = typing.Iterable[_ForeignKeyArtifacts]
-_ForeignKeyArtifactsGroupedIter = typing.Iterable[
-    typing.Tuple[str, _ForeignKeyArtifactsIter]
-]
-_ForeignKeySchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
-
-
 def _calculate_foreign_key_property_artifacts(
     schemas: types.Schema,
     parent_name: str,
     parent_schema: types.Schema,
     property_name: str,
     property_schema: types.Schema,
-) -> _ForeignKeyArtifacts:
+) -> helpers.process.Artifacts:
     """
     Calculate the artifacts for the schema for the foreign key property.
 
@@ -217,7 +201,7 @@ def _calculate_foreign_key_property_artifacts(
     )
 
     # Calculate the schema
-    foreign_key_property_schema: types.ColumnSchema = {
+    foreign_key_property_schema: types.Schema = {
         "type": property_type,
         "x-dict-ignore": True,
         "nullable": nullable,
@@ -245,14 +229,14 @@ def _calculate_foreign_key_property_artifacts(
         schemas=schemas,
     )
 
-    return _ForeignKeyArtifacts(
+    return helpers.process.Artifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
     )
 
 
 def _get_schema_foreign_keys(
     schemas: types.Schemas, schema_name: str, schema: types.Schema,
-) -> _ForeignKeyArtifactsIter:
+) -> helpers.process.ArtifactsIter:
     """
     Retrieve the foreign keys for a schema.
 
@@ -298,25 +282,22 @@ def _get_schema_foreign_keys(
     )
 
 
-def _get_foreign_keys(*, schemas: types.Schemas) -> _ForeignKeyArtifactsIter:
+def _foreign_keys_to_schema(
+    foreign_keys: helpers.process.ArtifactsIter,
+) -> types.Schema:
     """
-    Get all foreign key information from the schemas.
-
-    Takes all schemas, retrieves all constructable schemas, for each schema retrieves
-    all foreign keys and return an iterable with all the captured foreign keys.
+    Convert to the schema with the foreign keys from foreign key artifacts.
 
     Args:
-        schemas: The schemas to process.
+        foreign_keys: The foreign keys to convert.
 
     Returns:
-        All foreign key information.
+        The schema with the foreign keys.
 
     """
-    # Retrieve all constructable schemas
-    constructables = helpers.iterate.constructable(schemas=schemas)
-    # Retrieve all foreign_keys
-    foreign_keys_iters = map(
-        lambda args: _get_schema_foreign_keys(schemas, *args), constructables
-    )
-    # Unpack nested iterators
-    return itertools.chain(*foreign_keys_iters)
+    return {
+        "type": "object",
+        "properties": {
+            property_name: schema for _, property_name, schema in foreign_keys
+        },
+    }

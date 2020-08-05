@@ -70,8 +70,10 @@ def calculate_outputs(
         An iterator with the converted output.
 
     """
+    # Sort and group
     sorted_artifacts = sorted(artifacts, key=lambda backref: backref.schema_name)
     grouped_artifacts = itertools.groupby(
         sorted_artifacts, lambda backref: backref.schema_name
     )
+    # Map to output
     return map(lambda args: (args[0], calculate_output(args[1])), grouped_artifacts)

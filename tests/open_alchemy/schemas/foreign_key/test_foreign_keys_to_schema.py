@@ -1,26 +1,26 @@
-"""Tests for backref schemas processing."""
+"""Tests for foreign_key schemas processing."""
 
 import pytest
 
-from open_alchemy.schemas import backref
+from open_alchemy.schemas import foreign_key
 from open_alchemy.schemas import helpers
 
 Art = helpers.process.Artifacts  # pylint: disable=protected-access
 
 
 class TestBackrefsToSchema:
-    """Tests for _backrefs_to_schema"""
+    """Tests for _foreign_keys_to_schema"""
 
     # pylint: disable=protected-access
 
     @staticmethod
     @pytest.mark.parametrize(
-        "backrefs, expected_schema",
+        "foreign_keys, expected_schema",
         [
-            pytest.param([], {"type": "object", "x-backrefs": {}}, id="empty"),
+            pytest.param([], {"type": "object", "properties": {}}, id="empty"),
             pytest.param(
                 [Art("Schema1", "prop_1", {"key_1": "value 1"})],
-                {"type": "object", "x-backrefs": {"prop_1": {"key_1": "value 1"}}},
+                {"type": "object", "properties": {"prop_1": {"key_1": "value 1"}}},
                 id="single",
             ),
             pytest.param(
@@ -30,7 +30,7 @@ class TestBackrefsToSchema:
                 ],
                 {
                     "type": "object",
-                    "x-backrefs": {
+                    "properties": {
                         "prop_1": {"key_1": "value 1"},
                         "prop_2": {"key_2": "value 2"},
                     },
@@ -40,12 +40,12 @@ class TestBackrefsToSchema:
         ],
     )
     @pytest.mark.schemas
-    def test_(backrefs, expected_schema):
+    def test_(foreign_keys, expected_schema):
         """
-        GIVEN backrefs and expected schema
-        WHEN _backrefs_to_schema is called with the backrefs
+        GIVEN foreign keys and expected schema
+        WHEN _foreign_keys_to_schema is called with the foreign keys
         THEN the expected schema is returned.
         """
-        returned_schema = backref._backrefs_to_schema(backrefs)
+        returned_schema = foreign_key._foreign_keys_to_schema(foreign_keys)
 
         assert returned_schema == expected_schema

@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas import foreign_key
+# from open_alchemy.schemas import foreign_key
 
 GET_FOREIGN_KEYS_TESTS = [
     pytest.param({"Schema1": {}}, [], id="single schema not constructable",),
@@ -179,20 +179,20 @@ GET_FOREIGN_KEYS_TESTS = [
 ]
 
 
-class TestGetForeignKeys:
-    """Tests for _get_foreign_keys"""
+# class TestGetForeignKeys:
+#     """Tests for _get_foreign_keys"""
 
-    # pylint: disable=protected-access
+#     # pylint: disable=protected-access
 
-    @staticmethod
-    @pytest.mark.parametrize("schemas, expected_foreign_keys", GET_FOREIGN_KEYS_TESTS)
-    @pytest.mark.schemas
-    def test_(schemas, expected_foreign_keys):
-        """
-        GIVEN schemas and expected foreign keys
-        WHEN _get_foreign keys is called with the schemas
-        THEN the expected foreign keys are returned.
-        """
-        returned_foreign_keys = foreign_key._get_foreign_keys(schemas=schemas)
+#     @staticmethod
+#     @pytest.mark.parametrize("schemas, expected_foreign_keys", GET_FOREIGN_KEYS_TESTS)
+#     @pytest.mark.schemas
+#     def test_(schemas, expected_foreign_keys):
+#         """
+#         GIVEN schemas and expected foreign keys
+#         WHEN _get_foreign keys is called with the schemas
+#         THEN the expected foreign keys are returned.
+#         """
+#         returned_foreign_keys = foreign_key._get_foreign_keys(schemas=schemas)
 
-        assert list(returned_foreign_keys) == expected_foreign_keys
+#         assert list(returned_foreign_keys) == expected_foreign_keys
