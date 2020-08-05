@@ -150,7 +150,7 @@ def test_integration_object_ref():
     logical_name = "ref_schema"
 
     (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
+        [(tbl_logical_name, relationship)],
         returned_schema,
     ) = column_factory.column_factory(
         schema=schema,
@@ -159,9 +159,6 @@ def test_integration_object_ref():
         model_schema={"properties": {}},
     )
 
-    assert fk_logical_name == "ref_schema_id"
-    assert isinstance(fk_column.type, facades.sqlalchemy.column.Integer)
-    assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None

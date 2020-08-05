@@ -4,7 +4,6 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy.column_factory import object_ref
 
 
@@ -35,11 +34,7 @@ def test_handle_object_error(schema, schemas):
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
-            schema=schema,
-            schemas=schemas,
-            required=True,
-            logical_name="name 1",
-            model_schema={},
+            schema=schema, schemas=schemas, logical_name="name 1",
         )
 
 
@@ -48,7 +43,7 @@ def test_integration_object_ref():
     """
     GIVEN schema that references another object schema and schemas
     WHEN handle_object is called with the schema and schemas
-    THEN foreign key reference and relationship is returned with the spec.
+    THEN relationship is returned with the spec.
     """
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
@@ -60,21 +55,10 @@ def test_integration_object_ref():
     }
     logical_name = "ref_schema"
 
-    (
-        [(fk_logical_name, fk_column), (tbl_logical_name, relationship)],
-        returned_schema,
-    ) = object_ref.handle_object(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema={"properties": {}},
-        required=False,
+    ([(tbl_logical_name, relationship)], returned_schema,) = object_ref.handle_object(
+        schema=schema, schemas=schemas, logical_name=logical_name,
     )
 
-    assert fk_logical_name == "ref_schema_id"
-    assert isinstance(fk_column.type, facades.sqlalchemy.column.Integer)
-    assert fk_column.nullable is True
-    assert len(fk_column.foreign_keys) == 1
     assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
@@ -83,39 +67,11 @@ def test_integration_object_ref():
 
 
 @pytest.mark.column
-def test_integration_object_ref_required():
-    """
-    GIVEN schema that is required and references another object schema and schemas
-    WHEN handle_object is called with the schema and schemas
-    THEN foreign key which is not nullable is returned.
-    """
-    schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    logical_name = "ref_schema"
-
-    ([(_, fk_column), _], _) = object_ref.handle_object(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema={"properties": {}},
-        required=True,
-    )
-
-    assert fk_column.nullable is False
-
-
-@pytest.mark.column
 def test_integration_object_ref_nullable():
     """
     GIVEN schema that is not nullable and references another object schema and schemas
     WHEN handle_object is called with the schema and schemas
-    THEN foreign key which is not nullable is returned.
+    THEN schema which is not nullable is returned.
     """
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {
@@ -128,15 +84,10 @@ def test_integration_object_ref_nullable():
     }
     logical_name = "ref_schema"
 
-    ([(_, fk_column), _], returned_schema) = object_ref.handle_object(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema={"properties": {}},
-        required=None,
+    (_, returned_schema) = object_ref.handle_object(
+        schema=schema, schemas=schemas, logical_name=logical_name,
     )
 
-    assert fk_column.nullable is False
     assert returned_schema == {
         "type": "object",
         "x-de-$ref": "RefSchema",
@@ -163,14 +114,9 @@ def test_integration_object_ref_backref():
         }
     }
     logical_name = "ref_schema"
-    model_schema = {"properties": {}}
 
-    ([_, (_, relationship)], _) = object_ref.handle_object(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-        required=False,
+    ([(_, relationship)], _) = object_ref.handle_object(
+        schema=schema, schemas=schemas, logical_name=logical_name,
     )
 
     assert relationship.backref == ("schema", {"uselist": None})
@@ -181,38 +127,3 @@ def test_integration_object_ref_backref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-
-
-@pytest.mark.column
-def test_fk_def():
-    """
-    GIVEN schema that references another object schema which already has the foreign
-        key defined and schemas
-    WHEN handle_object is called with the schema and schemas
-    THEN no foreign key column is returned.
-    """
-    model_schema = {
-        "properties": {
-            "ref_schema_id": {"type": "integer", "x-foreign-key": "ref_schema.id"}
-        }
-    }
-    schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    logical_name = "ref_schema"
-
-    ([(tbl_logical_name, relationship)], _) = object_ref.handle_object(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-        required=None,
-    )
-
-    assert tbl_logical_name == logical_name
-    assert relationship.argument == "RefSchema"

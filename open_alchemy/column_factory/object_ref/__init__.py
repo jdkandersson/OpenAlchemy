@@ -17,12 +17,7 @@ from . import schema as _schema
 
 
 def handle_object(
-    *,
-    schema: oa_types.Schema,
-    schemas: oa_types.Schemas,
-    required: typing.Optional[bool],
-    logical_name: str,
-    model_schema: oa_types.Schema,
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas, logical_name: str,
 ) -> typing.Tuple[types.TReturnValue, oa_types.ObjectRefSchema]:
     """
     Generate properties for a reference to another object.
@@ -53,25 +48,7 @@ def handle_object(
             "Many to one and one to one relationships do not support x-secondary."
         )
 
-    # Construct foreign key
-    fk_logical_name, fk_artifacts = foreign_key.gather_artifacts_helper(
-        obj_artifacts=obj_artifacts, schemas=schemas, required=required
-    )
-    fk_required = foreign_key.check_required(
-        artifacts=fk_artifacts,
-        fk_logical_name=fk_logical_name,
-        model_schema=model_schema,
-        schemas=schemas,
-    )
-    return_value: types.TReturnValue
-    if fk_required:
-        fk_column = column.construct_column(artifacts=fk_artifacts)
-        return_value = [(fk_logical_name, fk_column)]
-    else:
-        return_value = []
-
     return_schema = _schema.calculate(artifacts=obj_artifacts)
     # Create relationship
     relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
-    return_value.append((logical_name, relationship))
-    return (return_value, return_schema)
+    return ([(logical_name, relationship)], return_schema)
