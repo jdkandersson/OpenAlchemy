@@ -8,7 +8,7 @@ from open_alchemy.schemas import helpers
 Art = helpers.process.Artifacts  # pylint: disable=protected-access
 
 
-class TestBackrefsToSchema:
+class TestForeignKeysToSchema:
     """Tests for _foreign_keys_to_schema"""
 
     # pylint: disable=protected-access

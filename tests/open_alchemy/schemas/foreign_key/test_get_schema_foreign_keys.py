@@ -266,12 +266,12 @@ class TestGetSchemaForeignKeys:
     @pytest.mark.schemas
     def test_(schema_name, schema, schemas, expected_foreign_keys):
         """
-        GIVEN schema name and schema, schemas and expected backrefs
+        GIVEN schema name and schema, schemas and expected foreign keys
         WHEN _get_schema_foreign_keys is called with the schema name, schema and schemas
-        THEN the expected backrefs are returned.
+        THEN the expected foreign keys are returned.
         """
-        returned_backrefs = foreign_key._get_schema_foreign_keys(
+        returned_foreign_keys = foreign_key._get_schema_foreign_keys(
             schemas, schema_name, schema
         )
 
-        assert list(returned_backrefs) == expected_foreign_keys
+        assert list(returned_foreign_keys) == expected_foreign_keys

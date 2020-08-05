@@ -65,7 +65,7 @@ PROCESS_TESTS = [
                 "properties": {"prop_1": {"type": "integer"}},
             },
         },
-        id="single backref",
+        id="single foreign key",
     ),
     pytest.param(
         {
@@ -150,7 +150,7 @@ PROCESS_TESTS = [
                 "properties": {"prop_2": {"type": "integer"}},
             },
         },
-        id="multiple backref",
+        id="multiple foreign keys",
     ),
 ]
 
