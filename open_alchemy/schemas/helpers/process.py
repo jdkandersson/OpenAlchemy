@@ -34,6 +34,7 @@ def get_artifacts(
 
     Args:
         schemas: The schemas to process.
+        get_schema_artifacts: Function that retrieves the artifacts for the schema.
 
     Returns:
         All backreference information.
