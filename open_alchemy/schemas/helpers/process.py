@@ -12,7 +12,7 @@ class Artifacts(typing.NamedTuple):
 
     schema_name: str
     property_name: str
-    property_schema: types.Schema
+    property_schema: typing.Any
 
 
 ArtifactsIter = typing.Iterator[Artifacts]

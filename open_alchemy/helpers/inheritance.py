@@ -332,10 +332,12 @@ def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:
     """
     Calculate the type of inheritance.
 
+    Assume the schema and any parent schema is constructable and valid.
+
     The rules are:
     1. if the schema does not inherit return NONE,
     2. if the parent and child tablename are different return JOINED_TABLE and
-    3. return SINGLE_TABLE.
+    3. else return SINGLE_TABLE.
 
     Args:
         schema: The schema to calculate the type for.

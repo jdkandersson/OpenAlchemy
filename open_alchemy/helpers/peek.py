@@ -93,16 +93,16 @@ def autoincrement(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[bool]:
     """
-    Retrieve the autoincrement property from a property schema.
+    Retrieve the x-autoincrement property from a property schema.
 
-    Raises MalformedSchemaError if the autoincrement value is not a boolean.
+    Raises MalformedSchemaError if the x-autoincrement value is not a boolean.
 
     Args:
-        schema: The schema to get the autoincrement from.
+        schema: The schema to get the x-autoincrement from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The autoincrement value.
+        The x-autoincrement value.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-autoincrement")
@@ -117,16 +117,16 @@ def autoincrement(
 
 def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
     """
-    Retrieve the index property from a property schema.
+    Retrieve the x-index property from a property schema.
 
-    Raises MalformedSchemaError if the index value is not a boolean.
+    Raises MalformedSchemaError if the x-index value is not a boolean.
 
     Args:
-        schema: The schema to get the index from.
+        schema: The schema to get the x-index from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The index value.
+        The x-index value.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-index")
@@ -139,16 +139,16 @@ def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bo
 
 def unique(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
     """
-    Retrieve the unique property from a property schema.
+    Retrieve the x-unique property from a property schema.
 
-    Raises MalformedSchemaError if the unique value is not a boolean.
+    Raises MalformedSchemaError if the x-unique value is not a boolean.
 
     Args:
-        schema: The schema to get the unique from.
+        schema: The schema to get the x-unique from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The unique value.
+        The x-unique value.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-unique")
@@ -285,16 +285,16 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
 
 def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the tablename of the schema.
+    Retrieve the x-tablename of the schema.
 
-    Raises MalformedSchemaError if the tablename value is not a string.
+    Raises MalformedSchemaError if the x-tablename value is not a string.
 
     Args:
-        schema: The schema to get tablename from.
+        schema: The schema to get x-tablename from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The tablename or None.
+        The x-tablename or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
@@ -359,16 +359,16 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
 
 def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the backref of the schema.
+    Retrieve the x-backref of the schema.
 
-    Raises MalformedSchemaError if the backref value is not a string.
+    Raises MalformedSchemaError if the x-backref value is not a string.
 
     Args:
-        schema: The schema to get backref from.
+        schema: The schema to get x-backref from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The backref or None.
+        The x-backref or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-backref")
@@ -383,16 +383,16 @@ def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
 
 def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]:
     """
-    Retrieve the secondary of the schema.
+    Retrieve the x-secondary of the schema.
 
-    Raises MalformedSchemaError if the secondary value is not a string.
+    Raises MalformedSchemaError if the x-secondary value is not a string.
 
     Args:
-        schema: The schema to get secondary from.
+        schema: The schema to get x-secondary from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The secondary or None.
+        The x-secondary or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-secondary")
@@ -407,16 +407,16 @@ def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
 
 def uselist(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:
     """
-    Retrieve the uselist of the schema.
+    Retrieve the x-uselist of the schema.
 
-    Raises MalformedSchemaError if the uselist value is not a boolean.
+    Raises MalformedSchemaError if the x-uselist value is not a boolean.
 
     Args:
-        schema: The schema to get uselist from.
+        schema: The schema to get x-uselist from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The uselist or None.
+        The x-uselist or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-uselist")
@@ -545,16 +545,16 @@ def foreign_key(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[str]:
     """
-    Retrieve the foreign-key of the schema.
+    Retrieve the x-foreign-key of the schema.
 
-    Raises MalformedSchemaError if the foreign-key value is not a string.
+    Raises MalformedSchemaError if the x-foreign-key value is not a string.
 
     Args:
-        schema: The schema to get foreign-key from.
+        schema: The schema to get x-foreign-key from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The foreign-key or None.
+        The x-foreign-key or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key")
@@ -571,16 +571,16 @@ def foreign_key_column(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[str]:
     """
-    Retrieve the foreign-key-column of the schema.
+    Retrieve the x-foreign-key-column of the schema.
 
-    Raises MalformedSchemaError if the foreign-key-column value is not a string.
+    Raises MalformedSchemaError if the x-foreign-key-column value is not a string.
 
     Args:
-        schema: The schema to get foreign-key-column from.
+        schema: The schema to get x-foreign-key-column from.
         schemas: The schemas for $ref lookup.
 
     Returns:
-        The foreign-key-column or None.
+        The x-foreign-key-column or None.
 
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key-column")
@@ -599,7 +599,7 @@ def composite_index(
     """
     Retrieve the x-composite-index of the schema.
 
-    Raises MalformedExtensionPropertyError if the x-composite-index value does not
+    Raises MalformedSchemaError if the x-composite-index value does not
         conform with the schema.
 
     Args:
@@ -625,7 +625,7 @@ def composite_unique(
     """
     Retrieve the x-composite-unique of the schema.
 
-    Raises MalformedExtensionPropertyError if the x-composite-unique value does not
+    Raises MalformedSchemaError if the x-composite-unique value does not
         conform with the schema.
 
     Args:
@@ -649,8 +649,13 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     """
     Retrieve the default value and check it against the schema.
 
+    Raises MalformedSchemaError if the default value does not conform with the schema.
+
     Args:
         schema: The schema to retrieve the default value from.
+
+    Returns:
+        The default or None.
 
     """
     # Retrieve value

@@ -142,7 +142,7 @@ def _calculate_foreign_key_property_artifacts(
         property_schema: The schema of the property.
 
     Returns:
-        The name of the schema to store the property into and the name and schema of the
+        The name of the schema to store the property onto and the name and schema of the
         foreign key property.
 
     """

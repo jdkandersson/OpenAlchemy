@@ -115,13 +115,14 @@ def calculate_foreign_key(
     """
     Calculate the foreign key.
 
+    Assume type_ is not a many to many relationship.
     Assume target_schema is a valid model.
 
     Args:
         column_name: The name of the foreign key column.
         target_schema: The schema of the model targeted by the foreign key
             of the relationship.
-        schema: All defines schemas used to resolve any $ref.
+        schema: All defined schemas used to resolve any $ref.
 
     Returns:
         The foreign key.
@@ -146,7 +147,7 @@ def get_modify_schema(
     Assume property schema is a valid relationship.
 
     Args:
-        type: The type of relationship.
+        type_: The type of relationship.
         parent_schema: The schema the relationship property is embedded in.
         property_schema: The schema of the relationship property.
         schemas: Used to resolve any $ref.
