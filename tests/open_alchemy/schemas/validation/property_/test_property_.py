@@ -126,6 +126,12 @@ CALCULATE_TYPE_TESTS = [
         property_.Type.RELATIONSHIP,
         id="object x-json false",
     ),
+    pytest.param(
+        {"x-json": False, "type": "integer"},
+        {},
+        property_.Type.SIMPLE,
+        id="integer x-json false",
+    ),
     pytest.param({"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True",),
     pytest.param(
         {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True $ref",
@@ -134,10 +140,22 @@ CALCULATE_TYPE_TESTS = [
         {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True allOf",
     ),
     pytest.param(
+        {"readOnly": False, "type": "object"},
+        {},
+        property_.Type.RELATIONSHIP,
+        id="object readOnly false",
+    ),
+    pytest.param(
         {"readOnly": False, "type": "integer"},
         {},
         property_.Type.SIMPLE,
         id="integer readOnly false",
+    ),
+    pytest.param(
+        {"readOnly": True, "x-json": True, "type": "object"},
+        {},
+        property_.Type.READ_ONLY,
+        id="object readOnly and x-json True",
     ),
     pytest.param({"type": "object"}, {}, property_.Type.RELATIONSHIP, id="object",),
     pytest.param(

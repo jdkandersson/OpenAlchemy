@@ -74,13 +74,13 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
         The type of the property.
 
     """
-    json = helpers.peek.json(schema=schema, schemas=schemas)
-    if json is True:
-        return Type.JSON
-
     read_only = helpers.peek.read_only(schema=schema, schemas=schemas)
     if read_only is True:
         return Type.READ_ONLY
+
+    json = helpers.peek.json(schema=schema, schemas=schemas)
+    if json is True:
+        return Type.JSON
 
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     if type_ in {"object", "array"}:
