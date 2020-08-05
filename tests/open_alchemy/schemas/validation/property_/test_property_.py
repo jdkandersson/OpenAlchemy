@@ -117,14 +117,27 @@ def test_check_type(schema, schemas, expected_result):
 
 
 CALCULATE_TYPE_TESTS = [
-    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True",),
-    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True $ref",),
-    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="json True allOf",),
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True",),
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True $ref",),
+    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True allOf",),
     pytest.param(
         {"x-json": False, "type": "object"},
         {},
         property_.Type.RELATIONSHIP,
-        id="object json false",
+        id="object x-json false",
+    ),
+    pytest.param({"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True",),
+    pytest.param(
+        {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True $ref",
+    ),
+    pytest.param(
+        {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True allOf",
+    ),
+    pytest.param(
+        {"readOnly": False, "type": "integer"},
+        {},
+        property_.Type.SIMPLE,
+        id="integer readOnly false",
     ),
     pytest.param({"type": "object"}, {}, property_.Type.RELATIONSHIP, id="object",),
     pytest.param(
