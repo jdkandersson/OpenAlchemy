@@ -121,13 +121,21 @@ def _foreign_key_property_not_defined(
     return True
 
 
+class Artifacts(helpers.process.Artifacts):
+    """The return value of _calculate_schema."""
+
+    schema_name: str
+    property_name: str
+    property_schema: types.ColumnSchema
+
+
 def _calculate_foreign_key_property_artifacts(
     schemas: types.Schema,
     parent_name: str,
     parent_schema: types.Schema,
     property_name: str,
     property_schema: types.Schema,
-) -> helpers.process.Artifacts:
+) -> Artifacts:
     """
     Calculate the artifacts for the schema for the foreign key property.
 
@@ -205,7 +213,7 @@ def _calculate_foreign_key_property_artifacts(
     )
 
     # Calculate the schema
-    foreign_key_property_schema: types.Schema = {
+    foreign_key_property_schema: types.ColumnSchema = {
         "type": property_type,
         "x-dict-ignore": True,
         "nullable": nullable,
@@ -233,7 +241,7 @@ def _calculate_foreign_key_property_artifacts(
         schemas=schemas,
     )
 
-    return helpers.process.Artifacts(
+    return Artifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
     )
 
