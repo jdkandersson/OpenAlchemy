@@ -197,12 +197,12 @@ def process(*, schemas: types.Schemas):
     backrefs = helpers.process.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_backrefs
     )
-    # Group by schema name
-    grouped_backrefs = _group_backrefs(backrefs=backrefs)
     # Map to a schema for each grouped backreference
-    backref_schemas = _grouped_backrefs_to_schemas(grouped_backrefs=grouped_backrefs)
+    backref_schemas = helpers.process.calculate_outputs(
+        artifacts=backrefs, calculate_output=_backrefs_to_schema
+    )
     # Convert to list to resolve iterator
-    backref_schemas = list(backref_schemas)
+    backref_schema_list = list(backref_schemas)
     # Add backreferences to schemas
-    for name, backref_schema in backref_schemas:
+    for name, backref_schema in backref_schema_list:
         schemas[name] = {"allOf": [schemas[name], backref_schema]}
