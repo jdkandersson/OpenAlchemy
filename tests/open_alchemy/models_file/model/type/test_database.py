@@ -371,6 +371,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert calculated_backref_type_str == 'typing.Sequence["TTable"]'
 
 
+@pytest.mark.only_this
 @pytest.mark.models_file
 def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     """
@@ -408,7 +409,6 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     base = declarative.declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
-    model_factory(name="RefTable")
 
     # Calculate the type through model factory operations
     schema = model._schema["properties"]["ref_table"]

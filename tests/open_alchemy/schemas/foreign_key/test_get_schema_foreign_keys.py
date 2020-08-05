@@ -110,7 +110,7 @@ GET_SCHEMA_FOREIGN_KEYS_TESTS = [
                 "type": "object",
                 "properties": {"prop_1": {"type": "integer"}},
             },
-            "RefSchema2": {"type": "integer",},
+            "RefSchema2": {"type": "integer"},
         },
         [
             (
@@ -135,7 +135,7 @@ GET_SCHEMA_FOREIGN_KEYS_TESTS = [
             }
         },
         {
-            "RefSchema1": {"type": "integer",},
+            "RefSchema1": {"type": "integer"},
             "RefSchema2": {
                 "x-tablename": "ref_schema_2",
                 "x-foreign-key-column": "prop_2",

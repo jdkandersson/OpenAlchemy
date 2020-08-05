@@ -177,9 +177,13 @@ def _calculate_foreign_key_property_artifacts(
             schema=parent_schema, schemas=schemas
         )
         required = any(filter(lambda name: name == property_name, required_items))
-    nullable = oa_helpers.peek.nullable(
-        schema=foreign_key_target_schema, schemas=schemas
+    # Calculate nullable for all but one-to-many relationships based on property
+    nullable: typing.Optional[bool] = None
+    relationship_type = oa_helpers.relationship.calculate_type(
+        schema=property_schema, schemas=schemas
     )
+    if relationship_type != oa_helpers.relationship.Type.ONE_TO_MANY:
+        nullable = oa_helpers.peek.nullable(schema=property_schema, schemas=schemas)
     default = oa_helpers.peek.default(schema=foreign_key_target_schema, schemas=schemas)
     nullable = oa_helpers.calculate_nullable(
         nullable=nullable,
@@ -229,6 +233,7 @@ def _calculate_foreign_key_property_artifacts(
         schemas=schemas,
     )
 
+    print(foreign_key_property_schema)
     return helpers.process.Artifacts(
         modify_name, foreign_key_property_name, foreign_key_property_schema
     )

@@ -31,6 +31,31 @@ CALC_F_K_PROP_ART_TESTS = [
     ),
     pytest.param(
         "Schema",
+        {},
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+                "nullable": False,
+            }
+        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": False,
+            },
+        ),
+        id="many-to-one not nullable",
+    ),
+    pytest.param(
+        "Schema",
         {"required": []},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
@@ -318,6 +343,76 @@ CALC_F_K_PROP_ART_TESTS = [
             },
         ),
         id="many-to-one x-kwargs",
+    ),
+    pytest.param(
+        "Schema",
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"x-tablename": "ref_schema"}},
+        (
+            "RefSchema",
+            "schema_ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
+        id="one-to-many",
+    ),
+    pytest.param(
+        "Schema",
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"x-tablename": "ref_schema", "nullable": False}},
+        (
+            "RefSchema",
+            "schema_ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
+        id="one-to-many reference not nullable",
+    ),
+    pytest.param(
+        "Schema",
+        {
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {
+            "type": "array",
+            "nullable": False,
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"x-tablename": "ref_schema"}},
+        (
+            "RefSchema",
+            "schema_ref_schema_id",
+            {
+                "type": "integer",
+                "x-foreign-key": "schema.id",
+                "x-dict-ignore": True,
+                "nullable": True,
+            },
+        ),
+        id="one-to-many property not nullable",
     ),
 ]
 
