@@ -124,8 +124,6 @@ def _foreign_key_property_not_defined(
 class Artifacts(helpers.process.Artifacts):
     """The return value of _calculate_schema."""
 
-    schema_name: str
-    property_name: str
     property_schema: types.ColumnSchema
 
 
