@@ -43,9 +43,9 @@ def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
 class _BackrefArtifacts(typing.NamedTuple):
     """The return value of _calculate_schema."""
 
-    ref_schema_name: str
+    schema_name: str
     property_name: str
-    schema: types.Schema
+    property_schema: types.Schema
 
 
 _BackrefArtifactsIter = typing.Iterable[_BackrefArtifacts]
@@ -184,8 +184,8 @@ def _group_backrefs(*, backrefs: _BackrefArtifactsIter) -> _BackrefArtifactsGrou
         The grouped back references.
 
     """
-    sorted_backrefs = sorted(backrefs, key=lambda backref: backref.ref_schema_name)
-    return itertools.groupby(sorted_backrefs, lambda backref: backref.ref_schema_name)
+    sorted_backrefs = sorted(backrefs, key=lambda backref: backref.schema_name)
+    return itertools.groupby(sorted_backrefs, lambda backref: backref.schema_name)
 
 
 def _backrefs_to_schema(backrefs: _BackrefArtifactsIter) -> types.Schema:

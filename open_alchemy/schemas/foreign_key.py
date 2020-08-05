@@ -125,9 +125,9 @@ def _foreign_key_property_not_defined(
 class _ForeignKeyArtifacts(typing.NamedTuple):
     """The return value of _calculate_schema."""
 
-    modify_schema_name: str
-    foreign_key_property_name: str
-    foreign_key_property_schema: types.ColumnSchema
+    schema_name: str
+    property_name: str
+    property_schema: types.ColumnSchema
 
 
 _ForeignKeyArtifactsIter = typing.Iterable[_ForeignKeyArtifacts]
