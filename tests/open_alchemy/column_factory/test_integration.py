@@ -203,8 +203,7 @@ def test_integration_array_ref():
     """
     GIVEN schema that references another object schema from an array and schemas
     WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference  is added to the referenced schema and relationship is
-        returned with the schema.
+    THEN relationship is returned with the schema.
     """
     schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
@@ -239,24 +238,10 @@ def test_integration_array_ref():
     }
     assert schemas == {
         "RefSchema": {
-            "allOf": [
-                {
-                    "type": "object",
-                    "x-tablename": "table 1",
-                    "properties": {"id": {"type": "integer"}},
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "schema_ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": "schema.id",
-                            "x-dict-ignore": True,
-                        }
-                    },
-                },
-            ]
-        }
+            "type": "object",
+            "x-tablename": "table 1",
+            "properties": {"id": {"type": "integer"}},
+        },
     }
 
 
