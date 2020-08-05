@@ -3,8 +3,9 @@
 import pytest
 
 from open_alchemy.schemas import backref
+from open_alchemy.schemas import helpers
 
-BackArt = backref._BackrefArtifacts  # pylint: disable=protected-access
+BackArt = helpers.process.Artifacts  # pylint: disable=protected-access
 
 
 class TestGroupedBackrefsToSchemas:

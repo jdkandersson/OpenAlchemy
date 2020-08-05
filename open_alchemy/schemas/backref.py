@@ -40,22 +40,9 @@ def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
     return False
 
 
-class _BackrefArtifacts(typing.NamedTuple):
-    """The return value of _calculate_schema."""
-
-    schema_name: str
-    property_name: str
-    property_schema: types.Schema
-
-
-_BackrefArtifactsIter = typing.Iterable[_BackrefArtifacts]
-_BackrefArtifactsGroupedIter = typing.Iterable[typing.Tuple[str, _BackrefArtifactsIter]]
-_BackrefSchemaIter = typing.Iterable[typing.Tuple[str, types.Schema]]
-
-
 def _calculate_artifacts(
     schema_name: str, schemas: types.Schemas, schema: types.Schema
-) -> _BackrefArtifacts:
+) -> helpers.process.Artifacts:
     """
     Calculate the artifacts for the schema for a back reference.
 
@@ -111,12 +98,12 @@ def _calculate_artifacts(
     if is_array:
         return_schema = {"type": "array", "items": return_schema}
 
-    return _BackrefArtifacts(ref_schema_name, backref, return_schema)
+    return helpers.process.Artifacts(ref_schema_name, backref, return_schema)
 
 
 def _get_schema_backrefs(
     schemas: types.Schemas, schema_name: str, schema: types.Schema,
-) -> _BackrefArtifactsIter:
+) -> helpers.process.ArtifactsIter:
     """
     Get the backrefs for a schema.
 
@@ -148,7 +135,7 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _get_backrefs(*, schemas: types.Schemas) -> _BackrefArtifactsIter:
+def _get_backrefs(*, schemas: types.Schemas) -> helpers.process.ArtifactsIter:
     """
     Get all back reference information from the schemas.
 
@@ -173,7 +160,9 @@ def _get_backrefs(*, schemas: types.Schemas) -> _BackrefArtifactsIter:
     return itertools.chain(*backrefs_iters)
 
 
-def _group_backrefs(*, backrefs: _BackrefArtifactsIter) -> _BackrefArtifactsGroupedIter:
+def _group_backrefs(
+    *, backrefs: helpers.process.ArtifactsIter
+) -> helpers.process.ArtifactsGroupedIter:
     """
     Group back references by schema name.
 
@@ -188,7 +177,7 @@ def _group_backrefs(*, backrefs: _BackrefArtifactsIter) -> _BackrefArtifactsGrou
     return itertools.groupby(sorted_backrefs, lambda backref: backref.schema_name)
 
 
-def _backrefs_to_schema(backrefs: _BackrefArtifactsIter) -> types.Schema:
+def _backrefs_to_schema(backrefs: helpers.process.ArtifactsIter) -> types.Schema:
     """
     Convert to the schema with the x-backrefs value from backrefs.
 
@@ -206,8 +195,8 @@ def _backrefs_to_schema(backrefs: _BackrefArtifactsIter) -> types.Schema:
 
 
 def _grouped_backrefs_to_schemas(
-    *, grouped_backrefs: _BackrefArtifactsGroupedIter
-) -> _BackrefSchemaIter:
+    *, grouped_backrefs: helpers.process.ArtifactsGroupedIter
+) -> helpers.process.SchemaIter:
     """
     Convert grouped backreferences to schema names and backreference schemas.
 
@@ -230,7 +219,9 @@ def process(*, schemas: types.Schemas):
 
     """
     # Retrieve back references
-    backrefs = _get_backrefs(schemas=schemas)
+    backrefs = helpers.process.get_artifacts(
+        schemas=schemas, get_schema_artifacts=_get_schema_backrefs
+    )
     # Group by schema name
     grouped_backrefs = _group_backrefs(backrefs=backrefs)
     # Map to a schema for each grouped backreference
