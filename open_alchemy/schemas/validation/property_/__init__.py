@@ -18,8 +18,9 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
 
     Algorithm:
     1. check that the type is present and valid
-    2. check that it is one of integer, number, string, boolean, object or array and
-    3. check that x-json, if defined, is valid.
+    2. check that it is one of integer, number, string, boolean, object or array,
+    3. check that x-json, if defined, is valid and
+    3. check that readOnly, if defined, is valid.
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
@@ -34,6 +35,7 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
         if type_ not in _SUPPORTED_TYPES:
             return types.Result(False, f"{type_} is not a supported type")
         helpers.peek.json(schema=schema, schemas=schemas)
+        helpers.peek.read_only(schema=schema, schemas=schemas)
 
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")
@@ -60,6 +62,7 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
 
     The rules are:
     1. if x-json is True it is JSON,
+    2. if readOnly is True it is READ_ONLY,
     2. if it is type object or array it is RELATIONSHIP and
     3. otherwise it is SIMPLE.
 

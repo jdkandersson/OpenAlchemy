@@ -79,6 +79,27 @@ CHECK_TYPE_TESTS = [
         (False, "malformed schema :: The x-json property must be of type boolean. "),
         id="x-json allOf",
     ),
+    pytest.param(
+        {"type": "integer", "readOnly": "True"},
+        {},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="readOnly invalid",
+    ),
+    pytest.param(
+        {"type": "integer", "readOnly": True}, {}, (True, None), id="readOnly"
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "integer", "readOnly": "True"}},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="readOnly invalid $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"type": "integer", "readOnly": "True"}]},
+        {},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="readOnly allOf",
+    ),
 ]
 
 
