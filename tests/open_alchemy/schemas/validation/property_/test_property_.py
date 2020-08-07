@@ -100,6 +100,27 @@ CHECK_TYPE_TESTS = [
         (False, "malformed schema :: A readOnly property must be of type boolean. "),
         id="readOnly allOf",
     ),
+    pytest.param(
+        {"type": "integer", "writeOnly": "True"},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly invalid",
+    ),
+    pytest.param(
+        {"type": "integer", "writeOnly": True}, {}, (True, None), id="writeOnly"
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "integer", "writeOnly": "True"}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly invalid $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"type": "integer", "writeOnly": "True"}]},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly allOf",
+    ),
 ]
 
 

@@ -261,27 +261,6 @@ TESTS = [
         id="boolean x-primary-key",
     ),
     pytest.param(
-        {"type": "integer", "readOnly": "True"},
-        {},
-        (False, "malformed schema :: A readOnly property must be of type boolean. "),
-        id="integer readOnly not boolean",
-    ),
-    pytest.param(
-        {"type": "integer", "readOnly": True}, {}, (True, None), id="integer readOnly",
-    ),
-    pytest.param(
-        {"type": "integer", "writeOnly": "True"},
-        {},
-        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
-        id="integer writeOnly not boolean",
-    ),
-    pytest.param(
-        {"type": "integer", "writeOnly": True},
-        {},
-        (True, None),
-        id="integer writeOnly",
-    ),
-    pytest.param(
         {"type": "integer", "x-autoincrement": "True"},
         {},
         (False, "malformed schema :: A autoincrement value must be of type boolean. "),

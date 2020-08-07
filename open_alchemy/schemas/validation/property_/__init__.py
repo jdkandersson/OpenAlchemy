@@ -36,6 +36,7 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
             return types.Result(False, f"{type_} is not a supported type")
         helpers.peek.json(schema=schema, schemas=schemas)
         helpers.peek.read_only(schema=schema, schemas=schemas)
+        helpers.peek.write_only(schema=schema, schemas=schemas)
 
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")
