@@ -134,6 +134,10 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         helpers.peek.description(schema=schema, schemas=schemas)
         # Check default
         helpers.peek.default(schema=schema, schemas=schemas)
+        # Check readOnly
+        helpers.peek.read_only(schema=schema, schemas=schemas)
+        # Check writeOnly
+        helpers.peek.write_only(schema=schema, schemas=schemas)
 
     except exceptions.SchemaNotFoundError as exc:
         return types.Result(False, f"reference :: {exc}")
