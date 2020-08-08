@@ -261,66 +261,6 @@ TESTS = [
                     "schemas": {
                         "readOnly": True,
                         "type": "array",
-                        "items": {
-                            "allOf": [
-                                {"type": "object", "properties": True},
-                                {"type": "object", "properties": {}},
-                            ]
-                        },
-                    },
-                },
-            }
-        },
-        (
-            False,
-            "backref property :: items :: value of properties must be a dictionary",
-        ),
-        id="many-to-one back reference multiple properties first not dictionary",
-    ),
-    pytest.param(
-        {},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "allOf": [
-                                {"type": "object", "properties": {}},
-                                {"type": "object", "properties": True},
-                            ]
-                        },
-                    },
-                },
-            }
-        },
-        (
-            False,
-            "backref property :: items :: value of properties must be a dictionary",
-        ),
-        id="many-to-one back reference multiple properties second not dictionary",
-    ),
-    pytest.param(
-        {},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
                         "items": {"type": "object", "properties": {}},
                     },
                 },
