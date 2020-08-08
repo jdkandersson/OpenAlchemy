@@ -608,7 +608,10 @@ TESTS = [
                 },
             }
         },
-        (False, None),
+        (
+            False,
+            "backref property :: malformed schema :: Every property requires a type. ",
+        ),
         id="many-to-one back reference has property no type",
     ),
     pytest.param(
@@ -633,7 +636,11 @@ TESTS = [
                 },
             }
         },
-        (False, None),
+        (
+            False,
+            "backref property :: items :: id :: type :: expected integer, actual is "
+            "string.",
+        ),
         id="many-to-one back reference has property different type",
     ),
     pytest.param(
@@ -738,35 +745,12 @@ TESTS = [
                 },
             }
         },
-        (False, None),
+        (
+            False,
+            "backref property :: malformed schema :: A format value must be of type "
+            "string. ",
+        ),
         id="many-to-one back reference has property format not string",
-    ),
-    pytest.param(
-        {"properties": {"id": {"type": "integer"}}},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer", "format": "format 1"}
-                            },
-                        },
-                    },
-                },
-            }
-        },
-        (False, None),
-        id="many-to-one back reference has property format no defined",
     ),
     pytest.param(
         {"properties": {"id": {"type": "integer", "format": "format 2"}}},
@@ -792,63 +776,12 @@ TESTS = [
                 },
             }
         },
-        (False, None),
+        (
+            False,
+            "backref property :: items :: id :: format :: expected format 2, actual is "
+            "format 1.",
+        ),
         id="many-to-one back reference has property format different",
-    ),
-    pytest.param(
-        {"properties": {"id": {"type": "integer", "format": "format 1"}}},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer", "format": "format 1"}
-                            },
-                        },
-                    },
-                },
-            }
-        },
-        (True, None),
-        id="many-to-one back reference has property format",
-    ),
-    pytest.param(
-        {"properties": {"name": {"type": "string"}}},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer"},
-                                "name": {"type": "string"},
-                            },
-                        },
-                    },
-                },
-            }
-        },
-        (False, None),
-        id="many-to-one back reference has multiple property for not defined",
     ),
     pytest.param(
         {"properties": {"id": {"type": "integer"}}},
@@ -867,19 +800,22 @@ TESTS = [
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {"type": "integer"},
-                                "name": {"type": "string"},
+                                "id": {"type": "integer", "maxLength": True}
                             },
                         },
                     },
                 },
             }
         },
-        (False, None),
-        id="many-to-one back reference has multiple property second not defined",
+        (
+            False,
+            "backref property :: malformed schema :: A maxLength value must be of type "
+            "integer. ",
+        ),
+        id="many-to-one back reference has property maxLength not string",
     ),
     pytest.param(
-        {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
+        {"properties": {"id": {"type": "integer", "maxLength": 2}}},
         "ref_schema",
         {"$ref": "#/components/schemas/RefSchema"},
         {
@@ -894,74 +830,185 @@ TESTS = [
                         "type": "array",
                         "items": {
                             "type": "object",
-                            "properties": {
-                                "id": {"type": "string"},
-                                "name": {"type": "string"},
-                            },
+                            "properties": {"id": {"type": "integer", "maxLength": 1}},
                         },
                     },
                 },
             }
         },
-        (False, None),
-        id="many-to-one back reference has multiple property first wrong type",
+        (
+            False,
+            "backref property :: items :: id :: maxLength :: expected 2, actual is 1.",
+        ),
+        id="many-to-one back reference has property maxLength different",
     ),
-    pytest.param(
-        {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer"},
-                                "name": {"type": "integer"},
-                            },
-                        },
-                    },
-                },
-            }
-        },
-        (False, None),
-        id="many-to-one back reference has multiple property second wrong type",
-    ),
-    pytest.param(
-        {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "x-backref": "schemas",
-                "type": "object",
-                "properties": {
-                    "id": {"type": "integer"},
-                    "schemas": {
-                        "readOnly": True,
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {"type": "integer"},
-                                "name": {"type": "string"},
-                            },
-                        },
-                    },
-                },
-            }
-        },
-        (True, None),
-        id="many-to-one back reference has multiple property",
-    ),
+    # pytest.param(
+    #     {"properties": {"id": {"type": "integer", "format": "format 1"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "integer", "format": "format 1"}
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (True, None),
+    #     id="many-to-one back reference has property format",
+    # ),
+    # pytest.param(
+    #     {"properties": {"name": {"type": "string"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "integer"},
+    #                             "name": {"type": "string"},
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (False, None),
+    #     id="many-to-one back reference has multiple property first not defined",
+    # ),
+    # pytest.param(
+    #     {"properties": {"id": {"type": "integer"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "integer"},
+    #                             "name": {"type": "string"},
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (False, None),
+    #     id="many-to-one back reference has multiple property second not defined",
+    # ),
+    # pytest.param(
+    #     {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "string"},
+    #                             "name": {"type": "string"},
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (False, None),
+    #     id="many-to-one back reference has multiple property first wrong type",
+    # ),
+    # pytest.param(
+    #     {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "integer"},
+    #                             "name": {"type": "integer"},
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (False, None),
+    #     id="many-to-one back reference has multiple property second wrong type",
+    # ),
+    # pytest.param(
+    #     {"properties": {"id": {"type": "integer"}, "name": {"type": "string"}}},
+    #     "ref_schema",
+    #     {"$ref": "#/components/schemas/RefSchema"},
+    #     {
+    #         "RefSchema": {
+    #             "x-tablename": "ref_schema",
+    #             "x-backref": "schemas",
+    #             "type": "object",
+    #             "properties": {
+    #                 "id": {"type": "integer"},
+    #                 "schemas": {
+    #                     "readOnly": True,
+    #                     "type": "array",
+    #                     "items": {
+    #                         "type": "object",
+    #                         "properties": {
+    #                             "id": {"type": "integer"},
+    #                             "name": {"type": "string"},
+    #                         },
+    #                     },
+    #                 },
+    #             },
+    #         }
+    #     },
+    #     (True, None),
+    #     id="many-to-one back reference has multiple property",
+    # ),
     pytest.param(
         {},
         "ref_schema",

@@ -285,11 +285,8 @@ def _check_many_to_many(
     return types.Result(True, None)
 
 
-def _check_backref_properties(
-    parent_schema: oa_types.Schema,
-    property_name: str,
-    backref_schema: oa_types.Schema,
-    schemas: oa_types.Schemas,
+def _check_backref_property_properties_basics(
+    property_name: str, backref_schema: oa_types.Schema, schemas: oa_types.Schemas,
 ) -> types.OptResult:
     """
     Check the backref schema.
@@ -330,6 +327,30 @@ def _check_backref_properties(
             "circular references",
         )
 
+    return None
+
+
+def _check_backref_property_properties(
+    parent_schema: oa_types.Schema,
+    property_name: str,
+    backref_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
+) -> types.OptResult:
+    """
+    Check the backref schema.
+
+    Args:
+        parent_schema: The schema that has the property embedded in it.
+        property_name: The name of the property.
+        backref_schema: The schema of the back reference.
+        schemas: All defined schemas used to resolve any $ref.
+    """
+    basics_result = _check_backref_property_properties_basics(
+        property_name=property_name, backref_schema=backref_schema, schemas=schemas
+    )
+    if basics_result is not None:
+        return basics_result
+
     # Check for backreference properties not in the parent schema properties
     parent_properties_items = helpers.iterate.property_items(
         schema=parent_schema, schemas=schemas
@@ -355,6 +376,42 @@ def _check_backref_properties(
     )
     if property_schema_not_dict is not None:
         return types.Result(False, "property schema must be dictionaries")
+
+    # Check schema matches
+    checks = (
+        ("type", oa_helpers.peek.type_),
+        ("format", oa_helpers.peek.format_),
+        ("maxLength", oa_helpers.peek.max_length),
+        ("default", oa_helpers.peek.default),
+    )
+    for key, func in checks:
+        properties_items = helpers.iterate.property_items(
+            schema=backref_schema, schemas=schemas
+        )
+        # pylint: disable=cell-var-from-loop
+        # Calculate result for each property
+        properties_items_results = map(
+            lambda args: (
+                args[0],
+                _check_value_matches(
+                    func=func,
+                    reference_schema=parent_properties[args[0]],
+                    check_schema=args[1],
+                    schemas=schemas,
+                ),
+            ),
+            properties_items,
+        )
+        # Look for the first failed result
+        properties_items_result = next(
+            filter(lambda args: args[1] is not None, properties_items_results), None
+        )
+        if properties_items_result is not None:
+            property_name, result = properties_items_result
+            assert result is not None
+            return types.Result(
+                result.valid, f"{property_name} :: {key} :: {result.reason}"
+            )
 
     return None
 
@@ -404,7 +461,7 @@ def _check_backref_property(
         )
         if items_schema is None:
             return types.Result(False, "items must be defined")
-        properties_result = _check_backref_properties(
+        properties_result = _check_backref_property_properties(
             parent_schema=parent_schema,
             property_name=property_name,
             backref_schema=items_schema,
@@ -414,7 +471,7 @@ def _check_backref_property(
             return types.Result(False, f"items :: {properties_result.reason}")
         return None
 
-    return _check_backref_properties(
+    return _check_backref_property_properties(
         parent_schema=parent_schema,
         property_name=property_name,
         backref_schema=backref_property_schema,

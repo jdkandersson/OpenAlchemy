@@ -37,15 +37,16 @@ def test_type():
     assert returned_type == type_
 
 
+@pytest.mark.parametrize(
+    "schema", [{"nullable": "1"}, {"nullable": 1}, {"nullable": 1.1}],
+)
 @pytest.mark.helper
-def test_nullable_wrong_type():
+def test_nullable_wrong_type(schema):
     """
     GIVEN schema with nullable defined as a string
     WHEN nullable is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"nullable": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.nullable(schema=schema, schemas={})
 
@@ -191,15 +192,16 @@ def test_unique(schema, expected_unique):
     assert returned_unique == expected_unique
 
 
+@pytest.mark.parametrize(
+    "schema", [{"maxLength": "1"}, {"maxLength": True}],
+)
 @pytest.mark.helper
-def test_max_length_wrong_type():
+def test_max_length_wrong_type(schema):
     """
-    GIVEN schema with max_length defined as a boolean
+    GIVEN schema with max_length of the wrong type
     WHEN max_length is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"maxLength": "1"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.max_length(schema=schema, schemas={})
 
