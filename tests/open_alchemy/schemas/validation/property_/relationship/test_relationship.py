@@ -23,8 +23,8 @@ from open_alchemy.schemas.validation.property_ import relationship
             {"RefSchema": {"x-tablename": "ref_schema", "type": "object"}},
             (
                 False,
-                "foreign key target schema :: models must have at least 1 property "
-                "themself",
+                "foreign key target schema :: properties :: models must have at least "
+                "1 property themself",
             ),
             id="malformed foreign key target",
         ),

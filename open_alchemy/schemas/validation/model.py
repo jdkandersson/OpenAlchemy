@@ -1,6 +1,5 @@
 """Validate the schema of a model."""
 
-import itertools
 import typing
 
 from ... import exceptions
@@ -8,6 +7,7 @@ from ... import helpers as oa_helpers
 from ... import table_args
 from ... import types as oa_types
 from .. import helpers
+from . import helpers as validation_helpers
 from . import types
 
 
@@ -16,34 +16,26 @@ def _check_properties(
 ) -> types.OptResult:
     """Check properties."""
     # Check property values
-    properties_values = helpers.iterate.properties_values(
-        schema=schema, schemas=schemas, stay_within_model=True
+    properties_values_result = validation_helpers.properties.check_properties_values(
+        schema=schema, schemas=schemas
     )
-    any_properties_value_not_list = any(
-        filter(
-            lambda properties_value: not isinstance(properties_value, dict),
-            properties_values,
-        )
-    )
-    if any_properties_value_not_list:
-        return types.Result(False, "value of properties must be a dictionary")
+    if properties_values_result is not None:
+        return properties_values_result
 
     # Check there is at least a single property
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     first_property = next(properties_items, None)
     if first_property is None:
         return types.Result(False, "models must have at least 1 property themself")
-    properties_items = itertools.chain([first_property], properties_items)
 
     # Check that all property names are strings
-    property_names = map(lambda prop: prop[0], properties_items)
-    any_property_name_not_string = any(
-        filter(lambda property_name: not isinstance(property_name, str), property_names)
+    properties_items_result = validation_helpers.properties.check_properties_items(
+        schema=schema, schemas=schemas
     )
-    if any_property_name_not_string:
-        return types.Result(False, "properties :: all property keys must be strings")
+    if properties_items_result is not None:
+        return properties_items_result
 
     return None
 
@@ -52,7 +44,7 @@ def _get_property_names_model(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     return map(lambda prop: prop[0], properties_items)
@@ -119,7 +111,9 @@ def _check_mandatory(
 
     properties_result = _check_properties(schema=schema, schemas=schemas)
     if properties_result is not None:
-        return properties_result
+        return types.Result(
+            properties_result.valid, f"properties :: {properties_result.reason}"
+        )
 
     return None
 
@@ -177,7 +171,7 @@ def _get_property_names_table(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     return map(lambda prop: prop[0], properties_items)

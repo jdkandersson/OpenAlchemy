@@ -176,7 +176,7 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
     value = peek_key(schema=schema, schemas=schemas, key="maxLength")
     if value is None:
         return None
-    if not isinstance(value, int):
+    if not isinstance(value, int) or isinstance(value, bool):
         raise exceptions.MalformedSchemaError(
             "A maxLength value must be of type integer."
         )

@@ -5,6 +5,8 @@ from .... import helpers
 from .... import types as oa_types
 from .. import types
 
+TYPES = {"integer", "number", "string", "boolean"}
+
 # Set of valid type and format combinations
 _VALID_TYPE_FORMAT = {
     ("integer", None),
@@ -34,7 +36,7 @@ def _check_modifiers(
     """Check property schema modifiers."""
     # check type
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    if type_ not in {"integer", "number", "string", "boolean"}:
+    if type_ not in TYPES:
         return types.Result(False, f"{type_} type is not supported")
 
     # check format
@@ -64,7 +66,7 @@ def _check_modifiers(
     return None
 
 
-def _check_kwargs(
+def check_kwargs(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the value of kwargs."""
@@ -83,7 +85,7 @@ def _check_kwargs(
         intersection = unexpected_keys.intersection(kwargs.keys())
         if intersection:
             return types.Result(
-                False, f"x-kwargs may not contain the {next(iter(intersection))} key"
+                False, f"x-kwargs :: may not contain the {next(iter(intersection))} key"
             )
 
     # Check foreign_key
@@ -93,7 +95,7 @@ def _check_kwargs(
     foreign_key_kwargs = helpers.peek.foreign_key_kwargs(schema=schema, schemas=schemas)
     if foreign_key_kwargs is not None and foreign_key is None:
         return types.Result(
-            False, "x-foreign-key-kwargs can only be defined alongside x-foreign-key"
+            False, "x-foreign-key-kwargs :: can only be defined alongside x-foreign-key"
         )
 
     return None
@@ -118,7 +120,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
             return modifiers_result
 
         # Check kwargs
-        kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
+        kwargs_result = check_kwargs(schema=schema, schemas=schemas)
         if kwargs_result is not None:
             return kwargs_result
 
@@ -134,6 +136,8 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         helpers.peek.description(schema=schema, schemas=schemas)
         # Check default
         helpers.peek.default(schema=schema, schemas=schemas)
+        # Check writeOnly
+        helpers.peek.write_only(schema=schema, schemas=schemas)
 
     except exceptions.SchemaNotFoundError as exc:
         return types.Result(False, f"reference :: {exc}")

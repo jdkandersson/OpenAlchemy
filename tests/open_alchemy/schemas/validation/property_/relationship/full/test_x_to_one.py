@@ -126,8 +126,8 @@ TESTS = [
         },
         (
             False,
-            "foreign key target schema :: models must have at least 1 property "
-            "themself",
+            "foreign key target schema :: properties :: models must have at least 1 "
+            "property themself",
         ),
         id="x-to-one foreign key property default single table inheritance",
     ),
@@ -202,10 +202,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (
-            False,
-            "the type of ref_schema_id is wrong, expected integer, actual is string.",
-        ),
+        (False, "ref_schema_id :: type :: expected integer, actual is string.",),
         id="x-to-one foreign key defined different type",
     ),
     pytest.param(
@@ -251,10 +248,7 @@ TESTS = [
                 "properties": {"ref_schema_id": {"type": "string"}},
             },
         },
-        (
-            False,
-            "the type of ref_schema_id is wrong, expected integer, actual is string.",
-        ),
+        (False, "ref_schema_id :: type :: expected integer, actual is string.",),
         id="x-to-one foreign key defined different type single table inheritance",
     ),
     pytest.param(
@@ -339,7 +333,7 @@ TESTS = [
         },
         (
             False,
-            "the format of ref_schema_id is wrong, expected not to be defined, actual "
+            "ref_schema_id :: format :: expected not to be defined, actual "
             "is int64.",
         ),
         id="x-to-one foreign key defined format only on source",
@@ -359,11 +353,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (
-            False,
-            "the format of ref_schema_id is wrong, expected int32, actual is not "
-            "defined.",
-        ),
+        (False, "ref_schema_id :: format :: expected int32, actual is not defined.",),
         id="x-to-one foreign key defined format only on referenced",
     ),
     pytest.param(
@@ -385,10 +375,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (
-            False,
-            "the format of ref_schema_id is wrong, expected int32, actual is int64.",
-        ),
+        (False, "ref_schema_id :: format :: expected int32, actual is int64.",),
         id="x-to-one foreign key defined different format",
     ),
     pytest.param(
@@ -434,8 +421,7 @@ TESTS = [
         },
         (
             False,
-            "the maxLength of ref_schema_id is wrong, expected not to be defined, "
-            "actual is 1.",
+            "ref_schema_id :: maxLength :: expected not to be defined, actual is 1.",
         ),
         id="x-to-one foreign key defined maxLength only on source",
     ),
@@ -454,11 +440,7 @@ TESTS = [
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (
-            False,
-            "the maxLength of ref_schema_id is wrong, expected 2, actual is not "
-            "defined.",
-        ),
+        (False, "ref_schema_id :: maxLength :: expected 2, actual is not defined.",),
         id="x-to-one foreign key defined maxLength only on referenced",
     ),
     pytest.param(
@@ -480,7 +462,7 @@ TESTS = [
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (False, "the maxLength of ref_schema_id is wrong, expected 2, actual is 1.",),
+        (False, "ref_schema_id :: maxLength :: expected 2, actual is 1.",),
         id="x-to-one foreign key defined different maxLength",
     ),
     pytest.param(
@@ -526,8 +508,7 @@ TESTS = [
         },
         (
             False,
-            "the default of ref_schema_id is wrong, expected not to be defined, actual "
-            "is 1.",
+            "ref_schema_id :: default :: expected not to be defined, actual is 1.",
         ),
         id="x-to-one foreign key defined default only on source",
     ),
@@ -546,10 +527,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (
-            False,
-            "the default of ref_schema_id is wrong, expected 2, actual is not defined.",
-        ),
+        (False, "ref_schema_id :: default :: expected 2, actual is not defined.",),
         id="x-to-one foreign key defined default only on referenced",
     ),
     pytest.param(
@@ -571,7 +549,7 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (False, "the default of ref_schema_id is wrong, expected 2, actual is 1.",),
+        (False, "ref_schema_id :: default :: expected 2, actual is 1.",),
         id="x-to-one foreign key defined different default",
     ),
     pytest.param(
@@ -663,7 +641,6 @@ def test_check(parent_schema, property_name, property_schema, schemas, expected_
     WHEN check is called with the schemas and parent and property schema
     THEN the expected result is returned.
     """
-    # pylint: disable=assignment-from-no-return
     returned_result = full.check(schemas, parent_schema, property_name, property_schema)
 
     assert returned_result == expected_result

@@ -18,5 +18,6 @@ def process(*, schemas: _types.Schemas) -> None:
         schemas: The schemas to pre-process in place.
 
     """
+    validation.process(schemas=schemas)
     backref.process(schemas=schemas)
     foreign_key.process(schemas=schemas)

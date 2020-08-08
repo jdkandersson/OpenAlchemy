@@ -4,6 +4,7 @@
 
 - Add schemas pre-processor that extracts the required back references.
 - Add foreign key pre-processor that extracts the required back references.
+- Add schema validation pre-processor.
 
 ## Version 1.3.0 - 2020-07-12
 

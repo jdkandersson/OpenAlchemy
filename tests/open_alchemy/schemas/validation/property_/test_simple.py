@@ -429,37 +429,37 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-kwargs": {"nullable": True}},
         {},
-        (False, "x-kwargs may not contain the nullable key"),
+        (False, "x-kwargs :: may not contain the nullable key"),
         id="x-kwargs has nullable",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"default": 1}},
         {},
-        (False, "x-kwargs may not contain the default key"),
+        (False, "x-kwargs :: may not contain the default key"),
         id="x-kwargs has default",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"primary_key": True}},
         {},
-        (False, "x-kwargs may not contain the primary_key key"),
+        (False, "x-kwargs :: may not contain the primary_key key"),
         id="x-kwargs has primary_key",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"autoincrement": True}},
         {},
-        (False, "x-kwargs may not contain the autoincrement key"),
+        (False, "x-kwargs :: may not contain the autoincrement key"),
         id="x-kwargs has autoincrement",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"index": True}},
         {},
-        (False, "x-kwargs may not contain the index key"),
+        (False, "x-kwargs :: may not contain the index key"),
         id="x-kwargs has index",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"unique": True}},
         {},
-        (False, "x-kwargs may not contain the unique key"),
+        (False, "x-kwargs :: may not contain the unique key"),
         id="x-kwargs has unique",
     ),
     pytest.param(
@@ -471,7 +471,7 @@ TESTS = [
     pytest.param(
         {"type": "integer", "x-foreign-key-kwargs": {"key": "value"}},
         {},
-        (False, "x-foreign-key-kwargs can only be defined alongside x-foreign-key"),
+        (False, "x-foreign-key-kwargs :: can only be defined alongside x-foreign-key"),
         id="x-foreign-key-kwargs without x-foreign-key",
     ),
     pytest.param(
@@ -519,7 +519,6 @@ def test_check(schema, schemas, expected_result):
     WHEN check is called with the schemas schema
     THEN the expected result is returned.
     """
-    # pylint: disable=assignment-from-no-return
     returned_result = simple.check(schemas, schema)
 
     assert returned_result == expected_result

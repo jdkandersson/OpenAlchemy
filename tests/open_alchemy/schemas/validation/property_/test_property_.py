@@ -100,6 +100,27 @@ CHECK_TYPE_TESTS = [
         (False, "malformed schema :: A readOnly property must be of type boolean. "),
         id="readOnly allOf",
     ),
+    pytest.param(
+        {"type": "integer", "writeOnly": "True"},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly invalid",
+    ),
+    pytest.param(
+        {"type": "integer", "writeOnly": True}, {}, (True, None), id="writeOnly"
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "integer", "writeOnly": "True"}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly invalid $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"type": "integer", "writeOnly": "True"}]},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="writeOnly allOf",
+    ),
 ]
 
 
@@ -186,3 +207,96 @@ def test_calculate_type(schema, schemas, expected_type):
     returned_type = property_.calculate_type(schema=schema, schemas=schemas)
 
     assert returned_type == expected_type
+
+
+CHECK_TESTS = [
+    pytest.param(
+        "prop_1",
+        True,
+        {},
+        {},
+        (False, "malformed schema :: The schema must be a dictionary. "),
+        id="type check fail",
+    ),
+    pytest.param(
+        "prop_1",
+        {"type": "integer", "format": True},
+        {},
+        {},
+        (False, "malformed schema :: A format value must be of type string. "),
+        id="simple fail",
+    ),
+    pytest.param("prop_1", {"type": "integer"}, {}, {}, (True, None), id="simple pass"),
+    pytest.param(
+        "prop_1",
+        {"readOnly": True, "type": "integer", "format": "not supported"},
+        {},
+        {},
+        (False, "not supported format is not supported for integer"),
+        id="readOnly fail",
+    ),
+    pytest.param(
+        "prop_1",
+        {"readOnly": True, "type": "integer"},
+        {},
+        {},
+        (True, None),
+        id="readOnly pass",
+    ),
+    pytest.param(
+        "prop_1",
+        {"x-json": True, "type": "integer", "x-index": "True"},
+        {},
+        {},
+        (False, "malformed schema :: A index value must be of type boolean. "),
+        id="JSON fail",
+    ),
+    pytest.param(
+        "prop_1",
+        {"x-json": True, "type": "integer"},
+        {},
+        {},
+        (True, None),
+        id="JSON pass",
+    ),
+    pytest.param(
+        "prop_1",
+        {"type": "object"},
+        {},
+        {},
+        (False, "not a reference to another object"),
+        id="relationship fail",
+    ),
+    pytest.param(
+        "schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
+                "properties": {"id": {"type": "integer"}},
+            }
+        },
+        (True, None),
+        id="relationship pass",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "property_name, property_schema, parent_schema, schemas, expected_result",
+    CHECK_TESTS,
+)
+@pytest.mark.schemas
+def test_check(property_name, property_schema, parent_schema, schemas, expected_result):
+    """
+    GIVEN schema, schemas and expected result
+    WHEN check is called with the schema and schemas
+    THEN the expected result is returned.
+    """
+    returned_result = property_.check(
+        schemas, parent_schema, property_name, property_schema
+    )
+
+    assert returned_result == expected_result
