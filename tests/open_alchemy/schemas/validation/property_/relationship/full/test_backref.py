@@ -949,11 +949,11 @@ TESTS = [
                             "allOf": [
                                 {
                                     "type": "object",
-                                    "properties": {"id": {"type": "integer"},},
+                                    "properties": {"id": {"type": "integer"}},
                                 },
                                 {
                                     "type": "object",
-                                    "properties": {"name": {"type": "string"},},
+                                    "properties": {"name": {"type": "string"}},
                                 },
                             ]
                         },
@@ -1046,11 +1046,11 @@ TESTS = [
                             "allOf": [
                                 {
                                     "type": "object",
-                                    "properties": {"id": {"type": "integer"},},
+                                    "properties": {"id": {"type": "integer"}},
                                 },
                                 {
                                     "type": "object",
-                                    "properties": {"name": {"type": "integer"},},
+                                    "properties": {"name": {"type": "integer"}},
                                 },
                             ]
                         },
@@ -1111,11 +1111,11 @@ TESTS = [
                             "allOf": [
                                 {
                                     "type": "object",
-                                    "properties": {"id": {"type": "integer"},},
+                                    "properties": {"id": {"type": "integer"}},
                                 },
                                 {
                                     "type": "object",
-                                    "properties": {"name": {"type": "string"},},
+                                    "properties": {"name": {"type": "string"}},
                                 },
                             ]
                         },
@@ -1138,7 +1138,7 @@ TESTS = [
                 "type": "object",
                 "properties": {
                     "id": {"type": "integer"},
-                    "schema": {"readOnly": True, "type": "array",},
+                    "schema": {"readOnly": True, "type": "array"},
                 },
             }
         },
@@ -1209,7 +1209,7 @@ TESTS = [
                 "type": "object",
                 "properties": {
                     "id": {"type": "integer"},
-                    "schema": {"readOnly": True, "type": "array",},
+                    "schema": {"readOnly": True, "type": "array"},
                 },
             }
         },
@@ -1287,7 +1287,7 @@ TESTS = [
                 "type": "object",
                 "properties": {
                     "id": {"type": "integer", "x-primary-key": True},
-                    "schemas": {"readOnly": True, "type": "object",},
+                    "schemas": {"readOnly": True, "type": "object"},
                 },
             }
         },

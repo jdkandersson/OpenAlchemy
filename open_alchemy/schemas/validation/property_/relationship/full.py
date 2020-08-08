@@ -522,8 +522,7 @@ def _check_backref(
         oa_helpers.relationship.Type.MANY_TO_MANY,
     }:
         items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
-        if items_schema is None:
-            return types.Result(False, "items must be defined")
+        assert items_schema is not None
         object_schema = items_schema
     else:
         object_schema = property_schema
