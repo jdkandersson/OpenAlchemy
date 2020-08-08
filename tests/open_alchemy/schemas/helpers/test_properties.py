@@ -90,19 +90,19 @@ CHECK_PROPS_ITEMS_TEST = [
         {"properties": {"key_1": {}, "key_2": {}}}, {}, None, id="multiple keys",
     ),
     pytest.param(
-        {"allOf": [{"properties": {True: {}}}, {"properties": {"key_2": {}}},]},
+        {"allOf": [{"properties": {True: {}}}, {"properties": {"key_2": {}}}]},
         {},
         (False, "property names must be strings, True is not"),
         id="multiple properties first invalid",
     ),
     pytest.param(
-        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {True: {}}},]},
+        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {True: {}}}]},
         {},
         (False, "property names must be strings, True is not"),
         id="multiple properties second invalid",
     ),
     pytest.param(
-        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {"key_2": {}}},]},
+        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {"key_2": {}}}]},
         {},
         None,
         id="multiple properties",

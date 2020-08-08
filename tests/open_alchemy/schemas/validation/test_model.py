@@ -154,7 +154,7 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"x-tablename": "schema", "type": "object", "properties": {"key": {}},}
+                {"x-tablename": "schema", "type": "object", "properties": {"key": {}}}
             ]
         },
         {},

@@ -181,6 +181,19 @@ TESTS = [
         (True, None),
         id="type array object no properties",
     ),
+    pytest.param(
+        {
+            "type": "array",
+            "items": {"type": "object", "properties": {"prop_1": {"type": "object"}}},
+        },
+        {},
+        (
+            False,
+            "items :: properties :: prop_1 :: readOnly object propeerties do not "
+            "support the object type",
+        ),
+        id="type array object property not simple",
+    ),
 ]
 
 
