@@ -464,15 +464,19 @@ def _check_backref_property(
             schemas=schemas,
         )
         if properties_result is not None:
-            return types.Result(False, f"items :: {properties_result.reason}")
-        return None
-
-    return _check_backref_property_properties(
-        parent_schema=parent_schema,
-        property_name=property_name,
-        backref_schema=backref_property_schema,
-        schemas=schemas,
-    )
+            return types.Result(
+                False, f"items :: properties :: {properties_result.reason}"
+            )
+    else:
+        properties_result = _check_backref_property_properties(
+            parent_schema=parent_schema,
+            property_name=property_name,
+            backref_schema=backref_property_schema,
+            schemas=schemas,
+        )
+        if properties_result is not None:
+            return types.Result(False, f"properties :: {properties_result.reason}")
+    return None
 
 
 def _check_backref(

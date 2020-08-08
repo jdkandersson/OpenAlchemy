@@ -26,8 +26,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: properties cannot contain the property name "
-            "of the relartionship to avoid circular references",
+            "backref property :: items :: properties :: properties cannot contain the "
+            "property name of the relartionship to avoid circular references",
         ),
         id="many-to-one back reference has property name",
     ),
@@ -50,7 +50,11 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: could not find id in the model schema",),
+        (
+            False,
+            "backref property :: items :: properties :: could not find id in the model "
+            "schema",
+        ),
         id="many-to-one back reference has property not in schema",
     ),
     pytest.param(
@@ -72,7 +76,11 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: property schema must be dictionaries"),
+        (
+            False,
+            "backref property :: items :: properties :: property schema must be "
+            "dictionaries",
+        ),
         id="many-to-one back reference has property not dictionary",
     ),
     pytest.param(
@@ -124,8 +132,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: type :: expected integer, actual is "
-            "string.",
+            "backref property :: items :: properties :: id :: type :: expected "
+            "integer, actual is string.",
         ),
         id="many-to-one back reference has property different type",
     ),
@@ -264,8 +272,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: format :: expected format 2, actual is "
-            "format 1.",
+            "backref property :: items :: properties :: id :: format :: expected "
+            "format 2, actual is format 1.",
         ),
         id="many-to-one back reference has property format different",
     ),
@@ -351,7 +359,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: maxLength :: expected 2, actual is 1.",
+            "backref property :: items :: properties :: id :: maxLength :: expected 2, "
+            "actual is 1.",
         ),
         id="many-to-one back reference has property maxLength different",
     ),
@@ -433,7 +442,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: default :: expected 2, actual is 1.",
+            "backref property :: items :: properties :: id :: default :: expected 2, "
+            "actual is 1.",
         ),
         id="many-to-one back reference has property default different",
     ),
@@ -487,7 +497,11 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: could not find id in the model schema"),
+        (
+            False,
+            "backref property :: items :: properties :: could not find id in the model "
+            "schema",
+        ),
         id="many-to-one back reference has multiple property first not defined",
     ),
     pytest.param(
@@ -515,7 +529,11 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: could not find name in the model schema"),
+        (
+            False,
+            "backref property :: items :: properties :: could not find name in the "
+            "model schema",
+        ),
         id="many-to-one back reference has multiple property second not defined",
     ),
     pytest.param(
@@ -548,7 +566,11 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: could not find name in the model schema"),
+        (
+            False,
+            "backref property :: items :: properties :: could not find name in the "
+            "model schema",
+        ),
         id="many-to-one back reference allOF multiple property second not defined",
     ),
     pytest.param(
@@ -578,7 +600,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: type :: expected integer, actual is "
+            "backref property :: items :: properties :: id :: type :: expected "
+            "integer, actual is "
             "string.",
         ),
         id="many-to-one back reference has multiple property first wrong type",
@@ -610,8 +633,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: name :: type :: expected string, actual is "
-            "integer.",
+            "backref property :: items :: properties :: name :: type :: expected "
+            "string, actual is integer.",
         ),
         id="many-to-one back reference has multiple property second wrong type",
     ),
@@ -647,8 +670,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: name :: type :: expected string, actual is "
-            "integer.",
+            "backref property :: items :: properties :: name :: type :: expected "
+            "string, actual is integer.",
         ),
         id="many-to-one back reference allOf multiple property second wrong type",
     ),
@@ -735,7 +758,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: id :: type :: expected integer, actual is string.",
+            "backref property :: properties :: id :: type :: expected integer, actual "
+            "is string.",
         ),
         id="one-to-one back reference property wrong type",
     ),
@@ -764,7 +788,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: id :: type :: expected integer, actual is string.",
+            "backref property :: properties :: id :: type :: expected integer, actual "
+            "is string.",
         ),
         id="one-to-many back reference property wrong type",
     ),
@@ -797,8 +822,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: id :: type :: expected integer, actual is "
-            "string.",
+            "backref property :: items :: properties :: id :: type :: expected "
+            "integer, actual is string.",
         ),
         id="many-to-many back reference property wrong type",
     ),

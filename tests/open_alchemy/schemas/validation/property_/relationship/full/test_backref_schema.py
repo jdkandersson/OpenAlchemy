@@ -196,7 +196,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: the back reference schema must be an object",
+            "backref property :: items :: properties :: the back reference schema must "
+            "be an object",
         ),
         id="many-to-one back reference property defined items not object type",
     ),
@@ -243,7 +244,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: value of properties must be a dictionary",
+            "backref property :: items :: properties :: value of properties must be a "
+            "dictionary",
         ),
         id="many-to-one back reference items properties not dictionary",
     ),
