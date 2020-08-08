@@ -36,7 +36,7 @@ def _check_modifiers(
     """Check property schema modifiers."""
     # check type
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    if type_ not in {"integer", "number", "string", "boolean"}:
+    if type_ not in TYPES:
         return types.Result(False, f"{type_} type is not supported")
 
     # check format
