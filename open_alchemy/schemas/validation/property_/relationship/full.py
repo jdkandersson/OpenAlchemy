@@ -160,8 +160,7 @@ def _check_target_schema(
     foreign_key_target_property = next(filtered_properties, None)
     if foreign_key_target_property is None:
         return types.Result(
-            False,
-            f"foreign key targeted schema must have the {column_name} " "property",
+            False, f"foreign key targeted schema must have the {column_name} property",
         )
 
     # Validate the schema
@@ -364,14 +363,11 @@ def _check_backref_property_properties(
         return types.Result(False, f"could not find {name} in the model schema")
 
     # Check properties are dictionaries
-    properties_items = helpers.iterate.properties_items(
+    properties_items_result = validation_helpers.properties.check_properties_items(
         schema=backref_schema, schemas=schemas
     )
-    property_schema_not_dict = next(
-        filter(lambda args: not isinstance(args[1], dict), properties_items), None
-    )
-    if property_schema_not_dict is not None:
-        return types.Result(False, "property schema must be dictionaries")
+    if properties_items_result is not None:
+        return properties_items_result
 
     # Check schema matches
     checks = (
@@ -386,7 +382,7 @@ def _check_backref_property_properties(
         )
         # pylint: disable=cell-var-from-loop
         # Calculate result for each property
-        properties_items_results = map(
+        properties_items_value_results = map(
             lambda args: (
                 args[0],
                 _check_value_matches(
@@ -399,11 +395,12 @@ def _check_backref_property_properties(
             properties_items,
         )
         # Look for the first failed result
-        properties_items_result = next(
-            filter(lambda args: args[1] is not None, properties_items_results), None
+        properties_items_value_result = next(
+            filter(lambda args: args[1] is not None, properties_items_value_results),
+            None,
         )
-        if properties_items_result is not None:
-            property_name, result = properties_items_result
+        if properties_items_value_result is not None:
+            property_name, result = properties_items_value_result
             assert result is not None
             return types.Result(
                 result.valid, f"{property_name} :: {key} :: {result.reason}"

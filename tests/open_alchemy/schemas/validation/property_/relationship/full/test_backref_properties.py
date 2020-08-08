@@ -78,7 +78,7 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: properties :: property schema must be "
+            "backref property :: items :: properties :: id :: property values must be "
             "dictionaries",
         ),
         id="many-to-one back reference has property not dictionary",
