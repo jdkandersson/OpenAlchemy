@@ -51,3 +51,74 @@ def test_check_properties_values(schema, schemas, expected_result):
     returned_result = properties.check_properties_values(schema=schema, schemas=schemas)
 
     assert returned_result == expected_result
+
+
+CHECK_PROPS_ITEMS_TEST = [
+    pytest.param({}, {}, None, id="empty",),
+    pytest.param({"properties": {}}, {}, None, id="single empty",),
+    pytest.param(
+        {"properties": {True: "value"}},
+        {},
+        (False, "property names must be strings"),
+        id="single key not string",
+    ),
+    pytest.param(
+        {"properties": {"key_1": "value"}},
+        {},
+        (False, "property values must be dictionaries"),
+        id="single value not dict",
+    ),
+    pytest.param({"properties": {"key_1": {}}}, {}, None, id="single",),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"properties": {"key_1": {}}}},
+        None,
+        id="single $ref",
+    ),
+    pytest.param(
+        {"properties": {True: {}, "key_2": {}}},
+        {},
+        (False, "property names must be strings"),
+        id="multiple keys first invalid",
+    ),
+    pytest.param(
+        {"properties": {"key_1": {}, True: {}}},
+        {},
+        (False, "property names must be strings"),
+        id="multiple keys second invalid",
+    ),
+    pytest.param(
+        {"properties": {"key_1": {}, "key_2": {}}}, {}, None, id="multiple keys",
+    ),
+    pytest.param(
+        {"allOf": [{"properties": {True: {}}}, {"properties": {"key_2": {}}},]},
+        {},
+        (False, "property names must be strings"),
+        id="multiple properties first invalid",
+    ),
+    pytest.param(
+        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {True: {}}},]},
+        {},
+        (False, "property names must be strings"),
+        id="multiple properties second invalid",
+    ),
+    pytest.param(
+        {"allOf": [{"properties": {"key_1": {}}}, {"properties": {"key_2": {}}},]},
+        {},
+        None,
+        id="multiple properties",
+    ),
+]
+
+
+@pytest.mark.parametrize("schema, schemas, expected_result", CHECK_PROPS_ITEMS_TEST)
+@pytest.mark.schemas
+def test_check_properties_items(schema, schemas, expected_result):
+    """
+    GIVEN schema, schemas and expected result
+    WHEN check_properties_items is called with the schema and schemas
+    THEN the expected result is returned.
+    """
+    returned_result = properties.check_properties_items(schema=schema, schemas=schemas)
+
+    assert returned_result == expected_result
