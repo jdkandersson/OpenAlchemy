@@ -1,7 +1,5 @@
 """Schema validation pre-processor."""
 
-import functools
-
 from ... import exceptions as _exceptions
 from ... import types as _types
 from .. import helpers as _helpers
@@ -23,11 +21,8 @@ def process_model(schemas: _types.Schemas, schema_name, schema: _types.Schema) -
     properties = _helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
-    property_check_schemas_parent_schema = functools.partial(
-        property_.check, schemas, schema
-    )
     properties_results = map(
-        lambda args: (args[0], property_check_schemas_parent_schema(args[0], args[1])),
+        lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
         properties,
     )
     invalid_properties_result = next(
@@ -66,9 +61,8 @@ def process(*, schemas: _types.Schemas) -> None:
 
     # Check constructable schemas model
     constructables = _helpers.iterate.constructable(schemas=schemas)
-    models_check_schemas = functools.partial(model.check, schemas)
     model_results = map(
-        lambda args: (args[0], models_check_schemas(args[1])), constructables
+        lambda args: (args[0], model.check(schemas, args[1])), constructables
     )
     invalid_model_result = next(
         filter(lambda args: not args[1].valid, model_results), None

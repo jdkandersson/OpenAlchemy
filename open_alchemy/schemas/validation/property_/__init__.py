@@ -102,7 +102,9 @@ def check(
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
-        schema: The schema to check.
+        parent_schema: The schema the property is embedded in.
+        property_name: The name of the property.
+        property_schema: The schema to check.
 
     Returns:
         Whether the property is valid.
