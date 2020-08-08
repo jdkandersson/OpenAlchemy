@@ -89,3 +89,40 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
     if type_ in {"object", "array"}:
         return Type.RELATIONSHIP
     return Type.SIMPLE
+
+
+def check(
+    schemas: oa_types.Schemas,
+    parent_schema: oa_types.Schema,
+    property_name: str,
+    property_schema: oa_types.Schema,
+) -> types.Result:
+    """
+    Check the schema for a property.
+
+    Args:
+        schemas: All defined schemas used to resolve any $ref.
+        schema: The schema to check.
+
+    Returns:
+        Whether the property is valid.
+
+    """
+    type_result = check_type(schema=property_schema, schemas=schemas)
+    if not type_result.valid:
+        return type_result
+
+    type_ = calculate_type(schema=property_schema, schemas=schemas)
+
+    if type_ == Type.READ_ONLY:
+        return read_only.check(schema=property_schema, schemas=schemas)
+    if type_ == Type.SIMPLE:
+        return simple.check(schema=property_schema, schemas=schemas)
+    if type_ == Type.JSON:
+        return json.check(schema=property_schema, schemas=schemas)
+    return relationship.check(
+        property_name=property_name,
+        property_schema=property_schema,
+        parent_schema=parent_schema,
+        schemas=schemas,
+    )
