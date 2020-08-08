@@ -51,9 +51,9 @@ def check_properties_items(
         """Check key and value of property."""
         key, value = args
         if not isinstance(key, str):
-            return types.Result(False, "property names must be strings")
+            return types.Result(False, f"property names must be strings, {key} is not")
         if not isinstance(value, dict):
-            return types.Result(False, "property values must be dictionaries")
+            return types.Result(False, f"{key} :: property values must be dictionaries")
         return None
 
     # Check for any results

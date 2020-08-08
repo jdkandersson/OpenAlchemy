@@ -1,6 +1,5 @@
 """Validate the schema of a model."""
 
-import itertools
 import typing
 
 from ... import exceptions
@@ -30,15 +29,13 @@ def _check_properties(
     first_property = next(properties_items, None)
     if first_property is None:
         return types.Result(False, "models must have at least 1 property themself")
-    properties_items = itertools.chain([first_property], properties_items)
 
     # Check that all property names are strings
-    property_names = map(lambda prop: prop[0], properties_items)
-    any_property_name_not_string = any(
-        filter(lambda property_name: not isinstance(property_name, str), property_names)
+    properties_items_result = validation_helpers.properties.check_properties_items(
+        schema=schema, schemas=schemas
     )
-    if any_property_name_not_string:
-        return types.Result(False, "all property keys must be strings")
+    if properties_items_result is not None:
+        return properties_items_result
 
     return None
 

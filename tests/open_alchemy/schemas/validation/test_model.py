@@ -130,31 +130,11 @@ TESTS = [
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {True: "value"}},
         {},
-        (False, "properties :: all property keys must be strings"),
+        (False, "properties :: property names must be strings, True is not"),
         id="properties single key not string",
     ),
     pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {True: "value 1", "key_2": "value 2"},
-        },
-        {},
-        (False, "properties :: all property keys must be strings"),
-        id="properties multiple first key not string",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"key_1": "value 1", True: "value 2"},
-        },
-        {},
-        (False, "properties :: all property keys must be strings"),
-        id="properties multiple second key not string",
-    ),
-    pytest.param(
-        {"x-tablename": "schema", "type": "object", "properties": {"key": "value"}},
+        {"x-tablename": "schema", "type": "object", "properties": {"key": {}}},
         {},
         (True, None),
         id="properties single",
@@ -165,7 +145,7 @@ TESTS = [
             "RefSchema": {
                 "x-tablename": "schema",
                 "type": "object",
-                "properties": {"key": "value"},
+                "properties": {"key": {}},
             }
         },
         (True, None),
@@ -174,11 +154,7 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {
-                    "x-tablename": "schema",
-                    "type": "object",
-                    "properties": {"key": "value"},
-                }
+                {"x-tablename": "schema", "type": "object", "properties": {"key": {}},}
             ]
         },
         {},
@@ -196,7 +172,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"key": "value"},
+                "properties": {"key": {}},
             }
         },
         (False, "properties :: models must have at least 1 property themself"),
@@ -209,7 +185,7 @@ TESTS = [
                     "x-tablename": "schema",
                     "x-inherits": True,
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -218,7 +194,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"key": "value"},
+                "properties": {"key": {}},
             }
         },
         (True, None),
@@ -235,7 +211,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"key": "value"},
+                "properties": {"key": {}},
             }
         },
         (False, "properties :: models must have at least 1 property themself"),
@@ -244,7 +220,7 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"x-inherits": True, "type": "object", "properties": {"key": "value"}},
+                {"x-inherits": True, "type": "object", "properties": {"key": {}}},
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
         },
@@ -252,7 +228,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"key": "value"},
+                "properties": {"key": {}},
             }
         },
         (True, None),
@@ -262,7 +238,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": True,
         },
         {},
@@ -273,7 +249,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": [],
         },
         {},
@@ -286,13 +262,13 @@ TESTS = [
                 {
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                     "required": True,
                 },
                 {
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                     "required": [],
                 },
             ]
@@ -307,13 +283,13 @@ TESTS = [
                 {
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                     "required": [],
                 },
                 {
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                     "required": True,
                 },
             ]
@@ -326,7 +302,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": [True],
         },
         {},
@@ -337,7 +313,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": [True, "value 2"],
         },
         {},
@@ -348,7 +324,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": ["value 1", True],
         },
         {},
@@ -359,7 +335,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": ["not a property"],
         },
         {},
@@ -370,7 +346,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": ["not a property", "key"],
         },
         {},
@@ -381,7 +357,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": ["key", "not a property"],
         },
         {},
@@ -392,7 +368,7 @@ TESTS = [
         {
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
             "required": ["key"],
         },
         {},
@@ -406,7 +382,7 @@ TESTS = [
                     "x-inherits": True,
                     "type": "object",
                     "required": ["parent_key"],
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -415,7 +391,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (False, "required :: all items must be properties, parent_key is not"),
@@ -427,7 +403,7 @@ TESTS = [
                 {
                     "type": "object",
                     "required": ["parent_key"],
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -436,7 +412,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (True, None),
@@ -447,7 +423,7 @@ TESTS = [
             "description": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "malformed schema :: A description value must be of type string. "),
@@ -458,7 +434,7 @@ TESTS = [
             "description": "description 1",
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -469,7 +445,7 @@ TESTS = [
             "x-kwargs": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "malformed schema :: The x-kwargs property must be of type dict. "),
@@ -480,7 +456,7 @@ TESTS = [
             "x-kwargs": {},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -491,7 +467,7 @@ TESTS = [
             "x-kwargs": {"tablename": True},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs must have keys that start and end with __"),
@@ -502,7 +478,7 @@ TESTS = [
             "x-kwargs": {"__table_args__": True},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs cannot define __table_args__"),
@@ -513,7 +489,7 @@ TESTS = [
             "x-kwargs": {"arg__": True},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs must have keys that start and end with __"),
@@ -524,7 +500,7 @@ TESTS = [
             "x-kwargs": {"__arg": True},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs must have keys that start and end with __"),
@@ -535,7 +511,7 @@ TESTS = [
             "x-kwargs": {"__arg__": True},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -546,7 +522,7 @@ TESTS = [
             "x-kwargs": {"arg1": True, "__arg2__": False},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs must have keys that start and end with __"),
@@ -557,7 +533,7 @@ TESTS = [
             "x-kwargs": {"__arg1__": True, "arg2": False},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models x-kwargs must have keys that start and end with __"),
@@ -568,7 +544,7 @@ TESTS = [
             "x-kwargs": {"__arg1__": True, "__arg2__": False},
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -579,7 +555,7 @@ TESTS = [
             "x-primary-key": "True",
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-primary-key key"),
@@ -590,7 +566,7 @@ TESTS = [
             "x-primary-key": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-primary-key key"),
@@ -601,7 +577,7 @@ TESTS = [
             "x-autoincrement": "True",
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-autoincrement key"),
@@ -612,7 +588,7 @@ TESTS = [
             "x-index": "True",
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-index key"),
@@ -623,7 +599,7 @@ TESTS = [
             "x-unique": "True",
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-unique key"),
@@ -634,7 +610,7 @@ TESTS = [
             "x-foreign-key": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-foreign-key key"),
@@ -645,7 +621,7 @@ TESTS = [
             "x-foreign-key-kwargs": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (False, "models do not support the x-foreign-key-kwargs key"),
@@ -656,7 +632,7 @@ TESTS = [
             "x-composite-index": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (
@@ -675,7 +651,7 @@ TESTS = [
                     "x-composite-index": True,
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 }
             ]
         },
@@ -694,7 +670,7 @@ TESTS = [
             "x-composite-index": ["key"],
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -705,7 +681,7 @@ TESTS = [
             "x-composite-index": ["not a key"],
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (
@@ -722,7 +698,7 @@ TESTS = [
                     "x-inherits": True,
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -731,7 +707,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (
@@ -748,7 +724,7 @@ TESTS = [
                     "x-composite-index": ["parent_key"],
                     "x-inherits": True,
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -757,7 +733,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (True, None),
@@ -768,7 +744,7 @@ TESTS = [
             "x-composite-unique": True,
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (
@@ -787,7 +763,7 @@ TESTS = [
                     "x-composite-unique": True,
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 }
             ]
         },
@@ -806,7 +782,7 @@ TESTS = [
             "x-composite-unique": ["key"],
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (True, None),
@@ -817,7 +793,7 @@ TESTS = [
             "x-composite-unique": ["not a key"],
             "x-tablename": "schema",
             "type": "object",
-            "properties": {"key": "value"},
+            "properties": {"key": {}},
         },
         {},
         (
@@ -834,7 +810,7 @@ TESTS = [
                     "x-inherits": True,
                     "x-tablename": "schema",
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -843,7 +819,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (
@@ -859,7 +835,7 @@ TESTS = [
                     "x-composite-unique": ["parent_key"],
                     "x-inherits": True,
                     "type": "object",
-                    "properties": {"key": "value"},
+                    "properties": {"key": {}},
                 },
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -868,7 +844,7 @@ TESTS = [
             "ParentSchema": {
                 "x-tablename": "parent_schema",
                 "type": "object",
-                "properties": {"parent_key": "parent value"},
+                "properties": {"parent_key": {}},
             }
         },
         (True, None),

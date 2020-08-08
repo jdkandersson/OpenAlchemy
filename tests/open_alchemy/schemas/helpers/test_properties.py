@@ -41,7 +41,6 @@ CHECK_PROPS_VALUES_TEST = [
 
 
 @pytest.mark.parametrize("schema, schemas, expected_result", CHECK_PROPS_VALUES_TEST)
-@pytest.mark.schemas
 def test_check_properties_values(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result
@@ -59,13 +58,13 @@ CHECK_PROPS_ITEMS_TEST = [
     pytest.param(
         {"properties": {True: "value"}},
         {},
-        (False, "property names must be strings"),
+        (False, "property names must be strings, True is not"),
         id="single key not string",
     ),
     pytest.param(
         {"properties": {"key_1": "value"}},
         {},
-        (False, "property values must be dictionaries"),
+        (False, "key_1 :: property values must be dictionaries"),
         id="single value not dict",
     ),
     pytest.param({"properties": {"key_1": {}}}, {}, None, id="single",),
@@ -78,13 +77,13 @@ CHECK_PROPS_ITEMS_TEST = [
     pytest.param(
         {"properties": {True: {}, "key_2": {}}},
         {},
-        (False, "property names must be strings"),
+        (False, "property names must be strings, True is not"),
         id="multiple keys first invalid",
     ),
     pytest.param(
         {"properties": {"key_1": {}, True: {}}},
         {},
-        (False, "property names must be strings"),
+        (False, "property names must be strings, True is not"),
         id="multiple keys second invalid",
     ),
     pytest.param(
@@ -93,13 +92,13 @@ CHECK_PROPS_ITEMS_TEST = [
     pytest.param(
         {"allOf": [{"properties": {True: {}}}, {"properties": {"key_2": {}}},]},
         {},
-        (False, "property names must be strings"),
+        (False, "property names must be strings, True is not"),
         id="multiple properties first invalid",
     ),
     pytest.param(
         {"allOf": [{"properties": {"key_1": {}}}, {"properties": {True: {}}},]},
         {},
-        (False, "property names must be strings"),
+        (False, "property names must be strings, True is not"),
         id="multiple properties second invalid",
     ),
     pytest.param(
@@ -113,6 +112,7 @@ CHECK_PROPS_ITEMS_TEST = [
 
 @pytest.mark.parametrize("schema, schemas, expected_result", CHECK_PROPS_ITEMS_TEST)
 @pytest.mark.schemas
+@pytest.mark.only_this
 def test_check_properties_items(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result

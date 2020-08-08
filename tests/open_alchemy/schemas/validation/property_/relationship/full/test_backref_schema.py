@@ -34,7 +34,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: malformed schema :: The schema must be a dictionary. ",
+            "foreign key target schema :: properties :: schemas :: property values "
+            "must be dictionaries",
         ),
         id="x-to-one back reference property defined not dictionary",
     ),
