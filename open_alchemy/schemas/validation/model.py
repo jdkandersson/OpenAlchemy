@@ -243,6 +243,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     """
     try:
         mandatory_result = _check_mandatory(schema=schema, schemas=schemas)
+        print(mandatory_result)
         if mandatory_result is not None:
             return mandatory_result
         modifiers_result = _check_modifiers(schema=schema, schemas=schemas)
