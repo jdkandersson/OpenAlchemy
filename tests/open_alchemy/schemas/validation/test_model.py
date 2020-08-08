@@ -112,19 +112,19 @@ TESTS = [
     pytest.param(
         {"x-tablename": "schema", "type": "object"},
         {},
-        (False, "models must have at least 1 property themself"),
+        (False, "properties :: models must have at least 1 property themself"),
         id="no properties",
     ),
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": True},
         {},
-        (False, "value of properties must be a dictionary"),
+        (False, "properties :: value of properties must be a dictionary"),
         id="properties not dict",
     ),
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {}},
         {},
-        (False, "models must have at least 1 property themself"),
+        (False, "properties :: models must have at least 1 property themself"),
         id="properties empty",
     ),
     pytest.param(
@@ -188,36 +188,6 @@ TESTS = [
     pytest.param(
         {
             "allOf": [
-                {"x-tablename": "schema", "type": "object", "properties": True},
-                {
-                    "x-tablename": "schema",
-                    "type": "object",
-                    "properties": {"key": "value"},
-                },
-            ]
-        },
-        {},
-        (False, "value of properties must be a dictionary"),
-        id="allOf multiple first property key not string",
-    ),
-    pytest.param(
-        {
-            "allOf": [
-                {
-                    "x-tablename": "schema",
-                    "type": "object",
-                    "properties": {"key": "value"},
-                },
-                {"x-tablename": "schema", "type": "object", "properties": True},
-            ]
-        },
-        {},
-        (False, "value of properties must be a dictionary"),
-        id="allOf multiple second property key not string",
-    ),
-    pytest.param(
-        {
-            "allOf": [
                 {"x-tablename": "schema", "x-inherits": True, "type": "object"},
                 {"$ref": "#/components/schemas/ParentSchema"},
             ]
@@ -229,7 +199,7 @@ TESTS = [
                 "properties": {"key": "value"},
             }
         },
-        (False, "models must have at least 1 property themself"),
+        (False, "properties :: models must have at least 1 property themself"),
         id="properties single on joined table inheritance",
     ),
     pytest.param(
@@ -268,7 +238,7 @@ TESTS = [
                 "properties": {"key": "value"},
             }
         },
-        (False, "models must have at least 1 property themself"),
+        (False, "properties :: models must have at least 1 property themself"),
         id="properties single on single table inheritance",
     ),
     pytest.param(

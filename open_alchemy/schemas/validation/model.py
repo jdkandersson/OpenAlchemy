@@ -8,6 +8,7 @@ from ... import helpers as oa_helpers
 from ... import table_args
 from ... import types as oa_types
 from .. import helpers
+from . import helpers as validation_helpers
 from . import types
 
 
@@ -16,17 +17,11 @@ def _check_properties(
 ) -> types.OptResult:
     """Check properties."""
     # Check property values
-    properties_values = helpers.iterate.properties_values(
-        schema=schema, schemas=schemas, stay_within_model=True
+    properties_values_result = validation_helpers.properties.check_properties_values(
+        schema=schema, schemas=schemas
     )
-    any_properties_value_not_list = any(
-        filter(
-            lambda properties_value: not isinstance(properties_value, dict),
-            properties_values,
-        )
-    )
-    if any_properties_value_not_list:
-        return types.Result(False, "value of properties must be a dictionary")
+    if properties_values_result is not None:
+        return properties_values_result
 
     # Check there is at least a single property
     properties_items = helpers.iterate.properties_items(
@@ -43,7 +38,7 @@ def _check_properties(
         filter(lambda property_name: not isinstance(property_name, str), property_names)
     )
     if any_property_name_not_string:
-        return types.Result(False, "properties :: all property keys must be strings")
+        return types.Result(False, "all property keys must be strings")
 
     return None
 
@@ -119,7 +114,9 @@ def _check_mandatory(
 
     properties_result = _check_properties(schema=schema, schemas=schemas)
     if properties_result is not None:
-        return properties_result
+        return types.Result(
+            properties_result.valid, f"properties :: {properties_result.reason}"
+        )
 
     return None
 

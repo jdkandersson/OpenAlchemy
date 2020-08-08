@@ -126,8 +126,8 @@ TESTS = [
         },
         (
             False,
-            "foreign key target schema :: models must have at least 1 property "
-            "themself",
+            "foreign key target schema :: properties :: models must have at least 1 "
+            "property themself",
         ),
         id="x-to-one foreign key property default single table inheritance",
     ),
