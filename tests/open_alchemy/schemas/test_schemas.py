@@ -2,19 +2,34 @@
 
 import pytest
 
+from open_alchemy import exceptions
 from open_alchemy.schemas import process
+
+
+@pytest.mark.schemas
+def test_process_invalid():
+    """
+    GIVEN invalid schemas
+    WHEN process is called with the schemas
+    THEN MalformedSchemaError is raised.
+    """
+    schemas = {"Schema": {"x-tablename": "schema"}}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        process(schemas=schemas)
 
 
 @pytest.mark.schemas
 def test_process():
     """
-    GIVEN schemas with back references
+    GIVEN schemas with back references and foreign keys
     WHEN process is called with the schemas
-    THEN the backreferences are added to the schemas.
+    THEN the back references and foreign keys are added to the schemas.
     """
     schemas = {
         "Schema1": {
             "x-tablename": "schema1",
+            "type": "object",
             "properties": {
                 "prop_1": {
                     "allOf": [
@@ -39,6 +54,7 @@ def test_process():
             "allOf": [
                 {
                     "x-tablename": "schema1",
+                    "type": "object",
                     "properties": {
                         "prop_1": {
                             "allOf": [
