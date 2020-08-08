@@ -3,7 +3,6 @@
 import functools
 import typing
 
-from .. import exceptions
 from .. import helpers as oa_helpers
 from .. import types
 from . import helpers
@@ -58,17 +57,13 @@ def _calculate_artifacts(
         )
 
     # Resolve name
-    if ref is None:  # pragma: no cover
-        # Should never get here
-        raise exceptions.MalformedSchemaError("Could not find a reference")
+    assert ref is not None
     ref_schema_name, _ = oa_helpers.ref.resolve(
         name="", schema={"$ref": ref}, schemas=schemas
     )
 
     # Calculate schema
-    if backref is None:  # pragma: no cover
-        # Should never get here
-        raise exceptions.MalformedSchemaError("Could not find a back reference")
+    assert backref is not None
     return_schema: types.Schema = {"type": "object", "x-de-$ref": schema_name}
     if is_array:
         return_schema = {"type": "array", "items": return_schema}

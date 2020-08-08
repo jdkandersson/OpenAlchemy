@@ -2,7 +2,6 @@
 
 import pytest
 
-from open_alchemy import exceptions
 from open_alchemy.schemas import foreign_key
 
 
@@ -10,25 +9,6 @@ class TestForeignKeyPropertyNotDefined:
     """Tests for _foreign_key_property_not_defined"""
 
     # pylint: disable=protected-access
-
-    @staticmethod
-    @pytest.mark.schemas
-    def test_invalid():
-        """
-        GIVEN schemas, invalid parent schema and property name and schema
-        WHEN _foreign_key_property_not_defined is called with the schemas, parent schema
-            and property name and schema
-        THEN MalformedSchemaError is raised.
-        """
-        parent_schema = {}
-        property_name = "ref_schema"
-        property_schema = {"$ref": "#/components/schemas/RefSchema"}
-        schemas = {"RefSchema": {"type": "object"}}
-
-        with pytest.raises(exceptions.MalformedSchemaError):
-            foreign_key._foreign_key_property_not_defined(
-                schemas, parent_schema, property_name, property_schema
-            )
 
     @staticmethod
     @pytest.mark.parametrize(

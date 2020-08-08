@@ -2,7 +2,6 @@
 
 import typing
 
-from .. import exceptions
 from .. import helpers as oa_helpers
 from .. import types
 from . import helpers
@@ -13,8 +12,7 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
     """
     Check whether the property requires a foreign key to be defined.
 
-    Raise MalformedSchemaError if the property is not valid.
-    Raise MalformedSchemaError if the property is a relationship but it is not valid.
+    Assume schema is valid.
 
     Foreign keys are required for many-to-one, one-to-one and one-to-many relationships.
     The following rules capture this:
@@ -29,22 +27,10 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
         Whether the property requires a foreign key.
 
     """
-    # Check for valid property
-    type_result = property_.check_type(schemas, schema)
-    if not type_result.valid:
-        raise exceptions.MalformedSchemaError(type_result.reason)
-
     # Filter for relationship properties
     property_type = property_.calculate_type(schemas, schema)
     if property_type != property_.Type.RELATIONSHIP:
         return False
-
-    # Check for valid relationship
-    relationship_result = property_.relationship.property_.check(
-        schema=schema, schemas=schemas
-    )
-    if not relationship_result.valid:
-        raise exceptions.MalformedSchemaError(relationship_result.reason)
 
     # Filter for not many-to-many relationship
     relationship_type = oa_helpers.relationship.calculate_type(
@@ -64,7 +50,7 @@ def _foreign_key_property_not_defined(
     """
     Check whether the foreign key property is not already defined.
 
-    Raise MalformedSchemaError if the full relationship schema is not valid.
+    Assume the full relationship schema is valid.
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
@@ -76,12 +62,6 @@ def _foreign_key_property_not_defined(
         Whether the foreign key property is not already defined.
 
     """
-    full_result = property_.relationship.full.check(
-        schemas, parent_schema, property_name, property_schema
-    )
-    if not full_result.valid:
-        raise exceptions.MalformedSchemaError(full_result.reason)
-
     # Retrieve the property name
     type_ = oa_helpers.relationship.calculate_type(
         schema=property_schema, schemas=schemas
