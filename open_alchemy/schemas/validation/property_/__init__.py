@@ -6,6 +6,7 @@ from .... import exceptions
 from .... import helpers
 from .... import types as oa_types
 from .. import types
+from . import json
 from . import read_only
 from . import relationship
 from . import simple
@@ -80,8 +81,8 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
     if read_only_value is True:
         return Type.READ_ONLY
 
-    json = helpers.peek.json(schema=schema, schemas=schemas)
-    if json is True:
+    json_value = helpers.peek.json(schema=schema, schemas=schemas)
+    if json_value is True:
         return Type.JSON
 
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
