@@ -363,9 +363,8 @@ def _check_backref_property_properties(
         filter(lambda args: args[0] not in parent_properties, properties_items), None
     )
     if property_name_not_in_parent is not None:
-        return types.Result(
-            False, "property names must be contained in the model schema properties"
-        )
+        name, _ = property_name_not_in_parent
+        return types.Result(False, f"could not find {name} in the model schema")
 
     # Check properties are dictionaries
     properties_items = helpers.iterate.property_items(
