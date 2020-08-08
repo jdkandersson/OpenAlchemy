@@ -241,7 +241,10 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: properties values must be dictionaries"),
+        (
+            False,
+            "backref property :: items :: value of properties must be a dictionary",
+        ),
         id="many-to-one back reference items properties not dictionary",
     ),
     pytest.param(
@@ -268,7 +271,10 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: properties values must be dictionaries"),
+        (
+            False,
+            "backref property :: items :: value of properties must be a dictionary",
+        ),
         id="many-to-one back reference multiple properties first not dictionary",
     ),
     pytest.param(
@@ -295,7 +301,10 @@ TESTS = [
                 },
             }
         },
-        (False, "backref property :: items :: properties values must be dictionaries"),
+        (
+            False,
+            "backref property :: items :: value of properties must be a dictionary",
+        ),
         id="many-to-one back reference multiple properties second not dictionary",
     ),
     pytest.param(

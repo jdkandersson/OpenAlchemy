@@ -4,6 +4,7 @@ from ..... import exceptions
 from ..... import helpers as oa_helpers
 from ..... import types as oa_types
 from .... import helpers
+from ... import helpers as validation_helpers
 from ... import model
 from ... import types
 from .. import simple
@@ -303,15 +304,11 @@ def _check_backref_property_properties_basics(
         return types.Result(False, "the back reference schema must be an object")
 
     # Check properties values
-    properties_values = helpers.iterate.properties_values(
+    properties_values_result = validation_helpers.properties.check_properties_values(
         schema=backref_schema, schemas=schemas
     )
-    properties_not_dict = next(
-        filter(lambda properties: not isinstance(properties, dict), properties_values),
-        None,
-    )
-    if properties_not_dict is not None:
-        return types.Result(False, "properties values must be dictionaries")
+    if properties_values_result is not None:
+        return properties_values_result
 
     # Check whether any property names match the property name
     properties_items = helpers.iterate.properties_items(
