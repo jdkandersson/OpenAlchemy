@@ -131,8 +131,7 @@ TESTS = [
         {"RefSchema": {"properties": {"schema_ref_schemas_id": {"type": "string"}}}},
         (
             False,
-            "the type of schema_ref_schemas_id is wrong, expected integer, actual is "
-            "string.",
+            "schema_ref_schemas_id :: type :: expected integer, actual is string.",
         ),
         id="one-to-many foreign key defined different type",
     ),
@@ -205,7 +204,7 @@ TESTS = [
         },
         (
             False,
-            "the format of schema_ref_schemas_id is wrong, expected int32, actual is "
+            "schema_ref_schemas_id :: format :: expected int32, actual is "
             "not defined.",
         ),
         id="one-to-many foreign key defined format only on source",
@@ -232,7 +231,7 @@ TESTS = [
         },
         (
             False,
-            "the format of schema_ref_schemas_id is wrong, expected not to be defined, "
+            "schema_ref_schemas_id :: format :: expected not to be defined, "
             "actual is int64.",
         ),
         id="one-to-many foreign key defined format only on referenced",
@@ -257,11 +256,7 @@ TESTS = [
                 },
             }
         },
-        (
-            False,
-            "the format of schema_ref_schemas_id is wrong, expected int32, actual is "
-            "int64.",
-        ),
+        (False, "schema_ref_schemas_id :: format :: expected int32, actual is int64.",),
         id="one-to-many foreign key defined different format",
     ),
     pytest.param(
@@ -308,7 +303,7 @@ TESTS = [
         },
         (
             False,
-            "the maxLength of schema_ref_schemas_id is wrong, expected 1, actual is "
+            "schema_ref_schemas_id :: maxLength :: expected 1, actual is "
             "not defined.",
         ),
         id="one-to-many foreign key defined maxLength only on source",
@@ -335,7 +330,7 @@ TESTS = [
         },
         (
             False,
-            "the maxLength of schema_ref_schemas_id is wrong, expected not to be "
+            "schema_ref_schemas_id :: maxLength :: expected not to be "
             "defined, actual is 2.",
         ),
         id="one-to-many foreign key defined maxLength only on referenced",
@@ -360,10 +355,7 @@ TESTS = [
                 },
             }
         },
-        (
-            False,
-            "the maxLength of schema_ref_schemas_id is wrong, expected 1, actual is 2.",
-        ),
+        (False, "schema_ref_schemas_id :: maxLength :: expected 1, actual is 2.",),
         id="one-to-many foreign key defined different maxLength",
     ),
     pytest.param(
@@ -410,8 +402,7 @@ TESTS = [
         },
         (
             False,
-            "the default of schema_ref_schemas_id is wrong, expected 1, actual is not "
-            "defined.",
+            "schema_ref_schemas_id :: default :: expected 1, actual is not defined.",
         ),
         id="one-to-many foreign key defined default only on source",
     ),
@@ -437,8 +428,8 @@ TESTS = [
         },
         (
             False,
-            "the default of schema_ref_schemas_id is wrong, expected not to be "
-            "defined, actual is 2.",
+            "schema_ref_schemas_id :: default :: expected not to be defined, actual is "
+            "2.",
         ),
         id="one-to-many foreign key defined default only on referenced",
     ),
@@ -462,10 +453,7 @@ TESTS = [
                 },
             }
         },
-        (
-            False,
-            "the default of schema_ref_schemas_id is wrong, expected 1, actual is 2.",
-        ),
+        (False, "schema_ref_schemas_id :: default :: expected 1, actual is 2.",),
         id="one-to-many foreign key defined different default",
     ),
     pytest.param(
