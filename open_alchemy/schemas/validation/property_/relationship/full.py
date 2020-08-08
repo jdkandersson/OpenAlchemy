@@ -511,12 +511,25 @@ def _check_backref(
         If the back reference is invalid, returns result with reason, otherwise None.
 
     """
-    backref = oa_helpers.peek.backref(schema=property_schema, schemas=schemas)
+    backref = helpers.backref.get(schema=property_schema, schemas=schemas)
     if backref is None:
         return None
 
+    # Get the object schema
+    object_schema: oa_types.Schema
+    if relationship_type in {
+        oa_helpers.relationship.Type.ONE_TO_MANY,
+        oa_helpers.relationship.Type.MANY_TO_MANY,
+    }:
+        items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+        if items_schema is None:
+            return types.Result(False, "items must be defined")
+        object_schema = items_schema
+    else:
+        object_schema = property_schema
+
     # Look for backref property
-    properties = helpers.iterate.property_items(schema=property_schema, schemas=schemas)
+    properties = helpers.iterate.property_items(schema=object_schema, schemas=schemas)
     property_ = next(filter(lambda args: args[0] == backref, properties), None)
     if property_ is None:
         return None

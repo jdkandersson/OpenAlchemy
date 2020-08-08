@@ -1169,7 +1169,7 @@ TESTS = [
             False,
             "backref property :: id :: type :: expected integer, actual is string.",
         ),
-        id="one-to-one back reference wrong type",
+        id="one-to-one back reference property wrong type",
     ),
     pytest.param(
         {"properties": {"id": {"type": "integer"}}},
@@ -1193,6 +1193,170 @@ TESTS = [
         },
         (True, None),
         id="one-to-one back reference",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer"},
+                    "schema": {"readOnly": True, "type": "array",},
+                },
+            }
+        },
+        (False, "backref property :: unexpected type, expected object actual array"),
+        id="one-to-many back reference wrong type",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer"},
+                    "schema": {
+                        "readOnly": True,
+                        "type": "object",
+                        "properties": {"id": {"type": "string"}},
+                    },
+                },
+            }
+        },
+        (
+            False,
+            "backref property :: id :: type :: expected integer, actual is string.",
+        ),
+        id="one-to-many back reference property wrong type",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"id": {"type": "integer"}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer"},
+                    "schema": {
+                        "readOnly": True,
+                        "type": "object",
+                        "properties": {"id": {"type": "integer"}},
+                    },
+                },
+            }
+        },
+        (True, None),
+        id="one-to-many back reference",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schemas",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schemas",
+                "x-secondary": "schema_ref_schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer", "x-primary-key": True},
+                    "schemas": {"readOnly": True, "type": "object",},
+                },
+            }
+        },
+        (False, "backref property :: unexpected type, expected array actual object"),
+        id="many-to-many back reference wrong type",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schemas",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schemas",
+                "x-secondary": "schema_ref_schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer", "x-primary-key": True},
+                    "schemas": {
+                        "readOnly": True,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "string"}},
+                        },
+                    },
+                },
+            }
+        },
+        (
+            False,
+            "backref property :: items :: id :: type :: expected integer, actual is "
+            "string.",
+        ),
+        id="many-to-many back reference property wrong type",
+    ),
+    pytest.param(
+        {
+            "type": "object",
+            "x-tablename": "schemas",
+            "properties": {"id": {"type": "integer", "x-primary-key": True}},
+        },
+        "ref_schema",
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "x-backref": "schemas",
+                "x-secondary": "schema_ref_schema",
+                "type": "object",
+                "properties": {
+                    "id": {"type": "integer", "x-primary-key": True},
+                    "schemas": {
+                        "readOnly": True,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {"id": {"type": "integer"}},
+                        },
+                    },
+                },
+            }
+        },
+        (True, None),
+        id="many-to-many back reference",
     ),
 ]
 

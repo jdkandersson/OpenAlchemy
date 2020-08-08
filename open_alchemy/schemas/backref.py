@@ -9,36 +9,6 @@ from .. import types
 from . import helpers
 
 
-def _defines_backref(schemas: types.Schemas, schema: types.Schema) -> bool:
-    """
-    Check whether the property schema defines a back reference.
-
-    The following rules are used:
-    1. if there is an items key, recursively call on the items value.
-    1. peek for x-backrefs on the schema and return True if found.
-    3. Return False.
-
-    Args:
-        schemas: All the defined schemas.
-        schema: The schema of the property.
-
-    Returns:
-        Whether the property defines a back reference.
-
-    """
-    # Handle items
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
-    if items_schema is not None:
-        return _defines_backref(schema=items_schema, schemas=schemas)
-
-    # Peek for backref
-    backref = oa_helpers.peek.backref(schema=schema, schemas=schemas)
-    if backref is not None:
-        return True
-
-    return False
-
-
 class TArtifacts(helpers.process.TArtifacts):
     """The return value of _calculate_schema."""
 
@@ -131,7 +101,7 @@ def _get_schema_backrefs(
     # Remove property name
     properties = map(lambda arg: arg[1], names_properties)
     # Remove properties that don't define back references
-    defines_backref_schemas = functools.partial(_defines_backref, schemas)
+    defines_backref_schemas = functools.partial(helpers.backref.defined, schemas)
     backref_properties = filter(defines_backref_schemas, properties)
     # Capture information for back references
     calculate_artifacts_schema_name_schemas = functools.partial(
