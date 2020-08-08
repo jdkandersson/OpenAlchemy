@@ -79,7 +79,7 @@ def _calculate_skip_name(
     return None
 
 
-def property_items(
+def properties_items(
     *,
     schema: types.Schema,
     schemas: types.Schemas,

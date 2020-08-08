@@ -111,7 +111,7 @@ def _foreign_key_property_not_defined(
         property_schema=property_schema,
         schemas=schemas,
     )
-    properties = helpers.iterate.property_items(schema=modify_schema, schemas=schemas)
+    properties = helpers.iterate.properties_items(schema=modify_schema, schemas=schemas)
     property_names = map(lambda arg: arg[0], properties)
     contains_foreign_key_property_name = any(
         filter(lambda name: name == foreign_key_property_name, property_names)
@@ -167,7 +167,7 @@ def _calculate_foreign_key_property_artifacts(
         property_schema=property_schema,
         schemas=schemas,
     )
-    target_schema_properties = helpers.iterate.property_items(
+    target_schema_properties = helpers.iterate.properties_items(
         schema=target_schema, schemas=schemas
     )
     foreign_key_target = next(
@@ -268,7 +268,7 @@ def _get_schema_foreign_keys(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.property_items(
+    names_properties = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Validate and remove properties that don't require foreign keys

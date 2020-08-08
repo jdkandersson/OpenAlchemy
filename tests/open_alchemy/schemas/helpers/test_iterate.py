@@ -128,13 +128,13 @@ def test_constructable(schemas, expected_schemas):
     ],
 )
 @pytest.mark.schemas
-def test_property_items(schema, schemas, expected_properties):
+def test_properties_items(schema, schemas, expected_properties):
     """
     GIVEN schema, schemas and expected properties
     WHEN properties is called with the schema and schemas
     THEN the expected name and property schema are returned.
     """
-    returned_properties = iterate.property_items(schema=schema, schemas=schemas)
+    returned_properties = iterate.properties_items(schema=schema, schemas=schemas)
 
     assert list(returned_properties) == expected_properties
 
@@ -229,7 +229,7 @@ def test_properties_joined(schema, schemas, expected_properties):
     WHEN properties is called with the schema and schemas
     THEN the expected name and property schema are returned.
     """
-    returned_properties = iterate.property_items(
+    returned_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
 
@@ -303,7 +303,7 @@ def test_properties_single(schema, schemas, expected_properties):
     WHEN properties is called with the schema and schemas
     THEN the expected name and property schema are returned.
     """
-    returned_properties = iterate.property_items(
+    returned_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
 

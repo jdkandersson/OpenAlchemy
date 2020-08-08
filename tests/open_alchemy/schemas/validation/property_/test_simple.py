@@ -519,7 +519,6 @@ def test_check(schema, schemas, expected_result):
     WHEN check is called with the schemas schema
     THEN the expected result is returned.
     """
-    # pylint: disable=assignment-from-no-return
     returned_result = simple.check(schemas, schema)
 
     assert returned_result == expected_result

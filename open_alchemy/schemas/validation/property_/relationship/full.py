@@ -74,7 +74,7 @@ def _check_pre_defined_property_schema(
 
     """
     # Get the pre-defined property schema if it exists
-    properties = helpers.iterate.property_items(
+    properties = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
@@ -152,7 +152,7 @@ def _check_target_schema(
 
     """
     # Look for foreign key property schema
-    properties = helpers.iterate.property_items(
+    properties = helpers.iterate.properties_items(
         schema=target_schema, schemas=schemas, stay_within_tablename=True,
     )
     filtered_properties = filter(lambda arg: arg[0] == column_name, properties)
@@ -211,7 +211,7 @@ def _check_many_to_many_schema(
         return model_result
 
     # Check for primary key
-    properties = helpers.iterate.property_items(
+    properties = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
@@ -314,7 +314,7 @@ def _check_backref_property_properties_basics(
         return types.Result(False, "properties values must be dictionaries")
 
     # Check whether any property names match the property name
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=backref_schema, schemas=schemas
     )
     property_name_matches = next(
@@ -352,11 +352,11 @@ def _check_backref_property_properties(
         return basics_result
 
     # Check for backreference properties not in the parent schema properties
-    parent_properties_items = helpers.iterate.property_items(
+    parent_properties_items = helpers.iterate.properties_items(
         schema=parent_schema, schemas=schemas
     )
     parent_properties = dict(parent_properties_items)
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=backref_schema, schemas=schemas
     )
     property_name_not_in_parent = next(
@@ -367,7 +367,7 @@ def _check_backref_property_properties(
         return types.Result(False, f"could not find {name} in the model schema")
 
     # Check properties are dictionaries
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=backref_schema, schemas=schemas
     )
     property_schema_not_dict = next(
@@ -384,7 +384,7 @@ def _check_backref_property_properties(
         ("default", oa_helpers.peek.default),
     )
     for key, func in checks:
-        properties_items = helpers.iterate.property_items(
+        properties_items = helpers.iterate.properties_items(
             schema=backref_schema, schemas=schemas
         )
         # pylint: disable=cell-var-from-loop
@@ -528,7 +528,7 @@ def _check_backref(
         object_schema = property_schema
 
     # Look for backref property
-    properties = helpers.iterate.property_items(schema=object_schema, schemas=schemas)
+    properties = helpers.iterate.properties_items(schema=object_schema, schemas=schemas)
     property_ = next(filter(lambda args: args[0] == backref, properties), None)
     if property_ is None:
         return None

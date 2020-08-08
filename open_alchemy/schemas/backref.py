@@ -95,7 +95,7 @@ def _get_schema_backrefs(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.property_items(
+    names_properties = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Remove property name

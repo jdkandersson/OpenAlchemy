@@ -29,7 +29,7 @@ def _check_properties(
         return types.Result(False, "value of properties must be a dictionary")
 
     # Check there is at least a single property
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     first_property = next(properties_items, None)
@@ -52,7 +52,7 @@ def _get_property_names_model(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     return map(lambda prop: prop[0], properties_items)
@@ -177,7 +177,7 @@ def _get_property_names_table(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.property_items(
+    properties_items = helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     return map(lambda prop: prop[0], properties_items)
