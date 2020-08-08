@@ -5,6 +5,8 @@ from .... import helpers
 from .... import types as oa_types
 from .. import types
 
+TYPES = {"integer", "number", "string", "boolean"}
+
 # Set of valid type and format combinations
 _VALID_TYPE_FORMAT = {
     ("integer", None),

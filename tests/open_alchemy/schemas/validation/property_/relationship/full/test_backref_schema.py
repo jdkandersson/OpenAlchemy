@@ -524,7 +524,6 @@ def test_check(parent_schema, property_name, property_schema, schemas, expected_
     WHEN check is called with the schemas and parent and property schema
     THEN the expected result is returned.
     """
-    # pylint: disable=assignment-from-no-return
     returned_result = full.check(schemas, parent_schema, property_name, property_schema)
 
     assert returned_result == expected_result
