@@ -1,7 +1,5 @@
 """Tests for validation rules."""
 
-# pylint: disable=line-too-long
-
 import pytest
 
 from open_alchemy import exceptions
@@ -186,7 +184,8 @@ CHECK_TESTS = [
         {
             "result": {
                 "valid": False,
-                "reason": "specification must define at least 1 schema with the x-tablename key",
+                "reason": "specification must define at least 1 schema with the "
+                "x-tablename key",
             }
         },
         id="schemas empty",
@@ -216,7 +215,8 @@ CHECK_TESTS = [
         {
             "result": {
                 "valid": False,
-                "reason": "specification must define at least 1 schema with the x-tablename key",
+                "reason": "specification must define at least 1 schema with the "
+                "x-tablename key",
             }
         },
         id="single model model not constructable",
@@ -229,7 +229,8 @@ CHECK_TESTS = [
                 "Schema1": {
                     "result": {
                         "valid": False,
-                        "reason": "malformed schema :: Every property requires a type. ",
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
                     }
                 }
             },
@@ -257,7 +258,8 @@ CHECK_TESTS = [
                         "prop_1": {
                             "result": {
                                 "valid": False,
-                                "reason": "malformed schema :: Every property requires a type. ",
+                                "reason": "malformed schema :: Every property requires "
+                                "a type. ",
                             }
                         }
                     },
@@ -310,7 +312,8 @@ CHECK_TESTS = [
                         "prop_1": {
                             "result": {
                                 "valid": False,
-                                "reason": "malformed schema :: Every property requires a type. ",
+                                "reason": "malformed schema :: Every property requires "
+                                "a type. ",
                             }
                         },
                         "prop_2": {"result": {"valid": True}},
@@ -342,7 +345,8 @@ CHECK_TESTS = [
                         "prop_2": {
                             "result": {
                                 "valid": False,
-                                "reason": "malformed schema :: Every property requires a type. ",
+                                "reason": "malformed schema :: Every property requires "
+                                "a type. ",
                             }
                         },
                     },
@@ -477,7 +481,8 @@ CHECK_TESTS = [
         {
             "result": {
                 "valid": False,
-                "reason": "specification must define at least 1 schema with the x-tablename key",
+                "reason": "specification must define at least 1 schema with the "
+                "x-tablename key",
             }
         },
         id="multiple model not constructable",
@@ -501,7 +506,8 @@ CHECK_TESTS = [
                 "Schema1": {
                     "result": {
                         "valid": False,
-                        "reason": "malformed schema :: Every property requires a type. ",
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
                     }
                 },
                 "Schema2": {
@@ -535,7 +541,8 @@ CHECK_TESTS = [
                 "Schema2": {
                     "result": {
                         "valid": False,
-                        "reason": "malformed schema :: Every property requires a type. ",
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
                     }
                 },
             },
