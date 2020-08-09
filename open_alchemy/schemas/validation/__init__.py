@@ -10,6 +10,19 @@ from . import property_
 from . import types
 
 
+def _get_properties_results(
+    schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> typing.Iterable[typing.Tuple[str, types.Result]]:
+    """Get an iterator with properties results."""
+    properties = _helpers.iterate.properties_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    return map(
+        lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
+        properties,
+    )
+
+
 def process_model(
     schemas: _oa_types.Schemas, schema_name: str, schema: _oa_types.Schema
 ) -> None:
@@ -24,13 +37,7 @@ def process_model(
         schema: The schema to validate.
 
     """
-    properties = _helpers.iterate.properties_items(
-        schema=schema, schemas=schemas, stay_within_model=True
-    )
-    properties_results = map(
-        lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
-        properties,
-    )
+    properties_results = _get_properties_results(schemas, schema)
     invalid_properties_result = next(
         filter(lambda args: not args[1].valid, properties_results), None
     )
@@ -129,13 +136,7 @@ def check_model_properties(
         Whether the properties are valid.
 
     """
-    properties = _helpers.iterate.properties_items(
-        schema=schema, schemas=schemas, stay_within_model=True
-    )
-    properties_results = map(
-        lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
-        properties,
-    )
+    properties_results = _get_properties_results(schemas, schema)
     properties_t_results: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
         lambda args: (args[0], {"result": types.t_result_from_result(args[1])}),
         properties_results,
