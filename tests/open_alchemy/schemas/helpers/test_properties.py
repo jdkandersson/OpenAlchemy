@@ -112,7 +112,6 @@ CHECK_PROPS_ITEMS_TEST = [
 
 @pytest.mark.parametrize("schema, schemas, expected_result", CHECK_PROPS_ITEMS_TEST)
 @pytest.mark.schemas
-@pytest.mark.only_this
 def test_check_properties_items(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result

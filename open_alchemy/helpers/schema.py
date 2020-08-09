@@ -23,19 +23,22 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
         Whether the schema is constructable.
 
     """
+    if not isinstance(schema, dict):
+        return False
     # Check for reference only models
     ref = schema.get("$ref")
     if ref is not None and (not isinstance(ref, str) or ref.startswith("#")):
         return False
-    # Check for single item allOf
+    # Check allOf
     all_of = schema.get("allOf")
     if all_of is not None and (not isinstance(all_of, list) or len(all_of) < 2):
-        return False
-    # Check for tablename
-    if peek.tablename(schema=schema, schemas=schemas) is not None:
-        return True
-    # Check for inherits
-    if inherits(schema=schema, schemas=schemas) is True:
+        if not isinstance(all_of, list) or not all_of:
+            return False
+        return constructable(schema=all_of[0], schemas=schemas)
+    # Check for tablename and inherits
+    tablename = peek.tablename(schema=schema, schemas=schemas)
+    schema_inherits = inherits(schema=schema, schemas=schemas)
+    if tablename is not None or schema_inherits is True:
         return True
     return False
 

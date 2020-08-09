@@ -135,6 +135,23 @@ PROCESS_TESTS = [
         False,
         id="multiple model valid",
     ),
+    pytest.param(
+        {
+            "Schema1": {
+                "allOf": [
+                    {
+                        "properties": {
+                            "column": {"type": "integer", "x-primary-key": True}
+                        },
+                        "x-tablename": "table",
+                        "type": "object",
+                    }
+                ]
+            },
+        },
+        False,
+        id="model allOf",
+    ),
 ]
 
 
@@ -477,7 +494,7 @@ CHECK_TESTS = [
         id="multiple model second value invalid",
     ),
     pytest.param(
-        {"components": {"schemas": {"Schema1": {}, "Schema2": {},}}},
+        {"components": {"schemas": {"Schema1": {}, "Schema2": {}}}},
         {
             "result": {
                 "valid": False,
