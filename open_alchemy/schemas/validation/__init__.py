@@ -11,7 +11,7 @@ from . import types
 
 
 def process_model(
-    schemas: _oa_types.Schemas, schema_name, schema: _oa_types.Schema
+    schemas: _oa_types.Schemas, schema_name: str, schema: _oa_types.Schema
 ) -> None:
     """
     Validate the model schema properties.
@@ -20,6 +20,7 @@ def process_model(
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
+        schema_name: The name of the schema to validate.
         schema: The schema to validate.
 
     """
@@ -113,6 +114,76 @@ def check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
     return types.Result(True, None)
 
 
+def check_model_properties(
+    *, schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> types.TProperties:
+    """
+    Check the properties of a model.
+
+    Args:
+        schemas: All defined schemas used to resolve any $ref.
+        schema_name: The name of the schema to validate.
+        schema: The schema to validate.
+
+    Returns:
+        Whether the properties are valid.
+
+    """
+    properties = _helpers.iterate.properties_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    properties_results = map(
+        lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
+        properties,
+    )
+    properties_t_results: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
+        lambda args: (args[0], {"result": types.t_result_from_result(args[1])}),
+        properties_results,
+    )
+    return dict(properties_t_results)
+
+
+def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
+    """
+    Check a model.
+
+    Args:
+        schema: The schema of the model to check.
+
+    Returns:
+        Whether the model and its properties are valid with a reason if it is not.
+
+    """
+    model_result = model.check(schemas, schema)
+    if not model_result.valid:
+        return {"result": types.t_result_from_result(model_result)}
+
+    return {
+        "result": {"valid": True},
+        "properties": check_model_properties(schemas=schemas, schema=schema),
+    }
+
+
+def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
+    """
+    Check the models of a schema.
+
+    Assume the schemas is valid although any of its models may not.
+
+    Args:
+        schemas: The schemas to check.
+
+    Returns:
+        The result for each model.
+
+    """
+    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables_result = map(
+        lambda args: (args[0], check_model(schemas, args[1])), constructables
+    )
+    return dict(constructables_result)
+
+
 def check(*, spec: typing.Any) -> types.TSpec:
     """
     Check a specification.
@@ -153,4 +224,4 @@ def check(*, spec: typing.Any) -> types.TSpec:
     if not schemas_result.valid:
         return {"result": types.t_result_from_result(schemas_result)}
 
-    return {"result": {"valid": True}}
+    return {"result": {"valid": True}, "models": check_models(schemas=schemas)}

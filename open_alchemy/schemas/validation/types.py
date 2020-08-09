@@ -44,10 +44,13 @@ class TProperty(types.TypedDict, total=True):
     result: TResult
 
 
+TProperties = typing.Dict[str, TProperty]
+
+
 class _TModelBase(types.TypedDict, total=False):
     """TModel base class for keys that might not be present."""
 
-    properties: typing.Dict[str, TProperty]
+    properties: TProperties
 
 
 class TModel(_TModelBase, total=True):
@@ -56,10 +59,13 @@ class TModel(_TModelBase, total=True):
     result: TResult
 
 
+TModels = typing.Dict[str, TModel]
+
+
 class _TSpecBase(types.TypedDict, total=False):
     """TSpec base class for keys that might not be presents."""
 
-    models: typing.Dict[str, TModel]
+    models: TModels
 
 
 class TSpec(_TSpecBase, total=True):
