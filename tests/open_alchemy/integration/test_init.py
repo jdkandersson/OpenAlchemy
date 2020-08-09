@@ -118,7 +118,18 @@ def test_cache_diff(mocked_model_factory: mock.MagicMock):
         called.
     """
     model_factory = open_alchemy.init_model_factory(
-        base=mock.MagicMock, spec={"components": {"schemas": {}}}
+        base=mock.MagicMock,
+        spec={
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "x-tablename": "schema_1",
+                        "type": "object",
+                        "properties": {"id": {"type": "integer"}},
+                    }
+                }
+            }
+        },
     )
 
     model_factory(name="table 1")
@@ -135,7 +146,18 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
     THEN mocked model_factory is called once.
     """
     model_factory = open_alchemy.init_model_factory(
-        base=mock.MagicMock, spec={"components": {"schemas": {}}}
+        base=mock.MagicMock,
+        spec={
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "x-tablename": "schema_1",
+                        "type": "object",
+                        "properties": {"id": {"type": "integer"}},
+                    }
+                }
+            }
+        },
     )
 
     model_factory(name="table 1")

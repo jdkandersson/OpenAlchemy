@@ -8,6 +8,7 @@ from open_alchemy import helpers
 @pytest.mark.parametrize(
     "schema, schemas, expected_result",
     [
+        pytest.param(True, {}, False, id="not dict",),
         pytest.param({}, {}, False, id="empty",),
         pytest.param({"x-tablename": "table 1"}, {}, True, id="x-tablename",),
         pytest.param({"x-inherits": "Schema1"}, {}, True, id="x-inherits string",),
@@ -37,6 +38,22 @@ from open_alchemy import helpers
             {"Schema1": {"x-tablename": "table 1"}},
             True,
             id="allOf x-tablename with additional",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {
+                        "properties": {
+                            "column": {"type": "integer", "x-primary-key": True}
+                        },
+                        "x-tablename": "table",
+                        "type": "object",
+                    }
+                ]
+            },
+            {},
+            True,
+            id="allOf properties and tablename split",
         ),
     ],
 )
