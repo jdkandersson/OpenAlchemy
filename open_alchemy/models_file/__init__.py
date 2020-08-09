@@ -47,5 +47,4 @@ class ModelsFile:
             model_sources.append(model_source)
 
         # Generate source code for models file
-        raw_source = _models.generate(models=model_sources)
-        return facades.code_formatter.apply(source=raw_source)
+        return _models.generate(models=model_sources)
