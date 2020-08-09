@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version 1.4.1 - 2020-08-09
+
+- Remove black dependency
+
 ## Version 1.4.0 - 2020-08-09
 
 - Add schemas pre-processor that extracts the required back references.
