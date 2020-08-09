@@ -23,7 +23,7 @@ def _get_properties_results(
     )
 
 
-def process_model(
+def _process_model(
     schemas: _oa_types.Schemas, schema_name: str, schema: _oa_types.Schema
 ) -> None:
     """
@@ -56,7 +56,7 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         schemas: The schemas to validate.
 
     """
-    schemas_result = check_schemas(schemas=schemas)
+    schemas_result = _check_schemas(schemas=schemas)
     if not schemas_result.valid:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
 
@@ -76,10 +76,10 @@ def process(*, schemas: _oa_types.Schemas) -> None:
     constructables = _helpers.iterate.constructable(schemas=schemas)
     for constructable in constructables:
         name, schema = constructable
-        process_model(schemas, name, schema)
+        _process_model(schemas, name, schema)
 
 
-def check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
+def _check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
     """
     Validate the schemas.
 
@@ -121,7 +121,7 @@ def check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
     return types.Result(True, None)
 
 
-def check_model_properties(
+def _check_model_properties(
     *, schemas: _oa_types.Schemas, schema: _oa_types.Schema
 ) -> types.TProperties:
     """
@@ -144,7 +144,7 @@ def check_model_properties(
     return dict(properties_t_results)
 
 
-def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
+def _check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
     """
     Check a model.
 
@@ -161,7 +161,7 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
 
     return {
         "result": {"valid": True},
-        "properties": check_model_properties(schemas=schemas, schema=schema),
+        "properties": _check_model_properties(schemas=schemas, schema=schema),
     }
 
 
@@ -180,7 +180,7 @@ def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
     """
     constructables = _helpers.iterate.constructable(schemas=schemas)
     constructables_result = map(
-        lambda args: (args[0], check_model(schemas, args[1])), constructables
+        lambda args: (args[0], _check_model(schemas, args[1])), constructables
     )
     return dict(constructables_result)
 
@@ -221,7 +221,7 @@ def check(*, spec: typing.Any) -> types.TSpec:
         return {
             "result": {"valid": False, "reason": "specification must define schemas"}
         }
-    schemas_result = check_schemas(schemas=schemas)
+    schemas_result = _check_schemas(schemas=schemas)
     if not schemas_result.valid:
         return {"result": types.t_result_from_result(schemas_result)}
 
