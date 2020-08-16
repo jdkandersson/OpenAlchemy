@@ -11,6 +11,17 @@ from open_alchemy.schemas.helpers import iterate
         pytest.param({}, [], id="empty"),
         pytest.param({"Schema1": {}}, [], id="single not"),
         pytest.param(
+            {"Schema1": {"x-tablename": True}}, [], id="single malformed tablename"
+        ),
+        pytest.param(
+            {"Schema1": {"x-inherits": 1}}, [], id="single malformed inherits"
+        ),
+        pytest.param(
+            {"Schema1": {"allOf": [{"$ref": "#/components/schemas/Schema2"}, {}]}},
+            [],
+            id="single missing reference",
+        ),
+        pytest.param(
             {"Schema1": {"x-tablename": "table 1"}},
             [("Schema1", {"x-tablename": "table 1"})],
             id="single is",

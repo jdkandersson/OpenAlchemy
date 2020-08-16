@@ -24,7 +24,10 @@ def constructable(
 
     """
     for name, schema in schemas.items():
-        if not helpers.schema.constructable(schema=schema, schemas=schemas):
+        try:
+            if not helpers.schema.constructable(schema=schema, schemas=schemas):
+                continue
+        except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
             continue
 
         yield name, schema

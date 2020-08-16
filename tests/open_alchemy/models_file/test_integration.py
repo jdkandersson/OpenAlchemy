@@ -1,7 +1,5 @@
 """Tests for models file."""
 
-# pylint: disable=line-too-long
-
 import sys
 
 import pytest
@@ -59,7 +57,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -157,7 +155,7 @@ class TModel1({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -239,7 +237,7 @@ class TModel2({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(self, id: typing.Optional[str] = None) -> None:
         """
@@ -366,7 +364,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
@@ -480,10 +478,12 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
-    def __init__(self, name: typing.Optional[str] = None, id: typing.Optional[int] = None) -> None:
+    def __init__(
+        self, name: typing.Optional[str] = None, id: typing.Optional[int] = None
+    ) -> None:
         """
         Construct.
 
@@ -495,7 +495,9 @@ class TModel({_EXPECTED_MODEL_BASE}):
         ...
 
     @classmethod
-    def from_dict(cls, name: typing.Optional[str] = None, id: typing.Optional[int] = None) -> "TModel":
+    def from_dict(
+        cls, name: typing.Optional[str] = None, id: typing.Optional[int] = None
+    ) -> "TModel":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -542,7 +544,9 @@ class TModel({_EXPECTED_MODEL_BASE}):
 
 
 Model: typing.Type[TModel] = models.Model  # type: ignore
-'''  # noqa: E501
+'''
+    print(repr(source))
+    print(repr(expected_source))
     assert source == expected_source
 
 
@@ -593,7 +597,7 @@ class TModel({_EXPECTED_MODEL_BASE}):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
 
     def __init__(self, id: typing.Optional[int] = None) -> None:
         """
