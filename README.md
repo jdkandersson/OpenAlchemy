@@ -2,6 +2,8 @@
 # OpenAlchemy
 Translates an OpenAPI schema to SQLAlchemy models.
 
+[Online Editor](https://editor.openalchemy.io)
+
 ## Installation
 ```bash
 python -m pip install OpenAlchemy
