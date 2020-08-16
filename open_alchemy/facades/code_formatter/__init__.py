@@ -1,7 +1,5 @@
 """Apply automatic code formatting to source code."""
 
-import black
-
 
 def apply(*, source: str) -> str:
     """
@@ -14,9 +12,4 @@ def apply(*, source: str) -> str:
         The formatted source code.
 
     """
-    try:
-        return black.format_file_contents(
-            src_contents=source, fast=False, mode=black.FileMode()
-        )
-    except black.NothingChanged:
-        return source
+    return source
