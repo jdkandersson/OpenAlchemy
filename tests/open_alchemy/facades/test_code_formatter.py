@@ -7,10 +7,7 @@ from open_alchemy import facades
 
 @pytest.mark.parametrize(
     "source, expected_source",
-    [
-        pytest.param("'test'\n", '"test"\n', id="apply formatting"),
-        pytest.param('"test"\n', '"test"\n', id="no formatting"),
-    ],
+    [pytest.param('"test"\n', '"test"\n', id="no formatting"),],
 )
 @pytest.mark.facade
 @pytest.mark.code_formatter

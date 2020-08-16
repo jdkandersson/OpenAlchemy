@@ -35,7 +35,6 @@ setuptools.setup(
         "jsonschema>=3",
         "Jinja2>=2",
         "sqlalchemy-stubs>=0.3",
-        "black",
     ],
     include_package_data=True,
     extras_require={
