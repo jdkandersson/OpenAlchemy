@@ -10,6 +10,11 @@ Translates OpenAPI schemas to SQLAlchemy models to reduce duplication when
 defining your API and database models. Any required additions to the OpenAPI
 specification are compliant with the OpenAPI standard.
 
+.. seealso::
+
+   `Online Editor <https://editor.openalchemy.io/>`_
+      Online editor including schema validation.
+
 .. _getting-started:
 
 Getting Started
