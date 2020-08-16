@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.4.2 - 2020-08-16
 
 - Fix bug where iterating over constructable schemas did not handle some exceptions
 - Add black dependency back in
