@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.4.3 - 2020-08-16
 
 - Remove dependency on black
 
