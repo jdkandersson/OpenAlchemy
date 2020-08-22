@@ -27,10 +27,12 @@ def get_artifacts(
     *, schemas: types.Schemas, get_schema_artifacts: TGetSchemaArtifacts
 ) -> TArtifactsIter:
     """
-    Get all back reference information from the schemas.
+    Get all artifacts information from the schemas.
+
+    Assume schemas is valid.
 
     Takes all schemas, retrieves all constructable schemas, for each schema retrieves
-    all back references and returns an iterable with all the captured back references.
+    all artifacts and returns an iterable with all the captured back references.
 
     Args:
         schemas: The schemas to process.
