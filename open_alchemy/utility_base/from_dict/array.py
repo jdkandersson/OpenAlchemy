@@ -47,6 +47,6 @@ def convert(
     item_conversion = functools.partial(object_.convert, schema=items_schema)
     try:
         converted_items = map(item_conversion, value)
-    except TypeError:
-        raise exceptions.InvalidInstanceError("Array values must be iterable.")
+    except TypeError as exc:
+        raise exceptions.InvalidInstanceError("Array values must be iterable.") from exc
     return list(converted_items)

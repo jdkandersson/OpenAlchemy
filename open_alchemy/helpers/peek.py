@@ -674,11 +674,11 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
         resolved_schema["maxLength"] = max_length_value
     try:
         facades.jsonschema.validate(value, resolved_schema)
-    except facades.jsonschema.ValidationError:
+    except facades.jsonschema.ValidationError as exc:
         raise exceptions.MalformedSchemaError(
             "The default value does not conform to the schema. "
             f"The value is: {repr(value)}"
-        )
+        ) from exc
     return value
 
 

@@ -916,39 +916,40 @@ class TestMapDefault:
     @pytest.mark.parametrize(
         "type_, format_, default, expected_default",
         [
-            ("integer", None, None, None),
-            ("integer", None, 1, 1),
-            ("integer", "int32", 1, 1),
-            ("integer", "int64", 1, 1),
-            ("number", None, 1.1, 1.1),
-            ("number", "float", 1.1, 1.1),
-            ("string", None, 'value "1', '"value \\"1"'),
-            ("string", "password", 'value "1', '"value \\"1"'),
-            ("string", "byte", 'value "1', '"value \\"1"'),
-            ("string", "binary", 'value "1', 'b"value \\"1"'),
-            ("string", "date", "2000-01-01", "datetime.date(2000, 1, 1)"),
-            (
+            pytest.param("integer", None, None, None, id="None",),
+            pytest.param("integer", None, 1, 1, id="integer",),
+            pytest.param("integer", "int32", 1, 1, id="integer int32",),
+            pytest.param("integer", "int64", 1, 1, id="integer int64",),
+            pytest.param("number", None, 1.1, 1.1, id="number",),
+            pytest.param("number", "float", 1.1, 1.1, id="number float",),
+            pytest.param("string", None, 'value "1', '"value \\"1"', id="string",),
+            pytest.param(
+                "string", "unsupported", 'value "1', '"value \\"1"', id="string",
+            ),
+            pytest.param(
+                "string", "password", 'value "1', '"value \\"1"', id="string password",
+            ),
+            pytest.param(
+                "string", "byte", 'value "1', '"value \\"1"', id="string byte",
+            ),
+            pytest.param(
+                "string", "binary", 'value "1', 'b"value \\"1"', id="string binary",
+            ),
+            pytest.param(
+                "string",
+                "date",
+                "2000-01-01",
+                "datetime.date(2000, 1, 1)",
+                id="string date",
+            ),
+            pytest.param(
                 "string",
                 "date-time",
                 "2000-01-01T01:01:01",
                 "datetime.datetime(2000, 1, 1, 1, 1, 1)",
+                id="string date-time",
             ),
-            ("boolean", None, True, True),
-        ],
-        ids=[
-            "None",
-            "integer",
-            "integer int32",
-            "integer int64",
-            "number",
-            "number float",
-            "string",
-            "string password",
-            "string byte",
-            "string binary",
-            "string date",
-            "string date-time",
-            "boolean",
+            pytest.param("boolean", None, True, True, id="boolean",),
         ],
     )
     @pytest.mark.models_file

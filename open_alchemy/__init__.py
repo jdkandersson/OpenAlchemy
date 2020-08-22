@@ -203,10 +203,10 @@ def init_yaml(
     """
     try:
         import yaml  # pylint: disable=import-outside-toplevel
-    except ImportError:
+    except ImportError as exc:
         raise ImportError(
             "Using init_yaml requires the pyyaml package. Try `pip install pyyaml`."
-        )
+        ) from exc
 
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
@@ -249,11 +249,11 @@ def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
         parent = _helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
         try:
             return getattr(models, parent)
-        except AttributeError:
+        except AttributeError as exc:
             raise exceptions.InheritanceError(
                 "Any parents of a schema must be constructed before the schema can be "
                 "constructed."
-            )
+            ) from exc
     return getattr(models, "Base")
 
 

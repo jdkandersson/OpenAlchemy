@@ -59,13 +59,13 @@ def get(
     schema = _SCHEMAS.get(name)
     try:
         facades.jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
-    except facades.jsonschema.ValidationError:
+    except facades.jsonschema.ValidationError as exc:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "
             "valid. "
             f"The expected schema is {json.dumps(schema)}. "
             f"The given value is {json.dumps(value)}."
-        )
+        ) from exc
     if pop:
         del source[name]  # type: ignore
     return value

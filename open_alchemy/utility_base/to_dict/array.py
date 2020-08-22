@@ -44,6 +44,6 @@ def convert(value: typing.Any, *, schema: ao_types.Schema) -> types.TOptArrayDic
     )
     try:
         converted_items = map(item_conversion, value)
-    except TypeError:
-        raise exceptions.InvalidInstanceError("Array values must be iterable.")
+    except TypeError as exc:
+        raise exceptions.InvalidInstanceError("Array values must be iterable.") from exc
     return list(converted_items)

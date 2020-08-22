@@ -107,7 +107,7 @@ TESTS = [
     pytest.param(
         {"type": "string", "format": "unsupported"},
         {},
-        (False, "unsupported format is not supported for string"),
+        (True, None),
         id="string format unsupported",
     ),
     pytest.param(

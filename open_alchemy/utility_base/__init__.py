@@ -100,13 +100,13 @@ class UtilityBase:
         schema = cls._get_schema()
         try:
             facades.jsonschema.validate(instance=kwargs, schema=schema)
-        except facades.jsonschema.ValidationError:
+        except facades.jsonschema.ValidationError as exc:
             raise exceptions.MalformedModelDictionaryError(
                 "The dictionary passed to from_dict is not a valid instance of the "
                 "model schema.",
                 schema=schema,
                 kwargs=kwargs,
-            )
+            ) from exc
 
         # Assemble dictionary for construction
         properties = cls.get_properties()
@@ -200,10 +200,10 @@ class UtilityBase:
             )
         try:
             dict_value = json.loads(value)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as exc:
             raise exceptions.MalformedModelDictionaryError(
                 "The string value is not valid JSON.", value=value
-            )
+            ) from exc
         if not isinstance(dict_value, dict):
             raise exceptions.MalformedModelDictionaryError(
                 "The string value is not a Python dictionary.",

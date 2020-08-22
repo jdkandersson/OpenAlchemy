@@ -173,10 +173,6 @@ def _handle_string(
         The SQLAlchemy string type of the column.
 
     """
-    if artifacts.open_api.format in {None, "byte", "password"}:
-        if artifacts.open_api.max_length is None:
-            return String()
-        return String(length=artifacts.open_api.max_length)
     if artifacts.open_api.format == "binary":
         if artifacts.open_api.max_length is None:
             return Binary()
@@ -185,9 +181,9 @@ def _handle_string(
         return Date()
     if artifacts.open_api.format == "date-time":
         return DateTime()
-    raise exceptions.FeatureNotImplementedError(
-        f"{artifacts.open_api.format} format for string is not supported."
-    )
+    if artifacts.open_api.max_length is None:
+        return String()
+    return String(length=artifacts.open_api.max_length)
 
 
 def _handle_boolean(

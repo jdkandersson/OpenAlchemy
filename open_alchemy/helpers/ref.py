@@ -146,10 +146,10 @@ def _separate_context_path(*, ref: str) -> typing.Tuple[str, str]:
     """
     try:
         ref_context, ref_schema = ref.split("#")
-    except ValueError:
+    except ValueError as exc:
         raise exceptions.MalformedSchemaError(
             f"A reference must contain exactly one #. Actual reference: {ref}"
-        )
+        ) from exc
     return ref_context, ref_schema
 
 
@@ -331,33 +331,33 @@ class _RemoteSchemaStore:
                 spec_dir = os.path.dirname(self.spec_context)
                 remote_spec_filename = os.path.join(spec_dir, context)
                 file_cm = open(remote_spec_filename)
-        except (FileNotFoundError, error.HTTPError):
+        except (FileNotFoundError, error.HTTPError) as exc:
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
                 f"{context}"
-            )
+            ) from exc
 
         # Calculate location of schemas
         with file_cm as in_file:
             if extension == ".json":
                 try:
                     schemas = json.load(in_file)
-                except json.JSONDecodeError:
+                except json.JSONDecodeError as exc:
                     raise exceptions.SchemaNotFoundError(
                         "The remote reference file is not valid JSON. The path "
                         f"is: {context}"
-                    )
+                    ) from exc
             else:
                 # Import as needed to make yaml optional
                 import yaml  # pylint: disable=import-outside-toplevel
 
                 try:
                     schemas = yaml.safe_load(in_file)
-                except yaml.scanner.ScannerError:
+                except yaml.scanner.ScannerError as exc:
                     raise exceptions.SchemaNotFoundError(
                         "The remote reference file is not valid YAML. The path "
                         f"is: {context}"
-                    )
+                    ) from exc
 
         # Store for faster future retrieval
         self._schemas[context] = schemas
@@ -407,10 +407,10 @@ def _retrieve_schema(*, schemas: types.Schemas, path: str) -> NameSchema:
         return _retrieve_schema(
             schemas=schemas[path_components[0]], path=path_components[1]
         )
-    except KeyError:
+    except KeyError as exc:
         raise exceptions.SchemaNotFoundError(
             f"The schema was not found in the remote schemas. Path subsection: {path}"
-        )
+        ) from exc
 
 
 def get_remote_ref(*, ref: str) -> NameSchema:

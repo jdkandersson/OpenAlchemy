@@ -37,13 +37,13 @@ def convert(
     if isinstance(value, str) and format_ == "date":
         try:
             return datetime.date.fromisoformat(value)
-        except ValueError:
-            raise exceptions.MalformedSchemaError("Invalid date string.")
+        except ValueError as exc:
+            raise exceptions.MalformedSchemaError("Invalid date string.") from exc
     if isinstance(value, str) and format_ == "date-time":
         try:
             return datetime.datetime.fromisoformat(value)
-        except ValueError:
-            raise exceptions.MalformedSchemaError("Invalid date-time string.")
+        except ValueError as exc:
+            raise exceptions.MalformedSchemaError("Invalid date-time string.") from exc
     if isinstance(value, str) and format_ == "binary":
         return value.encode()
     if format_ == "double":

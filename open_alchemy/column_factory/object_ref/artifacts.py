@@ -153,10 +153,10 @@ def _handle_ref(
     # Check referenced schema
     try:
         type_ = helpers.peek.type_(schema=ref_schema, schemas=schemas)
-    except exceptions.TypeMissingError:
+    except exceptions.TypeMissingError as exc:
         raise exceptions.MalformedRelationshipError(
             "The referenced schema does not have a type."
-        )
+        ) from exc
     if type_ != "object":
         raise exceptions.MalformedRelationshipError(
             "A reference in a relationship must resolve to an object."
