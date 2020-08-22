@@ -5,7 +5,7 @@ import typing
 from . import types
 
 
-def check(schemas: typing.Any) -> types.Result:
+def check(*, schemas: typing.Any) -> types.Result:
     """
     Check that the schemas are valid.
 

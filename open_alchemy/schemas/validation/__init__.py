@@ -7,7 +7,7 @@ from ... import types as _oa_types
 from .. import helpers as _helpers
 from . import model
 from . import property_
-from . import schemas as schemas_validation
+from . import schemas_validation
 from . import types
 
 
@@ -95,7 +95,7 @@ def _check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
         Whether the schemas are valid.
 
     """
-    schemas_result = schemas_validation.check(schemas)
+    schemas_result = schemas_validation.check(schemas=schemas)
     if not schemas_result.valid:
         return schemas_result
 
