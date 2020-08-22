@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.5.0 - 2020-08-22
 
 - Add support for generic `format` for `string` that are treated like a `string` without a `format`.
 - Change constructable check to no longer check the schema of `x-tablename` and `x-inherits`.
