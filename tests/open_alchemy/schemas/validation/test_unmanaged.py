@@ -242,13 +242,13 @@ CHECK_TESTS = [
     ),
     pytest.param(
         {"components": {"schemas": {}}},
-        {"result": {"valid": True,}, "models": {}},
+        {"result": {"valid": True}, "models": {}},
         id="schemas empty",
     ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}}}},
         {
-            "result": {"valid": True,},
+            "result": {"valid": True},
             "models": {
                 "Schema1": {
                     "result": {
