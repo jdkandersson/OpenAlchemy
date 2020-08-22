@@ -61,6 +61,15 @@ _ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
         ),
         pytest.param(
             _ColSchemaArt(
+                open_api=_ColSchemaOAArt(
+                    type="string", format="unsupported", nullable=False
+                )
+            ),
+            "str",
+            id="string unsupported format",
+        ),
+        pytest.param(
+            _ColSchemaArt(
                 open_api=_ColSchemaOAArt(type="string", format="byte", nullable=False)
             ),
             "str",
@@ -195,6 +204,16 @@ _ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
             ),
             "str",
             id="password string json",
+        ),
+        pytest.param(
+            _ColSchemaArt(
+                open_api=_ColSchemaOAArt(
+                    type="string", format="unsupported", nullable=False
+                ),
+                extension=_ColSchemaExtArt(json=True),
+            ),
+            "str",
+            id="unsupported string json",
         ),
         pytest.param(
             _ColSchemaArt(

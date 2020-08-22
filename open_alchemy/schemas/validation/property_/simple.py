@@ -14,19 +14,7 @@ _VALID_TYPE_FORMAT = {
     ("integer", "int64"),
     ("number", None),
     ("number", "float"),
-    ("string", None),
-    ("string", "password"),
-    ("string", "byte"),
-    ("string", "binary"),
-    ("string", "date"),
-    ("string", "date-time"),
     ("boolean", None),
-}
-_VALID_MAX_LENGTH_TYPE_FORMAT = {
-    ("string", None),
-    ("string", "password"),
-    ("string", "byte"),
-    ("string", "binary"),
 }
 
 
@@ -43,7 +31,7 @@ def _check_modifiers(
     format_ = helpers.peek.format_(schema=schema, schemas=schemas)
     type_format = (type_, format_)
     # Check type and format combination
-    if type_format not in _VALID_TYPE_FORMAT:
+    if type_ != "string" and type_format not in _VALID_TYPE_FORMAT:
         return types.Result(False, f"{format_} format is not supported for {type_}")
 
     # Define format display value
@@ -53,8 +41,11 @@ def _check_modifiers(
 
     # Check maxLength
     max_length = helpers.peek.max_length(schema=schema, schemas=schemas)
-    if max_length is not None and type_format not in _VALID_MAX_LENGTH_TYPE_FORMAT:
-        return types.Result(False, f"{type_}{format_str} does not support maxLength")
+    if max_length is not None:
+        if type_ != "string" or format_ in {"date", "date-time"}:
+            return types.Result(
+                False, f"{type_}{format_str} does not support maxLength"
+            )
 
     # Check autoincrement
     autoincrement = helpers.peek.autoincrement(schema=schema, schemas=schemas)
