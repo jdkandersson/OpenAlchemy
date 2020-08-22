@@ -161,26 +161,6 @@ CHECK_TESTS = [
         id="spec not dict",
     ),
     pytest.param(
-        {},
-        {"result": {"valid": False, "reason": "specification must define components"}},
-        id="no components key",
-    ),
-    pytest.param(
-        {"components": True},
-        {"result": {"valid": False, "reason": "components value must be a dictionary"}},
-        id="components value not dict",
-    ),
-    pytest.param(
-        {"components": {}},
-        {"result": {"valid": False, "reason": "specification must define schemas"}},
-        id="no schemas",
-    ),
-    pytest.param(
-        {"components": {"schemas": True}},
-        {"result": {"valid": False, "reason": "schemas must be a dictionary"}},
-        id="schemas not dict",
-    ),
-    pytest.param(
         {"components": {"schemas": {}}},
         {
             "result": {
