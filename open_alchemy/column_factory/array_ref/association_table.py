@@ -97,11 +97,11 @@ def _gather_column_artifacts(
             # Gather artifacts for constructing the foreign key column
             try:
                 type_ = helpers.peek.type_(schema=property_schema, schemas=schemas)
-            except exceptions.TypeMissingError:
+            except exceptions.TypeMissingError as exc:
                 raise exceptions.MalformedSchemaError(
                     "A schema that is part of a many to many relationship must define "
                     "a type for the primary key."
-                )
+                ) from exc
             format_ = helpers.peek.format_(schema=property_schema, schemas=schemas)
             max_length = helpers.peek.max_length(
                 schema=property_schema, schemas=schemas

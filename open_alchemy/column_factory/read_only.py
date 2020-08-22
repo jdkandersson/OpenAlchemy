@@ -88,10 +88,10 @@ def _prepare_schema(
     # Check type
     try:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    except exceptions.TypeMissingError:
+    except exceptions.TypeMissingError as exc:
         raise exceptions.MalformedSchemaError(
             "Every readOnly property must have a type."
-        )
+        ) from exc
 
     if type_ == "object":
         return _prepare_schema_object(schema=schema, schemas=schemas)
@@ -121,12 +121,12 @@ def _prepare_schema_object_common(
     # Check type
     try:
         type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    except exceptions.TypeMissingError:
+    except exceptions.TypeMissingError as exc:
         raise exceptions.MalformedSchemaError(
             "Every readOnly property must have a type."
             if not array_context
             else "Array readOnly items must have a type."
-        )
+        ) from exc
 
     schema = helpers.schema.prepare(schema=schema, schemas=schemas)
 

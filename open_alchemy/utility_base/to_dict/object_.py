@@ -28,15 +28,15 @@ def _convert_relationship(*, value: types.TModel) -> types.TOptObjectDict:
 
     try:
         return value.to_dict()
-    except AttributeError:
+    except AttributeError as exc:
         raise exceptions.InvalidModelInstanceError(
             "The object property instance does not have a to_dict implementation."
-        )
-    except TypeError:
+        ) from exc
+    except TypeError as exc:
         raise exceptions.InvalidModelInstanceError(
             "The object property instance to_dict implementation is "
             "expecting arguments."
-        )
+        ) from exc
 
 
 def _convert_read_only(
