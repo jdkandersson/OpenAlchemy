@@ -2,6 +2,7 @@
 
 import typing
 
+from .. import exceptions
 from .. import types
 from . import all_of as all_of_helper
 from . import peek
@@ -36,11 +37,12 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
             return False
         return constructable(schema=all_of[0], schemas=schemas)
     # Check for tablename and inherits
-    tablename = peek.tablename(schema=schema, schemas=schemas)
-    schema_inherits = inherits(schema=schema, schemas=schemas)
-    if tablename is not None or schema_inherits is True:
+    tablename = peek.peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    try:
+        schema_inherits = inherits(schema=schema, schemas=schemas)
+    except exceptions.MalformedSchemaError:
         return True
-    return False
+    return tablename is not None or schema_inherits is True
 
 
 def inherits(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bool]:

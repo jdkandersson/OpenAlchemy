@@ -8,13 +8,15 @@ from open_alchemy import helpers
 @pytest.mark.parametrize(
     "schema, schemas, expected_result",
     [
-        pytest.param(True, {}, False, id="not dict",),
-        pytest.param({}, {}, False, id="empty",),
-        pytest.param({"x-tablename": "table 1"}, {}, True, id="x-tablename",),
-        pytest.param({"x-inherits": "Schema1"}, {}, True, id="x-inherits string",),
-        pytest.param({"x-inherits": True}, {}, True, id="x-inherits bool true",),
-        pytest.param({"x-inherits": False}, {}, False, id="x-inherits bool false",),
-        pytest.param({"$ref": True}, {}, False, id="$ref not string",),
+        pytest.param(True, {}, False, id="not dict"),
+        pytest.param({}, {}, False, id="empty"),
+        pytest.param({"x-tablename": "table 1"}, {}, True, id="x-tablename"),
+        pytest.param({"x-tablename": True}, {}, True, id="x-tablename not valid"),
+        pytest.param({"x-inherits": "Schema1"}, {}, True, id="x-inherits string"),
+        pytest.param({"x-inherits": True}, {}, True, id="x-inherits bool true"),
+        pytest.param({"x-inherits": False}, {}, False, id="x-inherits bool false"),
+        pytest.param({"x-inherits": 1}, {}, True, id="x-inherits not valid"),
+        pytest.param({"$ref": True}, {}, False, id="$ref not string"),
         pytest.param(
             {"$ref": "#/components/schemas/Schema1"}, {}, False, id="$ref not resolve",
         ),
@@ -24,9 +26,9 @@ from open_alchemy import helpers
             False,
             id="x-tablename $ref only",
         ),
-        pytest.param({"allOf": []}, {}, False, id="allOf empty",),
-        pytest.param({"allOf": True}, {}, False, id="allOf not list",),
-        pytest.param({"allOf": [True]}, {}, False, id="allOf elements not dict",),
+        pytest.param({"allOf": []}, {}, False, id="allOf empty"),
+        pytest.param({"allOf": True}, {}, False, id="allOf not list"),
+        pytest.param({"allOf": [True]}, {}, False, id="allOf elements not dict"),
         pytest.param(
             {"allOf": [{"$ref": "#/components/schemas/Schema1"}]},
             {"Schema1": {"x-tablename": "table 1"}},
@@ -171,14 +173,14 @@ def test_prepare_skip(schema, schemas):
 @pytest.mark.parametrize(
     "schema, schemas, expected_schema",
     [
-        pytest.param({"key": "value"}, {}, {"key": "value"}, id="plain",),
+        pytest.param({"key": "value"}, {}, {"key": "value"}, id="plain"),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"key": "value"}},
             {"key": "value"},
             id="$ref",
         ),
-        pytest.param({"allOf": [{"key": "value"}]}, {}, {"key": "value"}, id="allOf",),
+        pytest.param({"allOf": [{"key": "value"}]}, {}, {"key": "value"}, id="allOf"),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"allOf": [{"key": "value"}]}},
@@ -216,7 +218,7 @@ def test_prepare_skip(schema, schemas):
             },
             id="object property multiple $ref",
         ),
-        pytest.param({"items": {}}, {}, {"items": {}}, id="array empty items",),
+        pytest.param({"items": {}}, {}, {"items": {}}, id="array empty items"),
         pytest.param(
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"key": "value"}},
