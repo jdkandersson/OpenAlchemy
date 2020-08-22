@@ -7,6 +7,7 @@ from ... import types as _oa_types
 from .. import helpers as _helpers
 from . import model
 from . import property_
+from . import schemas as schemas_validation
 from . import types
 
 
@@ -94,25 +95,9 @@ def _check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
         Whether the schemas are valid.
 
     """
-    if not isinstance(schemas, dict):
-        return types.Result(False, "schemas must be a dictionary")
-
-    # Check keys are strings
-    first_key_not_string = next(
-        filter(lambda key: not isinstance(key, str), schemas.keys()), None,
-    )
-    if first_key_not_string is not None:
-        return types.Result(
-            False, f"schemas keys must be strings, {first_key_not_string} is not"
-        )
-
-    # Check values are dictionaries
-    first_item_not_dict_value = next(
-        filter(lambda args: not isinstance(args[1], dict), schemas.items()), None
-    )
-    if first_item_not_dict_value is not None:
-        key, _ = first_item_not_dict_value
-        return types.Result(False, f"the value of {key} must be a dictionary")
+    schemas_result = schemas_validation.check(schemas)
+    if not schemas_result.valid:
+        return schemas_result
 
     # Check there is at least 1 constructable schema
     constructables = _helpers.iterate.constructable(schemas=schemas)
