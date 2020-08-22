@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Add support for generic `format` for `string` that are treated like a `string` without a `format`.
+
 ## Version 1.4.3 - 2020-08-16
 
 - Remove dependency on black
