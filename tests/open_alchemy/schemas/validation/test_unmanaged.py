@@ -152,3 +152,83 @@ def test_check_model(schema, schemas, expected_result):
     returned_result = validation.unmanaged.check_model(schemas, schema)
 
     assert returned_result == expected_result
+
+
+CHECK_MODELS_TESTS = [
+    pytest.param({}, {}, id="empty"),
+    pytest.param({"Schema1": {"x-tablename": True}}, {}, id="single constructable"),
+    pytest.param(
+        {"Schema1": {}},
+        {
+            "Schema1": {
+                "result": {
+                    "valid": False,
+                    "reason": 'no "type" key was found, define a type',
+                }
+            }
+        },
+        id="single not constructable",
+    ),
+    pytest.param(
+        {"Schema1": {"x-tablename": True}, "Schema2": {"x-tablename": True}},
+        {},
+        id="multiple all constructable",
+    ),
+    pytest.param(
+        {"Schema1": {}, "Schema2": {"x-tablename": True}},
+        {
+            "Schema1": {
+                "result": {
+                    "valid": False,
+                    "reason": 'no "type" key was found, define a type',
+                }
+            }
+        },
+        id="multiple first not constructable",
+    ),
+    pytest.param(
+        {"Schema1": {"x-tablename": True}, "Schema2": {}},
+        {
+            "Schema2": {
+                "result": {
+                    "valid": False,
+                    "reason": 'no "type" key was found, define a type',
+                }
+            }
+        },
+        id="multiple second not constructable",
+    ),
+    pytest.param(
+        {"Schema1": {}, "Schema2": {"type": "object"}},
+        {
+            "Schema1": {
+                "result": {
+                    "valid": False,
+                    "reason": 'no "type" key was found, define a type',
+                }
+            },
+            "Schema2": {
+                "result": {
+                    "valid": False,
+                    "reason": (
+                        'no "x-tablename" key was found, define the name of the table'
+                    ),
+                }
+            },
+        },
+        id="multiple all not constructable",
+    ),
+]
+
+
+@pytest.mark.parametrize("schemas, expected_result", CHECK_MODELS_TESTS)
+@pytest.mark.schemas
+def test_check_models(schemas, expected_result):
+    """
+    GIVEN schemas and the expected result
+    WHEN check_models is called with the schemas
+    THEN the expected result is returned.
+    """
+    returned_result = validation.unmanaged.check_models(schemas=schemas)
+
+    assert returned_result == expected_result

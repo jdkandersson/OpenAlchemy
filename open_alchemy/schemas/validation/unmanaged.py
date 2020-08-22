@@ -3,6 +3,7 @@
 from ... import exceptions
 from ... import helpers as _oa_helpers
 from ... import types as _oa_types
+from .. import helpers as _helpers
 from . import types
 
 
@@ -62,3 +63,23 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
             reason='no "x-tablename" key was found, define the name of the table'
         )
     }
+
+
+def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
+    """
+    Check the models of a schema.
+
+    Assume the schemas is valid although any of its models may not.
+
+    Args:
+        schemas: The schemas to check.
+
+    Returns:
+        The result for each model.
+
+    """
+    not_constructables = _helpers.iterate.not_constructable(schemas=schemas)
+    not_constructables_result = map(
+        lambda args: (args[0], check_model(schemas, args[1])), not_constructables
+    )
+    return dict(not_constructables_result)
