@@ -14,9 +14,13 @@ def _get_properties_results(
     schemas: _oa_types.Schemas, schema: _oa_types.Schema
 ) -> typing.Iterable[typing.Tuple[str, types.Result]]:
     """Get an iterator with properties results."""
+    # Get model properties
     properties = _helpers.iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
+    # Filter any keys that are not string
+    properties = filter(lambda args: isinstance(args[0], str), properties)
+    # Check properties
     return map(
         lambda args: (args[0], property_.check(schemas, schema, args[0], args[1])),
         properties,
@@ -156,11 +160,8 @@ def _check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.
 
     """
     model_result = model.check(schemas, schema)
-    if not model_result.valid:
-        return {"result": types.t_result_from_result(model_result)}
-
     return {
-        "result": {"valid": True},
+        "result": types.t_result_from_result(model_result),
         "properties": _check_model_properties(schemas=schemas, schema=schema),
     }
 

@@ -4,6 +4,7 @@
 
 - Add support for generic `format` for `string` that are treated like a `string` without a `format`.
 - Change constructable check to no longer check the schema of `x-tablename` and `x-inherits`.
+- Change schema validation to process properties even if the model is not valid.
 
 ## Version 1.4.3 - 2020-08-16
 

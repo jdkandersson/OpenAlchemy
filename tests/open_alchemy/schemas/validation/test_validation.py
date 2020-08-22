@@ -248,11 +248,95 @@ CHECK_TESTS = [
                         "valid": False,
                         "reason": "malformed schema :: Every property requires a "
                         "type. ",
-                    }
+                    },
+                    "properties": {},
                 }
             },
         },
-        id="single model model not valid",
+        id="single model model not valid no properties",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {"Schema1": {"x-tablename": "schema_1", "properties": True}}
+            }
+        },
+        {
+            "result": {"valid": True},
+            "models": {
+                "Schema1": {
+                    "result": {
+                        "valid": False,
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
+                    },
+                    "properties": {},
+                }
+            },
+        },
+        id="single model model not valid properties not dict",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "x-tablename": "schema_1",
+                        "properties": {True: {"type": "integer"}},
+                    }
+                }
+            }
+        },
+        {
+            "result": {"valid": True},
+            "models": {
+                "Schema1": {
+                    "result": {
+                        "valid": False,
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
+                    },
+                    "properties": {},
+                }
+            },
+        },
+        id="single model model not valid properties key not string",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "x-tablename": "schema_1",
+                        "properties": {"prop_1": True},
+                    }
+                }
+            }
+        },
+        {
+            "result": {"valid": True},
+            "models": {
+                "Schema1": {
+                    "result": {
+                        "valid": False,
+                        "reason": "malformed schema :: Every property requires a "
+                        "type. ",
+                    },
+                    "properties": {
+                        "prop_1": {
+                            "result": {
+                                "valid": False,
+                                "reason": (
+                                    "malformed schema :: The schema must be a "
+                                    "dictionary. "
+                                ),
+                            }
+                        }
+                    },
+                }
+            },
+        },
+        id="single model model not valid properties value not dict",
     ),
     pytest.param(
         {
@@ -525,7 +609,8 @@ CHECK_TESTS = [
                         "valid": False,
                         "reason": "malformed schema :: Every property requires a "
                         "type. ",
-                    }
+                    },
+                    "properties": {},
                 },
                 "Schema2": {
                     "result": {"valid": True},
@@ -560,7 +645,8 @@ CHECK_TESTS = [
                         "valid": False,
                         "reason": "malformed schema :: Every property requires a "
                         "type. ",
-                    }
+                    },
+                    "properties": {},
                 },
             },
         },
