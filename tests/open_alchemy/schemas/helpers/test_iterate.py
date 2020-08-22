@@ -68,6 +68,56 @@ def test_constructable(schemas, expected_schemas):
 
 
 @pytest.mark.parametrize(
+    "schemas, expected_schemas",
+    [
+        pytest.param({}, [], id="empty"),
+        pytest.param({"Schema1": {}}, [("Schema1", {})], id="single not"),
+        pytest.param({"Schema1": {"x-tablename": True}}, [], id="single tablename",),
+        pytest.param({"Schema1": {"x-inherits": 1}}, [], id="single inherits",),
+        pytest.param(
+            {"Schema1": {"allOf": [{"$ref": "#/components/schemas/Schema2"}, {}]}},
+            [],
+            id="single missing reference",
+        ),
+        pytest.param(
+            {
+                "Schema1": {"x-tablename": "table 1"},
+                "Schema2": {"x-tablename": "table 2"},
+            },
+            [],
+            id="multiple all",
+        ),
+        pytest.param(
+            {"Schema1": {}, "Schema2": {"x-tablename": "table 2"}},
+            [("Schema1", {})],
+            id="multiple last",
+        ),
+        pytest.param(
+            {"Schema1": {"x-tablename": "table 1"}, "Schema2": {}},
+            [("Schema2", {})],
+            id="multiple first",
+        ),
+        pytest.param(
+            {"Schema1": {}, "Schema2": {}},
+            [("Schema1", {}), ("Schema2", {})],
+            id="multiple none",
+        ),
+    ],
+)
+@pytest.mark.schemas
+def test_not_constructable(schemas, expected_schemas):
+    """
+    GIVEN schemas and expected schemas
+    WHEN not_constructable is called with the schemas
+    THEN an iterable with all the names and schemas in the expected schemas are
+        returned.
+    """
+    returned_schemas = iterate.not_constructable(schemas=schemas)
+
+    assert list(returned_schemas) == expected_schemas
+
+
+@pytest.mark.parametrize(
     "schema, schemas, expected_properties",
     [
         pytest.param(True, {}, [], id="not dict"),

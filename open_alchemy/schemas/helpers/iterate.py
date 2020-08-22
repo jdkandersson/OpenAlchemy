@@ -33,6 +33,32 @@ def constructable(
         yield name, schema
 
 
+def not_constructable(
+    *, schemas: types.Schemas
+) -> typing.Iterator[typing.Tuple[str, types.Schema]]:
+    """
+    Create an iterable with all non-constructable schemas from all schemas.
+
+    Iterates over all items in the schemas, checks whether a schema is not constructable
+    and yields those that are.
+
+    Args:
+        schemas: The schemas to iterate over.
+
+    Returns:
+        iterable with all schemas that are not constructable.
+
+    """
+    for name, schema in schemas.items():
+        try:
+            if helpers.schema.constructable(schema=schema, schemas=schemas):
+                continue
+        except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
+            continue
+
+        yield name, schema
+
+
 def _calculate_skip_name(
     *,
     schema: types.Schema,

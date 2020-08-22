@@ -8,23 +8,7 @@ from open_alchemy.schemas import validation
 PROCESS_TESTS = [
     pytest.param(True, True, id="not dictionary"),
     pytest.param({}, True, id="empty"),
-    pytest.param({True: {}}, True, id="key not string"),
-    pytest.param({"Schema1": True}, True, id="value not dict"),
     pytest.param({"Schema1": {}}, True, id="model not constructable"),
-    pytest.param(
-        {True: {}, "Schema2": {}}, True, id="multiple model first key not string"
-    ),
-    pytest.param(
-        {"Schema1": {}, True: {}}, True, id="multiple model second key not string"
-    ),
-    pytest.param(
-        {"Schema1": True, "Schema2": {}}, True, id="multiple model first value not dict"
-    ),
-    pytest.param(
-        {"Schema1": {}, "Schema2": True},
-        True,
-        id="multiple model second value not dict",
-    ),
     pytest.param(
         {"Schema1": {}, "Schema2": {}}, True, id="multiple model not constructable"
     ),
@@ -177,26 +161,6 @@ CHECK_TESTS = [
         id="spec not dict",
     ),
     pytest.param(
-        {},
-        {"result": {"valid": False, "reason": "specification must define components"}},
-        id="no components key",
-    ),
-    pytest.param(
-        {"components": True},
-        {"result": {"valid": False, "reason": "components value must be a dictionary"}},
-        id="components value not dict",
-    ),
-    pytest.param(
-        {"components": {}},
-        {"result": {"valid": False, "reason": "specification must define schemas"}},
-        id="no schemas",
-    ),
-    pytest.param(
-        {"components": {"schemas": True}},
-        {"result": {"valid": False, "reason": "schemas must be a dictionary"}},
-        id="schemas not dict",
-    ),
-    pytest.param(
         {"components": {"schemas": {}}},
         {
             "result": {
@@ -206,26 +170,6 @@ CHECK_TESTS = [
             }
         },
         id="schemas empty",
-    ),
-    pytest.param(
-        {"components": {"schemas": {True: {}}}},
-        {
-            "result": {
-                "valid": False,
-                "reason": "schemas keys must be strings, True is not",
-            }
-        },
-        id="schemas key not string",
-    ),
-    pytest.param(
-        {"components": {"schemas": {"Schema1": True}}},
-        {
-            "result": {
-                "valid": False,
-                "reason": "the value of Schema1 must be a dictionary",
-            }
-        },
-        id="schemas values not dict",
     ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}}}},
@@ -484,98 +428,6 @@ CHECK_TESTS = [
             },
         },
         id="single model multiple properties valid",
-    ),
-    pytest.param(
-        {
-            "components": {
-                "schemas": {
-                    True: {
-                        "type": "object",
-                        "x-tablename": "schema_1",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                    "Schema2": {
-                        "type": "object",
-                        "x-tablename": "schema_2",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                }
-            }
-        },
-        {
-            "result": {
-                "valid": False,
-                "reason": "schemas keys must be strings, True is not",
-            }
-        },
-        id="multiple model first key invalid",
-    ),
-    pytest.param(
-        {
-            "components": {
-                "schemas": {
-                    "Schema1": {
-                        "type": "object",
-                        "x-tablename": "schema_1",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                    True: {
-                        "type": "object",
-                        "x-tablename": "schema_2",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                }
-            }
-        },
-        {
-            "result": {
-                "valid": False,
-                "reason": "schemas keys must be strings, True is not",
-            }
-        },
-        id="multiple model second key invalid",
-    ),
-    pytest.param(
-        {
-            "components": {
-                "schemas": {
-                    "Schema1": True,
-                    "Schema2": {
-                        "type": "object",
-                        "x-tablename": "schema_2",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                }
-            }
-        },
-        {
-            "result": {
-                "valid": False,
-                "reason": "the value of Schema1 must be a dictionary",
-            }
-        },
-        id="multiple model first value invalid",
-    ),
-    pytest.param(
-        {
-            "components": {
-                "schemas": {
-                    "Schema1": {
-                        "type": "object",
-                        "x-tablename": "schema_1",
-                        "properties": {"prop_1": {"type": "integer"}},
-                    },
-                    "Schema2": True,
-                }
-            }
-        },
-        {
-            "result": {
-                "valid": False,
-                "reason": "the value of Schema2 must be a dictionary",
-            }
-        },
-        id="multiple model second value invalid",
     ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}, "Schema2": {}}}},
