@@ -1,9 +1,12 @@
 """Check unmanaged schemas for why they are unmanaged."""
 
+import typing
+
 from ... import exceptions
 from ... import helpers as _oa_helpers
 from ... import types as _oa_types
 from .. import helpers as _helpers
+from . import spec_validation
 from . import types
 
 
@@ -83,3 +86,29 @@ def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
         lambda args: (args[0], check_model(schemas, args[1])), not_constructables
     )
     return dict(not_constructables_result)
+
+
+def check(*, spec: typing.Any) -> types.TSpec:
+    """
+    Check a specification.
+
+    Args:
+        spec: The specification to check.
+
+    Returns:
+        Whether the specification is valid with a reason if it is not.
+
+    """
+    # Check spec to schemas
+    spec_result = spec_validation.check(spec=spec)
+    if not spec_result.valid:
+        return {"result": types.t_result_from_result(spec_result)}
+
+    # Check that there is at least 1 model
+    assert isinstance(spec, dict)
+    components = spec.get("components")
+    assert isinstance(components, dict)
+    schemas = components.get("schemas")
+    assert isinstance(schemas, dict)
+
+    return {"result": {"valid": True}, "models": check_models(schemas=schemas)}

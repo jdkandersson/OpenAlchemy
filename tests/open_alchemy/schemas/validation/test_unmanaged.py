@@ -232,3 +232,45 @@ def test_check_models(schemas, expected_result):
     returned_result = validation.unmanaged.check_models(schemas=schemas)
 
     assert returned_result == expected_result
+
+
+CHECK_TESTS = [
+    pytest.param(
+        True,
+        {"result": {"valid": False, "reason": "specification must be a dictionary"}},
+        id="spec not dict",
+    ),
+    pytest.param(
+        {"components": {"schemas": {}}},
+        {"result": {"valid": True,}, "models": {}},
+        id="schemas empty",
+    ),
+    pytest.param(
+        {"components": {"schemas": {"Schema1": {}}}},
+        {
+            "result": {"valid": True,},
+            "models": {
+                "Schema1": {
+                    "result": {
+                        "valid": False,
+                        "reason": 'no "type" key was found, define a type',
+                    }
+                }
+            },
+        },
+        id="single model model not constructable",
+    ),
+]
+
+
+@pytest.mark.parametrize("spec, expected_result", CHECK_TESTS)
+@pytest.mark.schemas
+def test_check(spec, expected_result):
+    """
+    GIVEN spec and the expected result
+    WHEN check is called with the spec
+    THEN the expected result is returned.
+    """
+    returned_result = validation.unmanaged.check(spec=spec)
+
+    assert returned_result == expected_result
