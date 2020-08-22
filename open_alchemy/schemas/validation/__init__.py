@@ -8,6 +8,7 @@ from .. import helpers as _helpers
 from . import model
 from . import property_
 from . import schemas_validation
+from . import spec_validation
 from . import types
 
 
@@ -61,9 +62,12 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         schemas: The schemas to validate.
 
     """
-    schemas_result = _check_schemas(schemas=schemas)
+    schemas_result = schemas_validation.check(schemas=schemas)
     if not schemas_result.valid:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
+    one_model_result = _check_one_model(schemas=schemas)
+    if not one_model_result.valid:
+        raise _exceptions.MalformedSchemaError(one_model_result.reason)
 
     # Check constructable schemas model
     constructables = _helpers.iterate.constructable(schemas=schemas)
@@ -84,22 +88,17 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         _process_model(schemas, name, schema)
 
 
-def _check_schemas(*, schemas: _oa_types.Schemas) -> types.Result:
+def _check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
     """
-    Validate the schemas.
+    Check that there is at least 1 model in the schemas.
 
     Args:
         schemas: The schemas to validate.
 
     Returns:
-        Whether the schemas are valid.
+        Whether the schemas contain at least 1 model.
 
     """
-    schemas_result = schemas_validation.check(schemas=schemas)
-    if not schemas_result.valid:
-        return schemas_result
-
-    # Check there is at least 1 constructable schema
     constructables = _helpers.iterate.constructable(schemas=schemas)
     if not any(constructables):
         return types.Result(
@@ -182,33 +181,19 @@ def check(*, spec: typing.Any) -> types.TSpec:
         Whether the specification is valid with a reason if it is not.
 
     """
-    if not isinstance(spec, dict):
-        return {
-            "result": {"valid": False, "reason": "specification must be a dictionary"}
-        }
+    # Check spec to schemas
+    spec_result = spec_validation.check(spec=spec)
+    if not spec_result.valid:
+        return {"result": types.t_result_from_result(spec_result)}
 
-    # Check components
+    # Check that there is at least 1 model
+    assert isinstance(spec, dict)
     components = spec.get("components")
-    if components is None:
-        return {
-            "result": {"valid": False, "reason": "specification must define components"}
-        }
-    if not isinstance(components, dict):
-        return {
-            "result": {
-                "valid": False,
-                "reason": "components value must be a dictionary",
-            }
-        }
-
-    # Check schemas
+    assert isinstance(components, dict)
     schemas = components.get("schemas")
-    if schemas is None:
-        return {
-            "result": {"valid": False, "reason": "specification must define schemas"}
-        }
-    schemas_result = _check_schemas(schemas=schemas)
-    if not schemas_result.valid:
-        return {"result": types.t_result_from_result(schemas_result)}
+    assert isinstance(schemas, dict)
+    one_model_result = _check_one_model(schemas=schemas)
+    if not one_model_result.valid:
+        return {"result": types.t_result_from_result(one_model_result)}
 
     return {"result": {"valid": True}, "models": check_models(schemas=schemas)}
