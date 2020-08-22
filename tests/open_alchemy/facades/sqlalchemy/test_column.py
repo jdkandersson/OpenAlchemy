@@ -426,36 +426,23 @@ class TestHandleString:
     # pylint: disable=protected-access
 
     @staticmethod
-    @pytest.mark.facade
-    def test_invalid_format():
-        """
-        GIVEN artifacts with format that is not supported
-        WHEN _handle_string is called with the artifacts
-        THEN FeatureNotImplementedError is raised.
-        """
-        artifacts = ColArt(open_api=OAColArt(type="string", format="unsupported"))
-
-        with pytest.raises(exceptions.FeatureNotImplementedError):
-            column._handle_string(artifacts=artifacts)
-
-    @staticmethod
     @pytest.mark.parametrize(
         "format_, expected_type",
         [
-            (None, sqlalchemy.String),
-            ("date", sqlalchemy.Date),
-            ("date-time", sqlalchemy.DateTime),
-            ("byte", sqlalchemy.String),
-            ("password", sqlalchemy.String),
-            ("binary", sqlalchemy.LargeBinary),
+            pytest.param(None, sqlalchemy.String, id="None",),
+            pytest.param("date", sqlalchemy.Date, id="date",),
+            pytest.param("date-time", sqlalchemy.DateTime, id="date-time",),
+            pytest.param("byte", sqlalchemy.String, id="byte",),
+            pytest.param("password", sqlalchemy.String, id="password",),
+            pytest.param("binary", sqlalchemy.LargeBinary, id="binary"),
+            pytest.param("unsupported", sqlalchemy.String, id="unsupported"),
         ],
-        ids=["None", "date", "date-time", "byte", "password", "binary"],
     )
     @pytest.mark.facade
     def test_valid(format_, expected_type):
         """
         GIVEN artifacts and expected SQLALchemy type
-        WHEN _handle_integer is called with the artifacts
+        WHEN _handle_string is called with the artifacts
         THEN the expected type is returned.
         """
         artifacts = ColArt(open_api=OAColArt(type="string", format=format_))
