@@ -28,4 +28,8 @@ def get(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types.ModelArt
     if inherits is True:
         parent = oa_helpers.inheritance.get_parent(schema=schema, schemas=schemas)
 
-    return types.ModelArtifacts(tablename=tablename, inherits=inherits, parent=parent)
+    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+
+    return types.ModelArtifacts(
+        tablename=tablename, inherits=inherits, parent=parent, description=description
+    )
