@@ -442,6 +442,34 @@ TESTS = [
     ),
     pytest.param(
         {
+            "x-mixins": True,
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": {}},
+        },
+        {},
+        (
+            False,
+            'extension property :: The value of the "x-mixins" extension property is '
+            'not valid. The expected schema is {"description": "The import path for a '
+            'mixin class to be added as a parent for a model.", "$ref": "#/Mixins"}. '
+            "The given value is true. ",
+        ),
+        id="x-mixins not string",
+    ),
+    pytest.param(
+        {
+            "mixins": "mixin.class",
+            "x-tablename": "schema",
+            "type": "object",
+            "properties": {"key": {}},
+        },
+        {},
+        (True, None),
+        id="x-mixins string",
+    ),
+    pytest.param(
+        {
             "x-kwargs": True,
             "x-tablename": "schema",
             "type": "object",
@@ -637,7 +665,7 @@ TESTS = [
         {},
         (
             False,
-            'sextension property :: The value of the "x-composite-index" extension '
+            'extension property :: The value of the "x-composite-index" extension '
             'property is not valid. The expected schema is {"description": "Add '
             'composite index to a table.", "$ref": "#/CompositeIndex"}. The given '
             "value is true. ",
@@ -658,7 +686,7 @@ TESTS = [
         {},
         (
             False,
-            'sextension property :: The value of the "x-composite-index" extension '
+            'extension property :: The value of the "x-composite-index" extension '
             'property is not valid. The expected schema is {"description": "Add '
             'composite index to a table.", "$ref": "#/CompositeIndex"}. The given '
             "value is true. ",
@@ -749,7 +777,7 @@ TESTS = [
         {},
         (
             False,
-            'sextension property :: The value of the "x-composite-unique" extension '
+            'extension property :: The value of the "x-composite-unique" extension '
             'property is not valid. The expected schema is {"description": "Add '
             'composite unique constraint to a table.", "$ref": "#/CompositeUnique"}. '
             "The given value is true. ",
@@ -770,7 +798,7 @@ TESTS = [
         {},
         (
             False,
-            'sextension property :: The value of the "x-composite-unique" extension '
+            'extension property :: The value of the "x-composite-unique" extension '
             'property is not valid. The expected schema is {"description": "Add '
             'composite unique constraint to a table.", "$ref": "#/CompositeUnique"}. '
             "The given value is true. ",
