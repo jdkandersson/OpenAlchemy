@@ -108,10 +108,10 @@ def test_spec_to_name_schemas(schema_names, spec, raises):
 def test_map_unique(spec, expected_spec):
     """
     GIVEN specification and expected specification
-    WHEN _map_unique is called with the specification
+    WHEN map_unique is called with the specification
     THEN the expected specification is returned which is a valid UniqueList.
     """
-    returned_spec = factory._map_unique(spec=spec)  # pylint: disable=protected-access
+    returned_spec = factory.map_unique(spec=spec)  # pylint: disable=protected-access
 
     assert returned_spec == expected_spec
     assert (
@@ -193,10 +193,10 @@ def test_iter_unique_columns(spec, expected_columns):
 def test_map_index(spec, expected_spec):
     """
     GIVEN specification and expected specification
-    WHEN _map_index is called with the specification
+    WHEN map_index is called with the specification
     THEN the expected specification is returned which is a valid IndexList.
     """
-    returned_spec = factory._map_index(spec=spec)  # pylint: disable=protected-access
+    returned_spec = factory.map_index(spec=spec)  # pylint: disable=protected-access
 
     assert returned_spec == expected_spec
     assert (
