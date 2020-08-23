@@ -29,7 +29,7 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}},},
+        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
         id="single model valid",
     ),
     pytest.param(
@@ -50,7 +50,7 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema2": {"artifacts": {"tablename": "schema_2"}},},},
+        {"models": {"Schema2": {"artifacts": {"tablename": "schema_2"}}}},
         id="multiple model first model invalid",
     ),
     pytest.param(
@@ -66,7 +66,7 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}},},},
+        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
         id="multiple model second model invalid",
     ),
     pytest.param(

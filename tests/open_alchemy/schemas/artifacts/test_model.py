@@ -88,13 +88,13 @@ GET_TESTS = [
         id="$ref description",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3",}]},
+        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3"}]},
         {},
         "description",
         "description 3",
         id="allOf description",
     ),
-    pytest.param({**DEFAULT_SCHEMA}, {}, "mixins", None, id="x-mixins not defined",),
+    pytest.param({**DEFAULT_SCHEMA}, {}, "mixins", None, id="x-mixins not defined"),
     pytest.param(
         {**DEFAULT_SCHEMA, "x-mixins": "module.Mixin1"},
         {},
@@ -110,11 +110,7 @@ GET_TESTS = [
         id="$ref x-mixins",
     ),
     pytest.param(
-        {
-            "allOf": [
-                {**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin3", "module.Mixin4"],}
-            ]
-        },
+        {"allOf": [{**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin3", "module.Mixin4"]}]},
         {},
         "mixins",
         ["module.Mixin3", "module.Mixin4"],
@@ -136,7 +132,7 @@ GET_TESTS = [
         id="$ref x-kwargs",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"},}]},
+        {"allOf": [{**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"}}]},
         {},
         "kwargs",
         {"key_3": "value 3"},
