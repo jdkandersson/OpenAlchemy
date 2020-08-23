@@ -11,13 +11,13 @@ from . import types
 
 def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
     """
-    Check a model.
+    Get artifacts for a model.
 
     Args:
-        schema: The schema of the model to get.
+        schema: The schema of the model to get artifacts for.
 
     Returns:
-        Whether the model and its properties are valid with a reason if it is not.
+        The artifacts of the model.
 
     """
     model_artifacts = model.get(schemas, schema)
@@ -28,15 +28,15 @@ def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TM
 
 def get_models(*, schemas: _oa_types.Schemas) -> types.TModels:
     """
-    Check the models of a schema.
+    Get artifacts for the models of a schema.
 
     Assume the schemas is valid although any of its models may not.
 
     Args:
-        schemas: The schemas to get.
+        schemas: The schemas to get artifacts for.
 
     Returns:
-        The result for each model.
+        The artifacts for each model.
 
     """
     constructables = _helpers.iterate.constructable(schemas=schemas)
@@ -51,13 +51,13 @@ def get_models(*, schemas: _oa_types.Schemas) -> types.TModels:
 
 def get(*, spec: typing.Any) -> types.TSpec:
     """
-    Check a specification.
+    Get artifacts for a specification.
 
     Args:
-        spec: The specification to get.
+        spec: The specification to get artifacts from.
 
     Returns:
-        Whether the specification is valid with a reason if it is not.
+        The artifacts for the specification.
 
     """
     # Check spec to schemas
