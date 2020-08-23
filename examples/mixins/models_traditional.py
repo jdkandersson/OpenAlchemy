@@ -9,6 +9,8 @@ class Employee(Base, TimestampsMixin):
     """Person that works for a company."""
 
     __tablename__ = "employee"
+    __abstract__ = False
+
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String, index=True)
     division = sa.Column(sa.String, index=True)

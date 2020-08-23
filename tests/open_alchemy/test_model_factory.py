@@ -562,7 +562,10 @@ def test_mixin(monkeypatch):
     mixin_class = type(
         "Mixin1",
         (),
-        {"property_2": sqlalchemy.column.Column(sqlalchemy.column.Integer)},
+        {
+            "property_2": sqlalchemy.column.Column(sqlalchemy.column.Integer),
+            "__abstract__": True,
+        },
     )
     mock_import_module.return_value.Mixin1 = mixin_class
     monkeypatch.setattr(importlib, "import_module", mock_import_module)
@@ -581,6 +584,7 @@ def test_mixin(monkeypatch):
     )
 
     assert hasattr(model, "property_2")
+    assert model.__abstract__ is False
 
 
 class TestGetSchema:

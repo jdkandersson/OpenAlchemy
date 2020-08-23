@@ -18,3 +18,4 @@ Examples
    all_of
    inheritance
    json
+   mixins

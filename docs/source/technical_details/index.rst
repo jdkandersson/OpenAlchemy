@@ -12,3 +12,4 @@ Technical Details
    relationships
    inheritance
    model
+   mixins
