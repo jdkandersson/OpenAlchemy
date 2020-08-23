@@ -59,15 +59,16 @@
   },
   "x-inherits": {
     "description": "Define that a schema inherits from another schema or specify which schema to inherit from.",
-    "oneOf": [
-      {"type": "string"},
-      {"type": "boolean"}
-    ]
+    "oneOf": [{ "type": "string" }, { "type": "boolean" }]
   },
   "x-kwargs": {
     "description": "Define kwargs to be passed to a function based on the context.",
     "type": "object",
     "additionalProperties": true
+  },
+  "x-mixins": {
+    "description": "The import path for a mixin class to be added as a parent for a model.",
+    "$ref": "#/Mixins"
   },
   "x-backrefs": {
     "description": "INTERNAL USE ONLY: Note on a schema that a back reference was created.",

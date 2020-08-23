@@ -49,9 +49,7 @@
         "type": "boolean"
       }
     },
-    "required": [
-      "expressions"
-    ]
+    "required": ["expressions"]
   },
   "IndexList": {
     "type": "array",
@@ -102,10 +100,7 @@
         "$ref": "#/x-de-$ref"
       }
     },
-    "required": [
-      "type",
-      "x-de-$ref"
-    ]
+    "required": ["type", "x-de-$ref"]
   },
   "BackRef": {
     "type": "object",
@@ -124,12 +119,23 @@
               "$ref": "#/ObjectRef"
             }
           },
-          "required": [
-            "type",
-            "items"
-          ]
+          "required": ["type", "items"]
         }
       ]
     }
+  },
+  "Mixin": {
+    "type": "string",
+    "nullable": false,
+    "minLength": 1
+  },
+  "MixinList": {
+    "type": "array",
+    "nullable": false,
+    "items": { "$ref": "#/Mixin" },
+    "minItems": 1
+  },
+  "Mixins": {
+    "oneOf": [{ "$ref": "#/Mixin" }, { "$ref": "#/MixinList" }]
   }
 }

@@ -467,3 +467,50 @@ def test_kwargs_reserved(reserved, value, raises):
         returned_value = test_func()
 
         assert returned_value == value
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        pytest.param(None, id="None"),
+        pytest.param(1, id="not string"),
+        pytest.param("", id="empty string"),
+        pytest.param([], id="list empty"),
+        pytest.param([None], id="list contains None"),
+    ],
+)
+@pytest.mark.helper
+def test_mixins_invalid(value):
+    """
+    GIVEN value for x-mixins that has an invalid format
+    WHEN get with x-mixins and the value
+    THEN MalformedExtensionPropertyError is raised.
+    """
+    name = "x-mixins"
+    source = {name: value}
+
+    with pytest.raises(exceptions.MalformedExtensionPropertyError):
+        helpers.ext_prop.get(source=source, name=name)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        pytest.param("mixin 1", id="string"),
+        pytest.param(["mixin 1"], id="lst single"),
+        pytest.param(["mixin 1", "mixin 1"], id="lst multiple"),
+    ],
+)
+@pytest.mark.helper
+def test_mixins_valid(value):
+    """
+    GIVEN value for x-mixins that has a valid format
+    WHEN get with x-mixins and the value
+    THEN the value is returned.
+    """
+    name = "x-mixins"
+    source = {name: value}
+
+    returned_value = helpers.ext_prop.get(source=source, name=name)
+
+    assert returned_value == value
