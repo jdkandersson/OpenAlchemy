@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Expose function that collects artifacts for the models.
+
 ## Version 1.5.1 - 2020-08-23
 
 - Add support for arbitrary mix in classes.
