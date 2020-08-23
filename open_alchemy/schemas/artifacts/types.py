@@ -5,6 +5,31 @@ import typing
 
 from ... import types
 
+TMixins = typing.List[str]
+TKwargs = typing.Dict[str, typing.Any]
+
+
+class _ModelTypedDictBase(types.TypedDict, total=False):
+    """TypedDict representation of the model artifacts."""
+
+    inherits: bool
+    parent: str
+
+    description: str
+
+    mixins: TMixins
+
+    kwargs: TKwargs
+
+    composite_index: types.IndexList
+    composite_unique: types.UniqueList
+
+
+class ModelTypedDict(_ModelTypedDictBase, total=True):
+    """TypedDict representation of the model artifacts."""
+
+    tablename: str
+
 
 @dataclasses.dataclass
 class ModelArtifacts:
@@ -16,9 +41,41 @@ class ModelArtifacts:
 
     description: typing.Optional[str]
 
-    mixins: typing.Optional[typing.List[str]]
+    mixins: typing.Optional[TMixins]
 
-    kwargs: typing.Optional[typing.Dict[str, typing.Any]]
+    kwargs: typing.Optional[TKwargs]
 
     composite_index: typing.Optional[types.IndexList]
     composite_unique: typing.Optional[types.UniqueList]
+
+    def to_dict(self) -> ModelTypedDict:
+        """Convert to dictionary."""
+        return_dict: ModelTypedDict = {"tablename": self.tablename}
+
+        opt_keys: typing.List[
+            typing.Literal[
+                "inherits",
+                "parent",
+                "description",
+                "mixins",
+                "kwargs",
+                "composite_index",
+                "composite_unique",
+            ]
+        ] = [
+            "inherits",
+            "parent",
+            "description",
+            "mixins",
+            "kwargs",
+            "composite_index",
+            "composite_unique",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
