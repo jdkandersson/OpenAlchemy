@@ -238,6 +238,6 @@ def test_get(schema, schemas, key, expected_value):
     WHEN get is called with the schema and schemas
     THEN the returned artifacts has the expected value behind the key.
     """
-    returned_artifacts = artifacts.model.get(schema=schema, schemas=schemas)
+    returned_artifacts = artifacts.model.get(schemas, schema)
 
     assert getattr(returned_artifacts, key) == expected_value

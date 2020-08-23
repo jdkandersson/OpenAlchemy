@@ -8,7 +8,7 @@ from ... import types as oa_types
 from . import types
 
 
-def get(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types.ModelArtifacts:
+def get(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.ModelArtifacts:
     """
     Retrieve the artifacts for the model.
 

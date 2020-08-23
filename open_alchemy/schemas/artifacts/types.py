@@ -31,6 +31,12 @@ class ModelTypedDict(_ModelTypedDictBase, total=True):
     tablename: str
 
 
+class TModel(types.TypedDict, total=True):
+    """Record artifacts of a model."""
+
+    artifacts: ModelTypedDict
+
+
 @dataclasses.dataclass
 class ModelArtifacts:
     """Information about a model."""
@@ -79,3 +85,12 @@ class ModelArtifacts:
             return_dict[opt_key] = value
 
         return return_dict
+
+
+TModels = typing.Dict[str, TModel]
+
+
+class TSpec(types.TypedDict, total=False):
+    """Record artifacts for a specification."""
+
+    models: TModels
