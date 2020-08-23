@@ -142,6 +142,90 @@ GET_TESTS = [
         {"key_3": "value 3"},
         id="allOf x-kwargs",
     ),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "composite_index",
+        None,
+        id="x-composite-index not defined",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "x-composite-index": ["column_1"]},
+        {},
+        "composite_index",
+        [{"expressions": ["column_1"]}],
+        id="x-composite-index",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "x-composite-index": [["column_1"], ["column_2"]],
+            }
+        },
+        "composite_index",
+        [{"expressions": ["column_1"]}, {"expressions": ["column_2"]}],
+        id="$ref x-composite-index",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-composite-index": [
+                        {"name": "index-1", "expressions": ["column_1"]}
+                    ],
+                }
+            ]
+        },
+        {},
+        "composite_index",
+        [{"name": "index-1", "expressions": ["column_1"]}],
+        id="allOf x-composite-index",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "composite_unique",
+        None,
+        id="x-composite-unique not defined",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "x-composite-unique": ["column_1"]},
+        {},
+        "composite_unique",
+        [{"columns": ["column_1"]}],
+        id="x-composite-unique",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "x-composite-unique": [["column_1"], ["column_2"]],
+            }
+        },
+        "composite_unique",
+        [{"columns": ["column_1"]}, {"columns": ["column_2"]}],
+        id="$ref x-composite-unique",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-composite-unique": [
+                        {"name": "unique-1", "columns": ["column_1"]}
+                    ],
+                }
+            ]
+        },
+        {},
+        "composite_unique",
+        [{"name": "unique-1", "columns": ["column_1"]}],
+        id="allOf x-composite-unique",
+    ),
 ]
 
 

@@ -99,7 +99,7 @@ _INDEX_MAPPING: typing.Dict[str, typing.Callable[..., types.IndexList]] = {
 }
 
 
-def _map_unique(*, spec: types.AnyUnique) -> types.UniqueList:
+def map_unique(*, spec: types.AnyUnique) -> types.UniqueList:
     """
     Convert any unique constraint to UniqueList.
 
@@ -125,12 +125,12 @@ def iter_unique_columns(*, spec: types.AnyUnique) -> typing.Iterator[str]:
         An iterator with all columns of the unique constraint.
 
     """
-    mapped_specs = _map_unique(spec=spec)
+    mapped_specs = map_unique(spec=spec)
     column_lists = map(lambda unique_spec: unique_spec["columns"], mapped_specs)
     return itertools.chain(*column_lists)
 
 
-def _map_index(*, spec: types.AnyIndex) -> types.IndexList:
+def map_index(*, spec: types.AnyIndex) -> types.IndexList:
     """
     Convert any composite index to IndexList.
 
@@ -156,7 +156,7 @@ def iter_index_expressions(*, spec: types.AnyIndex) -> typing.Iterator[str]:
         An iterator with all expressions of the index constraint.
 
     """
-    mapped_specs = _map_index(spec=spec)
+    mapped_specs = map_index(spec=spec)
     column_lists = map(lambda index_spec: index_spec["expressions"], mapped_specs)
     return itertools.chain(*column_lists)
 
@@ -212,7 +212,7 @@ def unique_factory(
         The unique constraints.
 
     """
-    mapped_spec = _map_unique(spec=spec)
+    mapped_spec = map_unique(spec=spec)
     return map(_construct_unique, mapped_spec)
 
 
@@ -227,5 +227,5 @@ def index_factory(*, spec: types.AnyIndex) -> typing.Iterator[schema.Index]:
         The composite indexes.
 
     """
-    mapped_spec = _map_index(spec=spec)
+    mapped_spec = map_index(spec=spec)
     return map(_construct_index, mapped_spec)

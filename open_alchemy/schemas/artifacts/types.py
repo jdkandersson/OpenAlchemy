@@ -3,6 +3,8 @@
 import dataclasses
 import typing
 
+from ... import types
+
 
 @dataclasses.dataclass
 class ModelArtifacts:
@@ -17,3 +19,6 @@ class ModelArtifacts:
     mixins: typing.Optional[typing.List[str]]
 
     kwargs: typing.Optional[typing.Dict[str, typing.Any]]
+
+    composite_index: typing.Optional[types.IndexList]
+    composite_unique: typing.Optional[types.UniqueList]
