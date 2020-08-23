@@ -30,7 +30,11 @@ GET_TESTS = [
         id="allOf tablename",
     ),
     pytest.param(
-        {**DEFAULT_SCHEMA, "x-inherits": True}, {}, "inherits", True, id="inherits",
+        {**DEFAULT_SCHEMA, "x-inherits": True, "$ref": "#/components/schemas/Parent"},
+        {"Parent": {"x-tablename": "parent"}},
+        "inherits",
+        True,
+        id="inherits",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
@@ -40,11 +44,30 @@ GET_TESTS = [
         id="$ref inherits",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "x-inherits": "Parent"}]},
-        {},
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-inherits": "Parent",
+                    "$ref": "#/components/schemas/Parent",
+                }
+            ]
+        },
+        {"Parent": {"x-tablename": "parent"}},
         "inherits",
         True,
         id="allOf inherits",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "x-inherits": "Parent",
+            "$ref": "#/components/schemas/Parent",
+        },
+        {"Parent": {"x-tablename": "parent"}},
+        "parent",
+        "Parent",
+        id="parent",
     ),
 ]
 

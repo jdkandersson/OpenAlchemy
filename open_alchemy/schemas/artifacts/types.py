@@ -8,3 +8,4 @@ class ModelArtifacts(typing.NamedTuple):
 
     tablename: str
     inherits: typing.Optional[bool]
+    parent: typing.Optional[str]
