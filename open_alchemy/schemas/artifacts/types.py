@@ -15,3 +15,5 @@ class ModelArtifacts:
     description: typing.Optional[str]
 
     mixins: typing.Optional[typing.List[str]]
+
+    kwargs: typing.Optional[typing.Dict[str, typing.Any]]

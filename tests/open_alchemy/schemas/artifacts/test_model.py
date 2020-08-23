@@ -120,6 +120,28 @@ GET_TESTS = [
         ["module.Mixin3", "module.Mixin4"],
         id="allOf x-mixins",
     ),
+    pytest.param({**DEFAULT_SCHEMA}, {}, "kwargs", None, id="x-kwargs not defined",),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "x-kwargs": {"key_1": "value 1"}},
+        {},
+        "kwargs",
+        {"key_1": "value 1"},
+        id="x-kwargs",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "x-kwargs": {"key_2": "value 2"}}},
+        "kwargs",
+        {"key_2": "value 2"},
+        id="$ref x-kwargs",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"},}]},
+        {},
+        "kwargs",
+        {"key_3": "value 3"},
+        id="allOf x-kwargs",
+    ),
 ]
 
 
