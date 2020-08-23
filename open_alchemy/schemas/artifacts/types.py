@@ -13,3 +13,5 @@ class ModelArtifacts:
     parent: typing.Optional[str]
 
     description: typing.Optional[str]
+
+    mixins: typing.Optional[typing.List[str]]

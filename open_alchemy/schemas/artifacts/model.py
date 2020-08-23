@@ -30,6 +30,12 @@ def get(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types.ModelArt
 
     description = oa_helpers.peek.description(schema=schema, schemas=schemas)
 
+    mixins = oa_helpers.peek.mixins(schema=schema, schemas=schemas)
+
     return types.ModelArtifacts(
-        tablename=tablename, inherits=inherits, parent=parent, description=description
+        tablename=tablename,
+        inherits=inherits,
+        parent=parent,
+        description=description,
+        mixins=mixins,
     )

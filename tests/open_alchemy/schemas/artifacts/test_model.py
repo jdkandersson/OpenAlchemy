@@ -94,6 +94,32 @@ GET_TESTS = [
         "description 3",
         id="allOf description",
     ),
+    pytest.param({**DEFAULT_SCHEMA}, {}, "mixins", None, id="x-mixins not defined",),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "x-mixins": "module.Mixin1"},
+        {},
+        "mixins",
+        ["module.Mixin1"],
+        id="x-mixins",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin2"]}},
+        "mixins",
+        ["module.Mixin2"],
+        id="$ref x-mixins",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin3", "module.Mixin4"],}
+            ]
+        },
+        {},
+        "mixins",
+        ["module.Mixin3", "module.Mixin4"],
+        id="allOf x-mixins",
+    ),
 ]
 
 
