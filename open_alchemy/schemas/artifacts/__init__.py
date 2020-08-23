@@ -43,10 +43,10 @@ def get_models(*, schemas: _oa_types.Schemas) -> types.TModels:
     valid_constructables = filter(
         lambda args: validation.model.check(schemas, args[1]).valid, constructables
     )
-    constructables_result = map(
+    constructables_artifacts = map(
         lambda args: (args[0], _get_model(schemas, args[1])), valid_constructables
     )
-    return dict(constructables_result)
+    return dict(constructables_artifacts)
 
 
 def get(*, spec: typing.Any) -> types.TSpec:
@@ -65,7 +65,6 @@ def get(*, spec: typing.Any) -> types.TSpec:
     if not spec_result.valid:
         return {}
 
-    # Check that there is at least 1 model
     assert isinstance(spec, dict)
     components = spec.get("components")
     assert isinstance(components, dict)
