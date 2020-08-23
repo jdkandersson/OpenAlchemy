@@ -6,6 +6,7 @@ import typing
 from . import column_factory
 from . import exceptions
 from . import helpers
+from . import mixins
 from . import table_args
 from . import types
 from . import utility_base
@@ -63,17 +64,24 @@ def model_factory(
         if not dict_ignore:
             model_schema["properties"][prop_name] = prop_final_spec
 
+    # Retrieve mixins
+    mixin_classes: typing.Tuple[typing.Type, ...] = tuple()
+    mixin_values = helpers.peek.mixins(schema=schema, schemas=schemas)
+    if mixin_values is not None:
+        mixin_classes = mixins.get(mixins=mixin_values)
+
     # Assembling model
     base = get_base(name=name, schemas=schemas)
     return type(
         name,
-        (base, utility_base.UtilityBase),
+        (base, utility_base.UtilityBase, *mixin_classes),
         {
             "_schema": model_schema,
             **dict(itertools.chain.from_iterable(model_class_vars)),
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
             **_prepare_model_dict(schema=schema),
+            "__abstract__": False,
         },
     )
 

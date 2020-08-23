@@ -187,6 +187,8 @@ def _check_modifiers(
 
     # Check description value
     oa_helpers.peek.description(schema=schema, schemas=schemas)
+    # Check mixins value
+    oa_helpers.peek.mixins(schema=schema, schemas=schemas)
 
     # Check kwargs
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
@@ -254,6 +256,6 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     except exceptions.SchemaNotFoundError as exc:
         return types.Result(False, f"reference :: {exc}")
     except exceptions.MalformedExtensionPropertyError as exc:
-        return types.Result(False, f"sextension property :: {exc}")
+        return types.Result(False, f"extension property :: {exc}")
 
     return types.Result(True, None)

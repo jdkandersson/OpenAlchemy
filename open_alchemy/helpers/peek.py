@@ -599,9 +599,6 @@ def composite_index(
     """
     Retrieve the x-composite-index of the schema.
 
-    Raises MalformedSchemaError if the x-composite-index value does not
-        conform with the schema.
-
     Args:
         schema: The schema to get x-composite-index from.
         schemas: The schemas for $ref lookup.
@@ -624,9 +621,6 @@ def composite_unique(
 ) -> typing.Optional[typing.List]:
     """
     Retrieve the x-composite-unique of the schema.
-
-    Raises MalformedSchemaError if the x-composite-unique value does not
-        conform with the schema.
 
     Args:
         schema: The schema to get x-composite-unique from.
@@ -679,6 +673,55 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
             "The default value does not conform to the schema. "
             f"The value is: {repr(value)}"
         ) from exc
+    return value
+
+
+def mixins(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[typing.List[str]]:
+    """
+    Retrieve the x-mixins of the schema.
+
+    Args:
+        schema: The schema to get x-mixins from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-mixins or None.
+
+    """
+    key = "x-mixins"
+    value = peek_key(schema=schema, schemas=schemas, key=key)
+    if value is None:
+        return None
+
+    # Check value
+    ext_prop_helper.get(source={key: value}, name=key)  # type: ignore
+
+    # Transform string to list
+    if isinstance(value, str):
+        value = [value]
+
+    # Check that each value is a valid dot-separated identifier
+    def valid(mixin_value: str) -> bool:
+        """Check whether a mixin value is valid."""
+        components = mixin_value.split(".")
+        if len(components) < 2:
+            return False
+
+        invalid_components = map(
+            lambda component: not component.isidentifier(), components
+        )
+        return not any(invalid_components)
+
+    values_valid = map(lambda mixin_value: (mixin_value, valid(mixin_value)), value)
+    first_invalid_value = next(filter(lambda args: not args[1], values_valid), None)
+    if first_invalid_value is not None:
+        raise exceptions.MalformedExtensionPropertyError(
+            f'mixin values must be a valid import path, "{first_invalid_value[0]}" is '
+            "not"
+        )
+
     return value
 
 

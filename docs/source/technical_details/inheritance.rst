@@ -120,9 +120,9 @@ The required :samp:`__mapper_args__` must be added using :samp:`x-kwargs`. For
 example, for :samp:`Employee`:
 
 .. code-block:: yaml
-   :linenos:
+    :linenos:
 
-   Employee:
+    Employee:
       type: object
       ...
       x-kwargs:

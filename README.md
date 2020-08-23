@@ -1,11 +1,14 @@
 [![Build Status](https://dev.azure.com/anderssonpublic/anderssonpublic/_apis/build/status/jdkandersson.OpenAlchemy?branchName=master)](https://dev.azure.com/anderssonpublic/anderssonpublic/_build/latest?definitionId=1&branchName=master) ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/anderssonpublic/anderssonpublic/1) [![Documentation Status](https://readthedocs.org/projects/openapi-sqlalchemy/badge/?version=latest)](https://openapi-sqlalchemy.readthedocs.io/en/latest/?badge=latest) ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/jdkandersson/OpenAlchemy) ![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/jdkandersson/OpenAlchemy) ![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/jdkandersson/OpenAlchemy)
+
 # OpenAlchemy
+
 Translates an OpenAPI schema to SQLAlchemy models.
 
 Get started with the online editor that will guide you through using your existing OpenAPI specification to define your database schema:
 [Online Editor](https://editor.openalchemy.io)
 
 ## Installation
+
 ```bash
 python -m pip install OpenAlchemy
 # To be able to load YAML file
@@ -73,6 +76,7 @@ components:
 ```
 
 The SQLALchemy models file then becomes:
+
 ```python
 # models.py
 from open_alchemy import init_yaml
@@ -81,6 +85,7 @@ init_yaml("./examples/simple/example-spec.yml")
 ```
 
 The _Base_ and _Employee_ objects can be accessed:
+
 ```python
 from open_alchemy.models import Base
 from open_alchemy.models import Employee
@@ -103,9 +108,11 @@ An example API has been defined using connexion and Flask here:
 [example connexion app](examples/app)
 
 ## Documentation
+
 [Read the Docs](https://openapi-sqlalchemy.readthedocs.io/en/latest/)
 
 ## Features
+
 - initializing from JSON,
 - initializing from YAML,
 - automatically generate a models file,
@@ -145,31 +152,40 @@ An example API has been defined using connexion and Flask here:
 - `__str__` model methods to support the python `str` function,
 - `__repr__` model methods to support the python `repr` function,
 - `to_dict` model methods to convert instances to dictionaries,
-- `readOnly` and `writeOnly` for influence the conversion to and from dictionaries and
-- exposing created models under `open_alchemy.models` removing the need for `models.py` files.
+- `readOnly` and `writeOnly` for influence the conversion to and from dictionaries,
+- exposing created models under `open_alchemy.models` removing the need for `models.py` files and
+- ability to mix in arbitrary classes into a model.
 
 ## Contributing
+
 Fork and checkout the repository. To install:
+
 ```bash
 python -m venv venv
 source ./venv/bin/activate
 python -m pip install -e .[dev,test]
 ```
+
 To run tests:
+
 ```bash
 tox
 ```
+
 Make your changes and raise a pull request.
 
 ## Compiling Docs
+
 ```bash
 python -m venv venv
 cd docs
 make html
 ```
+
 This creates the `index.html` file in `docs/build/html/index.html`.
 
 ## Release Commands
+
 ```bash
 rm -r dist/*
 python -m pip install --upgrade pip
