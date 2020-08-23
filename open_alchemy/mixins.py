@@ -34,7 +34,7 @@ def _import_mixin(mixin: str) -> typing.Type:
     return class_
 
 
-def get(mixins: typing.List[str]) -> typing.Tuple[typing.Type, ...]:
+def get(*, mixins: typing.List[str]) -> typing.Tuple[typing.Type, ...]:
     """
     Import the mixins.
 

@@ -3,6 +3,7 @@
 # pylint: disable=protected-access,no-member
 
 import copy
+import importlib
 from unittest import mock
 
 import pytest
@@ -10,6 +11,7 @@ from sqlalchemy import schema as sql_schema
 
 from open_alchemy import exceptions
 from open_alchemy import model_factory
+from open_alchemy.facades import sqlalchemy
 
 
 def _mock_get_base(**_):
@@ -546,6 +548,39 @@ def test_table_args_index():
 
     (index,) = model.__table_args__
     assert isinstance(index, sql_schema.Index)
+
+
+@pytest.mark.model
+def test_mixin(monkeypatch):
+    """
+    GIVEN schemas with schema that has a mixin
+    WHEN model_factory is called with the name of the schema
+    THEN a model with the property is returned.
+    """
+    # Define mixin
+    mock_import_module = mock.MagicMock()
+    mixin_class = type(
+        "Mixin1",
+        (),
+        {"property_2": sqlalchemy.column.Column(sqlalchemy.column.Integer)},
+    )
+    mock_import_module.return_value.Mixin1 = mixin_class
+    monkeypatch.setattr(importlib, "import_module", mock_import_module)
+
+    model = model_factory.model_factory(
+        name="SingleProperty",
+        get_base=_mock_get_base,
+        schemas={
+            "SingleProperty": {
+                "x-tablename": "table 1",
+                "type": "object",
+                "x-mixins": "module.Mixin1",
+                "properties": {"property_1": {"type": "integer"}},
+            }
+        },
+    )
+
+    assert hasattr(model, "property_2")
 
 
 class TestGetSchema:
