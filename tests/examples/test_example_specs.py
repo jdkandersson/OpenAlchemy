@@ -183,6 +183,39 @@ def test_single_model_write_only(engine, sessionmaker):
     assert queried_instance.to_dict() == {"id": 1, "name": "name 1"}
 
 
+@pytest.mark.only_this
+@pytest.mark.example
+def test_single_model_mixins(engine, sessionmaker):
+    """
+    GIVEN example spec with mixins
+    WHEN model instance is created with the input dictionary
+    THEN the mixins are added to the model.
+    """
+    filename = "mixins/example-spec.yml"
+    model_name = "Employee"
+    employee_dict = {"name": "employee 1", "division": "division 1"}
+    model, session = helpers.create_model_session(
+        filename=filename,
+        model_name=model_name,
+        engine=engine,
+        sessionmaker=sessionmaker,
+    )
+
+    # Create instance
+    model_instance = model(**employee_dict)
+    session.add(model_instance)
+    session.flush()
+
+    queried_instance = session.query(model).first()
+    assert queried_instance.to_dict() == {
+        "division": "division 1",
+        "id": 1,
+        "name": "employee 1",
+    }
+    assert hasattr(queried_instance, "created_at")
+    assert hasattr(queried_instance, "updated_at")
+
+
 @pytest.mark.parametrize(
     "filename, model_name, sql, expected_contents",
     [

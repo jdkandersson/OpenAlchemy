@@ -66,6 +66,7 @@ setuptools.setup(
             "PyYAML",
             "connexion[swagger-ui]",
             "typeguard",
+            "sqlalchemy_mixins",
         ],
         ":python_version<'3.7'": [
             "dataclasses>=0.7",

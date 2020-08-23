@@ -81,6 +81,7 @@ def model_factory(
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
             **_prepare_model_dict(schema=schema),
+            "__abstract__": False,
         },
     )
 
