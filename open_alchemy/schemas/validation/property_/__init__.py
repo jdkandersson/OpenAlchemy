@@ -51,11 +51,10 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
 class Type(enum.Enum):
     """The type of a property."""
 
-    READ_ONLY = 1
-    SIMPLE = 2
-    JSON = 3
-    RELATIONSHIP = 4
-    BACKREF = 5
+    SIMPLE = 1
+    JSON = 2
+    RELATIONSHIP = 3
+    BACKREF = 4
 
 
 def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
@@ -65,10 +64,10 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
     Assume the property has a valid type.
 
     The rules are:
-    1. if readOnly is True it is READ_ONLY,
-    2. if x-json is True it is JSON,
-    2. if it is type object or array it is RELATIONSHIP and
-    3. otherwise it is SIMPLE.
+    1. if x-json is True it is JSON,
+    2. if the type is integer, number, string or boolean it is SIMPLE,
+    3. if readOnly is true it is BACKREF and
+    4. otherwise it is RELATIONSHIP.
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
@@ -118,7 +117,7 @@ def check(
 
     type_ = calculate_type(schema=property_schema, schemas=schemas)
 
-    if type_ == Type.READ_ONLY:
+    if type_ == Type.BACKREF:
         return read_only.check(schema=property_schema, schemas=schemas)
     if type_ == Type.SIMPLE:
         return simple.check(schema=property_schema, schemas=schemas)
