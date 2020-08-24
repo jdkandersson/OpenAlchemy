@@ -11,16 +11,6 @@ TESTS = [
         (False, "not supported type is not supported"),
         id="type simple not supported",
     ),
-    pytest.param({"type": "integer"}, {}, (True, None), id="type integer",),
-    pytest.param(
-        {"type": "integer", "format": "not supported"},
-        {},
-        (False, "not supported format is not supported for integer"),
-        id="type integer incorrect format",
-    ),
-    pytest.param({"type": "number"}, {}, (True, None), id="type number",),
-    pytest.param({"type": "string"}, {}, (True, None), id="type string",),
-    pytest.param({"type": "boolean"}, {}, (True, None), id="type boolean",),
     pytest.param({"type": "object"}, {}, (True, None), id="type object no properties",),
     pytest.param(
         {"type": "object", "properties": True},

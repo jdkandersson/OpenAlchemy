@@ -245,7 +245,6 @@ CALCULATE_TYPE_TESTS = [
 
 
 @pytest.mark.parametrize("schema, schemas, expected_type", CALCULATE_TYPE_TESTS)
-@pytest.mark.only_this
 @pytest.mark.schemas
 def test_calculate_type(schema, schemas, expected_type):
     """

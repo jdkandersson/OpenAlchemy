@@ -81,8 +81,8 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     """
     try:
         type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-        if type_ in simple.TYPES:
-            return simple.check(schemas, schema)
+
+        assert type_ not in simple.TYPES
 
         if type_ == "object":
             return _check_object(schema=schema, schemas=schemas)

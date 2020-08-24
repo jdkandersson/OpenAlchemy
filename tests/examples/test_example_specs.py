@@ -183,7 +183,6 @@ def test_single_model_write_only(engine, sessionmaker):
     assert queried_instance.to_dict() == {"id": 1, "name": "name 1"}
 
 
-@pytest.mark.only_this
 @pytest.mark.example
 def test_single_model_mixins(engine, sessionmaker):
     """
