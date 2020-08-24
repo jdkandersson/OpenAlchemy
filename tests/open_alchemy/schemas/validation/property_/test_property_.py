@@ -139,8 +139,15 @@ def test_check_type(schema, schemas, expected_result):
 
 CALCULATE_TYPE_TESTS = [
     pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True",),
-    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True $ref",),
-    pytest.param({"x-json": True}, {}, property_.Type.JSON, id="x-json True allOf",),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"x-json": True}},
+        property_.Type.JSON,
+        id="x-json True $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"x-json": True}]}, {}, property_.Type.JSON, id="x-json True allOf",
+    ),
     pytest.param(
         {"x-json": False, "type": "object"},
         {},
@@ -153,12 +160,53 @@ CALCULATE_TYPE_TESTS = [
         property_.Type.SIMPLE,
         id="integer x-json false",
     ),
-    pytest.param({"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True",),
     pytest.param(
-        {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True $ref",
+        {"readOnly": True, "type": "integer"},
+        {},
+        property_.Type.SIMPLE,
+        id="readOnly True integer",
     ),
     pytest.param(
-        {"readOnly": True}, {}, property_.Type.READ_ONLY, id="readOnly True allOf",
+        {"readOnly": True, "type": "number"},
+        {},
+        property_.Type.SIMPLE,
+        id="readOnly True number",
+    ),
+    pytest.param(
+        {"readOnly": True, "type": "string"},
+        {},
+        property_.Type.SIMPLE,
+        id="readOnly True string",
+    ),
+    pytest.param(
+        {"readOnly": True, "type": "boolean"},
+        {},
+        property_.Type.SIMPLE,
+        id="readOnly True boolean",
+    ),
+    pytest.param(
+        {"readOnly": True, "type": "object"},
+        {},
+        property_.Type.BACKREF,
+        id="readOnly True object",
+    ),
+    pytest.param(
+        {"readOnly": True, "type": "array"},
+        {},
+        property_.Type.BACKREF,
+        id="readOnly True array",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"readOnly": True, "type": "object"}},
+        property_.Type.BACKREF,
+        id="readOnly True $ref",
+    ),
+    pytest.param(
+        {"allOf": [{"readOnly": True, "type": "object"}]},
+        {},
+        property_.Type.BACKREF,
+        id="readOnly True allOf",
     ),
     pytest.param(
         {"readOnly": False, "type": "object"},
@@ -175,7 +223,7 @@ CALCULATE_TYPE_TESTS = [
     pytest.param(
         {"readOnly": True, "x-json": True, "type": "object"},
         {},
-        property_.Type.READ_ONLY,
+        property_.Type.JSON,
         id="object readOnly and x-json True",
     ),
     pytest.param({"type": "object"}, {}, property_.Type.RELATIONSHIP, id="object",),
@@ -197,6 +245,7 @@ CALCULATE_TYPE_TESTS = [
 
 
 @pytest.mark.parametrize("schema, schemas, expected_type", CALCULATE_TYPE_TESTS)
+@pytest.mark.only_this
 @pytest.mark.schemas
 def test_calculate_type(schema, schemas, expected_type):
     """

@@ -55,6 +55,7 @@ class Type(enum.Enum):
     SIMPLE = 2
     JSON = 3
     RELATIONSHIP = 4
+    BACKREF = 5
 
 
 def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
@@ -77,18 +78,19 @@ def calculate_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> Type:
         The type of the property.
 
     """
-    read_only_value = helpers.peek.read_only(schema=schema, schemas=schemas)
-    if read_only_value is True:
-        return Type.READ_ONLY
-
     json_value = helpers.peek.json(schema=schema, schemas=schemas)
     if json_value is True:
         return Type.JSON
 
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    if type_ in {"object", "array"}:
-        return Type.RELATIONSHIP
-    return Type.SIMPLE
+    if type_ in simple.TYPES:
+        return Type.SIMPLE
+
+    read_only_value = helpers.peek.read_only(schema=schema, schemas=schemas)
+    if read_only_value is True:
+        return Type.BACKREF
+
+    return Type.RELATIONSHIP
 
 
 def check(
