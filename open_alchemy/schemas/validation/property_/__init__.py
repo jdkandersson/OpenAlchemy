@@ -6,8 +6,8 @@ from .... import exceptions
 from .... import helpers
 from .... import types as oa_types
 from .. import types
+from . import backref
 from . import json
-from . import read_only
 from . import relationship
 from . import simple
 
@@ -118,7 +118,7 @@ def check(
     type_ = calculate_type(schema=property_schema, schemas=schemas)
 
     if type_ == Type.BACKREF:
-        return read_only.check(schema=property_schema, schemas=schemas)
+        return backref.check(schema=property_schema, schemas=schemas)
     if type_ == Type.SIMPLE:
         return simple.check(schema=property_schema, schemas=schemas)
     if type_ == Type.JSON:

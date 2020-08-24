@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation.property_ import read_only
+from open_alchemy.schemas.validation.property_ import backref
 
 TESTS = [
     pytest.param(
@@ -195,6 +195,6 @@ def test_check(schema, schemas, expected_result):
     WHEN check is called with the schemas schema
     THEN the expected result is returned.
     """
-    returned_result = read_only.check(schemas, schema)
+    returned_result = backref.check(schemas, schema)
 
     assert returned_result == expected_result
