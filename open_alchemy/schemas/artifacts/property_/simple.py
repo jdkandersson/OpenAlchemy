@@ -22,7 +22,14 @@ def get(
     """
     type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
     format_ = oa_helpers.peek.format_(schema=schema, schemas=schemas)
+    max_length = oa_helpers.peek.max_length(schema=schema, schemas=schemas)
+
+    autoincrement = oa_helpers.peek.autoincrement(schema=schema, schemas=schemas)
 
     return types.SimplePropertyArtifacts(
-        property_type=helpers.property_.type_.Type.SIMPLE, type_=type_, format_=format_
+        type_=helpers.property_.type_.Type.SIMPLE,
+        open_api=types.OpenApiSimplePropertyArtifacts(
+            type_=type_, format_=format_, max_length=max_length
+        ),
+        extension=types.ExtensionSimplePropertyArtifacts(autoincrement=autoincrement),
     )

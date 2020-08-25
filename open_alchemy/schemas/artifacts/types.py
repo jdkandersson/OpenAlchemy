@@ -11,7 +11,7 @@ from .. import helpers
 class PropertyArtifacts:
     """Information about a property."""
 
-    property_type: typing.Literal[
+    type_: typing.Literal[
         helpers.property_.type_.Type.SIMPLE,
         helpers.property_.type_.Type.JSON,
         helpers.property_.type_.Type.RELATIONSHIP,
@@ -20,13 +20,28 @@ class PropertyArtifacts:
 
 
 @dataclasses.dataclass
-class SimplePropertyArtifacts(PropertyArtifacts):
-    """Information about a simple property."""
-
-    property_type: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+class OpenApiSimplePropertyArtifacts:
+    """OpenAPI artifacts for the simple property."""
 
     type_: str
     format_: typing.Optional[str]
+    max_length: typing.Optional[int]
+
+
+@dataclasses.dataclass
+class ExtensionSimplePropertyArtifacts:
+    """OpenAPI artifacts for the simple property."""
+
+    autoincrement: typing.Optional[bool]
+
+
+@dataclasses.dataclass
+class SimplePropertyArtifacts(PropertyArtifacts):
+    """Information about a simple property."""
+
+    type_: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+    open_api: OpenApiSimplePropertyArtifacts
+    extension: ExtensionSimplePropertyArtifacts
 
 
 TMixins = typing.List[str]
