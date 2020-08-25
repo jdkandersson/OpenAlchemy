@@ -5,6 +5,12 @@ import typing
 
 from ... import types
 
+
+@dataclasses.dataclass
+class PropertyArtifacts:
+    """Information about a property."""
+
+
 TMixins = typing.List[str]
 TKwargs = typing.Dict[str, typing.Any]
 
