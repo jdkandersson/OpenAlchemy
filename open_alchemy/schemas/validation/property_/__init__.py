@@ -13,7 +13,6 @@ from . import json
 from . import relationship
 from . import simple
 
-_SUPPORTED_TYPES: typing.Set[str] = helpers.property_.TYPES
 Type = helpers.property_.type_.Type
 
 
@@ -37,7 +36,7 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
     """
     try:
         type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-        if type_ not in _SUPPORTED_TYPES:
+        if type_ not in helpers.property_.TYPES:
             return types.Result(False, f"{type_} is not a supported type")
         oa_helpers.peek.json(schema=schema, schemas=schemas)
         oa_helpers.peek.read_only(schema=schema, schemas=schemas)

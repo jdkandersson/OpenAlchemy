@@ -49,18 +49,7 @@ def get(
     )
 
     # Remove extension properties from schema
-    properties = [
-        "x-primary-key",
-        "x-index",
-        "x-unique",
-        "x-foreign-key",
-        "x-kwargs",
-        "x-foreign-key-kwargs",
-    ]
-    for prop in properties:
-        if prop not in schema:
-            continue
-        del schema[prop]
+    helpers.clean.extension(schema=schema)
 
     return types.SimplePropertyArtifacts(
         type_=helpers.property_.type_.Type.SIMPLE,
