@@ -21,7 +21,8 @@ def get(
 
     """
     type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+    format_ = oa_helpers.peek.format_(schema=schema, schemas=schemas)
 
     return types.SimplePropertyArtifacts(
-        property_type=helpers.property_.type_.Type.SIMPLE, type_=type_,
+        property_type=helpers.property_.type_.Type.SIMPLE, type_=type_, format_=format_
     )

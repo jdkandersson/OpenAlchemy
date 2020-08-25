@@ -26,6 +26,7 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     property_type: typing.Literal[helpers.property_.type_.Type.SIMPLE]
 
     type_: str
+    format_: typing.Optional[str]
 
 
 TMixins = typing.List[str]

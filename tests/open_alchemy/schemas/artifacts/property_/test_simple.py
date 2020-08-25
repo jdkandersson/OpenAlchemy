@@ -29,6 +29,23 @@ GET_TESTS = [
         "type 1",
         id="allOf type",
     ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "format": "format 1"}, {}, "format_", "format 1", id="format"
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "format": "format 1"}},
+        "format_",
+        "format 1",
+        id="$ref format",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "format": "format 1"}]},
+        {},
+        "format_",
+        "format 1",
+        id="allOf format",
+    ),
 ]
 
 
