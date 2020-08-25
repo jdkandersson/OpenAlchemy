@@ -1,5 +1,7 @@
 """Retrieve artifacts for a JSON property."""
 
+import copy
+
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
@@ -20,7 +22,9 @@ def get(
         The artifacts for the property.
 
     """
-    schema = oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+    schema = copy.deepcopy(
+        oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+    )
 
     nullable = oa_helpers.peek.nullable(schema=schema, schemas=schemas)
 
@@ -39,6 +43,20 @@ def get(
     foreign_key_kwargs = oa_helpers.peek.foreign_key_kwargs(
         schema=schema, schemas=schemas
     )
+
+    # Remove extension properties from schema
+    properties = [
+        "x-primary-key",
+        "x-index",
+        "x-unique",
+        "x-foreign-key",
+        "x-kwargs",
+        "x-foreign-key-kwargs",
+    ]
+    for prop in properties:
+        if prop not in schema:
+            continue
+        del schema[prop]
 
     return types.JsonPropertyArtifacts(
         type_=helpers.property_.type_.Type.JSON,

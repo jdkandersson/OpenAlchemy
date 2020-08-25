@@ -67,13 +67,14 @@ class SimplePropertyArtifacts(PropertyArtifacts):
 class OpenApiJsonPropertyArtifacts:
     """OpenAPI artifacts for the JSON property."""
 
+    schema: typing.Optional[types.Schema]
+
     nullable: typing.Optional[bool]
 
     description: typing.Optional[str]
 
     read_only: typing.Optional[bool]
     write_only: typing.Optional[bool]
-    schema: typing.Optional[types.Schema] = None
 
 
 @dataclasses.dataclass

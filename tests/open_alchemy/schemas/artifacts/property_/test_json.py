@@ -1,5 +1,6 @@
 """Tests for retrieving artifacts of a simple property."""
 
+import copy
 import functools
 
 import pytest
@@ -25,6 +26,20 @@ GET_TESTS = [
         "open_api.schema",
         {"properties": {"prop_1": {"key": "value"}}},
         id="$ref schema deep",
+    ),
+    pytest.param(
+        {
+            "x-primary-key": True,
+            "x-index": True,
+            "x-unique": True,
+            "x-foreign-key": "foreign.key",
+            "x-kwargs": {"key": "value"},
+            "x-foreign-key-kwargs": {"key": "value"},
+        },
+        {},
+        "open_api.schema",
+        {},
+        id="schema remove extension",
     ),
     pytest.param(
         {"allOf": [{"key": "value"}]},
@@ -229,7 +244,10 @@ def test_get(schema, schemas, key, expected_value):
     WHEN get is called with the schema and schemas
     THEN the returned artifacts has the expected value behind the key.
     """
+    original_schemas = copy.deepcopy(schemas)
+
     returned_artifacts = artifacts.property_.json.get(schemas, schema)
 
     value = functools.reduce(getattr, key.split("."), returned_artifacts)
     assert value == expected_value
+    assert schemas == original_schemas
