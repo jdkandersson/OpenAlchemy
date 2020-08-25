@@ -6,6 +6,9 @@ import typing
 from ... import types
 from .. import helpers
 
+TMixins = typing.List[str]
+TKwargs = typing.Dict[str, typing.Any]
+
 
 @dataclasses.dataclass
 class PropertyArtifacts:
@@ -33,6 +36,9 @@ class ExtensionSimplePropertyArtifacts:
     """OpenAPI artifacts for the simple property."""
 
     autoincrement: typing.Optional[bool]
+    kwargs: typing.Optional[TKwargs]
+    foreign_key: typing.Optional[str]
+    foreign_key_kwargs: typing.Optional[TKwargs]
 
 
 @dataclasses.dataclass
@@ -42,10 +48,6 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
-
-
-TMixins = typing.List[str]
-TKwargs = typing.Dict[str, typing.Any]
 
 
 class _ModelTypedDictBase(types.TypedDict, total=False):

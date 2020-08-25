@@ -25,11 +25,21 @@ def get(
     max_length = oa_helpers.peek.max_length(schema=schema, schemas=schemas)
 
     autoincrement = oa_helpers.peek.autoincrement(schema=schema, schemas=schemas)
+    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    foreign_key = oa_helpers.peek.foreign_key(schema=schema, schemas=schemas)
+    foreign_key_kwargs = oa_helpers.peek.foreign_key_kwargs(
+        schema=schema, schemas=schemas
+    )
 
     return types.SimplePropertyArtifacts(
         type_=helpers.property_.type_.Type.SIMPLE,
         open_api=types.OpenApiSimplePropertyArtifacts(
             type_=type_, format_=format_, max_length=max_length
         ),
-        extension=types.ExtensionSimplePropertyArtifacts(autoincrement=autoincrement),
+        extension=types.ExtensionSimplePropertyArtifacts(
+            autoincrement=autoincrement,
+            kwargs=kwargs,
+            foreign_key=foreign_key,
+            foreign_key_kwargs=foreign_key_kwargs,
+        ),
     )
