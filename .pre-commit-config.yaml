@@ -33,4 +33,5 @@ repos:
   - repo: https://github.com/prettier/prettier
     rev: "2.0.5"
     hooks:
-      - id: prettier
+      - exclude: "^docs.*.yaml$"
+        id: prettier
