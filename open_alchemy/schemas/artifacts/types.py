@@ -67,27 +67,27 @@ class SimplePropertyArtifacts(PropertyArtifacts):
 class OpenApiJsonPropertyArtifacts:
     """OpenAPI artifacts for the JSON property."""
 
-    schema: types.Schema = {}
-    nullable: typing.Optional[bool] = None
+    nullable: typing.Optional[bool]
 
-    description: typing.Optional[str] = None
+    description: typing.Optional[str]
 
-    read_only: typing.Optional[bool] = None
-    write_only: typing.Optional[bool] = None
+    read_only: typing.Optional[bool]
+    write_only: typing.Optional[bool]
+    schema: typing.Optional[types.Schema] = None
 
 
 @dataclasses.dataclass
 class ExtensionJsonPropertyArtifacts:
     """OpenAPI artifacts for the JSON property."""
 
-    primary_key: bool = False
-    index: typing.Optional[bool] = None
-    unique: typing.Optional[bool] = None
+    primary_key: bool
+    index: typing.Optional[bool]
+    unique: typing.Optional[bool]
 
-    foreign_key: typing.Optional[str] = None
+    foreign_key: typing.Optional[str]
 
-    kwargs: typing.Optional[TKwargs] = None
-    foreign_key_kwargs: typing.Optional[TKwargs] = None
+    kwargs: typing.Optional[TKwargs]
+    foreign_key_kwargs: typing.Optional[TKwargs]
 
 
 @dataclasses.dataclass
