@@ -43,9 +43,14 @@ class OpenApiSimplePropertyArtifacts:
 class ExtensionSimplePropertyArtifacts:
     """OpenAPI artifacts for the simple property."""
 
+    primary_key: bool
     autoincrement: typing.Optional[bool]
-    kwargs: typing.Optional[TKwargs]
+    index: typing.Optional[bool]
+    unique: typing.Optional[bool]
+
     foreign_key: typing.Optional[str]
+
+    kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
 
 

@@ -32,9 +32,14 @@ def get(
     read_only = oa_helpers.peek.read_only(schema=schema, schemas=schemas)
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
 
+    primary_key = oa_helpers.peek.primary_key(schema=schema, schemas=schemas)
     autoincrement = oa_helpers.peek.autoincrement(schema=schema, schemas=schemas)
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    index = oa_helpers.peek.index(schema=schema, schemas=schemas)
+    unique = oa_helpers.peek.unique(schema=schema, schemas=schemas)
+
     foreign_key = oa_helpers.peek.foreign_key(schema=schema, schemas=schemas)
+
+    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
     foreign_key_kwargs = oa_helpers.peek.foreign_key_kwargs(
         schema=schema, schemas=schemas
     )
@@ -52,9 +57,12 @@ def get(
             write_only=write_only,
         ),
         extension=types.ExtensionSimplePropertyArtifacts(
+            primary_key=primary_key,
             autoincrement=autoincrement,
-            kwargs=kwargs,
+            index=index,
+            unique=unique,
             foreign_key=foreign_key,
+            kwargs=kwargs,
             foreign_key_kwargs=foreign_key_kwargs,
         ),
     )
