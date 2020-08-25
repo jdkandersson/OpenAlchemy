@@ -1,5 +1,7 @@
 """Retrieve artifacts for a simple property."""
 
+import copy
+
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
@@ -20,6 +22,8 @@ def get(
         The artifacts for the property.
 
     """
+    schema = copy.deepcopy(oa_helpers.schema.prepare(schema=schema, schemas=schemas))
+
     type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
     format_ = oa_helpers.peek.format_(schema=schema, schemas=schemas)
     max_length = oa_helpers.peek.max_length(schema=schema, schemas=schemas)
@@ -44,8 +48,23 @@ def get(
         schema=schema, schemas=schemas
     )
 
+    # Remove extension properties from schema
+    properties = [
+        "x-primary-key",
+        "x-index",
+        "x-unique",
+        "x-foreign-key",
+        "x-kwargs",
+        "x-foreign-key-kwargs",
+    ]
+    for prop in properties:
+        if prop not in schema:
+            continue
+        del schema[prop]
+
     return types.SimplePropertyArtifacts(
         type_=helpers.property_.type_.Type.SIMPLE,
+        schema=schema,
         open_api=types.OpenApiSimplePropertyArtifacts(
             type_=type_,
             format_=format_,

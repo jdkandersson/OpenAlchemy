@@ -60,8 +60,8 @@ def get(
 
     return types.JsonPropertyArtifacts(
         type_=helpers.property_.type_.Type.JSON,
+        schema=schema,
         open_api=types.OpenApiJsonPropertyArtifacts(
-            schema=schema,
             nullable=nullable,
             description=description,
             read_only=read_only,

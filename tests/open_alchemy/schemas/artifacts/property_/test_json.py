@@ -10,20 +10,21 @@ from open_alchemy.schemas.helpers.property_ import type_
 
 GET_TESTS = [
     pytest.param({}, {}, "type_", type_.Type.JSON, id="property type"),
-    pytest.param(
-        {"key": "value"}, {}, "open_api.schema", {"key": "value"}, id="schema"
-    ),
+    pytest.param({"key": "value"}, {}, "schema", {"key": "value"}, id="schema"),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"key": "value"}},
-        "open_api.schema",
+        "schema",
         {"key": "value"},
         id="$ref schema",
     ),
     pytest.param(
+        {"allOf": [{"key": "value"}]}, {}, "schema", {"key": "value"}, id="schema",
+    ),
+    pytest.param(
         {"properties": {"prop_1": {"$ref": "#/components/schemas/RefSchema"}}},
         {"RefSchema": {"key": "value"}},
-        "open_api.schema",
+        "schema",
         {"properties": {"prop_1": {"key": "value"}}},
         id="$ref schema deep",
     ),
@@ -37,16 +38,9 @@ GET_TESTS = [
             "x-foreign-key-kwargs": {"key": "value"},
         },
         {},
-        "open_api.schema",
+        "schema",
         {},
         id="schema remove extension",
-    ),
-    pytest.param(
-        {"allOf": [{"key": "value"}]},
-        {},
-        "open_api.schema",
-        {"key": "value"},
-        id="schema",
     ),
     pytest.param({}, {}, "open_api.nullable", None, id="nullable undefined"),
     pytest.param({"nullable": True}, {}, "open_api.nullable", True, id="nullable",),

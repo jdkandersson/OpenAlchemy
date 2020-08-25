@@ -20,6 +20,7 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.RELATIONSHIP,
         helpers.property_.type_.Type.BACKREF,
     ]
+    schema: typing.Optional[types.Schema]
 
 
 @dataclasses.dataclass
@@ -66,8 +67,6 @@ class SimplePropertyArtifacts(PropertyArtifacts):
 @dataclasses.dataclass
 class OpenApiJsonPropertyArtifacts:
     """OpenAPI artifacts for the JSON property."""
-
-    schema: typing.Optional[types.Schema]
 
     nullable: typing.Optional[bool]
 

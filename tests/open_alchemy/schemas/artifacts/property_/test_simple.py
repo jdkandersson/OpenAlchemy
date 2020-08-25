@@ -1,5 +1,6 @@
 """Tests for retrieving artifacts of a simple property."""
 
+import copy
 import functools
 import typing
 
@@ -12,6 +13,42 @@ DEFAULT_SCHEMA: typing.Any = {"type": "default type"}
 GET_TESTS = [
     pytest.param(
         {**DEFAULT_SCHEMA}, {}, "type_", type_.Type.SIMPLE, id="property type"
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "key": "value"},
+        {},
+        "schema",
+        {**DEFAULT_SCHEMA, "key": "value"},
+        id="schema",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "key": "value"}},
+        "schema",
+        {**DEFAULT_SCHEMA, "key": "value"},
+        id="$ref schema",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "key": "value"}]},
+        {},
+        "schema",
+        {**DEFAULT_SCHEMA, "key": "value"},
+        id="schema",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "x-primary-key": True,
+            "x-index": True,
+            "x-unique": True,
+            "x-foreign-key": "foreign.key",
+            "x-kwargs": {"key": "value"},
+            "x-foreign-key-kwargs": {"key": "value"},
+        },
+        {},
+        "schema",
+        {**DEFAULT_SCHEMA},
+        id="schema remove extension",
     ),
     pytest.param(
         {**DEFAULT_SCHEMA, "type": "type 1"}, {}, "open_api.type_", "type 1", id="type"
@@ -390,7 +427,10 @@ def test_get(schema, schemas, key, expected_value):
     WHEN get is called with the schema and schemas
     THEN the returned artifacts has the expected value behind the key.
     """
+    original_schemas = copy.deepcopy(schemas)
+
     returned_artifacts = artifacts.property_.simple.get(schemas, schema)
 
     value = functools.reduce(getattr, key.split("."), returned_artifacts)
     assert value == expected_value
+    assert schemas == original_schemas
