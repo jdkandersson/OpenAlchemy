@@ -29,6 +29,14 @@ class OpenApiSimplePropertyArtifacts:
     type_: str
     format_: typing.Optional[str]
     max_length: typing.Optional[int]
+    nullable: typing.Optional[bool]
+
+    description: typing.Optional[str]
+
+    default: typing.Optional[typing.Union[int, float, str, bool]]
+
+    read_only: typing.Optional[bool]
+    write_only: typing.Optional[bool]
 
 
 @dataclasses.dataclass

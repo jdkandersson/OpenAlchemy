@@ -171,6 +171,130 @@ GET_TESTS = [
         {"key_3": "value 3"},
         id="allOf x-foreign-key-kwargs",
     ),
+    pytest.param(
+        {**DEFAULT_SCHEMA}, {}, "open_api.nullable", None, id="nullable undefined"
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "nullable": True},
+        {},
+        "open_api.nullable",
+        True,
+        id="nullable",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "nullable": False}},
+        "open_api.nullable",
+        False,
+        id="$ref nullable",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "nullable": None}]},
+        {},
+        "open_api.nullable",
+        None,
+        id="allOf nullable",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA}, {}, "open_api.description", None, id="description undefined"
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "description": "description 1"},
+        {},
+        "open_api.description",
+        "description 1",
+        id="description",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "description": "description  2"}},
+        "open_api.description",
+        "description  2",
+        id="$ref description",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3"}]},
+        {},
+        "open_api.description",
+        "description 3",
+        id="allOf description",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "type": "integer"},
+        {},
+        "open_api.default",
+        None,
+        id="default undefined",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "type": "integer", "default": 1},
+        {},
+        "open_api.default",
+        1,
+        id="default",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "type": "integer", "default": 2}},
+        "open_api.default",
+        2,
+        id="$ref default",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "type": "integer", "default": 3}]},
+        {},
+        "open_api.default",
+        3,
+        id="allOf default",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA}, {}, "open_api.read_only", None, id="readOnly undefined"
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "readOnly": True},
+        {},
+        "open_api.read_only",
+        True,
+        id="readOnly",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "readOnly": False}},
+        "open_api.read_only",
+        False,
+        id="$ref readOnly",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "readOnly": None}]},
+        {},
+        "open_api.read_only",
+        None,
+        id="allOf readOnly",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA}, {}, "open_api.write_only", None, id="writeOnly undefined"
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "writeOnly": True},
+        {},
+        "open_api.write_only",
+        True,
+        id="writeOnly",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "writeOnly": False}},
+        "open_api.write_only",
+        False,
+        id="$ref writeOnly",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "writeOnly": None}]},
+        {},
+        "open_api.write_only",
+        None,
+        id="allOf writeOnly",
+    ),
 ]
 
 
