@@ -63,6 +63,42 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     extension: ExtensionSimplePropertyArtifacts
 
 
+@dataclasses.dataclass
+class OpenApiJsonPropertyArtifacts:
+    """OpenAPI artifacts for the JSON property."""
+
+    schema: types.Schema = {}
+    nullable: typing.Optional[bool] = None
+
+    description: typing.Optional[str] = None
+
+    read_only: typing.Optional[bool] = None
+    write_only: typing.Optional[bool] = None
+
+
+@dataclasses.dataclass
+class ExtensionJsonPropertyArtifacts:
+    """OpenAPI artifacts for the JSON property."""
+
+    primary_key: bool = False
+    index: typing.Optional[bool] = None
+    unique: typing.Optional[bool] = None
+
+    foreign_key: typing.Optional[str] = None
+
+    kwargs: typing.Optional[TKwargs] = None
+    foreign_key_kwargs: typing.Optional[TKwargs] = None
+
+
+@dataclasses.dataclass
+class JsonPropertyArtifacts(PropertyArtifacts):
+    """Information about a JSON property."""
+
+    type_: typing.Literal[helpers.property_.type_.Type.JSON]
+    open_api: OpenApiJsonPropertyArtifacts
+    extension: ExtensionJsonPropertyArtifacts
+
+
 class _ModelTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the model artifacts."""
 
