@@ -4,11 +4,28 @@ import dataclasses
 import typing
 
 from ... import types
+from .. import helpers
 
 
 @dataclasses.dataclass
 class PropertyArtifacts:
     """Information about a property."""
+
+    property_type: typing.Literal[
+        helpers.property_.type_.Type.SIMPLE,
+        helpers.property_.type_.Type.JSON,
+        helpers.property_.type_.Type.RELATIONSHIP,
+        helpers.property_.type_.Type.BACKREF,
+    ]
+
+
+@dataclasses.dataclass
+class SimplePropertyArtifacts(PropertyArtifacts):
+    """Information about a simple property."""
+
+    property_type: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+
+    type_: str
 
 
 TMixins = typing.List[str]

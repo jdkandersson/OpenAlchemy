@@ -1,6 +1,7 @@
 """Validation for properties."""
 
 import enum
+import typing
 
 from .... import exceptions
 from .... import helpers as oa_helpers
@@ -12,7 +13,7 @@ from . import json
 from . import relationship
 from . import simple
 
-_SUPPORTED_TYPES = helpers.property_.TYPES
+_SUPPORTED_TYPES: typing.Set[str] = helpers.property_.TYPES
 Type = helpers.property_.type_.Type
 
 

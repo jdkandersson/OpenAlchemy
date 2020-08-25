@@ -6,6 +6,7 @@ from ... import types as _oa_types
 from .. import helpers as _helpers
 from .. import validation
 from . import model
+from . import property_
 from . import types
 
 
