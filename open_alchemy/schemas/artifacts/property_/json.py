@@ -20,6 +20,8 @@ def get(
         The artifacts for the property.
 
     """
+    schema = oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+
     nullable = oa_helpers.peek.nullable(schema=schema, schemas=schemas)
 
     description = oa_helpers.peek.description(schema=schema, schemas=schemas)
@@ -41,6 +43,7 @@ def get(
     return types.JsonPropertyArtifacts(
         type_=helpers.property_.type_.Type.JSON,
         open_api=types.OpenApiJsonPropertyArtifacts(
+            schema=schema,
             nullable=nullable,
             description=description,
             read_only=read_only,
