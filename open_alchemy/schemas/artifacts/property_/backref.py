@@ -1,14 +1,12 @@
 """Retrieve artifacts for backref property."""
 
+import copy
 import typing
 
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
 from .. import types
-
-# import copy
-
 
 OPEN_API_TO_SUB_TYPE: typing.Dict[
     str,
@@ -36,6 +34,10 @@ def get(
         The artifacts for the property.
 
     """
+    schema = copy.deepcopy(
+        oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+    )
+
     type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
@@ -56,6 +58,6 @@ def get(
     return types.BackrefPropertyArtifacts(
         type_=helpers.property_.type_.Type.BACKREF,
         sub_type=sub_type,
-        schema={},
+        schema=schema,
         properties=list(properties_names),
     )

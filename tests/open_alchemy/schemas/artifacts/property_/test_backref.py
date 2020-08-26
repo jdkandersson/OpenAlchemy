@@ -50,7 +50,11 @@ GET_TESTS = [
         id="properties object empty",
     ),
     pytest.param(
-        {**DEFAULT_SCHEMA, "type": "object", "properties": {"prop_1": "value 1"}},
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
         {},
         "properties",
         ["prop_1"],
@@ -60,7 +64,10 @@ GET_TESTS = [
         {
             **DEFAULT_SCHEMA,
             "type": "object",
-            "properties": {"prop_1": "value 1", "prop_2": "value 2"},
+            "properties": {
+                "prop_1": {"key_1": "value 1"},
+                "prop_2": {"key_2": "value 2"},
+            },
         },
         {},
         "properties",
@@ -71,7 +78,7 @@ GET_TESTS = [
         {
             **DEFAULT_SCHEMA,
             "type": "array",
-            "items": {"properties": {"prop_1": "value 1"}},
+            "items": {"properties": {"prop_1": {"key_1": "value 1"}}},
         },
         {},
         "properties",
@@ -84,7 +91,7 @@ GET_TESTS = [
             "RefSchema": {
                 **DEFAULT_SCHEMA,
                 "type": "array",
-                "items": {"properties": {"prop_1": "value 1"}},
+                "items": {"properties": {"prop_1": {"key_1": "value 1"}}},
             }
         },
         "properties",
@@ -97,7 +104,7 @@ GET_TESTS = [
                 {
                     **DEFAULT_SCHEMA,
                     "type": "array",
-                    "items": {"properties": {"prop_1": "value 1"}},
+                    "items": {"properties": {"prop_1": {"key_1": "value 1"}}},
                 }
             ]
         },
@@ -105,6 +112,53 @@ GET_TESTS = [
         "properties",
         ["prop_1"],
         id="allOf properties array single",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        {},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        id="schema",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "type": "object",
+                "properties": {"prop_1": {"key_1": "value 1"}},
+            }
+        },
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        id="$ref schema",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"$ref": "#/components/schemas/RefSchema"}},
+        },
+        {"RefSchema": {"key_1": "value 1"}},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        id="schema properties $ref",
     ),
 ]
 
