@@ -4,6 +4,7 @@ import dataclasses
 import enum
 import typing
 
+from ... import helpers as oa_helpers
 from ... import types
 from .. import helpers
 
@@ -100,6 +101,86 @@ class JsonPropertyArtifacts(PropertyArtifacts):
     extension: ExtensionJsonPropertyArtifacts
 
 
+@dataclasses.dataclass
+class RelationshipPropertyArtifacts(PropertyArtifacts):
+    """Information about a relationship property."""
+
+    type_: typing.Literal[helpers.property_.type_.Type.RELATIONSHIP]
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_ONE,
+        oa_helpers.relationship.Type.ONE_TO_ONE,
+        oa_helpers.relationship.Type.ONE_TO_MANY,
+        oa_helpers.relationship.Type.MANY_TO_MANY,
+    ]
+    parent: str
+    backref_property: typing.Optional[str]
+    kwargs: typing.Optional[TKwargs]
+    write_only: typing.Optional[bool]
+
+
+@dataclasses.dataclass
+class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
+    """Information about a relationship that is not many-to-many property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_ONE,
+        oa_helpers.relationship.Type.ONE_TO_ONE,
+        oa_helpers.relationship.Type.ONE_TO_MANY,
+    ]
+    foreign_key: str
+    foreign_key_property: str
+
+
+@dataclasses.dataclass
+class OneToManyRelationshipPropertyArtifacts(
+    NotManyToManyRelationshipPropertyArtifacts
+):
+    """Information about a one-to-many relationship property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.ONE_TO_MANY,
+    ]
+
+
+@dataclasses.dataclass
+class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtifacts):
+    """Information about a x-to-one relationship property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_ONE,
+        oa_helpers.relationship.Type.ONE_TO_ONE,
+    ]
+    nullable: typing.Optional[bool]
+
+
+@dataclasses.dataclass
+class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
+    """Information about a many-to-one relationship property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_ONE,
+    ]
+
+
+@dataclasses.dataclass
+class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
+    """Information about a one-to-one relationship property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.ONE_TO_ONE,
+    ]
+
+
+@dataclasses.dataclass
+class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
+    """Information about a x-to-one relationship property."""
+
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_MANY,
+    ]
+    secondary: str
+
+
 class BackrefSubType(enum.Enum):
     """The possible types of backreferences."""
 
@@ -109,7 +190,7 @@ class BackrefSubType(enum.Enum):
 
 @dataclasses.dataclass
 class BackrefPropertyArtifacts(PropertyArtifacts):
-    """Information about a JSON property."""
+    """Information about a back reference property."""
 
     type_: typing.Literal[helpers.property_.type_.Type.BACKREF]
     sub_type: typing.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
