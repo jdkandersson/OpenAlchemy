@@ -1,6 +1,7 @@
 """The artifact types."""
 
 import dataclasses
+import enum
 import typing
 
 from ... import types
@@ -97,6 +98,22 @@ class JsonPropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.JSON]
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
+
+
+class BackrefSubType(enum.Enum):
+    """The possible types of backreferences."""
+
+    OBJECT = 1
+    ARRAY = 2
+
+
+@dataclasses.dataclass
+class BackrefPropertyArtifacts(PropertyArtifacts):
+    """Information about a JSON property."""
+
+    type_: typing.Literal[helpers.property_.type_.Type.BACKREF]
+    sub_type: typing.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
+    properties: typing.List[str]
 
 
 class _ModelTypedDictBase(types.TypedDict, total=False):
