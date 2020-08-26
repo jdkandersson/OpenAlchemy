@@ -40,9 +40,22 @@ def get(
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
+    properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
+    if sub_type == types.BackrefSubType.OBJECT:
+        properties_items = helpers.iterate.properties_items(
+            schema=schema, schemas=schemas
+        )
+    else:
+        items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+        assert items_schema is not None
+        properties_items = helpers.iterate.properties_items(
+            schema=items_schema, schemas=schemas
+        )
+    properties_names = map(lambda args: args[0], properties_items)
+
     return types.BackrefPropertyArtifacts(
         type_=helpers.property_.type_.Type.BACKREF,
         sub_type=sub_type,
         schema={},
-        properties=[],
+        properties=list(properties_names),
     )

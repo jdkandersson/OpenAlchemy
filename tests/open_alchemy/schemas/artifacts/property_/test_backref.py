@@ -19,21 +19,92 @@ GET_TESTS = [
         {},
         "sub_type",
         artifacts.types.BackrefSubType.OBJECT,
-        id="sub type",
+        id="sub type object",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
-        {"RefSchema": {**DEFAULT_SCHEMA, "type": "array"}},
+        {"RefSchema": {**DEFAULT_SCHEMA, "type": "array", "items": {}}},
         "sub_type",
         artifacts.types.BackrefSubType.ARRAY,
-        id="$ref sub type",
+        id="$ref sub type array",
     ),
     pytest.param(
         {"allOf": [{**DEFAULT_SCHEMA, "type": "object"}]},
         {},
         "sub_type",
         artifacts.types.BackrefSubType.OBJECT,
-        id="allOf sub type",
+        id="allOf sub type object",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "type": "object"},
+        {},
+        "properties",
+        [],
+        id="properties object no properties",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "type": "object", "properties": {}},
+        {},
+        "properties",
+        [],
+        id="properties object empty",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "type": "object", "properties": {"prop_1": "value 1"}},
+        {},
+        "properties",
+        ["prop_1"],
+        id="properties object single",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": "value 1", "prop_2": "value 2"},
+        },
+        {},
+        "properties",
+        ["prop_1", "prop_2"],
+        id="properties object multiple",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "array",
+            "items": {"properties": {"prop_1": "value 1"}},
+        },
+        {},
+        "properties",
+        ["prop_1"],
+        id="properties array single",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "type": "array",
+                "items": {"properties": {"prop_1": "value 1"}},
+            }
+        },
+        "properties",
+        ["prop_1"],
+        id="$ref properties array single",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "type": "array",
+                    "items": {"properties": {"prop_1": "value 1"}},
+                }
+            ]
+        },
+        {},
+        "properties",
+        ["prop_1"],
+        id="allOf properties array single",
     ),
 ]
 
