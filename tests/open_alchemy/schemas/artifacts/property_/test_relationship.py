@@ -791,6 +791,54 @@ GET_TESTS = [
         artifacts.types.OneToManyRelationshipPropertyArtifacts,
         id="foreign key property one-to-many",
     ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        "nullable",
+        None,
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="nullable undefined",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": True}]},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        "nullable",
+        True,
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="nullable many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "nullable": True,
+            }
+        },
+        "nullable",
+        None,
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="nullable many-to-one skip_ref",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": False}]},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-uselist": False,
+            }
+        },
+        "nullable",
+        False,
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="nullable one-to-one",
+    ),
 ]
 
 
