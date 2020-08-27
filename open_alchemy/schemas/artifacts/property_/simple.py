@@ -1,7 +1,5 @@
 """Retrieve artifacts for a simple property."""
 
-import copy
-
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
@@ -23,8 +21,6 @@ def get(
         The artifacts for the property.
 
     """
-    schema = copy.deepcopy(oa_helpers.schema.prepare(schema=schema, schemas=schemas))
-
     type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
     format_ = oa_helpers.peek.format_(schema=schema, schemas=schemas)
     max_length = oa_helpers.peek.max_length(schema=schema, schemas=schemas)
@@ -49,12 +45,28 @@ def get(
         schema=schema, schemas=schemas
     )
 
-    # Remove extension properties from schema
-    helpers.clean.extension(schema=schema)
+    # Generate the schema
+    schema_artifact: oa_types.ColumnSchema = {
+        "type": type_,
+    }
+    if format_ is not None:
+        schema_artifact["format"] = format_
+    if max_length is not None:
+        schema_artifact["maxLength"] = max_length
+    if description is not None:
+        schema_artifact["description"] = description
+    if nullable is not None:
+        schema_artifact["nullable"] = nullable
+    if default is not None:
+        schema_artifact["default"] = default
+    if read_only is not None:
+        schema_artifact["readOnly"] = read_only
+    if write_only is not None:
+        schema_artifact["writeOnly"] = write_only
 
     return types.SimplePropertyArtifacts(
         type_=helpers.property_.type_.Type.SIMPLE,
-        schema=schema,
+        schema=schema_artifact,
         required=required,
         open_api=types.OpenApiSimplePropertyArtifacts(
             type_=type_,

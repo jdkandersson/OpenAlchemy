@@ -23,7 +23,12 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.BACKREF,
     ]
     schema: typing.Optional[
-        typing.Union[types.Schema, types.ObjectRefSchema, types.ArrayRefSchema]
+        typing.Union[
+            types.Schema,
+            types.ColumnSchema,
+            types.ObjectRefSchema,
+            types.ArrayRefSchema,
+        ]
     ]
     required: typing.Optional[bool]
 
@@ -67,7 +72,7 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
-    schema: types.Schema
+    schema: types.ColumnSchema
 
 
 @dataclasses.dataclass
@@ -212,6 +217,7 @@ class BackrefPropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.BACKREF]
     sub_type: typing.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
     properties: typing.List[str]
+    schema: types.Schema
 
 
 class _ModelTypedDictBase(types.TypedDict, total=False):
