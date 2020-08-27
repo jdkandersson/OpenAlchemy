@@ -166,6 +166,11 @@ def _check_array_root(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check for invalid keys at the array schema root."""
+    # Check description
+    helpers.peek.description(schema=schema, schemas=schemas)
+    # Check writeOnly
+    helpers.peek.write_only(schema=schema, schemas=schemas)
+
     # Check secondary
     if (
         helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-secondary")
