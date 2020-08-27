@@ -744,6 +744,53 @@ GET_TESTS = [
         artifacts.types.OneToManyRelationshipPropertyArtifacts,
         id="foreign key one-to-many",
     ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        "foreign_key_property",
+        "ref_schema_id",
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="foreign key property many-to-one",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-foreign-key-column": "name"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        "foreign_key_property",
+        "ref_schema_name",
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="foreign key property set many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-uselist": False,
+            }
+        },
+        "foreign_key_property",
+        "ref_schema_id",
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="foreign key property one-to-one",
+    ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        "foreign_key_property",
+        "schema_ref_schema_id",
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="foreign key property one-to-many",
+    ),
 ]
 
 
@@ -759,9 +806,10 @@ def test_get(required, schema, schemas, key, expected_value, expected_type):
     THEN the returned artifacts has the expected value behind the key.
     """
     parent_schema = {"x-tablename": "schema"}
+    property_name = "ref_schema"
 
     returned_artifacts = artifacts.property_.relationship.get(
-        schemas, parent_schema, schema, required
+        schemas, parent_schema, property_name, schema, required
     )
 
     assert isinstance(returned_artifacts, expected_type)

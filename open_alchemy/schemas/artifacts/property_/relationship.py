@@ -99,8 +99,36 @@ def _get_foreign_key(
     )
 
 
+def _get_foreign_key_property(
+    *,
+    relationship_type: oa_helpers.relationship.Type,
+    schema: oa_types.Schema,
+    property_name: str,
+    parent_schema: oa_types.Schema,
+    schemas: oa_types.Schemas
+) -> str:
+    """Calculate the foreign key property."""
+    column_name = oa_helpers.foreign_key.calculate_column_name(
+        type_=relationship_type, property_schema=schema, schemas=schemas,
+    )
+    target_schema = oa_helpers.foreign_key.get_target_schema(
+        type_=relationship_type,
+        parent_schema=parent_schema,
+        property_schema=schema,
+        schemas=schemas,
+    )
+    return oa_helpers.foreign_key.calculate_prop_name(
+        type_=relationship_type,
+        column_name=column_name,
+        property_name=property_name,
+        target_schema=target_schema,
+        schemas=schemas,
+    )
+
+
 def _get_many_to_one(
     *,
+    property_name: str,
     schema: oa_types.Schema,
     parent_schema: oa_types.Schema,
     schemas: oa_types.Schemas
@@ -110,6 +138,7 @@ def _get_many_to_one(
 
     Args:
         schemas: All the defined schemas.
+        property_name: The name of the property.
         schema: The schema of the relationship property to gather artifacts for.
         parent_schema: The schema that contains the property.
 
@@ -140,13 +169,20 @@ def _get_many_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        foreign_key_property="",
+        foreign_key_property=_get_foreign_key_property(
+            relationship_type=sub_type,
+            property_name=property_name,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
         nullable=None,
     )
 
 
 def _get_one_to_one(
     *,
+    property_name: str,
     schema: oa_types.Schema,
     parent_schema: oa_types.Schema,
     schemas: oa_types.Schemas
@@ -156,7 +192,9 @@ def _get_one_to_one(
 
     Args:
         schemas: All the defined schemas.
+        property_name: The name of the property.
         schema: The schema of the relationship property to gather artifacts for.
+        parent_schema: The schema that contains the property.
 
     Returns:
         The artifacts for the property.
@@ -185,7 +223,13 @@ def _get_one_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        foreign_key_property="",
+        foreign_key_property=_get_foreign_key_property(
+            relationship_type=sub_type,
+            property_name=property_name,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
         nullable=None,
     )
 
@@ -211,6 +255,7 @@ def _calculate_one_to_x_schema(
 
 def _get_one_to_many(
     *,
+    property_name: str,
     schema: oa_types.Schema,
     parent_schema: oa_types.Schema,
     schemas: oa_types.Schemas
@@ -220,7 +265,9 @@ def _get_one_to_many(
 
     Args:
         schemas: All the defined schemas.
+        property_name: The name of the property.
         schema: The schema of the relationship property to gather artifacts for.
+        parent_schema: The schema that contains the property.
 
     Returns:
         The artifacts for the property.
@@ -252,12 +299,19 @@ def _get_one_to_many(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        foreign_key_property="",
+        foreign_key_property=_get_foreign_key_property(
+            relationship_type=sub_type,
+            property_name=property_name,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
     )
 
 
 def _get_many_to_many(
     *,
+    property_name: str,  # pylint: disable=unused-argument
     schema: oa_types.Schema,
     parent_schema: oa_types.Schema,  # pylint: disable=unused-argument
     schemas: oa_types.Schemas
@@ -267,7 +321,9 @@ def _get_many_to_many(
 
     Args:
         schemas: All the defined schemas.
+        property_name: The name of the property.
         schema: The schema of the relationship property to gather artifacts for.
+        parent_schema: The schema that contains the property.
 
     Returns:
         The artifacts for the property.
@@ -305,6 +361,7 @@ _GET_MAPPING = {
 def get(
     schemas: oa_types.Schemas,
     parent_schema: oa_types.Schema,
+    property_name: str,
     schema: oa_types.Schema,
     required: bool,
 ) -> types.TAnyRelationshipPropertyArtifacts:
@@ -313,6 +370,8 @@ def get(
 
     Args:
         schemas: All the defined schemas.
+        parent_schema: The schema that contains the property.
+        property_name: The name of the property.
         schema: The schema of the relationship property to gather artifacts for.
         required: WHether the property appears in the required list.
 
@@ -323,7 +382,10 @@ def get(
     sub_type = oa_helpers.relationship.calculate_type(schema=schema, schemas=schemas)
 
     artifacts = _GET_MAPPING[sub_type](
-        schema=schema, schemas=schemas, parent_schema=parent_schema
+        property_name=property_name,
+        schema=schema,
+        schemas=schemas,
+        parent_schema=parent_schema,
     )
     artifacts.required = required
 
