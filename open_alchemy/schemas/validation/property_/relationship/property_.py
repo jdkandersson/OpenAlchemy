@@ -44,7 +44,7 @@ def _check_object_ref(
         return types.Result(False, "not a reference to another object")
 
     # Check referenced schema is constructable
-    _, ref_schema = helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
+    _, ref_schema = helpers.ref.get_ref(ref=ref, schemas=schemas)
     if not helpers.schema.constructable(schema=ref_schema, schemas=schemas):
         return types.Result(False, "referenced schema not constructable")
 

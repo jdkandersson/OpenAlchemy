@@ -12,7 +12,7 @@ def _get_parent(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str:
     """Retrieve the parent name from an object reference."""
     ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
     assert ref is not None
-    parent, _ = oa_helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
+    parent, _ = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
     return parent
 
 

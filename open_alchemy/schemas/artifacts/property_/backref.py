@@ -43,7 +43,7 @@ def get(
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
     properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
-    if sub_type == types.BackrefSubType.OBJECT:
+    if sub_type == types.BackrefSubType.OBJECT:  # noqa: E721
         properties_items = helpers.iterate.properties_items(
             schema=schema, schemas=schemas
         )

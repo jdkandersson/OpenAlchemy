@@ -189,7 +189,7 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": True},]},
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": True}]},
         {"RefSchema": {"type": "object", "nullable": False}},
         "schema",
         {"type": "object", "x-de-$ref": "RefSchema", "nullable": True},
@@ -198,7 +198,7 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"writeOnly": True},]},
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"writeOnly": True}]},
         {"RefSchema": {"type": "object", "writeOnly": False}},
         "schema",
         {"type": "object", "x-de-$ref": "RefSchema", "writeOnly": True},
