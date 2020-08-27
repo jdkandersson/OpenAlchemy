@@ -328,13 +328,7 @@ def _get_secondary(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str
     return secondary
 
 
-def _get_many_to_many(
-    *,
-    property_name: str,  # pylint: disable=unused-argument
-    schema: oa_types.Schema,
-    parent_schema: oa_types.Schema,  # pylint: disable=unused-argument
-    schemas: oa_types.Schemas
-):
+def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_):
     """
     Retrieve the artifacts for a many-to-many relationship property.
 
@@ -369,7 +363,7 @@ def _get_many_to_many(
     )
 
 
-_GET_MAPPING = {
+_GET_MAPPING: typing.Dict[oa_helpers.relationship.Type, typing.Callable] = {
     oa_helpers.relationship.Type.MANY_TO_ONE: _get_many_to_one,
     oa_helpers.relationship.Type.ONE_TO_ONE: _get_one_to_one,
     oa_helpers.relationship.Type.ONE_TO_MANY: _get_one_to_many,
