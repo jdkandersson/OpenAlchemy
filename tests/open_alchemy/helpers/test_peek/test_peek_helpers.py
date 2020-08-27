@@ -58,6 +58,37 @@ def test_peek_key(schema, schemas, expected_value):
 
 
 @pytest.mark.parametrize(
+    "schema, schemas, expected_value",
+    [
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"key": "value 1"}},
+            None,
+            id="ref hit",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/OtherRefSchema"},
+            {"OtherRefSchema": {"key": "value 1"}},
+            "value 1",
+            id="ref miss",
+        ),
+    ],
+)
+@pytest.mark.helper
+def test_peek_key_skip_ref(schema, schemas, expected_value):
+    """
+    GIVEN schema, schemas and expected value
+    WHEN peek_key is called with the schema and schemas
+    THEN the expected value is returned.
+    """
+    returned_type = helpers.peek.peek_key(
+        schema=schema, schemas=schemas, key="key", skip_ref="RefSchema"
+    )
+
+    assert returned_type == expected_value
+
+
+@pytest.mark.parametrize(
     "schema, schemas",
     [
         pytest.param(True, {}, id="schema not dictionary"),
@@ -134,10 +165,10 @@ def test_peek_key_invalid(schema, schemas):
     ],
 )
 @pytest.mark.helper
-def test_get(schema, schemas, expected_value):
+def test_prefer_local(schema, schemas, expected_value):
     """
     GIVEN schema, schemas and expected value
-    WHEN get is called with the backref peek helper and the schema and schemas
+    WHEN prefer_local is called with the backref peek helper and the schema and schemas
     THEN the expected value is returned.
     """
     returned_value = helpers.peek.prefer_local(

@@ -725,7 +725,13 @@ def mixins(
     return value
 
 
-def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typing.Any:
+def peek_key(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    key: str,
+    skip_ref: typing.Optional[str] = None,
+) -> typing.Any:
     """
     Recursive type lookup.
 
@@ -736,16 +742,21 @@ def peek_key(*, schema: types.Schema, schemas: types.Schemas, key: str) -> typin
         schemas: All the schemas to resolve any $ref.
         key: The key to check for.
         seen_refs: All the $ref that have already been seen.
+        skip_ref: The name of a reference to not follow.
 
     Returns:
         The key value (if found) or None.
 
     """
-    return _peek_key(schema, schemas, key, set())
+    return _peek_key(schema, schemas, key, set(), skip_ref=skip_ref)
 
 
 def _peek_key(
-    schema: types.Schema, schemas: types.Schemas, key: str, seen_refs: typing.Set[str]
+    schema: types.Schema,
+    schemas: types.Schemas,
+    key: str,
+    seen_refs: typing.Set[str],
+    skip_ref: typing.Optional[str],
 ) -> typing.Any:
     """Implement peek_key."""
     # Check schema and schemas are dict
@@ -770,8 +781,10 @@ def _peek_key(
             raise exceptions.MalformedSchemaError("Circular reference detected.")
         seen_refs.add(ref_value)
 
-        _, ref_schema = ref_helper.get_ref(ref=ref_value, schemas=schemas)
-        return _peek_key(ref_schema, schemas, key, seen_refs)
+        ref_name, ref_schema = ref_helper.get_ref(ref=ref_value, schemas=schemas)
+        if skip_ref is not None and ref_name == skip_ref:
+            return None
+        return _peek_key(ref_schema, schemas, key, seen_refs, skip_ref)
 
     # Recursive case, look for allOf
     all_of = schema.get("allOf")
@@ -787,7 +800,7 @@ def _peek_key(
                     "The elements of allOf must be dictionaries."
                 )
 
-            value = _peek_key(sub_schema, schemas, key, seen_refs)
+            value = _peek_key(sub_schema, schemas, key, seen_refs, skip_ref)
             if value is not None:
                 return value
 
