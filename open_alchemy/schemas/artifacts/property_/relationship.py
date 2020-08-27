@@ -1,5 +1,7 @@
 """Retrieve artifacts for a relationship property."""
 
+import typing
+
 from .... import helpers as oa_helpers
 from .... import types as oa_types
 from ... import helpers
@@ -39,6 +41,15 @@ def _calculate_x_to_one_schema(
     return return_schema
 
 
+def _get_backref_property(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Optional[str]:
+    """Retrieve the parent name from an object reference."""
+    return oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
+    )
+
+
 def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
     """
     Retrieve the artifacts for a many-to-one relationship property.
@@ -61,7 +72,7 @@ def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         ),
         required=None,
         parent=parent,
-        backref_property=None,
+        backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=None,
         write_only=None,
         foreign_key="",
@@ -92,7 +103,7 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         ),
         required=None,
         parent=parent,
-        backref_property=None,
+        backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=None,
         write_only=None,
         foreign_key="",
@@ -145,7 +156,7 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         ),
         required=None,
         parent=parent,
-        backref_property=None,
+        backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=None,
         write_only=None,
         foreign_key="",
@@ -178,7 +189,7 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         ),
         required=None,
         parent=parent,
-        backref_property=None,
+        backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=None,
         write_only=None,
         secondary="secondary",

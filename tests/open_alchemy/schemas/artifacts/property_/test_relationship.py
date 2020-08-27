@@ -268,6 +268,53 @@ GET_TESTS = [
         artifacts.types.ManyToManyRelationshipPropertyArtifacts,
         id="schema many-to-many",
     ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-backref": "backref_1"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-backref": "backref_2"}},
+        "backref_property",
+        "backref_1",
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="backref prefer local many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "x-backref": "backref_1", "x-uselist": False}},
+        "backref_property",
+        "backref_1",
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="backref one-to-one",
+    ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-backref": "backref_1"}},
+        "backref_property",
+        "backref_1",
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="backref one-to-many",
+    ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-backref": "backref_1",
+                "x-secondary": "secondary_1",
+            }
+        },
+        "backref_property",
+        "backref_1",
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="backref many-to-many",
+    ),
 ]
 
 
