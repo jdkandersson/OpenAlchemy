@@ -77,23 +77,54 @@ def _get_description(
     )
 
 
-def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
+def _get_foreign_key(
+    *,
+    relationship_type: oa_helpers.relationship.Type,
+    schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
+    schemas: oa_types.Schemas
+) -> str:
+    """Calculate the foreign key."""
+    column_name = oa_helpers.foreign_key.calculate_column_name(
+        type_=relationship_type, property_schema=schema, schemas=schemas,
+    )
+    target_schema = oa_helpers.foreign_key.get_target_schema(
+        type_=relationship_type,
+        parent_schema=parent_schema,
+        property_schema=schema,
+        schemas=schemas,
+    )
+    return oa_helpers.foreign_key.calculate_foreign_key(
+        column_name=column_name, target_schema=target_schema, schemas=schemas,
+    )
+
+
+def _get_many_to_one(
+    *,
+    schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
+    schemas: oa_types.Schemas
+):
     """
     Retrieve the artifacts for a many-to-one relationship property.
 
     Args:
         schemas: All the defined schemas.
         schema: The schema of the relationship property to gather artifacts for.
+        parent_schema: The schema that contains the property.
 
     Returns:
         The artifacts for the property.
 
     """
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.MANY_TO_ONE
+    ] = oa_helpers.relationship.Type.MANY_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.ManyToOneRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
-        sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
@@ -103,13 +134,23 @@ def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
         description=_get_description(parent=parent, schema=schema, schemas=schemas),
-        foreign_key="",
+        foreign_key=_get_foreign_key(
+            relationship_type=sub_type,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
         foreign_key_property="",
         nullable=None,
     )
 
 
-def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
+def _get_one_to_one(
+    *,
+    schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
+    schemas: oa_types.Schemas
+):
     """
     Retrieve the artifacts for a one-to-one relationship property.
 
@@ -121,11 +162,14 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         The artifacts for the property.
 
     """
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.ONE_TO_ONE
+    ] = oa_helpers.relationship.Type.ONE_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.OneToOneRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
-        sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
+        sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
@@ -135,7 +179,12 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
         description=_get_description(parent=parent, schema=schema, schemas=schemas),
-        foreign_key="",
+        foreign_key=_get_foreign_key(
+            relationship_type=sub_type,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
         foreign_key_property="",
         nullable=None,
     )
@@ -160,7 +209,12 @@ def _calculate_one_to_x_schema(
     return return_schema
 
 
-def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
+def _get_one_to_many(
+    *,
+    schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,
+    schemas: oa_types.Schemas
+):
     """
     Retrieve the artifacts for a one-to-many relationship property.
 
@@ -172,6 +226,9 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         The artifacts for the property.
 
     """
+    sub_type: typing.Literal[
+        oa_helpers.relationship.Type.ONE_TO_MANY
+    ] = oa_helpers.relationship.Type.ONE_TO_MANY
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
@@ -179,7 +236,7 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
 
     return types.OneToManyRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
-        sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
+        sub_type=sub_type,
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
@@ -189,12 +246,22 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
         description=_get_description(parent=parent, schema=schema, schemas=schemas),
-        foreign_key="",
+        foreign_key=_get_foreign_key(
+            relationship_type=sub_type,
+            schema=schema,
+            parent_schema=parent_schema,
+            schemas=schemas,
+        ),
         foreign_key_property="",
     )
 
 
-def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
+def _get_many_to_many(
+    *,
+    schema: oa_types.Schema,
+    parent_schema: oa_types.Schema,  # pylint: disable=unused-argument
+    schemas: oa_types.Schemas
+):
     """
     Retrieve the artifacts for a many-to-many relationship property.
 
@@ -236,7 +303,10 @@ _GET_MAPPING = {
 
 
 def get(
-    schemas: oa_types.Schemas, schema: oa_types.Schema, required: bool
+    schemas: oa_types.Schemas,
+    parent_schema: oa_types.Schema,
+    schema: oa_types.Schema,
+    required: bool,
 ) -> types.TAnyRelationshipPropertyArtifacts:
     """
     Retrieve the artifacts for a relationship property.
@@ -252,7 +322,9 @@ def get(
     """
     sub_type = oa_helpers.relationship.calculate_type(schema=schema, schemas=schemas)
 
-    artifacts = _GET_MAPPING[sub_type](schema=schema, schemas=schemas)
+    artifacts = _GET_MAPPING[sub_type](
+        schema=schema, schemas=schemas, parent_schema=parent_schema
+    )
     artifacts.required = required
 
     return artifacts
