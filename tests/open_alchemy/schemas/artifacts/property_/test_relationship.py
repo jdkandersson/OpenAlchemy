@@ -480,6 +480,78 @@ GET_TESTS = [
         artifacts.types.ManyToManyRelationshipPropertyArtifacts,
         id="writeOnly many-to-many",
     ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object"}},
+        "description",
+        None,
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="description undefined",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 1"},
+            ]
+        },
+        {"RefSchema": {"type": "object"}},
+        "description",
+        "description 1",
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="description many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "description": "description 1"}},
+        "description",
+        None,
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="description many-to-one skip_ref",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 2"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-uselist": False}},
+        "description",
+        "description 2",
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="description one-to-one",
+    ),
+    pytest.param(
+        None,
+        {
+            "description": "description 1",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object"}},
+        "description",
+        "description 1",
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="description one-to-many",
+    ),
+    pytest.param(
+        None,
+        {
+            "description": "description 1",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-secondary": "secondary_1"}},
+        "description",
+        "description 1",
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="description many-to-many",
+    ),
 ]
 
 

@@ -68,6 +68,15 @@ def _get_write_only(
     )
 
 
+def _get_description(
+    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Optional[str]:
+    """Retrieve the description value from a schema."""
+    return oa_helpers.peek.peek_key(
+        schema=schema, schemas=schemas, key="description", skip_ref=parent
+    )
+
+
 def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
     """
     Retrieve the artifacts for a many-to-one relationship property.
@@ -93,7 +102,7 @@ def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
-        description=None,
+        description=_get_description(parent=parent, schema=schema, schemas=schemas),
         foreign_key="",
         foreign_key_property="",
         nullable=None,
@@ -125,7 +134,7 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
-        description=None,
+        description=_get_description(parent=parent, schema=schema, schemas=schemas),
         foreign_key="",
         foreign_key_property="",
         nullable=None,
@@ -179,7 +188,7 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
-        description=None,
+        description=_get_description(parent=parent, schema=schema, schemas=schemas),
         foreign_key="",
         foreign_key_property="",
     )
@@ -213,7 +222,7 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
-        description=None,
+        description=_get_description(parent=parent, schema=schema, schemas=schemas),
         secondary="secondary",
     )
 
