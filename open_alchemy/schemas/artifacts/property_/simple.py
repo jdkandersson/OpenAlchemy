@@ -9,7 +9,7 @@ from .. import types
 
 
 def get(
-    schemas: oa_types.Schemas, schema: oa_types.Schema
+    schemas: oa_types.Schemas, schema: oa_types.Schema, required: bool
 ) -> types.SimplePropertyArtifacts:
     """
     Retrieve the artifacts for a simple property.
@@ -17,6 +17,7 @@ def get(
     Args:
         schemas: All the defined schemas.
         schema: The schema of the simple property to gather artifacts for.
+        required: WHether the property appears in the required list.
 
     Returns:
         The artifacts for the property.
@@ -54,6 +55,7 @@ def get(
     return types.SimplePropertyArtifacts(
         type_=helpers.property_.type_.Type.SIMPLE,
         schema=schema,
+        required=required,
         open_api=types.OpenApiSimplePropertyArtifacts(
             type_=type_,
             format_=format_,

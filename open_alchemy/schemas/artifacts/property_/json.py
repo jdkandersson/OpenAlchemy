@@ -9,7 +9,7 @@ from .. import types
 
 
 def get(
-    schemas: oa_types.Schemas, schema: oa_types.Schema
+    schemas: oa_types.Schemas, schema: oa_types.Schema, required: bool = False
 ) -> types.JsonPropertyArtifacts:
     """
     Retrieve the artifacts for a JSON property.
@@ -17,6 +17,7 @@ def get(
     Args:
         schemas: All the defined schemas.
         schema: The schema of the JSON property to gather artifacts for.
+        required: WHether the property appears in the required list.
 
     Returns:
         The artifacts for the property.
@@ -50,6 +51,7 @@ def get(
     return types.JsonPropertyArtifacts(
         type_=helpers.property_.type_.Type.JSON,
         schema=schema,
+        required=required,
         open_api=types.OpenApiJsonPropertyArtifacts(
             nullable=nullable,
             description=description,

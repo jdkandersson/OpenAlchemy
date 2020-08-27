@@ -59,5 +59,6 @@ def get(
         type_=helpers.property_.type_.Type.BACKREF,
         sub_type=sub_type,
         schema=schema,
+        required=False,
         properties=list(properties_names),
     )

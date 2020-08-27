@@ -23,6 +23,7 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.BACKREF,
     ]
     schema: typing.Optional[types.Schema]
+    required: bool
 
 
 @dataclasses.dataclass
