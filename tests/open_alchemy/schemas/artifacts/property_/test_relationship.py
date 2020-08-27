@@ -164,6 +164,110 @@ GET_TESTS = [
         artifacts.types.ManyToManyRelationshipPropertyArtifacts,
         id="allOf items one-to-many",
     ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object"}},
+        "schema",
+        {"type": "object", "x-de-$ref": "RefSchema"},
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="schema many-to-one",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 1"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "description": "description 2"}},
+        "schema",
+        {"type": "object", "x-de-$ref": "RefSchema", "description": "description 1"},
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="schema description prefer local many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": True},]},
+        {"RefSchema": {"type": "object", "nullable": False}},
+        "schema",
+        {"type": "object", "x-de-$ref": "RefSchema", "nullable": True},
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="schema nullable prefer local many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"writeOnly": True},]},
+        {"RefSchema": {"type": "object", "writeOnly": False}},
+        "schema",
+        {"type": "object", "x-de-$ref": "RefSchema", "writeOnly": True},
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="schema writeOnly prefer local many-to-one",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {"type": "object", "x-uselist": False}},
+        "schema",
+        {"type": "object", "x-de-$ref": "RefSchema"},
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="schema one-to-one",
+    ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object"}},
+        "schema",
+        {"type": "array", "items": {"type": "object", "x-de-$ref": "RefSchema"}},
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="schema one-to-many",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+                {"description": "description 1"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "description": "description 2"}},
+        "schema",
+        {
+            "type": "array",
+            "items": {"type": "object", "x-de-$ref": "RefSchema"},
+            "description": "description 1",
+        },
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="schema description one-to-many",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+                {"writeOnly": True},
+            ]
+        },
+        {"RefSchema": {"type": "object", "writeOnly": False}},
+        "schema",
+        {
+            "type": "array",
+            "items": {"type": "object", "x-de-$ref": "RefSchema"},
+            "writeOnly": True,
+        },
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="schema writeOnly one-to-many",
+    ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-secondary": "secondary_1"}},
+        "schema",
+        {"type": "array", "items": {"type": "object", "x-de-$ref": "RefSchema"}},
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="schema many-to-many",
+    ),
 ]
 
 

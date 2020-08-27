@@ -22,7 +22,9 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.RELATIONSHIP,
         helpers.property_.type_.Type.BACKREF,
     ]
-    schema: typing.Optional[types.Schema]
+    schema: typing.Optional[
+        typing.Union[types.Schema, types.ObjectRefSchema, types.ArrayRefSchema]
+    ]
     required: typing.Optional[bool]
 
 
@@ -65,6 +67,7 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
+    schema: types.Schema
 
 
 @dataclasses.dataclass
@@ -100,6 +103,7 @@ class JsonPropertyArtifacts(PropertyArtifacts):
     type_: typing.Literal[helpers.property_.type_.Type.JSON]
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
+    schema: types.Schema
 
 
 @dataclasses.dataclass
@@ -141,6 +145,7 @@ class OneToManyRelationshipPropertyArtifacts(
     sub_type: typing.Literal[
         oa_helpers.relationship.Type.ONE_TO_MANY,
     ]
+    schema: types.ArrayRefSchema
 
 
 @dataclasses.dataclass
@@ -161,6 +166,7 @@ class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts
     sub_type: typing.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
     ]
+    schema: types.ObjectRefSchema
 
 
 @dataclasses.dataclass
@@ -170,6 +176,7 @@ class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts)
     sub_type: typing.Literal[
         oa_helpers.relationship.Type.ONE_TO_ONE,
     ]
+    schema: types.ObjectRefSchema
 
 
 @dataclasses.dataclass
@@ -180,6 +187,7 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
         oa_helpers.relationship.Type.MANY_TO_MANY,
     ]
     secondary: str
+    schema: types.ArrayRefSchema
 
 
 TAnyRelationshipPropertyArtifacts = typing.Union[

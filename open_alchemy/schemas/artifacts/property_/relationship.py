@@ -8,11 +8,35 @@ from .. import types
 
 def _get_parent(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str:
     """Retrieve the parent name from an object reference."""
-    print(schema)
     ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
     assert ref is not None
     parent, _ = oa_helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
     return parent
+
+
+def _calculate_x_to_one_schema(
+    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> oa_types.ObjectRefSchema:
+    """Calculate the schema for a x-to-one relationship."""
+    return_schema: oa_types.ObjectRefSchema = {"type": "object", "x-de-$ref": parent}
+
+    description = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
+    )
+    if description is not None:
+        return_schema["description"] = description
+    nullable = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
+    )
+    if nullable is not None:
+        return_schema["nullable"] = nullable
+    write_only = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
+    )
+    if write_only is not None:
+        return_schema["writeOnly"] = write_only
+
+    return return_schema
 
 
 def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
@@ -27,12 +51,16 @@ def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         The artifacts for the property.
 
     """
+    parent = _get_parent(schema=schema, schemas=schemas)
+
     return types.ManyToOneRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
-        schema={},
+        schema=_calculate_x_to_one_schema(
+            parent=parent, schema=schema, schemas=schemas
+        ),
         required=None,
-        parent=_get_parent(schema=schema, schemas=schemas),
+        parent=parent,
         backref_property=None,
         kwargs=None,
         write_only=None,
@@ -54,12 +82,16 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         The artifacts for the property.
 
     """
+    parent = _get_parent(schema=schema, schemas=schemas)
+
     return types.OneToOneRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
-        schema={},
+        schema=_calculate_x_to_one_schema(
+            parent=parent, schema=schema, schemas=schemas
+        ),
         required=None,
-        parent=_get_parent(schema=schema, schemas=schemas),
+        parent=parent,
         backref_property=None,
         kwargs=None,
         write_only=None,
@@ -67,6 +99,25 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         foreign_key_property="",
         nullable=None,
     )
+
+
+def _calculate_one_to_x_schema(
+    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> oa_types.ArrayRefSchema:
+    """Calculate the schema for a x-to-one relationship."""
+    return_schema: oa_types.ArrayRefSchema = {
+        "type": "array",
+        "items": {"type": "object", "x-de-$ref": parent},
+    }
+
+    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    if description is not None:
+        return_schema["description"] = description
+    write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
+    if write_only is not None:
+        return_schema["writeOnly"] = write_only
+
+    return return_schema
 
 
 def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
@@ -84,12 +135,16 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
+    parent = _get_parent(schema=items_schema, schemas=schemas)
+
     return types.OneToManyRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
-        schema={},
+        schema=_calculate_one_to_x_schema(
+            parent=parent, schema=schema, schemas=schemas
+        ),
         required=None,
-        parent=_get_parent(schema=items_schema, schemas=schemas),
+        parent=parent,
         backref_property=None,
         kwargs=None,
         write_only=None,
@@ -113,12 +168,16 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
+    parent = _get_parent(schema=items_schema, schemas=schemas)
+
     return types.ManyToManyRelationshipPropertyArtifacts(
         type_=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
-        schema={},
+        schema=_calculate_one_to_x_schema(
+            parent=parent, schema=schema, schemas=schemas
+        ),
         required=None,
-        parent=_get_parent(schema=items_schema, schemas=schemas),
+        parent=parent,
         backref_property=None,
         kwargs=None,
         write_only=None,
