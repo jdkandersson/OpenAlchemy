@@ -182,6 +182,14 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     secondary: str
 
 
+TAnyRelationshipPropertyArtifacts = typing.Union[
+    ManyToOneRelationshipPropertyArtifacts,
+    OneToOneRelationshipPropertyArtifacts,
+    OneToManyRelationshipPropertyArtifacts,
+    ManyToManyRelationshipPropertyArtifacts,
+]
+
+
 class BackrefSubType(enum.Enum):
     """The possible types of backreferences."""
 

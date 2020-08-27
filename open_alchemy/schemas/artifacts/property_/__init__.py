@@ -2,4 +2,5 @@
 
 from . import backref
 from . import json
+from . import relationship
 from . import simple
