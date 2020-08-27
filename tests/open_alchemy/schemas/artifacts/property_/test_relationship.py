@@ -315,6 +315,68 @@ GET_TESTS = [
         artifacts.types.ManyToManyRelationshipPropertyArtifacts,
         id="backref many-to-many",
     ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-kwargs": {"key_1": "value 1"}},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-kwargs": {"key_2": "value 2"}}},
+        "kwargs",
+        {"key_1": "value 1"},
+        artifacts.types.ManyToOneRelationshipPropertyArtifacts,
+        id="kwargs on parent many-to-one",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-kwargs": {"key_1": "value 1"}},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-uselist": False}},
+        "kwargs",
+        {"key_1": "value 1"},
+        artifacts.types.OneToOneRelationshipPropertyArtifacts,
+        id="kwargs one-to-one",
+    ),
+    pytest.param(
+        None,
+        {
+            "type": "array",
+            "items": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-kwargs": {"key_1": "value 1"}},
+                ]
+            },
+        },
+        {"RefSchema": {"type": "object"}},
+        "kwargs",
+        {"key_1": "value 1"},
+        artifacts.types.OneToManyRelationshipPropertyArtifacts,
+        id="kwargs one-to-many",
+    ),
+    pytest.param(
+        None,
+        {
+            "type": "array",
+            "items": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-kwargs": {"key_1": "value 1"}},
+                ]
+            },
+        },
+        {"RefSchema": {"type": "object", "x-secondary": "secondary_1",}},
+        "kwargs",
+        {"key_1": "value 1"},
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="kwargs many-to-many",
+    ),
 ]
 
 
