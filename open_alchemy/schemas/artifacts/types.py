@@ -126,6 +126,7 @@ class RelationshipPropertyArtifacts(PropertyArtifacts):
     backref_property: typing.Optional[str]
     kwargs: typing.Optional[TKwargs]
     write_only: typing.Optional[bool]
+    description: typing.Optional[str]
 
 
 @dataclasses.dataclass

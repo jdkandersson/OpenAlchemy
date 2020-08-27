@@ -44,7 +44,7 @@ def _calculate_x_to_one_schema(
 def _get_backref_property(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[str]:
-    """Retrieve the parent name from an object reference."""
+    """Retrieve the backref from an object reference."""
     return oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
     )
@@ -53,9 +53,18 @@ def _get_backref_property(
 def _get_kwargs(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[typing.Dict[str, typing.Any]]:
-    """Retrieve the parent name from an object reference."""
+    """Retrieve the kwargs name from an object reference."""
     return oa_helpers.peek.peek_key(
         schema=schema, schemas=schemas, key="x-kwargs", skip_ref=parent
+    )
+
+
+def _get_write_only(
+    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Optional[bool]:
+    """Retrieve the writeOnly value from a schema."""
+    return oa_helpers.peek.peek_key(
+        schema=schema, schemas=schemas, key="writeOnly", skip_ref=parent
     )
 
 
@@ -83,7 +92,8 @@ def _get_many_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         parent=parent,
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
-        write_only=None,
+        write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
+        description=None,
         foreign_key="",
         foreign_key_property="",
         nullable=None,
@@ -114,7 +124,8 @@ def _get_one_to_one(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         parent=parent,
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
-        write_only=None,
+        write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
+        description=None,
         foreign_key="",
         foreign_key_property="",
         nullable=None,
@@ -167,7 +178,8 @@ def _get_one_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         parent=parent,
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
-        write_only=None,
+        write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
+        description=None,
         foreign_key="",
         foreign_key_property="",
     )
@@ -200,7 +212,8 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas):
         parent=parent,
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
-        write_only=None,
+        write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
+        description=None,
         secondary="secondary",
     )
 
