@@ -318,6 +318,16 @@ def _get_one_to_many(
     )
 
 
+def _get_secondary(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str:
+    """Retrieve the secondary from an object reference."""
+    secondary = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.secondary, schema=schema, schemas=schemas
+    )
+    assert secondary is not None
+
+    return secondary
+
+
 def _get_many_to_many(
     *,
     property_name: str,  # pylint: disable=unused-argument
@@ -355,7 +365,7 @@ def _get_many_to_many(
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
         write_only=_get_write_only(parent=parent, schema=schema, schemas=schemas),
         description=_get_description(parent=parent, schema=schema, schemas=schemas),
-        secondary="secondary",
+        secondary=_get_secondary(schema=items_schema, schemas=schemas),
     )
 
 

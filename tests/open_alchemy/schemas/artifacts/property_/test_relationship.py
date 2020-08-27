@@ -839,6 +839,32 @@ GET_TESTS = [
         artifacts.types.OneToOneRelationshipPropertyArtifacts,
         id="nullable one-to-one",
     ),
+    pytest.param(
+        None,
+        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
+        {"RefSchema": {"type": "object", "x-secondary": "secondary_1",}},
+        "secondary",
+        "secondary_1",
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="secondary many-to-many",
+    ),
+    pytest.param(
+        None,
+        {
+            "type": "array",
+            "items": {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-secondary": "secondary_1"},
+                ]
+            },
+        },
+        {"RefSchema": {"type": "object", "x-secondary": "secondary_2",}},
+        "secondary",
+        "secondary_1",
+        artifacts.types.ManyToManyRelationshipPropertyArtifacts,
+        id="secondary prefer local many-to-many",
+    ),
 ]
 
 
