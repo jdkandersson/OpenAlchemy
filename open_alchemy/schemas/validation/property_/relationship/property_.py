@@ -90,6 +90,10 @@ def _check_object_values(
     """Check the values of the relationship."""
     # Check nullable
     helpers.peek.nullable(schema=schema, schemas=schemas)
+    # Check description
+    helpers.peek.description(schema=schema, schemas=schemas)
+    # Check writeOnly
+    helpers.peek.write_only(schema=schema, schemas=schemas)
     # Check backref and uselist
     backref_uselist_result = _check_object_backref_uselist(
         schema=schema, schemas=schemas

@@ -133,6 +133,95 @@ TESTS = [
             "RefSchema": {
                 "type": "object",
                 "x-tablename": "ref_schema",
+                "description": "description 1",
+            }
+        },
+        (True, None),
+        id="many to one description $ref",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "description": True,
+            }
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="many to one description $ref not string",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 1"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (True, None),
+        id="many to one description allOf",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 1"},
+                {"description": "description 2"},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "multiple description defined in allOf"),
+        id="many to one description allOf multiple",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "writeOnly": True,
+            }
+        },
+        (True, None),
+        id="many to one writeOnly $ref",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "writeOnly": "True",
+            }
+        },
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="many to one writeOnly $ref not bool",
+    ),
+    pytest.param(
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"writeOnly": True}]},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (True, None),
+        id="many to one writeOnly allOf",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"writeOnly": True},
+                {"writeOnly": False},
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "multiple writeOnly defined in allOf"),
+        id="many to one writeOnly allOf multiple",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
                 "x-backref": "schema",
             }
         },
@@ -366,6 +455,7 @@ TESTS = [
 @pytest.mark.parametrize(
     "schema, schemas, expected_result", TESTS,
 )
+@pytest.mark.validation
 @pytest.mark.schemas
 def test_check(schema, schemas, expected_result):
     """
