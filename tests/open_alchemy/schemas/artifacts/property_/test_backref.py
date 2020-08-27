@@ -11,6 +11,7 @@ from open_alchemy.schemas.helpers.property_ import type_
 
 DEFAULT_SCHEMA: typing.Any = {"type": "object"}
 GET_TESTS = [
+    pytest.param({**DEFAULT_SCHEMA}, {}, "required", None, id="required"),
     pytest.param(
         {**DEFAULT_SCHEMA}, {}, "type_", type_.Type.BACKREF, id="property type"
     ),
