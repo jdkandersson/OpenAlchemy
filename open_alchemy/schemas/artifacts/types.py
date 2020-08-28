@@ -221,6 +221,14 @@ class BackrefPropertyArtifacts(PropertyArtifacts):
     schema: types.Schema
 
 
+TAnyPropertyArtifacts = typing.Union[
+    SimplePropertyArtifacts,
+    JsonPropertyArtifacts,
+    TAnyRelationshipPropertyArtifacts,
+    BackrefPropertyArtifacts,
+]
+
+
 class _ModelTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the model artifacts."""
 
