@@ -24,11 +24,11 @@ def get(
     schemas: oa_types.Schemas, schema: oa_types.Schema
 ) -> types.BackrefPropertyArtifacts:
     """
-    Retrieve the artifacts for a simple property.
+    Retrieve the artifacts for a backref property.
 
     Args:
         schemas: All the defined schemas.
-        schema: The schema of the simple property to gather artifacts for.
+        schema: The schema of the backref property to gather artifacts for.
 
     Returns:
         The artifacts for the property.
@@ -42,6 +42,7 @@ def get(
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
+    # Get property names
     properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
     if sub_type == types.BackrefSubType.OBJECT:  # noqa: E721
         properties_items = helpers.iterate.properties_items(
