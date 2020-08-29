@@ -16,7 +16,7 @@ TKwargs = typing.Dict[str, typing.Any]
 class PropertyArtifacts:
     """Information about a property."""
 
-    type_: typing.Literal[
+    type_: types.Literal[
         helpers.property_.type_.Type.SIMPLE,
         helpers.property_.type_.Type.JSON,
         helpers.property_.type_.Type.RELATIONSHIP,
@@ -70,7 +70,7 @@ class OpenApiSimplePropertyArtifacts:
         return_dict: OpenApiSimplePropertyTypedDict = {"type": self.type_}
 
         opt_keys: typing.List[
-            typing.Literal[
+            types.Literal[
                 "format_",
                 "max_length",
                 "nullable",
@@ -140,7 +140,7 @@ class ExtensionSimplePropertyArtifacts:
         }
 
         opt_keys: typing.List[
-            typing.Literal[
+            types.Literal[
                 "autoincrement",
                 "index",
                 "unique",
@@ -180,7 +180,7 @@ class SimplePropertyTypedDict(types.TypedDict, total=True):
 class SimplePropertyArtifacts(PropertyArtifacts):
     """Information about a simple property."""
 
-    type_: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+    type_: types.Literal[helpers.property_.type_.Type.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
     schema: types.ColumnSchema
@@ -224,7 +224,7 @@ class OpenApiJsonPropertyArtifacts:
         return_dict: OpenApiJsonPropertyTypedDict = {}
 
         opt_keys: typing.List[
-            typing.Literal["nullable", "description", "read_only", "write_only"]
+            types.Literal["nullable", "description", "read_only", "write_only"]
         ] = [
             "nullable",
             "description",
@@ -277,7 +277,7 @@ class ExtensionJsonPropertyArtifacts:
         return_dict: ExtensionJsonPropertyTypedDict = {"primary_key": self.primary_key}
 
         opt_keys: typing.List[
-            typing.Literal[
+            types.Literal[
                 "index", "unique", "foreign_key", "kwargs", "foreign_key_kwargs",
             ]
         ] = [
@@ -311,7 +311,7 @@ class JsonPropertyTypedDict(types.TypedDict, total=True):
 class JsonPropertyArtifacts(PropertyArtifacts):
     """Information about a JSON property."""
 
-    type_: typing.Literal[helpers.property_.type_.Type.JSON]
+    type_: types.Literal[helpers.property_.type_.Type.JSON]
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
     schema: types.Schema
@@ -332,8 +332,8 @@ class JsonPropertyArtifacts(PropertyArtifacts):
 class RelationshipPropertyArtifacts(PropertyArtifacts):
     """Information about a relationship property."""
 
-    type_: typing.Literal[helpers.property_.type_.Type.RELATIONSHIP]
-    sub_type: typing.Literal[
+    type_: types.Literal[helpers.property_.type_.Type.RELATIONSHIP]
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_MANY,
@@ -351,7 +351,7 @@ class RelationshipPropertyArtifacts(PropertyArtifacts):
 class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a relationship that is not many-to-many property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_MANY,
@@ -389,7 +389,7 @@ class OneToManyRelationshipPropertyArtifacts(
 ):
     """Information about a one-to-many relationship property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.ONE_TO_MANY,
     ]
     schema: types.ArrayRefSchema
@@ -407,7 +407,7 @@ class OneToManyRelationshipPropertyArtifacts(
         }
 
         opt_keys: typing.List[
-            typing.Literal["backref_property", "kwargs", "write_only", "description"]
+            types.Literal["backref_property", "kwargs", "write_only", "description"]
         ] = [
             "backref_property",
             "kwargs",
@@ -452,7 +452,7 @@ class XToOneRelationshipPropertyTypedDict(
 class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtifacts):
     """Information about a x-to-one relationship property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_ONE,
     ]
@@ -472,7 +472,7 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
         }
 
         opt_keys: typing.List[
-            typing.Literal[
+            types.Literal[
                 "backref_property", "kwargs", "write_only", "description", "nullable",
             ]
         ] = [
@@ -499,7 +499,7 @@ ManyToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
 class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
     """Information about a many-to-one relationship property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
     ]
 
@@ -517,7 +517,7 @@ OneToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
 class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
     """Information about a one-to-one relationship property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.ONE_TO_ONE,
     ]
 
@@ -554,7 +554,7 @@ class ManyToManyRelationshipPropertyTypedDict(
 class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a x-to-one relationship property."""
 
-    sub_type: typing.Literal[
+    sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_MANY,
     ]
     secondary: str
@@ -572,7 +572,7 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
         }
 
         opt_keys: typing.List[
-            typing.Literal["backref_property", "kwargs", "write_only", "description"]
+            types.Literal["backref_property", "kwargs", "write_only", "description"]
         ] = [
             "backref_property",
             "kwargs",
@@ -624,8 +624,8 @@ class BackrefSubType(str, enum.Enum):
 class BackrefPropertyArtifacts(PropertyArtifacts):
     """Information about a back reference property."""
 
-    type_: typing.Literal[helpers.property_.type_.Type.BACKREF]
-    sub_type: typing.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
+    type_: types.Literal[helpers.property_.type_.Type.BACKREF]
+    sub_type: types.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
     properties: typing.List[str]
     schema: types.Schema
     required: None
@@ -719,7 +719,7 @@ class ModelArtifacts:
         return_dict: ModelTypedDict = {"tablename": self.tablename}
 
         opt_keys: typing.List[
-            typing.Literal[
+            types.Literal[
                 "inherits",
                 "parent",
                 "description",

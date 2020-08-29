@@ -11,8 +11,8 @@ from .. import types
 OPEN_API_TO_SUB_TYPE: typing.Dict[
     str,
     typing.Union[
-        typing.Literal[types.BackrefSubType.OBJECT],
-        typing.Literal[types.BackrefSubType.ARRAY],
+        oa_types.Literal[types.BackrefSubType.OBJECT],
+        oa_types.Literal[types.BackrefSubType.ARRAY],
     ],
 ] = {
     "object": types.BackrefSubType.OBJECT,

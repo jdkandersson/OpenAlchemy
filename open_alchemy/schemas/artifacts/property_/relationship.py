@@ -155,7 +155,7 @@ def _get_many_to_one(
         The artifacts for the property.
 
     """
-    sub_type: typing.Literal[
+    sub_type: oa_types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE
     ] = oa_helpers.relationship.Type.MANY_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
@@ -209,7 +209,7 @@ def _get_one_to_one(
         The artifacts for the property.
 
     """
-    sub_type: typing.Literal[
+    sub_type: oa_types.Literal[
         oa_helpers.relationship.Type.ONE_TO_ONE
     ] = oa_helpers.relationship.Type.ONE_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
@@ -282,7 +282,7 @@ def _get_one_to_many(
         The artifacts for the property.
 
     """
-    sub_type: typing.Literal[
+    sub_type: oa_types.Literal[
         oa_helpers.relationship.Type.ONE_TO_MANY
     ] = oa_helpers.relationship.Type.ONE_TO_MANY
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
