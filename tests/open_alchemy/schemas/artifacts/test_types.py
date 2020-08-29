@@ -339,7 +339,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             ),
             {
                 "type": "RELATIONSHIP",
-                "sub_type": "ONE_TO_ONE",
+                "sub_type": "MANY_TO_ONE",
                 "parent": "parent 1",
                 "required": True,
                 "backref_property": "backref 1",

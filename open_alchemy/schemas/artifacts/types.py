@@ -490,6 +490,9 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
         return return_dict
 
 
+ManyToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
+
+
 @dataclasses.dataclass
 class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
     """Information about a many-to-one relationship property."""
@@ -497,6 +500,15 @@ class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts
     sub_type: typing.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
     ]
+
+    def to_dict(  # pylint: disable=useless-super-delegation
+        self,
+    ) -> ManyToOneRelationshipPropertyTypedDict:
+        """Convert to dictionary."""
+        return super().to_dict()
+
+
+OneToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
 
 
 @dataclasses.dataclass
@@ -506,6 +518,12 @@ class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts)
     sub_type: typing.Literal[
         oa_helpers.relationship.Type.ONE_TO_ONE,
     ]
+
+    def to_dict(  # pylint: disable=useless-super-delegation
+        self,
+    ) -> OneToOneRelationshipPropertyTypedDict:
+        """Convert to dictionary."""
+        return super().to_dict()
 
 
 @dataclasses.dataclass
