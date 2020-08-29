@@ -364,7 +364,4 @@ def test_get(spec, expected_artifacts):
     """
     returned_artifacts = artifacts.get(spec=spec)
 
-    print(returned_artifacts)
-    print(expected_artifacts)
-
     assert returned_artifacts == expected_artifacts
