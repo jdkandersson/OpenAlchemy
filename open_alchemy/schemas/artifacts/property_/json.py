@@ -49,7 +49,7 @@ def get(
     helpers.clean.extension(schema=schema)
 
     return types.JsonPropertyArtifacts(
-        type_=helpers.property_.type_.Type.JSON,
+        type=helpers.property_.type_.Type.JSON,
         schema=schema,
         required=required,
         open_api=types.OpenApiJsonPropertyArtifacts(

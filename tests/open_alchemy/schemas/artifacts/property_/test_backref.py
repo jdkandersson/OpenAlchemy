@@ -13,7 +13,7 @@ DEFAULT_SCHEMA: typing.Any = {"type": "object"}
 GET_TESTS = [
     pytest.param({**DEFAULT_SCHEMA}, {}, "required", None, id="required"),
     pytest.param(
-        {**DEFAULT_SCHEMA}, {}, "type_", type_.Type.BACKREF, id="property type"
+        {**DEFAULT_SCHEMA}, {}, "type", type_.Type.BACKREF, id="property type"
     ),
     pytest.param(
         {**DEFAULT_SCHEMA, "type": "object"},

@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Correct `format` key to no longer have a trailing `_` for artifacts.
+
 ## Version 1.5.2 - 2020-08-29
 
 - Expose function that collects artifacts for the models.

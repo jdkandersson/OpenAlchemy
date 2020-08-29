@@ -167,7 +167,7 @@ def _get_many_to_one(
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.ManyToOneRelationshipPropertyArtifacts(
-        type_=helpers.property_.type_.Type.RELATIONSHIP,
+        type=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -221,7 +221,7 @@ def _get_one_to_one(
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.OneToOneRelationshipPropertyArtifacts(
-        type_=helpers.property_.type_.Type.RELATIONSHIP,
+        type=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -297,7 +297,7 @@ def _get_one_to_many(
     parent = _get_parent(schema=items_schema, schemas=schemas)
 
     return types.OneToManyRelationshipPropertyArtifacts(
-        type_=helpers.property_.type_.Type.RELATIONSHIP,
+        type=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -354,7 +354,7 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_
     parent = _get_parent(schema=items_schema, schemas=schemas)
 
     return types.ManyToManyRelationshipPropertyArtifacts(
-        type_=helpers.property_.type_.Type.RELATIONSHIP,
+        type=helpers.property_.type_.Type.RELATIONSHIP,
         sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
