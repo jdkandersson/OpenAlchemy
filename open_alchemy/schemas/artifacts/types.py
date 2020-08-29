@@ -587,7 +587,7 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
         return return_dict
 
 
-TAnyRelationshipTypedDict = typing.Union[
+TAnyRelationshipPropertyTypedDict = typing.Union[
     ManyToOneRelationshipPropertyTypedDict,
     OneToOneRelationshipPropertyTypedDict,
     OneToManyRelationshipPropertyTypedDict,
@@ -599,6 +599,15 @@ TAnyRelationshipPropertyArtifacts = typing.Union[
     OneToManyRelationshipPropertyArtifacts,
     ManyToManyRelationshipPropertyArtifacts,
 ]
+
+
+class BackrefPropertyTypedDict(types.TypedDict, total=True):
+    """TypedDict representation of the many-to-many relationship property."""
+
+    type: str
+    sub_type: str
+    properties: typing.List[str]
+    schema: types.Schema
 
 
 @enum.unique
@@ -617,8 +626,24 @@ class BackrefPropertyArtifacts(PropertyArtifacts):
     sub_type: typing.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
     properties: typing.List[str]
     schema: types.Schema
+    required: None
+
+    def to_dict(self) -> BackrefPropertyTypedDict:
+        """Convert to dictionary."""
+        return {
+            "type": self.type_,
+            "sub_type": self.sub_type,
+            "properties": self.properties,
+            "schema": self.schema,
+        }
 
 
+TAnyPropertyTypedDict = typing.Union[
+    SimplePropertyTypedDict,
+    JsonPropertyTypedDict,
+    TAnyRelationshipPropertyTypedDict,
+    BackrefPropertyTypedDict,
+]
 TAnyPropertyArtifacts = typing.Union[
     SimplePropertyArtifacts,
     JsonPropertyArtifacts,

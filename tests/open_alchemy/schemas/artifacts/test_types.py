@@ -491,6 +491,56 @@ def test_relationship_property_artifacts(artifacts_value, expected_dict):
     "artifacts_value, expected_dict",
     [
         pytest.param(
+            artifacts.types.BackrefPropertyArtifacts(
+                type_=helpers.property_.type_.Type.BACKREF,
+                sub_type=artifacts.types.BackrefSubType.OBJECT,
+                schema={"type": "object"},
+                properties=["property_1"],
+                required=None,
+            ),
+            {
+                "type": "BACKREF",
+                "sub_type": "OBJECT",
+                "schema": {"type": "object"},
+                "properties": ["property_1"],
+            },
+            id="object",
+        ),
+        pytest.param(
+            artifacts.types.BackrefPropertyArtifacts(
+                type_=helpers.property_.type_.Type.BACKREF,
+                sub_type=artifacts.types.BackrefSubType.ARRAY,
+                schema={"type": "object"},
+                properties=["property_1"],
+                required=None,
+            ),
+            {
+                "type": "BACKREF",
+                "sub_type": "ARRAY",
+                "schema": {"type": "object"},
+                "properties": ["property_1"],
+            },
+            id="object",
+        ),
+    ],
+)
+@pytest.mark.schemas
+@pytest.mark.artifacts
+def test_backref_property_artifacts(artifacts_value, expected_dict):
+    """
+    GIVEN artifacts and expected dictionary
+    WHEN to_dict is called on the artifacts
+    THEN the expected dictionary is returned.
+    """
+    returned_dict = artifacts_value.to_dict()
+
+    assert returned_dict == expected_dict
+
+
+@pytest.mark.parametrize(
+    "artifacts_value, expected_dict",
+    [
+        pytest.param(
             artifacts.types.ModelArtifacts(
                 tablename="table_1",
                 inherits=None,
