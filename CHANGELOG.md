@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.5.2 - 2020-08-29
 
 - Expose function that collects artifacts for the models.
 - Expose function that collects artifacts for the model properties.
