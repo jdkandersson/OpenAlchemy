@@ -9,6 +9,43 @@ from open_alchemy.schemas import artifacts
     "artifacts_value, expected_dict",
     [
         pytest.param(
+            artifacts.types.OpenApiSimplePropertyArtifacts(
+                type_="integer",
+                format_=None,
+                max_length=None,
+                nullable=None,
+                description=None,
+                default=None,
+                read_only=None,
+                write_only=None,
+            ),
+            {"type": "integer"},
+            id="open api opt values None",
+        ),
+        pytest.param(
+            artifacts.types.OpenApiSimplePropertyArtifacts(
+                type_="string",
+                format_="format 1",
+                max_length=11,
+                nullable=True,
+                description="description 1",
+                default="default 1",
+                read_only=False,
+                write_only=True,
+            ),
+            {
+                "type": "string",
+                "format_": "format 1",
+                "max_length": 11,
+                "nullable": True,
+                "description": "description 1",
+                "default": "default 1",
+                "read_only": False,
+                "write_only": True,
+            },
+            id="open api opt values defined",
+        ),
+        pytest.param(
             artifacts.types.ExtensionSimplePropertyArtifacts(
                 primary_key=True,
                 autoincrement=None,
@@ -19,7 +56,7 @@ from open_alchemy.schemas import artifacts
                 foreign_key_kwargs=None,
             ),
             {"primary_key": True},
-            id="opt values None",
+            id="extension opt values None",
         ),
         pytest.param(
             artifacts.types.ExtensionSimplePropertyArtifacts(
@@ -40,13 +77,13 @@ from open_alchemy.schemas import artifacts
                 "kwargs": {"key_1": "value 1"},
                 "foreign_key_kwargs": {"key_2": "value 2"},
             },
-            id="opt values defined",
+            id="extension opt values defined",
         ),
     ],
 )
 @pytest.mark.schemas
 @pytest.mark.artifacts
-def test_extension_simple_property_artifacts(artifacts_value, expected_dict):
+def test_simple_property_artifacts(artifacts_value, expected_dict):
     """
     GIVEN artifacts and expected dictionary
     WHEN to_dict is called on the artifacts

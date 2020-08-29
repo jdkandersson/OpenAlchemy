@@ -33,6 +33,27 @@ class PropertyArtifacts:
     required: typing.Optional[bool]
 
 
+class _OpenApiSimplePropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+
+    format_: str
+    max_length: int
+    nullable: bool
+
+    description: str
+
+    default: typing.Union[int, float, str, bool]
+
+    read_only: bool
+    write_only: bool
+
+
+class OpenApiSimplePropertyTypedDict(_OpenApiSimplePropertyTypedDict, total=True):
+    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+
+    type: str
+
+
 @dataclasses.dataclass
 class OpenApiSimplePropertyArtifacts:
     """OpenAPI artifacts for the simple property."""
@@ -49,9 +70,41 @@ class OpenApiSimplePropertyArtifacts:
     read_only: typing.Optional[bool]
     write_only: typing.Optional[bool]
 
+    def to_dict(self) -> OpenApiSimplePropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: OpenApiSimplePropertyTypedDict = {"type": self.type_}
+
+        opt_keys: typing.List[
+            typing.Literal[
+                "format_",
+                "max_length",
+                "nullable",
+                "description",
+                "default",
+                "read_only",
+                "write_only",
+            ]
+        ] = [
+            "format_",
+            "max_length",
+            "nullable",
+            "description",
+            "default",
+            "read_only",
+            "write_only",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
+
 
 class _ExtensionSimplePropertyTypedDict(types.TypedDict, total=False):
-    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+    """TypedDict representation of the extension artifacts for a simple property."""
 
     autoincrement: bool
     index: bool
@@ -64,7 +117,7 @@ class _ExtensionSimplePropertyTypedDict(types.TypedDict, total=False):
 
 
 class ExtensionSimplePropertyTypedDict(_ExtensionSimplePropertyTypedDict, total=True):
-    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+    """TypedDict representation of the extension artifacts for a simple property."""
 
     primary_key: bool
 
