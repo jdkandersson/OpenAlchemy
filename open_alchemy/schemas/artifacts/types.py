@@ -22,13 +22,8 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.RELATIONSHIP,
         helpers.property_.type_.Type.BACKREF,
     ]
-    schema: typing.Optional[
-        typing.Union[
-            types.Schema,
-            types.ColumnSchema,
-            types.ObjectRefSchema,
-            types.ArrayRefSchema,
-        ]
+    schema: typing.Union[
+        types.Schema, types.ColumnSchema, types.ObjectRefSchema, types.ArrayRefSchema,
     ]
     required: typing.Optional[bool]
 
@@ -169,6 +164,16 @@ class ExtensionSimplePropertyArtifacts:
         return return_dict
 
 
+class SimplePropertyTypedDict(types.TypedDict, total=True):
+    """TypedDict representation of the simple property."""
+
+    type: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+    open_api: OpenApiSimplePropertyTypedDict
+    extension: ExtensionSimplePropertyTypedDict
+    schema: types.ColumnSchema
+    required: bool
+
+
 @dataclasses.dataclass
 class SimplePropertyArtifacts(PropertyArtifacts):
     """Information about a simple property."""
@@ -177,6 +182,17 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
     schema: types.ColumnSchema
+    required: bool
+
+    def to_dict(self) -> SimplePropertyTypedDict:
+        """Convert to dictionary."""
+        return {
+            "type": self.type_,
+            "open_api": self.open_api.to_dict(),
+            "extension": self.extension.to_dict(),
+            "schema": self.schema,
+            "required": self.required,
+        }
 
 
 @dataclasses.dataclass
