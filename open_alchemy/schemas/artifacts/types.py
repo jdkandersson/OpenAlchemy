@@ -587,6 +587,12 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
         return return_dict
 
 
+TAnyRelationshipTypedDict = typing.Union[
+    ManyToOneRelationshipPropertyTypedDict,
+    OneToOneRelationshipPropertyTypedDict,
+    OneToManyRelationshipPropertyTypedDict,
+    ManyToManyRelationshipPropertyTypedDict,
+]
 TAnyRelationshipPropertyArtifacts = typing.Union[
     ManyToOneRelationshipPropertyArtifacts,
     OneToOneRelationshipPropertyArtifacts,
