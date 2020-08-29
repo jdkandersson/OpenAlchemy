@@ -29,7 +29,13 @@ GET_TESTS = [
         "table_3",
         id="allOf tablename",
     ),
-    pytest.param({**DEFAULT_SCHEMA}, {}, "inherits", None, id="inherits not defined",),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "inherits",
+        None,
+        id="inherits not defined",
+    ),
     pytest.param(
         {**DEFAULT_SCHEMA, "x-inherits": True, "$ref": "#/components/schemas/Parent"},
         {"Parent": {"x-tablename": "parent"}},
@@ -71,7 +77,11 @@ GET_TESTS = [
         id="parent",
     ),
     pytest.param(
-        {**DEFAULT_SCHEMA}, {}, "description", None, id="description not defined",
+        {**DEFAULT_SCHEMA},
+        {},
+        "description",
+        None,
+        id="description not defined",
     ),
     pytest.param(
         {**DEFAULT_SCHEMA, "description": "description 1"},
@@ -116,7 +126,13 @@ GET_TESTS = [
         ["module.Mixin3", "module.Mixin4"],
         id="allOf x-mixins",
     ),
-    pytest.param({**DEFAULT_SCHEMA}, {}, "kwargs", None, id="x-kwargs not defined",),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "kwargs",
+        None,
+        id="x-kwargs not defined",
+    ),
     pytest.param(
         {**DEFAULT_SCHEMA, "x-kwargs": {"key_1": "value 1"}},
         {},

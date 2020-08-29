@@ -5,7 +5,12 @@ import pytest
 from open_alchemy.schemas.validation.helpers import properties
 
 CHECK_PROPS_VALUES_TEST = [
-    pytest.param({}, {}, None, id="empty",),
+    pytest.param(
+        {},
+        {},
+        None,
+        id="empty",
+    ),
     pytest.param(
         {"properties": True},
         {},
@@ -18,7 +23,12 @@ CHECK_PROPS_VALUES_TEST = [
         (False, "value of properties must be a dictionary"),
         id="single $ref invalid",
     ),
-    pytest.param({"properties": {}}, {}, None, id="single valid",),
+    pytest.param(
+        {"properties": {}},
+        {},
+        None,
+        id="single valid",
+    ),
     pytest.param(
         {"allOf": [{"properties": True}, {"properties": {}}]},
         {},
@@ -53,8 +63,18 @@ def test_check_properties_values(schema, schemas, expected_result):
 
 
 CHECK_PROPS_ITEMS_TEST = [
-    pytest.param({}, {}, None, id="empty",),
-    pytest.param({"properties": {}}, {}, None, id="single empty",),
+    pytest.param(
+        {},
+        {},
+        None,
+        id="empty",
+    ),
+    pytest.param(
+        {"properties": {}},
+        {},
+        None,
+        id="single empty",
+    ),
     pytest.param(
         {"properties": {True: "value"}},
         {},
@@ -67,7 +87,12 @@ CHECK_PROPS_ITEMS_TEST = [
         (False, "key_1 :: property values must be dictionaries"),
         id="single value not dict",
     ),
-    pytest.param({"properties": {"key_1": {}}}, {}, None, id="single",),
+    pytest.param(
+        {"properties": {"key_1": {}}},
+        {},
+        None,
+        id="single",
+    ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"properties": {"key_1": {}}}},
@@ -87,7 +112,10 @@ CHECK_PROPS_ITEMS_TEST = [
         id="multiple keys second invalid",
     ),
     pytest.param(
-        {"properties": {"key_1": {}, "key_2": {}}}, {}, None, id="multiple keys",
+        {"properties": {"key_1": {}, "key_2": {}}},
+        {},
+        None,
+        id="multiple keys",
     ),
     pytest.param(
         {"allOf": [{"properties": {True: {}}}, {"properties": {"key_2": {}}}]},

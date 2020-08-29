@@ -8,7 +8,9 @@ Division:
     employees:
       type: array
       items:
-        $ref: "#/../Employee"
+        allOf:
+          - $ref: "#/../Employee"
+          - x-backref: division
 Employee:
   type: object
   ...

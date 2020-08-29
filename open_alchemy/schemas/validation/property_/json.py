@@ -20,6 +20,10 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
+        helpers.peek.nullable(schema=schema, schemas=schemas)
+        helpers.peek.description(schema=schema, schemas=schemas)
+        helpers.peek.read_only(schema=schema, schemas=schemas)
+        helpers.peek.write_only(schema=schema, schemas=schemas)
         helpers.peek.index(schema=schema, schemas=schemas)
         helpers.peek.unique(schema=schema, schemas=schemas)
         helpers.peek.primary_key(schema=schema, schemas=schemas)

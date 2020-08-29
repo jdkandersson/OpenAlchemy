@@ -44,7 +44,7 @@ def _check_object_ref(
         return types.Result(False, "not a reference to another object")
 
     # Check referenced schema is constructable
-    _, ref_schema = helpers.ref.resolve(schema={"$ref": ref}, schemas=schemas, name="")
+    _, ref_schema = helpers.ref.get_ref(ref=ref, schemas=schemas)
     if not helpers.schema.constructable(schema=ref_schema, schemas=schemas):
         return types.Result(False, "referenced schema not constructable")
 
@@ -90,6 +90,10 @@ def _check_object_values(
     """Check the values of the relationship."""
     # Check nullable
     helpers.peek.nullable(schema=schema, schemas=schemas)
+    # Check description
+    helpers.peek.description(schema=schema, schemas=schemas)
+    # Check writeOnly
+    helpers.peek.write_only(schema=schema, schemas=schemas)
     # Check backref and uselist
     backref_uselist_result = _check_object_backref_uselist(
         schema=schema, schemas=schemas
@@ -162,6 +166,11 @@ def _check_array_root(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check for invalid keys at the array schema root."""
+    # Check description
+    helpers.peek.description(schema=schema, schemas=schemas)
+    # Check writeOnly
+    helpers.peek.write_only(schema=schema, schemas=schemas)
+
     # Check secondary
     if (
         helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-secondary")
@@ -198,7 +207,8 @@ def _check_array_root(
         is not None
     ):
         return types.Result(
-            False, "x-kwargs cannot be defined on x-to-many relationship property root",
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
         )
     # Check uselist
     if (
@@ -263,7 +273,10 @@ def _check_array_items(
         )
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     if type_ != "object":
-        return types.Result(False, "items property :: type not an object",)
+        return types.Result(
+            False,
+            "items property :: type not an object",
+        )
 
     # Check array item values
     _values_result = _check_array_items_values(schema=schema, schemas=schemas)

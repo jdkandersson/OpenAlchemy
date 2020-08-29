@@ -14,7 +14,12 @@ class TestRequiresForeignKey:
     @pytest.mark.parametrize(
         "schema, schemas, expected_result",
         [
-            pytest.param({"type": "integer"}, {}, False, id="not relationship",),
+            pytest.param(
+                {"type": "integer"},
+                {},
+                False,
+                id="not relationship",
+            ),
             pytest.param(
                 {"$ref": "#/components/schemas/RefSchema"},
                 {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},

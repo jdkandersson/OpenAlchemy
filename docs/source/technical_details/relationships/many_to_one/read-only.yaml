@@ -6,7 +6,9 @@ Employee:
       type: integer
     ...
     division:
-      $ref: "#/../Division"
+      allOf:
+        - $ref: "#/../Division"
+        - x-backref: employees
 Division:
   type: object
   x-tablename: division

@@ -97,6 +97,100 @@ TESTS = [
     ),
     pytest.param(
         {
+            "description": True,
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="one to many malformed description",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "description": True,
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefRefSchema"},
+            },
+            "RefRefSchema": {"type": "object", "x-tablename": "ref_schema"},
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="one to many malformed description $ref",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "description": True,
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                }
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="one to many malformed description allOf",
+    ),
+    pytest.param(
+        {
+            "description": "description 1",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (True, None),
+        id="one to many $ref",
+    ),
+    pytest.param(
+        {
+            "writeOnly": "True",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="one to many malformed writeOnly",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "writeOnly": "True",
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefRefSchema"},
+            },
+            "RefRefSchema": {"type": "object", "x-tablename": "ref_schema"},
+        },
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="one to many malformed writeOnly $ref",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "writeOnly": "True",
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                }
+            ]
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="one to many malformed writeOnly allOf",
+    ),
+    pytest.param(
+        {
+            "writeOnly": True,
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
+        (True, None),
+        id="one to many $ref",
+    ),
+    pytest.param(
+        {
             "allOf": [
                 {
                     "type": "array",
@@ -212,7 +306,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many backref on root",
     ),
     pytest.param(
@@ -222,7 +319,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many backref on root not string",
     ),
     pytest.param(
@@ -360,7 +460,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many kwargs on root",
     ),
     pytest.param(
@@ -445,7 +548,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many uselist on root",
     ),
     pytest.param(
@@ -516,8 +622,10 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
+@pytest.mark.validation
 @pytest.mark.schemas
 def test_check(schema, schemas, expected_result):
     """

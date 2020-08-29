@@ -48,6 +48,144 @@ TESTS = [
     ),
     pytest.param(
         {
+            "description": True,
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="many to many $ref malformed description",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "description": True,
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefRefSchema"},
+            },
+            "RefRefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            },
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="many to many $ref malformed description",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "description": True,
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                }
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="many to many $ref malformed description allOf",
+    ),
+    pytest.param(
+        {
+            "description": "description 1",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (True, None),
+        id="many to many $ref description",
+    ),
+    pytest.param(
+        {
+            "writeOnly": "True",
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="many to many $ref malformed writeOnly",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "writeOnly": "True",
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/RefRefSchema"},
+            },
+            "RefRefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            },
+        },
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="many to many $ref malformed writeOnly",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "writeOnly": "True",
+                    "type": "array",
+                    "items": {"$ref": "#/components/schemas/RefSchema"},
+                }
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="many to many $ref malformed writeOnly allOf",
+    ),
+    pytest.param(
+        {
+            "writeOnly": True,
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/RefSchema"},
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-secondary": "schema_ref_schema",
+            }
+        },
+        (True, None),
+        id="many to many $ref writeOnly",
+    ),
+    pytest.param(
+        {
             "type": "array",
             "x-json": False,
             "items": {"$ref": "#/components/schemas/RefSchema"},
@@ -190,7 +328,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many backref on root",
     ),
     pytest.param(
@@ -390,7 +531,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many kwargs on root not dict",
     ),
     pytest.param(
@@ -406,7 +550,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many kwargs on root",
     ),
     pytest.param(
@@ -502,7 +649,10 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many uselist on root not bool",
     ),
     pytest.param(
@@ -518,7 +668,10 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many uselist on root",
     ),
     pytest.param(
@@ -614,9 +767,11 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
+@pytest.mark.validation
 def test_check(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result

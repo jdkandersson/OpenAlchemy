@@ -6,13 +6,14 @@ from .. import types
 from . import peek
 
 
-class Type(enum.Enum):
+@enum.unique
+class Type(str, enum.Enum):
     """The relationship type."""
 
-    MANY_TO_ONE = 1
-    ONE_TO_ONE = 2
-    ONE_TO_MANY = 3
-    MANY_TO_MANY = 4
+    MANY_TO_ONE = "MANY_TO_ONE"
+    ONE_TO_ONE = "ONE_TO_ONE"
+    ONE_TO_MANY = "ONE_TO_MANY"
+    MANY_TO_MANY = "MANY_TO_MANY"
 
 
 def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:

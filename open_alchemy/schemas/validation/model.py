@@ -132,7 +132,12 @@ def _check_kwargs(
         return not key.startswith("__") or not key.endswith("__")
 
     kwargs_keys = list(kwargs.keys())
-    any_kwargs_keys_invalid = any(filter(invalid_key, kwargs_keys,))
+    any_kwargs_keys_invalid = any(
+        filter(
+            invalid_key,
+            kwargs_keys,
+        )
+    )
     if any_kwargs_keys_invalid:
         return types.Result(
             False, "models x-kwargs must have keys that start and end with __"

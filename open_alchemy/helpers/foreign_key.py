@@ -66,7 +66,8 @@ def get_target_schema(
         return parent_schema
 
     ref = peek.ref(schema=property_schema, schemas=schemas)
-    _, ref_schema = ref_helper.resolve(schema={"$ref": ref}, schemas=schemas, name="")
+    assert ref is not None
+    _, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
     return ref_schema
 
 
@@ -162,9 +163,8 @@ def get_modify_schema(
         items_schema = peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
         ref = peek.ref(schema=items_schema, schemas=schemas)
-        _, ref_schema = ref_helper.resolve(
-            schema={"$ref": ref}, schemas=schemas, name=""
-        )
+        assert ref is not None
+        _, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
         return ref_schema
 
     return parent_schema
@@ -199,9 +199,8 @@ def get_modify_name(
         items_schema = peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
         ref = peek.ref(schema=items_schema, schemas=schemas)
-        ref_name, _ = ref_helper.resolve(
-            schema={"$ref": ref}, schemas=schemas, name=parent_name
-        )
+        assert ref is not None
+        ref_name, _ = ref_helper.get_ref(ref=ref, schemas=schemas)
         return ref_name
 
     return parent_name

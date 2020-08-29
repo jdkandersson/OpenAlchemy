@@ -5,8 +5,16 @@ import pytest
 from open_alchemy.schemas.helpers import process
 
 GET_ARTIFACTS_TESTS = [
-    pytest.param({}, [], id="empty",),
-    pytest.param({"Schema1": {}}, [], id="single schema not constructable",),
+    pytest.param(
+        {},
+        [],
+        id="empty",
+    ),
+    pytest.param(
+        {"Schema1": {}},
+        [],
+        id="single schema not constructable",
+    ),
     pytest.param(
         {"Schema1": {"x-tablename": "schema_1", "properties": {}}},
         [],
@@ -59,7 +67,8 @@ GET_ARTIFACTS_TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schemas, expected_artifacts", GET_ARTIFACTS_TESTS,
+    "schemas, expected_artifacts",
+    GET_ARTIFACTS_TESTS,
 )
 @pytest.mark.schemas
 def test_get_artifacts(schemas, expected_artifacts):
@@ -88,7 +97,11 @@ TArt = process.TArtifacts
 
 
 CALCULATE_OUTPUTS_TESTS = [
-    pytest.param([], [], id="empty",),
+    pytest.param(
+        [],
+        [],
+        id="empty",
+    ),
     pytest.param(
         [TArt("Schema1", "prop_1", {})],
         [

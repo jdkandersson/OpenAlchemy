@@ -44,7 +44,8 @@ def _check_value_matches(
 
     if expected_value != actual_value:
         return types.Result(
-            False, f"expected {expected_value_str}, actual is {actual_value_str}.",
+            False,
+            f"expected {expected_value_str}, actual is {actual_value_str}.",
         )
 
     return None
@@ -88,7 +89,8 @@ def _check_pre_defined_property_schema(
     schema_result = simple.check(schemas, defined_property_schema)
     if not schema_result.valid:
         return types.Result(
-            False, f"{property_name} property :: {schema_result.reason}",
+            False,
+            f"{property_name} property :: {schema_result.reason}",
         )
 
     # Check that key information matches
@@ -117,7 +119,10 @@ def _check_pre_defined_property_schema(
         schema=defined_property_schema, schemas=schemas
     )
     if actual_foreign_key is None:
-        return types.Result(False, f"{property_name} must define a foreign key",)
+        return types.Result(
+            False,
+            f"{property_name} must define a foreign key",
+        )
     if actual_foreign_key != foreign_key:
         return types.Result(
             False,
@@ -154,13 +159,16 @@ def _check_target_schema(
     """
     # Look for foreign key property schema
     properties = helpers.iterate.properties_items(
-        schema=target_schema, schemas=schemas, stay_within_tablename=True,
+        schema=target_schema,
+        schemas=schemas,
+        stay_within_tablename=True,
     )
     filtered_properties = filter(lambda arg: arg[0] == column_name, properties)
     foreign_key_target_property = next(filtered_properties, None)
     if foreign_key_target_property is None:
         return types.Result(
-            False, f"foreign key targeted schema must have the {column_name} property",
+            False,
+            f"foreign key targeted schema must have the {column_name} property",
         )
 
     # Validate the schema
@@ -177,7 +185,9 @@ def _check_target_schema(
 
     # Check for pre-defined foreign key property
     foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
-        column_name=column_name, target_schema=target_schema, schemas=schemas,
+        column_name=column_name,
+        target_schema=target_schema,
+        schemas=schemas,
     )
     pre_defined_result = _check_pre_defined_property_schema(
         property_name=foreign_key_property_name,
@@ -273,9 +283,8 @@ def _check_many_to_many(
     items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
     assert items_schema is not None
     ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
-    _, ref_schema = oa_helpers.ref.resolve(
-        schema={"$ref": ref}, schemas=schemas, name=""
-    )
+    assert ref is not None
+    _, ref_schema = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
     ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
     if ref_result is not None:
         return types.Result(
@@ -286,7 +295,9 @@ def _check_many_to_many(
 
 
 def _check_backref_property_properties_basics(
-    property_name: str, backref_schema: oa_types.Schema, schemas: oa_types.Schemas,
+    property_name: str,
+    backref_schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
 ) -> types.OptResult:
     """
     Check the backref schema.
@@ -601,7 +612,9 @@ def check(
             # Retrieve information required to check x-to-one and one-to-many
             # relationships
             column_name = oa_helpers.foreign_key.calculate_column_name(
-                type_=type_, property_schema=property_schema, schemas=schemas,
+                type_=type_,
+                property_schema=property_schema,
+                schemas=schemas,
             )
             target_schema = oa_helpers.foreign_key.get_target_schema(
                 type_=type_,

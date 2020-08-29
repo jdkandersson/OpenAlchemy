@@ -38,7 +38,8 @@ def test_type():
 
 
 @pytest.mark.parametrize(
-    "schema", [{"nullable": "1"}, {"nullable": 1}, {"nullable": 1.1}],
+    "schema",
+    [{"nullable": "1"}, {"nullable": 1}, {"nullable": 1.1}],
 )
 @pytest.mark.helper
 def test_nullable_wrong_type(schema):
@@ -99,7 +100,8 @@ def test_format(schema, expected_format):
 
 
 @pytest.mark.parametrize(
-    "schema", [{"maxLength": "1"}, {"maxLength": True}],
+    "schema",
+    [{"maxLength": "1"}, {"maxLength": True}],
 )
 @pytest.mark.helper
 def test_max_length_wrong_type(schema):

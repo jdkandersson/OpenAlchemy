@@ -5,7 +5,6 @@ import typing
 from .. import helpers as oa_helpers
 from .. import types
 from . import helpers
-from .validation import property_
 
 
 def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
@@ -28,8 +27,8 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
 
     """
     # Filter for relationship properties
-    property_type = property_.calculate_type(schemas, schema)
-    if property_type != property_.Type.RELATIONSHIP:
+    property_type = helpers.property_.type_.calculate(schemas, schema)
+    if property_type != helpers.property_.type_.Type.RELATIONSHIP:
         return False
 
     # Filter for not many-to-many relationship
@@ -67,7 +66,9 @@ def _foreign_key_property_not_defined(
         schema=property_schema, schemas=schemas
     )
     column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=type_, property_schema=property_schema, schemas=schemas,
+        type_=type_,
+        property_schema=property_schema,
+        schemas=schemas,
     )
     target_schema = oa_helpers.foreign_key.get_target_schema(
         type_=type_,
@@ -139,7 +140,9 @@ def _calculate_foreign_key_property_artifacts(
     assert relationship_type != oa_helpers.relationship.Type.MANY_TO_MANY
 
     column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=relationship_type, property_schema=property_schema, schemas=schemas,
+        type_=relationship_type,
+        property_schema=property_schema,
+        schemas=schemas,
     )
     target_schema = oa_helpers.foreign_key.get_target_schema(
         type_=relationship_type,
@@ -180,7 +183,9 @@ def _calculate_foreign_key_property_artifacts(
 
     # Retrieve information about the foreign key schema
     foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
-        column_name=column_name, target_schema=target_schema, schemas=schemas,
+        column_name=column_name,
+        target_schema=target_schema,
+        schemas=schemas,
     )
     property_type = oa_helpers.peek.type_(
         schema=foreign_key_target_schema, schemas=schemas
@@ -225,7 +230,9 @@ def _calculate_foreign_key_property_artifacts(
 
 
 def _get_schema_foreign_keys(
-    schemas: types.Schemas, schema_name: str, schema: types.Schema,
+    schemas: types.Schemas,
+    schema_name: str,
+    schema: types.Schema,
 ) -> helpers.process.TArtifactsIter:
     """
     Retrieve the foreign keys for a schema.

@@ -25,7 +25,10 @@ def test_integration_simple(schema, expected_schema):
     """
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -70,7 +73,10 @@ def test_integration_simple_json(schema, expected_schema):
     """
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -88,7 +94,10 @@ def test_integration_kwargs():
     schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
     ([(_, column)], _) = column_factory.column_factory(
-        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
     )
 
     assert column.doc == "doc 1"
@@ -105,7 +114,10 @@ def test_integration_all_of():
     schema = {"allOf": [{"type": "boolean"}]}
     schemas = {}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -124,7 +136,10 @@ def test_integration_ref():
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
     ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema, schemas=schemas, logical_name="column_1", model_schema={},
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+        model_schema={},
     )
 
     assert logical_name == "column_1"

@@ -66,7 +66,9 @@ def column_factory(
     if type_ == "object":
         # Handle objects
         return object_ref.handle_object(
-            schema=schema, schemas=schemas, logical_name=logical_name,
+            schema=schema,
+            schemas=schemas,
+            logical_name=logical_name,
         )
 
     # Handle arrays

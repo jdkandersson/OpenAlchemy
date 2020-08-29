@@ -5,8 +5,16 @@ import pytest
 from open_alchemy.schemas import artifacts
 
 GET_TESTS = [
-    pytest.param(True, {}, id="spec not dict",),
-    pytest.param({"components": {"schemas": {}}}, {"models": {}}, id="schemas empty",),
+    pytest.param(
+        True,
+        {},
+        id="spec not dict",
+    ),
+    pytest.param(
+        {"components": {"schemas": {}}},
+        {"models": {}},
+        id="schemas empty",
+    ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}}}},
         {"models": {}},
@@ -24,13 +32,209 @@ GET_TESTS = [
                     "Schema1": {
                         "type": "object",
                         "x-tablename": "schema_1",
+                        "properties": {"prop_1": {}},
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {}}
+            }
+        },
+        id="single model single property invalid",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
                         "properties": {"prop_1": {"type": "integer"}},
                     }
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
-        id="single model valid",
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
+        id="single model single property valid not required",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
+                        "properties": {"prop_1": {"type": "integer"}},
+                        "required": ["prop_1"],
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": True,
+                            }
+                        }
+                    },
+                }
+            }
+        },
+        id="single model single property valid required",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
+                        "properties": {"prop_1": {}, "prop_2": {}},
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {}}
+            }
+        },
+        id="single model multiple property none valid",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
+                        "properties": {"prop_1": {"type": "integer"}, "prop_2": {}},
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
+        id="single model multiple property first valid",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
+                        "properties": {"prop_1": {}, "prop_2": {"type": "string"}},
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_2": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "string"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "string"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
+        id="single model multiple property second valid",
+    ),
+    pytest.param(
+        {
+            "components": {
+                "schemas": {
+                    "Schema1": {
+                        "type": "object",
+                        "x-tablename": "schema_1",
+                        "properties": {
+                            "prop_1": {"type": "integer"},
+                            "prop_2": {"type": "string"},
+                        },
+                    }
+                }
+            }
+        },
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        },
+                        "prop_2": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "string"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "string"},
+                                "required": False,
+                            }
+                        },
+                    },
+                }
+            }
+        },
+        id="single model multiple property valid",
     ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}, "Schema2": {}}}},
@@ -50,7 +254,24 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema2": {"artifacts": {"tablename": "schema_2"}}}},
+        {
+            "models": {
+                "Schema2": {
+                    "artifacts": {"tablename": "schema_2"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
         id="multiple model first model invalid",
     ),
     pytest.param(
@@ -66,7 +287,24 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
         id="multiple model second model invalid",
     ),
     pytest.param(
@@ -88,8 +326,34 @@ GET_TESTS = [
         },
         {
             "models": {
-                "Schema1": {"artifacts": {"tablename": "schema_1"}},
-                "Schema2": {"artifacts": {"tablename": "schema_2"}},
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                },
+                "Schema2": {
+                    "artifacts": {"tablename": "schema_2"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                },
             },
         },
         id="multiple model valid",

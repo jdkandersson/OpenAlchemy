@@ -5,7 +5,31 @@ import pytest
 from open_alchemy.schemas.validation.property_ import json
 
 CHECK_TESTS = [
-    pytest.param({}, {}, (True, None), id="empty",),
+    pytest.param({}, {}, (True, None), id="empty"),
+    pytest.param(
+        {"nullable": "False"},
+        {},
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
+        id="malformed nullable",
+    ),
+    pytest.param(
+        {"description": True},
+        {},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="malformed description",
+    ),
+    pytest.param(
+        {"readOnly": "False"},
+        {},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="malformed readOnly",
+    ),
+    pytest.param(
+        {"writeOnly": "False"},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="malformed writeOnly",
+    ),
     pytest.param(
         {"x-index": "False"},
         {},
@@ -30,14 +54,14 @@ CHECK_TESTS = [
         (False, "malformed schema :: A index value must be of type boolean. "),
         id="allOf malformed x-index",
     ),
-    pytest.param({"x-index": True}, {}, (True, None), id="x-index",),
+    pytest.param({"x-index": True}, {}, (True, None), id="x-index"),
     pytest.param(
         {"x-unique": "False"},
         {},
         (False, "malformed schema :: A unique value must be of type boolean. "),
         id="malformed x-unique",
     ),
-    pytest.param({"x-unique": True}, {}, (True, None), id="x-unique",),
+    pytest.param({"x-unique": True}, {}, (True, None), id="x-unique"),
     pytest.param(
         {"x-primary-key": "False"},
         {},
@@ -47,7 +71,7 @@ CHECK_TESTS = [
         ),
         id="malformed x-primary-key",
     ),
-    pytest.param({"x-primary-key": True}, {}, (True, None), id="x-primary-key",),
+    pytest.param({"x-primary-key": True}, {}, (True, None), id="x-primary-key"),
     pytest.param(
         {"x-autoincrement": "False"},
         {},
@@ -66,7 +90,7 @@ CHECK_TESTS = [
     pytest.param(
         {"x-foreign-key": "foreign.key"},
         {},
-        (True, None,),
+        (True, None),
         id="x-foreign-key not string",
     ),
     pytest.param(

@@ -6,7 +6,56 @@ from ... import types as _oa_types
 from .. import helpers as _helpers
 from .. import validation
 from . import model
+from . import property_
 from . import types
+
+
+def _get_properties_artifacts(
+    schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> typing.Iterable[typing.Tuple[str, types.TAnyPropertyArtifacts]]:
+    """Get an iterator with properties artifacts."""
+    # Get model properties
+    properties = _helpers.iterate.properties_items(
+        schema=schema, schemas=schemas, stay_within_model=True
+    )
+    required_set = set(_helpers.iterate.required_items(schema=schema, schemas=schemas))
+    # Filter for valid properties
+    valid_properties = filter(
+        lambda args: validation.property_.check(
+            schemas, schema, args[0], args[1]
+        ).valid,
+        properties,
+    )
+    return map(
+        lambda args: (
+            args[0],
+            property_.get(schemas, schema, args[0], args[1], args[0] in required_set),
+        ),
+        valid_properties,
+    )
+
+
+def _get_properties(
+    *, schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> types.TProperties:
+    """
+    Get artifacts for the properties of a model.
+
+    Args:
+        schemas: All defined schemas used to resolve any $ref.
+        schema_name: The name of the schema to validate.
+        schema: The schema to validate.
+
+    Returns:
+        The artifacts for the properties.
+
+    """
+    properties_artifacts = _get_properties_artifacts(schemas, schema)
+    properties_t_artifacts: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
+        lambda args: (args[0], {"artifacts": args[1].to_dict()}),
+        properties_artifacts,
+    )
+    return dict(properties_t_artifacts)
 
 
 def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
@@ -23,6 +72,7 @@ def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TM
     model_artifacts = model.get(schemas, schema)
     return {
         "artifacts": model_artifacts.to_dict(),
+        "properties": _get_properties(schemas=schemas, schema=schema),
     }
 
 

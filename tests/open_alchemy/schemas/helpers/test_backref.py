@@ -114,7 +114,10 @@ def test_get(schema, schemas, expected_backref):
             id="allOf single $ref",
         ),
         pytest.param(
-            {"allOf": [{"x-backref": "schema"}]}, {}, True, id="allOf single x-backref",
+            {"allOf": [{"x-backref": "schema"}]},
+            {},
+            True,
+            id="allOf single x-backref",
         ),
         pytest.param({"allOf": [{}]}, {}, False, id="allOf single no backref"),
         pytest.param({"allOf": [{}, {}]}, {}, False, id="allOf multiple no backref"),

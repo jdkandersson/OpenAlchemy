@@ -58,9 +58,7 @@ def _calculate_artifacts(
 
     # Resolve name
     assert ref is not None
-    ref_schema_name, _ = oa_helpers.ref.resolve(
-        name="", schema={"$ref": ref}, schemas=schemas
-    )
+    ref_schema_name, _ = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
 
     # Calculate schema
     assert backref is not None
@@ -72,7 +70,9 @@ def _calculate_artifacts(
 
 
 def _get_schema_backrefs(
-    schemas: types.Schemas, schema_name: str, schema: types.Schema,
+    schemas: types.Schemas,
+    schema_name: str,
+    schema: types.Schema,
 ) -> helpers.process.TArtifactsIter:
     """
     Get the backrefs for a schema.

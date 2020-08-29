@@ -320,12 +320,13 @@ def _retrieve_model_parents_schema(
     yield schema
 
 
-class Type(enum.Enum):
+@enum.unique
+class Type(str, enum.Enum):
     """The type of inheritance."""
 
-    NONE = 1
-    JOINED_TABLE = 2
-    SINGLE_TABLE = 3
+    NONE = "NONE"
+    JOINED_TABLE = "JOINED_TABLE"
+    SINGLE_TABLE = "SINGLE_TABLE"
 
 
 def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:

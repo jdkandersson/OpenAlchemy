@@ -18,7 +18,10 @@ from open_alchemy import helpers
         pytest.param({"x-inherits": 1}, {}, True, id="x-inherits not valid"),
         pytest.param({"$ref": True}, {}, False, id="$ref not string"),
         pytest.param(
-            {"$ref": "#/components/schemas/Schema1"}, {}, False, id="$ref not resolve",
+            {"$ref": "#/components/schemas/Schema1"},
+            {},
+            False,
+            id="$ref not resolve",
         ),
         pytest.param(
             {"$ref": "#/components/schemas/Schema1"},
@@ -194,7 +197,10 @@ def test_prepare_skip(schema, schemas):
             id="allOf with $ref",
         ),
         pytest.param(
-            {"properties": {}}, {}, {"properties": {}}, id="object properties empty",
+            {"properties": {}},
+            {},
+            {"properties": {}},
+            id="object properties empty",
         ),
         pytest.param(
             {"properties": {"key_1": {"$ref": "#/components/schemas/RefSchema"}}},

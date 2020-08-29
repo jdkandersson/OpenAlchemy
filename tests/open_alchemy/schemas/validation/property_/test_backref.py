@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas.validation.property_ import read_only
+from open_alchemy.schemas.validation.property_ import backref
 
 TESTS = [
     pytest.param(
@@ -11,17 +11,12 @@ TESTS = [
         (False, "not supported type is not supported"),
         id="type simple not supported",
     ),
-    pytest.param({"type": "integer"}, {}, (True, None), id="type integer",),
     pytest.param(
-        {"type": "integer", "format": "not supported"},
+        {"type": "object"},
         {},
-        (False, "not supported format is not supported for integer"),
-        id="type integer incorrect format",
+        (True, None),
+        id="type object no properties",
     ),
-    pytest.param({"type": "number"}, {}, (True, None), id="type number",),
-    pytest.param({"type": "string"}, {}, (True, None), id="type string",),
-    pytest.param({"type": "boolean"}, {}, (True, None), id="type boolean",),
-    pytest.param({"type": "object"}, {}, (True, None), id="type object no properties",),
     pytest.param(
         {"type": "object", "properties": True},
         {},
@@ -205,6 +200,6 @@ def test_check(schema, schemas, expected_result):
     WHEN check is called with the schemas schema
     THEN the expected result is returned.
     """
-    returned_result = read_only.check(schemas, schema)
+    returned_result = backref.check(schemas, schema)
 
     assert returned_result == expected_result

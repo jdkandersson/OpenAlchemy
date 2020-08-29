@@ -194,7 +194,9 @@ def test_calculate_foreign_key():
     schemas = {"RefSchema": {"x-tablename": "table_1"}}
 
     returned_key = foreign_key.calculate_foreign_key(
-        column_name="fk_column", target_schema=target_schema, schemas=schemas,
+        column_name="fk_column",
+        target_schema=target_schema,
+        schemas=schemas,
     )
 
     assert returned_key == "table_1.fk_column"

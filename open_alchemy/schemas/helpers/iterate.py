@@ -238,7 +238,10 @@ def _any_key(
 
 
 def required_values(
-    *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Any]:
     """
     Return iterable with all values of the required key of the constructable schema.
@@ -280,7 +283,10 @@ def required_values(
 
 
 def required_items(
-    *, schema: types.Schema, schemas: types.Schemas, stay_within_model: bool = False,
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+    stay_within_model: bool = False,
 ) -> typing.Iterator[typing.Any]:
     """
     Return iterable with all items of the required key of the constructable schema.

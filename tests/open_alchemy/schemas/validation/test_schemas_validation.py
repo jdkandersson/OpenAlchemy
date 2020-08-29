@@ -38,7 +38,9 @@ CHECK_TESTS = [
         id="multiple model second value invalid",
     ),
     pytest.param(
-        {"Schema1": {}, "Schema2": {}}, (True, None), id="multiple model valid",
+        {"Schema1": {}, "Schema2": {}},
+        (True, None),
+        id="multiple model valid",
     ),
 ]
 
