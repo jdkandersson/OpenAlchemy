@@ -3,6 +3,7 @@
 import pytest
 
 from open_alchemy.schemas import artifacts
+from open_alchemy.schemas import helpers
 
 
 @pytest.mark.parametrize(
@@ -78,6 +79,40 @@ from open_alchemy.schemas import artifacts
                 "foreign_key_kwargs": {"key_2": "value 2"},
             },
             id="extension opt values defined",
+        ),
+        pytest.param(
+            artifacts.types.SimplePropertyArtifacts(
+                type_=helpers.property_.type_.Type.SIMPLE,
+                open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
+                    type_="integer",
+                    format_=None,
+                    max_length=None,
+                    nullable=None,
+                    description=None,
+                    default=None,
+                    read_only=None,
+                    write_only=None,
+                ),
+                extension=artifacts.types.ExtensionSimplePropertyArtifacts(
+                    primary_key=True,
+                    autoincrement=None,
+                    index=None,
+                    unique=None,
+                    foreign_key=None,
+                    kwargs=None,
+                    foreign_key_kwargs=None,
+                ),
+                schema={"type": "integer"},
+                required=True,
+            ),
+            {
+                "type": "SIMPLE",
+                "open_api": {"type": "integer"},
+                "extension": {"primary_key": True},
+                "schema": {"type": "integer"},
+                "required": True,
+            },
+            id="complete",
         ),
     ],
 )

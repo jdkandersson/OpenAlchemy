@@ -7,13 +7,13 @@ from .... import types
 from . import simple
 
 
-class Type(enum.Enum):
+class Type(str, enum.Enum):
     """The type of a property."""
 
-    SIMPLE = 1
-    JSON = 2
-    RELATIONSHIP = 3
-    BACKREF = 4
+    SIMPLE = "SIMPLE"
+    JSON = "JSON"
+    RELATIONSHIP = "RELATIONSHIP"
+    BACKREF = "BACKREF"
 
 
 def calculate(schemas: types.Schemas, schema: types.Schema) -> Type:
