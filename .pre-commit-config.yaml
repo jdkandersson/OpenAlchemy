@@ -31,7 +31,7 @@ repos:
         types: [python]
         exclude: "^example|conf.py$"
   - repo: https://github.com/prettier/prettier
-    rev: "2.0.5"
+    rev: "2.1.1"
     hooks:
       - exclude: "^docs.*.yaml$"
         id: prettier
