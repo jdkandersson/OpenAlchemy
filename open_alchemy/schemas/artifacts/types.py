@@ -50,6 +50,25 @@ class OpenApiSimplePropertyArtifacts:
     write_only: typing.Optional[bool]
 
 
+class _ExtensionSimplePropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+
+    autoincrement: bool
+    index: bool
+    unique: bool
+
+    foreign_key: str
+
+    kwargs: TKwargs
+    foreign_key_kwargs: TKwargs
+
+
+class ExtensionSimplePropertyTypedDict(_ExtensionSimplePropertyTypedDict, total=True):
+    """TypedDict representation of the OpenAPI artifacts for a simple property."""
+
+    primary_key: bool
+
+
 @dataclasses.dataclass
 class ExtensionSimplePropertyArtifacts:
     """OpenAPI artifacts for the simple property."""
@@ -63,6 +82,38 @@ class ExtensionSimplePropertyArtifacts:
 
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
+
+    def to_dict(self) -> ExtensionSimplePropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: ExtensionSimplePropertyTypedDict = {
+            "primary_key": self.primary_key
+        }
+
+        opt_keys: typing.List[
+            typing.Literal[
+                "autoincrement",
+                "index",
+                "unique",
+                "foreign_key",
+                "kwargs",
+                "foreign_key_kwargs",
+            ]
+        ] = [
+            "autoincrement",
+            "index",
+            "unique",
+            "foreign_key",
+            "kwargs",
+            "foreign_key_kwargs",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
 
 
 @dataclasses.dataclass

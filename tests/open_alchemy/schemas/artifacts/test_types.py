@@ -9,6 +9,58 @@ from open_alchemy.schemas import artifacts
     "artifacts_value, expected_dict",
     [
         pytest.param(
+            artifacts.types.ExtensionSimplePropertyArtifacts(
+                primary_key=True,
+                autoincrement=None,
+                index=None,
+                unique=None,
+                foreign_key=None,
+                kwargs=None,
+                foreign_key_kwargs=None,
+            ),
+            {"primary_key": True},
+            id="opt values None",
+        ),
+        pytest.param(
+            artifacts.types.ExtensionSimplePropertyArtifacts(
+                primary_key=True,
+                autoincrement=False,
+                index=False,
+                unique=True,
+                foreign_key="foreign.key",
+                kwargs={"key_1": "value 1"},
+                foreign_key_kwargs={"key_2": "value 2"},
+            ),
+            {
+                "primary_key": True,
+                "autoincrement": False,
+                "index": False,
+                "unique": True,
+                "foreign_key": "foreign.key",
+                "kwargs": {"key_1": "value 1"},
+                "foreign_key_kwargs": {"key_2": "value 2"},
+            },
+            id="opt values defined",
+        ),
+    ],
+)
+@pytest.mark.schemas
+@pytest.mark.artifacts
+def test_extension_simple_property_artifacts(artifacts_value, expected_dict):
+    """
+    GIVEN artifacts and expected dictionary
+    WHEN to_dict is called on the artifacts
+    THEN the expected dictionary is returned.
+    """
+    returned_dict = artifacts_value.to_dict()
+
+    assert returned_dict == expected_dict
+
+
+@pytest.mark.parametrize(
+    "artifacts_value, expected_dict",
+    [
+        pytest.param(
             artifacts.types.ModelArtifacts(
                 tablename="table_1",
                 inherits=None,
