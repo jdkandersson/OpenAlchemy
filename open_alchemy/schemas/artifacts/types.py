@@ -28,7 +28,7 @@ class PropertyArtifacts:
     required: typing.Optional[bool]
 
 
-class _OpenApiSimplePropertyTypedDict(types.TypedDict, total=False):
+class _OpenApiSimplePropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the OpenAPI artifacts for a simple property."""
 
     format_: str
@@ -43,7 +43,7 @@ class _OpenApiSimplePropertyTypedDict(types.TypedDict, total=False):
     write_only: bool
 
 
-class OpenApiSimplePropertyTypedDict(_OpenApiSimplePropertyTypedDict, total=True):
+class OpenApiSimplePropertyTypedDict(_OpenApiSimplePropertyTypedDictBase, total=True):
     """TypedDict representation of the OpenAPI artifacts for a simple property."""
 
     type: str
@@ -98,7 +98,7 @@ class OpenApiSimplePropertyArtifacts:
         return return_dict
 
 
-class _ExtensionSimplePropertyTypedDict(types.TypedDict, total=False):
+class _ExtensionSimplePropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the extension artifacts for a simple property."""
 
     autoincrement: bool
@@ -111,7 +111,9 @@ class _ExtensionSimplePropertyTypedDict(types.TypedDict, total=False):
     foreign_key_kwargs: TKwargs
 
 
-class ExtensionSimplePropertyTypedDict(_ExtensionSimplePropertyTypedDict, total=True):
+class ExtensionSimplePropertyTypedDict(
+    _ExtensionSimplePropertyTypedDictBase, total=True
+):
     """TypedDict representation of the extension artifacts for a simple property."""
 
     primary_key: bool
@@ -239,7 +241,7 @@ class OpenApiJsonPropertyArtifacts:
         return return_dict
 
 
-class _ExtensionJsonPropertyTypedDict(types.TypedDict, total=False):
+class _ExtensionJsonPropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the extension artifacts for a JSON property."""
 
     index: bool
@@ -251,7 +253,7 @@ class _ExtensionJsonPropertyTypedDict(types.TypedDict, total=False):
     foreign_key_kwargs: TKwargs
 
 
-class ExtensionJsonPropertyTypedDict(_ExtensionJsonPropertyTypedDict, total=True):
+class ExtensionJsonPropertyTypedDict(_ExtensionJsonPropertyTypedDictBase, total=True):
     """TypedDict representation of the extension artifacts for a JSON property."""
 
     primary_key: bool
@@ -358,7 +360,7 @@ class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     foreign_key_property: str
 
 
-class _OneToManyRelationshipPropertyTypedDict(types.TypedDict, total=False):
+class _OneToManyRelationshipPropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the one-to-many relationship property."""
 
     backref_property: str
@@ -368,7 +370,7 @@ class _OneToManyRelationshipPropertyTypedDict(types.TypedDict, total=False):
 
 
 class OneToManyRelationshipPropertyTypedDict(
-    _OneToManyRelationshipPropertyTypedDict, total=True
+    _OneToManyRelationshipPropertyTypedDictBase, total=True
 ):
     """TypedDict representation of the one-to-many relationship property."""
 
@@ -422,7 +424,7 @@ class OneToManyRelationshipPropertyArtifacts(
         return return_dict
 
 
-class _XToOneRelationshipPropertyTypedDict(types.TypedDict, total=False):
+class _XToOneRelationshipPropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the x-to-one relationship property."""
 
     backref_property: str
@@ -433,7 +435,7 @@ class _XToOneRelationshipPropertyTypedDict(types.TypedDict, total=False):
 
 
 class XToOneRelationshipPropertyTypedDict(
-    _XToOneRelationshipPropertyTypedDict, total=True
+    _XToOneRelationshipPropertyTypedDictBase, total=True
 ):
     """TypedDict representation of the x-to-one relationship property."""
 
@@ -526,7 +528,7 @@ class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts)
         return super().to_dict()
 
 
-class _ManyToManyRelationshipPropertyTypedDict(types.TypedDict, total=False):
+class _ManyToManyRelationshipPropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the many-to-many relationship property."""
 
     backref_property: str
@@ -536,7 +538,7 @@ class _ManyToManyRelationshipPropertyTypedDict(types.TypedDict, total=False):
 
 
 class ManyToManyRelationshipPropertyTypedDict(
-    _ManyToManyRelationshipPropertyTypedDict, total=True
+    _ManyToManyRelationshipPropertyTypedDictBase, total=True
 ):
     """TypedDict representation of the many-to-many relationship property."""
 
@@ -652,6 +654,15 @@ TAnyPropertyArtifacts = typing.Union[
 ]
 
 
+class TProperty(types.TypedDict, total=True):
+    """Artifacts for a property."""
+
+    artifacts: TAnyPropertyTypedDict
+
+
+TProperties = typing.Dict[str, TProperty]
+
+
 class _ModelTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the model artifacts."""
 
@@ -674,7 +685,13 @@ class ModelTypedDict(_ModelTypedDictBase, total=True):
     tablename: str
 
 
-class TModel(types.TypedDict, total=True):
+class _TModelBase(types.TypedDict, total=False):
+    """Record artifacts of a model."""
+
+    properties: TProperties
+
+
+class TModel(_TModelBase, total=True):
     """Record artifacts of a model."""
 
     artifacts: ModelTypedDict
