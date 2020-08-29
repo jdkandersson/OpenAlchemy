@@ -410,6 +410,68 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             },
             id="one-to-one relationship opt values defined",
         ),
+        pytest.param(
+            artifacts.types.ManyToManyRelationshipPropertyArtifacts(
+                type_=helpers.property_.type_.Type.RELATIONSHIP,
+                schema={
+                    "type": "array",
+                    "items": {"type": "object", "x-de-$ref": "parent"},
+                },
+                sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+                parent="parent 1",
+                backref_property=None,
+                kwargs=None,
+                write_only=None,
+                description=None,
+                required=True,
+                secondary="secondary_1",
+            ),
+            {
+                "type": "RELATIONSHIP",
+                "sub_type": "MANY_TO_MANY",
+                "parent": "parent 1",
+                "required": True,
+                "secondary": "secondary_1",
+                "schema": {
+                    "type": "array",
+                    "items": {"type": "object", "x-de-$ref": "parent"},
+                },
+            },
+            id="one-to-many relationship opt values not defined",
+        ),
+        pytest.param(
+            artifacts.types.ManyToManyRelationshipPropertyArtifacts(
+                type_=helpers.property_.type_.Type.RELATIONSHIP,
+                schema={
+                    "type": "array",
+                    "items": {"type": "object", "x-de-$ref": "parent"},
+                },
+                sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+                parent="parent 1",
+                backref_property="backref 1",
+                kwargs={"key_": "value"},
+                write_only=True,
+                description="description 1",
+                required=True,
+                secondary="secondary_1",
+            ),
+            {
+                "type": "RELATIONSHIP",
+                "sub_type": "MANY_TO_MANY",
+                "parent": "parent 1",
+                "required": True,
+                "backref_property": "backref 1",
+                "kwargs": {"key_": "value"},
+                "write_only": True,
+                "description": "description 1",
+                "secondary": "secondary_1",
+                "schema": {
+                    "type": "array",
+                    "items": {"type": "object", "x-de-$ref": "parent"},
+                },
+            },
+            id="one-to-many relationship opt values defined",
+        ),
     ],
 )
 @pytest.mark.schemas

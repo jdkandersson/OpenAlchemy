@@ -423,7 +423,7 @@ class OneToManyRelationshipPropertyArtifacts(
 
 
 class _XToOneRelationshipPropertyTypedDict(types.TypedDict, total=False):
-    """TypedDict representation of the one-to-many relationship property."""
+    """TypedDict representation of the x-to-one relationship property."""
 
     backref_property: str
     kwargs: TKwargs
@@ -435,7 +435,7 @@ class _XToOneRelationshipPropertyTypedDict(types.TypedDict, total=False):
 class XToOneRelationshipPropertyTypedDict(
     _XToOneRelationshipPropertyTypedDict, total=True
 ):
-    """TypedDict representation of the one-to-many relationship property."""
+    """TypedDict representation of the x-to-one relationship property."""
 
     type: str
     sub_type: str
@@ -526,6 +526,28 @@ class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts)
         return super().to_dict()
 
 
+class _ManyToManyRelationshipPropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the many-to-many relationship property."""
+
+    backref_property: str
+    kwargs: TKwargs
+    write_only: bool
+    description: str
+
+
+class ManyToManyRelationshipPropertyTypedDict(
+    _ManyToManyRelationshipPropertyTypedDict, total=True
+):
+    """TypedDict representation of the many-to-many relationship property."""
+
+    type: str
+    sub_type: str
+    parent: str
+    required: bool
+    schema: types.ArrayRefSchema
+    secondary: str
+
+
 @dataclasses.dataclass
 class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a x-to-one relationship property."""
@@ -535,6 +557,34 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     ]
     secondary: str
     schema: types.ArrayRefSchema
+
+    def to_dict(self) -> ManyToManyRelationshipPropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: ManyToManyRelationshipPropertyTypedDict = {
+            "type": self.type_,
+            "sub_type": self.sub_type,
+            "parent": self.parent,
+            "required": self.required,
+            "schema": self.schema,
+            "secondary": self.secondary,
+        }
+
+        opt_keys: typing.List[
+            typing.Literal["backref_property", "kwargs", "write_only", "description"]
+        ] = [
+            "backref_property",
+            "kwargs",
+            "write_only",
+            "description",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
 
 
 TAnyRelationshipPropertyArtifacts = typing.Union[
