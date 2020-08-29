@@ -14,7 +14,7 @@ GET_TESTS = [
     pytest.param(True, {**DEFAULT_SCHEMA}, {}, "required", True, id="required True"),
     pytest.param(False, {**DEFAULT_SCHEMA}, {}, "required", False, id="required False"),
     pytest.param(
-        None, {**DEFAULT_SCHEMA}, {}, "type_", type_.Type.SIMPLE, id="property type"
+        None, {**DEFAULT_SCHEMA}, {}, "type", type_.Type.SIMPLE, id="property type"
     ),
     pytest.param(
         None,
@@ -63,7 +63,7 @@ GET_TESTS = [
         None,
         {**DEFAULT_SCHEMA, "type": "type 1"},
         {},
-        "open_api.type_",
+        "open_api.type",
         "type 1",
         id="type",
     ),
@@ -71,7 +71,7 @@ GET_TESTS = [
         None,
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {**DEFAULT_SCHEMA, "type": "type 2"}},
-        "open_api.type_",
+        "open_api.type",
         "type 2",
         id="$ref type",
     ),
@@ -79,18 +79,18 @@ GET_TESTS = [
         None,
         {"allOf": [{**DEFAULT_SCHEMA, "type": "type 3"}]},
         {},
-        "open_api.type_",
+        "open_api.type",
         "type 3",
         id="allOf type",
     ),
     pytest.param(
-        None, {**DEFAULT_SCHEMA}, {}, "open_api.format_", None, id="format undefined"
+        None, {**DEFAULT_SCHEMA}, {}, "open_api.format", None, id="format undefined"
     ),
     pytest.param(
         None,
         {**DEFAULT_SCHEMA, "format": "format 1"},
         {},
-        "open_api.format_",
+        "open_api.format",
         "format 1",
         id="format",
     ),
@@ -98,7 +98,7 @@ GET_TESTS = [
         None,
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {**DEFAULT_SCHEMA, "format": "format 2"}},
-        "open_api.format_",
+        "open_api.format",
         "format 2",
         id="$ref format",
     ),
@@ -106,7 +106,7 @@ GET_TESTS = [
         None,
         {"allOf": [{**DEFAULT_SCHEMA, "format": "format 3"}]},
         {},
-        "open_api.format_",
+        "open_api.format",
         "format 3",
         id="allOf format",
     ),

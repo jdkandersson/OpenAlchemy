@@ -16,7 +16,7 @@ TKwargs = typing.Dict[str, typing.Any]
 class PropertyArtifacts:
     """Information about a property."""
 
-    type_: types.Literal[
+    type: types.Literal[
         helpers.property_.type_.Type.SIMPLE,
         helpers.property_.type_.Type.JSON,
         helpers.property_.type_.Type.RELATIONSHIP,
@@ -34,7 +34,7 @@ class PropertyArtifacts:
 class _OpenApiSimplePropertyTypedDictBase(types.TypedDict, total=False):
     """TypedDict representation of the OpenAPI artifacts for a simple property."""
 
-    format_: str
+    format: str
     max_length: int
     nullable: bool
 
@@ -56,8 +56,8 @@ class OpenApiSimplePropertyTypedDict(_OpenApiSimplePropertyTypedDictBase, total=
 class OpenApiSimplePropertyArtifacts:
     """OpenAPI artifacts for the simple property."""
 
-    type_: str
-    format_: typing.Optional[str]
+    type: str
+    format: typing.Optional[str]
     max_length: typing.Optional[int]
     nullable: typing.Optional[bool]
 
@@ -70,11 +70,11 @@ class OpenApiSimplePropertyArtifacts:
 
     def to_dict(self) -> OpenApiSimplePropertyTypedDict:
         """Convert to dictionary."""
-        return_dict: OpenApiSimplePropertyTypedDict = {"type": self.type_}
+        return_dict: OpenApiSimplePropertyTypedDict = {"type": self.type}
 
         opt_keys: typing.List[
             types.Literal[
-                "format_",
+                "format",
                 "max_length",
                 "nullable",
                 "description",
@@ -83,7 +83,7 @@ class OpenApiSimplePropertyArtifacts:
                 "write_only",
             ]
         ] = [
-            "format_",
+            "format",
             "max_length",
             "nullable",
             "description",
@@ -183,7 +183,7 @@ class SimplePropertyTypedDict(types.TypedDict, total=True):
 class SimplePropertyArtifacts(PropertyArtifacts):
     """Information about a simple property."""
 
-    type_: types.Literal[helpers.property_.type_.Type.SIMPLE]
+    type: types.Literal[helpers.property_.type_.Type.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
     schema: types.ColumnSchema
@@ -192,7 +192,7 @@ class SimplePropertyArtifacts(PropertyArtifacts):
     def to_dict(self) -> SimplePropertyTypedDict:
         """Convert to dictionary."""
         return {
-            "type": self.type_,
+            "type": self.type,
             "open_api": self.open_api.to_dict(),
             "extension": self.extension.to_dict(),
             "schema": self.schema,
@@ -318,7 +318,7 @@ class JsonPropertyTypedDict(types.TypedDict, total=True):
 class JsonPropertyArtifacts(PropertyArtifacts):
     """Information about a JSON property."""
 
-    type_: types.Literal[helpers.property_.type_.Type.JSON]
+    type: types.Literal[helpers.property_.type_.Type.JSON]
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
     schema: types.Schema
@@ -327,7 +327,7 @@ class JsonPropertyArtifacts(PropertyArtifacts):
     def to_dict(self) -> JsonPropertyTypedDict:
         """Convert to dictionary."""
         return {
-            "type": self.type_,
+            "type": self.type,
             "open_api": self.open_api.to_dict(),
             "extension": self.extension.to_dict(),
             "schema": self.schema,
@@ -339,7 +339,7 @@ class JsonPropertyArtifacts(PropertyArtifacts):
 class RelationshipPropertyArtifacts(PropertyArtifacts):
     """Information about a relationship property."""
 
-    type_: types.Literal[helpers.property_.type_.Type.RELATIONSHIP]
+    type: types.Literal[helpers.property_.type_.Type.RELATIONSHIP]
     sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_ONE,
@@ -404,7 +404,7 @@ class OneToManyRelationshipPropertyArtifacts(
     def to_dict(self) -> OneToManyRelationshipPropertyTypedDict:
         """Convert to dictionary."""
         return_dict: OneToManyRelationshipPropertyTypedDict = {
-            "type": self.type_,
+            "type": self.type,
             "sub_type": self.sub_type,
             "parent": self.parent,
             "required": self.required,
@@ -469,7 +469,7 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
     def to_dict(self) -> XToOneRelationshipPropertyTypedDict:
         """Convert to dictionary."""
         return_dict: XToOneRelationshipPropertyTypedDict = {
-            "type": self.type_,
+            "type": self.type,
             "sub_type": self.sub_type,
             "parent": self.parent,
             "required": self.required,
@@ -574,7 +574,7 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     def to_dict(self) -> ManyToManyRelationshipPropertyTypedDict:
         """Convert to dictionary."""
         return_dict: ManyToManyRelationshipPropertyTypedDict = {
-            "type": self.type_,
+            "type": self.type,
             "sub_type": self.sub_type,
             "parent": self.parent,
             "required": self.required,
@@ -635,7 +635,7 @@ class BackrefSubType(str, enum.Enum):
 class BackrefPropertyArtifacts(PropertyArtifacts):
     """Information about a back reference property."""
 
-    type_: types.Literal[helpers.property_.type_.Type.BACKREF]
+    type: types.Literal[helpers.property_.type_.Type.BACKREF]
     sub_type: types.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
     properties: typing.List[str]
     schema: types.Schema
@@ -644,7 +644,7 @@ class BackrefPropertyArtifacts(PropertyArtifacts):
     def to_dict(self) -> BackrefPropertyTypedDict:
         """Convert to dictionary."""
         return {
-            "type": self.type_,
+            "type": self.type,
             "sub_type": self.sub_type,
             "properties": self.properties,
             "schema": self.schema,

@@ -31,7 +31,7 @@ GET_TESTS = [
         None,
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        "type_",
+        "type",
         type_.Type.RELATIONSHIP,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
         id="property type",

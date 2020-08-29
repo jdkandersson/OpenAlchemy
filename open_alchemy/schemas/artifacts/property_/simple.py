@@ -65,12 +65,12 @@ def get(
         schema_artifact["writeOnly"] = write_only
 
     return types.SimplePropertyArtifacts(
-        type_=helpers.property_.type_.Type.SIMPLE,
+        type=helpers.property_.type_.Type.SIMPLE,
         schema=schema_artifact,
         required=required,
         open_api=types.OpenApiSimplePropertyArtifacts(
-            type_=type_,
-            format_=format_,
+            type=type_,
+            format=format_,
             max_length=max_length,
             nullable=nullable,
             description=description,
