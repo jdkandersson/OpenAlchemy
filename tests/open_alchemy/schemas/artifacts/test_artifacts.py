@@ -29,7 +29,24 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
         id="single model valid",
     ),
     pytest.param(
@@ -50,7 +67,24 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema2": {"artifacts": {"tablename": "schema_2"}}}},
+        {
+            "models": {
+                "Schema2": {
+                    "artifacts": {"tablename": "schema_2"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
         id="multiple model first model invalid",
     ),
     pytest.param(
@@ -66,7 +100,24 @@ GET_TESTS = [
                 }
             }
         },
-        {"models": {"Schema1": {"artifacts": {"tablename": "schema_1"}}}},
+        {
+            "models": {
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                }
+            }
+        },
         id="multiple model second model invalid",
     ),
     pytest.param(
@@ -88,8 +139,34 @@ GET_TESTS = [
         },
         {
             "models": {
-                "Schema1": {"artifacts": {"tablename": "schema_1"}},
-                "Schema2": {"artifacts": {"tablename": "schema_2"}},
+                "Schema1": {
+                    "artifacts": {"tablename": "schema_1"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                },
+                "Schema2": {
+                    "artifacts": {"tablename": "schema_2"},
+                    "properties": {
+                        "prop_1": {
+                            "artifacts": {
+                                "type": "SIMPLE",
+                                "open_api": {"type": "integer"},
+                                "extension": {"primary_key": False},
+                                "schema": {"type": "integer"},
+                                "required": False,
+                            }
+                        }
+                    },
+                },
             },
         },
         id="multiple model valid",
@@ -107,5 +184,8 @@ def test_get(spec, expected_artifacts):
     THEN the expected artifacts is returned.
     """
     returned_artifacts = artifacts.get(spec=spec)
+
+    print(returned_artifacts)
+    print(expected_artifacts)
 
     assert returned_artifacts == expected_artifacts
