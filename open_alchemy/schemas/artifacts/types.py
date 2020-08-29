@@ -339,14 +339,16 @@ class RelationshipPropertyTypedDict(_RelationshipPropertyTypedDict, total=True):
     """TypedDict representation of the relationship property."""
 
     type: str
+    sub_type: str
     parent: str
     required: bool
 
 
 RELATIONSHIP_PROPERTY_ARTIFACTS_KEYS: typing.List[
-    typing.Literal["type", "parent", "required"]
+    typing.Literal["type", "sub_type", "parent", "required"]
 ] = [
     "type",
+    "sub_type",
     "parent",
     "required",
 ]
@@ -382,6 +384,7 @@ class RelationshipPropertyArtifacts(PropertyArtifacts):
         """Convert to dictionary."""
         return_dict: RelationshipPropertyTypedDict = {
             "type": self.type_,
+            "sub_type": self.sub_type,
             "parent": self.parent,
             "required": self.required,
         }
@@ -419,6 +422,19 @@ class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
 
     def to_dict(self) -> NotManyToManyRelationshipPropertyTypedDict:
         """Convert to dictionary."""
+        parent_dict = super().to_dict()
+
+        return_dict: NotManyToManyRelationshipPropertyTypedDict = {}  # type: ignore
+        return_dict["foreign_key"] = self.foreign_key
+        return_dict["foreign_key_property"] = self.foreign_key_property
+        for key in RELATIONSHIP_PROPERTY_ARTIFACTS_KEYS:
+            return_dict[key] = parent_dict[key]
+        for opt_key in RELATIONSHIP_PROPERTY_ARTIFACTS_OPT_KEYS:
+            if opt_key not in parent_dict:
+                continue
+            return_dict[opt_key] = parent_dict[opt_key]
+
+        return return_dict
 
 
 @dataclasses.dataclass

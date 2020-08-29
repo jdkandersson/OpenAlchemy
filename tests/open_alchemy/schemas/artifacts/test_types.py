@@ -242,7 +242,12 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
                 description=None,
                 required=True,
             ),
-            {"type": "RELATIONSHIP", "parent": "parent 1", "required": True,},
+            {
+                "type": "RELATIONSHIP",
+                "sub_type": "MANY_TO_ONE",
+                "parent": "parent 1",
+                "required": True,
+            },
             id="relationship opt values None",
         ),
     ],
