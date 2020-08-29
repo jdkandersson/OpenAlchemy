@@ -2,6 +2,7 @@
 
 import pytest
 
+from open_alchemy import helpers as oa_helpers
 from open_alchemy.schemas import artifacts
 from open_alchemy.schemas import helpers
 
@@ -216,6 +217,39 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
 @pytest.mark.schemas
 @pytest.mark.artifacts
 def test_json_property_artifacts(artifacts_value, expected_dict):
+    """
+    GIVEN artifacts and expected dictionary
+    WHEN to_dict is called on the artifacts
+    THEN the expected dictionary is returned.
+    """
+    returned_dict = artifacts_value.to_dict()
+
+    assert returned_dict == expected_dict
+
+
+@pytest.mark.parametrize(
+    "artifacts_value, expected_dict",
+    [
+        pytest.param(
+            artifacts.types.RelationshipPropertyArtifacts(
+                type_=helpers.property_.type_.Type.RELATIONSHIP,
+                schema={},
+                sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+                parent="parent 1",
+                backref_property=None,
+                kwargs=None,
+                write_only=None,
+                description=None,
+                required=True,
+            ),
+            {"type": "RELATIONSHIP", "parent": "parent 1", "required": True,},
+            id="relationship opt values None",
+        ),
+    ],
+)
+@pytest.mark.schemas
+@pytest.mark.artifacts
+def test_relationship_property_artifacts(artifacts_value, expected_dict):
     """
     GIVEN artifacts and expected dictionary
     WHEN to_dict is called on the artifacts

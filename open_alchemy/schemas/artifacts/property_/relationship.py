@@ -166,7 +166,7 @@ def _get_many_to_one(
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
-        required=None,
+        required=False,  # to be fixed on calling function
         parent=parent,
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
@@ -220,7 +220,7 @@ def _get_one_to_one(
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
-        required=None,
+        required=False,  # to be fixed on calling function
         parent=parent,
         backref_property=_get_backref_property(schema=schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=schema, schemas=schemas),
@@ -296,7 +296,7 @@ def _get_one_to_many(
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
-        required=None,
+        required=False,  # to be fixed on calling function
         parent=parent,
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),
@@ -353,7 +353,7 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
-        required=None,
+        required=False,  # to be fixed on calling function
         parent=parent,
         backref_property=_get_backref_property(schema=items_schema, schemas=schemas),
         kwargs=_get_kwargs(parent=parent, schema=items_schema, schemas=schemas),

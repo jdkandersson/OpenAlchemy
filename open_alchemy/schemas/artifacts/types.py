@@ -326,6 +326,40 @@ class JsonPropertyArtifacts(PropertyArtifacts):
         }
 
 
+class _RelationshipPropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the relationship property."""
+
+    backref_property: str
+    kwargs: TKwargs
+    write_only: bool
+    description: str
+
+
+class RelationshipPropertyTypedDict(_RelationshipPropertyTypedDict, total=True):
+    """TypedDict representation of the relationship property."""
+
+    type: str
+    parent: str
+    required: bool
+
+
+RELATIONSHIP_PROPERTY_ARTIFACTS_KEYS: typing.List[
+    typing.Literal["type", "parent", "required"]
+] = [
+    "type",
+    "parent",
+    "required",
+]
+RELATIONSHIP_PROPERTY_ARTIFACTS_OPT_KEYS: typing.List[
+    typing.Literal["backref_property", "kwargs", "write_only", "description",]
+] = [
+    "backref_property",
+    "kwargs",
+    "write_only",
+    "description",
+]
+
+
 @dataclasses.dataclass
 class RelationshipPropertyArtifacts(PropertyArtifacts):
     """Information about a relationship property."""
@@ -342,6 +376,33 @@ class RelationshipPropertyArtifacts(PropertyArtifacts):
     kwargs: typing.Optional[TKwargs]
     write_only: typing.Optional[bool]
     description: typing.Optional[str]
+    required: bool
+
+    def to_dict(self) -> RelationshipPropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: RelationshipPropertyTypedDict = {
+            "type": self.type_,
+            "parent": self.parent,
+            "required": self.required,
+        }
+
+        for opt_key in RELATIONSHIP_PROPERTY_ARTIFACTS_OPT_KEYS:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
+
+
+class NotManyToManyRelationshipPropertyTypedDict(
+    RelationshipPropertyTypedDict, total=True
+):
+    """TypedDict representation of the relationship property."""
+
+    foreign_key: str
+    foreign_key_property: str
 
 
 @dataclasses.dataclass
@@ -355,6 +416,9 @@ class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     ]
     foreign_key: str
     foreign_key_property: str
+
+    def to_dict(self) -> NotManyToManyRelationshipPropertyTypedDict:
+        """Convert to dictionary."""
 
 
 @dataclasses.dataclass
@@ -419,11 +483,12 @@ TAnyRelationshipPropertyArtifacts = typing.Union[
 ]
 
 
-class BackrefSubType(enum.Enum):
+@enum.unique
+class BackrefSubType(str, enum.Enum):
     """The possible types of backreferences."""
 
-    OBJECT = 1
-    ARRAY = 2
+    OBJECT = "OBJECT"
+    ARRAY = "ARRAY"
 
 
 @dataclasses.dataclass

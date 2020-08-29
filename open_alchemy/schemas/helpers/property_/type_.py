@@ -7,6 +7,7 @@ from .... import types
 from . import simple
 
 
+@enum.unique
 class Type(str, enum.Enum):
     """The type of a property."""
 
