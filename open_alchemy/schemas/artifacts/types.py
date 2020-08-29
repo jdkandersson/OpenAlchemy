@@ -224,7 +224,7 @@ class OpenApiJsonPropertyArtifacts:
         return_dict: OpenApiJsonPropertyTypedDict = {}
 
         opt_keys: typing.List[
-            typing.Literal["nullable", "description", "read_only", "write_only",]
+            typing.Literal["nullable", "description", "read_only", "write_only"]
         ] = [
             "nullable",
             "description",
@@ -407,7 +407,7 @@ class OneToManyRelationshipPropertyArtifacts(
         }
 
         opt_keys: typing.List[
-            typing.Literal["backref_property", "kwargs", "write_only", "description",]
+            typing.Literal["backref_property", "kwargs", "write_only", "description"]
         ] = [
             "backref_property",
             "kwargs",

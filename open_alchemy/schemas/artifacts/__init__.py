@@ -39,7 +39,7 @@ def _get_properties(
     *, schemas: _oa_types.Schemas, schema: _oa_types.Schema
 ) -> types.TProperties:
     """
-    Check the properties of a model.
+    Get artifacts for the properties of a model.
 
     Args:
         schemas: All defined schemas used to resolve any $ref.
@@ -47,14 +47,14 @@ def _get_properties(
         schema: The schema to validate.
 
     Returns:
-        Whether the properties are valid.
+        The artifacts for the properties.
 
     """
-    properties_results = _get_properties_artifacts(schemas, schema)
-    properties_t_results: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
-        lambda args: (args[0], {"artifacts": args[1].to_dict()}), properties_results,
+    properties_artifacts = _get_properties_artifacts(schemas, schema)
+    properties_t_artifacts: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
+        lambda args: (args[0], {"artifacts": args[1].to_dict()}), properties_artifacts,
     )
-    return dict(properties_t_results)
+    return dict(properties_t_artifacts)
 
 
 def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:

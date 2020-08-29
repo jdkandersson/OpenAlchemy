@@ -31,7 +31,7 @@ GET_TESTS = [
         },
         {
             "models": {
-                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {},}
+                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {}}
             }
         },
         id="single model single property invalid",
@@ -115,7 +115,7 @@ GET_TESTS = [
         },
         {
             "models": {
-                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {},}
+                "Schema1": {"artifacts": {"tablename": "schema_1"}, "properties": {}}
             }
         },
         id="single model multiple property none valid",
