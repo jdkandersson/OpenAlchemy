@@ -167,7 +167,7 @@ class ExtensionSimplePropertyArtifacts:
 class SimplePropertyTypedDict(types.TypedDict, total=True):
     """TypedDict representation of the simple property."""
 
-    type: typing.Literal[helpers.property_.type_.Type.SIMPLE]
+    type: str
     open_api: OpenApiSimplePropertyTypedDict
     extension: ExtensionSimplePropertyTypedDict
     schema: types.ColumnSchema
@@ -195,6 +195,17 @@ class SimplePropertyArtifacts(PropertyArtifacts):
         }
 
 
+class OpenApiJsonPropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the OpenAPI artifacts for a JSON property."""
+
+    nullable: bool
+
+    description: str
+
+    read_only: bool
+    write_only: bool
+
+
 @dataclasses.dataclass
 class OpenApiJsonPropertyArtifacts:
     """OpenAPI artifacts for the JSON property."""
@@ -205,6 +216,45 @@ class OpenApiJsonPropertyArtifacts:
 
     read_only: typing.Optional[bool]
     write_only: typing.Optional[bool]
+
+    def to_dict(self) -> OpenApiJsonPropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: OpenApiJsonPropertyTypedDict = {}
+
+        opt_keys: typing.List[
+            typing.Literal["nullable", "description", "read_only", "write_only",]
+        ] = [
+            "nullable",
+            "description",
+            "read_only",
+            "write_only",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
+
+
+class _ExtensionJsonPropertyTypedDict(types.TypedDict, total=False):
+    """TypedDict representation of the extension artifacts for a JSON property."""
+
+    index: bool
+    unique: bool
+
+    foreign_key: str
+
+    kwargs: TKwargs
+    foreign_key_kwargs: TKwargs
+
+
+class ExtensionJsonPropertyTypedDict(_ExtensionJsonPropertyTypedDict, total=True):
+    """TypedDict representation of the extension artifacts for a JSON property."""
+
+    primary_key: bool
 
 
 @dataclasses.dataclass
@@ -220,6 +270,40 @@ class ExtensionJsonPropertyArtifacts:
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
 
+    def to_dict(self) -> ExtensionJsonPropertyTypedDict:
+        """Convert to dictionary."""
+        return_dict: ExtensionJsonPropertyTypedDict = {"primary_key": self.primary_key}
+
+        opt_keys: typing.List[
+            typing.Literal[
+                "index", "unique", "foreign_key", "kwargs", "foreign_key_kwargs",
+            ]
+        ] = [
+            "index",
+            "unique",
+            "foreign_key",
+            "kwargs",
+            "foreign_key_kwargs",
+        ]
+        for opt_key in opt_keys:
+            value = getattr(self, opt_key)
+            if value is None:
+                continue
+
+            return_dict[opt_key] = value
+
+        return return_dict
+
+
+class JsonPropertyTypedDict(types.TypedDict, total=True):
+    """TypedDict representation of the JSON property."""
+
+    type: str
+    open_api: OpenApiJsonPropertyTypedDict
+    extension: ExtensionJsonPropertyTypedDict
+    schema: types.Schema
+    required: bool
+
 
 @dataclasses.dataclass
 class JsonPropertyArtifacts(PropertyArtifacts):
@@ -229,6 +313,17 @@ class JsonPropertyArtifacts(PropertyArtifacts):
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
     schema: types.Schema
+    required: bool
+
+    def to_dict(self) -> JsonPropertyTypedDict:
+        """Convert to dictionary."""
+        return {
+            "type": self.type_,
+            "open_api": self.open_api.to_dict(),
+            "extension": self.extension.to_dict(),
+            "schema": self.schema,
+            "required": self.required,
+        }
 
 
 @dataclasses.dataclass
