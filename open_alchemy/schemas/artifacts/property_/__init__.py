@@ -42,4 +42,5 @@ def get(
     if type_ == helpers.property_.type_.Type.BACKREF:
         return backref.get(schemas, schema)
 
+    assert type_ == helpers.property_.type_.Type.RELATIONSHIP
     return relationship.get(schemas, model_schema, property_name, schema, required)
