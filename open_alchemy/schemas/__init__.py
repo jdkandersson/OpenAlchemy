@@ -1,6 +1,7 @@
 """Performs operations on the schemas to prepare them for further processing."""
 
 from .. import types as _types
+from . import artifacts
 from . import backref
 from . import foreign_key
 from . import helpers
