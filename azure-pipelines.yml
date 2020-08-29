@@ -8,147 +8,149 @@ trigger:
 pr:
   - master
 schedules:
-- cron: "0 0 * * *"
-  displayName: Daily midnight build
-  branches:
-    include:
-      - master
+  - cron: "0 0 * * *"
+    displayName: Daily midnight build
+    branches:
+      include:
+        - master
 
 jobs:
-  - job: 'pytest'
+  - job: "pytest"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python36:
-          python.version: '3.6'
+          python.version: "3.6"
         Python37:
-          python.version: '3.7'
+          python.version: "3.7"
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
+        Python39:
+          python.version: "3.9"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        pip install pytest pytest-azurepipelines
-        pytest
-      displayName: 'pytest'
-  - job: 'pylint'
+      - script: |
+          pip install pytest pytest-azurepipelines
+          pytest
+        displayName: "pytest"
+  - job: "pylint"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        pylint tests open_alchemy
-      displayName: 'pylint'
-  - job: 'mypy'
+      - script: |
+          pylint tests open_alchemy
+        displayName: "pylint"
+  - job: "mypy"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        mypy --ignore-missing-imports open_alchemy
-      displayName: 'mypy'
-  - job: 'isort'
+      - script: |
+          mypy --ignore-missing-imports open_alchemy
+        displayName: "mypy"
+  - job: "isort"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        isort -rc --check-only open_alchemy tests
-      displayName: 'isort'
-  - job: 'black'
+      - script: |
+          isort -rc --check-only open_alchemy tests
+        displayName: "isort"
+  - job: "black"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        black --check open_alchemy tests examples
-      displayName: 'black'
-  - job: 'pydocstyle'
+      - script: |
+          black --check open_alchemy tests examples
+        displayName: "black"
+  - job: "pydocstyle"
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: "ubuntu-latest"
     strategy:
       matrix:
         Python38:
-          python.version: '3.8'
+          python.version: "3.8"
 
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-      displayName: 'Use Python $(python.version)'
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
 
-    - script: |
-        python -m pip install --upgrade pip
-        python -m pip install -e .[dev,test]
-      displayName: 'Install dependencies'
+      - script: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev,test]
+        displayName: "Install dependencies"
 
-    - script: |
-        pydocstyle open_alchemy
-      displayName: 'pydocstyle'
+      - script: |
+          pydocstyle open_alchemy
+        displayName: "pydocstyle"
