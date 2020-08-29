@@ -259,7 +259,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "parent_schema, property_name, property_schema, schemas, expected_result", TESTS,
+    "parent_schema, property_name, property_schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):

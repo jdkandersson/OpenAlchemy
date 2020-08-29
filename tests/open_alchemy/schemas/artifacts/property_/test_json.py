@@ -54,7 +54,12 @@ GET_TESTS = [
     ),
     pytest.param(None, {}, {}, "open_api.nullable", None, id="nullable undefined"),
     pytest.param(
-        None, {"nullable": True}, {}, "open_api.nullable", True, id="nullable",
+        None,
+        {"nullable": True},
+        {},
+        "open_api.nullable",
+        True,
+        id="nullable",
     ),
     pytest.param(
         None,
@@ -101,7 +106,12 @@ GET_TESTS = [
     ),
     pytest.param(None, {}, {}, "open_api.read_only", None, id="readOnly undefined"),
     pytest.param(
-        None, {"readOnly": True}, {}, "open_api.read_only", True, id="readOnly",
+        None,
+        {"readOnly": True},
+        {},
+        "open_api.read_only",
+        True,
+        id="readOnly",
     ),
     pytest.param(
         None,
@@ -121,7 +131,12 @@ GET_TESTS = [
     ),
     pytest.param(None, {}, {}, "open_api.write_only", None, id="writeOnly undefined"),
     pytest.param(
-        None, {"writeOnly": True}, {}, "open_api.write_only", True, id="writeOnly",
+        None,
+        {"writeOnly": True},
+        {},
+        "open_api.write_only",
+        True,
+        id="writeOnly",
     ),
     pytest.param(
         None,
@@ -140,7 +155,12 @@ GET_TESTS = [
         id="allOf writeOnly",
     ),
     pytest.param(
-        None, {}, {}, "extension.primary_key", False, id="x-primary-key undefined",
+        None,
+        {},
+        {},
+        "extension.primary_key",
+        False,
+        id="x-primary-key undefined",
     ),
     pytest.param(
         None,
@@ -167,7 +187,14 @@ GET_TESTS = [
         id="allOf x-primary-key",
     ),
     pytest.param(None, {}, {}, "extension.index", None, id="x-index undefined"),
-    pytest.param(None, {"x-index": True}, {}, "extension.index", True, id="x-index",),
+    pytest.param(
+        None,
+        {"x-index": True},
+        {},
+        "extension.index",
+        True,
+        id="x-index",
+    ),
     pytest.param(
         None,
         {"$ref": "#/components/schemas/RefSchema"},
@@ -186,7 +213,12 @@ GET_TESTS = [
     ),
     pytest.param(None, {}, {}, "extension.unique", None, id="x-unique undefined"),
     pytest.param(
-        None, {"x-unique": True}, {}, "extension.unique", True, id="x-unique",
+        None,
+        {"x-unique": True},
+        {},
+        "extension.unique",
+        True,
+        id="x-unique",
     ),
     pytest.param(
         None,
@@ -205,7 +237,12 @@ GET_TESTS = [
         id="allOf x-unique",
     ),
     pytest.param(
-        None, {}, {}, "extension.foreign_key", None, id="x-foreign-key undefined",
+        None,
+        {},
+        {},
+        "extension.foreign_key",
+        None,
+        id="x-foreign-key undefined",
     ),
     pytest.param(
         None,
@@ -231,7 +268,14 @@ GET_TESTS = [
         "foreign.key3",
         id="allOf x-foreign-key",
     ),
-    pytest.param(None, {}, {}, "extension.kwargs", None, id="x-kwargs undefined",),
+    pytest.param(
+        None,
+        {},
+        {},
+        "extension.kwargs",
+        None,
+        id="x-kwargs undefined",
+    ),
     pytest.param(
         None,
         {"x-kwargs": {"key_1": "value 1"}},
@@ -257,7 +301,12 @@ GET_TESTS = [
         id="allOf x-kwargs",
     ),
     pytest.param(
-        None, {}, {}, "extension.foreign_key_kwargs", None, id="x-kwargs undefined",
+        None,
+        {},
+        {},
+        "extension.foreign_key_kwargs",
+        None,
+        id="x-kwargs undefined",
     ),
     pytest.param(
         None,

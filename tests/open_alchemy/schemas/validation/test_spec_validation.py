@@ -6,10 +6,14 @@ from open_alchemy.schemas import validation
 
 CHECK_TESTS = [
     pytest.param(
-        True, (False, "specification must be a dictionary"), id="spec not dict",
+        True,
+        (False, "specification must be a dictionary"),
+        id="spec not dict",
     ),
     pytest.param(
-        {}, (False, "specification must define components"), id="no components key",
+        {},
+        (False, "specification must define components"),
+        id="no components key",
     ),
     pytest.param(
         {"components": True},
@@ -26,7 +30,11 @@ CHECK_TESTS = [
         (False, "schemas must be a dictionary"),
         id="schemas not dict",
     ),
-    pytest.param({"components": {"schemas": {}}}, (True, None), id="schemas valid",),
+    pytest.param(
+        {"components": {"schemas": {}}},
+        (True, None),
+        id="schemas valid",
+    ),
 ]
 
 

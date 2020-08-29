@@ -135,7 +135,10 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
     [
         pytest.param(
             artifacts.types.OpenApiJsonPropertyArtifacts(
-                nullable=None, description=None, read_only=None, write_only=None,
+                nullable=None,
+                description=None,
+                read_only=None,
+                write_only=None,
             ),
             {},
             id="open api opt values None",
@@ -190,7 +193,10 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.JsonPropertyArtifacts(
                 type_=helpers.property_.type_.Type.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
-                    nullable=True, description=None, read_only=None, write_only=None,
+                    nullable=True,
+                    description=None,
+                    read_only=None,
+                    write_only=None,
                 ),
                 extension=artifacts.types.ExtensionJsonPropertyArtifacts(
                     primary_key=True,

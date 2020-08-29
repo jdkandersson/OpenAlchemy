@@ -18,8 +18,16 @@ ColArt = types.ColumnArtifacts
 @pytest.mark.parametrize(
     "schema, expected_exception",
     [
-        pytest.param({}, exceptions.TypeMissingError, id="type missing",),
-        pytest.param({"type": 1}, exceptions.TypeMissingError, id="type not string",),
+        pytest.param(
+            {},
+            exceptions.TypeMissingError,
+            id="type missing",
+        ),
+        pytest.param(
+            {"type": 1},
+            exceptions.TypeMissingError,
+            id="type not string",
+        ),
         pytest.param(
             {"type": "type 1", "format": 1},
             exceptions.MalformedSchemaError,
@@ -449,17 +457,69 @@ class TestCheckArtifacts:
     @pytest.mark.parametrize(
         "type_, format_, max_length, autoincrement",
         [
-            pytest.param("integer", None, 1, None, id="maxLength integer",),
-            pytest.param("number", None, 1, None, id="maxLength number",),
-            pytest.param("boolean", None, 1, None, id="maxLength boolean",),
-            pytest.param("string", "date", 1, None, id="maxLength string  date",),
             pytest.param(
-                "string", "date-time", 1, None, id="maxLength string date-time",
+                "integer",
+                None,
+                1,
+                None,
+                id="maxLength integer",
             ),
-            pytest.param("number", None, None, True, id="autoincrement number",),
-            pytest.param("string", None, None, True, id="autoincrement string",),
-            pytest.param("boolean", None, None, True, id="autoincrement boolean",),
-            pytest.param("boolean", "format1", None, None, id="format boolean",),
+            pytest.param(
+                "number",
+                None,
+                1,
+                None,
+                id="maxLength number",
+            ),
+            pytest.param(
+                "boolean",
+                None,
+                1,
+                None,
+                id="maxLength boolean",
+            ),
+            pytest.param(
+                "string",
+                "date",
+                1,
+                None,
+                id="maxLength string  date",
+            ),
+            pytest.param(
+                "string",
+                "date-time",
+                1,
+                None,
+                id="maxLength string date-time",
+            ),
+            pytest.param(
+                "number",
+                None,
+                None,
+                True,
+                id="autoincrement number",
+            ),
+            pytest.param(
+                "string",
+                None,
+                None,
+                True,
+                id="autoincrement string",
+            ),
+            pytest.param(
+                "boolean",
+                None,
+                None,
+                True,
+                id="autoincrement boolean",
+            ),
+            pytest.param(
+                "boolean",
+                "format1",
+                None,
+                None,
+                id="format boolean",
+            ),
         ],
     )
     @pytest.mark.column

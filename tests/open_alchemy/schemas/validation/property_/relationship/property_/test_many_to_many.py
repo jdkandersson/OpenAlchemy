@@ -328,7 +328,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many backref on root",
     ),
     pytest.param(
@@ -528,7 +531,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many kwargs on root not dict",
     ),
     pytest.param(
@@ -544,7 +550,10 @@ TESTS = [
                 "x-secondary": "schema_ref_schema",
             }
         },
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many kwargs on root",
     ),
     pytest.param(
@@ -640,7 +649,10 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many uselist on root not bool",
     ),
     pytest.param(
@@ -656,7 +668,10 @@ TESTS = [
                 "x-secondary": "ref_schema_schema",
             }
         },
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="many to many uselist on root",
     ),
     pytest.param(
@@ -752,7 +767,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
 @pytest.mark.validation

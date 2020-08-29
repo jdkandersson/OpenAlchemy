@@ -23,7 +23,10 @@ class PropertyArtifacts:
         helpers.property_.type_.Type.BACKREF,
     ]
     schema: typing.Union[
-        types.Schema, types.ColumnSchema, types.ObjectRefSchema, types.ArrayRefSchema,
+        types.Schema,
+        types.ColumnSchema,
+        types.ObjectRefSchema,
+        types.ArrayRefSchema,
     ]
     required: typing.Optional[bool]
 
@@ -278,7 +281,11 @@ class ExtensionJsonPropertyArtifacts:
 
         opt_keys: typing.List[
             types.Literal[
-                "index", "unique", "foreign_key", "kwargs", "foreign_key_kwargs",
+                "index",
+                "unique",
+                "foreign_key",
+                "kwargs",
+                "foreign_key_kwargs",
             ]
         ] = [
             "index",
@@ -473,7 +480,11 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
 
         opt_keys: typing.List[
             types.Literal[
-                "backref_property", "kwargs", "write_only", "description", "nullable",
+                "backref_property",
+                "kwargs",
+                "write_only",
+                "description",
+                "nullable",
             ]
         ] = [
             "backref_property",

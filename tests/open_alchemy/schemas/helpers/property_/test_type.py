@@ -5,7 +5,12 @@ import pytest
 from open_alchemy.schemas.helpers.property_ import type_
 
 CALCULATE_TYPE_TESTS = [
-    pytest.param({"x-json": True}, {}, type_.Type.JSON, id="x-json True",),
+    pytest.param(
+        {"x-json": True},
+        {},
+        type_.Type.JSON,
+        id="x-json True",
+    ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"x-json": True}},
@@ -13,7 +18,10 @@ CALCULATE_TYPE_TESTS = [
         id="x-json True $ref",
     ),
     pytest.param(
-        {"allOf": [{"x-json": True}]}, {}, type_.Type.JSON, id="x-json True allOf",
+        {"allOf": [{"x-json": True}]},
+        {},
+        type_.Type.JSON,
+        id="x-json True allOf",
     ),
     pytest.param(
         {"x-json": False, "type": "object"},
@@ -93,7 +101,12 @@ CALCULATE_TYPE_TESTS = [
         type_.Type.JSON,
         id="object readOnly and x-json True",
     ),
-    pytest.param({"type": "object"}, {}, type_.Type.RELATIONSHIP, id="object",),
+    pytest.param(
+        {"type": "object"},
+        {},
+        type_.Type.RELATIONSHIP,
+        id="object",
+    ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object"}},
@@ -101,10 +114,23 @@ CALCULATE_TYPE_TESTS = [
         id="object $ref",
     ),
     pytest.param(
-        {"allOf": [{"type": "object"}]}, {}, type_.Type.RELATIONSHIP, id="object allOf",
+        {"allOf": [{"type": "object"}]},
+        {},
+        type_.Type.RELATIONSHIP,
+        id="object allOf",
     ),
-    pytest.param({"type": "array"}, {}, type_.Type.RELATIONSHIP, id="array",),
-    pytest.param({"type": "integer"}, {}, type_.Type.SIMPLE, id="simple",),
+    pytest.param(
+        {"type": "array"},
+        {},
+        type_.Type.RELATIONSHIP,
+        id="array",
+    ),
+    pytest.param(
+        {"type": "integer"},
+        {},
+        type_.Type.SIMPLE,
+        id="simple",
+    ),
 ]
 
 

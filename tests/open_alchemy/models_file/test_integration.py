@@ -679,7 +679,9 @@ def _create_source_file(source, tmp_path):
     "schemas, names",
     [
         pytest.param(
-            [{"properties": {"id": {"type": "integer"}}}], ["Model"], id="simple",
+            [{"properties": {"id": {"type": "integer"}}}],
+            ["Model"],
+            id="simple",
         ),
         pytest.param(
             [

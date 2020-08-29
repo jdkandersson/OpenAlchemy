@@ -125,20 +125,30 @@ def test_map_unique(spec, expected_spec):
 @pytest.mark.parametrize(
     "spec, expected_columns",
     [
-        pytest.param(["column 1"], ["column 1"], id="column list single",),
+        pytest.param(
+            ["column 1"],
+            ["column 1"],
+            id="column list single",
+        ),
         pytest.param(
             ["column 1", "column 2"],
             ["column 1", "column 2"],
             id="column list multiple",
         ),
-        pytest.param([["column 1"]], ["column 1"], id="column list of list single",),
+        pytest.param(
+            [["column 1"]],
+            ["column 1"],
+            id="column list of list single",
+        ),
         pytest.param(
             [["column 1"], ["column 2"]],
             ["column 1", "column 2"],
             id="column list of list multiple",
         ),
         pytest.param(
-            {"columns": ["column 1"]}, ["column 1"], id="unique constraint single",
+            {"columns": ["column 1"]},
+            ["column 1"],
+            id="unique constraint single",
         ),
         pytest.param(
             {"columns": ["column 1", "column 2"]},
@@ -210,20 +220,30 @@ def test_map_index(spec, expected_spec):
 @pytest.mark.parametrize(
     "spec, expected_expressions",
     [
-        pytest.param(["column 1"], ["column 1"], id="column list single",),
+        pytest.param(
+            ["column 1"],
+            ["column 1"],
+            id="column list single",
+        ),
         pytest.param(
             ["column 1", "column 2"],
             ["column 1", "column 2"],
             id="column list multiple",
         ),
-        pytest.param([["column 1"]], ["column 1"], id="column list of list single",),
+        pytest.param(
+            [["column 1"]],
+            ["column 1"],
+            id="column list of list single",
+        ),
         pytest.param(
             [["column 1"], ["column 2"]],
             ["column 1", "column 2"],
             id="column list of list multiple",
         ),
         pytest.param(
-            {"expressions": ["column 1"]}, ["column 1"], id="unique constraint single",
+            {"expressions": ["column 1"]},
+            ["column 1"],
+            id="unique constraint single",
         ),
         pytest.param(
             {"expressions": ["column 1", "column 2"]},

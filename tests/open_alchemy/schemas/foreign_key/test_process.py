@@ -5,7 +5,11 @@ import pytest
 from open_alchemy.schemas import foreign_key
 
 PROCESS_TESTS = [
-    pytest.param({}, {}, id="empty",),
+    pytest.param(
+        {},
+        {},
+        id="empty",
+    ),
     pytest.param(
         {
             "Schema1": {

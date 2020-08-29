@@ -306,7 +306,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many backref on root",
     ),
     pytest.param(
@@ -316,7 +319,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-backref cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-backref cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many backref on root not string",
     ),
     pytest.param(
@@ -454,7 +460,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-kwargs cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many kwargs on root",
     ),
     pytest.param(
@@ -539,7 +548,10 @@ TESTS = [
             "items": {"$ref": "#/components/schemas/RefSchema"},
         },
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
-        (False, "x-uselist cannot be defined on x-to-many relationship property root",),
+        (
+            False,
+            "x-uselist cannot be defined on x-to-many relationship property root",
+        ),
         id="one to many uselist on root",
     ),
     pytest.param(
@@ -610,7 +622,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.validation
 @pytest.mark.schemas

@@ -198,7 +198,9 @@ def _calculate_column_artifacts(
 
     # Add artifacts to the lists
     return types.ColumnArtifacts(
-        type=type_, name=name, description=artifacts.open_api.description,
+        type=type_,
+        name=name,
+        description=artifacts.open_api.description,
     )
 
 
@@ -211,7 +213,9 @@ def _calculate_typed_dict_artifacts(
 
     # Add artifacts to the lists
     return types.ColumnArtifacts(
-        type=type_, name=name, description=artifacts.open_api.description,
+        type=type_,
+        name=name,
+        description=artifacts.open_api.description,
     )
 
 

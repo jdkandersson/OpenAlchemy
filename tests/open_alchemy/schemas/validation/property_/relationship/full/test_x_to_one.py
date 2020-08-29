@@ -53,7 +53,10 @@ TESTS = [
                 "properties": {"id": {}},
             }
         },
-        (False, "id property :: malformed schema :: Every property requires a type. ",),
+        (
+            False,
+            "id property :: malformed schema :: Every property requires a type. ",
+        ),
         id="x-to-one foreign key default property invalid",
     ),
     pytest.param(
@@ -202,7 +205,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer"}},
             }
         },
-        (False, "ref_schema_id :: type :: expected integer, actual is string.",),
+        (
+            False,
+            "ref_schema_id :: type :: expected integer, actual is string.",
+        ),
         id="x-to-one foreign key defined different type",
     ),
     pytest.param(
@@ -225,7 +231,10 @@ TESTS = [
                 "properties": {"ref_schema_id": {"type": "string"}},
             },
         },
-        (True, None,),
+        (
+            True,
+            None,
+        ),
         id="x-to-one foreign key defined different type joined table inheritance",
     ),
     pytest.param(
@@ -248,7 +257,10 @@ TESTS = [
                 "properties": {"ref_schema_id": {"type": "string"}},
             },
         },
-        (False, "ref_schema_id :: type :: expected integer, actual is string.",),
+        (
+            False,
+            "ref_schema_id :: type :: expected integer, actual is string.",
+        ),
         id="x-to-one foreign key defined different type single table inheritance",
     ),
     pytest.param(
@@ -353,7 +365,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (False, "ref_schema_id :: format :: expected int32, actual is not defined.",),
+        (
+            False,
+            "ref_schema_id :: format :: expected int32, actual is not defined.",
+        ),
         id="x-to-one foreign key defined format only on referenced",
     ),
     pytest.param(
@@ -375,7 +390,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "format": "int32"}},
             }
         },
-        (False, "ref_schema_id :: format :: expected int32, actual is int64.",),
+        (
+            False,
+            "ref_schema_id :: format :: expected int32, actual is int64.",
+        ),
         id="x-to-one foreign key defined different format",
     ),
     pytest.param(
@@ -440,7 +458,10 @@ TESTS = [
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (False, "ref_schema_id :: maxLength :: expected 2, actual is not defined.",),
+        (
+            False,
+            "ref_schema_id :: maxLength :: expected 2, actual is not defined.",
+        ),
         id="x-to-one foreign key defined maxLength only on referenced",
     ),
     pytest.param(
@@ -462,7 +483,10 @@ TESTS = [
                 "properties": {"id": {"type": "string", "maxLength": 2}},
             }
         },
-        (False, "ref_schema_id :: maxLength :: expected 2, actual is 1.",),
+        (
+            False,
+            "ref_schema_id :: maxLength :: expected 2, actual is 1.",
+        ),
         id="x-to-one foreign key defined different maxLength",
     ),
     pytest.param(
@@ -527,7 +551,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (False, "ref_schema_id :: default :: expected 2, actual is not defined.",),
+        (
+            False,
+            "ref_schema_id :: default :: expected 2, actual is not defined.",
+        ),
         id="x-to-one foreign key defined default only on referenced",
     ),
     pytest.param(
@@ -549,7 +576,10 @@ TESTS = [
                 "properties": {"id": {"type": "integer", "default": 2}},
             }
         },
-        (False, "ref_schema_id :: default :: expected 2, actual is 1.",),
+        (
+            False,
+            "ref_schema_id :: default :: expected 2, actual is 1.",
+        ),
         id="x-to-one foreign key defined different default",
     ),
     pytest.param(
@@ -632,7 +662,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "parent_schema, property_name, property_schema, schemas, expected_result", TESTS,
+    "parent_schema, property_name, property_schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):

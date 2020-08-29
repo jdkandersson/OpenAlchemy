@@ -448,7 +448,12 @@ GET_TESTS = [
         id="allOf x-foreign-key",
     ),
     pytest.param(
-        None, {**DEFAULT_SCHEMA}, {}, "extension.kwargs", None, id="x-kwargs undefined",
+        None,
+        {**DEFAULT_SCHEMA},
+        {},
+        "extension.kwargs",
+        None,
+        id="x-kwargs undefined",
     ),
     pytest.param(
         None,

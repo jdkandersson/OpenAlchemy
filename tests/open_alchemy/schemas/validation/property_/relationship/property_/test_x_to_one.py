@@ -8,7 +8,10 @@ TESTS = [
     pytest.param(
         {},
         {},
-        (False, "malformed schema :: Every property requires a type. ",),
+        (
+            False,
+            "malformed schema :: Every property requires a type. ",
+        ),
         id="no type",
     ),
     pytest.param(
@@ -20,7 +23,10 @@ TESTS = [
     pytest.param(
         {"type": True},
         {},
-        (False, "malformed schema :: A type property value must be of type string. ",),
+        (
+            False,
+            "malformed schema :: A type property value must be of type string. ",
+        ),
         id="type not a string",
     ),
     pytest.param(
@@ -32,7 +38,10 @@ TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema :: The value of $ref must ba a string. ",),
+        (
+            False,
+            "malformed schema :: The value of $ref must ba a string. ",
+        ),
         id="$ref not string",
     ),
     pytest.param(
@@ -62,7 +71,10 @@ TESTS = [
     pytest.param(
         {"allOf": True},
         {},
-        (False, "malformed schema :: The value of allOf must be a list. ",),
+        (
+            False,
+            "malformed schema :: The value of allOf must be a list. ",
+        ),
         id="many to one allOf",
     ),
     pytest.param(
@@ -453,7 +465,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.validation
 @pytest.mark.schemas

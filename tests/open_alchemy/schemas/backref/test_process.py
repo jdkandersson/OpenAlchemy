@@ -33,7 +33,11 @@ def test_process_not_found():
 @pytest.mark.parametrize(
     "schemas, expected_schemas",
     [
-        pytest.param({}, {}, id="empty",),
+        pytest.param(
+            {},
+            {},
+            id="empty",
+        ),
         pytest.param(
             {
                 "Schema1": {

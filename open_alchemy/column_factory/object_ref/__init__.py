@@ -16,7 +16,10 @@ from . import schema as _schema
 
 
 def handle_object(
-    *, schema: oa_types.Schema, schemas: oa_types.Schemas, logical_name: str,
+    *,
+    schema: oa_types.Schema,
+    schemas: oa_types.Schemas,
+    logical_name: str,
 ) -> typing.Tuple[types.TReturnValue, oa_types.ObjectRefSchema]:
     """
     Generate properties for a reference to another object.

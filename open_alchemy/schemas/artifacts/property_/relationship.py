@@ -86,7 +86,9 @@ def _get_foreign_key(
 ) -> str:
     """Calculate the foreign key."""
     column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=relationship_type, property_schema=schema, schemas=schemas,
+        type_=relationship_type,
+        property_schema=schema,
+        schemas=schemas,
     )
     target_schema = oa_helpers.foreign_key.get_target_schema(
         type_=relationship_type,
@@ -95,7 +97,9 @@ def _get_foreign_key(
         schemas=schemas,
     )
     return oa_helpers.foreign_key.calculate_foreign_key(
-        column_name=column_name, target_schema=target_schema, schemas=schemas,
+        column_name=column_name,
+        target_schema=target_schema,
+        schemas=schemas,
     )
 
 
@@ -109,7 +113,9 @@ def _get_foreign_key_property(
 ) -> str:
     """Calculate the foreign key property."""
     column_name = oa_helpers.foreign_key.calculate_column_name(
-        type_=relationship_type, property_schema=schema, schemas=schemas,
+        type_=relationship_type,
+        property_schema=schema,
+        schemas=schemas,
     )
     target_schema = oa_helpers.foreign_key.get_target_schema(
         type_=relationship_type,

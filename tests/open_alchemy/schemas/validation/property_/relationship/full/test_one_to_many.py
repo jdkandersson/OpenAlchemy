@@ -50,7 +50,10 @@ TESTS = [
         "ref_schemas",
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
-        (False, "id property :: malformed schema :: Every property requires a type. ",),
+        (
+            False,
+            "id property :: malformed schema :: Every property requires a type. ",
+        ),
         id="one-to-many foreign key default property invalid",
     ),
     pytest.param(
@@ -256,7 +259,10 @@ TESTS = [
                 },
             }
         },
-        (False, "schema_ref_schemas_id :: format :: expected int32, actual is int64.",),
+        (
+            False,
+            "schema_ref_schemas_id :: format :: expected int32, actual is int64.",
+        ),
         id="one-to-many foreign key defined different format",
     ),
     pytest.param(
@@ -355,7 +361,10 @@ TESTS = [
                 },
             }
         },
-        (False, "schema_ref_schemas_id :: maxLength :: expected 1, actual is 2.",),
+        (
+            False,
+            "schema_ref_schemas_id :: maxLength :: expected 1, actual is 2.",
+        ),
         id="one-to-many foreign key defined different maxLength",
     ),
     pytest.param(
@@ -453,7 +462,10 @@ TESTS = [
                 },
             }
         },
-        (False, "schema_ref_schemas_id :: default :: expected 1, actual is 2.",),
+        (
+            False,
+            "schema_ref_schemas_id :: default :: expected 1, actual is 2.",
+        ),
         id="one-to-many foreign key defined different default",
     ),
     pytest.param(
@@ -548,7 +560,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "parent_schema, property_name, property_schema, schemas, expected_result", TESTS,
+    "parent_schema, property_name, property_schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):

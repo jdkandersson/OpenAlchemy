@@ -36,7 +36,10 @@ TESTS = [
         id="allOf elements not dict",
     ),
     pytest.param(
-        {}, {}, (False, "every model must define x-tablename"), id="no tablename",
+        {},
+        {},
+        (False, "every model must define x-tablename"),
+        id="no tablename",
     ),
     pytest.param(
         {"x-tablename": True},
@@ -882,7 +885,8 @@ TESTS = [
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_result", TESTS,
+    "schema, schemas, expected_result",
+    TESTS,
 )
 @pytest.mark.schemas
 def test_check(schema, schemas, expected_result):

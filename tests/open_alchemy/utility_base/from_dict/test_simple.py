@@ -42,14 +42,42 @@ def test_convert_invalid(schema, value, exception):
 @pytest.mark.parametrize(
     "schema, value, expected_value",
     [
-        pytest.param({"type": "integer"}, 1, 1, id="integer",),
-        pytest.param({"type": "integer", "format": "int32"}, 1, 1, id="integer int32",),
-        pytest.param({"type": "integer", "format": "int64"}, 1, 1, id="integer int64",),
-        pytest.param({"type": "number"}, 1.1, 1.1, id="number",),
         pytest.param(
-            {"type": "number", "format": "float"}, 1.1, 1.1, id="number  float",
+            {"type": "integer"},
+            1,
+            1,
+            id="integer",
         ),
-        pytest.param({"type": "string"}, "value 1", "value 1", id="string",),
+        pytest.param(
+            {"type": "integer", "format": "int32"},
+            1,
+            1,
+            id="integer int32",
+        ),
+        pytest.param(
+            {"type": "integer", "format": "int64"},
+            1,
+            1,
+            id="integer int64",
+        ),
+        pytest.param(
+            {"type": "number"},
+            1.1,
+            1.1,
+            id="number",
+        ),
+        pytest.param(
+            {"type": "number", "format": "float"},
+            1.1,
+            1.1,
+            id="number  float",
+        ),
+        pytest.param(
+            {"type": "string"},
+            "value 1",
+            "value 1",
+            id="string",
+        ),
         pytest.param(
             {"type": "string", "format": "password"},
             "value 1",
@@ -81,7 +109,10 @@ def test_convert_invalid(schema, value, exception):
             id="string  binary not NOne",
         ),
         pytest.param(
-            {"type": "string", "format": "date"}, None, None, id="string  date None",
+            {"type": "string", "format": "date"},
+            None,
+            None,
+            id="string  date None",
         ),
         pytest.param(
             {"type": "string", "format": "date"},
@@ -101,7 +132,12 @@ def test_convert_invalid(schema, value, exception):
             datetime.datetime(2000, 1, 1, 1, 1, 1),
             id="string  date-time not None",
         ),
-        pytest.param({"type": "boolean"}, True, True, id="boolean",),
+        pytest.param(
+            {"type": "boolean"},
+            True,
+            True,
+            id="boolean",
+        ),
     ],
 )
 @pytest.mark.utility_base

@@ -13,17 +13,65 @@ import open_alchemy
 @pytest.mark.parametrize(
     "type_, format_, value",
     [
-        pytest.param("integer", None, 1, id="integer",),
-        pytest.param("integer", "int32", 1, id="int32",),
-        pytest.param("integer", "int64", 1, id="int64",),
-        pytest.param("number", None, 1.1, id="number",),
-        pytest.param("number", "float", 1.1, id="float",),
-        pytest.param("string", None, "some string", id="string",),
-        pytest.param("string", "password", "some password", id="password",),
-        pytest.param("string", "byte", "some string", id="byte",),
-        pytest.param("string", "binary", b"some bytes", id="binary",),
         pytest.param(
-            "string", "date", datetime.date(year=2000, month=1, day=1), id="date",
+            "integer",
+            None,
+            1,
+            id="integer",
+        ),
+        pytest.param(
+            "integer",
+            "int32",
+            1,
+            id="int32",
+        ),
+        pytest.param(
+            "integer",
+            "int64",
+            1,
+            id="int64",
+        ),
+        pytest.param(
+            "number",
+            None,
+            1.1,
+            id="number",
+        ),
+        pytest.param(
+            "number",
+            "float",
+            1.1,
+            id="float",
+        ),
+        pytest.param(
+            "string",
+            None,
+            "some string",
+            id="string",
+        ),
+        pytest.param(
+            "string",
+            "password",
+            "some password",
+            id="password",
+        ),
+        pytest.param(
+            "string",
+            "byte",
+            "some string",
+            id="byte",
+        ),
+        pytest.param(
+            "string",
+            "binary",
+            b"some bytes",
+            id="binary",
+        ),
+        pytest.param(
+            "string",
+            "date",
+            datetime.date(year=2000, month=1, day=1),
+            id="date",
         ),
         pytest.param(
             "string",
@@ -31,8 +79,18 @@ import open_alchemy
             datetime.datetime(year=2000, month=1, day=1, hour=1, minute=1, second=1),
             id="date-time",
         ),
-        pytest.param("string", "unsupported", "some password", id="unsupported",),
-        pytest.param("boolean", None, True, id="boolean",),
+        pytest.param(
+            "string",
+            "unsupported",
+            "some password",
+            id="unsupported",
+        ),
+        pytest.param(
+            "boolean",
+            None,
+            True,
+            id="boolean",
+        ),
     ],
 )
 @pytest.mark.integration
@@ -81,10 +139,20 @@ def test_types(engine, sessionmaker, type_, format_, value):
     [
         pytest.param({"type": "integer", "x-json": True}, 1, id="integer"),
         pytest.param({"type": "number", "x-json": True}, 1.1, id="number"),
-        pytest.param({"type": "string", "x-json": True}, "value 1", id="string",),
-        pytest.param({"type": "boolean", "x-json": True}, True, id="boolean",),
         pytest.param(
-            {"type": "object", "x-json": True}, {"key": "value"}, id="object",
+            {"type": "string", "x-json": True},
+            "value 1",
+            id="string",
+        ),
+        pytest.param(
+            {"type": "boolean", "x-json": True},
+            True,
+            id="boolean",
+        ),
+        pytest.param(
+            {"type": "object", "x-json": True},
+            {"key": "value"},
+            id="object",
         ),
         pytest.param({"type": "array", "x-json": True}, [1], id="array"),
     ],

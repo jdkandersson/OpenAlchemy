@@ -11,7 +11,12 @@ TESTS = [
         (False, "not supported type is not supported"),
         id="type simple not supported",
     ),
-    pytest.param({"type": "object"}, {}, (True, None), id="type object no properties",),
+    pytest.param(
+        {"type": "object"},
+        {},
+        (True, None),
+        id="type object no properties",
+    ),
     pytest.param(
         {"type": "object", "properties": True},
         {},

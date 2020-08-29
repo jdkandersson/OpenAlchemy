@@ -34,7 +34,9 @@ def test_handle_object_error(schema, schemas):
     """
     with pytest.raises(exceptions.MalformedRelationshipError):
         object_ref.handle_object(
-            schema=schema, schemas=schemas, logical_name="name 1",
+            schema=schema,
+            schemas=schemas,
+            logical_name="name 1",
         )
 
 
@@ -56,7 +58,9 @@ def test_integration_object_ref():
     logical_name = "ref_schema"
 
     ([(tbl_logical_name, relationship)], returned_schema,) = object_ref.handle_object(
-        schema=schema, schemas=schemas, logical_name=logical_name,
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
     )
 
     assert tbl_logical_name == logical_name
@@ -85,7 +89,9 @@ def test_integration_object_ref_nullable():
     logical_name = "ref_schema"
 
     (_, returned_schema) = object_ref.handle_object(
-        schema=schema, schemas=schemas, logical_name=logical_name,
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
     )
 
     assert returned_schema == {
@@ -116,7 +122,9 @@ def test_integration_object_ref_backref():
     logical_name = "ref_schema"
 
     ([(_, relationship)], _) = object_ref.handle_object(
-        schema=schema, schemas=schemas, logical_name=logical_name,
+        schema=schema,
+        schemas=schemas,
+        logical_name=logical_name,
     )
 
     assert relationship.backref == ("schema", {"uselist": None})

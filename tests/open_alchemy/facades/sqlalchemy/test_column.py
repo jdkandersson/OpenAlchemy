@@ -429,11 +429,31 @@ class TestHandleString:
     @pytest.mark.parametrize(
         "format_, expected_type",
         [
-            pytest.param(None, sqlalchemy.String, id="None",),
-            pytest.param("date", sqlalchemy.Date, id="date",),
-            pytest.param("date-time", sqlalchemy.DateTime, id="date-time",),
-            pytest.param("byte", sqlalchemy.String, id="byte",),
-            pytest.param("password", sqlalchemy.String, id="password",),
+            pytest.param(
+                None,
+                sqlalchemy.String,
+                id="None",
+            ),
+            pytest.param(
+                "date",
+                sqlalchemy.Date,
+                id="date",
+            ),
+            pytest.param(
+                "date-time",
+                sqlalchemy.DateTime,
+                id="date-time",
+            ),
+            pytest.param(
+                "byte",
+                sqlalchemy.String,
+                id="byte",
+            ),
+            pytest.param(
+                "password",
+                sqlalchemy.String,
+                id="password",
+            ),
             pytest.param("binary", sqlalchemy.LargeBinary, id="binary"),
             pytest.param("unsupported", sqlalchemy.String, id="unsupported"),
         ],

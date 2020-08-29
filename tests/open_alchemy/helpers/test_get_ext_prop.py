@@ -70,22 +70,86 @@ def test_invalid(name, value):
 @pytest.mark.parametrize(
     "name, value",
     [
-        pytest.param("x-backref", "table 1", id="x-backref",),
-        pytest.param("x-uselist", True, id="x-uselist",),
-        pytest.param("x-secondary", "association", id="x-secondary",),
-        pytest.param("x-primary-key", True, id="x-primary-key",),
-        pytest.param("x-autoincrement", True, id="x-autoincrement",),
-        pytest.param("x-index", True, id="x-index",),
-        pytest.param("x-unique", True, id="x-unique",),
-        pytest.param("x-json", True, id="x-json",),
-        pytest.param("x-foreign-key", "table 1.column 1", id="x-foreign-key",),
-        pytest.param("x-foreign-key-column", "column 1", id="x-foreign-key-column",),
-        pytest.param("x-tablename", "table 1", id="x-tablename",),
-        pytest.param("x-de-$ref", "Table1", id="x-de-$ref",),
-        pytest.param("x-dict-ignore", True, id="x-dict-ignore",),
-        pytest.param("x-generated", True, id="x-generated",),
-        pytest.param("x-inherits", True, id="x-inherits bool",),
-        pytest.param("x-inherits", "Parent", id="x-inherits string",),
+        pytest.param(
+            "x-backref",
+            "table 1",
+            id="x-backref",
+        ),
+        pytest.param(
+            "x-uselist",
+            True,
+            id="x-uselist",
+        ),
+        pytest.param(
+            "x-secondary",
+            "association",
+            id="x-secondary",
+        ),
+        pytest.param(
+            "x-primary-key",
+            True,
+            id="x-primary-key",
+        ),
+        pytest.param(
+            "x-autoincrement",
+            True,
+            id="x-autoincrement",
+        ),
+        pytest.param(
+            "x-index",
+            True,
+            id="x-index",
+        ),
+        pytest.param(
+            "x-unique",
+            True,
+            id="x-unique",
+        ),
+        pytest.param(
+            "x-json",
+            True,
+            id="x-json",
+        ),
+        pytest.param(
+            "x-foreign-key",
+            "table 1.column 1",
+            id="x-foreign-key",
+        ),
+        pytest.param(
+            "x-foreign-key-column",
+            "column 1",
+            id="x-foreign-key-column",
+        ),
+        pytest.param(
+            "x-tablename",
+            "table 1",
+            id="x-tablename",
+        ),
+        pytest.param(
+            "x-de-$ref",
+            "Table1",
+            id="x-de-$ref",
+        ),
+        pytest.param(
+            "x-dict-ignore",
+            True,
+            id="x-dict-ignore",
+        ),
+        pytest.param(
+            "x-generated",
+            True,
+            id="x-generated",
+        ),
+        pytest.param(
+            "x-inherits",
+            True,
+            id="x-inherits bool",
+        ),
+        pytest.param(
+            "x-inherits",
+            "Parent",
+            id="x-inherits string",
+        ),
     ],
 )
 @pytest.mark.helper

@@ -13,7 +13,10 @@ from open_alchemy.schemas.validation.property_ import relationship
             {},
             {},
             {},
-            (False, "malformed schema :: Every property requires a type. ",),
+            (
+                False,
+                "malformed schema :: Every property requires a type. ",
+            ),
             id="malformed relationship",
         ),
         pytest.param(
@@ -39,7 +42,10 @@ from open_alchemy.schemas.validation.property_ import relationship
                     "properties": {"id": {"type": "integer"}},
                 }
             },
-            (True, None,),
+            (
+                True,
+                None,
+            ),
             id="valid",
         ),
     ],

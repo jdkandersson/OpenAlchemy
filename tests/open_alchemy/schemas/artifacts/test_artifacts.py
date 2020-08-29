@@ -5,8 +5,16 @@ import pytest
 from open_alchemy.schemas import artifacts
 
 GET_TESTS = [
-    pytest.param(True, {}, id="spec not dict",),
-    pytest.param({"components": {"schemas": {}}}, {"models": {}}, id="schemas empty",),
+    pytest.param(
+        True,
+        {},
+        id="spec not dict",
+    ),
+    pytest.param(
+        {"components": {"schemas": {}}},
+        {"models": {}},
+        id="schemas empty",
+    ),
     pytest.param(
         {"components": {"schemas": {"Schema1": {}}}},
         {"models": {}},

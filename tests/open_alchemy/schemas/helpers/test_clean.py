@@ -8,9 +8,21 @@ from open_alchemy.schemas.helpers import clean
 @pytest.mark.parametrize(
     "schema, expected_schema",
     [
-        pytest.param({}, {}, id="empty",),
-        pytest.param({"key": "value"}, {"key": "value"}, id="single not extension",),
-        pytest.param({"x-key": "value"}, {}, id="single extension",),
+        pytest.param(
+            {},
+            {},
+            id="empty",
+        ),
+        pytest.param(
+            {"key": "value"},
+            {"key": "value"},
+            id="single not extension",
+        ),
+        pytest.param(
+            {"x-key": "value"},
+            {},
+            id="single extension",
+        ),
         pytest.param(
             {"key_1": "value 1", "key_2": "value 2"},
             {"key_1": "value 1", "key_2": "value 2"},

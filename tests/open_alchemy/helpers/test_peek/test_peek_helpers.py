@@ -130,9 +130,24 @@ def test_peek_key_invalid(schema, schemas):
 @pytest.mark.parametrize(
     "schema, schemas, expected_value",
     [
-        pytest.param({}, {}, None, id="not found",),
-        pytest.param({"x-backref": "schema"}, {}, "schema", id="present locally",),
-        pytest.param({"allOf": []}, {}, None, id="not present locally in allOf",),
+        pytest.param(
+            {},
+            {},
+            None,
+            id="not found",
+        ),
+        pytest.param(
+            {"x-backref": "schema"},
+            {},
+            "schema",
+            id="present locally",
+        ),
+        pytest.param(
+            {"allOf": []},
+            {},
+            None,
+            id="not present locally in allOf",
+        ),
         pytest.param(
             {"allOf": [{"x-backref": "schema"}]},
             {},

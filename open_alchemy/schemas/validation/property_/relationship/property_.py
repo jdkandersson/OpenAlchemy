@@ -207,7 +207,8 @@ def _check_array_root(
         is not None
     ):
         return types.Result(
-            False, "x-kwargs cannot be defined on x-to-many relationship property root",
+            False,
+            "x-kwargs cannot be defined on x-to-many relationship property root",
         )
     # Check uselist
     if (
@@ -272,7 +273,10 @@ def _check_array_items(
         )
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
     if type_ != "object":
-        return types.Result(False, "items property :: type not an object",)
+        return types.Result(
+            False,
+            "items property :: type not an object",
+        )
 
     # Check array item values
     _values_result = _check_array_items_values(schema=schema, schemas=schemas)

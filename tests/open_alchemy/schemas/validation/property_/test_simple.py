@@ -8,13 +8,19 @@ TESTS = [
     pytest.param(
         {},
         {},
-        (False, "malformed schema :: Every property requires a type. ",),
+        (
+            False,
+            "malformed schema :: Every property requires a type. ",
+        ),
         id="type missing",
     ),
     pytest.param(
         {"type": True},
         {},
-        (False, "malformed schema :: A type property value must be of type string. ",),
+        (
+            False,
+            "malformed schema :: A type property value must be of type string. ",
+        ),
         id="type not a string",
     ),
     pytest.param(
@@ -30,13 +36,24 @@ TESTS = [
         id="type object",
     ),
     pytest.param(
-        {"type": "array"}, {}, (False, "array type is not supported"), id="type array",
+        {"type": "array"},
+        {},
+        (False, "array type is not supported"),
+        id="type array",
     ),
-    pytest.param({"type": "integer"}, {}, (True, None), id="type integer",),
+    pytest.param(
+        {"type": "integer"},
+        {},
+        (True, None),
+        id="type integer",
+    ),
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema :: The value of $ref must ba a string. ",),
+        (
+            False,
+            "malformed schema :: The value of $ref must ba a string. ",
+        ),
         id="$ref not string",
     ),
     pytest.param(
@@ -54,20 +71,39 @@ TESTS = [
     pytest.param(
         {"allOf": True},
         {},
-        (False, "malformed schema :: The value of allOf must be a list. ",),
+        (
+            False,
+            "malformed schema :: The value of allOf must be a list. ",
+        ),
         id="allOf not list",
     ),
     pytest.param(
         {"allOf": [True]},
         {},
-        (False, "malformed schema :: The elements of allOf must be dictionaries. ",),
+        (
+            False,
+            "malformed schema :: The elements of allOf must be dictionaries. ",
+        ),
         id="allOf element not dictionary",
     ),
     pytest.param(
-        {"allOf": [{"type": "integer"}]}, {}, (True, None), id="type integer allOf",
+        {"allOf": [{"type": "integer"}]},
+        {},
+        (True, None),
+        id="type integer allOf",
     ),
-    pytest.param({"type": "number"}, {}, (True, None), id="type number",),
-    pytest.param({"type": "boolean"}, {}, (True, None), id="type boolean",),
+    pytest.param(
+        {"type": "number"},
+        {},
+        (True, None),
+        id="type number",
+    ),
+    pytest.param(
+        {"type": "boolean"},
+        {},
+        (True, None),
+        id="type boolean",
+    ),
     pytest.param(
         {"type": "integer", "format": True},
         {},
@@ -117,7 +153,10 @@ TESTS = [
         id="string format password",
     ),
     pytest.param(
-        {"type": "string", "format": "byte"}, {}, (True, None), id="string format byte",
+        {"type": "string", "format": "byte"},
+        {},
+        (True, None),
+        id="string format byte",
     ),
     pytest.param(
         {"type": "string", "format": "binary"},
@@ -126,7 +165,10 @@ TESTS = [
         id="string format binary",
     ),
     pytest.param(
-        {"type": "string", "format": "date"}, {}, (True, None), id="string format date",
+        {"type": "string", "format": "date"},
+        {},
+        (True, None),
+        id="string format date",
     ),
     pytest.param(
         {"type": "string", "format": "date-time"},
@@ -147,7 +189,10 @@ TESTS = [
         id="string maxLength not integer",
     ),
     pytest.param(
-        {"type": "string", "maxLength": 1}, {}, (True, None), id="string maxLength",
+        {"type": "string", "maxLength": 1},
+        {},
+        (True, None),
+        id="string maxLength",
     ),
     pytest.param(
         {"type": "string", "format": "date", "maxLength": 1},
@@ -186,16 +231,28 @@ TESTS = [
         id="integer nullable not boolean",
     ),
     pytest.param(
-        {"type": "integer", "nullable": True}, {}, (True, None), id="integer nullable",
+        {"type": "integer", "nullable": True},
+        {},
+        (True, None),
+        id="integer nullable",
     ),
     pytest.param(
-        {"type": "number", "nullable": True}, {}, (True, None), id="number nullable",
+        {"type": "number", "nullable": True},
+        {},
+        (True, None),
+        id="number nullable",
     ),
     pytest.param(
-        {"type": "string", "nullable": True}, {}, (True, None), id="string nullable",
+        {"type": "string", "nullable": True},
+        {},
+        (True, None),
+        id="string nullable",
     ),
     pytest.param(
-        {"type": "boolean", "nullable": True}, {}, (True, None), id="boolean nullable",
+        {"type": "boolean", "nullable": True},
+        {},
+        (True, None),
+        id="boolean nullable",
     ),
     pytest.param(
         {"type": "integer", "description": True},
@@ -297,16 +354,28 @@ TESTS = [
         id="integer x-index not boolean",
     ),
     pytest.param(
-        {"type": "integer", "x-index": True}, {}, (True, None), id="integer x-index",
+        {"type": "integer", "x-index": True},
+        {},
+        (True, None),
+        id="integer x-index",
     ),
     pytest.param(
-        {"type": "number", "x-index": True}, {}, (True, None), id="number x-index",
+        {"type": "number", "x-index": True},
+        {},
+        (True, None),
+        id="number x-index",
     ),
     pytest.param(
-        {"type": "string", "x-index": True}, {}, (True, None), id="string x-index",
+        {"type": "string", "x-index": True},
+        {},
+        (True, None),
+        id="string x-index",
     ),
     pytest.param(
-        {"type": "boolean", "x-index": True}, {}, (True, None), id="boolean x-index",
+        {"type": "boolean", "x-index": True},
+        {},
+        (True, None),
+        id="boolean x-index",
     ),
     pytest.param(
         {"type": "integer", "x-unique": "True"},
@@ -315,16 +384,28 @@ TESTS = [
         id="integer x-unique not boolean",
     ),
     pytest.param(
-        {"type": "integer", "x-unique": True}, {}, (True, None), id="integer x-unique",
+        {"type": "integer", "x-unique": True},
+        {},
+        (True, None),
+        id="integer x-unique",
     ),
     pytest.param(
-        {"type": "number", "x-unique": True}, {}, (True, None), id="number x-unique",
+        {"type": "number", "x-unique": True},
+        {},
+        (True, None),
+        id="number x-unique",
     ),
     pytest.param(
-        {"type": "string", "x-unique": True}, {}, (True, None), id="string x-unique",
+        {"type": "string", "x-unique": True},
+        {},
+        (True, None),
+        id="string x-unique",
     ),
     pytest.param(
-        {"type": "boolean", "x-unique": True}, {}, (True, None), id="boolean x-unique",
+        {"type": "boolean", "x-unique": True},
+        {},
+        (True, None),
+        id="boolean x-unique",
     ),
     pytest.param(
         {"type": "integer", "x-foreign-key": True},
@@ -370,7 +451,10 @@ TESTS = [
         id="integer default invalid",
     ),
     pytest.param(
-        {"type": "integer", "default": 1}, {}, (True, None), id="integer default",
+        {"type": "integer", "default": 1},
+        {},
+        (True, None),
+        id="integer default",
     ),
     pytest.param(
         {"type": "number", "default": True},
@@ -383,10 +467,16 @@ TESTS = [
         id="number default invalid",
     ),
     pytest.param(
-        {"type": "number", "default": 1.1}, {}, (True, None), id="number default float",
+        {"type": "number", "default": 1.1},
+        {},
+        (True, None),
+        id="number default float",
     ),
     pytest.param(
-        {"type": "number", "default": 1}, {}, (True, None), id="number default integer",
+        {"type": "number", "default": 1},
+        {},
+        (True, None),
+        id="number default integer",
     ),
     pytest.param(
         {"type": "string", "default": True},
@@ -399,7 +489,10 @@ TESTS = [
         id="string default invalid",
     ),
     pytest.param(
-        {"type": "string", "default": "value 1"}, {}, (True, None), id="string default",
+        {"type": "string", "default": "value 1"},
+        {},
+        (True, None),
+        id="string default",
     ),
     pytest.param(
         {"type": "boolean", "default": "True"},
@@ -412,7 +505,10 @@ TESTS = [
         id="boolean default invalid",
     ),
     pytest.param(
-        {"type": "boolean", "default": True}, {}, (True, None), id="boolean default",
+        {"type": "boolean", "default": True},
+        {},
+        (True, None),
+        id="boolean default",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": 1},

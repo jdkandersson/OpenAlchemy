@@ -26,7 +26,8 @@ def check(*, schemas: typing.Any) -> types.Result:
 
     # Check keys are strings
     first_key_not_string = next(
-        filter(lambda key: not isinstance(key, str), schemas.keys()), None,
+        filter(lambda key: not isinstance(key, str), schemas.keys()),
+        None,
     )
     if first_key_not_string is not None:
         return types.Result(

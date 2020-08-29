@@ -70,7 +70,9 @@ def _calculate_artifacts(
 
 
 def _get_schema_backrefs(
-    schemas: types.Schemas, schema_name: str, schema: types.Schema,
+    schemas: types.Schemas,
+    schema_name: str,
+    schema: types.Schema,
 ) -> helpers.process.TArtifactsIter:
     """
     Get the backrefs for a schema.

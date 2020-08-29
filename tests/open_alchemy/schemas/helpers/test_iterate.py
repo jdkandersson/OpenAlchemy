@@ -72,8 +72,16 @@ def test_constructable(schemas, expected_schemas):
     [
         pytest.param({}, [], id="empty"),
         pytest.param({"Schema1": {}}, [("Schema1", {})], id="single not"),
-        pytest.param({"Schema1": {"x-tablename": True}}, [], id="single tablename",),
-        pytest.param({"Schema1": {"x-inherits": 1}}, [], id="single inherits",),
+        pytest.param(
+            {"Schema1": {"x-tablename": True}},
+            [],
+            id="single tablename",
+        ),
+        pytest.param(
+            {"Schema1": {"x-inherits": 1}},
+            [],
+            id="single inherits",
+        ),
         pytest.param(
             {"Schema1": {"allOf": [{"$ref": "#/components/schemas/Schema2"}, {}]}},
             [],
@@ -123,7 +131,12 @@ def test_not_constructable(schemas, expected_schemas):
         pytest.param(True, {}, [], id="not dict"),
         pytest.param({}, {}, [], id="no properties"),
         pytest.param({"properties": {}}, {}, [], id="empty properties"),
-        pytest.param({"properties": True}, {}, [], id="properties not dictionary",),
+        pytest.param(
+            {"properties": True},
+            {},
+            [],
+            id="properties not dictionary",
+        ),
         pytest.param(
             {"properties": {"prop_1": "value 1"}},
             {},
@@ -142,7 +155,12 @@ def test_not_constructable(schemas, expected_schemas):
             [("prop_1", "value 1"), ("prop_2", "value 2")],
             id="multiple property",
         ),
-        pytest.param({"$ref": True}, {}, [], id="$ref not string",),
+        pytest.param(
+            {"$ref": True},
+            {},
+            [],
+            id="$ref not string",
+        ),
         pytest.param(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"properties": {"prop_1": "value 1"}}},
@@ -150,7 +168,10 @@ def test_not_constructable(schemas, expected_schemas):
             id="$ref",
         ),
         pytest.param(
-            {"$ref": "#/components/schemas/RefSchema"}, {}, [], id="$ref not resolve",
+            {"$ref": "#/components/schemas/RefSchema"},
+            {},
+            [],
+            id="$ref not resolve",
         ),
         pytest.param({"allOf": True}, {}, [], id="allOf not list"),
         pytest.param({"allOf": []}, {}, [], id="allOf empty"),
@@ -379,7 +400,12 @@ def test_properties_single(schema, schemas, expected_properties):
     "schema, schemas, expected_required_values",
     [
         pytest.param({}, {}, [], id="no required"),
-        pytest.param({"required": "value 1"}, {}, ["value 1"], id="single required",),
+        pytest.param(
+            {"required": "value 1"},
+            {},
+            ["value 1"],
+            id="single required",
+        ),
         pytest.param(
             {"x-inherits": False, "required": "value 1"},
             {},
@@ -393,7 +419,10 @@ def test_properties_single(schema, schemas, expected_properties):
             id="$ref",
         ),
         pytest.param(
-            {"allOf": [{"required": "value 1"}]}, {}, ["value 1"], id="allOf single",
+            {"allOf": [{"required": "value 1"}]},
+            {},
+            ["value 1"],
+            id="allOf single",
         ),
         pytest.param(
             {"allOf": [{"required": "value 1"}, {"required": "value 2"}]},

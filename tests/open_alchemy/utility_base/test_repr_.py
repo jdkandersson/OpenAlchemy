@@ -22,7 +22,11 @@ class Model:
 @pytest.mark.parametrize(
     "properties, expected_repr",
     [
-        pytest.param({}, "open_alchemy.models.Model()", id="no properties",),
+        pytest.param(
+            {},
+            "open_alchemy.models.Model()",
+            id="no properties",
+        ),
         pytest.param(
             {"property_not_def": {}},
             "open_alchemy.models.Model(property_not_def=None)",
