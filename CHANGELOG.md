@@ -1,5 +1,9 @@
 # Release Notes
 
+## Version _next_
+
+- Move `description` to be a top level property artifact for every property.
+
 ## Version 1.5.3 - 2020-08-29
 
 - Correct `format` key to no longer have a trailing `_` for artifacts.
