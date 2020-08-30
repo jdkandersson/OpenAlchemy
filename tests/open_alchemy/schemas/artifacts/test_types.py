@@ -84,6 +84,7 @@ from open_alchemy.schemas import helpers
         pytest.param(
             artifacts.types.SimplePropertyArtifacts(
                 type=helpers.property_.type_.Type.SIMPLE,
+                description=None,
                 open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
                     type="integer",
                     format=None,
@@ -113,7 +114,43 @@ from open_alchemy.schemas import helpers
                 "schema": {"type": "integer"},
                 "required": True,
             },
-            id="complete",
+            id="complete optional not defined",
+        ),
+        pytest.param(
+            artifacts.types.SimplePropertyArtifacts(
+                type=helpers.property_.type_.Type.SIMPLE,
+                description="description 1",
+                open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
+                    type="integer",
+                    format=None,
+                    max_length=None,
+                    nullable=None,
+                    description=None,
+                    default=None,
+                    read_only=None,
+                    write_only=None,
+                ),
+                extension=artifacts.types.ExtensionSimplePropertyArtifacts(
+                    primary_key=True,
+                    autoincrement=None,
+                    index=None,
+                    unique=None,
+                    foreign_key=None,
+                    kwargs=None,
+                    foreign_key_kwargs=None,
+                ),
+                schema={"type": "integer"},
+                required=True,
+            ),
+            {
+                "type": "SIMPLE",
+                "description": "description 1",
+                "open_api": {"type": "integer"},
+                "extension": {"primary_key": True},
+                "schema": {"type": "integer"},
+                "required": True,
+            },
+            id="complete optional defined",
         ),
     ],
 )
@@ -191,6 +228,7 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.JsonPropertyArtifacts(
+                description=None,
                 type=helpers.property_.type_.Type.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
                     nullable=True,
@@ -216,7 +254,38 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
                 "schema": {"type": "integer"},
                 "required": True,
             },
-            id="complete",
+            id="complete opt values not defined",
+        ),
+        pytest.param(
+            artifacts.types.JsonPropertyArtifacts(
+                description="description 1",
+                type=helpers.property_.type_.Type.JSON,
+                open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
+                    nullable=True,
+                    description=None,
+                    read_only=None,
+                    write_only=None,
+                ),
+                extension=artifacts.types.ExtensionJsonPropertyArtifacts(
+                    primary_key=True,
+                    index=None,
+                    unique=None,
+                    foreign_key=None,
+                    kwargs=None,
+                    foreign_key_kwargs=None,
+                ),
+                schema={"type": "integer"},
+                required=True,
+            ),
+            {
+                "type": "JSON",
+                "description": "description 1",
+                "open_api": {"nullable": True},
+                "extension": {"primary_key": True},
+                "schema": {"type": "integer"},
+                "required": True,
+            },
+            id="complete opt values defined",
         ),
     ],
 )
@@ -500,6 +569,7 @@ def test_relationship_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.BackrefPropertyArtifacts(
                 type=helpers.property_.type_.Type.BACKREF,
                 sub_type=artifacts.types.BackrefSubType.OBJECT,
+                description=None,
                 schema={"type": "object"},
                 properties=["property_1"],
                 required=None,
@@ -516,17 +586,19 @@ def test_relationship_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.BackrefPropertyArtifacts(
                 type=helpers.property_.type_.Type.BACKREF,
                 sub_type=artifacts.types.BackrefSubType.ARRAY,
-                schema={"type": "object"},
+                description="description 1",
+                schema={"type": "array"},
                 properties=["property_1"],
                 required=None,
             ),
             {
                 "type": "BACKREF",
+                "description": "description 1",
                 "sub_type": "ARRAY",
-                "schema": {"type": "object"},
+                "schema": {"type": "array"},
                 "properties": ["property_1"],
             },
-            id="object",
+            id="array",
         ),
     ],
 )

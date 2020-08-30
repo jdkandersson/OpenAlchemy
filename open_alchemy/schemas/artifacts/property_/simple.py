@@ -66,6 +66,7 @@ def get(
 
     return types.SimplePropertyArtifacts(
         type=helpers.property_.type_.Type.SIMPLE,
+        description=description,
         schema=schema_artifact,
         required=required,
         open_api=types.OpenApiSimplePropertyArtifacts(

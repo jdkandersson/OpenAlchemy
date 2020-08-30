@@ -29,6 +29,7 @@ class PropertyArtifacts:
         types.ArrayRefSchema,
     ]
     required: typing.Optional[bool]
+    description: typing.Optional[str]
 
 
 class _OpenApiSimplePropertyTypedDictBase(types.TypedDict, total=False):
@@ -169,7 +170,13 @@ class ExtensionSimplePropertyArtifacts:
         return return_dict
 
 
-class SimplePropertyTypedDict(types.TypedDict, total=True):
+class _SimplePropertyTypedDictBase(types.TypedDict, total=False):
+    """TypedDict representation of the simple property."""
+
+    description: str
+
+
+class SimplePropertyTypedDict(_SimplePropertyTypedDictBase, total=True):
     """TypedDict representation of the simple property."""
 
     type: str
@@ -191,13 +198,18 @@ class SimplePropertyArtifacts(PropertyArtifacts):
 
     def to_dict(self) -> SimplePropertyTypedDict:
         """Convert to dictionary."""
-        return {
+        return_dict: SimplePropertyTypedDict = {
             "type": self.type,
             "open_api": self.open_api.to_dict(),
             "extension": self.extension.to_dict(),
             "schema": self.schema,
             "required": self.required,
         }
+
+        if self.description is not None:
+            return_dict["description"] = self.description
+
+        return return_dict
 
 
 class OpenApiJsonPropertyTypedDict(types.TypedDict, total=False):
@@ -304,7 +316,13 @@ class ExtensionJsonPropertyArtifacts:
         return return_dict
 
 
-class JsonPropertyTypedDict(types.TypedDict, total=True):
+class _JsonPropertyTypedDictBase(types.TypedDict, total=False):
+    """TypedDict representation of the JSON property."""
+
+    description: str
+
+
+class JsonPropertyTypedDict(_JsonPropertyTypedDictBase, total=True):
     """TypedDict representation of the JSON property."""
 
     type: str
@@ -326,13 +344,18 @@ class JsonPropertyArtifacts(PropertyArtifacts):
 
     def to_dict(self) -> JsonPropertyTypedDict:
         """Convert to dictionary."""
-        return {
+        return_dict: JsonPropertyTypedDict = {
             "type": self.type,
             "open_api": self.open_api.to_dict(),
             "extension": self.extension.to_dict(),
             "schema": self.schema,
             "required": self.required,
         }
+
+        if self.description is not None:
+            return_dict["description"] = self.description
+
+        return return_dict
 
 
 @dataclasses.dataclass
@@ -614,8 +637,14 @@ TAnyRelationshipPropertyArtifacts = typing.Union[
 ]
 
 
-class BackrefPropertyTypedDict(types.TypedDict, total=True):
-    """TypedDict representation of the many-to-many relationship property."""
+class _BackrefPropertyTypedDictBase(types.TypedDict, total=False):
+    """TypedDict representation of the backref property."""
+
+    description: str
+
+
+class BackrefPropertyTypedDict(_BackrefPropertyTypedDictBase, total=True):
+    """TypedDict representation of the backref property."""
 
     type: str
     sub_type: str
@@ -643,12 +672,17 @@ class BackrefPropertyArtifacts(PropertyArtifacts):
 
     def to_dict(self) -> BackrefPropertyTypedDict:
         """Convert to dictionary."""
-        return {
+        return_dict: BackrefPropertyTypedDict = {
             "type": self.type,
             "sub_type": self.sub_type,
             "properties": self.properties,
             "schema": self.schema,
         }
+
+        if self.description is not None:
+            return_dict["description"] = self.description
+
+        return return_dict
 
 
 TAnyPropertyTypedDict = typing.Union[

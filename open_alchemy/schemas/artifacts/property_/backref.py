@@ -58,6 +58,7 @@ def get(
 
     return types.BackrefPropertyArtifacts(
         type=helpers.property_.type_.Type.BACKREF,
+        description=None,
         sub_type=sub_type,
         schema=schema,
         required=None,
