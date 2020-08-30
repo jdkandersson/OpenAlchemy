@@ -39,8 +39,6 @@ class _OpenApiSimplePropertyTypedDictBase(types.TypedDict, total=False):
     max_length: int
     nullable: bool
 
-    description: str
-
     default: typing.Union[int, float, str, bool]
 
     read_only: bool
@@ -62,8 +60,6 @@ class OpenApiSimplePropertyArtifacts:
     max_length: typing.Optional[int]
     nullable: typing.Optional[bool]
 
-    description: typing.Optional[str]
-
     default: typing.Optional[typing.Union[int, float, str, bool]]
 
     read_only: typing.Optional[bool]
@@ -78,7 +74,6 @@ class OpenApiSimplePropertyArtifacts:
                 "format",
                 "max_length",
                 "nullable",
-                "description",
                 "default",
                 "read_only",
                 "write_only",
@@ -87,7 +82,6 @@ class OpenApiSimplePropertyArtifacts:
             "format",
             "max_length",
             "nullable",
-            "description",
             "default",
             "read_only",
             "write_only",
@@ -217,8 +211,6 @@ class OpenApiJsonPropertyTypedDict(types.TypedDict, total=False):
 
     nullable: bool
 
-    description: str
-
     read_only: bool
     write_only: bool
 
@@ -229,8 +221,6 @@ class OpenApiJsonPropertyArtifacts:
 
     nullable: typing.Optional[bool]
 
-    description: typing.Optional[str]
-
     read_only: typing.Optional[bool]
     write_only: typing.Optional[bool]
 
@@ -238,11 +228,8 @@ class OpenApiJsonPropertyArtifacts:
         """Convert to dictionary."""
         return_dict: OpenApiJsonPropertyTypedDict = {}
 
-        opt_keys: typing.List[
-            types.Literal["nullable", "description", "read_only", "write_only"]
-        ] = [
+        opt_keys: typing.List[types.Literal["nullable", "read_only", "write_only"]] = [
             "nullable",
-            "description",
             "read_only",
             "write_only",
         ]

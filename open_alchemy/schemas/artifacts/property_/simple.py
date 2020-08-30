@@ -74,7 +74,6 @@ def get(
             format=format_,
             max_length=max_length,
             nullable=nullable,
-            description=description,
             default=default,
             read_only=read_only,
             write_only=write_only,

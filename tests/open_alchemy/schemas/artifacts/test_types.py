@@ -16,7 +16,6 @@ from open_alchemy.schemas import helpers
                 format=None,
                 max_length=None,
                 nullable=None,
-                description=None,
                 default=None,
                 read_only=None,
                 write_only=None,
@@ -30,7 +29,6 @@ from open_alchemy.schemas import helpers
                 format="format 1",
                 max_length=11,
                 nullable=True,
-                description="description 1",
                 default="default 1",
                 read_only=False,
                 write_only=True,
@@ -40,7 +38,6 @@ from open_alchemy.schemas import helpers
                 "format": "format 1",
                 "max_length": 11,
                 "nullable": True,
-                "description": "description 1",
                 "default": "default 1",
                 "read_only": False,
                 "write_only": True,
@@ -90,7 +87,6 @@ from open_alchemy.schemas import helpers
                     format=None,
                     max_length=None,
                     nullable=None,
-                    description=None,
                     default=None,
                     read_only=None,
                     write_only=None,
@@ -125,7 +121,6 @@ from open_alchemy.schemas import helpers
                     format=None,
                     max_length=None,
                     nullable=None,
-                    description=None,
                     default=None,
                     read_only=None,
                     write_only=None,
@@ -173,7 +168,6 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
         pytest.param(
             artifacts.types.OpenApiJsonPropertyArtifacts(
                 nullable=None,
-                description=None,
                 read_only=None,
                 write_only=None,
             ),
@@ -183,13 +177,11 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
         pytest.param(
             artifacts.types.OpenApiJsonPropertyArtifacts(
                 nullable=True,
-                description="description 1",
                 read_only=False,
                 write_only=True,
             ),
             {
                 "nullable": True,
-                "description": "description 1",
                 "read_only": False,
                 "write_only": True,
             },
@@ -232,7 +224,6 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
                 type=helpers.property_.type_.Type.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
                     nullable=True,
-                    description=None,
                     read_only=None,
                     write_only=None,
                 ),
@@ -262,7 +253,6 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
                 type=helpers.property_.type_.Type.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
                     nullable=True,
-                    description=None,
                     read_only=None,
                     write_only=None,
                 ),

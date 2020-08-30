@@ -55,7 +55,6 @@ def get(
         required=required,
         open_api=types.OpenApiJsonPropertyArtifacts(
             nullable=nullable,
-            description=description,
             read_only=read_only,
             write_only=write_only,
         ),
