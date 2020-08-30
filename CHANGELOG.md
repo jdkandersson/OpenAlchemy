@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.5.3 - 2020-08-29
 
 - Correct `format` key to no longer have a trailing `_` for artifacts.
 
