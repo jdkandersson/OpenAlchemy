@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.5.4 - 2020-08-30
 
 - Move `description` to be a top level property artifact for every property.
 
