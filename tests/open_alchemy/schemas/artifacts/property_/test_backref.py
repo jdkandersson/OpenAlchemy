@@ -161,6 +161,34 @@ GET_TESTS = [
         },
         id="schema properties $ref",
     ),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "description",
+        None,
+        id="description not defined",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "description": "description 1"},
+        {},
+        "description",
+        "description 1",
+        id="description",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "description": "description 2"}},
+        "description",
+        "description 2",
+        id="$ref description",
+    ),
+    pytest.param(
+        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3"}]},
+        {},
+        "description",
+        "description 3",
+        id="allOf description",
+    ),
 ]
 
 

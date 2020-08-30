@@ -42,6 +42,8 @@ def get(
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
+    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+
     # Get property names
     properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
     if sub_type == types.BackrefSubType.OBJECT:  # noqa: E721
@@ -58,6 +60,7 @@ def get(
 
     return types.BackrefPropertyArtifacts(
         type=helpers.property_.type_.Type.BACKREF,
+        description=description,
         sub_type=sub_type,
         schema=schema,
         required=None,

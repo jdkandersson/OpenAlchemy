@@ -135,6 +135,52 @@ TESTS = [
         id="type object properties boolean property",
     ),
     pytest.param(
+        {
+            "description": True,
+            "type": "object",
+            "properties": {"prop_1": {"type": "integer"}},
+        },
+        {},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="description not string",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "description": True,
+                "type": "object",
+                "properties": {"prop_1": {"type": "integer"}},
+            }
+        },
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="$ref description not string",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    "description": True,
+                    "type": "object",
+                    "properties": {"prop_1": {"type": "integer"}},
+                }
+            ]
+        },
+        {},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="allOf description not string",
+    ),
+    pytest.param(
+        {
+            "description": "description 1",
+            "type": "object",
+            "properties": {"prop_1": {"type": "integer"}},
+        },
+        {},
+        (True, None),
+        id="description valid",
+    ),
+    pytest.param(
         {"type": "array"},
         {},
         (False, "readOnly array properties must define items"),
@@ -194,6 +240,7 @@ TESTS = [
 
 @pytest.mark.parametrize("schema, schemas, expected_result", TESTS)
 @pytest.mark.schemas
+@pytest.mark.validation
 def test_check(schema, schemas, expected_result):
     """
     GIVEN schemas, schema and the expected result
