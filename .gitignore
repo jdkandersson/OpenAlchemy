@@ -9,6 +9,8 @@
 *.pyc
 *.pyo
 build/
+!open_alchemy/build/
+!tests/open_alchemy/build/
 dist/
 htmlcov/
 venv

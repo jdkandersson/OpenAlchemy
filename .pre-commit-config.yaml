@@ -35,3 +35,7 @@ repos:
     hooks:
       - exclude: "^docs.*.yaml$"
         id: prettier
+  - repo: https://github.com/codespell-project/codespell
+    rev: v1.17.1
+    hooks:
+      - id: codespell
