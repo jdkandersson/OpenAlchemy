@@ -8,7 +8,9 @@ from ... import types as oa_types
 from . import types
 
 
-def get(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.ModelArtifacts:
+def get(
+    schemas: oa_types.Schemas, schema: oa_types.Schema
+) -> types.ModelExPropertiesArtifacts:
     """
     Retrieve the artifacts for the model.
 
@@ -49,7 +51,7 @@ def get(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.ModelArtifa
     if composite_unique_value is not None:
         composite_unique = table_args.factory.map_unique(spec=composite_unique_value)
 
-    return types.ModelArtifacts(
+    return types.ModelExPropertiesArtifacts(
         tablename=tablename,
         inherits=inherits,
         parent=parent,

@@ -609,7 +609,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
     "artifacts_value, expected_dict",
     [
         pytest.param(
-            artifacts.types.ModelArtifacts(
+            artifacts.types.ModelExPropertiesArtifacts(
                 tablename="table_1",
                 inherits=None,
                 parent=None,
@@ -623,7 +623,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
             id="opt values None",
         ),
         pytest.param(
-            artifacts.types.ModelArtifacts(
+            artifacts.types.ModelExPropertiesArtifacts(
                 tablename="table_1",
                 inherits=True,
                 parent="Parent1",

@@ -730,8 +730,8 @@ class ModelValue(_ModelValueBase, total=True):
 
 
 @dataclasses.dataclass
-class ModelArtifacts:
-    """Information about a model."""
+class ModelExPropertiesArtifacts:
+    """Information about a model excluding its properties."""
 
     tablename: str
     inherits: typing.Optional[bool]
@@ -777,6 +777,13 @@ class ModelArtifacts:
             return_dict[opt_key] = value
 
         return return_dict
+
+
+@dataclasses.dataclass
+class ModelArtifacts(ModelExPropertiesArtifacts):
+    """Full information about a model."""
+
+    properties: typing.List[TAnyPropertyArtifacts]
 
 
 ModelsValue = typing.Dict[str, ModelValue]
