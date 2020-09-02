@@ -11,6 +11,8 @@ from open_alchemy import types as oa_types
 from .. import types
 from . import type_ as _type
 
+# from open_alchemy.schemas import artifacts as schemas_artifacts
+
 
 def gather_column_artifacts(
     schema: oa_types.Schema, required: typing.Optional[bool]
@@ -54,6 +56,24 @@ def gather_column_artifacts(
             )
 
     return artifacts
+
+
+# def from_artifacts(
+#     *,
+#     artifacts: schemas_artifacts.types.ModelArtifacts,
+#     name: str
+# ) -> types.ModelArtifacts:
+#     """
+#     Calculate the model artifacts from the schema artifacts.
+
+#     Args:
+#         artifacts: The schema artifacts.
+#         name: The name of the model.
+
+#     Returns:
+#         The model artifacts for the models file.
+
+#     """
 
 
 def from_schema(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:

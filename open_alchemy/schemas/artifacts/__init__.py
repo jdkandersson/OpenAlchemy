@@ -37,7 +37,7 @@ def _get_properties_artifacts(
 
 def _get_properties(
     *, schemas: _oa_types.Schemas, schema: _oa_types.Schema
-) -> types.TProperties:
+) -> types.PropertiesValue:
     """
     Get artifacts for the properties of a model.
 
@@ -51,14 +51,18 @@ def _get_properties(
 
     """
     properties_artifacts = _get_properties_artifacts(schemas, schema)
-    properties_t_artifacts: typing.Iterable[typing.Tuple[str, types.TProperty]] = map(
+    properties_t_artifacts: typing.Iterable[
+        typing.Tuple[str, types.PropertyValue]
+    ] = map(
         lambda args: (args[0], {"artifacts": args[1].to_dict()}),
         properties_artifacts,
     )
     return dict(properties_t_artifacts)
 
 
-def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TModel:
+def _get_model(
+    schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> types.ModelValue:
     """
     Get artifacts for a model.
 
@@ -76,7 +80,7 @@ def _get_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.TM
     }
 
 
-def get_models(*, schemas: _oa_types.Schemas) -> types.TModels:
+def get_models(*, schemas: _oa_types.Schemas) -> types.ModelsValue:
     """
     Get artifacts for the models of a schema.
 
@@ -99,7 +103,7 @@ def get_models(*, schemas: _oa_types.Schemas) -> types.TModels:
     return dict(constructables_artifacts)
 
 
-def get(*, spec: typing.Any) -> types.TSpec:
+def get(*, spec: typing.Any) -> types.SpecValue:
     """
     Get artifacts for a specification.
 

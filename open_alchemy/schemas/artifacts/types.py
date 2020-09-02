@@ -686,13 +686,13 @@ TAnyPropertyArtifacts = typing.Union[
 ]
 
 
-class TProperty(types.TypedDict, total=True):
+class PropertyValue(types.TypedDict, total=True):
     """Artifacts for a property."""
 
     artifacts: TAnyPropertyTypedDict
 
 
-TProperties = typing.Dict[str, TProperty]
+PropertiesValue = typing.Dict[str, PropertyValue]
 
 
 class _ModelTypedDictBase(types.TypedDict, total=False):
@@ -717,13 +717,13 @@ class ModelTypedDict(_ModelTypedDictBase, total=True):
     tablename: str
 
 
-class _TModelBase(types.TypedDict, total=False):
+class _ModelValueBase(types.TypedDict, total=False):
     """Record artifacts of a model."""
 
-    properties: TProperties
+    properties: PropertiesValue
 
 
-class TModel(_TModelBase, total=True):
+class ModelValue(_ModelValueBase, total=True):
     """Record artifacts of a model."""
 
     artifacts: ModelTypedDict
@@ -779,10 +779,10 @@ class ModelArtifacts:
         return return_dict
 
 
-TModels = typing.Dict[str, TModel]
+ModelsValue = typing.Dict[str, ModelValue]
 
 
-class TSpec(types.TypedDict, total=False):
+class SpecValue(types.TypedDict, total=False):
     """Record artifacts for a specification."""
 
-    models: TModels
+    models: ModelsValue
