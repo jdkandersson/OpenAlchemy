@@ -21,5 +21,5 @@ def generate(*, schema: oa_types.Schema, name: str) -> str:
         The source code for the model class.
 
     """
-    artifacts = _artifacts.calculate(schema=schema, name=name)
+    artifacts = _artifacts.from_schema(schema=schema, name=name)
     return _source.generate(artifacts=artifacts)

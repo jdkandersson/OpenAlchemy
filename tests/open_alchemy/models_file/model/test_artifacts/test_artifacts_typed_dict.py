@@ -117,7 +117,7 @@ def test_calculate_td_required_props(schema, expected_props):
     WHEN calculate is called with the schema
     THEN the given expected td required properties are added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     # assert False
     assert artifacts.typed_dict.required.props == expected_props
@@ -185,7 +185,7 @@ def test_calculate_td_not_required_props(schema, expected_props):
     WHEN calculate is called with the schema
     THEN the given expected td not required properties are added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.typed_dict.not_required.props == expected_props
 
@@ -215,7 +215,7 @@ def test_calculate_required_empty(schema, expected_required_empty):
     WHEN calculate is called with the schema
     THEN the given expected td required empty is added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.typed_dict.required.empty == expected_required_empty
 
@@ -245,7 +245,7 @@ def test_calculate_not_required_empty(schema, expected_not_required_empty):
     WHEN calculate is called with the schema
     THEN the given expected td not required empty is added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.typed_dict.not_required.empty == expected_not_required_empty
 
@@ -305,7 +305,7 @@ def test_calculate_td_names(schema, expected_required_name, expected_not_require
     THEN the given expected td required and not required names are added to the
         artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.typed_dict.required.name == expected_required_name
     assert artifacts.typed_dict.not_required.name == expected_not_required_name
@@ -373,7 +373,7 @@ def test_calculate_td_parent(
     THEN the given expected td required and not required parents are added to the
         artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.typed_dict.required.parent_class == expected_required_parent
     artifacts_not_required_parent = artifacts.typed_dict.not_required.parent_class

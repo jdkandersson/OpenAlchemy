@@ -161,7 +161,7 @@ def test_calculate_name():
     schema = {"properties": {}}
     name = "Model"
 
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name=name)
 
     assert artifacts.sqlalchemy.name == name
 
@@ -183,7 +183,7 @@ def test_calculate_description(schema, expected_description):
     """
     name = "Model"
 
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name=name)
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name=name)
 
     assert artifacts.sqlalchemy.description == expected_description
 
@@ -202,7 +202,7 @@ def test_calculate_parent():
     """
     schema = {"properties": {}}
 
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.parent_cls == _EXPECTED_CLS_BASE
 
@@ -291,7 +291,7 @@ def test_calculate_column(schema, expected_columns):
     WHEN calculate is called with the schema
     THEN the given expected columns are added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.columns == expected_columns
 
@@ -308,7 +308,7 @@ def test_calculate_column_inherits_return(mocked_facades_models):
         "properties": {"column_2": {"type": "string"}}
     }
 
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
     assert artifacts.sqlalchemy.columns == [
@@ -332,7 +332,7 @@ def test_calculate_empty(schema, expected_empty):
     WHEN calculate is called with the schema
     THEN the given expected empty is added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.empty == expected_empty
 
@@ -413,7 +413,7 @@ def test_calculate_required_args(schema, expected_args):
     WHEN calculate is called with the schema
     THEN the given expected required arguments are added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.arg.required == expected_args
 
@@ -544,7 +544,7 @@ def test_calculate_not_required_args(schema, expected_args):
     WHEN calculate is called with the schema
     THEN the given expected td not required properties are added to the artifacts.
     """
-    artifacts = models_file._model._artifacts.calculate(schema=schema, name="Model")
+    artifacts = models_file._model._artifacts.from_schema(schema=schema, name="Model")
 
     assert artifacts.sqlalchemy.arg.not_required == expected_args
 

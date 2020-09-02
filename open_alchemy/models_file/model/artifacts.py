@@ -56,7 +56,7 @@ def gather_column_artifacts(
     return artifacts
 
 
-def calculate(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
+def from_schema(*, schema: oa_types.Schema, name: str) -> types.ModelArtifacts:
     """
     Calculate the model artifacts from the schema.
 
