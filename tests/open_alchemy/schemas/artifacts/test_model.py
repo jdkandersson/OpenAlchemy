@@ -30,6 +30,18 @@ GET_TESTS = [
         id="allOf tablename",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-tablename": "local_table"},
+            ]
+        },
+        {"RefSchema": {"x-tablename": "ref_table"}},
+        "tablename",
+        "local_table",
+        id="tablename in $ref and allOf",
+    ),
+    pytest.param(
         {**DEFAULT_SCHEMA},
         {},
         "inherits",

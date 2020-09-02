@@ -24,7 +24,9 @@ def get(
         The artifacts for the model.
 
     """
-    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
+    tablename = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.tablename, schema=schema, schemas=schemas
+    )
     assert tablename is not None
     inherits = oa_helpers.schema.inherits(schema=schema, schemas=schemas)
     parent: typing.Optional[str] = None
