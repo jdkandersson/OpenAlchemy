@@ -729,6 +729,13 @@ class ModelValue(_ModelValueBase, total=True):
     artifacts: ModelTypedDict
 
 
+class ModelBackrefArtifacts(typing.NamedTuple):
+    """Artifacts for model back references."""
+
+    type: BackrefSubType
+    child: str
+
+
 @dataclasses.dataclass
 class ModelExPropertiesArtifacts:
     """Information about a model excluding its properties."""
@@ -745,6 +752,8 @@ class ModelExPropertiesArtifacts:
 
     composite_index: typing.Optional[types.IndexList]
     composite_unique: typing.Optional[types.UniqueList]
+
+    backrefs: typing.List[typing.Tuple[str, ModelBackrefArtifacts]]
 
     def to_dict(self) -> ModelTypedDict:
         """Convert to dictionary."""
@@ -783,7 +792,7 @@ class ModelExPropertiesArtifacts:
 class ModelArtifacts(ModelExPropertiesArtifacts):
     """Full information about a model."""
 
-    properties: typing.List[TAnyPropertyArtifacts]
+    properties: typing.List[typing.Tuple[str, TAnyPropertyArtifacts]]
 
 
 ModelsValue = typing.Dict[str, ModelValue]

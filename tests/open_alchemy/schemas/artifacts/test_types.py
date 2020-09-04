@@ -618,6 +618,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
                 kwargs=None,
                 composite_index=None,
                 composite_unique=None,
+                backrefs=[],
             ),
             {"tablename": "table_1"},
             id="opt values None",
@@ -632,6 +633,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
                 kwargs={"key": "value"},
                 composite_index=[{"expressions": ["column_1"]}],
                 composite_unique=[{"columns": ["column_1"]}],
+                backrefs=[],
             ),
             {
                 "tablename": "table_1",

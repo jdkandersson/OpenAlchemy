@@ -250,6 +250,130 @@ GET_TESTS = [
         [{"name": "unique-1", "columns": ["column_1"]}],
         id="allOf x-composite-unique",
     ),
+    pytest.param(
+        {**DEFAULT_SCHEMA},
+        {},
+        "backrefs",
+        [],
+        id="backrefs not defined",
+    ),
+    pytest.param(
+        {**DEFAULT_SCHEMA, "x-backrefs": {}},
+        {},
+        "backrefs",
+        [],
+        id="backrefs empty",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "x-backrefs": {"backref_1": {"type": "object", "x-de-$ref": "Parent1"}},
+        },
+        {},
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1"))],
+        id="backrefs single object",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "x-backrefs": {
+                "backref_1": {
+                    "type": "array",
+                    "items": {"type": "object", "x-de-$ref": "Parent1"},
+                }
+            },
+        },
+        {},
+        "backrefs",
+        [("backref_1", ("ARRAY", "Parent1"))],
+        id="backrefs single array",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "x-backrefs": {"backref_1": {"type": "object", "x-de-$ref": "Parent1"}},
+            }
+        },
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1"))],
+        id="$ref backrefs single object",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-backrefs": {
+                        "backref_1": {"type": "object", "x-de-$ref": "Parent1"}
+                    },
+                }
+            ]
+        },
+        {},
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1"))],
+        id="allOf backrefs single object",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "x-backrefs": {
+                "backref_1": {"type": "object", "x-de-$ref": "Parent1"},
+                "backref_2": {"type": "object", "x-de-$ref": "Parent2"},
+            },
+        },
+        {},
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1")), ("backref_2", ("OBJECT", "Parent2"))],
+        id="backrefs multiple",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-backrefs": {
+                        "backref_1": {"type": "object", "x-de-$ref": "Parent1"}
+                    },
+                },
+                {
+                    "type": "object",
+                    "x-backrefs": {
+                        "backref_2": {"type": "object", "x-de-$ref": "Parent2"}
+                    },
+                },
+            ]
+        },
+        {},
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1")), ("backref_2", ("OBJECT", "Parent2"))],
+        id="backrefs allOf multiple",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {
+                    **DEFAULT_SCHEMA,
+                    "x-backrefs": {
+                        "backref_1": {"type": "object", "x-de-$ref": "Parent1"}
+                    },
+                },
+                {"$ref": "#/components/schemas/RefSchema"},
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-backrefs": {"backref_2": {"type": "object", "x-de-$ref": "Parent2"}},
+            }
+        },
+        "backrefs",
+        [("backref_1", ("OBJECT", "Parent1")), ("backref_2", ("OBJECT", "Parent2"))],
+        id="backrefs parent and child multiple",
+    ),
 ]
 
 

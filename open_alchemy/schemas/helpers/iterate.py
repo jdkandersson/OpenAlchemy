@@ -133,7 +133,7 @@ def properties_items(
             single and joined table inheritance no reference to the parent is followed.
 
     Returns:
-        An interator with all properties of a schema.
+        An iterator with all properties of a schema.
 
     """
     properties_values_iterator = properties_values(
@@ -174,7 +174,7 @@ def properties_values(
             followed.
 
     Returns:
-        An interator with all properties key values.
+        An iterator with all properties key values.
 
     """
     skip_name: typing.Optional[str] = None
@@ -259,7 +259,7 @@ def required_values(
             followed.
 
     Returns:
-        An interator with all required key values.
+        An iterator with all required key values.
 
     """
     skip_name: typing.Optional[str] = None
@@ -304,7 +304,7 @@ def required_items(
             followed.
 
     Returns:
-        An interator with all items of the required key.
+        An iterator with all items of the required key.
 
     """
     required_values_iterator = required_values(
@@ -314,3 +314,60 @@ def required_items(
         if not isinstance(required_value, list):
             continue
         yield from required_value
+
+
+def backrefs_items(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+) -> typing.Iterator[typing.Any]:
+    """
+    Create an iterable with all backrefs of a schema from a constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise looks for x-backrefs and yields all items if the key exists.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+
+    Returns:
+        An iterator with all backrefs of a schema.
+
+    """
+    backrefs_values_iterator = backrefs_values(
+        schema=schema,
+        schemas=schemas,
+    )
+    for backrefs_value in backrefs_values_iterator:
+        if not isinstance(backrefs_value, dict):
+            continue
+        yield from backrefs_value.items()
+
+
+def backrefs_values(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+) -> typing.Iterator[typing.Any]:
+    """
+    Return iterable with all values of the backrefs key of the constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise yields the backrefs key value.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+
+    Returns:
+        An iterator with all backrefs key values.
+
+    """
+    yield from _any_key(
+        schema=schema, schemas=schemas, skip_name=None, key="x-backrefs"
+    )
