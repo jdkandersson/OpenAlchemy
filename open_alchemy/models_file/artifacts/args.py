@@ -8,6 +8,7 @@ from open_alchemy import schemas
 from open_alchemy import types as oa_types
 
 from .. import types
+from . import type_
 
 
 class ReturnValue(typing.NamedTuple):
@@ -15,6 +16,17 @@ class ReturnValue(typing.NamedTuple):
 
     required: typing.List[types.ColumnArtifacts]
     not_required: typing.List[types.ColumnArtifacts]
+
+
+def _get_read_only(
+    artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
+) -> typing.Optional[bool]:
+    """Get read only for any property artifacts."""
+    if artifacts.type == schemas.helpers.property_.type_.Type.SIMPLE:
+        return artifacts.open_api.read_only
+    if artifacts.type == schemas.helpers.property_.type_.Type.JSON:
+        return artifacts.open_api.read_only
+    return None
 
 
 def _map_default(
@@ -60,3 +72,33 @@ def _map_default(
     if isinstance(mapped_default, (int, float, str, bool)):
         return mapped_default
     return repr(mapped_default)
+
+
+def _calculate(
+    *,
+    artifacts: typing.Iterable[
+        typing.Tuple[str, schemas.artifacts.types.TAnyPropertyArtifacts]
+    ],
+) -> typing.Iterable[types.ColumnArgArtifacts]:
+    """Calculate the typed dict artifacts from property artifacts."""
+    no_backref_properties = filter(
+        lambda args: args[1].type != schemas.helpers.property_.type_.Type.BACKREF,
+        artifacts,
+    )
+    no_backref_no_dict_ignore_properties = filter(
+        lambda args: not (
+            args[1].type == schemas.helpers.property_.type_.Type.SIMPLE
+            and args[1].extension.dict_ignore
+        ),
+        no_backref_properties,
+    )
+    return map(
+        lambda args: types.ColumnArgArtifacts(
+            name=args[0],
+            init_type=type_.arg_init(artifacts=args[1]),
+            from_dict_type=type_.arg_from_dict(artifacts=args[1]),
+            default=_map_default(artifacts=args[1]),
+            read_only=_get_read_only(artifacts=args[1]),
+        ),
+        no_backref_no_dict_ignore_properties,
+    )

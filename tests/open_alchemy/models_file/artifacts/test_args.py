@@ -26,7 +26,9 @@ def _construct_model_artifacts(properties, backrefs):
     )
 
 
-def _construct_simple_property_artifacts(type_, format_, default):
+def _construct_simple_property_artifacts(
+    type_, format_, default, dict_ignore, read_only
+):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
         type=helpers.property_.type_.Type.SIMPLE,
@@ -36,7 +38,7 @@ def _construct_simple_property_artifacts(type_, format_, default):
             max_length=None,
             nullable=False,
             default=default,
-            read_only=None,
+            read_only=read_only,
             write_only=None,
         ),
         extension=schemas_artifacts.types.ExtensionSimplePropertyArtifacts(
@@ -47,10 +49,10 @@ def _construct_simple_property_artifacts(type_, format_, default):
             foreign_key=None,
             kwargs=None,
             foreign_key_kwargs=None,
-            dict_ignore=None,
+            dict_ignore=dict_ignore,
         ),
         schema={},  # type: ignore
-        required=False,
+        required=True,
         description=None,
     )
 
@@ -89,7 +91,7 @@ def _construct_relationship_property_artifacts():
         kwargs=None,
         write_only=None,
         description=None,
-        required=False,
+        required=True,
         foreign_key="foreign.key",
         foreign_key_property="foreign_key",
         nullable=False,
@@ -122,94 +124,146 @@ MAP_DEAULT_TESTS = [
     pytest.param(_construct_backref_property_artifacts(), None, id="backref"),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="integer", format_=None, default=None
+            type_="integer",
+            format_=None,
+            default=None,
+            dict_ignore=None,
+            read_only=None,
         ),
         None,
         id="simple integer default None",
     ),
     pytest.param(
-        _construct_simple_property_artifacts(type_="integer", format_=None, default=1),
+        _construct_simple_property_artifacts(
+            type_="integer", format_=None, default=1, dict_ignore=None, read_only=None
+        ),
         1,
         id="simple integer format None default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="integer", format_="int32", default=1
+            type_="integer",
+            format_="int32",
+            default=1,
+            dict_ignore=None,
+            read_only=None,
         ),
         1,
         id="simple integer format int32 default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="integer", format_="int64", default=1
+            type_="integer",
+            format_="int64",
+            default=1,
+            dict_ignore=None,
+            read_only=None,
         ),
         1,
         id="simple integer format int64 default defined",
     ),
     pytest.param(
-        _construct_simple_property_artifacts(type_="number", format_=None, default=1.1),
+        _construct_simple_property_artifacts(
+            type_="number", format_=None, default=1.1, dict_ignore=None, read_only=None
+        ),
         1.1,
         id="simple number format None default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="number", format_="float", default=1.1
+            type_="number",
+            format_="float",
+            default=1.1,
+            dict_ignore=None,
+            read_only=None,
         ),
         1.1,
         id="simple number format float default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_=None, default='value "1'
+            type_="string",
+            format_=None,
+            default='value "1',
+            dict_ignore=None,
+            read_only=None,
         ),
         '"value \\"1"',
         id="simple string format None default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="unsupported", default='value "1'
+            type_="string",
+            format_="unsupported",
+            default='value "1',
+            dict_ignore=None,
+            read_only=None,
         ),
         '"value \\"1"',
         id="simple string format unsupported default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="password", default='value "1'
+            type_="string",
+            format_="password",
+            default='value "1',
+            dict_ignore=None,
+            read_only=None,
         ),
         '"value \\"1"',
         id="simple string format password default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="byte", default='value "1'
+            type_="string",
+            format_="byte",
+            default='value "1',
+            dict_ignore=None,
+            read_only=None,
         ),
         '"value \\"1"',
         id="simple string format byte default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="binary", default='value "1'
+            type_="string",
+            format_="binary",
+            default='value "1',
+            dict_ignore=None,
+            read_only=None,
         ),
         'b"value \\"1"',
         id="simple string format binary default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="date", default="2000-01-01"
+            type_="string",
+            format_="date",
+            default="2000-01-01",
+            dict_ignore=None,
+            read_only=None,
         ),
         "datetime.date(2000, 1, 1)",
         id="simple string format date default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="string", format_="date-time", default="2000-01-01T01:01:01"
+            type_="string",
+            format_="date-time",
+            default="2000-01-01T01:01:01",
+            dict_ignore=None,
+            read_only=None,
         ),
         "datetime.datetime(2000, 1, 1, 1, 1, 1)",
         id="simple string format date-time default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="boolean", format_=None, default=True
+            type_="boolean",
+            format_=None,
+            default=True,
+            dict_ignore=None,
+            read_only=None,
         ),
         True,
         id="simple boolean default defined",
@@ -229,3 +283,228 @@ def test_map_default(artifacts, expected_default):
     returned_default = models_file._artifacts._args._map_default(artifacts=artifacts)
 
     assert returned_default == expected_default
+
+
+_CALCULATE_TESTS = [
+    pytest.param([], [], id="empty"),
+    pytest.param(
+        [("prop_1", _construct_backref_property_artifacts())], [], id="single backref"
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=True,
+                    read_only=None,
+                ),
+            )
+        ],
+        [],
+        id="single simple dict ignore",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=None,
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="single simple read only None",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=False,
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=False,
+            ),
+        ],
+        id="single simple read only False",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=True,
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=True,
+            ),
+        ],
+        id="single simple read only True",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=None,
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="single simple default None",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=1,
+                    dict_ignore=None,
+                    read_only=None,
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=1,
+                read_only=None,
+            ),
+        ],
+        id="single simple default defined",
+    ),
+    pytest.param(
+        [("prop_1", _construct_json_property_artifacts())],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="typing.Optional[typing.Any]",
+                from_dict_type="typing.Optional[typing.Any]",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="single json",
+    ),
+    pytest.param(
+        [("prop_1", _construct_relationship_property_artifacts())],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type='"TRefModel"',
+                from_dict_type='"RefModelDict"',
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="single relationship",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    type_="integer",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=None,
+                ),
+            ),
+            (
+                "prop_2",
+                _construct_simple_property_artifacts(
+                    type_="string",
+                    format_=None,
+                    default=None,
+                    dict_ignore=None,
+                    read_only=None,
+                ),
+            ),
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+            models_file.types.ColumnArgArtifacts(
+                name="prop_2",
+                init_type="str",
+                from_dict_type="str",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="multiple",
+    ),
+]
+
+
+@pytest.mark.parametrize("artifacts, expected_columns", _CALCULATE_TESTS)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test__calculate(artifacts, expected_columns):
+    """
+    GIVEN artifacts and expected columns
+    WHEN _calculate is called with the artifacts
+    THEN the expected columns are returned.
+    """
+    returned_columns = models_file.artifacts._args._calculate(artifacts=artifacts)
+
+    assert list(returned_columns) == expected_columns
