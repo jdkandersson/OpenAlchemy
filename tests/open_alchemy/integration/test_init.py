@@ -555,6 +555,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class TableDict({expected_td_base}, total=False):
     """TypedDict for properties that are not required."""

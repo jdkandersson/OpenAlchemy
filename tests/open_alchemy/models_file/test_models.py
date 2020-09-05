@@ -28,6 +28,8 @@ import sqlalchemy{_ADDITIONAL_IMPORT}
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 model 1
 """,
         ),
@@ -42,6 +44,8 @@ import sqlalchemy{_ADDITIONAL_IMPORT}
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 model 1
 model 2
 """,
@@ -58,6 +62,8 @@ import sqlalchemy{_ADDITIONAL_IMPORT}
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 model 1 datetime.
 """,
         ),
@@ -73,6 +79,8 @@ import sqlalchemy{_ADDITIONAL_IMPORT}
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 model 1 datetime.
 model 2 datetime.
 """,

@@ -14,6 +14,8 @@ import typing_extensions
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 {% for model in models %}
 {{ model }}
 {% endfor %}

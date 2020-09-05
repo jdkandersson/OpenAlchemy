@@ -117,6 +117,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class ModelDict({_EXPECTED_TD_BASE}, total=False):
     """TypedDict for properties that are not required."""
@@ -239,6 +241,8 @@ import sqlalchemy{_ADDITIONAL_IMPORT}
 from sqlalchemy import orm
 
 from open_alchemy import models
+
+Base = models.Base  # type: ignore
 
 
 class Model1Dict({_EXPECTED_TD_BASE}, total=False):
@@ -409,7 +413,6 @@ Model2: typing.Type[TModel2] = models.Model2  # type: ignore
     ],
 )
 @pytest.mark.models_file
-@pytest.mark.only_this
 def test_integration(artifacts, expected_source):
     """
     GIVEN schema and name
@@ -488,8 +491,10 @@ def test_generate_type_return(tmp_path, artifacts):
     source = models_file.generate(artifacts=artifacts)
     source_file = _create_source_file(source, tmp_path)
 
-    _, _, returncode = api.run([str(source_file)])
+    val1, val2, returncode = api.run([str(source_file)])
 
+    print(val1)
+    print(val2)
     assert returncode == 0
 
 
