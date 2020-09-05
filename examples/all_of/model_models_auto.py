@@ -20,7 +20,7 @@ class TDivision(typing.Protocol):
     """
     SQLAlchemy model protocol.
 
-    Base schema with an id and name column.
+    A part of a company.
 
     Attrs:
         id: Unique identifier for the object.
@@ -110,7 +110,7 @@ class TEmployee(typing.Protocol):
     """
     SQLAlchemy model protocol.
 
-    Base schema with an id and name column.
+    Person that works for a company.
 
     Attrs:
         id: Unique identifier for the object.
