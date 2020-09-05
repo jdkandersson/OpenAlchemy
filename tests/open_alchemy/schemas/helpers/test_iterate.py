@@ -213,6 +213,53 @@ def test_not_constructable(schemas, expected_schemas):
             [("prop_1", "value 1")],
             id="allOf $ref",
         ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema1"},
+                    {"$ref": "#/components/schemas/RefSchema2"},
+                ]
+            },
+            {
+                "RefSchema1": {"properties": {"prop_1": "value 1"}},
+                "RefSchema2": {"properties": {"prop_2": "value 2"}},
+            },
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf multiple $ref",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"properties": {"prop_2": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf multiple local",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_2": "value 2"}}},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf local and $ref local first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"properties": {"prop_1": "value 1"}},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_2": "value 2"}}},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf local and $ref $ref first",
+        ),
     ],
 )
 @pytest.mark.schemas

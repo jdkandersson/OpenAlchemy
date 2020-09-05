@@ -225,7 +225,31 @@ def _any_key(
     if all_of is not None:
         if not isinstance(all_of, list):
             return
-        for sub_schema in all_of:
+
+        all_of_dicts = list(
+            filter(lambda sub_schema: isinstance(sub_schema, dict), all_of)
+        )
+
+        # Process not $ref first
+        all_of_no_ref = filter(
+            lambda sub_schema: not helpers.peek.peek_key(
+                schema=sub_schema, schemas=schemas, key="$ref"
+            ),
+            all_of_dicts,
+        )
+        for sub_schema in all_of_no_ref:
+            yield from _any_key(
+                schema=sub_schema, schemas=schemas, skip_name=skip_name, key=key
+            )
+
+        # Process $ref
+        all_of_ref = filter(
+            lambda sub_schema: helpers.peek.peek_key(
+                schema=sub_schema, schemas=schemas, key="$ref"
+            ),
+            all_of_dicts,
+        )
+        for sub_schema in all_of_ref:
             yield from _any_key(
                 schema=sub_schema, schemas=schemas, skip_name=skip_name, key=key
             )
