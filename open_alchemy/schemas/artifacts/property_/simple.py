@@ -21,28 +21,56 @@ def get(
         The artifacts for the property.
 
     """
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-    format_ = oa_helpers.peek.format_(schema=schema, schemas=schemas)
-    max_length = oa_helpers.peek.max_length(schema=schema, schemas=schemas)
-    nullable = oa_helpers.peek.nullable(schema=schema, schemas=schemas)
+    type_ = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.type_, schema=schema, schemas=schemas
+    )
+    format_ = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.format_, schema=schema, schemas=schemas
+    )
+    max_length = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.max_length, schema=schema, schemas=schemas
+    )
+    nullable = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
+    )
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
+    )
 
-    default = oa_helpers.peek.default(schema=schema, schemas=schemas)
+    default = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.default, schema=schema, schemas=schemas
+    )
 
-    read_only = oa_helpers.peek.read_only(schema=schema, schemas=schemas)
-    write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
+    read_only = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.read_only, schema=schema, schemas=schemas
+    )
+    write_only = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
+    )
 
-    primary_key = oa_helpers.peek.primary_key(schema=schema, schemas=schemas)
-    autoincrement = oa_helpers.peek.autoincrement(schema=schema, schemas=schemas)
-    index = oa_helpers.peek.index(schema=schema, schemas=schemas)
-    unique = oa_helpers.peek.unique(schema=schema, schemas=schemas)
+    primary_key = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.primary_key, schema=schema, schemas=schemas
+    )
+    autoincrement = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.autoincrement, schema=schema, schemas=schemas
+    )
+    index = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.index, schema=schema, schemas=schemas
+    )
+    unique = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.unique, schema=schema, schemas=schemas
+    )
 
-    foreign_key = oa_helpers.peek.foreign_key(schema=schema, schemas=schemas)
+    foreign_key = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.foreign_key, schema=schema, schemas=schemas
+    )
 
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
-    foreign_key_kwargs = oa_helpers.peek.foreign_key_kwargs(
-        schema=schema, schemas=schemas
+    kwargs = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.kwargs, schema=schema, schemas=schemas
+    )
+    foreign_key_kwargs = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.foreign_key_kwargs, schema=schema, schemas=schemas
     )
 
     dict_ignore = oa_helpers.peek.dict_ignore(schema=schema, schemas=schemas)
