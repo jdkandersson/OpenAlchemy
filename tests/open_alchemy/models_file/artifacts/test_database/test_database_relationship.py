@@ -9,6 +9,7 @@ from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import models_file
+from open_alchemy import schemas
 
 _ColSchemaArt = models_file.types.ColumnSchemaArtifacts
 _ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
@@ -54,19 +55,29 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_table"]
-    backref_schema = ref_model._schema["x-backrefs"]["tables"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=backref_schema, required=None
+    assert len(schemas_artifacts) == 2
+    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
+    assert ref_model_schemas_name == "RefTable"
+    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
-    calculated_backref_type_str = models_file._model._type.model(
-        artifacts=model_backref_artifacts
+    assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
+    tables_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
+    assert tables_column_artifacts.name == "tables"
+    calculated_backref_type_str = tables_column_artifacts.type
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
     )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_table_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_table_column_artifacts.name == "ref_table"
+    calculated_type_str = ref_table_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
@@ -136,13 +147,17 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
                     "x-tablename": "ref_table",
                     "x-backref": "tables",
                     "type": "object",
-                    "nullable": False,
                 },
                 "Table": {
                     "properties": {
                         "id": {"type": "integer", "x-primary-key": True},
                         "name": {"type": "string"},
-                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                        "ref_table": {
+                            "allOf": [
+                                {"$ref": "#/components/schemas/RefTable"},
+                                {"nullable": False},
+                            ],
+                        },
                     },
                     "x-tablename": "table",
                     "type": "object",
@@ -156,12 +171,20 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     model = model_factory(name="Table")
     model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_table"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
+    assert len(schemas_artifacts) == 2
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
+    )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_table_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_table_column_artifacts.name == "ref_table"
+    calculated_type_str = ref_table_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
@@ -217,19 +240,29 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_table"]
-    backref_schema = ref_model._schema["x-backrefs"]["table"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=backref_schema, required=None
+    assert len(schemas_artifacts) == 2
+    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
+    assert ref_model_schemas_name == "RefTable"
+    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
-    calculated_backref_type_str = models_file._model._type.model(
-        artifacts=model_backref_artifacts
+    assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
+    table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
+    assert table_column_artifacts.name == "table"
+    calculated_backref_type_str = table_column_artifacts.type
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
     )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_table_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_table_column_artifacts.name == "ref_table"
+    calculated_type_str = ref_table_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
@@ -293,13 +326,17 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
                     "x-backref": "table",
                     "type": "object",
                     "x-uselist": False,
-                    "nullable": False,
                 },
                 "Table": {
                     "properties": {
                         "id": {"type": "integer", "x-primary-key": True},
                         "name": {"type": "string"},
-                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                        "ref_table": {
+                            "allOf": [
+                                {"$ref": "#/components/schemas/RefTable"},
+                                {"nullable": False},
+                            ]
+                        },
                     },
                     "x-tablename": "table",
                     "type": "object",
@@ -313,19 +350,29 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_table"]
-    backref_schema = ref_model._schema["x-backrefs"]["table"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=backref_schema, required=None
+    assert len(schemas_artifacts) == 2
+    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
+    assert ref_model_schemas_name == "RefTable"
+    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
-    calculated_backref_type_str = models_file._model._type.model(
-        artifacts=model_backref_artifacts
+    assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
+    table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
+    assert table_column_artifacts.name == "table"
+    calculated_backref_type_str = table_column_artifacts.type
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
     )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_table_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_table_column_artifacts.name == "ref_table"
+    calculated_type_str = ref_table_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
@@ -403,19 +450,29 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_tables"]
-    backref_schema = ref_model._schema["x-backrefs"]["table"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=backref_schema, required=None
+    assert len(schemas_artifacts) == 2
+    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
+    assert ref_model_schemas_name == "RefTable"
+    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
-    calculated_backref_type_str = models_file._model._type.model(
-        artifacts=model_backref_artifacts
+    assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
+    table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
+    assert table_column_artifacts.name == "table"
+    calculated_backref_type_str = table_column_artifacts.type
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
     )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_tables_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_tables_column_artifacts.name == "ref_tables"
+    calculated_type_str = ref_tables_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
@@ -508,19 +565,29 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
 
-    # Calculate the type through model factory operations
-    schema = model._schema["properties"]["ref_tables"]
-    backref_schema = ref_model._schema["x-backrefs"]["tables"]
-    model_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=schema, required=None
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    model_backref_artifacts = models_file._model._artifacts.gather_column_artifacts(
-        schema=backref_schema, required=None
+    assert len(schemas_artifacts) == 2
+    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
+    assert ref_model_schemas_name == "RefTable"
+    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
-    calculated_type_str = models_file._model._type.model(artifacts=model_artifacts)
-    calculated_backref_type_str = models_file._model._type.model(
-        artifacts=model_backref_artifacts
+    assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
+    tables_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
+    assert tables_column_artifacts.name == "tables"
+    calculated_backref_type_str = tables_column_artifacts.type
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=model_schemas_artifacts, name="Table"
     )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 3
+    ref_tables_column_artifacts = model_models_artifacts.sqlalchemy.columns[2]
+    assert ref_tables_column_artifacts.name == "ref_tables"
+    calculated_type_str = ref_tables_column_artifacts.type
 
     # Creating models
     base.metadata.create_all(engine)
