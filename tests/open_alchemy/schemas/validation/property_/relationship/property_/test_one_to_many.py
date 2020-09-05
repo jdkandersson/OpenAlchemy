@@ -53,7 +53,7 @@ TESTS = [
         {},
         (
             False,
-            "items property :: malformed schema :: The value of $ref must ba a "
+            "items property :: malformed schema :: The value of $ref must be a "
             "string. ",
         ),
         id="array items no $ref not string",

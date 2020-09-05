@@ -60,7 +60,7 @@ def _resolve(
         return name, schema
     # Check that ref is string
     if not isinstance(ref, str):
-        raise exceptions.MalformedSchemaError("The value of $ref must ba a string.")
+        raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
 
     # Check for circular $ref
     if ref in seen_refs:

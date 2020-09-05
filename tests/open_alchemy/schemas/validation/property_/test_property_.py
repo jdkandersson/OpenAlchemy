@@ -32,7 +32,7 @@ CHECK_TYPE_TESTS = [
     pytest.param(
         {"$ref": True},
         {},
-        (False, "malformed schema :: The value of $ref must ba a string. "),
+        (False, "malformed schema :: The value of $ref must be a string. "),
         id="type $ref not string",
     ),
     pytest.param(
