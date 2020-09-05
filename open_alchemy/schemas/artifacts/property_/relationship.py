@@ -258,7 +258,7 @@ def _calculate_one_to_x_schema(
         "items": {"type": "object", "x-de-$ref": parent},
     }
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = _get_description(schema=schema, schemas=schemas, parent=parent)
     if description is not None:
         return_schema["description"] = description
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
