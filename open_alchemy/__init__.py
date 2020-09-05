@@ -83,9 +83,7 @@ def init_model_factory(
         schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
             schemas=schemas, stay_within_model=False
         )
-        models_file_contents = _models_file.from_schemas_artifacts(
-            artifacts=schemas_artifacts
-        )
+        models_file_contents = _models_file.generate(artifacts=schemas_artifacts)
         with open(models_filename, "w") as out_file:
             out_file.write(models_file_contents)
 

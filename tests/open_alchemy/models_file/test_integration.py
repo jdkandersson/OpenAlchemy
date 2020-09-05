@@ -416,7 +416,7 @@ def test_integration(artifacts, expected_source):
     WHEN schema is added to the models file and the models file is generated
     THEN the models source code is returned.
     """
-    source = models_file.from_schemas_artifacts(artifacts=artifacts)
+    source = models_file.generate(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -485,7 +485,7 @@ def test_generate_type_return(tmp_path, artifacts):
     WHEN the models file is generated and mypy is run over it
     THEN no errors are returned.
     """
-    source = models_file.from_schemas_artifacts(artifacts=artifacts)
+    source = models_file.generate(artifacts=artifacts)
     source_file = _create_source_file(source, tmp_path)
 
     _, _, returncode = api.run([str(source_file)])
@@ -551,10 +551,7 @@ def test_generate_type_check(tmp_path, artifacts, mypy_check, expected_out_subst
     WHEN the models file is generated and mypy is run over it
     THEN the expected output substring is in the mypy output.
     """
-    source = (
-        models_file.from_schemas_artifacts(artifacts=[("Model", artifacts)])
-        + f"\n{mypy_check}"
-    )
+    source = models_file.generate(artifacts=[("Model", artifacts)]) + f"\n{mypy_check}"
     source_file = _create_source_file(source, tmp_path)
 
     out, _, _ = api.run([str(source_file)])

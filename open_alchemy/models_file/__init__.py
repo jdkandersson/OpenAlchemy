@@ -14,9 +14,7 @@ from . import models as _models
 from . import types as types
 
 
-def from_schemas_artifacts(
-    *, artifacts: schemas.artifacts.types.ModelsModelArtifacts
-) -> str:
+def generate(*, artifacts: schemas.artifacts.types.ModelsModelArtifacts) -> str:
     """
     Generate the models file from schema artifacts.
 
