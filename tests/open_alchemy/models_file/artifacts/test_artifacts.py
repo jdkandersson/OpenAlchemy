@@ -315,7 +315,7 @@ def test_calculate_typed_dict_column():
                         _construct_simple_property_artifacts(False),
                     ),
                     (
-                        "prop_1",
+                        "prop_2",
                         _construct_simple_property_artifacts(True),
                     ),
                 ],
@@ -345,3 +345,199 @@ def test_calculate_typed_dict_column_empty(
     assert (
         returned_artifacts.typed_dict.not_required.empty == expected_not_required_empty
     )
+
+
+# Table for the name of the required and not required TypedDicts
+# +----------------+--------------------+-----------------------+-------------------+
+# | required empty | not required empty | required name         | not required name |
+# +================+====================+=======================+===================+
+# | False          | False              | _<model name>DictBase | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+# | False          | True               | <model name>Dict      | None              |
+# +----------------+--------------------+-----------------------+-------------------+
+# | True           | False              | None                  | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+# | True           | True               | None                  | <model name>Dict  |
+# +----------------+--------------------+-----------------------+-------------------+
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_required_name, expected_not_required_name",
+    [
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(False),
+                    ),
+                    (
+                        "prop_2",
+                        _construct_simple_property_artifacts(True),
+                    ),
+                ],
+                None,
+            ),
+            "_ModelDictBase",
+            "ModelDict",
+            id="required empty: False, not required empty: False",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(True),
+                    ),
+                ],
+                None,
+            ),
+            "ModelDict",
+            None,
+            id="required empty: False, not required empty: True",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(False),
+                    ),
+                ],
+                None,
+            ),
+            None,
+            "ModelDict",
+            id="required empty: True,  not required empty: False",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [],
+                None,
+            ),
+            None,
+            "ModelDict",
+            id="required empty: True,  not required empty: True",
+        ),
+    ],
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_calculate_td_names(
+    artifacts, expected_required_name, expected_not_required_name
+):
+    """
+    GIVEN artifacts
+    WHEN calculate is called with the artifacts
+    THEN the given expected td required and not required names are added to the
+        artifacts.
+    """
+    returned_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=artifacts, name="Model"
+    )
+
+    assert returned_artifacts.typed_dict.required.name == expected_required_name
+    assert returned_artifacts.typed_dict.not_required.name == expected_not_required_name
+
+
+# Table for the parent class of the required and not required TypedDicts
+# +----------------+--------------------+------------------+-----------------------+
+# | required empty | not required empty | required parent  | not required parent   |
+# +================+====================+==================+=======================+
+# | False          | False              | typing.TypedDict | _<model name>DictBase |
+# +----------------+--------------------+------------------+-----------------------+
+# | False          | True               | typing.TypedDict | None                  |
+# +----------------+--------------------+------------------+-----------------------+
+# | True           | False              | None             | typing.TypedDict      |
+# +----------------+--------------------+------------------+-----------------------+
+# | True           | True               | None             | typing.TypedDict      |
+# +----------------+--------------------+------------------+-----------------------+
+
+
+_EXPECTED_TD_BASE = "typing.TypedDict"
+if sys.version_info[1] < 8:
+    _EXPECTED_TD_BASE = "typing_extensions.TypedDict"
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_required_parent, expected_not_required_parent",
+    [
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(False),
+                    ),
+                    (
+                        "prop_2",
+                        _construct_simple_property_artifacts(True),
+                    ),
+                ],
+                None,
+            ),
+            _EXPECTED_TD_BASE,
+            "_ModelDictBase",
+            id="required empty: False, not required empty: False",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(True),
+                    ),
+                ],
+                None,
+            ),
+            _EXPECTED_TD_BASE,
+            None,
+            id="required empty: False, not required empty: True",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts(False),
+                    ),
+                ],
+                None,
+            ),
+            None,
+            _EXPECTED_TD_BASE,
+            id="required empty: True,  not required empty: False",
+        ),
+        pytest.param(
+            _construct_model_artifacts(
+                [],
+                None,
+            ),
+            None,
+            _EXPECTED_TD_BASE,
+            id="required empty: True,  not required empty: True",
+        ),
+    ],
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_calculate_td_parent(
+    artifacts, expected_required_parent, expected_not_required_parent
+):
+    """
+    GIVEN artifacts
+    WHEN calculate is called with the artifacts
+    THEN the given expected td required and not required parents are added to the
+        artifacts.
+    """
+    returned_artifacts = models_file._artifacts.from_artifacts(
+        artifacts=artifacts, name="Model"
+    )
+
+    assert (
+        returned_artifacts.typed_dict.required.parent_class == expected_required_parent
+    )
+    artifacts_not_required_parent = (
+        returned_artifacts.typed_dict.not_required.parent_class
+    )
+    assert artifacts_not_required_parent == expected_not_required_parent
