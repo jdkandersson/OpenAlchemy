@@ -15,6 +15,19 @@ class ReturnValue(typing.NamedTuple):
     not_required: typing.List[types.ColumnArtifacts]
 
 
+def _get_write_only(
+    artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
+) -> typing.Optional[bool]:
+    """Get write only for any property artifacts."""
+    if artifacts.type == schemas.helpers.property_.type_.Type.SIMPLE:
+        return artifacts.open_api.write_only
+    if artifacts.type == schemas.helpers.property_.type_.Type.JSON:
+        return artifacts.open_api.write_only
+    if artifacts.type == schemas.helpers.property_.type_.Type.RELATIONSHIP:
+        return artifacts.write_only
+    return None
+
+
 def _calculate(
     *,
     artifacts: typing.Iterable[
@@ -29,13 +42,17 @@ def _calculate(
         ),
         artifacts,
     )
+    no_dict_ignore_no_write_only = filter(
+        lambda args: not _get_write_only(args[1]),
+        no_dict_ignore_properties,
+    )
     return map(
         lambda args: types.ColumnArtifacts(
             name=args[0],
             type=type_.typed_dict(artifacts=args[1]),
             description=args[1].description,
         ),
-        no_dict_ignore_properties,
+        no_dict_ignore_no_write_only,
     )
 
 

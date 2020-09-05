@@ -26,7 +26,7 @@ def _construct_model_artifacts(properties, backrefs):
     )
 
 
-def _construct_simple_property_artifacts(dict_ignore, description):
+def _construct_simple_property_artifacts(dict_ignore, description, write_only):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
         type=helpers.property_.type_.Type.SIMPLE,
@@ -37,7 +37,7 @@ def _construct_simple_property_artifacts(dict_ignore, description):
             nullable=False,
             default=None,
             read_only=None,
-            write_only=None,
+            write_only=write_only,
         ),
         extension=schemas_artifacts.types.ExtensionSimplePropertyArtifacts(
             primary_key=False,
@@ -55,14 +55,14 @@ def _construct_simple_property_artifacts(dict_ignore, description):
     )
 
 
-def _construct_json_property_artifacts():
+def _construct_json_property_artifacts(write_only):
     """Construct the artifacts for a json property."""
     return schemas_artifacts.types.JsonPropertyArtifacts(
         type=helpers.property_.type_.Type.JSON,
         open_api=schemas_artifacts.types.OpenApiJsonPropertyArtifacts(
             nullable=False,
             read_only=None,
-            write_only=None,
+            write_only=write_only,
         ),
         extension=schemas_artifacts.types.ExtensionJsonPropertyArtifacts(
             primary_key=False,
@@ -78,7 +78,7 @@ def _construct_json_property_artifacts():
     )
 
 
-def _construct_many_to_one_relationship_property_artifacts():
+def _construct_many_to_one_relationship_property_artifacts(write_only):
     """Construct many-to-one relationship property artifacts."""
     return schemas_artifacts.types.ManyToOneRelationshipPropertyArtifacts(
         type=helpers.property_.type_.Type.RELATIONSHIP,
@@ -87,7 +87,7 @@ def _construct_many_to_one_relationship_property_artifacts():
         parent="RefModel",
         backref_property=None,
         kwargs=None,
-        write_only=None,
+        write_only=write_only,
         description=None,
         required=False,
         foreign_key="foreign.key",
@@ -96,7 +96,7 @@ def _construct_many_to_one_relationship_property_artifacts():
     )
 
 
-def _construct_one_to_one_relationship_property_artifacts():
+def _construct_one_to_one_relationship_property_artifacts(write_only):
     """Construct one-to-one relationship property artifacts."""
     return schemas_artifacts.types.OneToOneRelationshipPropertyArtifacts(
         type=helpers.property_.type_.Type.RELATIONSHIP,
@@ -105,7 +105,7 @@ def _construct_one_to_one_relationship_property_artifacts():
         parent="RefModel",
         backref_property=None,
         kwargs=None,
-        write_only=None,
+        write_only=write_only,
         description=None,
         required=False,
         foreign_key="foreign.key",
@@ -114,7 +114,7 @@ def _construct_one_to_one_relationship_property_artifacts():
     )
 
 
-def _construct_one_to_many_relationship_property_artifacts():
+def _construct_one_to_many_relationship_property_artifacts(write_only):
     """Construct one-to-many relationship property artifacts."""
     return schemas_artifacts.types.OneToManyRelationshipPropertyArtifacts(
         type=helpers.property_.type_.Type.RELATIONSHIP,
@@ -123,7 +123,7 @@ def _construct_one_to_many_relationship_property_artifacts():
         parent="RefModel",
         backref_property=None,
         kwargs=None,
-        write_only=None,
+        write_only=write_only,
         description=None,
         required=False,
         foreign_key="foreign.key",
@@ -131,7 +131,7 @@ def _construct_one_to_many_relationship_property_artifacts():
     )
 
 
-def _construct_many_to_many_relationship_property_artifacts():
+def _construct_many_to_many_relationship_property_artifacts(write_only):
     """Construct many-to-many relationship artifacts."""
     return schemas_artifacts.types.ManyToManyRelationshipPropertyArtifacts(
         type=helpers.property_.type_.Type.RELATIONSHIP,
@@ -140,7 +140,7 @@ def _construct_many_to_many_relationship_property_artifacts():
         parent="RefModel",
         backref_property=None,
         kwargs=None,
-        write_only=None,
+        write_only=write_only,
         description=None,
         required=False,
         secondary="secondary_1",
@@ -208,7 +208,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=True, description=None
+                    dict_ignore=True, description=None, write_only=False
                 ),
             )
         ],
@@ -220,7 +220,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None
+                    dict_ignore=False, description=None, write_only=None
                 ),
             )
         ],
@@ -231,10 +231,40 @@ CALCULATE_TESTS = [
                 description=None,
             ),
         ],
-        id="single simple",
+        id="single simple write only None",
     ),
     pytest.param(
-        [("prop_1", _construct_json_property_artifacts())],
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    dict_ignore=False, description=None, write_only=False
+                ),
+            )
+        ],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+        ],
+        id="single simple write only False",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_simple_property_artifacts(
+                    dict_ignore=False, description=None, write_only=True
+                ),
+            )
+        ],
+        [],
+        id="single simple write only True",
+    ),
+    pytest.param(
+        [("prop_1", _construct_json_property_artifacts(write_only=None))],
         [
             models_file.types.ColumnArtifacts(
                 name="prop_1",
@@ -242,10 +272,31 @@ CALCULATE_TESTS = [
                 description=None,
             )
         ],
-        id="single json",
+        id="single json write only None",
     ),
     pytest.param(
-        [("prop_1", _construct_many_to_one_relationship_property_artifacts())],
+        [("prop_1", _construct_json_property_artifacts(write_only=False))],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="typing.Any",
+                description=None,
+            )
+        ],
+        id="single json write only False",
+    ),
+    pytest.param(
+        [("prop_1", _construct_json_property_artifacts(write_only=True))],
+        [],
+        id="single json write only True",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_many_to_one_relationship_property_artifacts(write_only=None),
+            )
+        ],
         [
             models_file.types.ColumnArtifacts(
                 name="prop_1",
@@ -253,10 +304,17 @@ CALCULATE_TESTS = [
                 description=None,
             )
         ],
-        id="single relationship many-to-one",
+        id="single relationship many-to-one write only None",
     ),
     pytest.param(
-        [("prop_1", _construct_one_to_one_relationship_property_artifacts())],
+        [
+            (
+                "prop_1",
+                _construct_many_to_one_relationship_property_artifacts(
+                    write_only=False
+                ),
+            )
+        ],
         [
             models_file.types.ColumnArtifacts(
                 name="prop_1",
@@ -264,10 +322,41 @@ CALCULATE_TESTS = [
                 description=None,
             )
         ],
-        id="single relationship one-to-one",
+        id="single relationship many-to-one write only False",
     ),
     pytest.param(
-        [("prop_1", _construct_one_to_many_relationship_property_artifacts())],
+        [
+            (
+                "prop_1",
+                _construct_many_to_one_relationship_property_artifacts(write_only=True),
+            )
+        ],
+        [],
+        id="single relationship many-to-one write only True",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_one_to_one_relationship_property_artifacts(write_only=None),
+            )
+        ],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type='"RefModelDict"',
+                description=None,
+            )
+        ],
+        id="single relationship one-to-one write only None",
+    ),
+    pytest.param(
+        [
+            (
+                "prop_1",
+                _construct_one_to_many_relationship_property_artifacts(write_only=None),
+            )
+        ],
         [
             models_file.types.ColumnArtifacts(
                 name="prop_1",
@@ -278,7 +367,14 @@ CALCULATE_TESTS = [
         id="single relationship one-to-many",
     ),
     pytest.param(
-        [("prop_1", _construct_many_to_many_relationship_property_artifacts())],
+        [
+            (
+                "prop_1",
+                _construct_many_to_many_relationship_property_artifacts(
+                    write_only=None
+                ),
+            )
+        ],
         [
             models_file.types.ColumnArtifacts(
                 name="prop_1",
@@ -293,7 +389,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description="description 1"
+                    dict_ignore=False, description="description 1", write_only=None
                 ),
             )
         ],
@@ -311,13 +407,13 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None
+                    dict_ignore=False, description=None, write_only=None
                 ),
             ),
             (
                 "prop_2",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None
+                    dict_ignore=False, description=None, write_only=None
                 ),
             ),
         ],
