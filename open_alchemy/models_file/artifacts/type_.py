@@ -136,31 +136,30 @@ def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> s
     return model_type
 
 
-# def arg_init(*, artifacts: types.ColumnSchemaArtifacts) -> str:
-#     """
-#     Calculate the Python type of a column for the arguments of __init__.
+def arg_init(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str:
+    """
+    Calculate the Python type of a column for the arguments of __init__.
 
-#     Args:
-#         artifacts: The artifacts from the schema of the column.
+    Args:
+        artifacts: The artifacts from the schema of the column.
 
-#     Returns:
-#         The equivalent Python type for the argument for the column.
+    Returns:
+        The equivalent Python type for the argument for the column.
 
-#     """
-#     model_type = model(artifacts=artifacts)
+    """
+    model_type = model(artifacts=artifacts)
 
-#     # If has a default value, remove optional
-#     if artifacts.open_api.default is not None:
-#         if not model_type.startswith("typing.Optional["):
-#             return model_type
-#         return model_type[16:-1]
+    # If has a default value, remove optional
+    if artifacts.type == artifacts_helpers.property_.type_.Type.SIMPLE:
+        if artifacts.open_api.default is not None:
+            if not model_type.startswith("typing.Optional["):
+                return model_type
+            return model_type[16:-1]
 
-#     # Add optional if not required unless already optional
-#     if not artifacts.open_api.required and not model_type.startswith(
-#         "typing.Optional["
-#     ):
-#         return f"typing.Optional[{model_type}]"
-#     return model_type
+    # Add optional if not required unless already optional
+    if not artifacts.required and not model_type.startswith("typing.Optional["):
+        return f"typing.Optional[{model_type}]"
+    return model_type
 
 
 # def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:

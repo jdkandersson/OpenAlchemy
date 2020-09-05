@@ -410,6 +410,7 @@ def test_model(artifacts, expected_type):
     ],
 )
 @pytest.mark.models_file
+@pytest.mark.artifacts
 def test_dict(artifacts, expected_type):
     """
     GIVEN artifacts and expected type
@@ -417,5 +418,37 @@ def test_dict(artifacts, expected_type):
     THEN the given expected type is returned.
     """
     returned_type = models_file._artifacts._type.typed_dict(artifacts=artifacts)
+
+    assert returned_type == expected_type
+
+
+@pytest.mark.parametrize(
+    "nullable, required, default, expected_type",
+    [
+        pytest.param(False, True, None, "int", id="not nullable required"),
+        pytest.param(
+            False, False, None, "typing.Optional[int]", id="not nullable not required"
+        ),
+        pytest.param(True, True, None, "typing.Optional[int]", id="nullable required"),
+        pytest.param(
+            True, False, None, "typing.Optional[int]", id="nullable not required"
+        ),
+        pytest.param(False, False, 1, "int", id="not nullable default"),
+        pytest.param(True, False, 1, "int", id="nullable default"),
+    ],
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_arg_init(nullable, required, default, expected_type):
+    """
+    GIVEN nullable and required
+    WHEN arg_init is called with the nullable and required
+    THEN the expected type is returned.
+    """
+    artifacts = _construct_simple_artifacts(
+        type_="integer", nullable=nullable, required=required, default=default
+    )
+
+    returned_type = models_file._artifacts._type.arg_init(artifacts=artifacts)
 
     assert returned_type == expected_type
