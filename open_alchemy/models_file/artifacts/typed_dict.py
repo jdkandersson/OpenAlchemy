@@ -56,17 +56,21 @@ def _calculate(
     )
 
 
-# def calculate(
-#     *, artifacts: schemas.artifacts.types.ModelArtifacts
-# ) -> ReturnValue:
-#     """
-#     Calculate the typed dict artifacts from model schema artifacts.
+def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnValue:
+    """
+    Calculate the typed dict artifacts from model schema artifacts.
 
-#     Args:
-#         artifacts: The schema artifacts for a model.
+    Args:
+        artifacts: The schema artifacts for a model.
 
-#     Returns:
-#         The artifacts for the typed dict.
+    Returns:
+        The artifacts for the typed dict.
 
-#     """
-#     return ReturnValue([], [])
+    """
+    required = filter(lambda args: args[1].required, artifacts.properties)
+    not_required = filter(lambda args: not args[1].required, artifacts.properties)
+
+    return ReturnValue(
+        list(_calculate(artifacts=required)),
+        list(_calculate(artifacts=not_required)),
+    )

@@ -26,7 +26,9 @@ def _construct_model_artifacts(properties, backrefs):
     )
 
 
-def _construct_simple_property_artifacts(dict_ignore, description, write_only):
+def _construct_simple_property_artifacts(
+    dict_ignore, description, write_only, required
+):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
         type=helpers.property_.type_.Type.SIMPLE,
@@ -50,7 +52,7 @@ def _construct_simple_property_artifacts(dict_ignore, description, write_only):
             dict_ignore=dict_ignore,
         ),
         schema={},  # type: ignore
-        required=False,
+        required=required,
         description=description,
     )
 
@@ -159,7 +161,15 @@ def _construct_backref_property_artifacts(sub_type):
     )
 
 
-CALCULATE_TESTS = [
+def _construct_backrefs_item():
+    """Construct a model backref item."""
+    return schemas_artifacts.types.ModelBackrefArtifacts(
+        type=schemas_artifacts.types.BackrefSubType.OBJECT,
+        child="Child1",
+    )
+
+
+_CALCULATE_TESTS = [
     pytest.param([], [], id="empty"),
     pytest.param(
         [
@@ -208,7 +218,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=True, description=None, write_only=False
+                    dict_ignore=True, description=None, write_only=False, required=False
                 ),
             )
         ],
@@ -220,7 +230,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None, write_only=None
+                    dict_ignore=False, description=None, write_only=None, required=False
                 ),
             )
         ],
@@ -238,7 +248,10 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None, write_only=False
+                    dict_ignore=False,
+                    description=None,
+                    write_only=False,
+                    required=False,
                 ),
             )
         ],
@@ -256,7 +269,7 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None, write_only=True
+                    dict_ignore=False, description=None, write_only=True, required=False
                 ),
             )
         ],
@@ -389,7 +402,10 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description="description 1", write_only=None
+                    dict_ignore=False,
+                    description="description 1",
+                    write_only=None,
+                    required=False,
                 ),
             )
         ],
@@ -407,13 +423,13 @@ CALCULATE_TESTS = [
             (
                 "prop_1",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None, write_only=None
+                    dict_ignore=False, description=None, write_only=None, required=False
                 ),
             ),
             (
                 "prop_2",
                 _construct_simple_property_artifacts(
-                    dict_ignore=False, description=None, write_only=None
+                    dict_ignore=False, description=None, write_only=None, required=False
                 ),
             ),
         ],
@@ -434,15 +450,252 @@ CALCULATE_TESTS = [
 ]
 
 
-@pytest.mark.parametrize("artifacts, expected_columns", CALCULATE_TESTS)
+@pytest.mark.parametrize("artifacts, expected_columns", _CALCULATE_TESTS)
 @pytest.mark.models_file
 @pytest.mark.artifacts
-def test_calculate(artifacts, expected_columns):
+def test__calculate(artifacts, expected_columns):
     """
     GIVEN artifacts and expected columns
-    WHEN calculate is called with the artifacts
+    WHEN _calculate is called with the artifacts
     THEN the expected columns are returned.
     """
     returned_columns = models_file.artifacts._typed_dict._calculate(artifacts=artifacts)
 
     assert list(returned_columns) == expected_columns
+
+
+CALCULATE_TESTS = [
+    pytest.param(_construct_model_artifacts([], []), [], [], id="empty"),
+    pytest.param(
+        _construct_model_artifacts([], [("backref_1", _construct_backrefs_item())]),
+        [],
+        [],
+        id="single backrefs",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=True,
+                    ),
+                )
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+        ],
+        [],
+        id="single required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=False,
+                    ),
+                )
+            ],
+            [],
+        ),
+        [],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+        ],
+        id="single not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=True,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=True,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+            models_file.types.ColumnArtifacts(
+                name="prop_2",
+                type="int",
+                description=None,
+            ),
+        ],
+        [],
+        id="multiple required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=False,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=True,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_2",
+                type="int",
+                description=None,
+            ),
+        ],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+        ],
+        id="multiple first not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=True,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=False,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+        ],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_2",
+                type="int",
+                description=None,
+            ),
+        ],
+        id="multiple last not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=False,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        dict_ignore=False,
+                        description=None,
+                        write_only=None,
+                        required=False,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [],
+        [
+            models_file.types.ColumnArtifacts(
+                name="prop_1",
+                type="int",
+                description=None,
+            ),
+            models_file.types.ColumnArtifacts(
+                name="prop_2",
+                type="int",
+                description=None,
+            ),
+        ],
+        id="multiple not required",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_required_columns, expected_not_required_columns",
+    CALCULATE_TESTS,
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_calculate(artifacts, expected_required_columns, expected_not_required_columns):
+    """
+    GIVEN artifacts and expected required and not required columns
+    WHEN calculate is called with the artifacts
+    THEN the expected columns are returned.
+    """
+    returned_columns = models_file.artifacts._typed_dict.calculate(artifacts=artifacts)
+
+    assert returned_columns.required == expected_required_columns
+    assert returned_columns.not_required == expected_not_required_columns
