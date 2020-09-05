@@ -804,3 +804,6 @@ class SpecValue(types.TypedDict, total=False):
     """Record artifacts for a specification."""
 
     models: ModelsValue
+
+
+ModelsModelArtifacts = typing.List[typing.Tuple[str, ModelArtifacts]]

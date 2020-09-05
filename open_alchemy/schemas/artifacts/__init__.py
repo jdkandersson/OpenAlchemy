@@ -177,7 +177,7 @@ def _from_schemas_get_model(
 
 def get_from_schemas(
     *, schemas: _oa_types.Schemas, stay_within_model: bool
-) -> typing.List[typing.Tuple[str, types.ModelArtifacts]]:
+) -> types.ModelsModelArtifacts:
     """
     Get the artifacts from schemas.
 
