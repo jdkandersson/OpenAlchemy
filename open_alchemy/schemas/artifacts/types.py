@@ -131,6 +131,8 @@ class ExtensionSimplePropertyArtifacts:
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
 
+    dict_ignore: typing.Optional[bool]
+
     def to_dict(self) -> ExtensionSimplePropertyTypedDict:
         """Convert to dictionary."""
         return_dict: ExtensionSimplePropertyTypedDict = {

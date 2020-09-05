@@ -45,6 +45,8 @@ def get(
         schema=schema, schemas=schemas
     )
 
+    dict_ignore = oa_helpers.peek.dict_ignore(schema=schema, schemas=schemas)
+
     # Generate the schema
     schema_artifact: oa_types.ColumnSchema = {
         "type": type_,
@@ -86,5 +88,6 @@ def get(
             foreign_key=foreign_key,
             kwargs=kwargs,
             foreign_key_kwargs=foreign_key_kwargs,
+            dict_ignore=dict_ignore,
         ),
     )

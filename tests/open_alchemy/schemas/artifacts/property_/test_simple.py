@@ -511,6 +511,38 @@ GET_TESTS = [
         {"key_3": "value 3"},
         id="allOf x-foreign-key-kwargs",
     ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA},
+        {},
+        "extension.dict_ignore",
+        None,
+        id="x-dict-ignore undefined",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        {},
+        "extension.dict_ignore",
+        True,
+        id="x-dict-ignore",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "x-dict-ignore": False}},
+        "extension.dict_ignore",
+        False,
+        id="$ref x-dict-ignore",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{**DEFAULT_SCHEMA, "x-dict-ignore": None}]},
+        {},
+        "extension.dict_ignore",
+        None,
+        id="allOf x-dict-ignore",
+    ),
 ]
 
 
