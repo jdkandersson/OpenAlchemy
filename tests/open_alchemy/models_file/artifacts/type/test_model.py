@@ -1,0 +1,359 @@
+"""Tests for type_."""
+# pylint: disable=protected-access
+
+import pytest
+
+from open_alchemy import helpers as oa_helpers
+from open_alchemy import models_file
+from open_alchemy.schemas import artifacts as schemas_artifacts
+from open_alchemy.schemas import helpers
+
+
+def _construct_simple_artifacts(
+    *, type_, format_=None, nullable=None, generated=None, default=None, required=False
+):
+    """Construct the artifacts for a simple property."""
+    return schemas_artifacts.types.SimplePropertyArtifacts(
+        type=helpers.property_.type_.Type.SIMPLE,
+        open_api=schemas_artifacts.types.OpenApiSimplePropertyArtifacts(
+            type=type_,
+            format=format_,
+            max_length=None,
+            nullable=nullable,
+            default=default,
+            read_only=None,
+            write_only=None,
+        ),
+        extension=schemas_artifacts.types.ExtensionSimplePropertyArtifacts(
+            primary_key=False,
+            autoincrement=generated,
+            index=None,
+            unique=None,
+            foreign_key=None,
+            kwargs=None,
+            foreign_key_kwargs=None,
+            dict_ignore=None,
+        ),
+        schema={},  # type: ignore
+        required=required,
+        description=None,
+    )
+
+
+def _construct_json_artifacts():
+    """Construct the artifacts for a json property."""
+    return schemas_artifacts.types.JsonPropertyArtifacts(
+        type=helpers.property_.type_.Type.JSON,
+        open_api=schemas_artifacts.types.OpenApiJsonPropertyArtifacts(
+            nullable=False,
+            read_only=None,
+            write_only=None,
+        ),
+        extension=schemas_artifacts.types.ExtensionJsonPropertyArtifacts(
+            primary_key=False,
+            index=None,
+            unique=None,
+            foreign_key=None,
+            kwargs=None,
+            foreign_key_kwargs=None,
+        ),
+        schema={},  # type: ignore
+        required=False,
+        description=None,
+    )
+
+
+def _construct_many_to_one_relationship_artifacts(required=False, nullable=None):
+    """Construct many-to-one relationship artifacts."""
+    return schemas_artifacts.types.ManyToOneRelationshipPropertyArtifacts(
+        type=helpers.property_.type_.Type.RELATIONSHIP,
+        schema={},  # type: ignore
+        sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+        parent="RefModel",
+        backref_property=None,
+        kwargs=None,
+        write_only=None,
+        description=None,
+        required=required,
+        foreign_key="foreign.key",
+        foreign_key_property="foreign_key",
+        nullable=nullable,
+    )
+
+
+def _construct_one_to_one_relationship_artifacts(required=False, nullable=None):
+    """Construct one-to-one relationship artifacts."""
+    return schemas_artifacts.types.OneToOneRelationshipPropertyArtifacts(
+        type=helpers.property_.type_.Type.RELATIONSHIP,
+        schema={},  # type: ignore
+        sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
+        parent="RefModel",
+        backref_property=None,
+        kwargs=None,
+        write_only=None,
+        description=None,
+        required=required,
+        foreign_key="foreign.key",
+        foreign_key_property="foreign_key",
+        nullable=nullable,
+    )
+
+
+def _construct_one_to_many_relationship_artifacts(required=False):
+    """Construct one-to-many relationship artifacts."""
+    return schemas_artifacts.types.OneToManyRelationshipPropertyArtifacts(
+        type=helpers.property_.type_.Type.RELATIONSHIP,
+        schema={},  # type: ignore
+        sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
+        parent="RefModel",
+        backref_property=None,
+        kwargs=None,
+        write_only=None,
+        description=None,
+        required=required,
+        foreign_key="foreign.key",
+        foreign_key_property="foreign_key",
+    )
+
+
+def _construct_many_to_many_relationship_artifacts(required=False):
+    """Construct many-to-many relationship artifacts."""
+    return schemas_artifacts.types.ManyToManyRelationshipPropertyArtifacts(
+        type=helpers.property_.type_.Type.RELATIONSHIP,
+        schema={},  # type: ignore
+        sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+        parent="RefModel",
+        backref_property=None,
+        kwargs=None,
+        write_only=None,
+        description=None,
+        required=required,
+        secondary="secondary_1",
+    )
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_type",
+    [
+        pytest.param(
+            _construct_simple_artifacts(type_="integer", nullable=False),
+            "int",
+            id="simple integer no format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer", format_="int32", nullable=False
+            ),
+            "int",
+            id="simple integer int32 format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer", format_="int64", nullable=False
+            ),
+            "int",
+            id="simple integer int64 format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="number", nullable=False),
+            "float",
+            id="simple number no format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="number", format_="float", nullable=False
+            ),
+            "float",
+            id="simple number float format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", nullable=False),
+            "str",
+            id="simple string no format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="string", format_="password", nullable=False
+            ),
+            "str",
+            id="simple string password format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="string", format_="unsupported", nullable=False
+            ),
+            "str",
+            id="simple string unsupported format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", format_="byte", nullable=False),
+            "str",
+            id="simple string byte format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="string", format_="binary", nullable=False
+            ),
+            "bytes",
+            id="simple string binary format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", format_="date", nullable=False),
+            "datetime.date",
+            id="simple string date format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="string", format_="date-time", nullable=False
+            ),
+            "datetime.datetime",
+            id="simple string date-time format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="boolean", nullable=False),
+            "bool",
+            id="simple boolean no format",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=False,
+                generated=None,
+                default=None,
+            ),
+            "typing.Optional[int]",
+            id="simple nullable and required None",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=True,
+                generated=None,
+                default=None,
+            ),
+            "int",
+            id="simple nullable None required True",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=False,
+                generated=True,
+                default=None,
+            ),
+            "int",
+            id="simple nullable None generated True",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=False,
+                generated=False,
+                default=None,
+            ),
+            "typing.Optional[int]",
+            id="simple nullable None generated False",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=False,
+                generated=None,
+                default=1,
+            ),
+            "int",
+            id="simple nullable None default given",
+        ),
+        pytest.param(
+            _construct_json_artifacts(),
+            "typing.Any",
+            id="json",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(nullable=None),
+            'typing.Optional["TRefModel"]',
+            id="relationship many-to-one nullable None",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(nullable=False),
+            '"TRefModel"',
+            id="relationship many-to-one nullable False",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(nullable=True),
+            'typing.Optional["TRefModel"]',
+            id="relationship many-to-one nullable True",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(required=False),
+            'typing.Optional["TRefModel"]',
+            id="relationship many-to-one required False",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(required=True),
+            '"TRefModel"',
+            id="relationship many-to-one required True",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(nullable=None),
+            'typing.Optional["TRefModel"]',
+            id="relationship one-to-one nullable None",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(nullable=False),
+            '"TRefModel"',
+            id="relationship one-to-one nullable False",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(nullable=True),
+            'typing.Optional["TRefModel"]',
+            id="relationship one-to-one nullable True",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(required=False),
+            'typing.Optional["TRefModel"]',
+            id="relationship one-to-one required False",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(required=True),
+            '"TRefModel"',
+            id="relationship one-to-one required True",
+        ),
+        pytest.param(
+            _construct_one_to_many_relationship_artifacts(required=False),
+            'typing.Sequence["TRefModel"]',
+            id="relationship one-to-many required False",
+        ),
+        pytest.param(
+            _construct_one_to_many_relationship_artifacts(required=True),
+            'typing.Sequence["TRefModel"]',
+            id="relationship one-to-many required True",
+        ),
+        pytest.param(
+            _construct_many_to_many_relationship_artifacts(required=False),
+            'typing.Sequence["TRefModel"]',
+            id="relationship many-to-many required False",
+        ),
+        pytest.param(
+            _construct_many_to_many_relationship_artifacts(required=True),
+            'typing.Sequence["TRefModel"]',
+            id="relationship many-to-many required True",
+        ),
+    ],
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_model(artifacts, expected_type):
+    """
+    GIVEN artifacts
+    WHEN model is called with the artifacts
+    THEN the expected type is returned.
+    """
+    returned_type = models_file._artifacts._type.model(artifacts=artifacts)
+
+    assert returned_type == expected_type

@@ -7,6 +7,7 @@ import typing
 from open_alchemy import facades
 from open_alchemy import types as oa_types
 
+from . import artifacts as _artifacts
 from . import model as _model
 from . import models as _models
 from . import types as types
