@@ -5,6 +5,7 @@ import dataclasses
 import typing
 
 from open_alchemy import facades
+from open_alchemy import schemas
 from open_alchemy import types as oa_types
 
 from . import artifacts as _artifacts
@@ -50,3 +51,26 @@ class ModelsFile:
         # Generate source code for models file
         raw_source = _models.generate(models=model_sources)
         return facades.code_formatter.apply(source=raw_source)
+
+
+def from_schemas_artifacts(
+    *, artifacts: schemas.artifacts.types.ModelsModelArtifacts
+) -> str:
+    """
+    Generate the models file from schema artifacts.
+
+    Args:
+        artifacts: The artifacts from the schemas.
+
+    Returns:
+        The models file.
+
+    """
+    model_sources = list(
+        map(
+            lambda args: _model.from_artifacts(artifacts=args[1], name=args[0]),
+            artifacts,
+        )
+    )
+    raw_source = _models.generate(models=model_sources)
+    return facades.code_formatter.apply(source=raw_source)
