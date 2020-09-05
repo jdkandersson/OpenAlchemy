@@ -85,7 +85,7 @@ GET_TESTS = [
         },
         {"RefSchema": {"type": "type 4"}},
         "open_api.type",
-        "type 3",
+        "type 4",
         id="allOf type",
     ),
     pytest.param(
