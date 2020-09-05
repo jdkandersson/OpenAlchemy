@@ -38,18 +38,12 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
-    address: "sqlalchemy.Column[typing.Optional[str]]"
-    division: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
+    address: 'sqlalchemy.Column[typing.Optional[str]]'
+    division: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        address: typing.Optional[str] = None,
-        division: typing.Optional[str] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, address: typing.Optional[str] = None, division: typing.Optional[str] = None) -> None:
         """
         Construct.
 
@@ -63,13 +57,7 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        address: typing.Optional[str] = None,
-        division: typing.Optional[str] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, address: typing.Optional[str] = None, division: typing.Optional[str] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 

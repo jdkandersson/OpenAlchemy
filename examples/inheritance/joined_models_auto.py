@@ -36,16 +36,11 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
-    type: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
+    type: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> None:
         """
         Construct.
 
@@ -58,12 +53,7 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -117,8 +107,6 @@ class ManagerDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
-    name: typing.Optional[str]
-    type: typing.Optional[str]
     manager_data: typing.Optional[str]
 
 
@@ -130,8 +118,6 @@ class TManager(typing.Protocol):
 
     Attrs:
         id: Unique identifier for the manager.
-        name: The name of the employee.
-        type: The type of the employee.
         manager_data: Data for the manager.
 
     """
@@ -142,45 +128,27 @@ class TManager(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
-    type: "sqlalchemy.Column[typing.Optional[str]]"
-    manager_data: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    manager_data: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-        manager_data: typing.Optional[str] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, manager_data: typing.Optional[str] = None) -> None:
         """
         Construct.
 
         Args:
             id: Unique identifier for the manager.
-            name: The name of the employee.
-            type: The type of the employee.
             manager_data: Data for the manager.
 
         """
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-        manager_data: typing.Optional[str] = None,
-    ) -> "TManager":
+    def from_dict(cls, id: typing.Optional[int] = None, manager_data: typing.Optional[str] = None) -> "TManager":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
             id: Unique identifier for the manager.
-            name: The name of the employee.
-            type: The type of the employee.
             manager_data: Data for the manager.
 
         Returns:
@@ -228,8 +196,6 @@ class EngineerDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
     id: typing.Optional[int]
-    name: typing.Optional[str]
-    type: typing.Optional[str]
     engineer_info: typing.Optional[str]
 
 
@@ -241,8 +207,6 @@ class TEngineer(typing.Protocol):
 
     Attrs:
         id: Unique identifier for the engineer.
-        name: The name of the employee.
-        type: The type of the employee.
         engineer_info: Information for the manager.
 
     """
@@ -253,45 +217,27 @@ class TEngineer(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
-    type: "sqlalchemy.Column[typing.Optional[str]]"
-    engineer_info: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    engineer_info: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-        engineer_info: typing.Optional[str] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, engineer_info: typing.Optional[str] = None) -> None:
         """
         Construct.
 
         Args:
             id: Unique identifier for the engineer.
-            name: The name of the employee.
-            type: The type of the employee.
             engineer_info: Information for the manager.
 
         """
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        type: typing.Optional[str] = None,
-        engineer_info: typing.Optional[str] = None,
-    ) -> "TEngineer":
+    def from_dict(cls, id: typing.Optional[int] = None, engineer_info: typing.Optional[str] = None) -> "TEngineer":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
             id: Unique identifier for the engineer.
-            name: The name of the employee.
-            type: The type of the employee.
             engineer_info: Information for the manager.
 
         Returns:

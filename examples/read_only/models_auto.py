@@ -34,12 +34,10 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[int]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[int]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> None:
         """
         Construct.
 

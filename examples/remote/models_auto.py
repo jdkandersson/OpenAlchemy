@@ -43,18 +43,12 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[int]"
-    name: "sqlalchemy.Column[str]"
-    division: "sqlalchemy.Column[str]"
-    salary: "sqlalchemy.Column[typing.Optional[float]]"
+    id: 'sqlalchemy.Column[int]'
+    name: 'sqlalchemy.Column[str]'
+    division: 'sqlalchemy.Column[str]'
+    salary: 'sqlalchemy.Column[typing.Optional[float]]'
 
-    def __init__(
-        self,
-        name: str,
-        division: str,
-        id: typing.Optional[int] = None,
-        salary: typing.Optional[float] = None,
-    ) -> None:
+    def __init__(self, name: str, division: str, id: typing.Optional[int] = None, salary: typing.Optional[float] = None) -> None:
         """
         Construct.
 
@@ -68,13 +62,7 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        name: str,
-        division: str,
-        id: typing.Optional[int] = None,
-        salary: typing.Optional[float] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, name: str, division: str, id: typing.Optional[int] = None, salary: typing.Optional[float] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 

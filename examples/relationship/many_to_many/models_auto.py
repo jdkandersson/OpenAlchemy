@@ -34,12 +34,10 @@ class TProject(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> None:
         """
         Construct.
 
@@ -51,9 +49,7 @@ class TProject(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> "TProject":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> "TProject":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -129,16 +125,11 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
     projects: 'sqlalchemy.Column[typing.Sequence["TProject"]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        projects: typing.Optional[typing.Sequence["TProject"]] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, projects: typing.Optional[typing.Sequence["TProject"]] = None) -> None:
         """
         Construct.
 
@@ -151,12 +142,7 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        projects: typing.Optional[typing.Sequence["ProjectDict"]] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, projects: typing.Optional[typing.Sequence["ProjectDict"]] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 

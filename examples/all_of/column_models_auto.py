@@ -24,8 +24,8 @@ class TEmployee(typing.Protocol):
     Person that works for a company.
 
     Attrs:
-        id: Unique identifier for the employee.
-        name: The name of the employee.
+        id: Base for the id schema of an object.
+        name: The name of the object.
         salary: The amount of money the employee is paid.
 
     """
@@ -36,40 +36,30 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
-    salary: "sqlalchemy.Column[typing.Optional[float]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
+    salary: 'sqlalchemy.Column[typing.Optional[float]]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        salary: typing.Optional[float] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, salary: typing.Optional[float] = None) -> None:
         """
         Construct.
 
         Args:
-            id: Unique identifier for the employee.
-            name: The name of the employee.
+            id: Base for the id schema of an object.
+            name: The name of the object.
             salary: The amount of money the employee is paid.
 
         """
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        salary: typing.Optional[float] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, salary: typing.Optional[float] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Unique identifier for the employee.
-            name: The name of the employee.
+            id: Base for the id schema of an object.
+            name: The name of the object.
             salary: The amount of money the employee is paid.
 
         Returns:
@@ -127,8 +117,8 @@ class TDivision(typing.Protocol):
     A part of a company.
 
     Attrs:
-        id: Unique identifier for the division.
-        name: The name of the division.
+        id: Base for the id schema of an object.
+        name: The name of the object.
 
     """
 
@@ -138,32 +128,28 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> None:
         """
         Construct.
 
         Args:
-            id: Unique identifier for the division.
-            name: The name of the division.
+            id: Base for the id schema of an object.
+            name: The name of the object.
 
         """
         ...
 
     @classmethod
-    def from_dict(
-        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> "TDivision":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> "TDivision":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Unique identifier for the division.
-            name: The name of the division.
+            id: Base for the id schema of an object.
+            name: The name of the object.
 
         Returns:
             Model instance based on the dictionary.

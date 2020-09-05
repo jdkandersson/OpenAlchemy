@@ -79,27 +79,17 @@ def init_model_factory(
         setattr(models, name, model)
         return model
 
+    if models_filename is not None:
+        schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+            schemas=schemas, stay_within_model=True
+        )
+        models_file_contents = _models_file.from_schemas_artifacts(
+            artifacts=schemas_artifacts
+        )
+        with open(models_filename, "w") as out_file:
+            out_file.write(models_file_contents)
+
     if define_all:
-        # Write the schemas file
-        if models_filename is not None:
-            models_file = _models_file.ModelsFile()
-
-            # Intercept factory calls to record the schema
-            def _record_schema(*, name: str) -> typing.Type:
-                """Intercept calls to model factory and record schema."""
-                model = _register_model(name=name)
-                models_file.add_model(
-                    schema=model._schema, name=name  # pylint: disable=protected-access
-                )
-                return model
-
-            _helpers.define_all(model_factory=_record_schema, schemas=schemas)
-
-            with open(models_filename, "w") as out_file:
-                out_file.write(models_file.generate_models())
-
-            return _record_schema
-
         _helpers.define_all(model_factory=_register_model, schemas=schemas)
 
     return _register_model

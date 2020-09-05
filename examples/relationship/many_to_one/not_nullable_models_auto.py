@@ -34,12 +34,10 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
 
-    def __init__(
-        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> None:
         """
         Construct.
 
@@ -51,9 +49,7 @@ class TDivision(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
-    ) -> "TDivision":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> "TDivision":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -129,16 +125,11 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: "sqlalchemy.Column[typing.Optional[int]]"
-    name: "sqlalchemy.Column[typing.Optional[str]]"
+    id: 'sqlalchemy.Column[typing.Optional[int]]'
+    name: 'sqlalchemy.Column[typing.Optional[str]]'
     division: 'sqlalchemy.Column["TDivision"]'
 
-    def __init__(
-        self,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        division: typing.Optional["TDivision"] = None,
-    ) -> None:
+    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, division: typing.Optional["TDivision"] = None) -> None:
         """
         Construct.
 
@@ -151,12 +142,7 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(
-        cls,
-        id: typing.Optional[int] = None,
-        name: typing.Optional[str] = None,
-        division: typing.Optional["DivisionDict"] = None,
-    ) -> "TEmployee":
+    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, division: typing.Optional["DivisionDict"] = None) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
