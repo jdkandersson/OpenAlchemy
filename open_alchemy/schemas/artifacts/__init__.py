@@ -1,5 +1,6 @@
 """Retrieve artifacts from the schemas."""
 
+import dataclasses
 import typing
 
 from ... import types as _oa_types
@@ -67,6 +68,7 @@ def _get_model(
     Get artifacts for a model.
 
     Args:
+        schemas: All defined schemas used to resolve any $ref.
         schema: The schema of the model to get artifacts for.
 
     Returns:
@@ -126,3 +128,77 @@ def get(*, spec: typing.Any) -> types.SpecValue:
     assert isinstance(schemas, dict)
 
     return {"models": get_models(schemas=schemas)}
+
+
+def _from_schemas_get_properties_artifacts(
+    stay_within_model: bool, schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> typing.Iterable[typing.Tuple[str, types.TAnyPropertyArtifacts]]:
+    """Get an iterator with properties artifacts."""
+    # Get model properties
+    properties = _helpers.iterate.properties_items(
+        schema=schema, schemas=schemas, stay_within_model=stay_within_model
+    )
+    required_set = set(_helpers.iterate.required_items(schema=schema, schemas=schemas))
+    return map(
+        lambda args: (
+            args[0],
+            property_.get(schemas, schema, args[0], args[1], args[0] in required_set),
+        ),
+        properties,
+    )
+
+
+def _from_schemas_get_model(
+    stay_within_model: bool, schemas: _oa_types.Schemas, schema: _oa_types.Schema
+) -> types.ModelArtifacts:
+    """
+    Get artifacts for a model.
+
+    Assume the schema is valid.
+
+    Args:
+        schema: The schema of the model to get artifacts for.
+        schemas: All defined schemas used to resolve any $ref.
+        stay_within_model: Whether only properties from within a model should be
+            included.
+
+    Returns:
+        The artifacts of the model.
+
+    """
+    model_artifacts = model.get(schemas, schema)
+    properties_artifacts = _from_schemas_get_properties_artifacts(
+        stay_within_model, schemas, schema
+    )
+    return types.ModelArtifacts(  # type: ignore
+        **dataclasses.asdict(model_artifacts), properties=list(properties_artifacts)
+    )
+
+
+def get_from_schemas(
+    *, schemas: _oa_types.Schemas, stay_within_model: bool
+) -> typing.List[typing.Tuple[str, types.ModelArtifacts]]:
+    """
+    Get the artifacts from schemas.
+
+    Assume the schemas are valid.
+
+    Args:
+        schemas: The schemas to get artifacts from.
+        stay_within_model: Whether only properties from within a model should be
+            included.
+
+    Returns:
+        The artifacts for the schemas.
+
+    """
+    constructables = _helpers.iterate.constructable(schemas=schemas)
+    return list(
+        map(
+            lambda args: (
+                args[0],
+                _from_schemas_get_model(stay_within_model, schemas, args[1]),
+            ),
+            constructables,
+        )
+    )
