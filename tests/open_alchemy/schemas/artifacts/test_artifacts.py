@@ -512,12 +512,12 @@ GET_FROM_SCHEMAS_TESTS = [
                     "ParentSchema",
                     [
                         (
-                            "prop_2",
-                            _construct_simple_property_artifacts("string", False),
-                        ),
-                        (
                             "prop_1",
                             _construct_simple_property_artifacts("integer", False),
+                        ),
+                        (
+                            "prop_2",
+                            _construct_simple_property_artifacts("string", False),
                         ),
                     ],
                 ),
