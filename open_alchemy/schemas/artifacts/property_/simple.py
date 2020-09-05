@@ -21,9 +21,7 @@ def get(
         The artifacts for the property.
 
     """
-    type_ = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.type_, schema=schema, schemas=schemas
-    )
+    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
     format_ = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.format_, schema=schema, schemas=schemas
     )

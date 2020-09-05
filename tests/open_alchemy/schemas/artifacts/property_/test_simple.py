@@ -80,13 +80,13 @@ GET_TESTS = [
         {
             "allOf": [
                 {"$ref": "#/components/schemas/RefSchema"},
-                {**DEFAULT_SCHEMA, "type": "type 3"},
+                {**DEFAULT_SCHEMA, "type": "type 4"},
             ]
         },
         {"RefSchema": {"type": "type 4"}},
         "open_api.type",
         "type 3",
-        id="allOf type prefer local",
+        id="allOf type",
     ),
     pytest.param(
         None, {**DEFAULT_SCHEMA}, {}, "open_api.format", None, id="format undefined"

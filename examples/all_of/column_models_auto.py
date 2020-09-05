@@ -24,8 +24,8 @@ class TEmployee(typing.Protocol):
     Person that works for a company.
 
     Attrs:
-        id: Base for the id schema of an object.
-        name: The name of the object.
+        id: Unique identifier for the employee.
+        name: The name of the employee.
         salary: The amount of money the employee is paid.
 
     """
@@ -45,8 +45,8 @@ class TEmployee(typing.Protocol):
         Construct.
 
         Args:
-            id: Base for the id schema of an object.
-            name: The name of the object.
+            id: Unique identifier for the employee.
+            name: The name of the employee.
             salary: The amount of money the employee is paid.
 
         """
@@ -58,8 +58,8 @@ class TEmployee(typing.Protocol):
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Base for the id schema of an object.
-            name: The name of the object.
+            id: Unique identifier for the employee.
+            name: The name of the employee.
             salary: The amount of money the employee is paid.
 
         Returns:
@@ -117,8 +117,8 @@ class TDivision(typing.Protocol):
     A part of a company.
 
     Attrs:
-        id: Base for the id schema of an object.
-        name: The name of the object.
+        id: Unique identifier for the division.
+        name: The name of the division.
 
     """
 
@@ -136,8 +136,8 @@ class TDivision(typing.Protocol):
         Construct.
 
         Args:
-            id: Base for the id schema of an object.
-            name: The name of the object.
+            id: Unique identifier for the division.
+            name: The name of the division.
 
         """
         ...
@@ -148,8 +148,8 @@ class TDivision(typing.Protocol):
         Construct from a dictionary (eg. a POST payload).
 
         Args:
-            id: Base for the id schema of an object.
-            name: The name of the object.
+            id: Unique identifier for the division.
+            name: The name of the division.
 
         Returns:
             Model instance based on the dictionary.
