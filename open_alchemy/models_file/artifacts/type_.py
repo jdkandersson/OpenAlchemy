@@ -111,8 +111,16 @@ def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> s
         The equivalent Python type for the TypedDict.
 
     """
-    # Calculate type the same way as for the model
-    model_type = model(artifacts=artifacts)
+    model_type: str
+    if artifacts.type != artifacts_helpers.property_.type_.Type.BACKREF:
+        # Calculate type the same way as for the model
+        model_type = model(artifacts=artifacts)
+    else:
+        inner_type = "typing.Dict[str, typing.Union[int, float, str, bool]]"
+        if artifacts.sub_type == schemas_artifacts.types.BackrefSubType.OBJECT:
+            model_type = f"typing.Optional[{inner_type}]"
+        else:
+            model_type = f"typing.Sequence[{inner_type}]"
 
     # No more checks if JSON
     if artifacts.type == artifacts_helpers.property_.type_.Type.JSON:
@@ -140,6 +148,8 @@ def arg_init(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str
     """
     Calculate the Python type of a column for the arguments of __init__.
 
+    Assume that the property is not a back reference.
+
     Args:
         artifacts: The artifacts from the schema of the column.
 
@@ -147,6 +157,8 @@ def arg_init(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str
         The equivalent Python type for the argument for the column.
 
     """
+    assert artifacts.type != artifacts_helpers.property_.type_.Type.BACKREF
+
     model_type = model(artifacts=artifacts)
 
     # If has a default value, remove optional
@@ -166,6 +178,8 @@ def arg_from_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -
     """
     Calculate the Python type of a column for the arguments of from_dict.
 
+    Assume that the property is not a back reference.
+
     Args:
         artifacts: The artifacts from the schema of the column.
 
@@ -173,6 +187,8 @@ def arg_from_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -
         The equivalent Python type for the argument for the column.
 
     """
+    assert artifacts.type != artifacts_helpers.property_.type_.Type.BACKREF
+
     # Calculate type the same way as for the model
     init_type = arg_init(artifacts=artifacts)
 

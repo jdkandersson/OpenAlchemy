@@ -132,6 +132,18 @@ def _construct_many_to_many_relationship_artifacts(required=False):
     )
 
 
+def _construct_backref_property_artifacts(sub_type):
+    """Construct backref property artifacts."""
+    return schemas_artifacts.types.BackrefPropertyArtifacts(
+        type=helpers.property_.type_.Type.BACKREF,
+        sub_type=sub_type,
+        schema={},  # type: ignore
+        properties=[],
+        required=None,
+        description=None,
+    )
+
+
 @pytest.mark.parametrize(
     "artifacts, expected_type",
     [
@@ -406,6 +418,20 @@ def test_model(artifacts, expected_type):
             _construct_many_to_many_relationship_artifacts(),
             'typing.Sequence["RefModelDict"]',
             id="relationship many-to-many",
+        ),
+        pytest.param(
+            _construct_backref_property_artifacts(
+                schemas_artifacts.types.BackrefSubType.OBJECT
+            ),
+            "typing.Optional[typing.Dict[str, typing.Union[int, float, str, bool]]]",
+            id="backref object",
+        ),
+        pytest.param(
+            _construct_backref_property_artifacts(
+                schemas_artifacts.types.BackrefSubType.ARRAY
+            ),
+            "typing.Sequence[typing.Dict[str, typing.Union[int, float, str, bool]]]",
+            id="backref array",
         ),
     ],
 )
