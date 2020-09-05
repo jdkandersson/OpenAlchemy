@@ -110,11 +110,11 @@ def _construct_backref_property_artifacts():
     )
 
 
-def _construct_backrefs_item():
+def _construct_backrefs_item(type_, child):
     """Construct a model backref item."""
     return schemas_artifacts.types.ModelBackrefArtifacts(
-        type=schemas_artifacts.types.BackrefSubType.OBJECT,
-        child="Child1",
+        type=type_,
+        child=child,
     )
 
 
@@ -543,12 +543,6 @@ def test__calculate(artifacts, expected_columns):
 CALCULATE_TESTS = [
     pytest.param(_construct_model_artifacts([], []), [], [], id="empty"),
     pytest.param(
-        _construct_model_artifacts([], [("backref_1", _construct_backrefs_item())]),
-        [],
-        [],
-        id="single backrefs",
-    ),
-    pytest.param(
         _construct_model_artifacts(
             [
                 (
@@ -795,6 +789,184 @@ CALCULATE_TESTS = [
             ),
         ],
         id="multiple not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [],
+            [
+                (
+                    "backref_1",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.OBJECT,
+                        child="Child1",
+                    ),
+                )
+            ],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="backref_1",
+                init_type='typing.Optional["TChild1"]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            )
+        ],
+        id="single backrefs object",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [],
+            [
+                (
+                    "backref_1",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.ARRAY,
+                        child="Child1",
+                    ),
+                )
+            ],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="backref_1",
+                init_type='typing.Optional[typing.Sequence["TChild1"]]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            )
+        ],
+        id="single backrefs array",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [],
+            [
+                (
+                    "backref_1",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.OBJECT,
+                        child="Child1",
+                    ),
+                ),
+                (
+                    "backref_2",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.OBJECT,
+                        child="Child2",
+                    ),
+                ),
+            ],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="backref_1",
+                init_type='typing.Optional["TChild1"]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            ),
+            models_file.types.ColumnArgArtifacts(
+                name="backref_2",
+                init_type='typing.Optional["TChild2"]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            ),
+        ],
+        id="multiple backrefs",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                )
+            ],
+            [
+                (
+                    "backref_1",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.OBJECT,
+                        child="Child1",
+                    ),
+                )
+            ],
+        ),
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="backref_1",
+                init_type='typing.Optional["TChild1"]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            )
+        ],
+        id="single properties required single backrefs object",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                )
+            ],
+            [
+                (
+                    "backref_1",
+                    _construct_backrefs_item(
+                        type_=schemas_artifacts.types.BackrefSubType.OBJECT,
+                        child="Child1",
+                    ),
+                )
+            ],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="typing.Optional[int]",
+                from_dict_type="typing.Optional[int]",
+                default=None,
+                read_only=None,
+            ),
+            models_file.types.ColumnArgArtifacts(
+                name="backref_1",
+                init_type='typing.Optional["TChild1"]',
+                from_dict_type="",
+                default=None,
+                read_only=True,
+            ),
+        ],
+        id="single properties not required single backrefs object",
     ),
 ]
 

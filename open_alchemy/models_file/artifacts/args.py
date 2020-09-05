@@ -1,5 +1,6 @@
 """Artifacts for the arguments."""
 
+import itertools
 import json
 import typing
 
@@ -118,7 +119,22 @@ def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnVal
     required = filter(lambda args: args[1].required, artifacts.properties)
     not_required = filter(lambda args: not args[1].required, artifacts.properties)
 
+    # Process back references
+    backrefs_columns = map(
+        lambda args: types.ColumnArgArtifacts(
+            name=args[0],
+            init_type=f'typing.Optional["T{args[1].child}"]'
+            if args[1].type == schemas.artifacts.types.BackrefSubType.OBJECT
+            else f'typing.Optional[typing.Sequence["T{args[1].child}"]]',
+            from_dict_type="",
+            read_only=True,
+        ),
+        artifacts.backrefs,
+    )
+
     return ReturnValue(
         required=list(_calculate(artifacts=required)),
-        not_required=list(_calculate(artifacts=not_required)),
+        not_required=list(
+            itertools.chain(_calculate(artifacts=not_required), backrefs_columns)
+        ),
     )
