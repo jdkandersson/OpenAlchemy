@@ -108,13 +108,15 @@ class SQLAlchemyModelArtifacts:
     # Whether the columns are empty based on whether any properties are defined on the
     # schema and any back references
     empty: bool
-    # The columns for the model based on the properties of the schema
+    # The columns for the model based on the properties of the schema and any back
+    # references
     columns: typing.List[ColumnArtifacts]
-    # The artifacts for the arguments for __init__ and from_dict
+    # The artifacts for the arguments for __init__ and from_dict based on the properties
+    # of the schema and any back references
     arg: ArgArtifacts
-    # The parent class
+    # The parent class based on the version of Python
     parent_cls: str
-    # The description of the model
+    # The description of the model based on the description of the schema
     description: typing.Optional[str] = None
 
     # Calculated properties
