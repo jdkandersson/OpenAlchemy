@@ -100,43 +100,40 @@ def model(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str:
     return "typing.Any"
 
 
-# def typed_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
-#     """
-#     Calculate the Python type of a column for a TypedDict.
+def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str:
+    """
+    Calculate the Python type of a column for a TypedDict.
 
-#     Args:
-#         artifacts: The artifacts from the schema of the column.
+    Args:
+        artifacts: The artifacts from the schema of the column.
 
-#     Returns:
-#         The equivalent Python type for the TypedDict.
+    Returns:
+        The equivalent Python type for the TypedDict.
 
-#     """
-#     # Calculate type the same way as for the model
-#     model_type = model(artifacts=artifacts)
+    """
+    # Calculate type the same way as for the model
+    model_type = model(artifacts=artifacts)
 
-#     # No more checks if JSON
-#     if artifacts.extension.json:
-#         return model_type
+    # No more checks if JSON
+    if artifacts.type == artifacts_helpers.property_.type_.Type.JSON:
+        return model_type
 
-#     # Modify the type in case of object or array
-#     if artifacts.open_api.type in {"object", "array"}:
-#         if artifacts.extension.de_ref is None:
-#             raise exceptions.MissingArgumentError(
-#                 "The schema for the property of an object reference must include "
-#                 "x-de-$ref with the name of the model being referenced."
-#             )
-#         model_type = model_type.replace(
-#             f"T{artifacts.extension.de_ref}", f"{artifacts.extension.de_ref}Dict"
-#         )
-#     # Revert back to str for binary, date and date-time
-#     if artifacts.open_api.format == "binary":
-#         model_type = model_type.replace("bytes", "str")
-#     if artifacts.open_api.format == "date":
-#         model_type = model_type.replace("datetime.date", "str")
-#     if artifacts.open_api.format == "date-time":
-#         model_type = model_type.replace("datetime.datetime", "str")
+    # Modify the type in case of a relationship
+    if artifacts.type == artifacts_helpers.property_.type_.Type.RELATIONSHIP:
+        model_type = model_type.replace(
+            f"T{artifacts.parent}", f"{artifacts.parent}Dict"
+        )
 
-#     return model_type
+    if artifacts.type == artifacts_helpers.property_.type_.Type.SIMPLE:
+        # Revert back to str for binary, date and date-time
+        if artifacts.open_api.format == "binary":
+            model_type = model_type.replace("bytes", "str")
+        if artifacts.open_api.format == "date":
+            model_type = model_type.replace("datetime.date", "str")
+        if artifacts.open_api.format == "date-time":
+            model_type = model_type.replace("datetime.datetime", "str")
+
+    return model_type
 
 
 # def arg_init(*, artifacts: types.ColumnSchemaArtifacts) -> str:

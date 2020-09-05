@@ -357,3 +357,65 @@ def test_model(artifacts, expected_type):
     returned_type = models_file._artifacts._type.model(artifacts=artifacts)
 
     assert returned_type == expected_type
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_type",
+    [
+        pytest.param(
+            _construct_simple_artifacts(type_="integer"),
+            "typing.Optional[int]",
+            id="simple plain",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", format_="binary"),
+            "typing.Optional[str]",
+            id="simple binary",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", format_="date"),
+            "typing.Optional[str]",
+            id="simple date",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(type_="string", format_="date-time"),
+            "typing.Optional[str]",
+            id="simple date-time",
+        ),
+        pytest.param(
+            _construct_json_artifacts(),
+            "typing.Any",
+            id="json",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(),
+            'typing.Optional["RefModelDict"]',
+            id="relationship many-to-one",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(),
+            'typing.Optional["RefModelDict"]',
+            id="relationship one-to-one",
+        ),
+        pytest.param(
+            _construct_one_to_many_relationship_artifacts(),
+            'typing.Sequence["RefModelDict"]',
+            id="relationship one-to-many",
+        ),
+        pytest.param(
+            _construct_many_to_many_relationship_artifacts(),
+            'typing.Sequence["RefModelDict"]',
+            id="relationship many-to-many",
+        ),
+    ],
+)
+@pytest.mark.models_file
+def test_dict(artifacts, expected_type):
+    """
+    GIVEN artifacts and expected type
+    WHEN typed_dict is called with the artifacts
+    THEN the given expected type is returned.
+    """
+    returned_type = models_file._artifacts._type.typed_dict(artifacts=artifacts)
+
+    assert returned_type == expected_type
