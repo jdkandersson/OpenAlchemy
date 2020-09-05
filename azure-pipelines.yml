@@ -128,7 +128,7 @@ jobs:
         displayName: "Install dependencies"
 
       - script: |
-          black --check open_alchemy tests examples
+          black --check open_alchemy tests
         displayName: "black"
   - job: "pydocstyle"
     pool:
