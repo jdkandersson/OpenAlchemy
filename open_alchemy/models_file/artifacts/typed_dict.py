@@ -71,6 +71,6 @@ def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnVal
     not_required = filter(lambda args: not args[1].required, artifacts.properties)
 
     return ReturnValue(
-        list(_calculate(artifacts=required)),
-        list(_calculate(artifacts=not_required)),
+        required=list(_calculate(artifacts=required)),
+        not_required=list(_calculate(artifacts=not_required)),
     )
