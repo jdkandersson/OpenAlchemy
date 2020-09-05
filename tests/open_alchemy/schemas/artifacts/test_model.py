@@ -110,8 +110,13 @@ GET_TESTS = [
         id="$ref description",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3"}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "description": "description 3"},
+            ]
+        },
+        {"RefSchema": {"description": "description 4"}},
         "description",
         "description 3",
         id="allOf description",
@@ -132,8 +137,13 @@ GET_TESTS = [
         id="$ref x-mixins",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin3", "module.Mixin4"]}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-mixins": ["module.Mixin3", "module.Mixin4"]},
+            ]
+        },
+        {"RefSchema": {"x-mixins": ["module.Mixin5"]}},
         "mixins",
         ["module.Mixin3", "module.Mixin4"],
         id="allOf x-mixins",
@@ -160,8 +170,13 @@ GET_TESTS = [
         id="$ref x-kwargs",
     ),
     pytest.param(
-        {"allOf": [{**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"}}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"}},
+            ]
+        },
+        {"RefSchema": {"x-kwargs": {"key_4": "value 4"}}},
         "kwargs",
         {"key_3": "value 3"},
         id="allOf x-kwargs",
@@ -195,15 +210,20 @@ GET_TESTS = [
     pytest.param(
         {
             "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
                 {
                     **DEFAULT_SCHEMA,
                     "x-composite-index": [
                         {"name": "index-1", "expressions": ["column_1"]}
                     ],
-                }
+                },
             ]
         },
-        {},
+        {
+            "RefSchema": {
+                "x-composite-index": [{"name": "index-2", "expressions": ["column_2"]}]
+            }
+        },
         "composite_index",
         [{"name": "index-1", "expressions": ["column_1"]}],
         id="allOf x-composite-index",
@@ -237,15 +257,20 @@ GET_TESTS = [
     pytest.param(
         {
             "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
                 {
                     **DEFAULT_SCHEMA,
                     "x-composite-unique": [
                         {"name": "unique-1", "columns": ["column_1"]}
                     ],
-                }
+                },
             ]
         },
-        {},
+        {
+            "RefSchema": {
+                "x-composite-unique": [{"name": "unique-2", "columns": ["column_2"]}]
+            }
+        },
         "composite_unique",
         [{"name": "unique-1", "columns": ["column_1"]}],
         id="allOf x-composite-unique",

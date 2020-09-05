@@ -51,22 +51,28 @@ def get(
     if inherits is True:
         parent = oa_helpers.inheritance.get_parent(schema=schema, schemas=schemas)
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
+    )
 
-    mixins = oa_helpers.peek.mixins(schema=schema, schemas=schemas)
+    mixins = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.mixins, schema=schema, schemas=schemas
+    )
 
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    kwargs = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.kwargs, schema=schema, schemas=schemas
+    )
 
     composite_index: typing.Optional[oa_types.IndexList] = None
-    composite_index_value = oa_helpers.peek.composite_index(
-        schema=schema, schemas=schemas
+    composite_index_value = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.composite_index, schema=schema, schemas=schemas
     )
     if composite_index_value is not None:
         composite_index = table_args.factory.map_index(spec=composite_index_value)
 
     composite_unique: typing.Optional[oa_types.UniqueList] = None
-    composite_unique_value = oa_helpers.peek.composite_unique(
-        schema=schema, schemas=schemas
+    composite_unique_value = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.composite_unique, schema=schema, schemas=schemas
     )
     if composite_unique_value is not None:
         composite_unique = table_args.factory.map_unique(spec=composite_unique_value)
