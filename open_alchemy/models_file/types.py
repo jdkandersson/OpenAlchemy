@@ -65,11 +65,11 @@ class ColumnSchemaArtifacts:
 class ColumnArtifacts:
     """Artifacts for the column portion of a model template."""
 
-    # The name of the column
+    # The name of the column based on the name of the property
     name: str
     # The type of the column
     type: str
-    # The description of the column
+    # The description of the column based on the description of the property
     description: typing.Optional[str] = None
 
 
