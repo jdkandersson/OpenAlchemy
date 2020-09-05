@@ -40,7 +40,7 @@ def _construct_simple_artifacts(
     )
 
 
-def _construct_json_artifacts():
+def _construct_json_artifacts(required=False):
     """Construct the artifacts for a json property."""
     return schemas_artifacts.types.JsonPropertyArtifacts(
         type=helpers.property_.type_.Type.JSON,
@@ -58,7 +58,7 @@ def _construct_json_artifacts():
             foreign_key_kwargs=None,
         ),
         schema={},  # type: ignore
-        required=False,
+        required=required,
         description=None,
     )
 
@@ -450,5 +450,53 @@ def test_arg_init(nullable, required, default, expected_type):
     )
 
     returned_type = models_file._artifacts._type.arg_init(artifacts=artifacts)
+
+    assert returned_type == expected_type
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_type",
+    [
+        pytest.param(
+            _construct_simple_artifacts(type_="integer", required=True),
+            "int",
+            id="plain",
+        ),
+        pytest.param(
+            _construct_json_artifacts(required=True),
+            "typing.Any",
+            id="json",
+        ),
+        pytest.param(
+            _construct_many_to_one_relationship_artifacts(required=True),
+            '"RefModelDict"',
+            id="relationship many-to-one",
+        ),
+        pytest.param(
+            _construct_one_to_one_relationship_artifacts(required=True),
+            '"RefModelDict"',
+            id="relationship one-to-one",
+        ),
+        pytest.param(
+            _construct_one_to_many_relationship_artifacts(required=True),
+            'typing.Sequence["RefModelDict"]',
+            id="relationship one-to-many",
+        ),
+        pytest.param(
+            _construct_many_to_many_relationship_artifacts(required=True),
+            'typing.Sequence["RefModelDict"]',
+            id="relationship many-to-many",
+        ),
+    ],
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_arg_from_dict(artifacts, expected_type):
+    """
+    GIVEN None format and required, False nullable and de_ref and given type
+    WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
+    THEN the given expected type is returned.
+    """
+    returned_type = models_file._artifacts._type.arg_from_dict(artifacts=artifacts)
 
     assert returned_type == expected_type

@@ -162,33 +162,26 @@ def arg_init(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str
     return model_type
 
 
-# def arg_from_dict(*, artifacts: types.ColumnSchemaArtifacts) -> str:
-#     """
-#     Calculate the Python type of a column for the arguments of from_dict.
+def arg_from_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str:
+    """
+    Calculate the Python type of a column for the arguments of from_dict.
 
-#     Args:
-#         artifacts: The artifacts from the schema of the column.
+    Args:
+        artifacts: The artifacts from the schema of the column.
 
-#     Returns:
-#         The equivalent Python type for the argument for the column.
+    Returns:
+        The equivalent Python type for the argument for the column.
 
-#     """
-#     # Calculate type the same way as for the model
-#     init_type = arg_init(artifacts=artifacts)
+    """
+    # Calculate type the same way as for the model
+    init_type = arg_init(artifacts=artifacts)
 
-#     # No more checks if JSON
-#     if artifacts.extension.json:
-#         return init_type
+    # No more checks if JSON
+    if artifacts.type == artifacts_helpers.property_.type_.Type.JSON:
+        return init_type
 
-#     # Modify the type in case of object or array
-#     if artifacts.open_api.type in {"object", "array"}:
-#         if artifacts.extension.de_ref is None:
-#             raise exceptions.MissingArgumentError(
-#                 "The schema for the property of an object reference must include "
-#                 "x-de-$ref with the name of the model being referenced."
-#             )
-#         init_type = init_type.replace(
-#             f"T{artifacts.extension.de_ref}", f"{artifacts.extension.de_ref}Dict"
-#         )
+    # Modify the type in case of relationship
+    if artifacts.type == artifacts_helpers.property_.type_.Type.RELATIONSHIP:
+        init_type = init_type.replace(f"T{artifacts.parent}", f"{artifacts.parent}Dict")
 
-#     return init_type
+    return init_type
