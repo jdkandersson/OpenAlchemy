@@ -14,8 +14,8 @@ from . import type_
 class ReturnValue(typing.NamedTuple):
     """The return value for the calculated artifacts."""
 
-    required: typing.List[types.ColumnArtifacts]
-    not_required: typing.List[types.ColumnArtifacts]
+    required: typing.List[types.ColumnArgArtifacts]
+    not_required: typing.List[types.ColumnArgArtifacts]
 
 
 def _get_read_only(
@@ -101,4 +101,24 @@ def _calculate(
             read_only=_get_read_only(artifacts=args[1]),
         ),
         no_backref_no_dict_ignore_properties,
+    )
+
+
+def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnValue:
+    """
+    Calculate the typed dict artifacts from model schema artifacts.
+
+    Args:
+        artifacts: The schema artifacts for a model.
+
+    Returns:
+        The artifacts for the typed dict.
+
+    """
+    required = filter(lambda args: args[1].required, artifacts.properties)
+    not_required = filter(lambda args: not args[1].required, artifacts.properties)
+
+    return ReturnValue(
+        required=list(_calculate(artifacts=required)),
+        not_required=list(_calculate(artifacts=not_required)),
     )

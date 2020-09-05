@@ -27,7 +27,7 @@ def _construct_model_artifacts(properties, backrefs):
 
 
 def _construct_simple_property_artifacts(
-    type_, format_, default, dict_ignore, read_only
+    type_, format_, default, dict_ignore, read_only, required
 ):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
@@ -52,7 +52,7 @@ def _construct_simple_property_artifacts(
             dict_ignore=dict_ignore,
         ),
         schema={},  # type: ignore
-        required=True,
+        required=required,
         description=None,
     )
 
@@ -129,13 +129,19 @@ MAP_DEAULT_TESTS = [
             default=None,
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         None,
         id="simple integer default None",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="integer", format_=None, default=1, dict_ignore=None, read_only=None
+            type_="integer",
+            format_=None,
+            default=1,
+            dict_ignore=None,
+            read_only=None,
+            required=True,
         ),
         1,
         id="simple integer format None default defined",
@@ -147,6 +153,7 @@ MAP_DEAULT_TESTS = [
             default=1,
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         1,
         id="simple integer format int32 default defined",
@@ -158,13 +165,19 @@ MAP_DEAULT_TESTS = [
             default=1,
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         1,
         id="simple integer format int64 default defined",
     ),
     pytest.param(
         _construct_simple_property_artifacts(
-            type_="number", format_=None, default=1.1, dict_ignore=None, read_only=None
+            type_="number",
+            format_=None,
+            default=1.1,
+            dict_ignore=None,
+            read_only=None,
+            required=True,
         ),
         1.1,
         id="simple number format None default defined",
@@ -176,6 +189,7 @@ MAP_DEAULT_TESTS = [
             default=1.1,
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         1.1,
         id="simple number format float default defined",
@@ -187,6 +201,7 @@ MAP_DEAULT_TESTS = [
             default='value "1',
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         '"value \\"1"',
         id="simple string format None default defined",
@@ -198,6 +213,7 @@ MAP_DEAULT_TESTS = [
             default='value "1',
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         '"value \\"1"',
         id="simple string format unsupported default defined",
@@ -209,6 +225,7 @@ MAP_DEAULT_TESTS = [
             default='value "1',
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         '"value \\"1"',
         id="simple string format password default defined",
@@ -220,6 +237,7 @@ MAP_DEAULT_TESTS = [
             default='value "1',
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         '"value \\"1"',
         id="simple string format byte default defined",
@@ -231,6 +249,7 @@ MAP_DEAULT_TESTS = [
             default='value "1',
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         'b"value \\"1"',
         id="simple string format binary default defined",
@@ -242,6 +261,7 @@ MAP_DEAULT_TESTS = [
             default="2000-01-01",
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         "datetime.date(2000, 1, 1)",
         id="simple string format date default defined",
@@ -253,6 +273,7 @@ MAP_DEAULT_TESTS = [
             default="2000-01-01T01:01:01",
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         "datetime.datetime(2000, 1, 1, 1, 1, 1)",
         id="simple string format date-time default defined",
@@ -264,6 +285,7 @@ MAP_DEAULT_TESTS = [
             default=True,
             dict_ignore=None,
             read_only=None,
+            required=True,
         ),
         True,
         id="simple boolean default defined",
@@ -300,6 +322,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=True,
                     read_only=None,
+                    required=True,
                 ),
             )
         ],
@@ -316,6 +339,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=None,
+                    required=True,
                 ),
             )
         ],
@@ -340,6 +364,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=False,
+                    required=True,
                 ),
             )
         ],
@@ -364,6 +389,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=True,
+                    required=True,
                 ),
             )
         ],
@@ -388,6 +414,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=None,
+                    required=True,
                 ),
             )
         ],
@@ -412,6 +439,7 @@ _CALCULATE_TESTS = [
                     default=1,
                     dict_ignore=None,
                     read_only=None,
+                    required=True,
                 ),
             )
         ],
@@ -462,6 +490,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=None,
+                    required=True,
                 ),
             ),
             (
@@ -472,6 +501,7 @@ _CALCULATE_TESTS = [
                     default=None,
                     dict_ignore=None,
                     read_only=None,
+                    required=True,
                 ),
             ),
         ],
@@ -508,3 +538,280 @@ def test__calculate(artifacts, expected_columns):
     returned_columns = models_file.artifacts._args._calculate(artifacts=artifacts)
 
     assert list(returned_columns) == expected_columns
+
+
+CALCULATE_TESTS = [
+    pytest.param(_construct_model_artifacts([], []), [], [], id="empty"),
+    pytest.param(
+        _construct_model_artifacts([], [("backref_1", _construct_backrefs_item())]),
+        [],
+        [],
+        id="single backrefs",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                )
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        [],
+        id="single required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                )
+            ],
+            [],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="typing.Optional[int]",
+                from_dict_type="typing.Optional[int]",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="single not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        type_="string",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+            models_file.types.ColumnArgArtifacts(
+                name="prop_2",
+                init_type="str",
+                from_dict_type="str",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        [],
+        id="multiple required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        type_="string",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_2",
+                init_type="str",
+                from_dict_type="str",
+                default=None,
+                read_only=None,
+            )
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="typing.Optional[int]",
+                from_dict_type="typing.Optional[int]",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="multiple first not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=True,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        type_="string",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="int",
+                from_dict_type="int",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_2",
+                init_type="typing.Optional[str]",
+                from_dict_type="typing.Optional[str]",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="multiple last not required",
+    ),
+    pytest.param(
+        _construct_model_artifacts(
+            [
+                (
+                    "prop_1",
+                    _construct_simple_property_artifacts(
+                        type_="integer",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                ),
+                (
+                    "prop_2",
+                    _construct_simple_property_artifacts(
+                        type_="string",
+                        format_=None,
+                        dict_ignore=False,
+                        default=None,
+                        read_only=None,
+                        required=False,
+                    ),
+                ),
+            ],
+            [],
+        ),
+        [],
+        [
+            models_file.types.ColumnArgArtifacts(
+                name="prop_1",
+                init_type="typing.Optional[int]",
+                from_dict_type="typing.Optional[int]",
+                default=None,
+                read_only=None,
+            ),
+            models_file.types.ColumnArgArtifacts(
+                name="prop_2",
+                init_type="typing.Optional[str]",
+                from_dict_type="typing.Optional[str]",
+                default=None,
+                read_only=None,
+            ),
+        ],
+        id="multiple not required",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "artifacts, expected_required_columns, expected_not_required_columns",
+    CALCULATE_TESTS,
+)
+@pytest.mark.models_file
+@pytest.mark.artifacts
+def test_calculate(artifacts, expected_required_columns, expected_not_required_columns):
+    """
+    GIVEN artifacts and expected required and not required columns
+    WHEN calculate is called with the artifacts
+    THEN the expected columns are returned.
+    """
+    returned_columns = models_file.artifacts._args.calculate(artifacts=artifacts)
+
+    assert returned_columns.required == expected_required_columns
+    assert returned_columns.not_required == expected_not_required_columns
