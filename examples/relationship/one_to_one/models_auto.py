@@ -35,11 +35,16 @@ class TPayInfo(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    account_number: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    account_number: "sqlalchemy.Column[typing.Optional[str]]"
     employee: 'sqlalchemy.Column[typing.Optional["TEmployee"]]'
 
-    def __init__(self, id: typing.Optional[int] = None, account_number: typing.Optional[str] = None, employee: typing.Optional["TEmployee"] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        account_number: typing.Optional[str] = None,
+        employee: typing.Optional["TEmployee"] = None,
+    ) -> None:
         """
         Construct.
 
@@ -52,7 +57,11 @@ class TPayInfo(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, account_number: typing.Optional[str] = None) -> "TPayInfo":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        account_number: typing.Optional[str] = None,
+    ) -> "TPayInfo":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -129,11 +138,16 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
     pay_info: 'sqlalchemy.Column[typing.Optional["TPayInfo"]]'
 
-    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, pay_info: typing.Optional["TPayInfo"] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        pay_info: typing.Optional["TPayInfo"] = None,
+    ) -> None:
         """
         Construct.
 
@@ -146,7 +160,12 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, pay_info: typing.Optional["PayInfoDict"] = None) -> "TEmployee":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        pay_info: typing.Optional["PayInfoDict"] = None,
+    ) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 

@@ -36,11 +36,16 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
-    type: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
 
-    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> None:
         """
         Construct.
 
@@ -53,7 +58,12 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> "TEmployee":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -132,12 +142,18 @@ class TManager(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    manager_data: 'sqlalchemy.Column[typing.Optional[str]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
-    type: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    manager_data: "sqlalchemy.Column[typing.Optional[str]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
 
-    def __init__(self, id: typing.Optional[int] = None, manager_data: typing.Optional[str] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        manager_data: typing.Optional[str] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> None:
         """
         Construct.
 
@@ -151,7 +167,13 @@ class TManager(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, manager_data: typing.Optional[str] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> "TManager":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        manager_data: typing.Optional[str] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> "TManager":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -231,12 +253,18 @@ class TEngineer(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    engineer_info: 'sqlalchemy.Column[typing.Optional[str]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
-    type: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    engineer_info: "sqlalchemy.Column[typing.Optional[str]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    type: "sqlalchemy.Column[typing.Optional[str]]"
 
-    def __init__(self, id: typing.Optional[int] = None, engineer_info: typing.Optional[str] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        engineer_info: typing.Optional[str] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> None:
         """
         Construct.
 
@@ -250,7 +278,13 @@ class TEngineer(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, engineer_info: typing.Optional[str] = None, name: typing.Optional[str] = None, type: typing.Optional[str] = None) -> "TEngineer":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        engineer_info: typing.Optional[str] = None,
+        name: typing.Optional[str] = None,
+        type: typing.Optional[str] = None,
+    ) -> "TEngineer":
         """
         Construct from a dictionary (eg. a POST payload).
 

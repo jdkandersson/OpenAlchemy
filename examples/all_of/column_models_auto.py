@@ -36,11 +36,16 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
-    salary: 'sqlalchemy.Column[typing.Optional[float]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
+    salary: "sqlalchemy.Column[typing.Optional[float]]"
 
-    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None, salary: typing.Optional[float] = None) -> None:
+    def __init__(
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        salary: typing.Optional[float] = None,
+    ) -> None:
         """
         Construct.
 
@@ -53,7 +58,12 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None, salary: typing.Optional[float] = None) -> "TEmployee":
+    def from_dict(
+        cls,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        salary: typing.Optional[float] = None,
+    ) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
@@ -128,10 +138,12 @@ class TDivision(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    name: 'sqlalchemy.Column[typing.Optional[str]]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
 
-    def __init__(self, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> None:
+    def __init__(
+        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> None:
         """
         Construct.
 
@@ -143,7 +155,9 @@ class TDivision(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None) -> "TDivision":
+    def from_dict(
+        cls, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+    ) -> "TDivision":
         """
         Construct from a dictionary (eg. a POST payload).
 

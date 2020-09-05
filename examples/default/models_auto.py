@@ -34,8 +34,8 @@ class TEmployee(typing.Protocol):
     query: orm.Query
 
     # Model properties
-    id: 'sqlalchemy.Column[typing.Optional[int]]'
-    name: 'sqlalchemy.Column[str]'
+    id: "sqlalchemy.Column[typing.Optional[int]]"
+    name: "sqlalchemy.Column[str]"
 
     def __init__(self, id: typing.Optional[int] = None, name: str = "Unknown") -> None:
         """
@@ -49,7 +49,9 @@ class TEmployee(typing.Protocol):
         ...
 
     @classmethod
-    def from_dict(cls, id: typing.Optional[int] = None, name: str = "Unknown") -> "TEmployee":
+    def from_dict(
+        cls, id: typing.Optional[int] = None, name: str = "Unknown"
+    ) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).
 
