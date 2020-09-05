@@ -1,5 +1,6 @@
 """Functions to expose iterables for schemas."""
 
+import functools
 import typing
 
 from ... import exceptions
@@ -108,6 +109,17 @@ def _calculate_skip_name(
     return None
 
 
+def _filter_duplicates(seen_keys: typing.Set[str], args) -> bool:
+    """Remove duplicate values."""
+    key, _ = args
+
+    if key in seen_keys:
+        return False
+
+    seen_keys.add(key)
+    return True
+
+
 def properties_items(
     *,
     schema: types.Schema,
@@ -136,6 +148,8 @@ def properties_items(
         An iterator with all properties of a schema.
 
     """
+    init__filter_duplicates = functools.partial(_filter_duplicates, set())
+
     properties_values_iterator = properties_values(
         schema=schema,
         schemas=schemas,
@@ -145,7 +159,7 @@ def properties_items(
     for properties_value in properties_values_iterator:
         if not isinstance(properties_value, dict):
             continue
-        yield from properties_value.items()
+        yield from filter(init__filter_duplicates, properties_value.items())
 
 
 def properties_values(
