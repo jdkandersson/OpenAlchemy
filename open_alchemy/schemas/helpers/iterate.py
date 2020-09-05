@@ -148,7 +148,7 @@ def properties_items(
         An iterator with all properties of a schema.
 
     """
-    init__filter_duplicates = functools.partial(_filter_duplicates, set())
+    init_filter_duplicates = functools.partial(_filter_duplicates, set())
 
     properties_values_iterator = properties_values(
         schema=schema,
@@ -159,7 +159,7 @@ def properties_items(
     for properties_value in properties_values_iterator:
         if not isinstance(properties_value, dict):
             continue
-        yield from filter(init__filter_duplicates, properties_value.items())
+        yield from filter(init_filter_duplicates, properties_value.items())
 
 
 def properties_values(
@@ -375,6 +375,8 @@ def backrefs_items(
         An iterator with all backrefs of a schema.
 
     """
+    init_filter_duplicates = functools.partial(_filter_duplicates, set())
+
     backrefs_values_iterator = backrefs_values(
         schema=schema,
         schemas=schemas,
@@ -382,7 +384,7 @@ def backrefs_items(
     for backrefs_value in backrefs_values_iterator:
         if not isinstance(backrefs_value, dict):
             continue
-        yield from backrefs_value.items()
+        yield from filter(init_filter_duplicates, backrefs_value.items())
 
 
 def backrefs_values(

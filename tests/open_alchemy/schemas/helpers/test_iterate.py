@@ -789,6 +789,17 @@ def test_required_items_single(schema, schemas, expected_values):
             [("prop_1", "value 1")],
             id="allOf $ref",
         ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-backrefs": {"prop_1": "value 1"}},
+                    {"x-backrefs": {"prop_1": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1")],
+            id="allOf duplicates",
+        ),
     ],
 )
 @pytest.mark.schemas
