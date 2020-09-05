@@ -67,7 +67,7 @@ def test_calculate_name():
     artifacts = _construct_model_artifacts([], None)
     name = "Model"
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name=name
     )
 
@@ -93,7 +93,7 @@ def test_calculate_description(artifacts, expected_description):
     """
     name = "Model"
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name=name
     )
 
@@ -115,7 +115,7 @@ def test_calculate_parent():
     """
     artifacts = _construct_model_artifacts([], None)
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -140,7 +140,7 @@ def test_calculate_column():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -180,7 +180,7 @@ def test_calculate_column_empty(artifacts, expected_empty):
     WHEN calculate is called with the artifacts
     THEN the given expected columns are added to the artifacts.
     """
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -209,7 +209,7 @@ def test_calculate_arg():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -255,7 +255,7 @@ def test_calculate_typed_dict_column():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -337,7 +337,7 @@ def test_calculate_typed_dict_column_empty(
     WHEN calculate is called with the artifacts
     THEN the typed dict required and not required empty are as expected.
     """
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -432,7 +432,7 @@ def test_calculate_td_names(
     THEN the given expected td required and not required names are added to the
         artifacts.
     """
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 
@@ -530,7 +530,7 @@ def test_calculate_td_parent(
     THEN the given expected td required and not required parents are added to the
         artifacts.
     """
-    returned_artifacts = models_file._artifacts.from_artifacts(
+    returned_artifacts = models_file._artifacts.calculate(
         artifacts=artifacts, name="Model"
     )
 

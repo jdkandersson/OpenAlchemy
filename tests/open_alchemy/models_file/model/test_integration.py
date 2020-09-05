@@ -18,10 +18,10 @@ if sys.version_info[1] < 8:
 
 
 @pytest.mark.models_file
-def test_from_artifacts():
+def test_generate():
     """
     GIVEN artifacts and name
-    WHEN from_artifacts is called with the artifacts and name
+    WHEN generate is called with the artifacts and name
     THEN the model source code is returned.
     """
     artifacts = schemas_artifacts.types.ModelArtifacts(
@@ -66,7 +66,7 @@ def test_from_artifacts():
         ],
     )
 
-    source = models_file._model.from_artifacts(artifacts=artifacts, name="Model")
+    source = models_file._model.generate(artifacts=artifacts, name="Model")
 
     expected_source = f'''
 

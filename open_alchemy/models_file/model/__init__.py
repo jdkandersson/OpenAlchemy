@@ -9,9 +9,7 @@ from .. import artifacts as models_file_artifacts
 from . import source as _source
 
 
-def from_artifacts(
-    *, artifacts: schemas.artifacts.types.ModelArtifacts, name: str
-) -> str:
+def generate(*, artifacts: schemas.artifacts.types.ModelArtifacts, name: str) -> str:
     """
     Generate the class source from the schema.
 
@@ -23,7 +21,5 @@ def from_artifacts(
         The source code for the model class.
 
     """
-    model_artifacts = models_file_artifacts.from_artifacts(
-        artifacts=artifacts, name=name
-    )
+    model_artifacts = models_file_artifacts.calculate(artifacts=artifacts, name=name)
     return _source.generate(artifacts=model_artifacts)

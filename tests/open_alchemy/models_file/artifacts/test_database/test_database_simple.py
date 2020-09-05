@@ -13,10 +13,6 @@ import open_alchemy
 from open_alchemy import models_file
 from open_alchemy import schemas
 
-_ColSchemaArt = models_file.types.ColumnSchemaArtifacts
-_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
-_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
-
 
 @pytest.mark.parametrize(
     "type_, format_, nullable, required, generated, value",
@@ -324,7 +320,7 @@ def test_model_database_type_simple(
     assert len(schemas_artifacts) == 1
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2
@@ -397,7 +393,7 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     assert len(schemas_artifacts) == 1
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2

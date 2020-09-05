@@ -12,7 +12,7 @@ from . import type_ as _type
 from . import typed_dict as _typed_dict
 
 
-def from_artifacts(
+def calculate(
     *, artifacts: schemas.artifacts.types.ModelArtifacts, name: str
 ) -> types.ModelArtifacts:
     """

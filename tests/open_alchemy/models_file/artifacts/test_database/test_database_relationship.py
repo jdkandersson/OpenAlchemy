@@ -11,10 +11,6 @@ import open_alchemy
 from open_alchemy import models_file
 from open_alchemy import schemas
 
-_ColSchemaArt = models_file.types.ColumnSchemaArtifacts
-_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
-_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
-
 
 @pytest.mark.models_file
 def test_model_database_type_many_to_one(engine, sessionmaker):
@@ -62,7 +58,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
-    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+    ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
     assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
@@ -71,7 +67,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     calculated_backref_type_str = tables_column_artifacts.type
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
@@ -178,7 +174,7 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
@@ -247,7 +243,7 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
-    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+    ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
     assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
@@ -256,7 +252,7 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     calculated_backref_type_str = table_column_artifacts.type
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
@@ -357,7 +353,7 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
-    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+    ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
     assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
@@ -366,7 +362,7 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     calculated_backref_type_str = table_column_artifacts.type
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
@@ -457,7 +453,7 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
-    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+    ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
     assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
@@ -466,7 +462,7 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     calculated_backref_type_str = table_column_artifacts.type
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
@@ -572,7 +568,7 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     assert len(schemas_artifacts) == 2
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
-    ref_model_models_artifacts = models_file._artifacts.from_artifacts(
+    ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
     assert len(ref_model_models_artifacts.sqlalchemy.columns) == 3
@@ -581,7 +577,7 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     calculated_backref_type_str = tables_column_artifacts.type
     model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
     assert model_schemas_name == "Table"
-    model_models_artifacts = models_file._artifacts.from_artifacts(
+    model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 3
