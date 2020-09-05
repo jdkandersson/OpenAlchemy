@@ -69,6 +69,68 @@ def test_many_to_one(engine, sessionmaker):
 
 
 @pytest.mark.integration
+def test_many_to_one_backref(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with a many to one object relationship
+    WHEN schema is created, values inserted in both tables and queried
+    THEN the data is returned as it was inserted.
+    """
+    # Defining specification
+    spec = {
+        "components": {
+            "schemas": {
+                "RefTable": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                    },
+                    "x-tablename": "ref_table",
+                    "x-backref": "tables",
+                    "type": "object",
+                },
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "name": {"type": "string"},
+                        "ref_table": {"$ref": "#/components/schemas/RefTable"},
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                },
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+    ref_model = model_factory(name="RefTable")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating instance of model and ref_model
+    ref_model_instance = ref_model(
+        id=11, name="ref table name 1", tables=[model(id=12, name="table name 1")]
+    )
+    session = sessionmaker()
+    session.add(ref_model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.id == 12
+    assert queried_model.name == "table name 1"
+    assert queried_model.ref_table_id == 11
+    assert queried_model.ref_table.id == 11
+    assert queried_model.ref_table.name == "ref table name 1"
+    queried_ref_model = session.query(ref_model).first()
+    assert queried_ref_model.id == 11
+    assert queried_ref_model.name == "ref table name 1"
+    assert len(queried_ref_model.tables) == 1
+    assert queried_ref_model.tables[0].id == 12
+
+
+@pytest.mark.integration
 def test_many_to_one_relationship_fk(engine, sessionmaker):
     """
     GIVEN specification with a schema with a many to one object relationship with a

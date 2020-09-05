@@ -103,11 +103,12 @@ class ArgArtifacts:
 class SQLAlchemyModelArtifacts:
     """Artifacts for the SQLAlchemy model."""
 
-    # The name of the model
+    # The name of the model based on the name of the schema
     name: str
-    # Whether the columns are empty
+    # Whether the columns are empty based on whether any properties are defined on the
+    # schema and any back references
     empty: bool
-    # The columns for the model
+    # The columns for the model based on the properties of the schema
     columns: typing.List[ColumnArtifacts]
     # The artifacts for the arguments for __init__ and from_dict
     arg: ArgArtifacts
