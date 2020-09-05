@@ -81,7 +81,7 @@ def init_model_factory(
 
     if models_filename is not None:
         schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
-            schemas=schemas, stay_within_model=True
+            schemas=schemas, stay_within_model=False
         )
         models_file_contents = _models_file.from_schemas_artifacts(
             artifacts=schemas_artifacts
