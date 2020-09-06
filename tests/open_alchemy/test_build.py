@@ -335,3 +335,114 @@ def test_dump(tmp_path):
     assert expected_init_path.is_file()
     with open(expected_init_path) as in_file:
         assert in_file.read() == init
+
+
+@pytest.mark.build
+def test_dump_path_not_exists(tmp_path):
+    """
+    GIVEN path that doesn't exist
+    WHEN dump is called with the path
+    THEN no exceptions are raised.
+    """
+    dist_path = tmp_path / "dist"
+
+    name = "name 1"
+    setup = "setup file"
+    manifest = "manifest file"
+    spec = "spec file"
+    init = "init file"
+
+    build.dump(
+        path=str(dist_path),
+        name=name,
+        setup=setup,
+        manifest=manifest,
+        spec=spec,
+        init=init,
+    )
+
+
+@pytest.mark.build
+def test_dump_path_is_file(tmp_path):
+    """
+    GIVEN path that is a file
+    WHEN dump is called with the path
+    THEN BuildError is raised.
+    """
+    dist_path = tmp_path / "dist"
+    with open(dist_path, "w") as out_file:
+        out_file.write("")
+
+    name = "name 1"
+    setup = "setup file"
+    manifest = "manifest file"
+    spec = "spec file"
+    init = "init file"
+
+    with pytest.raises(exceptions.BuildError):
+        build.dump(
+            path=str(dist_path),
+            name=name,
+            setup=setup,
+            manifest=manifest,
+            spec=spec,
+            init=init,
+        )
+
+
+@pytest.mark.build
+def test_dump_path_name_exists(tmp_path):
+    """
+    GIVEN path and name that does exist
+    WHEN dump is called with the path
+    THEN no exceptions are raised.
+    """
+    dist_path = tmp_path / "dist"
+    dist_path.mkdir()
+
+    name = "name 1"
+    setup = "setup file"
+    manifest = "manifest file"
+    spec = "spec file"
+    init = "init file"
+
+    (dist_path / name).mkdir()
+
+    build.dump(
+        path=str(dist_path),
+        name=name,
+        setup=setup,
+        manifest=manifest,
+        spec=spec,
+        init=init,
+    )
+
+
+@pytest.mark.build
+def test_dump_path_name_is_file(tmp_path):
+    """
+    GIVEN path and name that points to a file
+    WHEN dump is called with the path
+    THEN BuildError is raised.
+    """
+    dist_path = tmp_path / "dist"
+    dist_path.mkdir()
+
+    name = "name 1"
+    setup = "setup file"
+    manifest = "manifest file"
+    spec = "spec file"
+    init = "init file"
+
+    with open(dist_path / name, "w") as out_file:
+        out_file.write("")
+
+    with pytest.raises(exceptions.BuildError):
+        build.dump(
+            path=str(dist_path),
+            name=name,
+            setup=setup,
+            manifest=manifest,
+            spec=spec,
+            init=init,
+        )

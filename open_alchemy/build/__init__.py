@@ -176,13 +176,21 @@ def dump(
 
     """
     pathlib_path = pathlib.Path(path)
+    if pathlib_path.is_file():
+        raise exceptions.BuildError(f"{pathlib_path} is a file.")
+    if not pathlib_path.is_dir():
+        pathlib_path.mkdir()
+
     with open(pathlib_path / "setup.py", "w") as out_file:
         out_file.write(setup)
     with open(pathlib_path / "MANIFEST.in", "w") as out_file:
         out_file.write(manifest)
 
     pathlib_package_path = pathlib_path / name
-    pathlib_package_path.mkdir()
+    if pathlib_package_path.is_file():
+        raise exceptions.BuildError(f"{pathlib_package_path} is a file.")
+    if not pathlib_package_path.is_dir():
+        pathlib_package_path.mkdir()
 
     with open(pathlib_package_path / "spec.json", "w") as out_file:
         out_file.write(spec)
