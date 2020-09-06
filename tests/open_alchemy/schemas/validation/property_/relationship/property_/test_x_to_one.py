@@ -40,7 +40,7 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema :: The value of $ref must ba a string. ",
+            "malformed schema :: The value of $ref must be a string. ",
         ),
         id="$ref not string",
     ),

@@ -69,3 +69,5 @@ cd examples/json
 python models.py
 python models_traditional.py
 cd -
+
+black examples

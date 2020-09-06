@@ -9,8 +9,13 @@
 *.pyc
 *.pyo
 build/
+!open_alchemy/build/
+!tests/open_alchemy/build/
 dist/
+!examples/**/dist/
+examples/**/dist/dist
 htmlcov/
 venv
+venv36
 coverage.xml
 docs/source/_*

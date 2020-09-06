@@ -52,6 +52,9 @@ friendly.
 :samp:`init_yaml`
 ^^^^^^^^^^^^^^^^^
 
+Used to initialize the SQLAlchemy models based on a YAML OpenAPI specification
+which has been extended with any relevant OpenAlchemy extension properties.
+
 The :samp:`init_yaml` interface requires the :samp:`PyYAML` library to be
 installed. The :samp:`init_yaml` interface accepts the following arguments:
 
@@ -112,6 +115,36 @@ does not construct a declarative base. It accepts the following parameters:
 
 The return value is the :samp:`model_factory` as defined as part of the return
 value of :ref:`init-yaml`.
+
+.. _build-yaml:
+
+:samp:`build_yaml`
+^^^^^^^^^^^^^^^^^^
+
+Used to build a package with the SQLAlchemy models (including type hints) based
+on a YAML OpenAPI specification which has been extended with any relevant
+OpenAlchemy extension properties.
+
+The :samp:`build_yaml` interface requires the :samp:`PyYAML` library to be
+installed. The :samp:`build_yaml` interface accepts the following arguments:
+
+* :samp:`spec_filename`: The name of the OpenAPI specification file. The file
+  must by a YAML file.
+* :samp:`package_name`: The name of the package to be produced. This will be
+
+  1. the name of the package if it is uploaded to a package index and
+  2. the name that is used to import the models after they have been installed).
+
+* :samp:`dist_path`: The directory to output the package files.
+
+.. _build-json:
+
+:samp:`build_json`
+^^^^^^^^^^^^^^^^^^
+
+The :samp:`build_json` interface is similar to the :ref:`build-yaml` interface
+except that :samp:`spec_filename` must be a JSON file and :samp:`PyYAML` is not
+a required dependency.
 
 .. _models-file:
 

@@ -608,3 +608,37 @@ def test_mixins(schema, schemas, expected_mixins):
     mixins = helpers.peek.mixins(schema=schema, schemas=schemas)
 
     assert mixins == expected_mixins
+
+
+@pytest.mark.helper
+def test_dict_ignore_wrong_type():
+    """
+    GIVEN schema with dict_ignore defined as a string
+    WHEN dict_ignore is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-dict-ignore": "True"}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.dict_ignore(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_dict_ignore",
+    [
+        ({}, None),
+        ({"x-dict-ignore": True}, True),
+        ({"x-dict-ignore": False}, False),
+    ],
+    ids=["missing", "true", "false"],
+)
+@pytest.mark.helper
+def test_dict_ignore(schema, expected_dict_ignore):
+    """
+    GIVEN schema and expected dict_ignore
+    WHEN dict_ignore is called with the schema
+    THEN the expected dict_ignore is returned.
+    """
+    returned_dict_ignore = helpers.peek.dict_ignore(schema=schema, schemas={})
+
+    assert returned_dict_ignore == expected_dict_ignore

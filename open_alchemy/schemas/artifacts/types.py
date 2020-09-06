@@ -131,6 +131,8 @@ class ExtensionSimplePropertyArtifacts:
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
 
+    dict_ignore: typing.Optional[bool]
+
     def to_dict(self) -> ExtensionSimplePropertyTypedDict:
         """Convert to dictionary."""
         return_dict: ExtensionSimplePropertyTypedDict = {
@@ -686,13 +688,13 @@ TAnyPropertyArtifacts = typing.Union[
 ]
 
 
-class TProperty(types.TypedDict, total=True):
+class PropertyValue(types.TypedDict, total=True):
     """Artifacts for a property."""
 
     artifacts: TAnyPropertyTypedDict
 
 
-TProperties = typing.Dict[str, TProperty]
+PropertiesValue = typing.Dict[str, PropertyValue]
 
 
 class _ModelTypedDictBase(types.TypedDict, total=False):
@@ -717,21 +719,28 @@ class ModelTypedDict(_ModelTypedDictBase, total=True):
     tablename: str
 
 
-class _TModelBase(types.TypedDict, total=False):
+class _ModelValueBase(types.TypedDict, total=False):
     """Record artifacts of a model."""
 
-    properties: TProperties
+    properties: PropertiesValue
 
 
-class TModel(_TModelBase, total=True):
+class ModelValue(_ModelValueBase, total=True):
     """Record artifacts of a model."""
 
     artifacts: ModelTypedDict
 
 
+class ModelBackrefArtifacts(typing.NamedTuple):
+    """Artifacts for model back references."""
+
+    type: BackrefSubType
+    child: str
+
+
 @dataclasses.dataclass
-class ModelArtifacts:
-    """Information about a model."""
+class ModelExPropertiesArtifacts:
+    """Information about a model excluding its properties."""
 
     tablename: str
     inherits: typing.Optional[bool]
@@ -745,6 +754,8 @@ class ModelArtifacts:
 
     composite_index: typing.Optional[types.IndexList]
     composite_unique: typing.Optional[types.UniqueList]
+
+    backrefs: typing.List[typing.Tuple[str, ModelBackrefArtifacts]]
 
     def to_dict(self) -> ModelTypedDict:
         """Convert to dictionary."""
@@ -779,10 +790,20 @@ class ModelArtifacts:
         return return_dict
 
 
-TModels = typing.Dict[str, TModel]
+@dataclasses.dataclass
+class ModelArtifacts(ModelExPropertiesArtifacts):
+    """Full information about a model."""
+
+    properties: typing.List[typing.Tuple[str, TAnyPropertyArtifacts]]
 
 
-class TSpec(types.TypedDict, total=False):
+ModelsValue = typing.Dict[str, ModelValue]
+
+
+class SpecValue(types.TypedDict, total=False):
     """Record artifacts for a specification."""
 
-    models: TModels
+    models: ModelsValue
+
+
+ModelsModelArtifacts = typing.List[typing.Tuple[str, ModelArtifacts]]

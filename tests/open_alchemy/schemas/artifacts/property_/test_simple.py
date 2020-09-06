@@ -77,10 +77,15 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "type": "type 3"}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "type": "type 4"},
+            ]
+        },
+        {"RefSchema": {"type": "type 4"}},
         "open_api.type",
-        "type 3",
+        "type 4",
         id="allOf type",
     ),
     pytest.param(
@@ -104,11 +109,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "format": "format 3"}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "format": "format 3"},
+            ]
+        },
+        {"RefSchema": {"format": "type 4"}},
         "open_api.format",
         "format 3",
-        id="allOf format",
+        id="allOf format prefer local",
     ),
     pytest.param(
         None,
@@ -136,11 +146,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "maxLength": 3}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "maxLength": 3},
+            ]
+        },
+        {"RefSchema": {"maxLength": 4}},
         "open_api.max_length",
         3,
-        id="allOf maxLength",
+        id="allOf maxLength prefer local",
     ),
     pytest.param(
         None, {**DEFAULT_SCHEMA}, {}, "open_api.nullable", None, id="nullable undefined"
@@ -163,11 +178,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "nullable": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "nullable": False},
+            ]
+        },
+        {"RefSchema": {"nullable": True}},
         "open_api.nullable",
-        None,
-        id="allOf nullable",
+        False,
+        id="allOf nullable prefer local",
     ),
     pytest.param(
         None,
@@ -195,11 +215,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "description": "description 3"}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "description": "description 3"},
+            ]
+        },
+        {"RefSchema": {"description": "description 4"}},
         "description",
         "description 3",
-        id="allOf description",
+        id="allOf description prefer local",
     ),
     pytest.param(
         None,
@@ -227,11 +252,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "type": "integer", "default": 3}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "type": "integer", "default": 3},
+            ]
+        },
+        {"RefSchema": {"default": 4}},
         "open_api.default",
         3,
-        id="allOf default",
+        id="allOf default prefer local",
     ),
     pytest.param(
         None,
@@ -259,11 +289,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "readOnly": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "readOnly": False},
+            ]
+        },
+        {"RefSchema": {"readOnly": True}},
         "open_api.read_only",
-        None,
-        id="allOf readOnly",
+        False,
+        id="allOf readOnly prefer local",
     ),
     pytest.param(
         None,
@@ -291,11 +326,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "writeOnly": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "writeOnly": False},
+            ]
+        },
+        {"RefSchema": {"writeOnly": True}},
         "open_api.write_only",
-        None,
-        id="allOf writeOnly",
+        False,
+        id="allOf writeOnly prefer local",
     ),
     pytest.param(
         None,
@@ -323,11 +363,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-primary-key": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-primary-key": False},
+            ]
+        },
+        {"RefSchema": {"x-primary-key": True}},
         "extension.primary_key",
         False,
-        id="allOf x-primary-key",
+        id="allOf x-primary-key prefer local",
     ),
     pytest.param(
         None,
@@ -355,11 +400,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-autoincrement": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-autoincrement": False},
+            ]
+        },
+        {"RefSchema": {"x-autoincrement": True}},
         "extension.autoincrement",
-        None,
-        id="allOf x-autoincrement",
+        False,
+        id="allOf x-autoincrement prefer local",
     ),
     pytest.param(
         None, {**DEFAULT_SCHEMA}, {}, "extension.index", None, id="x-index undefined"
@@ -382,11 +432,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-index": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-index": False},
+            ]
+        },
+        {"RefSchema": {"x-index": True}},
         "extension.index",
-        None,
-        id="allOf x-index",
+        False,
+        id="allOf x-index prefer local",
     ),
     pytest.param(
         None, {**DEFAULT_SCHEMA}, {}, "extension.unique", None, id="x-unique undefined"
@@ -409,11 +464,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-unique": None}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-unique": False},
+            ]
+        },
+        {"RefSchema": {"x-unique": True}},
         "extension.unique",
-        None,
-        id="allOf x-unique",
+        False,
+        id="allOf x-unique prefer local",
     ),
     pytest.param(
         None,
@@ -441,11 +501,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-foreign-key": "foreign.key3"}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-foreign-key": "foreign.key3"},
+            ]
+        },
+        {"RefSchema": {"x-foreign-key": "foreign.key4"}},
         "extension.foreign_key",
         "foreign.key3",
-        id="allOf x-foreign-key",
+        id="allOf x-foreign-key prefer local",
     ),
     pytest.param(
         None,
@@ -473,11 +538,16 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"}}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-kwargs": {"key_3": "value 3"}},
+            ]
+        },
+        {"RefSchema": {"x-kwargs": {"key_4": "value 4"}}},
         "extension.kwargs",
         {"key_3": "value 3"},
-        id="allOf x-kwargs",
+        id="allOf x-kwargs prefer local",
     ),
     pytest.param(
         None,
@@ -505,11 +575,48 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"allOf": [{**DEFAULT_SCHEMA, "x-foreign-key-kwargs": {"key_3": "value 3"}}]},
-        {},
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "x-foreign-key-kwargs": {"key_3": "value 3"}},
+            ]
+        },
+        {"RefSchema": {"x-foreign-key-kwargs": {"key_4": "value 4"}}},
         "extension.foreign_key_kwargs",
         {"key_3": "value 3"},
         id="allOf x-foreign-key-kwargs",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA},
+        {},
+        "extension.dict_ignore",
+        None,
+        id="x-dict-ignore undefined",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        {},
+        "extension.dict_ignore",
+        True,
+        id="x-dict-ignore",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {"RefSchema": {**DEFAULT_SCHEMA, "x-dict-ignore": False}},
+        "extension.dict_ignore",
+        False,
+        id="$ref x-dict-ignore",
+    ),
+    pytest.param(
+        None,
+        {"allOf": [{**DEFAULT_SCHEMA, "x-dict-ignore": None}]},
+        {},
+        "extension.dict_ignore",
+        None,
+        id="allOf x-dict-ignore",
     ),
 ]
 

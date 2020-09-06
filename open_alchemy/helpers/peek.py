@@ -725,6 +725,32 @@ def mixins(
     return value
 
 
+def dict_ignore(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[bool]:
+    """
+    Retrieve the x-dict-ignore property from a property schema.
+
+    Raises MalformedSchemaError if the x-dict-ignore value is not a boolean.
+
+    Args:
+        schema: The schema to get the x-dict-ignore from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-dict-ignore value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-dict-ignore")
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise exceptions.MalformedSchemaError(
+            "A x-dict-ignore value must be of type boolean."
+        )
+    return value
+
+
 def peek_key(
     *,
     schema: types.Schema,
@@ -775,7 +801,7 @@ def _peek_key(
     if ref_value is not None:
         # Check that ref is string
         if not isinstance(ref_value, str):
-            raise exceptions.MalformedSchemaError("The value of $ref must ba a string.")
+            raise exceptions.MalformedSchemaError("The value of $ref must be a string.")
         # Check for circular $ref
         if ref_value in seen_refs:
             raise exceptions.MalformedSchemaError("Circular reference detected.")

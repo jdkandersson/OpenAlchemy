@@ -53,6 +53,7 @@ from open_alchemy.schemas import helpers
                 foreign_key=None,
                 kwargs=None,
                 foreign_key_kwargs=None,
+                dict_ignore=None,
             ),
             {"primary_key": True},
             id="extension opt values None",
@@ -66,6 +67,7 @@ from open_alchemy.schemas import helpers
                 foreign_key="foreign.key",
                 kwargs={"key_1": "value 1"},
                 foreign_key_kwargs={"key_2": "value 2"},
+                dict_ignore=True,
             ),
             {
                 "primary_key": True,
@@ -99,6 +101,7 @@ from open_alchemy.schemas import helpers
                     foreign_key=None,
                     kwargs=None,
                     foreign_key_kwargs=None,
+                    dict_ignore=None,
                 ),
                 schema={"type": "integer"},
                 required=True,
@@ -133,6 +136,7 @@ from open_alchemy.schemas import helpers
                     foreign_key=None,
                     kwargs=None,
                     foreign_key_kwargs=None,
+                    dict_ignore=None,
                 ),
                 schema={"type": "integer"},
                 required=True,
@@ -609,7 +613,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
     "artifacts_value, expected_dict",
     [
         pytest.param(
-            artifacts.types.ModelArtifacts(
+            artifacts.types.ModelExPropertiesArtifacts(
                 tablename="table_1",
                 inherits=None,
                 parent=None,
@@ -618,12 +622,13 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
                 kwargs=None,
                 composite_index=None,
                 composite_unique=None,
+                backrefs=[],
             ),
             {"tablename": "table_1"},
             id="opt values None",
         ),
         pytest.param(
-            artifacts.types.ModelArtifacts(
+            artifacts.types.ModelExPropertiesArtifacts(
                 tablename="table_1",
                 inherits=True,
                 parent="Parent1",
@@ -632,6 +637,7 @@ def test_backref_property_artifacts(artifacts_value, expected_dict):
                 kwargs={"key": "value"},
                 composite_index=[{"expressions": ["column_1"]}],
                 composite_unique=[{"columns": ["column_1"]}],
+                backrefs=[],
             ),
             {
                 "tablename": "table_1",

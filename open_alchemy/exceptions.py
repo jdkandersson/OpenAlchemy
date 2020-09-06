@@ -66,3 +66,7 @@ class MalformedModelDictionaryError(BaseError, ValueError):
 
 class InheritanceError(BaseError):
     """Raised when an error related to inheritance occurs."""
+
+
+class BuildError(BaseError):
+    """Raised when an error related to build occurs."""

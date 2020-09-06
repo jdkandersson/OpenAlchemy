@@ -820,9 +820,9 @@ GET_TESTS = [
             }
         },
         "nullable",
-        None,
+        True,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
-        id="nullable many-to-one skip_ref",
+        id="nullable many-to-one on reference",
     ),
     pytest.param(
         None,

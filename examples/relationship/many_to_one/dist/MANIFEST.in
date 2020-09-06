@@ -1,0 +1,2 @@
+recursive-include open_alchemy_relationship_many_to_one_models *.json
+remove .*

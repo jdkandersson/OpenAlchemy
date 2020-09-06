@@ -1,0 +1,13 @@
+import setuptools
+
+setuptools.setup(
+    name="{{ name }}",
+    version="{{ version }}",
+    packages=setuptools.find_packages(),
+    python_requires=">=3.6",
+    install_requires=[
+        "OpenAlchemy",
+    ],
+    include_package_data=True,
+)
+

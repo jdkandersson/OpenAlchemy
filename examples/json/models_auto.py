@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
@@ -20,7 +22,7 @@ class EmployeeDict(_EmployeeDictBase, total=False):
     """TypedDict for properties that are not required."""
 
     id: int
-    data: typing.Optional[typing.Dict]
+    data: typing.Any
 
 
 class TEmployee(typing.Protocol):
@@ -46,14 +48,14 @@ class TEmployee(typing.Protocol):
     id: "sqlalchemy.Column[int]"
     name: "sqlalchemy.Column[str]"
     division: "sqlalchemy.Column[str]"
-    data: "sqlalchemy.Column[typing.Optional[typing.Dict]]"
+    data: "sqlalchemy.Column[typing.Any]"
 
     def __init__(
         self,
         name: str,
         division: str,
         id: typing.Optional[int] = None,
-        data: typing.Optional[typing.Dict] = None,
+        data: typing.Optional[typing.Any] = None,
     ) -> None:
         """
         Construct.
@@ -73,7 +75,7 @@ class TEmployee(typing.Protocol):
         name: str,
         division: str,
         id: typing.Optional[int] = None,
-        data: typing.Optional[typing.Dict] = None,
+        data: typing.Optional[typing.Any] = None,
     ) -> "TEmployee":
         """
         Construct from a dictionary (eg. a POST payload).

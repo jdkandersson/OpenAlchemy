@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class DivisionDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
@@ -40,7 +42,10 @@ class TDivision(typing.Protocol):
     employees: 'sqlalchemy.Column[typing.Sequence["TEmployee"]]'
 
     def __init__(
-        self, id: typing.Optional[int] = None, name: typing.Optional[str] = None
+        self,
+        id: typing.Optional[int] = None,
+        name: typing.Optional[str] = None,
+        employees: typing.Optional[typing.Sequence["TEmployee"]] = None,
     ) -> None:
         """
         Construct.

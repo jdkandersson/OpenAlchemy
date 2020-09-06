@@ -133,11 +133,11 @@ def _get_foreign_key_property(
 
 
 def _get_nullable(
-    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[bool]:
     """Retrieve the nullable value from a schema."""
-    return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="nullable", skip_ref=parent
+    return oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
     )
 
 
@@ -191,7 +191,7 @@ def _get_many_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        nullable=_get_nullable(parent=parent, schema=schema, schemas=schemas),
+        nullable=_get_nullable(schema=schema, schemas=schemas),
     )
 
 
@@ -245,7 +245,7 @@ def _get_one_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        nullable=_get_nullable(parent=parent, schema=schema, schemas=schemas),
+        nullable=_get_nullable(schema=schema, schemas=schemas),
     )
 
 
@@ -258,7 +258,7 @@ def _calculate_one_to_x_schema(
         "items": {"type": "object", "x-de-$ref": parent},
     }
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = _get_description(schema=schema, schemas=schemas, parent=parent)
     if description is not None:
         return_schema["description"] = description
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)

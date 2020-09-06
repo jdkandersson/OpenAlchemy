@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class PayInfoDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
@@ -43,6 +45,7 @@ class TPayInfo(typing.Protocol):
         self,
         id: typing.Optional[int] = None,
         account_number: typing.Optional[str] = None,
+        employee: typing.Optional["TEmployee"] = None,
     ) -> None:
         """
         Construct.

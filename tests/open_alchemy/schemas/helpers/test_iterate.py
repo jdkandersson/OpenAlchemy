@@ -55,6 +55,7 @@ from open_alchemy.schemas.helpers import iterate
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_constructable(schemas, expected_schemas):
     """
     GIVEN schemas and expected schemas
@@ -113,6 +114,7 @@ def test_constructable(schemas, expected_schemas):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_not_constructable(schemas, expected_schemas):
     """
     GIVEN schemas and expected schemas
@@ -211,9 +213,90 @@ def test_not_constructable(schemas, expected_schemas):
             [("prop_1", "value 1")],
             id="allOf $ref",
         ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema1"},
+                    {"$ref": "#/components/schemas/RefSchema2"},
+                ]
+            },
+            {
+                "RefSchema1": {"properties": {"prop_1": "value 1"}},
+                "RefSchema2": {"properties": {"prop_2": "value 2"}},
+            },
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf multiple $ref",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"properties": {"prop_2": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf multiple local",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_2": "value 2"}}},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf local and $ref local first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"properties": {"prop_1": "value 1"}},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_2": "value 2"}}},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf local and $ref $ref first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"properties": {"prop_1": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1")],
+            id="allOf multiple duplicate",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"properties": {"prop_1": "value 1"}},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_1": "value 2"}}},
+            [("prop_1", "value 1")],
+            id="allOf local and $ref local first duplicate",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"properties": {"prop_1": "value 1"}},
+                ]
+            },
+            {"RefSchema": {"properties": {"prop_1": "value 2"}}},
+            [("prop_1", "value 1")],
+            id="allOf local and $ref $ref first duplicate",
+        ),
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_properties_items(schema, schemas, expected_properties):
     """
     GIVEN schema, schemas and expected properties
@@ -309,6 +392,7 @@ def test_properties_items(schema, schemas, expected_properties):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_properties_joined(schema, schemas, expected_properties):
     """
     GIVEN schema, schemas and expected properties
@@ -383,6 +467,7 @@ def test_properties_joined(schema, schemas, expected_properties):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_properties_single(schema, schemas, expected_properties):
     """
     GIVEN schema, schemas and expected properties
@@ -433,6 +518,7 @@ def test_properties_single(schema, schemas, expected_properties):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_required_values(schema, schemas, expected_required_values):
     """
     GIVEN schema, schemas and expected required lists
@@ -510,6 +596,7 @@ def test_required_values(schema, schemas, expected_required_values):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_required_values_single(schema, schemas, expected_required_values):
     """
     GIVEN schema, schemas and expected required lists
@@ -557,6 +644,7 @@ def test_required_values_single(schema, schemas, expected_required_values):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_required_items(schema, schemas, expected_values):
     """
     GIVEN schema, schemas and expected values
@@ -606,6 +694,7 @@ def test_required_items(schema, schemas, expected_values):
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.helper
 def test_required_items_single(schema, schemas, expected_values):
     """
     GIVEN schema, schemas and expected values
@@ -618,3 +707,109 @@ def test_required_items_single(schema, schemas, expected_values):
     )
 
     assert list(returned_values) == expected_values
+
+
+@pytest.mark.parametrize(
+    "schema, schemas, expected_backrefs",
+    [
+        pytest.param(True, {}, [], id="not dict"),
+        pytest.param({}, {}, [], id="no backrefs"),
+        pytest.param({"x-backrefs": {}}, {}, [], id="empty backrefs"),
+        pytest.param(
+            {"x-backrefs": True},
+            {},
+            [],
+            id="backrefs not dictionary",
+        ),
+        pytest.param(
+            {"x-backrefs": {"prop_1": "value 1"}},
+            {},
+            [("prop_1", "value 1")],
+            id="single property",
+        ),
+        pytest.param(
+            {"x-backrefs": {"prop_1": "value 1", "prop_2": "value 2"}},
+            {},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="multiple property",
+        ),
+        pytest.param(
+            {"$ref": True},
+            {},
+            [],
+            id="$ref not string",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-backrefs": {"prop_1": "value 1"}}},
+            [("prop_1", "value 1")],
+            id="$ref",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {},
+            [],
+            id="$ref not resolve",
+        ),
+        pytest.param({"allOf": True}, {}, [], id="allOf not list"),
+        pytest.param({"allOf": []}, {}, [], id="allOf empty"),
+        pytest.param({"allOf": [True]}, {}, [], id="allOf elements not dict"),
+        pytest.param(
+            {"allOf": [{"x-backrefs": {"prop_1": "value 1"}}]},
+            {},
+            [("prop_1", "value 1")],
+            id="allOf single",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-backrefs": {"prop_1": "value 1"}},
+                    {"x-backrefs": {"prop_2": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1"), ("prop_2", "value 2")],
+            id="allOf multiple",
+        ),
+        pytest.param(
+            {"allOf": [{"x-backrefs": True}, {"x-backrefs": {"prop_2": "value 2"}}]},
+            {},
+            [("prop_2", "value 2")],
+            id="allOf multiple first not dict",
+        ),
+        pytest.param(
+            {"allOf": [{"x-backrefs": {"prop_1": "value 1"}}, {"x-backrefs": True}]},
+            {},
+            [("prop_1", "value 1")],
+            id="allOf multiple second not dict",
+        ),
+        pytest.param(
+            {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
+            {"RefSchema": {"x-backrefs": {"prop_1": "value 1"}}},
+            [("prop_1", "value 1")],
+            id="allOf $ref",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-backrefs": {"prop_1": "value 1"}},
+                    {"x-backrefs": {"prop_1": "value 2"}},
+                ]
+            },
+            {},
+            [("prop_1", "value 1")],
+            id="allOf duplicates",
+        ),
+    ],
+)
+@pytest.mark.schemas
+@pytest.mark.helper
+def test_backrefs_items(schema, schemas, expected_backrefs):
+    """
+    GIVEN schema, schemas and expected backrefs
+    WHEN backrefs is called with the schema and schemas
+    THEN the expected name and property schema are returned.
+    """
+    returned_backrefs = iterate.backrefs_items(schema=schema, schemas=schemas)
+
+    assert list(returned_backrefs) == expected_backrefs

@@ -1,5 +1,6 @@
 """Functions to expose iterables for schemas."""
 
+import functools
 import typing
 
 from ... import exceptions
@@ -108,6 +109,17 @@ def _calculate_skip_name(
     return None
 
 
+def _filter_duplicates(seen_keys: typing.Set[str], args) -> bool:
+    """Remove duplicate values."""
+    key, _ = args
+
+    if key in seen_keys:
+        return False
+
+    seen_keys.add(key)
+    return True
+
+
 def properties_items(
     *,
     schema: types.Schema,
@@ -133,9 +145,11 @@ def properties_items(
             single and joined table inheritance no reference to the parent is followed.
 
     Returns:
-        An interator with all properties of a schema.
+        An iterator with all properties of a schema.
 
     """
+    init_filter_duplicates = functools.partial(_filter_duplicates, set())
+
     properties_values_iterator = properties_values(
         schema=schema,
         schemas=schemas,
@@ -145,7 +159,7 @@ def properties_items(
     for properties_value in properties_values_iterator:
         if not isinstance(properties_value, dict):
             continue
-        yield from properties_value.items()
+        yield from filter(init_filter_duplicates, properties_value.items())
 
 
 def properties_values(
@@ -174,7 +188,7 @@ def properties_values(
             followed.
 
     Returns:
-        An interator with all properties key values.
+        An iterator with all properties key values.
 
     """
     skip_name: typing.Optional[str] = None
@@ -225,7 +239,31 @@ def _any_key(
     if all_of is not None:
         if not isinstance(all_of, list):
             return
-        for sub_schema in all_of:
+
+        all_of_dicts = list(
+            filter(lambda sub_schema: isinstance(sub_schema, dict), all_of)
+        )
+
+        # Process not $ref first
+        all_of_no_ref = filter(
+            lambda sub_schema: not helpers.peek.peek_key(
+                schema=sub_schema, schemas=schemas, key="$ref"
+            ),
+            all_of_dicts,
+        )
+        for sub_schema in all_of_no_ref:
+            yield from _any_key(
+                schema=sub_schema, schemas=schemas, skip_name=skip_name, key=key
+            )
+
+        # Process $ref
+        all_of_ref = filter(
+            lambda sub_schema: helpers.peek.peek_key(
+                schema=sub_schema, schemas=schemas, key="$ref"
+            ),
+            all_of_dicts,
+        )
+        for sub_schema in all_of_ref:
             yield from _any_key(
                 schema=sub_schema, schemas=schemas, skip_name=skip_name, key=key
             )
@@ -259,7 +297,7 @@ def required_values(
             followed.
 
     Returns:
-        An interator with all required key values.
+        An iterator with all required key values.
 
     """
     skip_name: typing.Optional[str] = None
@@ -304,7 +342,7 @@ def required_items(
             followed.
 
     Returns:
-        An interator with all items of the required key.
+        An iterator with all items of the required key.
 
     """
     required_values_iterator = required_values(
@@ -314,3 +352,62 @@ def required_items(
         if not isinstance(required_value, list):
             continue
         yield from required_value
+
+
+def backrefs_items(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+) -> typing.Iterator[typing.Any]:
+    """
+    Create an iterable with all backrefs of a schema from a constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise looks for x-backrefs and yields all items if the key exists.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+
+    Returns:
+        An iterator with all backrefs of a schema.
+
+    """
+    init_filter_duplicates = functools.partial(_filter_duplicates, set())
+
+    backrefs_values_iterator = backrefs_values(
+        schema=schema,
+        schemas=schemas,
+    )
+    for backrefs_value in backrefs_values_iterator:
+        if not isinstance(backrefs_value, dict):
+            continue
+        yield from filter(init_filter_duplicates, backrefs_value.items())
+
+
+def backrefs_values(
+    *,
+    schema: types.Schema,
+    schemas: types.Schemas,
+) -> typing.Iterator[typing.Any]:
+    """
+    Return iterable with all values of the backrefs key of the constructable schema.
+
+    Checks for $ref, if it is there resolves to the underlying schema and recursively
+    processes that schema.
+    Checks for allOf, if it is there recursively processes each schema.
+    Otherwise yields the backrefs key value.
+
+    Args:
+        schema: The constructable schems.
+        schemas: All defined schemas (not just the constructable ones).
+
+    Returns:
+        An iterator with all backrefs key values.
+
+    """
+    yield from _any_key(
+        schema=schema, schemas=schemas, skip_name=None, key="x-backrefs"
+    )

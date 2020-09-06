@@ -2,14 +2,14 @@
 
 import typing
 
+from open_alchemy import schemas
 from open_alchemy import types as oa_types
 
-from . import artifacts as _artifacts
+from .. import artifacts as models_file_artifacts
 from . import source as _source
-from . import type_ as _type
 
 
-def generate(*, schema: oa_types.Schema, name: str) -> str:
+def generate(*, artifacts: schemas.artifacts.types.ModelArtifacts, name: str) -> str:
     """
     Generate the class source from the schema.
 
@@ -21,5 +21,5 @@ def generate(*, schema: oa_types.Schema, name: str) -> str:
         The source code for the model class.
 
     """
-    artifacts = _artifacts.calculate(schema=schema, name=name)
-    return _source.generate(artifacts=artifacts)
+    model_artifacts = models_file_artifacts.calculate(artifacts=artifacts, name=name)
+    return _source.generate(artifacts=model_artifacts)

@@ -66,7 +66,7 @@ def process(*, schemas: _oa_types.Schemas) -> None:
     schemas_result = schemas_validation.check(schemas=schemas)
     if not schemas_result.valid:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
-    one_model_result = _check_one_model(schemas=schemas)
+    one_model_result = check_one_model(schemas=schemas)
     if not one_model_result.valid:
         raise _exceptions.MalformedSchemaError(one_model_result.reason)
 
@@ -89,7 +89,7 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         _process_model(schemas, name, schema)
 
 
-def _check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
+def check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
     """
     Check that there is at least 1 model in the schemas.
 
@@ -193,7 +193,7 @@ def check(*, spec: typing.Any) -> types.TSpec:
     assert isinstance(components, dict)
     schemas = components.get("schemas")
     assert isinstance(schemas, dict)
-    one_model_result = _check_one_model(schemas=schemas)
+    one_model_result = check_one_model(schemas=schemas)
     if not one_model_result.valid:
         return {"result": types.t_result_from_result(one_model_result)}
 

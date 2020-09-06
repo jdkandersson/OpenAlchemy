@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class EmployeeDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
@@ -116,10 +118,10 @@ Employee: typing.Type[TEmployee] = models.Employee  # type: ignore
 class ManagerDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
+    manager_data: typing.Optional[str]
     id: typing.Optional[int]
     name: typing.Optional[str]
     type: typing.Optional[str]
-    manager_data: typing.Optional[str]
 
 
 class TManager(typing.Protocol):
@@ -129,10 +131,10 @@ class TManager(typing.Protocol):
     Person that works for a company.
 
     Attrs:
+        manager_data: Data for the manager.
         id: Unique identifier for the employee.
         name: The name of the employee.
         type: The type of the employee.
-        manager_data: Data for the manager.
 
     """
 
@@ -142,26 +144,26 @@ class TManager(typing.Protocol):
     query: orm.Query
 
     # Model properties
+    manager_data: "sqlalchemy.Column[typing.Optional[str]]"
     id: "sqlalchemy.Column[typing.Optional[int]]"
     name: "sqlalchemy.Column[typing.Optional[str]]"
     type: "sqlalchemy.Column[typing.Optional[str]]"
-    manager_data: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
+        manager_data: typing.Optional[str] = None,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         type: typing.Optional[str] = None,
-        manager_data: typing.Optional[str] = None,
     ) -> None:
         """
         Construct.
 
         Args:
+            manager_data: Data for the manager.
             id: Unique identifier for the employee.
             name: The name of the employee.
             type: The type of the employee.
-            manager_data: Data for the manager.
 
         """
         ...
@@ -169,19 +171,19 @@ class TManager(typing.Protocol):
     @classmethod
     def from_dict(
         cls,
+        manager_data: typing.Optional[str] = None,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         type: typing.Optional[str] = None,
-        manager_data: typing.Optional[str] = None,
     ) -> "TManager":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
+            manager_data: Data for the manager.
             id: Unique identifier for the employee.
             name: The name of the employee.
             type: The type of the employee.
-            manager_data: Data for the manager.
 
         Returns:
             Model instance based on the dictionary.
@@ -227,10 +229,10 @@ Manager: typing.Type[TManager] = models.Manager  # type: ignore
 class EngineerDict(typing.TypedDict, total=False):
     """TypedDict for properties that are not required."""
 
+    engineer_info: typing.Optional[str]
     id: typing.Optional[int]
     name: typing.Optional[str]
     type: typing.Optional[str]
-    engineer_info: typing.Optional[str]
 
 
 class TEngineer(typing.Protocol):
@@ -240,10 +242,10 @@ class TEngineer(typing.Protocol):
     Person that works for a company.
 
     Attrs:
+        engineer_info: Information for the manager.
         id: Unique identifier for the employee.
         name: The name of the employee.
         type: The type of the employee.
-        engineer_info: Information for the manager.
 
     """
 
@@ -253,26 +255,26 @@ class TEngineer(typing.Protocol):
     query: orm.Query
 
     # Model properties
+    engineer_info: "sqlalchemy.Column[typing.Optional[str]]"
     id: "sqlalchemy.Column[typing.Optional[int]]"
     name: "sqlalchemy.Column[typing.Optional[str]]"
     type: "sqlalchemy.Column[typing.Optional[str]]"
-    engineer_info: "sqlalchemy.Column[typing.Optional[str]]"
 
     def __init__(
         self,
+        engineer_info: typing.Optional[str] = None,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         type: typing.Optional[str] = None,
-        engineer_info: typing.Optional[str] = None,
     ) -> None:
         """
         Construct.
 
         Args:
+            engineer_info: Information for the manager.
             id: Unique identifier for the employee.
             name: The name of the employee.
             type: The type of the employee.
-            engineer_info: Information for the manager.
 
         """
         ...
@@ -280,19 +282,19 @@ class TEngineer(typing.Protocol):
     @classmethod
     def from_dict(
         cls,
+        engineer_info: typing.Optional[str] = None,
         id: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         type: typing.Optional[str] = None,
-        engineer_info: typing.Optional[str] = None,
     ) -> "TEngineer":
         """
         Construct from a dictionary (eg. a POST payload).
 
         Args:
+            engineer_info: Information for the manager.
             id: Unique identifier for the employee.
             name: The name of the employee.
             type: The type of the employee.
-            engineer_info: Information for the manager.
 
         Returns:
             Model instance based on the dictionary.

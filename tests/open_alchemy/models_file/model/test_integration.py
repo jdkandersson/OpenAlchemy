@@ -6,6 +6,8 @@ import sys
 import pytest
 
 from open_alchemy import models_file
+from open_alchemy.schemas import artifacts as schemas_artifacts
+from open_alchemy.schemas import helpers
 
 _EXPECTED_TD_BASE = "typing.TypedDict"
 if sys.version_info[1] < 8:
@@ -18,13 +20,53 @@ if sys.version_info[1] < 8:
 @pytest.mark.models_file
 def test_generate():
     """
-    GIVEN schema and name
-    WHEN generate is called with the schema and name
+    GIVEN artifacts and name
+    WHEN generate is called with the artifacts and name
     THEN the model source code is returned.
     """
-    schema = {"properties": {"id": {"type": "integer"}}}
+    artifacts = schemas_artifacts.types.ModelArtifacts(
+        tablename="table 1",
+        inherits=None,
+        parent=None,
+        description=None,
+        mixins=None,
+        kwargs=None,
+        composite_index=None,
+        composite_unique=None,
+        backrefs=[],
+        properties=[
+            (
+                "id",
+                schemas_artifacts.types.SimplePropertyArtifacts(
+                    type=helpers.property_.type_.Type.SIMPLE,
+                    open_api=schemas_artifacts.types.OpenApiSimplePropertyArtifacts(
+                        type="integer",
+                        format=None,
+                        max_length=None,
+                        nullable=None,
+                        default=None,
+                        read_only=None,
+                        write_only=None,
+                    ),
+                    extension=schemas_artifacts.types.ExtensionSimplePropertyArtifacts(
+                        primary_key=False,
+                        autoincrement=None,
+                        index=None,
+                        unique=None,
+                        foreign_key=None,
+                        kwargs=None,
+                        foreign_key_kwargs=None,
+                        dict_ignore=None,
+                    ),
+                    schema={},  # type: ignore
+                    required=False,
+                    description=None,
+                ),
+            )
+        ],
+    )
 
-    source = models_file._model.generate(schema=schema, name="Model")
+    source = models_file._model.generate(artifacts=artifacts, name="Model")
 
     expected_source = f'''
 

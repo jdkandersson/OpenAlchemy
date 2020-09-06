@@ -46,7 +46,7 @@ CHECK_MODEL_TESTS = [
         {
             "result": {
                 "valid": False,
-                "reason": "malformed schema :: The value of $ref must ba a string. ",
+                "reason": "malformed schema :: The value of $ref must be a string. ",
             }
         },
         id="$ref not string",

@@ -9,67 +9,14 @@ from open_alchemy import types
 
 
 @dataclasses.dataclass
-class ColumnSchemaOpenAPIArtifacts:
-    """OpenAPI Artifacts from the OpenAPI schema."""
-
-    # The type of the column
-    type: str
-    # The format of the column
-    format: typing.Optional[str] = None
-    # Whether the column is nullable
-    nullable: typing.Optional[bool] = None
-    # Whether the column is required
-    required: typing.Optional[bool] = None
-    # The description of the column
-    description: typing.Optional[str] = None
-    # The default value of the column
-    default: types.TColumnDefault = None
-    # Whether the column is read only
-    read_only: typing.Optional[bool] = None
-    # Whether the column is write only
-    write_only: typing.Optional[bool] = None
-
-
-@dataclasses.dataclass
-class ColumnSchemaExtensionArtifacts:
-    """Extension Artifacts from the OpenAPI schema."""
-
-    # The model being reference for an object/array type
-    de_ref: typing.Optional[str] = None
-    # Whether the value of the column is generated (eg. through auto increment)
-    generated: typing.Optional[bool] = None
-    # Whether the column is json
-    json: typing.Optional[bool] = None
-
-
-@dataclasses.dataclass
-class ColumnSchemaArtifacts:
-    """Artifacts from the OpenAPI schema."""
-
-    open_api: ColumnSchemaOpenAPIArtifacts
-    extension: ColumnSchemaExtensionArtifacts
-
-    def __init__(
-        self,
-        open_api: ColumnSchemaOpenAPIArtifacts,
-        extension: typing.Optional[ColumnSchemaExtensionArtifacts] = None,
-    ) -> None:
-        """Construct."""
-        self.open_api = open_api
-        if extension is None:
-            extension = ColumnSchemaExtensionArtifacts()
-        self.extension = extension
-
-
-@dataclasses.dataclass
 class ColumnArtifacts:
     """Artifacts for the column portion of a model template."""
 
-    # The name of the column
+    # The name of the column based on the name of the property
     name: str
     # The type of the column
     type: str
-    # The description of the column
+    # The description of the column based on the description of the property
     description: typing.Optional[str] = None
 
 
@@ -103,17 +50,20 @@ class ArgArtifacts:
 class SQLAlchemyModelArtifacts:
     """Artifacts for the SQLAlchemy model."""
 
-    # The name of the model
+    # The name of the model based on the name of the schema
     name: str
-    # Whether the columns are empty
+    # Whether the columns are empty based on whether any properties are defined on the
+    # schema and any back references
     empty: bool
-    # The columns for the model
+    # The columns for the model based on the properties of the schema and any back
+    # references
     columns: typing.List[ColumnArtifacts]
-    # The artifacts for the arguments for __init__ and from_dict
+    # The artifacts for the arguments for __init__ and from_dict based on the properties
+    # of the schema and any back references
     arg: ArgArtifacts
-    # The parent class
+    # The parent class based on the version of Python
     parent_cls: str
-    # The description of the model
+    # The description of the model based on the description of the schema
     description: typing.Optional[str] = None
 
     # Calculated properties

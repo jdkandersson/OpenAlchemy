@@ -8,6 +8,8 @@ from sqlalchemy import orm
 
 from open_alchemy import models
 
+Base = models.Base  # type: ignore
+
 
 class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""

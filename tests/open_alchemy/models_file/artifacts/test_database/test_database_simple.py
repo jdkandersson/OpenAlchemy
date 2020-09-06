@@ -11,10 +11,7 @@ from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import models_file
-
-_ColSchemaArt = models_file.types.ColumnSchemaArtifacts
-_ColSchemaOAArt = models_file.types.ColumnSchemaOpenAPIArtifacts
-_ColSchemaExtArt = models_file.types.ColumnSchemaExtensionArtifacts
+from open_alchemy import schemas
 
 
 @pytest.mark.parametrize(
@@ -316,13 +313,20 @@ def test_model_database_type_simple(
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
-    # Create artifacts
-    artifacts = _ColSchemaArt(
-        open_api=_ColSchemaOAArt(
-            type=type_, format=format_, nullable=nullable, required=required
-        )
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    calculated_type_str = models_file._model._type.model(artifacts=artifacts)
+    assert len(schemas_artifacts) == 1
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.calculate(
+        artifacts=model_schemas_artifacts, name="Table"
+    )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 2
+    column_column_artifacts = model_models_artifacts.sqlalchemy.columns[1]
+    assert column_column_artifacts.name == "column"
+    calculated_type_str = column_column_artifacts.type
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
 
     # Creating models
@@ -382,12 +386,20 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
-    # Create artifacts
-    artifacts = _ColSchemaArt(
-        open_api=_ColSchemaOAArt(type=type_, required=True),
-        extension=_ColSchemaExtArt(json=True),
+    # Calculate the expected type
+    schemas_artifacts = schemas.artifacts.get_from_schemas(
+        schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    calculated_type_str = models_file._model._type.model(artifacts=artifacts)
+    assert len(schemas_artifacts) == 1
+    model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
+    assert model_schemas_name == "Table"
+    model_models_artifacts = models_file._artifacts.calculate(
+        artifacts=model_schemas_artifacts, name="Table"
+    )
+    assert len(model_models_artifacts.sqlalchemy.columns) == 2
+    column_column_artifacts = model_models_artifacts.sqlalchemy.columns[1]
+    assert column_column_artifacts.name == "column"
+    calculated_type_str = column_column_artifacts.type
     calculated_type = eval(calculated_type_str)  # pylint: disable=eval-used
 
     # Creating models
