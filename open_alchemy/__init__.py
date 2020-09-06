@@ -9,6 +9,7 @@ from sqlalchemy.ext import declarative
 
 from open_alchemy import types as oa_types
 
+from . import build as _build_module
 from . import exceptions
 from . import helpers as _helpers
 from . import model_factory as _model_factory
@@ -131,7 +132,9 @@ def init_json(
 
     Args:
         spec_filename: filename of an OpenAPI spec in JSON format
-        base: The declarative base for the models.
+        base: (optional) The declarative base for the models.
+              If base=None, construct a new SQLAlchemy declarative base.
+        define_all: (optional) Whether to define all the models during initialization.
         models_filename: (optional) The path to write the models file to. If it is not
             provided, the models file is not created.
 
@@ -141,7 +144,6 @@ def init_json(
         Base: a SQLAlchemy declarative base class
         model_factory: A factory that returns SQLAlchemy models derived from the
             base based on the OpenAPI specification.
-        define_all: (optional) Whether to define all the models during initialization.
 
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
@@ -186,7 +188,6 @@ def init_yaml(
         Base: a SQLAlchemy declarative base class
         model_factory: A factory that returns SQLAlchemy models derived from the
             base based on the OpenAPI specification.
-        define_all: Whether to define all the models during initialization.
 
     """
     try:
@@ -245,4 +246,31 @@ def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
     return getattr(models, "Base")
 
 
-__all__ = ["init_model_factory", "init_json", "init_yaml"]
+def build_json(
+    spec_filename: str,
+    package_name: str,
+    dist_path: str,
+) -> None:
+    """
+    Create an OpenAlchemy distribution package with the SQLAlchemy models.
+
+    The package can be uploaded to, for example, PyPI or a private repository for
+    distribution.
+
+    Args:
+        spec_filename: filename of an OpenAPI spec in JSON format
+        package_name: The name of the package.
+        dist_path: The directory to output the package to.
+
+    """
+    # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
+    # need it:
+    import json  # pylint: disable=import-outside-toplevel
+
+    with open(spec_filename) as spec_file:
+        spec = json.load(spec_file)
+
+    return _build_module.execute(spec=spec, name=package_name, path=dist_path)
+
+
+__all__ = ["init_model_factory", "init_json", "init_yaml", "build_json"]

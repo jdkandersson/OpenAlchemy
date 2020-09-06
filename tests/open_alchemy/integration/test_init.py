@@ -640,3 +640,73 @@ class TTable({expected_model_base}):
 Table: typing.Type[TTable] = models.Table  # type: ignore
 '''
     assert models_file_contents == expected_contents
+
+
+@pytest.mark.integration
+def test_execute(tmp_path):
+    """
+    GIVEN spec, package name and distribution path
+    WHEN build_json is called with the path to the file with the spec, package name and
+        distribution path
+    THEN the setup.py, MANIFEST.in, spec.json and __init__.py files are created.
+    """
+    dist = tmp_path / "dist"
+    dist.mkdir()
+
+    name = "app_models"
+    version = "version 1"
+    spec = {
+        "info": {
+            "version": version,
+        },
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
+    }
+
+    spec_path = tmp_path / "spec.json"
+    with open(spec_path, "w") as out_file:
+        out_file.write(json.dumps(spec))
+
+    open_alchemy.build_json(str(spec_path), package_name=name, dist_path=str(dist))
+
+    # Check setup file
+    expected_setup_path = tmp_path / "dist" / "setup.py"
+    assert expected_setup_path.is_file()
+    with open(expected_setup_path) as in_file:
+        setup_contents = in_file.read()
+
+    assert name in setup_contents
+    assert version in setup_contents
+
+    # Check manifest file
+    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    assert expected_manifest_path.is_file()
+    with open(expected_manifest_path) as in_file:
+        manifest_contents = in_file.read()
+    assert name in manifest_contents
+
+    # Check spec file
+    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    assert expected_spec_path.is_file()
+    with open(expected_spec_path) as in_file:
+        spec_contents = in_file.read()
+    assert '"Schema"' in spec_contents
+    assert '"id"' in spec_contents
+
+    # Check init file
+    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    assert expected_init_path.is_file()
+    with open(expected_init_path) as in_file:
+        init_contents = in_file.read()
+    assert "class SchemaDict" in init_contents
+    assert "id: typing.Optional[int]" in init_contents
+    assert "class TSchema" in init_contents
+    assert "id: 'sqlalchemy.Column[typing.Optional[int]]'" in init_contents
+    assert "Schema: typing.Type[TSchema]" in init_contents
