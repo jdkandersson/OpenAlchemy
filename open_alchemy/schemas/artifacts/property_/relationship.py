@@ -133,11 +133,11 @@ def _get_foreign_key_property(
 
 
 def _get_nullable(
-    *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[bool]:
     """Retrieve the nullable value from a schema."""
-    return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="nullable", skip_ref=parent
+    return oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
     )
 
 
@@ -191,7 +191,7 @@ def _get_many_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        nullable=_get_nullable(parent=parent, schema=schema, schemas=schemas),
+        nullable=_get_nullable(schema=schema, schemas=schemas),
     )
 
 
@@ -245,7 +245,7 @@ def _get_one_to_one(
             parent_schema=parent_schema,
             schemas=schemas,
         ),
-        nullable=_get_nullable(parent=parent, schema=schema, schemas=schemas),
+        nullable=_get_nullable(schema=schema, schemas=schemas),
     )
 
 
