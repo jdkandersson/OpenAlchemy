@@ -23,7 +23,7 @@ def check(
         property_schema: The schema of the relationship property.
 
     Returns:
-        Whether the schema is valid and the reason if it is noe.
+        Whether the schema is valid and the reason if it is not.
 
     """
     # Validate the property schema

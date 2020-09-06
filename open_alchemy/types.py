@@ -5,13 +5,13 @@ import datetime
 import typing
 
 try:  # pragma: no cover
-    from typing import TypedDict
     from typing import Literal
     from typing import Protocol
+    from typing import TypedDict
 except ImportError:  # pragma: no cover
-    from typing_extensions import TypedDict  # type: ignore
     from typing_extensions import Literal  # type: ignore
     from typing_extensions import Protocol  # type: ignore
+    from typing_extensions import TypedDict  # type: ignore
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]

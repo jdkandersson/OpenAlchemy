@@ -1,7 +1,6 @@
 """Application code."""
 
 import connexion
-
 import database
 
 # Creating Flask app

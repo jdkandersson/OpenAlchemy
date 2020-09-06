@@ -31,7 +31,7 @@ from open_alchemy import utility_base
 @pytest.mark.utility_base
 def test_convert_invalid(schema, value, exception):
     """
-    GIVEN invaid schema and expected exception
+    GIVEN invalid schema and expected exception
     WHEN convert is called with the schema
     THEN the expected exception is raised.
     """

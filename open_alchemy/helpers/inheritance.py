@@ -274,7 +274,7 @@ def retrieve_parent(*, schema: types.Schema, schemas: types.Schemas) -> str:
             )
         return inherits
     raise exceptions.InheritanceError(
-        "Cannot retrive the name of the parent if x-inherits is not defined or False."
+        "Cannot retrieve the name of the parent if x-inherits is not defined or False."
     )
 
 
