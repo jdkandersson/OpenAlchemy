@@ -486,3 +486,95 @@ def test_calculate_version(spec, spec_str, expected_version):
     returned_version = build.calculate_version(spec=spec, spec_str=spec_str)
 
     assert returned_version == expected_version
+
+
+@pytest.mark.build
+def test_execute(tmp_path):
+    """
+    GIVEN spec, name and path
+    WHEN execute is called with the spec, name and path
+    THEN the setup.py, MANIFEST.in, spec.json and __init__.py files are created.
+    """
+    dist = tmp_path / "dist"
+    dist.mkdir()
+
+    name = "app_models"
+    version = "version 1"
+    spec = {
+        "info": {
+            "version": version,
+        },
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
+    }
+
+    build.execute(spec=spec, name=name, path=str(dist))
+
+    # Check setup file
+    expected_setup_path = tmp_path / "dist" / "setup.py"
+    assert expected_setup_path.is_file()
+    with open(expected_setup_path) as in_file:
+        assert (
+            in_file.read()
+            == f"""import setuptools
+
+setuptools.setup(
+    name="{name}",
+    version="{version}",
+    packages=setuptools.find_packages(),
+    python_requires=">=3.6",
+    install_requires=[
+        "OpenAlchemy",
+    ],
+    include_package_data=True,
+)
+"""
+        )
+
+    # Check manifest file
+    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    assert expected_manifest_path.is_file()
+    with open(expected_manifest_path) as in_file:
+        assert (
+            in_file.read()
+            == f"""recursive-include {name} *.json
+remove .*
+"""
+        )
+
+    # Check spec file
+    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    assert expected_spec_path.is_file()
+    with open(expected_spec_path) as in_file:
+        assert in_file.read() == (
+            '{"components":{"schemas":{"Schema":'
+            '{"type":"object","x-tablename":"schema",'
+            '"properties":{"id":{"type":"integer"}}}}}}'
+        )
+
+    # Check init file
+    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    assert expected_init_path.is_file()
+    with open(expected_init_path) as in_file:
+        init_contents = in_file.read()
+    assert (
+        """import pathlib
+
+from open_alchemy import init_json
+
+parent_path = pathlib.Path(__file__).parent.absolute()
+init_json(parent_path / "spec.json")"""
+        in init_contents
+    )
+    assert "class SchemaDict" in init_contents
+    assert "id: typing.Optional[int]" in init_contents
+    assert "class TSchema" in init_contents
+    assert "id: 'sqlalchemy.Column[typing.Optional[int]]'" in init_contents
+    assert "Schema: typing.Type[TSchema]" in init_contents

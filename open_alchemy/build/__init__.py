@@ -72,6 +72,32 @@ def generate_spec(*, schemas: types.Schemas) -> str:
     return json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
 
 
+def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
+    """
+    Calculate the version for a spec.
+
+    The algorithm is:
+    1. look for the API version in the spec and return or
+    2. return the hash of the spec.
+
+    Args:
+        spec: The spec as a dictionary.
+        spec_str: The spec after it has been converted to string.
+
+    Returns:
+        The version of the spec.
+
+    """
+    try:
+        spec_version = spec["info"]["version"]
+        if isinstance(spec_version, str):
+            return spec_version
+    except (KeyError, TypeError):
+        pass
+
+    return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
+
+
 def generate_setup(*, name: str, version: str) -> str:
     """
     Generate the content of the setup.py file.
@@ -198,38 +224,24 @@ def dump(
         raise exceptions.BuildError(str(exc)) from exc
 
 
-def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
+def execute(*, spec: typing.Any, name: str, path: str) -> None:
     """
-    Calculate the version for a spec.
-
-    The algorithm is:
-    1. look for the API version in the spec and return or
-    2. return the hash of the spec.
+    Execute the build for a spec.
 
     Args:
-        spec: The spec as a dictionary.
-        spec_str: The spec after it has been converted to string.
-
-    Returns:
-        The version of the spec.
+        spec: The spec to execute the build on.
+        name: The name of the package.
+        path: The build output path.
 
     """
-    try:
-        spec_version = spec["info"]["version"]
-        if isinstance(spec_version, str):
-            return spec_version
-    except (KeyError, TypeError):
-        pass
+    schemas = get_schemas(spec=spec)
+    spec_str = generate_spec(schemas=schemas)
+    version = calculate_version(spec=spec, spec_str=spec_str)
+    setup = generate_setup(name=name, version=version)
+    manifest = generate_manifest(name=name)
 
-    return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
+    init_open_alchemy = generate_init_open_alchemy()
+    init_models_file = generate_init_models_file(schemas=schemas)
+    init = generate_init(open_alchemy=init_open_alchemy, models_file=init_models_file)
 
-
-# def execute(*, spec: typing.Any, path: str) -> None:
-#     """
-#     Execute the build for a spec.
-
-#     Args:
-#         spec: The spec to execute the build on.
-#         path: The build output path.
-
-#     """
+    dump(path=path, name=name, setup=setup, manifest=manifest, spec=spec_str, init=init)
