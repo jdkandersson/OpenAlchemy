@@ -81,7 +81,7 @@ def _calculate(
         typing.Tuple[str, schemas.artifacts.types.TAnyPropertyArtifacts]
     ],
 ) -> typing.Iterable[types.ColumnArgArtifacts]:
-    """Calculate the typed dict artifacts from property artifacts."""
+    """Calculate the arg artifacts from property artifacts."""
     no_backref_properties = filter(
         lambda args: args[1].type != schemas.helpers.property_.type_.Type.BACKREF,
         artifacts,
@@ -107,13 +107,13 @@ def _calculate(
 
 def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnValue:
     """
-    Calculate the typed dict artifacts from model schema artifacts.
+    Calculate the args artifacts from model schema artifacts.
 
     Args:
         artifacts: The schema artifacts for a model.
 
     Returns:
-        The artifacts for the typed dict.
+        The artifacts for the args.
 
     """
     required = filter(lambda args: args[1].required, artifacts.properties)
