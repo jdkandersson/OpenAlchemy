@@ -1,5 +1,6 @@
 """Build a package with the OpenAlchemy models."""
 
+import hashlib
 import json
 import pathlib
 import typing
@@ -195,3 +196,40 @@ def dump(
             out_file.write(init)
     except OSError as exc:
         raise exceptions.BuildError(str(exc)) from exc
+
+
+def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
+    """
+    Calculate the version for a spec.
+
+    The algorithm is:
+    1. look for the API version in the spec and return or
+    2. return the hash of the spec.
+
+    Args:
+        spec: The spec as a dictionary.
+        spec_str: The spec after it has been converted to string.
+
+    Returns:
+        The version of the spec.
+
+    """
+    try:
+        spec_version = spec["info"]["version"]
+        if isinstance(spec_version, str):
+            return spec_version
+    except (KeyError, TypeError):
+        pass
+
+    return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
+
+
+# def execute(*, spec: typing.Any, path: str) -> None:
+#     """
+#     Execute the build for a spec.
+
+#     Args:
+#         spec: The spec to execute the build on.
+#         path: The build output path.
+
+#     """
