@@ -1,0 +1,58 @@
+{
+  "components": {
+    "schemas": {
+      "Division": {
+        "description": "A part of a company.",
+        "type": "object",
+        "x-tablename": "division",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the division.",
+            "example": 0,
+            "x-primary-key": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the division.",
+            "example": "Engineering"
+          }
+        }
+      },
+      "Employee": {
+        "allOf": [
+          {
+            "description": "Person that works for a company.",
+            "type": "object",
+            "x-tablename": "employee",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique identifier for the employee.",
+                "example": 0,
+                "x-primary-key": true
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the employee.",
+                "example": "David Andersson"
+              },
+              "division": { "$ref": "#/components/schemas/Division" }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "division_id": {
+                "type": "integer",
+                "x-dict-ignore": true,
+                "nullable": true,
+                "x-foreign-key": "division.id"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

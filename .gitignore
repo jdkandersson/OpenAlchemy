@@ -12,6 +12,8 @@ build/
 !open_alchemy/build/
 !tests/open_alchemy/build/
 dist/
+!examples/**/dist/
+examples/**/dist/dist
 htmlcov/
 venv
 coverage.xml

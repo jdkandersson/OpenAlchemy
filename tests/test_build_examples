@@ -1,0 +1,7 @@
+#!/bin/bash
+cd examples/simple
+python -c "import open_alchemy; open_alchemy.build_yaml('example-spec.yml', 'open_alchemy_simple_models', 'dist')"
+cd -
+cd examples/relationship/many_to_one
+python -c "import open_alchemy; open_alchemy.build_yaml('example-spec.yml', 'open_alchemy_relationship_many_to_one_models', 'dist')"
+cd -

@@ -1,0 +1,2 @@
+recursive-include open_alchemy_simple_models *.json
+remove .*
