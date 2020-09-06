@@ -122,6 +122,24 @@ setuptools.setup(
 
 
 @pytest.mark.build
+def test_generate_manifest():
+    """
+    GIVEN name
+    WHEN generate_manifest is called with the name
+    THEN the MAINFEST.in file contents with the name are returned.
+    """
+    name = "name 1"
+
+    returned_contents = build.generate_manifest(name=name)
+
+    expected_contents = """recursive-include name 1 *.json
+remove .*
+"""
+
+    assert returned_contents == expected_contents
+
+
+@pytest.mark.build
 def test_generate_init_open_alchemy():
     """
     GIVEN name and version

@@ -14,6 +14,8 @@ from .. import types
 _DIRECTORY = pathlib.Path(__file__).parent.absolute()
 with open(_DIRECTORY / "setup.j2") as in_file:
     _SETUP_TEMPLATE = in_file.read()
+with open(_DIRECTORY / "MANIFEST.j2") as in_file:
+    _MANIFEST_TEMPLATE = in_file.read()
 with open(_DIRECTORY / "init_init_open_alchemy.j2") as in_file:
     _INIT_INIT_OPEN_ALCHEMY_TEMPLATE = in_file.read()
 with open(_DIRECTORY / "init.j2") as in_file:
@@ -86,6 +88,24 @@ def generate_setup(*, name: str, version: str) -> str:
     return template.render(
         name=name,
         version=version,
+    )
+
+
+def generate_manifest(*, name: str) -> str:
+    """
+    Generate the content of the MANIFEST.in file.
+
+    Args:
+        name: The name of the package.
+
+    Returns:
+        The contents of the MANIFEST.in file for the models package.
+
+    """
+    template = jinja2.Template(_MANIFEST_TEMPLATE)
+
+    return template.render(
+        name=name,
     )
 
 
