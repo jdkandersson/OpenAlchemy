@@ -3,6 +3,67 @@
 import pytest
 
 from open_alchemy import build
+from open_alchemy import exceptions
+
+
+@pytest.mark.parametrize(
+    "spec",
+    [
+        pytest.param(True, id="base invalid"),
+        pytest.param({"components": {"schemas": {}}}, id="no schemas"),
+        pytest.param(
+            {
+                "components": {
+                    "schemas": {
+                        "Schema1": {
+                            "x-tablename": "schema_1",
+                        }
+                    }
+                }
+            },
+            id="schema invalid",
+        ),
+    ],
+)
+@pytest.mark.build
+def test_get_schemas_invalid(spec):
+    """
+    GIVEN invalid spec
+    WHEN get_schemas is called
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        build.get_schemas(spec=spec)
+
+
+@pytest.mark.build
+def test_get_schemas_valid():
+    """
+    GIVEN invalid spec
+    WHEN get_schemas is called
+    THEN MalformedSchemaError is raised.
+    """
+    spec = {
+        "components": {
+            "schemas": {
+                "Schema1": {
+                    "type": "object",
+                    "x-tablename": "schema_1",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        }
+    }
+
+    returned_schemas = build.get_schemas(spec=spec)
+
+    assert returned_schemas == {
+        "Schema1": {
+            "type": "object",
+            "x-tablename": "schema_1",
+            "properties": {"id": {"type": "integer"}},
+        }
+    }
 
 
 @pytest.mark.build
