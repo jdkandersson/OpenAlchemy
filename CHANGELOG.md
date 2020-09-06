@@ -1,5 +1,10 @@
 # Release Notes
 
+## Version _next_
+
+- Refactor the models file generation to use the artifacts from the schemas.
+- Add `build_json` and `build_yaml` interfaces which can be used to produce a package with the models.
+
 ## Version 1.5.4 - 2020-08-30
 
 - Move `description` to be a top level property artifact for every property.
