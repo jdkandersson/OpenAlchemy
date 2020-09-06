@@ -175,24 +175,23 @@ def dump(
         init: The contents for the __init__ file.
 
     """
-    pathlib_path = pathlib.Path(path)
-    if pathlib_path.is_file():
-        raise exceptions.BuildError(f"{pathlib_path} is a file.")
-    if not pathlib_path.is_dir():
-        pathlib_path.mkdir()
+    try:
+        pathlib_path = pathlib.Path(path)
+        if not pathlib_path.is_dir():
+            pathlib_path.mkdir()
 
-    with open(pathlib_path / "setup.py", "w") as out_file:
-        out_file.write(setup)
-    with open(pathlib_path / "MANIFEST.in", "w") as out_file:
-        out_file.write(manifest)
+        with open(pathlib_path / "setup.py", "w") as out_file:
+            out_file.write(setup)
+        with open(pathlib_path / "MANIFEST.in", "w") as out_file:
+            out_file.write(manifest)
 
-    pathlib_package_path = pathlib_path / name
-    if pathlib_package_path.is_file():
-        raise exceptions.BuildError(f"{pathlib_package_path} is a file.")
-    if not pathlib_package_path.is_dir():
-        pathlib_package_path.mkdir()
+        pathlib_package_path = pathlib_path / name
+        if not pathlib_package_path.is_dir():
+            pathlib_package_path.mkdir()
 
-    with open(pathlib_package_path / "spec.json", "w") as out_file:
-        out_file.write(spec)
-    with open(pathlib_package_path / "__init__.py", "w") as out_file:
-        out_file.write(init)
+        with open(pathlib_package_path / "spec.json", "w") as out_file:
+            out_file.write(spec)
+        with open(pathlib_package_path / "__init__.py", "w") as out_file:
+            out_file.write(init)
+    except OSError as exc:
+        raise exceptions.BuildError(str(exc)) from exc
