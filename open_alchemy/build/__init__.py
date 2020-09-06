@@ -7,6 +7,7 @@ import typing
 import jinja2
 
 from .. import exceptions
+from .. import models_file
 from .. import schemas as schemas_module
 from .. import types
 
@@ -97,3 +98,21 @@ def generate_init_open_alchemy() -> str:
     template = jinja2.Template(_INIT_INIT_OPEN_ALCHEMY_TEMPLATE)
 
     return template.render()
+
+
+def generate_init_models_file(schemas: types.Schemas) -> str:
+    """
+    Generate the models file component of init.
+
+    Args:
+        schemas: All defined schemas.
+
+    Returns:
+        The models file component of the schemas.
+
+    """
+    schemas_module.backref.process(schemas=schemas)
+    artifacts = schemas_module.artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=False
+    )
+    return models_file.generate(artifacts=artifacts)
