@@ -247,3 +247,23 @@ def test_generate_init_models_file(schemas, expected_contents):
 
     for expected_content in expected_contents:
         assert expected_content in returned_contents
+
+
+@pytest.mark.build
+def test_generate_init():
+    """
+    GIVEN open alchemy and models file contents
+    WHEN generate_init is called with the open alchemy and models file contents
+    THEN the __init__.py file contents with the open alchemy and models file contents
+        are returned.
+    """
+    returned_contents = build.generate_init(
+        open_alchemy="open alchemy", models_file="models file"
+    )
+
+    expected_contents = """open alchemy
+
+
+models file"""
+
+    assert returned_contents == expected_contents

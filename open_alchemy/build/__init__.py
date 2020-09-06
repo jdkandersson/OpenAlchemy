@@ -7,7 +7,7 @@ import typing
 import jinja2
 
 from .. import exceptions
-from .. import models_file
+from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
 
@@ -16,6 +16,8 @@ with open(_DIRECTORY / "setup.j2") as in_file:
     _SETUP_TEMPLATE = in_file.read()
 with open(_DIRECTORY / "init_init_open_alchemy.j2") as in_file:
     _INIT_INIT_OPEN_ALCHEMY_TEMPLATE = in_file.read()
+with open(_DIRECTORY / "init.j2") as in_file:
+    _INIT_TEMPLATE = in_file.read()
 
 
 def get_schemas(*, spec: typing.Any) -> types.Schemas:
@@ -115,4 +117,24 @@ def generate_init_models_file(schemas: types.Schemas) -> str:
     artifacts = schemas_module.artifacts.get_from_schemas(
         schemas=schemas, stay_within_model=False
     )
-    return models_file.generate(artifacts=artifacts)
+    return models_file_module.generate(artifacts=artifacts)
+
+
+def generate_init(open_alchemy: str, models_file: str) -> str:
+    """
+    Generate the contents for the __init__.py file.
+
+    Args:
+        open_alchemy: The OpenAlchemy portion of the __init__ file.
+        models_file: The models file portion of the __init__ file.
+
+    Returns:
+        The contents of the __init__ file.
+
+    """
+    template = jinja2.Template(_INIT_TEMPLATE)
+
+    return template.render(
+        open_alchemy=open_alchemy,
+        models_file=models_file,
+    )
