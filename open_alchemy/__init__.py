@@ -273,4 +273,34 @@ def build_json(
     return _build_module.execute(spec=spec, name=package_name, path=dist_path)
 
 
-__all__ = ["init_model_factory", "init_json", "init_yaml", "build_json"]
+def build_yaml(
+    spec_filename: str,
+    package_name: str,
+    dist_path: str,
+) -> None:
+    """
+    Create an OpenAlchemy distribution package with the SQLAlchemy models.
+
+    The package can be uploaded to, for example, PyPI or a private repository for
+    distribution.
+
+    Args:
+        spec_filename: filename of an OpenAPI spec in YAML format
+        package_name: The name of the package.
+        dist_path: The directory to output the package to.
+
+    """
+    try:
+        import yaml  # pylint: disable=import-outside-toplevel
+    except ImportError as exc:
+        raise ImportError(
+            "Using init_yaml requires the pyyaml package. Try `pip install pyyaml`."
+        ) from exc
+
+    with open(spec_filename) as spec_file:
+        spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
+
+    return _build_module.execute(spec=spec, name=package_name, path=dist_path)
+
+
+__all__ = ["init_model_factory", "init_json", "init_yaml", "build_json", "build_yaml"]
