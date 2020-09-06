@@ -1,5 +1,6 @@
 """Build a package with the OpenAlchemy models."""
 
+import json
 import pathlib
 import typing
 
@@ -49,6 +50,20 @@ def get_schemas(*, spec: typing.Any) -> types.Schemas:
     schemas_module.process(schemas=schemas)
 
     return schemas
+
+
+def generate_spec(*, schemas: types.Schemas) -> str:
+    """
+    Generate the spec.json file contents.
+
+    Args:
+        schemas: The schemas to generate the spec for.
+
+    Returns:
+        The JSON encoded schemas.
+
+    """
+    return json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
 
 
 def generate_setup(*, name: str, version: str) -> str:
