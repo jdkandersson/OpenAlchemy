@@ -1,4 +1,4 @@
-"""Calculate the column artifacts for a model."""
+"""Calculate the typed dict artifacts for a model."""
 
 import typing
 
