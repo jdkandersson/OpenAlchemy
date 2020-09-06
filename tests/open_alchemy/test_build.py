@@ -285,3 +285,53 @@ def test_generate_init():
 models file"""
 
     assert returned_contents == expected_contents
+
+
+@pytest.mark.build
+def test_dump(tmp_path):
+    """
+    GIVEN path
+    WHEN dump is called with the path
+    THEN the expected directory structure is returned.
+    """
+    dist_path = tmp_path / "dist"
+    dist_path.mkdir()
+
+    name = "name 1"
+    setup = "setup file"
+    manifest = "manifest file"
+    spec = "spec file"
+    init = "init file"
+
+    build.dump(
+        path=str(dist_path),
+        name=name,
+        setup=setup,
+        manifest=manifest,
+        spec=spec,
+        init=init,
+    )
+
+    # Check setup file
+    expected_setup_path = tmp_path / "dist" / "setup.py"
+    assert expected_setup_path.is_file()
+    with open(expected_setup_path) as in_file:
+        assert in_file.read() == setup
+
+    # Check manifest file
+    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    assert expected_manifest_path.is_file()
+    with open(expected_manifest_path) as in_file:
+        assert in_file.read() == manifest
+
+    # Check spec file
+    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    assert expected_spec_path.is_file()
+    with open(expected_spec_path) as in_file:
+        assert in_file.read() == spec
+
+    # Check init file
+    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    assert expected_init_path.is_file()
+    with open(expected_init_path) as in_file:
+        assert in_file.read() == init

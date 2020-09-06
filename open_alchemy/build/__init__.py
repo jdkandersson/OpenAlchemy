@@ -158,3 +158,33 @@ def generate_init(open_alchemy: str, models_file: str) -> str:
         open_alchemy=open_alchemy,
         models_file=models_file,
     )
+
+
+def dump(
+    *, path: str, name: str, setup: str, manifest: str, spec: str, init: str
+) -> None:
+    """
+    Dump the files needed for the package at a path.
+
+    Args:
+        path: The path that will be the root of the package.
+        name: The name of the package.
+        setup: The contents for the setup file.
+        manifest: The contents for the manifest file.
+        spec: The contents for the spec file.
+        init: The contents for the __init__ file.
+
+    """
+    pathlib_path = pathlib.Path(path)
+    with open(pathlib_path / "setup.py", "w") as out_file:
+        out_file.write(setup)
+    with open(pathlib_path / "MANIFEST.in", "w") as out_file:
+        out_file.write(manifest)
+
+    pathlib_package_path = pathlib_path / name
+    pathlib_package_path.mkdir()
+
+    with open(pathlib_package_path / "spec.json", "w") as out_file:
+        out_file.write(spec)
+    with open(pathlib_package_path / "__init__.py", "w") as out_file:
+        out_file.write(init)
