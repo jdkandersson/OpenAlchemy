@@ -491,10 +491,8 @@ def test_generate_type_return(tmp_path, artifacts):
     source = models_file.generate(artifacts=artifacts)
     source_file = _create_source_file(source, tmp_path)
 
-    val1, val2, returncode = api.run([str(source_file)])
+    _, _, returncode = api.run([str(source_file)])
 
-    print(val1)
-    print(val2)
     assert returncode == 0
 
 

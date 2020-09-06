@@ -16,5 +16,6 @@ dist/
 examples/**/dist/dist
 htmlcov/
 venv
+venv36
 coverage.xml
 docs/source/_*

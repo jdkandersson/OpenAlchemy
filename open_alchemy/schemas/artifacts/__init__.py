@@ -170,8 +170,17 @@ def _from_schemas_get_model(
     properties_artifacts = _from_schemas_get_properties_artifacts(
         stay_within_model, schemas, schema
     )
-    return types.ModelArtifacts(  # type: ignore
-        **dataclasses.asdict(model_artifacts), properties=list(properties_artifacts)
+    return types.ModelArtifacts(
+        tablename=model_artifacts.tablename,
+        inherits=model_artifacts.inherits,
+        parent=model_artifacts.parent,
+        description=model_artifacts.description,
+        mixins=model_artifacts.mixins,
+        kwargs=model_artifacts.kwargs,
+        composite_index=model_artifacts.composite_index,
+        composite_unique=model_artifacts.composite_unique,
+        backrefs=model_artifacts.backrefs,
+        properties=list(properties_artifacts),
     )
 
 
