@@ -189,6 +189,21 @@ The following information is recorded in the models file:
     references for the model. :samp:`x-backrefs` is not a public interface and
     should not be relied upon as it is subject to change.
 
+It is worth noting that the auto-generated models cannot be imported directly.
+The generated models are added to the `open_alchemy.models` package by the
+`init_*` functions.
+
+.. code:: python
+
+  from open_alchemy import init_yaml
+  from open_alchemy import models
+
+  init_yaml('openapi.yml')
+  employee = models.Employee(name="David Andersson", division="Engineering")
+
+To use the models in another project, refer to the `build_yaml`_ or `build_json`_
+functions.
+
 .. _model-utilities:
 
 Model Utilities
