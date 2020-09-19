@@ -190,10 +190,11 @@ The following information is recorded in the models file:
     should not be relied upon as it is subject to change.
 
 It is worth noting that the auto-generated models cannot be imported directly.
-The generated models are added to the `open_alchemy.models` package by the
-`init_*` functions.
+The generated models are added to the :samp:`open_alchemy.models` package by the
+:samp:`init_*` functions.
 
-.. code:: python
+.. code-block:: python
+  :linenos:
 
   from open_alchemy import init_yaml
   from open_alchemy import models
