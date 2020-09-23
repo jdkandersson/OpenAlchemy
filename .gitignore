@@ -4,6 +4,7 @@
 .mypy_cache/
 .pytest_cache/
 .tox/
+.venv/
 .vscode/
 *.egg-info/
 *.pyc
