@@ -1,5 +1,4 @@
 """Tests for the package builder."""
-
 import pytest
 
 from open_alchemy import build
@@ -312,26 +311,30 @@ def test_dump(tmp_path):
         init=init,
     )
 
+    # Define generated project directories
+    project_path = dist_path / name
+    package_path = project_path / name
+
     # Check setup file
-    expected_setup_path = tmp_path / "dist" / "setup.py"
+    expected_setup_path = project_path / "setup.py"
     assert expected_setup_path.is_file()
     with open(expected_setup_path) as in_file:
         assert in_file.read() == setup
 
     # Check manifest file
-    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    expected_manifest_path = project_path / "MANIFEST.in"
     assert expected_manifest_path.is_file()
     with open(expected_manifest_path) as in_file:
         assert in_file.read() == manifest
 
     # Check spec file
-    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    expected_spec_path = package_path / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
         assert in_file.read() == spec
 
     # Check init file
-    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    expected_init_path = package_path / "__init__.py"
     assert expected_init_path.is_file()
     with open(expected_init_path) as in_file:
         assert in_file.read() == init
@@ -517,8 +520,12 @@ def test_execute(tmp_path):
 
     build.execute(spec=spec, name=name, path=str(dist))
 
+    # Define generated project directories
+    project_path = dist / name
+    package_path = project_path / name
+
     # Check setup file
-    expected_setup_path = tmp_path / "dist" / "setup.py"
+    expected_setup_path = project_path / "setup.py"
     assert expected_setup_path.is_file()
     with open(expected_setup_path) as in_file:
         assert (
@@ -539,7 +546,7 @@ setuptools.setup(
         )
 
     # Check manifest file
-    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    expected_manifest_path = project_path / "MANIFEST.in"
     assert expected_manifest_path.is_file()
     with open(expected_manifest_path) as in_file:
         assert (
@@ -550,7 +557,7 @@ remove .*
         )
 
     # Check spec file
-    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    expected_spec_path = package_path / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
         assert in_file.read() == (
@@ -560,7 +567,7 @@ remove .*
         )
 
     # Check init file
-    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    expected_init_path = package_path / "__init__.py"
     assert expected_init_path.is_file()
     with open(expected_init_path) as in_file:
         init_contents = in_file.read()

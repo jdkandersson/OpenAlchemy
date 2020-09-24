@@ -491,7 +491,16 @@ def test_generate_type_return(tmp_path, artifacts):
     source = models_file.generate(artifacts=artifacts)
     source_file = _create_source_file(source, tmp_path)
 
-    _, _, returncode = api.run([str(source_file)])
+    normal_report, error_report, returncode = api.run([str(source_file)])
+
+    if returncode > 0:
+        if normal_report:
+            print("\nType checking report:\n")
+            print(normal_report)  # stdout
+
+        if error_report:
+            print("\nError report:\n")
+            print(error_report)  # stderr
 
     assert returncode == 0
 

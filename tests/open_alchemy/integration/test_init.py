@@ -670,14 +670,20 @@ def test_build_json(tmp_path):
         },
     }
 
-    spec_path = tmp_path / "spec.json"
+    spec_dir = tmp_path / name
+    spec_dir.mkdir(parents=True, exist_ok=True)
+    spec_path = spec_dir / "spec.json"
     with open(spec_path, "w") as out_file:
         out_file.write(json.dumps(spec))
 
     open_alchemy.build_json(str(spec_path), package_name=name, dist_path=str(dist))
 
+    # Define generated project directories
+    project_path = dist / name
+    package_path = project_path / name
+
     # Check setup file
-    expected_setup_path = tmp_path / "dist" / "setup.py"
+    expected_setup_path = project_path / "setup.py"
     assert expected_setup_path.is_file()
     with open(expected_setup_path) as in_file:
         setup_contents = in_file.read()
@@ -686,14 +692,14 @@ def test_build_json(tmp_path):
     assert version in setup_contents
 
     # Check manifest file
-    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    expected_manifest_path = project_path / "MANIFEST.in"
     assert expected_manifest_path.is_file()
     with open(expected_manifest_path) as in_file:
         manifest_contents = in_file.read()
     assert name in manifest_contents
 
     # Check spec file
-    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    expected_spec_path = package_path / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
         spec_contents = in_file.read()
@@ -701,7 +707,7 @@ def test_build_json(tmp_path):
     assert '"id"' in spec_contents
 
     # Check init file
-    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    expected_init_path = package_path / "__init__.py"
     assert expected_init_path.is_file()
     with open(expected_init_path) as in_file:
         init_contents = in_file.read()
@@ -747,7 +753,7 @@ def test_build_yaml(tmp_path):
     open_alchemy.build_yaml(str(spec_path), package_name=name, dist_path=str(dist))
 
     # Check setup file
-    expected_setup_path = tmp_path / "dist" / "setup.py"
+    expected_setup_path = tmp_path / "dist" / name / "setup.py"
     assert expected_setup_path.is_file()
     with open(expected_setup_path) as in_file:
         setup_contents = in_file.read()
@@ -756,14 +762,14 @@ def test_build_yaml(tmp_path):
     assert version in setup_contents
 
     # Check manifest file
-    expected_manifest_path = tmp_path / "dist" / "MANIFEST.in"
+    expected_manifest_path = tmp_path / "dist" / name / "MANIFEST.in"
     assert expected_manifest_path.is_file()
     with open(expected_manifest_path) as in_file:
         manifest_contents = in_file.read()
     assert name in manifest_contents
 
     # Check spec file
-    expected_spec_path = tmp_path / "dist" / name / "spec.json"
+    expected_spec_path = tmp_path / "dist" / name / name / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
         spec_contents = in_file.read()
@@ -771,7 +777,7 @@ def test_build_yaml(tmp_path):
     assert '"id"' in spec_contents
 
     # Check init file
-    expected_init_path = tmp_path / "dist" / name / "__init__.py"
+    expected_init_path = tmp_path / "dist" / name / name / "__init__.py"
     assert expected_init_path.is_file()
     with open(expected_init_path) as in_file:
         init_contents = in_file.read()
