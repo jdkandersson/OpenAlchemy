@@ -8,6 +8,7 @@ import typing
 from sqlalchemy.ext import declarative
 
 from open_alchemy import types as oa_types
+from open_alchemy.build import PackageFormat
 
 from . import build as _build_module
 from . import exceptions
@@ -250,6 +251,7 @@ def build_json(
     spec_filename: str,
     package_name: str,
     dist_path: str,
+    format_: PackageFormat = PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -257,10 +259,18 @@ def build_json(
     The package can be uploaded to, for example, PyPI or a private repository for
     distribution.
 
+    The formats can be combined with the bitwise operator or (``|``), for
+    instance, building both sdist and wheel packages can be specified like that:
+
+    .. code-block: python
+
+        format_ = PackageFormat.SDIST|PackageFormat.WHEEL
+
     Args:
         spec_filename: filename of an OpenAPI spec in JSON format
         package_name: The name of the package.
         dist_path: The directory to output the package to.
+        format_: The format(s) of the archive to build if any
 
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
@@ -270,13 +280,16 @@ def build_json(
     with open(spec_filename) as spec_file:
         spec = json.load(spec_file)
 
-    return _build_module.execute(spec=spec, name=package_name, path=dist_path)
+    return _build_module.execute(
+        spec=spec, name=package_name, path=dist_path, format_=format_
+    )
 
 
 def build_yaml(
     spec_filename: str,
     package_name: str,
     dist_path: str,
+    format_: PackageFormat = PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -284,10 +297,18 @@ def build_yaml(
     The package can be uploaded to, for example, PyPI or a private repository for
     distribution.
 
+    The formats can be combined with the bitwise operator "or" (``|``), for
+    instance, building both sdist and wheel packages can be specified like that:
+
+    .. code-block:: python
+
+        format_=PackageFormat.SDIST|PackageFormat.WHEEL
+
     Args:
         spec_filename: filename of an OpenAPI spec in YAML format
         package_name: The name of the package.
         dist_path: The directory to output the package to.
+        format_: The format(s) of the archive to build if any
 
     """
     try:
@@ -300,7 +321,9 @@ def build_yaml(
     with open(spec_filename) as spec_file:
         spec = yaml.load(spec_file, Loader=yaml.SafeLoader)
 
-    return _build_module.execute(spec=spec, name=package_name, path=dist_path)
+    return _build_module.execute(
+        spec=spec, name=package_name, path=dist_path, format_=format_
+    )
 
 
 __all__ = ["init_model_factory", "init_json", "init_yaml", "build_json", "build_yaml"]

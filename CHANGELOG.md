@@ -4,6 +4,8 @@
 
 - Refactor the models file generation to use the artifacts from the schemas.
 - Add `build_json` and `build_yaml` interfaces which can be used to produce a package with the models.
+- Ensure a package built with `build_json` or `build_yaml` is contained within a project directory.
+- Add the ability to build a `sdist` or `wheel` distributable archive.
 
 ## Version 1.5.4 - 2020-08-30
 

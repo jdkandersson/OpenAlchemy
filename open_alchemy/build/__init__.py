@@ -1,8 +1,17 @@
 """Build a package with the OpenAlchemy models."""
-
+from enum import auto
+from enum import Flag
 import hashlib
 import json
 import pathlib
+import shlex
+
+
+# TODO(rgreinho)): Fix it in the future when following  # pylint: disable=W0511
+# issue is resolved:
+# https://github.com/PyCQA/bandit/issues/211
+import subprocess  # nosec: we are aware of the implications.
+import sys
 import typing
 
 import jinja2
@@ -21,6 +30,29 @@ with open(_DIRECTORY / "init_init_open_alchemy.j2") as in_file:
     _INIT_INIT_OPEN_ALCHEMY_TEMPLATE = in_file.read()
 with open(_DIRECTORY / "init.j2") as in_file:
     _INIT_TEMPLATE = in_file.read()
+
+
+class PackageFormat(Flag):
+    """Define the available package formats for the build."""
+
+    NONE = auto()
+    SDIST = auto()
+    WHEEL = auto()
+
+
+def validate_dist_format(format_) -> None:
+    """
+    Ensure a valid package format is provided.
+
+    Raises a ``BuildError` exception if the format is invalid.
+
+    :param PackageFormat format_: the package format to validate
+    """
+    if format_ is not PackageFormat.NONE and PackageFormat.NONE in format_:
+        raise exceptions.BuildError(
+            "combining `PackageFormat.NONE` with another package type is "
+            "confusing, please be more specific"
+        )
 
 
 def get_schemas(*, spec: typing.Any) -> types.Schemas:
@@ -218,7 +250,94 @@ def dump(
         raise exceptions.BuildError(str(exc)) from exc
 
 
-def execute(*, spec: typing.Any, name: str, path: str) -> None:
+def build_dist(name: str, path: str, format_: PackageFormat) -> None:
+    """
+    Build a distibution package.
+
+    The formats can be combined with the bitwise operator "or" (``|``), for
+    instance, building both sdist and wheel packages can be specified like this:
+
+    .. code-block:: python
+
+        format_=PackageFormat.SDIST|PackageFormat.WHEEL
+
+    Args:
+        path: The package directory.
+        format: The package format to build.
+    """
+    pkg_dir = pathlib.Path(path) / name
+    if PackageFormat.SDIST in format_:
+        build_sdist(str(pkg_dir))
+    if PackageFormat.WHEEL in format_:
+        build_wheel(str(pkg_dir))
+
+
+def build_sdist(path: str) -> None:
+    """
+    Build a .tar.gz source distribution and place it in a "dist" folder.
+
+    The "dist" folder is located at the root of the project.
+
+    Args:
+        path: The package directory.
+    """
+    run(f"{sys.executable} setup.py sdist", path)
+
+
+def build_wheel(path: str) -> None:
+    """
+    Build a .whl package and place it in a "dist" folder.
+
+    The "dist" folder is located at the root of the project.
+
+    Args:
+        path: The package directory.
+    """
+    try:
+        run(f"{sys.executable} setup.py bdist_wheel", path)
+    except exceptions.BuildError as exc:
+        raise RuntimeError(
+            "Building a wheel package requires the wheel package. "
+            "Try `pip install wheel`."
+        ) from exc
+
+
+def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
+    """
+    Run a shell command.
+
+    Args:
+        cmd: The command to execute.
+        cwd: The path where the command must be executed from.
+
+    Returns:
+        A tuple containing (stdout, stderr).
+    """
+    try:
+        # "nosec" is used here as we believe we followed the guidelines to use
+        # subprocess securely:
+        # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+        output = subprocess.run(  # nosec
+            shlex.split(cmd),
+            cwd=cwd,
+            check=True,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise exceptions.BuildError(str(exc)) from exc
+    else:
+        return output.stdout.decode("utf-8"), output.stderr.decode("utf-8")
+
+
+def execute(
+    *,
+    spec: typing.Any,
+    name: str,
+    path: str,
+    format_: PackageFormat = PackageFormat.NONE,
+) -> None:
     """
     Execute the build for a spec.
 
@@ -226,8 +345,10 @@ def execute(*, spec: typing.Any, name: str, path: str) -> None:
         spec: The spec to execute the build on.
         name: The name of the package.
         path: The build output path.
+        format_: The format of the distribution package to build.
 
     """
+    validate_dist_format(format_)
     schemas = get_schemas(spec=spec)
     spec_str = generate_spec(schemas=schemas)
     version = calculate_version(spec=spec, spec_str=spec_str)
@@ -246,3 +367,6 @@ def execute(*, spec: typing.Any, name: str, path: str) -> None:
         spec=spec_str,
         init=init,
     )
+
+    # Build a distributable archive if needed.
+    build_dist(name, path, format_)
