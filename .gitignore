@@ -20,3 +20,4 @@ venv
 venv36
 coverage.xml
 docs/source/_*
+.venv

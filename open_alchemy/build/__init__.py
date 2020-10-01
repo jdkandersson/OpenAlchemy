@@ -203,23 +203,17 @@ def dump(
 
     """
     try:
-        pathlib_path = pathlib.Path(path)
-        if not pathlib_path.is_dir():
-            pathlib_path.mkdir()
+        # Write files at the root of the project directory.
+        directory = pathlib.Path(path) / name
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / "setup.py").write_text(setup)
+        (directory / "MANIFEST.in").write_text(manifest)
 
-        with open(pathlib_path / "setup.py", "w") as out_file:
-            out_file.write(setup)
-        with open(pathlib_path / "MANIFEST.in", "w") as out_file:
-            out_file.write(manifest)
-
-        pathlib_package_path = pathlib_path / name
-        if not pathlib_package_path.is_dir():
-            pathlib_package_path.mkdir()
-
-        with open(pathlib_package_path / "spec.json", "w") as out_file:
-            out_file.write(spec)
-        with open(pathlib_package_path / "__init__.py", "w") as out_file:
-            out_file.write(init)
+        # Write files in the package directory.
+        package = directory / name
+        package.mkdir(parents=True, exist_ok=True)
+        (package / "spec.json").write_text(spec)
+        (package / "__init__.py").write_text(init)
     except OSError as exc:
         raise exceptions.BuildError(str(exc)) from exc
 
@@ -244,4 +238,11 @@ def execute(*, spec: typing.Any, name: str, path: str) -> None:
     init_models_file = generate_init_models_file(schemas=schemas)
     init = generate_init(open_alchemy=init_open_alchemy, models_file=init_models_file)
 
-    dump(path=path, name=name, setup=setup, manifest=manifest, spec=spec_str, init=init)
+    dump(
+        path=path,
+        name=name,
+        setup=setup,
+        manifest=manifest,
+        spec=spec_str,
+        init=init,
+    )
