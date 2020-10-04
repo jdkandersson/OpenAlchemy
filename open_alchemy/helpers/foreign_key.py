@@ -31,8 +31,8 @@ def calculate_column_name(
         assert items_schema is not None
         property_schema = items_schema
 
-    x_foreign_key_column = peek.foreign_key_column(
-        schema=property_schema, schemas=schemas
+    x_foreign_key_column = peek.prefer_local(
+        get_value=peek.foreign_key_column, schema=property_schema, schemas=schemas
     )
     return x_foreign_key_column if x_foreign_key_column is not None else "id"
 
@@ -103,7 +103,9 @@ def calculate_prop_name(
     assert type_ != relationship.Type.MANY_TO_MANY
 
     if type_ == relationship.Type.ONE_TO_MANY:
-        tablename = peek.tablename(schema=target_schema, schemas=schemas)
+        tablename = peek.prefer_local(
+            get_value=peek.tablename, schema=target_schema, schemas=schemas
+        )
         assert tablename is not None
         property_name = f"{tablename}_{property_name}"
 
@@ -129,7 +131,9 @@ def calculate_foreign_key(
         The foreign key.
 
     """
-    tablename = peek.tablename(schema=target_schema, schemas=schemas)
+    tablename = peek.prefer_local(
+        get_value=peek.tablename, schema=target_schema, schemas=schemas
+    )
     assert tablename is not None
     return f"{tablename}.{column_name}"
 

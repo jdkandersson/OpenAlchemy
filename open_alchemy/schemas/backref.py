@@ -126,6 +126,9 @@ def process(*, schemas: types.Schemas):
     """
     Pre-process the schemas to add back references as required.
 
+    These are added as allOf with x-backrefs which include the property name and schema
+    for the property.
+
     Args:
         schemas: The schemas to process.
 
