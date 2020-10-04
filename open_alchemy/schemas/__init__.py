@@ -2,6 +2,7 @@
 
 from .. import types as _types
 from . import artifacts
+from . import association
 from . import backref
 from . import foreign_key
 from . import helpers
