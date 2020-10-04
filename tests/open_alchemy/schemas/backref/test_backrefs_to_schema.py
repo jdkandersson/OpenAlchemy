@@ -5,7 +5,7 @@ import pytest
 from open_alchemy.schemas import backref
 from open_alchemy.schemas import helpers
 
-TArt = helpers.process.TArtifacts  # pylint: disable=protected-access
+TArt = helpers.process.TArtifacts
 
 
 class TestBackrefsToSchema:

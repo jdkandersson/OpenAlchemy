@@ -81,11 +81,12 @@ TPyColumnDefault = typing.Optional[
 ]
 
 
-_ColumnSchemaBase = TypedDict(  # pylint: disable=invalid-name
+_ColumnSchemaBase = TypedDict(
     "_ColumnSchemaBase",
     {
         "x-dict-ignore": bool,
         "format": str,
+        "x-primary-key": bool,
         "maxLength": int,
         "nullable": bool,
         "description": str,
@@ -190,7 +191,7 @@ class ObjectArtifacts:
     write_only: typing.Optional[bool] = None
 
 
-_ObjectRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+_ObjectRefSchemaBase = TypedDict(
     "_ObjectRefSchemaBase", {"type": str, "x-de-$ref": str}, total=True
 )
 
@@ -204,7 +205,7 @@ class ObjectRefSchema(_ObjectRefSchemaBase, total=False):
     writeOnly: bool
 
 
-_ArrayRefSchemaBase = TypedDict(  # pylint: disable=invalid-name
+_ArrayRefSchemaBase = TypedDict(
     "_ArrayRefSchemaBase",
     {"description": str, "readOnly": bool, "writeOnly": bool},
     total=False,
@@ -218,9 +219,7 @@ class ArrayRefSchema(_ArrayRefSchemaBase, total=True):
     items: _ObjectRefSchemaBase
 
 
-_ReadOnlySchemaBase = TypedDict(  # pylint: disable=invalid-name
-    "_ReadOnlySchemaBase", {"readOnly": bool}, total=True
-)
+_ReadOnlySchemaBase = TypedDict("_ReadOnlySchemaBase", {"readOnly": bool}, total=True)
 
 
 class ReadOnlySchemaObjectCommon(TypedDict, total=True):
