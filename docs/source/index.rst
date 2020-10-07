@@ -136,7 +136,6 @@ installed. The :samp:`build_yaml` interface accepts the following arguments:
   2. the name that is used to import the models after they have been installed).
 
 * :samp:`dist_path`: The directory to output the package files.
-
 * :samp:`format_`: Optionally, the format of the package to build:
 
   * ``PackageFormat.NONE``: no package is built (default)

@@ -8,7 +8,6 @@ import typing
 from sqlalchemy.ext import declarative
 
 from open_alchemy import types as oa_types
-from open_alchemy.build import PackageFormat
 
 from . import build as _build_module
 from . import exceptions
@@ -251,7 +250,7 @@ def build_json(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: PackageFormat = PackageFormat.NONE,
+    format_: _build_module.PackageFormat = _build_module.PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -270,7 +269,7 @@ def build_json(
         spec_filename: filename of an OpenAPI spec in JSON format
         package_name: The name of the package.
         dist_path: The directory to output the package to.
-        format_: The format(s) of the archive to build if any
+        format_: (optional) The format(s) of the archive(s) to build.
 
     """
     # Most OpenAPI specs are YAML, so, for efficiency, we only import json if we
@@ -289,7 +288,7 @@ def build_yaml(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: PackageFormat = PackageFormat.NONE,
+    format_: _build_module.PackageFormat = _build_module.PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -308,7 +307,7 @@ def build_yaml(
         spec_filename: filename of an OpenAPI spec in YAML format
         package_name: The name of the package.
         dist_path: The directory to output the package to.
-        format_: The format(s) of the archive to build if any
+        format_: (optional) The format(s) of the archive(s) to build.
 
     """
     try:

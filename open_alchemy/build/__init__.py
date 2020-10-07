@@ -1,6 +1,5 @@
 """Build a package with the OpenAlchemy models."""
-from enum import auto
-from enum import Flag
+import enum
 import hashlib
 import json
 import pathlib
@@ -32,12 +31,12 @@ with open(_DIRECTORY / "init.j2") as in_file:
     _INIT_TEMPLATE = in_file.read()
 
 
-class PackageFormat(Flag):
+class PackageFormat(enum.Flag):
     """Define the available package formats for the build."""
 
-    NONE = auto()
-    SDIST = auto()
-    WHEEL = auto()
+    NONE = enum.auto()
+    SDIST = enum.auto()
+    WHEEL = enum.auto()
 
 
 def validate_dist_format(format_) -> None:
@@ -46,12 +45,15 @@ def validate_dist_format(format_) -> None:
 
     Raises a ``BuildError` exception if the format is invalid.
 
-    :param PackageFormat format_: the package format to validate
+    Args:
+        format_: the package format to validate
     """
     if format_ is not PackageFormat.NONE and PackageFormat.NONE in format_:
         raise exceptions.BuildError(
-            "combining `PackageFormat.NONE` with another package type is "
-            "confusing, please be more specific"
+            "Combining `PackageFormat.NONE` with another package type "
+            "prevents OpenAlchemy to determine if an archive should be "
+            f"created or not: '{format_}'. Either specify 'PackageFormat.NONE' "
+            "or the format(s) to build. "
         )
 
 
@@ -265,14 +267,13 @@ def build_dist(name: str, path: str, format_: PackageFormat) -> None:
         path: The package directory.
         format: The package format to build.
     """
-    pkg_dir = pathlib.Path(path) / name
     if PackageFormat.SDIST in format_:
-        build_sdist(str(pkg_dir))
+        build_sdist(name, path)
     if PackageFormat.WHEEL in format_:
-        build_wheel(str(pkg_dir))
+        build_wheel(name, path)
 
 
-def build_sdist(path: str) -> None:
+def build_sdist(name: str, path: str) -> None:
     """
     Build a .tar.gz source distribution and place it in a "dist" folder.
 
@@ -281,10 +282,11 @@ def build_sdist(path: str) -> None:
     Args:
         path: The package directory.
     """
-    run(f"{sys.executable} setup.py sdist", path)
+    pkg_dir = pathlib.Path(path) / name
+    run(f"{sys.executable} setup.py sdist", str(pkg_dir))
 
 
-def build_wheel(path: str) -> None:
+def build_wheel(name: str, path: str) -> None:
     """
     Build a .whl package and place it in a "dist" folder.
 
@@ -293,8 +295,9 @@ def build_wheel(path: str) -> None:
     Args:
         path: The package directory.
     """
+    pkg_dir = pathlib.Path(path) / name
     try:
-        run(f"{sys.executable} setup.py bdist_wheel", path)
+        run(f"{sys.executable} setup.py bdist_wheel", str(pkg_dir))
     except exceptions.BuildError as exc:
         raise RuntimeError(
             "Building a wheel package requires the wheel package. "
@@ -313,6 +316,7 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
     Returns:
         A tuple containing (stdout, stderr).
     """
+    output = None
     try:
         # "nosec" is used here as we believe we followed the guidelines to use
         # subprocess securely:
@@ -327,8 +331,8 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
         )
     except subprocess.CalledProcessError as exc:
         raise exceptions.BuildError(str(exc)) from exc
-    else:
-        return output.stdout.decode("utf-8"), output.stderr.decode("utf-8")
+
+    return output.stdout.decode("utf-8"), output.stderr.decode("utf-8")
 
 
 def execute(
@@ -336,7 +340,7 @@ def execute(
     spec: typing.Any,
     name: str,
     path: str,
-    format_: PackageFormat = PackageFormat.NONE,
+    format_: PackageFormat,
 ) -> None:
     """
     Execute the build for a spec.

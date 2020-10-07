@@ -3,7 +3,6 @@ import pytest
 
 from open_alchemy import build
 from open_alchemy import exceptions
-from open_alchemy.build import PackageFormat
 
 
 @pytest.mark.parametrize(
@@ -495,15 +494,17 @@ def test_calculate_version(spec, spec_str, expected_version):
 @pytest.mark.parametrize(
     "package_format, extensions",
     [
-        pytest.param(PackageFormat.NONE, [], id="build without package"),
-        pytest.param(PackageFormat.SDIST, [".tar.gz"], id="build with a sdist package"),
+        pytest.param(build.PackageFormat.NONE, [], id="build without package"),
         pytest.param(
-            PackageFormat.WHEEL,
+            build.PackageFormat.SDIST, [".tar.gz"], id="build with a sdist package"
+        ),
+        pytest.param(
+            build.PackageFormat.WHEEL,
             [".whl"],
             id="build with a wheel package",
         ),
         pytest.param(
-            PackageFormat.SDIST | PackageFormat.WHEEL,
+            build.PackageFormat.SDIST | build.PackageFormat.WHEEL,
             [".tar.gz", "whl"],
             id="build with all available packages",
         ),
@@ -642,21 +643,32 @@ def test_build_dist_wheel_import_error(tmp_path):
         build.run("pip uninstall -y wheel", ".")
         with pytest.raises(RuntimeError):
             build.execute(
-                spec=spec, name=name, path=str(dist), format_=PackageFormat.WHEEL
+                spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
             )
     finally:
         build.run("pip install wheel", ".")
 
 
+@pytest.mark.parametrize(
+    "format_",
+    [
+        pytest.param(build.PackageFormat.NONE, id="build no archive"),
+        pytest.param(build.PackageFormat.SDIST, id="build a sdist archive"),
+        pytest.param(build.PackageFormat.WHEEL, id="build a wheel archive"),
+        pytest.param(
+            build.PackageFormat.SDIST | build.PackageFormat.WHEEL,
+            id="build a sdist and a whell archive",
+        ),
+    ],
+)
 @pytest.mark.build
-def test_validate_dist_format_valid():
+def test_validate_dist_format_valid(format_):
     """
     GIVEN a valid format
     WHEN validate_dist_format is called
     THEN nothing happens
     """
-    for format_ in PackageFormat:
-        build.validate_dist_format(format_)
+    build.validate_dist_format(format_)
 
 
 @pytest.mark.build
@@ -667,5 +679,5 @@ def test_validate_dist_format_invalid():
     THEN an exception is raised
     """
     with pytest.raises(exceptions.BuildError):
-        format_ = PackageFormat.NONE | PackageFormat.SDIST
+        format_ = build.PackageFormat.NONE | build.PackageFormat.SDIST
         build.validate_dist_format(format_)
