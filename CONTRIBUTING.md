@@ -43,3 +43,4 @@ used in the code (the list will evolve over time):
   no longer make the argument optional.
 - Take not of the tools used in the pipeline for code quality checks. Any
   disabling of any check must be documented with a reason.
+- Note changes in the changelog.
