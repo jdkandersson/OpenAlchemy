@@ -136,6 +136,26 @@ installed. The :samp:`build_yaml` interface accepts the following arguments:
   2. the name that is used to import the models after they have been installed).
 
 * :samp:`dist_path`: The directory to output the package files.
+* :samp:`format_`: Optionally, the format of the package to build:
+
+  * ``PackageFormat.NONE``: no package is built (default)
+  * ``PackageFormat.SDIST``: a sdist package is built
+  * ``PackageFormat.WHEEL``: a wheel package is built
+
+  The formats can be combined with the bitwise operator "or" (``|``), for
+  instance, building both sdist and wheel packages can be specified like this:
+
+  .. code-block:: python
+
+    format_=PackageFormat.SDIST|PackageFormat.WHEEL
+
+  .. warning::
+
+    In order to build a wheel distributable archive, the
+    `wheel <https://pypi.org/project/wheel/>`_ package is necessary.
+
+    It can be installed separately with ``pip install wheel``, or with
+    OpenAlchemy directly with ``pip install OpenAlchemy[wheel]``.
 
 .. _build-json:
 

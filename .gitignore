@@ -1,12 +1,14 @@
 .coverage
 .coverage.*
 .DS_Store
+.ipynb_checkpoints/
 .mypy_cache/
 .pytest_cache/
 .tox/
 .venv/
 .vscode/
 *.egg-info/
+*.ipynb
 *.pyc
 *.pyo
 build/
@@ -20,4 +22,3 @@ venv
 venv36
 coverage.xml
 docs/source/_*
-.venv

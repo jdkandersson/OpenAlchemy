@@ -491,10 +491,29 @@ def test_calculate_version(spec, spec_str, expected_version):
     assert returned_version == expected_version
 
 
+@pytest.mark.parametrize(
+    "package_format, extensions",
+    [
+        pytest.param(build.PackageFormat.NONE, [], id="build without package"),
+        pytest.param(
+            build.PackageFormat.SDIST, [".tar.gz"], id="build with a sdist package"
+        ),
+        pytest.param(
+            build.PackageFormat.WHEEL,
+            [".whl"],
+            id="build with a wheel package",
+        ),
+        pytest.param(
+            build.PackageFormat.SDIST | build.PackageFormat.WHEEL,
+            [".tar.gz", "whl"],
+            id="build with all available packages",
+        ),
+    ],
+)
 @pytest.mark.build
-def test_execute(tmp_path):
+def test_execute(tmp_path, package_format, extensions):
     """
-    GIVEN spec, name and path
+    GIVEN spec, name, path and a package format
     WHEN execute is called with the spec, name and path
     THEN the setup.py, MANIFEST.in, spec.json and __init__.py files are created.
     """
@@ -518,7 +537,7 @@ def test_execute(tmp_path):
         },
     }
 
-    build.execute(spec=spec, name=name, path=str(dist))
+    build.execute(spec=spec, name=name, path=str(dist), format_=package_format)
 
     # Define generated project directories
     project_path = dist / name
@@ -585,3 +604,80 @@ init_json(parent_path / "spec.json")"""
     assert "class TSchema" in init_contents
     assert "id: 'sqlalchemy.Column[typing.Optional[int]]'" in init_contents
     assert "Schema: typing.Type[TSchema]" in init_contents
+
+    # Assert one package per requested format is created.
+    for extension in extensions:
+        dist_dir = project_path / "dist"
+        files = list(dist_dir.glob(f"{name}*{extension}"))
+        assert len(files) == 1
+
+
+@pytest.mark.integration
+def test_build_dist_wheel_import_error(tmp_path):
+    """
+    GIVEN wheel package is not available
+    WHEN build_dist is called
+    THEN RuntimeError is raised.
+    """
+    dist = tmp_path / "dist"
+    dist.mkdir()
+
+    name = "app_models"
+    version = "version 1"
+    spec = {
+        "info": {
+            "version": version,
+        },
+        "components": {
+            "schemas": {
+                "Schema": {
+                    "type": "object",
+                    "x-tablename": "schema",
+                    "properties": {"id": {"type": "integer"}},
+                }
+            }
+        },
+    }
+
+    try:
+        build.run("pip uninstall -y wheel", ".")
+        with pytest.raises(RuntimeError):
+            build.execute(
+                spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
+            )
+    finally:
+        build.run("pip install wheel", ".")
+
+
+@pytest.mark.parametrize(
+    "format_",
+    [
+        pytest.param(build.PackageFormat.NONE, id="build no archive"),
+        pytest.param(build.PackageFormat.SDIST, id="build a sdist archive"),
+        pytest.param(build.PackageFormat.WHEEL, id="build a wheel archive"),
+        pytest.param(
+            build.PackageFormat.SDIST | build.PackageFormat.WHEEL,
+            id="build a sdist and a whell archive",
+        ),
+    ],
+)
+@pytest.mark.build
+def test_validate_dist_format_valid(format_):
+    """
+    GIVEN a valid format
+    WHEN validate_dist_format is called
+    THEN nothing happens
+    """
+    build.validate_dist_format(format_)
+
+
+@pytest.mark.build
+def test_validate_dist_format_invalid():
+    """
+    GIVEN a invalid format
+    WHEN validate_dist_format is called
+    THEN an exception is raised
+    """
+    with pytest.raises(exceptions.BuildError):
+        format_ = build.PackageFormat.NONE | build.PackageFormat.SDIST
+        build.validate_dist_format(format_)

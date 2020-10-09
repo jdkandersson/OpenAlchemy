@@ -39,6 +39,7 @@ setuptools.setup(
     include_package_data=True,
     extras_require={
         "yaml": ["PyYAML"],
+        "wheel": ["wheel"],
         "dev": [
             "tox",
             "tox-pyenv",
@@ -48,7 +49,6 @@ setuptools.setup(
             "black",
             "pre-commit",
             "isort<5.0.0",
-            "PyYAML",
             "Sphinx",
             "doc8",
             "connexion[swagger-ui]",
@@ -67,6 +67,7 @@ setuptools.setup(
             "connexion[swagger-ui]",
             "typeguard",
             "sqlalchemy_mixins",
+            "wheel",
         ],
         ":python_version<'3.7'": [
             "dataclasses>=0.7",
