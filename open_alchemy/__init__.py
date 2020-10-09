@@ -7,6 +7,7 @@ import typing
 
 from sqlalchemy.ext import declarative
 
+from open_alchemy import build
 from open_alchemy import types as oa_types
 
 from . import build as _build_module
@@ -250,7 +251,7 @@ def build_json(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: _build_module.PackageFormat = _build_module.PackageFormat.NONE,
+    format_: build.PackageFormat = build.PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -288,7 +289,7 @@ def build_yaml(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: _build_module.PackageFormat = _build_module.PackageFormat.NONE,
+    format_: build.PackageFormat = build.PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
