@@ -16,8 +16,8 @@ from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
 
-# TODO(rgreinho)): Fix it in the future when following  # pylint: disable=W0511
-# issue is resolved:
+# TODO(rgreinho)): Fix above nosec it in the future when  # pylint: disable=W0511
+# following issue is resolved:
 # https://github.com/PyCQA/bandit/issues/211
 
 
@@ -322,6 +322,14 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
     """
     output = None
     try:
+        output = subprocess.run(  # nosec
+            [sys.executable, "--python-version"],
+            cwd=cwd,
+            check=True,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         # "nosec" is used here as we believe we followed the guidelines to use
         # subprocess securely:
         # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
