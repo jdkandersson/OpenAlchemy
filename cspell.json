@@ -57,6 +57,8 @@
   "dictionaries": ["python"],
   "ignorePaths": [
     "tests/open_alchemy/models_file/test_types.py",
-    "examples/**/venv/**/*"
+    "examples/**/venv/**/*",
+    "package-lock.json",
+    "package.json"
   ]
 }
