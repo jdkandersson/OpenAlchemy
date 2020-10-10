@@ -18,13 +18,12 @@ jobs:
   - job: "pytest"
     pool:
       vmImage: "$(imageName)"
-    variables:
-      PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
     strategy:
       matrix:
         Python37:
           python.version: "3.7"
           imageName: "ubuntu-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
         # To be used once azure pipelines supports Python 3.9
         # Python38:
         #   python.version: "3.8"
@@ -32,12 +31,15 @@ jobs:
         Python38Linux:
           python.version: "3.8"
           imageName: "ubuntu-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
         Python38Mac:
           python.version: "3.8"
           imageName: "macOS-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
         Python38Windows:
           python.version: "3.8"
           imageName: "windows-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)\.pip
         # To be used once azure pipelines supports Python 3.9
         # Python39Linux:
         #   python.version: "3.9"
