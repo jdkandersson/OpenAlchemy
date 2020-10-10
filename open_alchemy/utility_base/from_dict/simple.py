@@ -1,18 +1,11 @@
 """Convert simple type from dictionary to the column equivalent."""
 
 import datetime
-import sys
 
 from ... import exceptions
 from ... import helpers
 from ... import types as oa_types
 from .. import types
-
-if sys.version_info[1] < 7:
-    # pylint: disable=import-error
-    from backports.datetime_fromisoformat import MonkeyPatch
-
-    MonkeyPatch.patch_fromisoformat()
 
 
 def convert(

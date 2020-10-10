@@ -1,17 +1,10 @@
 """Convert an OpenAPI value based on the format to the equivalent Python value."""
 
 import datetime
-import sys
 import typing
 
 from open_alchemy import exceptions
 from open_alchemy import types
-
-if sys.version_info[1] < 7:
-    # pylint: disable=import-error
-    from backports.datetime_fromisoformat import MonkeyPatch
-
-    MonkeyPatch.patch_fromisoformat()
 
 
 def convert(
