@@ -1,7 +1,5 @@
 """Tests for the package builder."""
 
-import sys
-
 import pytest
 
 from open_alchemy import build
@@ -513,9 +511,9 @@ def test_calculate_version(spec, spec_str, expected_version):
         ),
     ],
 )
-@pytest.mark.xfail(
-    condition=sys.platform == "win32", reason="feature not supported on Windows"
-)
+# @pytest.mark.xfail(
+#     condition=sys.platform == "win32", reason="feature not supported on Windows"
+# )
 @pytest.mark.build
 def test_execute(tmp_path, package_format, extensions):
     """
@@ -618,9 +616,9 @@ init_json(parent_path / "spec.json")"""
         assert len(files) == 1
 
 
-@pytest.mark.xfail(
-    condition=sys.platform == "win32", reason="feature not supported on Windows"
-)
+# @pytest.mark.xfail(
+#     condition=sys.platform == "win32", reason="feature not supported on Windows"
+# )
 @pytest.mark.integration
 def test_build_dist_wheel_import_error(tmp_path):
     """
