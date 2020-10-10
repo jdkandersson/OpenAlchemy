@@ -6,11 +6,6 @@ import typing
 
 import jinja2
 
-from open_alchemy import helpers
-from open_alchemy import types as oa_types
-
-from .. import types
-
 _DIRECTORY = os.path.dirname(__file__)
 _TEMPLATE_FILE = os.path.join(_DIRECTORY, "template.j2")
 with open(_TEMPLATE_FILE) as in_file:

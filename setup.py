@@ -17,9 +17,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Development Status :: 5 - Production/Stable",
@@ -29,7 +29,7 @@ setuptools.setup(
         "Topic :: Internet",
         "Typing :: Typed",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
         "SQLAlchemy>=1.0",
         "jsonschema>=3",
@@ -68,10 +68,6 @@ setuptools.setup(
             "typeguard",
             "sqlalchemy_mixins",
             "wheel",
-        ],
-        ":python_version<'3.7'": [
-            "dataclasses>=0.7",
-            "backports-datetime-fromisoformat>=1.0.0",
         ],
         ":python_version<'3.8'": ["typing_extensions>=3.7.4"],
     },

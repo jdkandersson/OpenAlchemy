@@ -1,4 +1,5 @@
 """Tests for the package builder."""
+
 import pytest
 
 from open_alchemy import build
@@ -510,6 +511,9 @@ def test_calculate_version(spec, spec_str, expected_version):
         ),
     ],
 )
+# @pytest.mark.xfail(
+#     condition=sys.platform == "win32", reason="feature not supported on Windows"
+# )
 @pytest.mark.build
 def test_execute(tmp_path, package_format, extensions):
     """
@@ -612,6 +616,9 @@ init_json(parent_path / "spec.json")"""
         assert len(files) == 1
 
 
+# @pytest.mark.xfail(
+#     condition=sys.platform == "win32", reason="feature not supported on Windows"
+# )
 @pytest.mark.integration
 def test_build_dist_wheel_import_error(tmp_path):
     """
@@ -640,13 +647,13 @@ def test_build_dist_wheel_import_error(tmp_path):
     }
 
     try:
-        build.run("pip uninstall -y wheel", ".")
+        build.run(["pip", "uninstall", "-y", "wheel"], ".")
         with pytest.raises(RuntimeError):
             build.execute(
                 spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
             )
     finally:
-        build.run("pip install wheel", ".")
+        build.run(["pip", "install", "wheel"], ".")
 
 
 @pytest.mark.parametrize(
@@ -657,7 +664,7 @@ def test_build_dist_wheel_import_error(tmp_path):
         pytest.param(build.PackageFormat.WHEEL, id="build a wheel archive"),
         pytest.param(
             build.PackageFormat.SDIST | build.PackageFormat.WHEEL,
-            id="build a sdist and a whell archive",
+            id="build a sdist and a wheel archive",
         ),
     ],
 )

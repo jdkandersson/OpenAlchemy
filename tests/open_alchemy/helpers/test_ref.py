@@ -1,6 +1,7 @@
 """Tests for ref."""
 
 import os
+import sys
 from unittest import mock
 from urllib import error
 
@@ -157,6 +158,9 @@ def test_resolve_error(schema, schemas, exception):
     ],
     ids=["no norm", "norm", "URL"],
 )
+@pytest.mark.xfail(
+    condition=sys.platform == "win32", reason="feature not supported on Windows"
+)
 @pytest.mark.helper
 def test_norm_context(context, expected_context):
     """
@@ -234,127 +238,160 @@ class TestAddRemoteContext:
     @pytest.mark.parametrize(
         "context, ref, expected_ref",
         [
-            ("doc1.ext", "#/Schema", "doc1.ext#/Schema"),
-            ("dir1/doc1.ext", "#/Schema", "dir1/doc1.ext#/Schema"),
-            ("doc1.ext", "doc2.ext#/Schema", "doc2.ext#/Schema"),
-            ("dir1/doc1.ext", "doc2.ext#/Schema", "dir1/doc2.ext#/Schema"),
-            ("doc1.ext", "dir2/doc2.ext#/Schema", "dir2/doc2.ext#/Schema"),
-            ("dir1/doc1.ext", "dir2/doc2.ext#/Schema", "dir1/dir2/doc2.ext#/Schema"),
-            ("doc1.ext", "dir2/../doc2.ext#/Schema", "doc2.ext#/Schema"),
-            ("dir1/doc1.ext", "../doc2.ext#/Schema", "doc2.ext#/Schema"),
-            (
+            pytest.param(
+                "doc1.ext",
+                "#/Schema",
+                "doc1.ext#/Schema",
+                id="within document context document",
+            ),
+            pytest.param(
+                "dir1/doc1.ext",
+                "#/Schema",
+                "dir1/doc1.ext#/Schema",
+                id="within document context folder",
+            ),
+            pytest.param(
+                "doc1.ext",
+                "doc2.ext#/Schema",
+                "doc2.ext#/Schema",
+                id="external same folder context document",
+            ),
+            pytest.param(
+                "dir1/doc1.ext",
+                "doc2.ext#/Schema",
+                "dir1/doc2.ext#/Schema",
+                id="external same folder context folder",
+            ),
+            pytest.param(
+                "doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "dir2/doc2.ext#/Schema",
+                id="external different folder context document",
+            ),
+            pytest.param(
+                "dir1/doc1.ext",
+                "dir2/doc2.ext#/Schema",
+                "dir1/dir2/doc2.ext#/Schema",
+                id="external different folder context folder",
+            ),
+            pytest.param(
+                "doc1.ext",
+                "dir2/../doc2.ext#/Schema",
+                "doc2.ext#/Schema",
+                id="external different folder require normalization context document",
+            ),
+            pytest.param(
+                "dir1/doc1.ext",
+                "../doc2.ext#/Schema",
+                "doc2.ext#/Schema",
+                id="external different folder require normalization context folder",
+            ),
+            pytest.param(
                 "http://host.com/doc1.ext",
                 "#/Schema",
                 "http://host.com/doc1.ext#/Schema",
+                id="http within document context document",
             ),
-            (
+            pytest.param(
                 "http://host.com/dir1/doc1.ext",
                 "#/Schema",
                 "http://host.com/dir1/doc1.ext#/Schema",
+                id="http within document context folder",
             ),
-            (
+            pytest.param(
                 "HTTP://host.com/doc1.ext",
                 "#/Schema",
                 "HTTP://host.com/doc1.ext#/Schema",
+                id="http capitalized context document",
             ),
-            (
+            pytest.param(
                 "https://host.com/doc1.ext",
                 "#/Schema",
                 "https://host.com/doc1.ext#/Schema",
+                id="https context document",
             ),
-            (
+            pytest.param(
                 "HTTPS://host.com/doc1.ext",
                 "#/Schema",
                 "HTTPS://host.com/doc1.ext#/Schema",
+                id="https capitalized context document",
             ),
-            (
+            pytest.param(
                 "http://host.com/doc1.ext",
                 "doc2.ext#/Schema",
                 "http://host.com/doc2.ext#/Schema",
+                id="http same folder context document",
             ),
-            (
+            pytest.param(
                 "http://host.com/dir1/doc1.ext",
                 "doc2.ext#/Schema",
                 "http://host.com/dir1/doc2.ext#/Schema",
+                id="http same folder context folder",
             ),
-            (
+            pytest.param(
                 "http://host.com/doc1.ext",
                 "dir2/doc2.ext#/Schema",
                 "http://host.com/dir2/doc2.ext#/Schema",
+                id="http different folder context document",
             ),
-            (
+            pytest.param(
                 "http://host.com/dir1/doc1.ext",
                 "dir2/doc2.ext#/Schema",
                 "http://host.com/dir1/dir2/doc2.ext#/Schema",
+                id="http different folder context folder",
             ),
-            (
+            pytest.param(
                 "http://host.com/doc1.ext",
                 "dir2/../doc2.ext#/Schema",
                 "http://host.com/doc2.ext#/Schema",
+                id="http different folder require normalization context document",
             ),
-            (
+            pytest.param(
                 "http://host.com/dir1/doc1.ext",
                 "../doc2.ext#/Schema",
                 "http://host.com/doc2.ext#/Schema",
+                id="http different folder require normalization context folder",
             ),
-            (
+            pytest.param(
                 "http://host1.com/doc1.ext",
                 "http://host2.com/doc1.ext#/Schema",
                 "http://host2.com/doc1.ext#/Schema",
+                id="http other http context document",
             ),
-            (
+            pytest.param(
                 "http://host1.com/doc1.ext",
                 "HTTP://host2.com/doc1.ext#/Schema",
                 "HTTP://host2.com/doc1.ext#/Schema",
+                id="http other http capitalized context document",
             ),
-            (
+            pytest.param(
                 "http://host1.com/doc1.ext",
                 "https://host2.com/doc1.ext#/Schema",
                 "https://host2.com/doc1.ext#/Schema",
+                id="http other https context document",
             ),
-            (
+            pytest.param(
                 "http://host1.com/doc1.ext",
                 "HTTPS://host2.com/doc1.ext#/Schema",
                 "HTTPS://host2.com/doc1.ext#/Schema",
+                id="http other https capitalized context document",
             ),
-            (
+            pytest.param(
                 "http://host1.com/doc1.ext",
                 "//host2.com/doc1.ext#/Schema",
                 "http://host2.com/doc1.ext#/Schema",
+                id="http other network no protocol context document",
             ),
-            (
+            pytest.param(
                 "doc1.ext",
                 "http://host.com/doc1.ext#/Schema",
                 "http://host.com/doc1.ext#/Schema",
+                id="within document to http context document",
             ),
         ],
-        ids=[
-            "within document                                 context document",
-            "                                                context folder",
-            "external same folder                            context document",
-            "                                                context folder",
-            "external different folder                       context document",
-            "                                                context folder",
-            "external different folder require normalization context document",
-            "                                                context folder",
-            "http within document                            context document",
-            "                                                context folder",
-            "http capitalized                                context document",
-            "https                                           context document",
-            "https capitalized                               context document",
-            "http same folder                                context document",
-            "                                                context folder",
-            "http different folder                           context document",
-            "                                                context folder",
-            "http different folder require normalization     context document",
-            "                                                context folder",
-            "http other http                                 context document",
-            "http other http capitalized                     context document",
-            "http other https                                context document",
-            "http other https capitalized                    context document",
-            "http other network no protocol                  context document",
-            "within document to http                         context document",
-        ],
+    )
+    @pytest.mark.xfail(
+        condition=sys.platform == "win32", reason="feature not supported on Windows"
     )
     @pytest.mark.helper
     def test_add_remote_context(context, ref, expected_ref):
@@ -762,6 +799,9 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     assert name == "Schema1"
 
 
+@pytest.mark.xfail(
+    condition=sys.platform == "win32", reason="feature not supported on Windows"
+)
 @pytest.mark.helper
 def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
     """

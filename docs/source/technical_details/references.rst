@@ -45,6 +45,10 @@ The OpenAPI specification supports remote references in
 1. another file within the file system and
 2. a file available at a URL.
 
+  .. warning::
+
+    (1) is not supported on Windows.
+
 For (1), the following example shows how to reference a schema in another file:
 
 .. literalinclude:: ../../../examples/remote/example-spec.yml

@@ -17,21 +17,37 @@ schedules:
 jobs:
   - job: "pytest"
     pool:
-      vmImage: "ubuntu-latest"
+      vmImage: "$(imageName)"
     strategy:
       matrix:
-        Python36:
-          python.version: "3.6"
         Python37:
           python.version: "3.7"
-        Python38:
+          imageName: "ubuntu-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
+        Python38Linux:
           python.version: "3.8"
+          imageName: "ubuntu-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
+        Python38Mac:
+          python.version: "3.8"
+          imageName: "macOS-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
+        Python38Windows:
+          python.version: "3.8"
+          imageName: "windows-latest"
+          PIP_CACHE_DIR: $(Pipeline.Workspace)\.pip
 
     steps:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "$(python.version)"
         displayName: "Use Python $(python.version)"
+
+      - task: Cache@2
+        inputs:
+          key: '"$(python.version)" | "$(Agent.OS)" | setup.py'
+          path: $(PIP_CACHE_DIR)
+        displayName: Cache pip packages
 
       - script: |
           python -m pip install --upgrade pip

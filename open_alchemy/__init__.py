@@ -7,7 +7,6 @@ import typing
 
 from sqlalchemy.ext import declarative
 
-from open_alchemy import build
 from open_alchemy import types as oa_types
 
 from . import build as _build_module
@@ -16,6 +15,7 @@ from . import helpers as _helpers
 from . import model_factory as _model_factory
 from . import models_file as _models_file
 from . import schemas as _schemas_module
+from .build import PackageFormat
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["open_alchemy.models"] = models
@@ -251,7 +251,7 @@ def build_json(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: build.PackageFormat = build.PackageFormat.NONE,
+    format_: PackageFormat = PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -289,7 +289,7 @@ def build_yaml(
     spec_filename: str,
     package_name: str,
     dist_path: str,
-    format_: build.PackageFormat = build.PackageFormat.NONE,
+    format_: PackageFormat = PackageFormat.NONE,
 ) -> None:
     """
     Create an OpenAlchemy distribution package with the SQLAlchemy models.
@@ -326,4 +326,11 @@ def build_yaml(
     )
 
 
-__all__ = ["init_model_factory", "init_json", "init_yaml", "build_json", "build_yaml"]
+__all__ = [
+    "init_model_factory",
+    "init_json",
+    "init_yaml",
+    "build_json",
+    "build_yaml",
+    "PackageFormat",
+]
