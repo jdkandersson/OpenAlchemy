@@ -1,6 +1,6 @@
 .. _model-kwargs:
 
-Miscelenaeous Model Arguments
+Miscellaneous Model Arguments
 =============================
 
 SQLAlchemy allows for special parameters, such as :samp:`__mapper_args__` that

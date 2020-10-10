@@ -170,7 +170,7 @@ def test_valid(name, value):
 def test_pop():
     """
     GIVEN property and valid value
-    WHEN geterty is called with the name, value and pop set
+    WHEN get is called with the name, value and pop set
     THEN the key is removed from the dictionary.
     """
     name = "x-dict-ignore"
