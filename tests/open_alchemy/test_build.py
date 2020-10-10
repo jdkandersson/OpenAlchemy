@@ -1,5 +1,7 @@
 """Tests for the package builder."""
 
+import sys
+
 import pytest
 
 from open_alchemy import build
@@ -648,6 +650,7 @@ def test_build_dist_wheel_import_error(tmp_path):
 
     try:
         build.run("pip uninstall -y wheel", ".")
+        print(build.run(f"{sys.executable} --version", "."))
         with pytest.raises(RuntimeError):
             build.execute(
                 spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL

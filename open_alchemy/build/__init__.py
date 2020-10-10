@@ -1,14 +1,10 @@
 """Build a package with the OpenAlchemy models."""
+
 import enum
 import hashlib
 import json
 import pathlib
 import shlex
-
-
-# TODO(rgreinho)): Fix it in the future when following  # pylint: disable=W0511
-# issue is resolved:
-# https://github.com/PyCQA/bandit/issues/211
 import subprocess  # nosec: we are aware of the implications.
 import sys
 import typing
@@ -19,6 +15,11 @@ from .. import exceptions
 from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
+
+# TODO(rgreinho)): Fix it in the future when following  # pylint: disable=W0511
+# issue is resolved:
+# https://github.com/PyCQA/bandit/issues/211
+
 
 _DIRECTORY = pathlib.Path(__file__).parent.absolute()
 with open(_DIRECTORY / "setup.j2") as in_file:
@@ -254,7 +255,7 @@ def dump(
 
 def build_dist(name: str, path: str, format_: PackageFormat) -> None:
     """
-    Build a distibution package.
+    Build a distribution package.
 
     The formats can be combined with the bitwise operator "or" (``|``), for
     instance, building both sdist and wheel packages can be specified like this:
@@ -283,6 +284,7 @@ def build_sdist(name: str, path: str) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
+    print(list(pkg_dir.glob("**/*")))
     run(f"{sys.executable} setup.py sdist", str(pkg_dir))
 
 
@@ -296,6 +298,7 @@ def build_wheel(name: str, path: str) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
+    print(list(pkg_dir.glob("**/*")))
     try:
         run(f"{sys.executable} setup.py bdist_wheel", str(pkg_dir))
     except exceptions.BuildError as exc:
@@ -315,6 +318,7 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
 
     Returns:
         A tuple containing (stdout, stderr).
+
     """
     output = None
     try:

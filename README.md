@@ -128,7 +128,7 @@ An example API has been defined using connexion and Flask here:
 - `date-time`,
 - generic JSON data,
 - `$ref` references for columns and models,
-- remote `$ref` to other files on the same file system,
+- remote `$ref` to other files on the same file system (_not supported on Windows_),
 - remote `$ref` to other files at a URL,
 - primary keys,
 - auto incrementing,
