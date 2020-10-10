@@ -31,3 +31,13 @@ repos:
     hooks:
       - exclude: "^docs.*.yaml$"
         id: prettier
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0 # Use the ref you want to point at
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: name-tests-test
+      - id: trailing-whitespace
