@@ -323,13 +323,14 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
     output = None
     try:
         output = subprocess.run(  # nosec
-            [sys.executable, "--python-version"],
+            [sys.executable, "--version"],
             cwd=cwd,
             check=True,
             shell=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
+        print(output)
         # "nosec" is used here as we believe we followed the guidelines to use
         # subprocess securely:
         # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html

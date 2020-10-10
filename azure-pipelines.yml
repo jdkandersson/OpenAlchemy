@@ -53,9 +53,13 @@ jobs:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "$(python.version)"
+        displayName: "Use Python $(python.version)"
+
+      - task: Cache@2
+        inputs:
           key: '$(python.version) | "$(Agent.OS)" | setup.py'
           path: $(PIP_CACHE_DIR)
-        displayName: "Use Python $(python.version)"
+        displayName: Cache pip packages
 
       - script: |
           python -m pip install --upgrade pip
