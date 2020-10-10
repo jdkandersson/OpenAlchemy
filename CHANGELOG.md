@@ -1,6 +1,6 @@
 # Release Notes
 
-## Version _next_
+## Version 1.5.4 - 2020-10-10
 
 - Refactor the models file generation to use the artifacts from the schemas.
 - Add `build_json` and `build_yaml` interfaces which can be used to produce a package with the models.
