@@ -36,10 +36,6 @@ jobs:
       matrix:
         command:
           - pylint tests open_alchemy
-          - mypy --ignore-missing-imports open_alchemy
-          - isort -rc --check-only open_alchemy tests
-          - black --check open_alchemy tests examples
-          - pydocstyle open_alchemy
           - bandit -r open_alchemy -s B101,B303,B310
 
     steps:
@@ -67,7 +63,6 @@ jobs:
     strategy:
       matrix:
         command:
-          - npx prettier --check "open_alchemy/**/*.json" --check "*.yaml" --check "*.md"
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
 
     steps:
@@ -81,3 +76,9 @@ jobs:
       - name: Run static code analyser
         run: |
           ${{ matrix.command }}
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: pre-commit/action@v2.0.0
