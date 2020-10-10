@@ -223,6 +223,9 @@ def _add_remote_context(*, context: str, ref: str) -> str:
     # Handle reference outside document
     new_ref_context_path = os.path.join(context_path_head, ref_context)
     norm_new_ref_context_path = _norm_context(context=new_ref_context_path)
+    # If URL, replace path separator with /
+    if hostname_match is not None:
+        norm_new_ref_context_path = norm_new_ref_context_path.replace(os.path.sep, "/")
     return f"{context_hostname}{norm_new_ref_context_path}#{ref_schema}"
 
 
