@@ -57,7 +57,7 @@ jobs:
 
       - task: Cache@2
         inputs:
-          key: '$(python.version) | "$(Agent.OS)" | setup.py'
+          key: '"$(python.version)" | "$(Agent.OS)" | setup.py'
           path: $(PIP_CACHE_DIR)
         displayName: Cache pip packages
 

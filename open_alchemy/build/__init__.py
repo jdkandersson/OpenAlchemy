@@ -285,7 +285,7 @@ def build_sdist(name: str, path: str) -> None:
     """
     pkg_dir = pathlib.Path(path) / name
     print(list(pkg_dir.glob("**/*")))
-    run(f"{sys.executable} setup.py sdist", str(pkg_dir))
+    run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
 def build_wheel(name: str, path: str) -> None:
@@ -300,7 +300,7 @@ def build_wheel(name: str, path: str) -> None:
     pkg_dir = pathlib.Path(path) / name
     print(list(pkg_dir.glob("**/*")))
     try:
-        run(f"{sys.executable} setup.py bdist_wheel", str(pkg_dir))
+        run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
     except exceptions.BuildError as exc:
         raise RuntimeError(
             "Building a wheel package requires the wheel package. "
@@ -308,7 +308,7 @@ def build_wheel(name: str, path: str) -> None:
         ) from exc
 
 
-def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
+def run(cmd: typing.List[str], cwd: str) -> typing.Tuple[str, str]:
     """
     Run a shell command.
 
@@ -335,7 +335,7 @@ def run(cmd: str, cwd: str) -> typing.Tuple[str, str]:
         # subprocess securely:
         # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
         output = subprocess.run(  # nosec
-            shlex.split(cmd),
+            cmd,
             cwd=cwd,
             check=True,
             shell=False,
