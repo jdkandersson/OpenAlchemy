@@ -3,7 +3,7 @@ repos:
     rev: 20.8b1
     hooks:
       - id: black
-        language_version: python3.7
+        language_version: python3.9
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.4.2
     hooks:
@@ -31,8 +31,23 @@ repos:
     hooks:
       - exclude: "^docs.*.yaml$"
         id: prettier
-  - repo: https://github.com/codespell-project/codespell
-    rev: v1.17.1
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
     hooks:
-      - id: codespell
-        args: [-L connexion]
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-docstring-first
+        exclude: ".*\/dist\/.*"
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: name-tests-test
+        args: ["--django"]
+        exclude: "\/helpers.py$"
+      - id: trailing-whitespace
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.9
+    hooks:
+      - id: forbid-crlf
+      - id: remove-crlf
+      - id: forbid-tabs
+      - id: remove-tabs

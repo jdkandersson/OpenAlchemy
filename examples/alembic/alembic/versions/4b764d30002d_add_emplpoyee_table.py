@@ -1,4 +1,4 @@
-"""Add emplpoyee table
+"""Add employee table
 
 Revision ID: 4b764d30002d
 Revises:
