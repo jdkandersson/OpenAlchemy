@@ -53,10 +53,7 @@ jobs:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "$(python.version)"
-          key: 'python | "$(Agent.OS)" | setup.py'
-          restoreKeys: |
-            python | "$(Agent.OS)"
-            python
+          key: '$(python.version) | "$(Agent.OS)" | setup.py'
           path: $(PIP_CACHE_DIR)
         displayName: "Use Python $(python.version)"
 

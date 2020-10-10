@@ -151,8 +151,8 @@ def test_resolve_error(schema, schemas, exception):
 @pytest.mark.parametrize(
     "context, expected_context",
     [
-        (os.path.join("dir", "doc.ext"), os.path.join("dir", "doc.ext")),
-        (os.path.join("dir", "..", "doc.ext"), "doc.ext"),
+        ("dir/doc.ext", "dir/doc.ext"),
+        ("dir/../doc.ext", "doc.ext"),
         ("http://host.com/doc.ext", "http://host.com/doc.ext"),
     ],
     ids=["no norm", "norm", "URL"],
@@ -243,7 +243,6 @@ class TestAddRemoteContext:
             pytest.param(
                 "dir1/doc1.ext",
                 "#/Schema",
-                # Not with os.path.join because context has folder
                 "dir1/doc1.ext#/Schema",
                 id="within document context folder",
             ),
@@ -256,19 +255,19 @@ class TestAddRemoteContext:
             pytest.param(
                 "dir1/doc1.ext",
                 "doc2.ext#/Schema",
-                os.path.join("dir1", "doc2.ext#/Schema"),
+                "dir1/doc2.ext#/Schema",
                 id="external same folder context folder",
             ),
             pytest.param(
                 "doc1.ext",
                 "dir2/doc2.ext#/Schema",
-                os.path.join("dir2", "doc2.ext#/Schema"),
+                "dir2/doc2.ext#/Schema",
                 id="external different folder context document",
             ),
             pytest.param(
                 "dir1/doc1.ext",
                 "dir2/doc2.ext#/Schema",
-                os.path.join("dir1", "dir2", "doc2.ext#/Schema"),
+                "dir1/dir2/doc2.ext#/Schema",
                 id="external different folder context folder",
             ),
             pytest.param(

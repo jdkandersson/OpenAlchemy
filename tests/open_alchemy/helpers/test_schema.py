@@ -63,10 +63,10 @@ from open_alchemy import helpers
     ],
 )
 @pytest.mark.helper
-def test_constractable(schema, schemas, expected_result):
+def test_constructable(schema, schemas, expected_result):
     """
     GIVEN schema and schemas
-    WHEN constractable is called with the schema and schemas
+    WHEN constructable is called with the schema and schemas
     THEN the expected constructable is returned.
     """
     result = helpers.schema.constructable(schema=schema, schemas=schemas)
@@ -75,10 +75,10 @@ def test_constractable(schema, schemas, expected_result):
 
 
 @pytest.mark.helper
-def test_constractable_remote(tmp_path, _clean_remote_schemas_store):
+def test_constructable_remote(tmp_path, _clean_remote_schemas_store):
     """
     GIVEN schema with remote $ref with x-tablename
-    WHEN constractable is called with the schema
+    WHEN constructable is called with the schema
     THEN True is returned.
     """
     # Create file
