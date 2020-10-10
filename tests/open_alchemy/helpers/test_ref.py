@@ -1,6 +1,7 @@
 """Tests for ref."""
 
 import os
+import sys
 from unittest import mock
 from urllib import error
 
@@ -156,6 +157,9 @@ def test_resolve_error(schema, schemas, exception):
         ("http://host.com/doc.ext", "http://host.com/doc.ext"),
     ],
     ids=["no norm", "norm", "URL"],
+)
+@pytest.mark.xfail(
+    condition=sys.platform == "win32", reason="feature not supported on Windows"
 )
 @pytest.mark.helper
 def test_norm_context(context, expected_context):
@@ -385,6 +389,9 @@ class TestAddRemoteContext:
                 id="within document to http context document",
             ),
         ],
+    )
+    @pytest.mark.xfail(
+        condition=sys.platform == "win32", reason="feature not supported on Windows"
     )
     @pytest.mark.helper
     def test_add_remote_context(context, ref, expected_ref):
@@ -792,6 +799,9 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     assert name == "Schema1"
 
 
+@pytest.mark.xfail(
+    condition=sys.platform == "win32", reason="feature not supported on Windows"
+)
 @pytest.mark.helper
 def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
     """
