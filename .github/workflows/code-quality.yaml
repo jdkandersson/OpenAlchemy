@@ -32,6 +32,10 @@ jobs:
           pytest
   pylint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        command:
+          - pylint tests open_alchemy
 
     steps:
       - uses: actions/checkout@v2
@@ -52,4 +56,4 @@ jobs:
           python -m pip install -e .[dev,test]
       - name: Run pylint
         run: |
-          pylint tests open_alchemy
+          ${{ matrix.command }}
