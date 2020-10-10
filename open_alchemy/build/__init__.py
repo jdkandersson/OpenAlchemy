@@ -4,7 +4,6 @@ import enum
 import hashlib
 import json
 import pathlib
-import shlex
 import subprocess  # nosec: we are aware of the implications.
 import sys
 import typing
@@ -284,7 +283,6 @@ def build_sdist(name: str, path: str) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
-    print(list(pkg_dir.glob("**/*")))
     run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
@@ -298,7 +296,6 @@ def build_wheel(name: str, path: str) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
-    print(list(pkg_dir.glob("**/*")))
     try:
         run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
     except exceptions.BuildError as exc:
@@ -322,15 +319,6 @@ def run(cmd: typing.List[str], cwd: str) -> typing.Tuple[str, str]:
     """
     output = None
     try:
-        output = subprocess.run(  # nosec
-            [sys.executable, "--version"],
-            cwd=cwd,
-            check=True,
-            shell=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        print(output)
         # "nosec" is used here as we believe we followed the guidelines to use
         # subprocess securely:
         # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
