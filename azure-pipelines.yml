@@ -17,15 +17,24 @@ schedules:
 jobs:
   - job: "pytest"
     pool:
-      vmImage: "ubuntu-latest"
+      vmImage: "$(imageName)"
     strategy:
       matrix:
-        Python36:
-          python.version: "3.6"
         Python37:
           python.version: "3.7"
+          imageName: "ubuntu-latest"
         Python38:
           python.version: "3.8"
+          imageName: "ubuntu-latest"
+        Python39Linux:
+          python.version: "3.9"
+          imageName: "ubuntu-latest"
+        Python39Mac:
+          python.version: "3.9"
+          imageName: "macOS-latest"
+        Python39Windows:
+          python.version: "3.9"
+          imageName: "windows-latest"
 
     steps:
       - task: UsePythonVersion@0
