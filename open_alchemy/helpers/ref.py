@@ -221,11 +221,10 @@ def _add_remote_context(*, context: str, ref: str) -> str:
     context_path_head, _ = os.path.split(context_path)
 
     # Handle reference outside document
-    new_ref_context_path = os.path.join(context_path_head, ref_context)
+    new_ref_context_path = os.path.join(context_path_head, ref_context).replace(
+        os.path.sep, "/"
+    )
     norm_new_ref_context_path = _norm_context(context=new_ref_context_path)
-    # If URL, replace path separator with /
-    if hostname_match is not None:
-        norm_new_ref_context_path = norm_new_ref_context_path.replace(os.path.sep, "/")
     return f"{context_hostname}{norm_new_ref_context_path}#{ref_schema}"
 
 
@@ -332,9 +331,11 @@ class _RemoteSchemaStore:
                 file_cm = request.urlopen(context)
             else:
                 spec_dir = os.path.dirname(self.spec_context)
-                remote_spec_filename = os.path.join(spec_dir, context)
-                file_cm = open(remote_spec_filename)
-        except (FileNotFoundError, error.HTTPError) as exc:
+                remote_spec_filename = os.path.join(spec_dir, context).replace(
+                    os.path.sep, "/"
+                )
+                file_cm = request.urlopen(f"file://{remote_spec_filename}")
+        except (error.URLError, error.HTTPError) as exc:
             raise exceptions.SchemaNotFoundError(
                 "The file with the remote reference was not found. The path is: "
                 f"{context}"

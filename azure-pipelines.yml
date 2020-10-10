@@ -18,6 +18,8 @@ jobs:
   - job: "pytest"
     pool:
       vmImage: "$(imageName)"
+    variables:
+      PIP_CACHE_DIR: $(Pipeline.Workspace)/.pip
     strategy:
       matrix:
         Python37:
@@ -51,6 +53,11 @@ jobs:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "$(python.version)"
+          key: 'python | "$(Agent.OS)" | setup.py'
+          restoreKeys: |
+            python | "$(Agent.OS)"
+            python
+          path: $(PIP_CACHE_DIR)
         displayName: "Use Python $(python.version)"
 
       - script: |
