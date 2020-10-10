@@ -20,7 +20,7 @@ jobs:
         id: cache
         with:
           path: ~/.cache/pip
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/setup.py') }}
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/setup.py') }}
           restore-keys: |
             ${{ matrix.os }}-${{ matrix.python-version }}-pip-
       - name: Install dependencies
@@ -30,7 +30,7 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
-  static:
+  staticPython:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,13 +52,38 @@ jobs:
         id: cache
         with:
           path: ~/.cache/pip
-          key: pip-${{ hashFiles('**/setup.py') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
           restore-keys: |
             pip-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .[dev,test]
+      - name: Run static code analyser
+        run: |
+          ${{ matrix.command }}
+  staticNode:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        command:
+          - npx prettier --check "open_alchemy/**/*.json" --check "*.yaml" --check "*.md"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          node-version: 12.x
+      - uses: actions/cache@v1
+        id: cache
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm
+          restore-keys: |
+            pip-
+      - name: Install dependencies
+        run: npm install prettier
       - name: Run static code analyser
         run: |
           ${{ matrix.command }}
