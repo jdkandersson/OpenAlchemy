@@ -26,6 +26,7 @@ repos:
     rev: "v2.6.0"
     hooks:
       - id: pylint
+        exclude: "^example|conf.py$"
   - repo: https://github.com/prettier/prettier
     rev: "2.1.1"
     hooks:

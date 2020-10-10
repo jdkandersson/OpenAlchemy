@@ -6,6 +6,7 @@
 - Add `build_json` and `build_yaml` interfaces which can be used to produce a package with the models.
 - Changed output of build_json and build_yaml to be contained within a project directory.
 - Add support for building sdist or wheel distributable archive.
+- Drop support for Python 3.6 and add support for Python 3.9.
 
 ## Version 1.5.4 - 2020-08-30
 
