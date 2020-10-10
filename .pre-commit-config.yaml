@@ -48,9 +48,3 @@ repos:
       - id: remove-crlf
       - id: forbid-tabs
       - id: remove-tabs
-  # - repo: https://github.com/APIDevTools/swagger-cli
-  #   rev: v2.2.1
-  #   hooks:
-  #     - id: swagger-validation
-  #       args: ["validate"]
-  #       files: "spec.(json|yaml|yml)$"
