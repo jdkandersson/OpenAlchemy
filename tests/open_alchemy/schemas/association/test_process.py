@@ -70,7 +70,110 @@ TESTS = [
                 ],
             },
         },
-        id="single schema association",
+        id="single schema single association",
+    ),
+    pytest.param(
+        {
+            "Schema": {
+                "x-tablename": "parent_schema",
+                "properties": {
+                    "parent_prop_1": {"type": "integer", "x-primary-key": True},
+                    "parent_prop_2": {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema1"},
+                    },
+                    "parent_prop_3": {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema2"},
+                    },
+                },
+            },
+            "RefSchema1": {
+                "x-tablename": "child_schema_1",
+                "x-secondary": "association_1",
+                "properties": {
+                    "child_1_prop_1": {"type": "string", "x-primary-key": True},
+                },
+            },
+            "RefSchema2": {
+                "x-tablename": "child_schema_2",
+                "x-secondary": "association_2",
+                "properties": {
+                    "child_2_prop_1": {"type": "string", "x-primary-key": True},
+                },
+            },
+        },
+        {
+            "Schema": {
+                "x-tablename": "parent_schema",
+                "properties": {
+                    "parent_prop_1": {"type": "integer", "x-primary-key": True},
+                    "parent_prop_2": {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema1"},
+                    },
+                    "parent_prop_3": {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema2"},
+                    },
+                },
+            },
+            "RefSchema1": {
+                "x-tablename": "child_schema_1",
+                "x-secondary": "association_1",
+                "properties": {
+                    "child_1_prop_1": {"type": "string", "x-primary-key": True}
+                },
+            },
+            "RefSchema2": {
+                "x-tablename": "child_schema_2",
+                "x-secondary": "association_2",
+                "properties": {
+                    "child_2_prop_1": {"type": "string", "x-primary-key": True}
+                },
+            },
+            "Association1": {
+                "type": "object",
+                "x-tablename": "association_1",
+                "properties": {
+                    "parent_schema_parent_prop_1": {
+                        "type": "integer",
+                        "x-primary-key": True,
+                        "x-foreign-key": "parent_schema.parent_prop_1",
+                    },
+                    "child_schema_1_child_1_prop_1": {
+                        "type": "string",
+                        "x-primary-key": True,
+                        "x-foreign-key": "child_schema_1.child_1_prop_1",
+                    },
+                },
+                "required": [
+                    "parent_schema_parent_prop_1",
+                    "child_schema_1_child_1_prop_1",
+                ],
+            },
+            "Association2": {
+                "type": "object",
+                "x-tablename": "association_2",
+                "properties": {
+                    "parent_schema_parent_prop_1": {
+                        "type": "integer",
+                        "x-primary-key": True,
+                        "x-foreign-key": "parent_schema.parent_prop_1",
+                    },
+                    "child_schema_2_child_2_prop_1": {
+                        "type": "string",
+                        "x-primary-key": True,
+                        "x-foreign-key": "child_schema_2.child_2_prop_1",
+                    },
+                },
+                "required": [
+                    "parent_schema_parent_prop_1",
+                    "child_schema_2_child_2_prop_1",
+                ],
+            },
+        },
+        id="single schema multiple association",
     ),
     pytest.param(
         {
@@ -201,7 +304,7 @@ TESTS = [
                 ],
             },
         },
-        id="single schema association",
+        id="multiple schema single association",
     ),
 ]
 
@@ -216,5 +319,6 @@ def test_process(schemas, expected_schemas):
     THEN the schemas are equal to the expected schemas.
     """
     association.process(schemas=schemas)
+    print(schemas)
 
     assert schemas == expected_schemas
