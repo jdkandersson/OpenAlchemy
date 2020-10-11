@@ -7,6 +7,27 @@ from .. import types
 from . import helpers
 
 
+def _requires_association(*, schema: types.Schema, schemas: types.Schemas) -> bool:
+    """
+    Calculate whether a property requires an association table.
+
+    Args:
+        schema: The schema of the property to check.
+
+    Returns:
+        Whether the property requires an association table.
+
+    """
+    property_type = helpers.property_.type_.calculate(schemas, schema)
+    if property_type != helpers.property_.type_.Type.RELATIONSHIP:
+        return False
+
+    relationship_type = oa_helpers.relationship.calculate_type(
+        schema=schema, schemas=schemas
+    )
+    return relationship_type == oa_helpers.relationship.Type.MANY_TO_MANY
+
+
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
     """The return type for the _calculate_property_schema function."""
 
