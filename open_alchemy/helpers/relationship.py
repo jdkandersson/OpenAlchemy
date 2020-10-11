@@ -1,9 +1,11 @@
 """Helper functions for relationships."""
 
 import enum
+import typing
 
 from .. import types
 from . import peek
+from . import ref
 
 
 @enum.unique
@@ -51,3 +53,27 @@ def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:
     if secondary is not None:
         return Type.MANY_TO_MANY
     return Type.ONE_TO_MANY
+
+
+def get_ref_schema_many_to_x(
+    *, property_schema: types.Schema, schemas: types.Schemas
+) -> typing.Tuple[str, types.Schema]:
+    """
+    Get the schema referenced by a many-to-x relationship property.
+
+    Assume the schema and schemas are valid.
+    Assume the property schema is a many-to-x relationship property.
+
+    Args:
+        property_schema: The schema of the many-to-x relationship property.
+        schemas: All defined schemas.
+
+    Returns:
+        The schema referenced in the many-to-x relationship.
+
+    """
+    items_schema = peek.items(schema=property_schema, schemas=schemas)
+    assert items_schema is not None
+    ref_value = peek.ref(schema=items_schema, schemas=schemas)
+    assert ref_value is not None
+    return ref.get_ref(ref=ref_value, schemas=schemas)

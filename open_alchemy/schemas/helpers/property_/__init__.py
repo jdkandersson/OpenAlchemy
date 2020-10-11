@@ -1,6 +1,5 @@
 """Helpers for properties."""
 
-from . import relationship
 from . import simple
 from . import type_
 
