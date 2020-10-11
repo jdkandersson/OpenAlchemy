@@ -7,6 +7,7 @@ enhancements to the code.
 To help smooth out the contributions, here are some guidelines of conventions
 used in the code (the list will evolve over time):
 
+- The maximum line length is 89 in Python files and 80 in the documentation.
 - Import modules as namespaces. For example, instead of `from enum import auto`
   use `import enum` and then `enum.auto`.
 - In tests, preferable use parameterization instead of a for loop in the test
@@ -59,3 +60,7 @@ used in the code (the list will evolve over time):
   ```
 - Separate the code for GIVEN, WHEN and THEN in tests using a single blank line
   to indicate where each piece starts
+- Functions that are intended for re-use across the code base (e.g. helper
+  functions) should use keyword only arguments for increased clarity. Private
+  module/ class functions may optionally use positional arguments for enhanced
+  execution speed.

@@ -1,5 +1,6 @@
 """Pre-process schemas by adding any association tables as a schema to schemas."""
 
+import functools
 import typing
 
 from .. import helpers as oa_helpers
@@ -28,7 +29,33 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     return relationship_type == oa_helpers.relationship.Type.MANY_TO_MANY
 
 
-# def _get_association_property_iterator(*, schemas: )
+def _get_association_property_iterator(
+    *, schemas: types.Schemas
+) -> typing.Iterable[typing.Tuple[types.Schemas, types.Schema, types.Schema]]:
+    """
+    Get an iterator for properties that require association tables from the schemas.
+
+    To ensure no duplication, property iteration stays within the model context.
+
+    Args:
+        schemas: All defined schemas.
+
+    Returns:
+        An iterator with properties that require an association table along with the
+        schemas and the parent schema.
+
+    """
+    for schema in schemas.values():
+        properties = helpers.iterate.properties_items(
+            schema=schema, schemas=schemas, stay_within_model=True
+        )
+        property_schemas = map(lambda args: args[1], properties)
+        association_property_schemas = filter(
+            functools.partial(_requires_association, schemas), property_schemas
+        )
+        yield from (
+            (schemas, schema, property_) for property_ in association_property_schemas
+        )
 
 
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
