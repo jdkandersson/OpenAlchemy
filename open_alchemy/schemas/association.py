@@ -7,7 +7,7 @@ from .. import types
 from . import helpers
 
 
-def _requires_association(*, schema: types.Schema, schemas: types.Schemas) -> bool:
+def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     """
     Calculate whether a property requires an association table.
 
@@ -26,6 +26,9 @@ def _requires_association(*, schema: types.Schema, schemas: types.Schemas) -> bo
         schema=schema, schemas=schemas
     )
     return relationship_type == oa_helpers.relationship.Type.MANY_TO_MANY
+
+
+# def _get_association_property_iterator(*, schemas: )
 
 
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
@@ -115,10 +118,9 @@ class TCalculateSchemaReturn(typing.NamedTuple):
 
 
 def _calculate_schema(
-    *,
+    schemas: types.Schemas,
     parent_schema: types.Schema,
     property_schema: types.Schema,
-    schemas: types.Schemas,
 ) -> TCalculateSchemaReturn:
     """
     Calculate the schema for the association table.

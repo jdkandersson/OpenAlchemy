@@ -41,9 +41,7 @@ class TestRequiresAssociation:
         WHEN _requires_association is called with the schema and schemas
         THEN the expected result is returned.
         """
-        returned_result = association._requires_association(
-            schema=schema, schemas=schemas
-        )
+        returned_result = association._requires_association(schemas, schema)
 
         assert returned_result == expected_result
 
@@ -525,9 +523,9 @@ class TestCalculateSchema:
         THEN the expected schema is returned.
         """
         _, returned_schema = association._calculate_schema(
-            parent_schema=parent_schema,
-            property_schema=property_schema,
-            schemas=schemas,
+            schemas,
+            parent_schema,
+            property_schema,
         )
 
         assert returned_schema == {
@@ -616,9 +614,9 @@ class TestCalculateSchema:
         }
 
         returned_name, _ = association._calculate_schema(
-            parent_schema=parent_schema,
-            property_schema=property_schema,
-            schemas=schemas,
+            schemas,
+            parent_schema,
+            property_schema,
         )
 
         assert returned_name == expected_name
