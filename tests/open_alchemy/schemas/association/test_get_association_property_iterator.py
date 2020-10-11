@@ -439,9 +439,6 @@ class TestGetAssociationPropertyIterator:
             association._get_association_property_iterator(schemas=schemas)
         )
 
-        print(returned_items)
-        print(expected_items)
-
         assert list(returned_items) == [
             (original_schemas, *items) for items in expected_items
         ]
