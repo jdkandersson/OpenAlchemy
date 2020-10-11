@@ -167,6 +167,31 @@ def _calculate_schema(
     5. calculate the schema name based on the secondary value and avoiding any existing
         schema names.
 
+    The following is the form of the schema:
+    <association schema name>:
+        type: object
+        x-tablename: <x-secondary>
+        properties:
+            <parent tablename>_<parent property name>:
+            type: <parent property type>
+            x-primary-key: true
+            # if the parent property defines a format
+            format: <parent property format>
+            # if the parent property defines maxLength
+            maxLength: <parent property maxLength>
+            x-foreign-key: <parent tablename>.<parent property name>
+            <child tablename>_<child property name>:
+            type: <child property type>
+            x-primary-key: true
+            # if the child property defines a format
+            format: <child property format>
+            # if the child property defines maxLength
+            maxLength: <child property maxLength>
+            x-foreign-key: <child tablename>.<child property name>
+        required:
+            - <parent tablename>_<parent property name>
+            - <child tablename>_<child property name>
+
     Args:
         parent_schema: The schema the property is embedded in.
         property_schema: The schema of the many-to-many property.
@@ -205,3 +230,27 @@ def _calculate_schema(
         name = f"Autogen{name}"
 
     return TCalculateSchemaReturn(name=name, schema=schema)
+
+
+def process(*, schemas: types.Schemas) -> None:
+    """
+    Pre-process the schemas to add association schemas as necessary.
+
+    Algorithm:
+    1. Iterate over all schemas and their properties retaining the parent schema and the
+        schemas in the context and staying within the model properties only
+    2. Filter for properties that (1) are relationships and (2) are many-to-many
+        relationships
+    3. Convert the property schema to an association schema
+    4. Add them to the schemas
+
+    Args:
+        schemas: The schemas to process.
+
+    """
+    association_properties = _get_association_property_iterator(schemas=schemas)
+    association_schemas = list(
+        map(lambda args: _calculate_schema(*args), association_properties)
+    )
+    for association in association_schemas:
+        schemas[association.name] = association.schema
