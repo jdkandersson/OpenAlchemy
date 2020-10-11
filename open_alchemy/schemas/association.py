@@ -173,21 +173,21 @@ def _calculate_schema(
         x-tablename: <x-secondary>
         properties:
             <parent tablename>_<parent property name>:
-            type: <parent property type>
-            x-primary-key: true
-            # if the parent property defines a format
-            format: <parent property format>
-            # if the parent property defines maxLength
-            maxLength: <parent property maxLength>
-            x-foreign-key: <parent tablename>.<parent property name>
+                type: <parent property type>
+                x-primary-key: true
+                # if the parent property defines a format
+                format: <parent property format>
+                # if the parent property defines maxLength
+                maxLength: <parent property maxLength>
+                x-foreign-key: <parent tablename>.<parent property name>
             <child tablename>_<child property name>:
-            type: <child property type>
-            x-primary-key: true
-            # if the child property defines a format
-            format: <child property format>
-            # if the child property defines maxLength
-            maxLength: <child property maxLength>
-            x-foreign-key: <child tablename>.<child property name>
+                type: <child property type>
+                x-primary-key: true
+                # if the child property defines a format
+                format: <child property format>
+                # if the child property defines maxLength
+                maxLength: <child property maxLength>
+                x-foreign-key: <child tablename>.<child property name>
         required:
             - <parent tablename>_<parent property name>
             - <child tablename>_<child property name>
