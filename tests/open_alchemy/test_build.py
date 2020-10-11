@@ -4,6 +4,7 @@ import pytest
 
 from open_alchemy import build
 from open_alchemy import exceptions
+from open_alchemy import helpers
 
 
 @pytest.mark.parametrize(
@@ -647,13 +648,13 @@ def test_build_dist_wheel_import_error(tmp_path):
     }
 
     try:
-        build.run(["pip", "uninstall", "-y", "wheel"], ".")
+        helpers.command.run(["pip", "uninstall", "-y", "wheel"], ".")
         with pytest.raises(RuntimeError):
             build.execute(
                 spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
             )
     finally:
-        build.run(["pip", "install", "wheel"], ".")
+        helpers.command.run(["pip", "install", "wheel"], ".")
 
 
 @pytest.mark.parametrize(

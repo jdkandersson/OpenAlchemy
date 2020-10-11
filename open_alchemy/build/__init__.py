@@ -4,13 +4,13 @@ import enum
 import hashlib
 import json
 import pathlib
-import subprocess  # nosec: we are aware of the implications.
 import sys
 import typing
 
 import jinja2
 
 from .. import exceptions
+from .. import helpers
 from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
@@ -283,7 +283,7 @@ def build_sdist(name: str, path: str) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
-    run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
+    helpers.command.run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
 def build_wheel(name: str, path: str) -> None:
@@ -297,43 +297,12 @@ def build_wheel(name: str, path: str) -> None:
     """
     pkg_dir = pathlib.Path(path) / name
     try:
-        run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
+        helpers.command.run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
     except exceptions.BuildError as exc:
         raise RuntimeError(
             "Building a wheel package requires the wheel package. "
             "Try `pip install wheel`."
         ) from exc
-
-
-def run(cmd: typing.List[str], cwd: str) -> typing.Tuple[str, str]:
-    """
-    Run a shell command.
-
-    Args:
-        cmd: The command to execute.
-        cwd: The path where the command must be executed from.
-
-    Returns:
-        A tuple containing (stdout, stderr).
-
-    """
-    output = None
-    try:
-        # "nosec" is used here as we believe we followed the guidelines to use
-        # subprocess securely:
-        # https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
-        output = subprocess.run(  # nosec
-            cmd,
-            cwd=cwd,
-            check=True,
-            shell=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    except subprocess.CalledProcessError as exc:
-        raise exceptions.BuildError(str(exc)) from exc
-
-    return output.stdout.decode("utf-8"), output.stderr.decode("utf-8")
 
 
 def execute(

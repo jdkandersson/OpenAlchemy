@@ -72,4 +72,7 @@ setuptools.setup(
         ],
         ":python_version<'3.8'": ["typing_extensions>=3.7.4"],
     },
+    entry_points={
+        "console_scripts": ["openalchemy=open_alchemy.cli:main"],
+    },
 )

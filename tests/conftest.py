@@ -1,6 +1,9 @@
 """Fixtures for all tests."""
 # pylint: disable=redefined-outer-name
 
+import os
+import pathlib
+
 import pytest
 import sqlalchemy
 from sqlalchemy import orm
@@ -30,3 +33,13 @@ def _clean_remote_schemas_store():
     yield
 
     helpers.ref._remote_schema_store.reset()
+
+
+@pytest.fixture(scope="function")
+def _remember_current_directory():
+    """Remember the current directory and make sure to switch back to it."""
+    current_dir = pathlib.Path.cwd()
+
+    yield
+
+    os.chdir(current_dir)
