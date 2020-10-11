@@ -294,7 +294,7 @@ def test_calculate_foreign_key(target_schema, schemas, expected_key):
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
             {"parent_key": "parent value"},
-            id="one-to-many",
+            id="many-to-one",
         ),
         pytest.param(
             relationship.Type.ONE_TO_ONE,
@@ -310,23 +310,7 @@ def test_calculate_foreign_key(target_schema, schemas, expected_key):
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"ref_key": "ref value"}},
             {"ref_key": "ref value"},
-            id="many-to-one",
-        ),
-        pytest.param(
-            relationship.Type.ONE_TO_MANY,
-            {"parent_key": "parent value"},
-            {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
-            {"RefSchema": {"ref_key": "ref value"}},
-            {"ref_key": "ref value"},
-            id="allOf many-to-one",
-        ),
-        pytest.param(
-            relationship.Type.ONE_TO_MANY,
-            {"parent_key": "parent value"},
-            {"items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
-            {"RefSchema": {"ref_key": "ref value"}},
-            {"ref_key": "ref value"},
-            id="many-to-one allOf",
+            id="one-to-many",
         ),
     ],
 )

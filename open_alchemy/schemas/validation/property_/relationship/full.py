@@ -280,7 +280,7 @@ def _check_many_to_many(
         )
 
     # Checking referenced schema
-    ref_schema = helpers.property_.relationship.get_ref_schema_many_to_x(
+    _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
         property_schema=property_schema, schemas=schemas
     )
     ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
