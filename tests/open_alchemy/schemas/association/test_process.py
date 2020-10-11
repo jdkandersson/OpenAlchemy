@@ -319,6 +319,5 @@ def test_process(schemas, expected_schemas):
     THEN the schemas are equal to the expected schemas.
     """
     association.process(schemas=schemas)
-    print(schemas)
 
     assert schemas == expected_schemas
