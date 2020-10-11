@@ -86,17 +86,72 @@ def _calculate_property_schema(
     return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
 
 
-# def _calculate_schema(
-#     *,
-#     parent_schema: types.Schema,
-#     property_schema: types.Schema,
-#     schemas: types.Schemas,
-# ) -> types.Schema:
-#     """
-#     Calculate the schema for the association table.
+class TCalculateSchemaReturn(typing.NamedTuple):
+    """The return type for the _calculate_schema function."""
 
-#     Assume that all schemas are valid.
+    name: str
+    schema: types.Schema
 
-#     The following algorithm is used to calculate the schema:
-#     1.
-#     """
+
+def _calculate_schema(
+    *,
+    parent_schema: types.Schema,
+    property_schema: types.Schema,
+    schemas: types.Schemas,
+) -> TCalculateSchemaReturn:
+    """
+    Calculate the schema for the association table.
+
+    Assume that all schemas are valid.
+    Assume that the property schema is a many-to-many relationship.
+
+    The following algorithm is used to calculate the schema:
+    1. retrieve the secondary value,
+    2. calculate the property schema for the parent schema,
+    3. retrieve the referenced schema and calculate the property schema,
+    4. assemble the final schema with
+        a. the object type,
+        b. tablename of the secondary value,
+        c. properties based on the parent and referenced schema and
+        d. required with the property names and
+    5. calculate the schema name based on the secondary value and avoiding any existing
+        schema names.
+
+    Args:
+        parent_schema: The schema the property is embedded in.
+        property_schema: The schema of the many-to-many property.
+        schemas: All defined schemas.
+
+    Returns:
+        The schema of the association table.
+
+    """
+    items = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+    assert items is not None
+    secondary = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.secondary, schema=items, schemas=schemas
+    )
+    assert secondary is not None and isinstance(secondary, str)
+
+    parent_property = _calculate_property_schema(schema=parent_schema, schemas=schemas)
+
+    _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
+        property_schema=property_schema, schemas=schemas
+    )
+    ref_property = _calculate_property_schema(schema=ref_schema, schemas=schemas)
+
+    schema = {
+        "type": "object",
+        "x-tablename": secondary,
+        "properties": {
+            parent_property.name: parent_property.schema,
+            ref_property.name: ref_property.schema,
+        },
+        "required": [parent_property.name, ref_property.name],
+    }
+
+    name = secondary.title().replace("_", "")
+    while name in schemas:
+        name = f"Autogen{name}"
+
+    return TCalculateSchemaReturn(name=name, schema=schema)
