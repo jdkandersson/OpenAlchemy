@@ -2,8 +2,8 @@
 
 import typing
 
-from .. import types
 from .. import helpers as oa_helpers
+from .. import types
 from . import helpers
 
 
@@ -84,3 +84,19 @@ def _calculate_property_schema(
         property_schema["maxLength"] = max_length
 
     return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
+
+
+# def _calculate_schema(
+#     *,
+#     parent_schema: types.Schema,
+#     property_schema: types.Schema,
+#     schemas: types.Schemas,
+# ) -> types.Schema:
+#     """
+#     Calculate the schema for the association table.
+
+#     Assume that all schemas are valid.
+
+#     The following algorithm is used to calculate the schema:
+#     1.
+#     """
