@@ -122,7 +122,7 @@ def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schem
     }
 
 
-def process(*, schemas: types.Schemas):
+def process(*, schemas: types.Schemas) -> None:
     """
     Pre-process the schemas to add back references as required.
 
