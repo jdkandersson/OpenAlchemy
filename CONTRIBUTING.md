@@ -35,7 +35,7 @@ used in the code (the list will evolve over time):
   The `Args` are not needed if there are no arguments and `Returns` is not
   needed if `None` is returned.
 
-- Use type hints
+- Use type hints, avoid using `typing.Any` where reasonable.
 - 100% code coverage is required (except as configured with a documented
   reason).
 - In error messages, explain what has gone wrong and how to fix it.
@@ -44,3 +44,8 @@ used in the code (the list will evolve over time):
 - Take not of the tools used in the pipeline for code quality checks. Any
   disabling of any check must be documented with a reason.
 - Note changes in the changelog.
+- Any raised exceptions should inherit from
+  `open_alchemy.exceptions.BaseError`. Exception handling should specify which
+  exception is being handled (e.i. more specific than `Exception`.
+- Update the readme with any significant new features
+- Update the documentation and examples, if appropriate
