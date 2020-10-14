@@ -49,3 +49,13 @@ used in the code (the list will evolve over time):
   exception is being handled (e.i. more specific than `Exception`.
 - Update the readme with any significant new features
 - Update the documentation and examples, if appropriate
+- Test docstrings should use the following structure:
+  ```Python
+  """
+  GIVEN <preconditions>
+  WHEN <an action is taken>
+  THEN <this outcome is expected>
+  """
+  ```
+- Separate the code for GIVEN, WHEN and THEN in tests using a single blank line
+  to indicate where each piece starts
