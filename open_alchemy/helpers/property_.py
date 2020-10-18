@@ -17,7 +17,7 @@ class Type(str, enum.Enum):
     BACKREF = "BACKREF"
 
 
-def calculate_type(schemas: types.Schemas, schema: types.Schema) -> Type:
+def calculate_type(*, schemas: types.Schemas, schema: types.Schema) -> Type:
     """
     Calculate the type of the property.
 
