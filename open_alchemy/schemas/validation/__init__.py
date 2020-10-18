@@ -10,6 +10,7 @@ from . import property_
 from . import schemas_validation
 from . import spec_validation
 from . import types
+from . import unique_secondary
 from . import unique_tablename
 from . import unmanaged
 
@@ -74,6 +75,10 @@ def _other_schemas_checks(*, schemas: _oa_types.Schemas) -> types.Result:
     unique_tablename_result = unique_tablename.check(schemas=schemas)
     if not unique_tablename_result.valid:
         return unique_tablename_result
+
+    unique_secondary_result = unique_secondary.check(schemas=schemas)
+    if not unique_secondary_result.valid:
+        return unique_secondary_result
 
     return types.Result(valid=True, reason=None)
 
@@ -217,8 +222,13 @@ def check(*, spec: typing.Any) -> types.TSpec:
     assert isinstance(components, dict)
     schemas = components.get("schemas")
     assert isinstance(schemas, dict)
-    other_result = _other_schemas_checks(schemas=schemas)
-    if not other_result.valid:
-        return {"result": types.t_result_from_result(other_result)}
+
+    try:
+        other_result = _other_schemas_checks(schemas=schemas)
+        if not other_result.valid:
+            return {"result": types.t_result_from_result(other_result)}
+    except _exceptions.BaseError:
+        # Something else is wrong
+        pass
 
     return {"result": {"valid": True}, "models": check_models(schemas=schemas)}

@@ -124,6 +124,49 @@ PROCESS_TESTS = [
             "Schema1": {
                 "type": "object",
                 "x-tablename": "schema_1",
+                "properties": {
+                    "prop_1": {"type": "integer", "x-primary-key": True},
+                    "prop_2": {
+                        "type": "array",
+                        "items": {
+                            "allOf": [
+                                {"x-secondary": "association_1"},
+                                {"$ref": "#/components/schemas/RefSchema"},
+                            ]
+                        },
+                    },
+                },
+            },
+            "Schema2": {
+                "type": "object",
+                "x-tablename": "schema_2",
+                "properties": {
+                    "prop_1": {"type": "integer", "x-primary-key": True},
+                    "prop_2": {
+                        "type": "array",
+                        "items": {
+                            "allOf": [
+                                {"x-secondary": "association_1"},
+                                {"$ref": "#/components/schemas/RefSchema"},
+                            ]
+                        },
+                    },
+                },
+            },
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "properties": {"prop_1": {"type": "integer", "x-primary-key": True}},
+            },
+        },
+        True,
+        id="multiple model duplicate secondary",
+    ),
+    pytest.param(
+        {
+            "Schema1": {
+                "type": "object",
+                "x-tablename": "schema_1",
                 "properties": {"prop_1": {"type": "integer"}},
             },
             "Schema2": {
