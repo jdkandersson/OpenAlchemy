@@ -59,7 +59,7 @@ def get(
     properties_names = map(lambda args: args[0], properties_items)
 
     return types.BackrefPropertyArtifacts(
-        type=helpers.property_.type_.Type.BACKREF,
+        type=oa_helpers.property_.Type.BACKREF,
         description=description,
         sub_type=sub_type,
         schema=schema,

@@ -31,16 +31,16 @@ def get(
         The artifacts for the property.
 
     """
-    type_ = helpers.property_.type_.calculate(schema=schema, schemas=schemas)
+    type_ = oa_helpers.property_.calculate_type(schema=schema, schemas=schemas)
 
-    if type_ == helpers.property_.type_.Type.SIMPLE:
+    if type_ == oa_helpers.property_.Type.SIMPLE:
         return simple.get(schemas, schema, required)
 
-    if type_ == helpers.property_.type_.Type.JSON:
+    if type_ == oa_helpers.property_.Type.JSON:
         return json.get(schemas, schema, required)
 
-    if type_ == helpers.property_.type_.Type.BACKREF:
+    if type_ == oa_helpers.property_.Type.BACKREF:
         return backref.get(schemas, schema)
 
-    assert type_ == helpers.property_.type_.Type.RELATIONSHIP
+    assert type_ == oa_helpers.property_.Type.RELATIONSHIP
     return relationship.get(schemas, model_schema, property_name, schema, required)

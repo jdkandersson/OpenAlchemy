@@ -240,7 +240,7 @@ TESTS = [
 
 @pytest.mark.parametrize("schema, schemas, expected_result", TESTS)
 @pytest.mark.schemas
-@pytest.mark.validation
+@pytest.mark.validate
 def test_check(schema, schemas, expected_result):
     """
     GIVEN schemas, schema and the expected result

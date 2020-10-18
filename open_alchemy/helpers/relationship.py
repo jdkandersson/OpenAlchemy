@@ -5,6 +5,7 @@ import typing
 
 from .. import types
 from . import peek
+from . import property_
 from . import ref
 
 
@@ -77,3 +78,27 @@ def get_ref_schema_many_to_x(
     ref_value = peek.ref(schema=items_schema, schemas=schemas)
     assert ref_value is not None
     return ref.get_ref(ref=ref_value, schemas=schemas)
+
+
+def is_relationship_type(
+    *, type_: Type, schema: types.Schema, schemas: types.Schemas
+) -> bool:
+    """
+    Check whether a property is a relationship of a particular type.
+
+    Args:
+        type_: The type of relationship to look for.
+        schema: The schema of the property to check.
+        schemas: All defined schemas.
+
+    Returns:
+        Whether the property is a relationship of a particular type.
+
+    """
+    property_type = property_.calculate_type(schema=schema, schemas=schemas)
+    if property_type != property_.Type.RELATIONSHIP:
+        return False
+
+    relationship_type = calculate_type(schema=schema, schemas=schemas)
+    print(relationship_type)
+    return relationship_type == type_

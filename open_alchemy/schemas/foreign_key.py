@@ -27,8 +27,8 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
 
     """
     # Filter for relationship properties
-    property_type = helpers.property_.type_.calculate(schemas, schema)
-    if property_type != helpers.property_.type_.Type.RELATIONSHIP:
+    property_type = oa_helpers.property_.calculate_type(schemas=schemas, schema=schema)
+    if property_type != oa_helpers.property_.Type.RELATIONSHIP:
         return False
 
     # Filter for not many-to-many relationship

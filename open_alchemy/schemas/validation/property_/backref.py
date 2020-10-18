@@ -6,7 +6,6 @@ from .... import types as oa_types
 from ... import helpers
 from .. import helpers as validation_helpers
 from .. import types
-from . import simple
 
 
 def _check_object(
@@ -32,7 +31,7 @@ def _check_object(
         properties_items,
     )
     properties_items_type = filter(
-        lambda args: args[1] not in simple.TYPES, properties_items_type
+        lambda args: args[1] not in oa_helpers.type_.SIMPLE_TYPES, properties_items_type
     )
     first_properties_items_type = next(properties_items_type, None)
     if first_properties_items_type is not None:
@@ -82,7 +81,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
     try:
         type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
 
-        assert type_ not in simple.TYPES
+        assert type_ not in oa_helpers.type_.SIMPLE_TYPES
 
         oa_helpers.peek.description(schema=schema, schemas=schemas)
 

@@ -2,7 +2,6 @@
 
 from .... import helpers as oa_helpers
 from .... import types as oa_types
-from ... import helpers
 from .. import types
 
 
@@ -93,7 +92,7 @@ def get(
         schema_artifact["writeOnly"] = write_only
 
     return types.SimplePropertyArtifacts(
-        type=helpers.property_.type_.Type.SIMPLE,
+        type=oa_helpers.property_.Type.SIMPLE,
         description=description,
         schema=schema_artifact,
         required=required,

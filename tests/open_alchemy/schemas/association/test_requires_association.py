@@ -12,12 +12,6 @@ class TestRequiresAssociation:
 
     TESTS = [
         pytest.param(
-            {"type": "integer"},
-            {},
-            False,
-            id="simple",
-        ),
-        pytest.param(
             {"type": "object"},
             {},
             False,

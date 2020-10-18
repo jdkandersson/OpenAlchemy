@@ -5,9 +5,9 @@ import sys
 
 import pytest
 
+from open_alchemy import helpers as oa_helpers
 from open_alchemy import models_file
 from open_alchemy.schemas import artifacts as schemas_artifacts
-from open_alchemy.schemas import helpers
 
 _EXPECTED_TD_BASE = "typing.TypedDict"
 if sys.version_info[1] < 8:
@@ -38,7 +38,7 @@ def test_generate():
             (
                 "id",
                 schemas_artifacts.types.SimplePropertyArtifacts(
-                    type=helpers.property_.type_.Type.SIMPLE,
+                    type=oa_helpers.property_.Type.SIMPLE,
                     open_api=schemas_artifacts.types.OpenApiSimplePropertyArtifacts(
                         type="integer",
                         format=None,

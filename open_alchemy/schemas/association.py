@@ -19,14 +19,9 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
         Whether the property requires an association table.
 
     """
-    property_type = helpers.property_.type_.calculate(schemas, schema)
-    if property_type != helpers.property_.type_.Type.RELATIONSHIP:
-        return False
-
-    relationship_type = oa_helpers.relationship.calculate_type(
-        schema=schema, schemas=schemas
+    return oa_helpers.relationship.is_relationship_type(
+        type_=oa_helpers.relationship.Type.MANY_TO_MANY, schema=schema, schemas=schemas
     )
-    return relationship_type == oa_helpers.relationship.Type.MANY_TO_MANY
 
 
 def _get_association_property_iterator(
@@ -45,7 +40,9 @@ def _get_association_property_iterator(
         schemas and the parent schema.
 
     """
-    for schema in schemas.values():
+    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructable_schemas = map(lambda args: args[1], constructables)
+    for schema in constructable_schemas:
         properties = helpers.iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )

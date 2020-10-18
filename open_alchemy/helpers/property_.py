@@ -2,9 +2,9 @@
 
 import enum
 
-from .... import helpers
-from .... import types
-from . import simple
+from .. import types
+from . import peek
+from . import type_
 
 
 @enum.unique
@@ -17,7 +17,7 @@ class Type(str, enum.Enum):
     BACKREF = "BACKREF"
 
 
-def calculate(schemas: types.Schemas, schema: types.Schema) -> Type:
+def calculate_type(*, schemas: types.Schemas, schema: types.Schema) -> Type:
     """
     Calculate the type of the property.
 
@@ -37,15 +37,15 @@ def calculate(schemas: types.Schemas, schema: types.Schema) -> Type:
         The type of the property.
 
     """
-    json_value = helpers.peek.json(schema=schema, schemas=schemas)
+    json_value = peek.json(schema=schema, schemas=schemas)
     if json_value is True:
         return Type.JSON
 
-    type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    if type_ in simple.TYPES:
+    property_type = peek.type_(schema=schema, schemas=schemas)
+    if property_type in type_.SIMPLE_TYPES:
         return Type.SIMPLE
 
-    read_only_value = helpers.peek.read_only(schema=schema, schemas=schemas)
+    read_only_value = peek.read_only(schema=schema, schemas=schemas)
     if read_only_value is True:
         return Type.BACKREF
 

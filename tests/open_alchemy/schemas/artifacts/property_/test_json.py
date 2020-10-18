@@ -5,13 +5,15 @@ import functools
 
 import pytest
 
+from open_alchemy import helpers as oa_helpers
 from open_alchemy.schemas import artifacts
-from open_alchemy.schemas.helpers.property_ import type_
 
 GET_TESTS = [
     pytest.param(True, {}, {}, "required", True, id="required True"),
     pytest.param(False, {}, {}, "required", False, id="required False"),
-    pytest.param(None, {}, {}, "type", type_.Type.JSON, id="property type"),
+    pytest.param(
+        None, {}, {}, "type", oa_helpers.property_.Type.JSON, id="property type"
+    ),
     pytest.param(None, {"key": "value"}, {}, "schema", {"key": "value"}, id="schema"),
     pytest.param(
         None,

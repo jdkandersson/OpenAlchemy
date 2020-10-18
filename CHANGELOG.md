@@ -20,6 +20,8 @@
   though they existed locally (only impacts relationship properties where, for
   example, `x-secondary` was defined both on the relationship property in
   `allOf` and on the referenced model).
+- Add check enforcing unique `x-tablename` values.
+- Add check enforcing unique `x-secondary` values.
 
 ## Version 1.5.4 - 2020-10-10
 

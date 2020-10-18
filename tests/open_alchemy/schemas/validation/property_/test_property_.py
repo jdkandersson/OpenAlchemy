@@ -126,6 +126,7 @@ CHECK_TYPE_TESTS = [
 
 @pytest.mark.parametrize("schema, schemas, expected_result", CHECK_TYPE_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check_type(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result
@@ -217,6 +218,7 @@ CHECK_TESTS = [
     CHECK_TESTS,
 )
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(property_name, property_schema, parent_schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result
