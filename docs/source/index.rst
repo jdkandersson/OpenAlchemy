@@ -63,15 +63,14 @@ installed. The :samp:`init_yaml` interface accepts the following arguments:
 * :samp:`base`: The SQLAlchemy declarative base as an optional keyword only
   argument. It is used to as the base class for all SQLAlchemy models. If it
   is not passed in, a new declarative base is constructed.
-* :samp:`define_all`: Whether to pre-define the SQLAlchemy models as an optional
-  keyword only argument. If it is :samp:`True`, all schemas with the
-  :samp:`x-tablename` property are constructed as a part of the initialization.
-  Defaults to :samp:`True`.
 * :samp:`models_filename`: The name of the file where the SQLAlchemy models
   will be written as an optional keyword only argument.
 * :samp:`spec_path`: The path to the OpenAPI specification (what would need to
   be passed to the :samp:`open` function to read the file) as an optional
   keyword only argument. Used to support remote references.
+
+.. note:: the :samp:`define_all` parameter has been removed and OpenAlchemy
+  behaves as though it is set to :samp:`True`.
 
 The return value is a tuple consisting of:
 
@@ -106,12 +105,11 @@ does not construct a declarative base. It accepts the following parameters:
   is used to as the base class for all SQLAlchemy models.
 * :samp:`spec`: The OpenAPI specification as a dictionary as a keyword only
   argument.
-* :samp:`define_all`: Whether to pre-define the SQLAlchemy models as an
-  optional keyword only argument. If it is :samp:`True`, all schemas with the
-  :samp:`x-tablename` property are constructed as a part of the initialization.
-  Defaults to :samp:`False`.
 * :samp:`models_filename`: The name of the file where the SQLAlchemy models
   will be written as an optional keyword only argument.
+
+.. note:: the :samp:`define_all` parameter has been removed and OpenAlchemy
+  behaves as though it is set to :samp:`True`.
 
 The return value is the :samp:`model_factory` as defined as part of the return
 value of :ref:`init-yaml`.

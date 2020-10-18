@@ -23,3 +23,4 @@ def process(*, schemas: _types.Schemas) -> None:
     validation.process(schemas=schemas)
     backref.process(schemas=schemas)
     foreign_key.process(schemas=schemas)
+    association.process(schemas=schemas)

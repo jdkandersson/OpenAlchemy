@@ -23,12 +23,11 @@ def test_init_optional_base_none_call(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    open_alchemy._init_optional_base(base=None, spec=spec, define_all=True)
+    open_alchemy._init_optional_base(base=None, spec=spec)
 
     mocked_init_model_factory.assert_called_once_with(
         base=mocked_declarative_base.return_value,
         spec=spec,
-        define_all=True,
         models_filename=None,
         spec_path=None,
     )
@@ -46,7 +45,7 @@ def test_init_optional_base_none_return(
     # pylint: disable=protected-access
     spec = mock.MagicMock()
 
-    base, _ = open_alchemy._init_optional_base(base=None, spec=spec, define_all=True)
+    base, _ = open_alchemy._init_optional_base(base=None, spec=spec)
 
     assert base == mocked_declarative_base.return_value
 
@@ -62,10 +61,10 @@ def test_init_optional_base_def_call(mocked_init_model_factory: mock.MagicMock):
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    open_alchemy._init_optional_base(base=base, spec=spec, define_all=True)
+    open_alchemy._init_optional_base(base=base, spec=spec)
 
     mocked_init_model_factory.assert_called_once_with(
-        base=base, spec=spec, define_all=True, models_filename=None, spec_path=None
+        base=base, spec=spec, models_filename=None, spec_path=None
     )
 
 
@@ -80,9 +79,7 @@ def test_init_optional_base_def_return(_mocked_init_model_factory: mock.MagicMoc
     spec = mock.MagicMock()
     base = mock.MagicMock()
 
-    returned_base, _ = open_alchemy._init_optional_base(
-        base=base, spec=spec, define_all=True
-    )
+    returned_base, _ = open_alchemy._init_optional_base(base=base, spec=spec)
 
     assert returned_base == base
 
@@ -132,8 +129,8 @@ def test_cache_diff(mocked_model_factory: mock.MagicMock):
         },
     )
 
-    model_factory(name="table 1")
-    model_factory(name="table 2")
+    model_factory(name="Schema1")
+    model_factory(name="Schema2")
 
     assert mocked_model_factory.call_count == 2
 
@@ -160,8 +157,8 @@ def test_cache_same(mocked_model_factory: mock.MagicMock):
         },
     )
 
-    model_factory(name="table 1")
-    model_factory(name="table 1")
+    model_factory(name="Schema1")
+    model_factory(name="Schema1")
 
     assert mocked_model_factory.call_count == 1
 
@@ -223,7 +220,7 @@ def test_init_json(engine, sessionmaker, tmp_path):
     spec_file.write_text(json.dumps(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = open_alchemy.init_json(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_json(str(spec_file))
     model = model_factory(name="Table")
 
     # Creating models
@@ -271,7 +268,7 @@ def test_init_json_remote(engine, sessionmaker, tmp_path, _clean_remote_schemas_
     remote_spec_file.write_text(json.dumps(remote_spec))
 
     # Creating model factory
-    base, model_factory = open_alchemy.init_json(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_json(str(spec_file))
     model = model_factory(name="Table")
 
     # Creating models
@@ -302,7 +299,7 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    base, model_factory = open_alchemy.init_yaml(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_yaml(str(spec_file))
     model = model_factory(name="Table")
 
     # Creating models
@@ -350,7 +347,7 @@ def test_init_yaml_remote(engine, sessionmaker, tmp_path, _clean_remote_schemas_
     remote_spec_file.write_text(yaml.dump(remote_spec))
 
     # Creating model factory
-    base, model_factory = open_alchemy.init_yaml(str(spec_file), define_all=False)
+    base, model_factory = open_alchemy.init_yaml(str(spec_file))
     model = model_factory(name="Table")
 
     # Creating models
@@ -426,7 +423,7 @@ def test_import_model(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(BASIC_SPEC))
 
     # Creating model factory
-    open_alchemy.init_yaml(str(spec_file), define_all=True)
+    open_alchemy.init_yaml(str(spec_file))
 
     # Creating models
     from open_alchemy.models import Base
@@ -487,7 +484,7 @@ def test_import_many_to_many_association(engine, sessionmaker, tmp_path):
     spec_file.write_text(yaml.dump(spec))
 
     # Creating model factory
-    open_alchemy.init_yaml(str(spec_file), define_all=True)
+    open_alchemy.init_yaml(str(spec_file))
 
     # Creating models
     from open_alchemy.models import Base
@@ -495,9 +492,9 @@ def test_import_many_to_many_association(engine, sessionmaker, tmp_path):
     Base.metadata.create_all(engine)
 
     # Creating model instance
+    from open_alchemy.models import Association
     from open_alchemy.models import RefTable
     from open_alchemy.models import Table
-    from open_alchemy.models import association
 
     ref_instance = RefTable(column=11)
     model_instance = Table(column=12, ref_tables=[ref_instance])
@@ -506,8 +503,9 @@ def test_import_many_to_many_association(engine, sessionmaker, tmp_path):
     session.flush()
 
     # Querying session
-    queried_association = session.query(association).first()
-    assert queried_association == (12, 11)
+    queried_association = session.query(Association).first()
+    assert queried_association.table_column == 12
+    assert queried_association.ref_table_column == 11
 
 
 @pytest.mark.integration
@@ -528,9 +526,7 @@ def test_models_file(tmp_path):
     models_file = directory / "models.py"
 
     # Creating model factory
-    open_alchemy.init_yaml(
-        str(spec_file), define_all=True, models_filename=str(models_file)
-    )
+    open_alchemy.init_yaml(str(spec_file), models_filename=str(models_file))
 
     # Check models file contents
     models_file_contents = models_file.read_text()

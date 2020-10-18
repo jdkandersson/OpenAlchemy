@@ -12,21 +12,14 @@ def test_handle_array():
     WHEN handle_array is called
     THEN relationship is returned pointing to the referenced schema.
     """
-    tablename = "schema"
     schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
     schemas = {
         "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }
     logical_name = "ref_schema"
-    model_schema = {
-        "type": "object",
-        "x-tablename": tablename,
-        "properties": {"id": {"type": "integer"}},
-    }
 
     ([(tbl_logical_name, relationship)], return_schema) = array_ref.handle_array(
         schema=schema,
-        model_schema=model_schema,
         schemas=schemas,
         logical_name=logical_name,
     )
@@ -51,7 +44,6 @@ def test_handle_array_backref():
     WHEN handle_array is called
     THEN relationship is returned with a back reference.
     """
-    tablename = "schema"
     schema = {
         "type": "array",
         "items": {
@@ -65,15 +57,9 @@ def test_handle_array_backref():
         "RefSchema": {"type": "object", "x-tablename": "ref_schema", "properties": {}}
     }
     logical_name = "ref_schema"
-    model_schema = {
-        "type": "object",
-        "x-tablename": tablename,
-        "properties": {"id": {"type": "integer"}},
-    }
 
     ([(_, relationship)], _) = array_ref.handle_array(
         schema=schema,
-        model_schema=model_schema,
         schemas=schemas,
         logical_name=logical_name,
     )

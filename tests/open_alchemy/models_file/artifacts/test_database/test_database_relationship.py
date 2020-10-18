@@ -565,7 +565,8 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
+    # Expecting 3 due to association
+    assert len(schemas_artifacts) == 3
     ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
     assert ref_model_schemas_name == "RefTable"
     ref_model_models_artifacts = models_file._artifacts.calculate(
