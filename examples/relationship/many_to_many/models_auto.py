@@ -206,3 +206,90 @@ class TEmployee(typing.Protocol):
 
 
 Employee: typing.Type[TEmployee] = models.Employee  # type: ignore
+
+
+class EmployeeProjectDict(typing.TypedDict, total=True):
+    """TypedDict for properties that are required."""
+
+    employee_id: int
+    project_id: int
+
+
+class TEmployeeProject(typing.Protocol):
+    """
+    SQLAlchemy model protocol.
+
+    Attrs:
+        employee_id: The employee_id of the EmployeeProject.
+        project_id: The project_id of the EmployeeProject.
+
+    """
+
+    # SQLAlchemy properties
+    __table__: sqlalchemy.Table
+    __tablename__: str
+    query: orm.Query
+
+    # Model properties
+    employee_id: "sqlalchemy.Column[int]"
+    project_id: "sqlalchemy.Column[int]"
+
+    def __init__(self, employee_id: int, project_id: int) -> None:
+        """
+        Construct.
+
+        Args:
+            employee_id: The employee_id of the EmployeeProject.
+            project_id: The project_id of the EmployeeProject.
+
+        """
+        ...
+
+    @classmethod
+    def from_dict(cls, employee_id: int, project_id: int) -> "TEmployeeProject":
+        """
+        Construct from a dictionary (eg. a POST payload).
+
+        Args:
+            employee_id: The employee_id of the EmployeeProject.
+            project_id: The project_id of the EmployeeProject.
+
+        Returns:
+            Model instance based on the dictionary.
+
+        """
+        ...
+
+    @classmethod
+    def from_str(cls, value: str) -> "TEmployeeProject":
+        """
+        Construct from a JSON string (eg. a POST payload).
+
+        Returns:
+            Model instance based on the JSON string.
+
+        """
+        ...
+
+    def to_dict(self) -> EmployeeProjectDict:
+        """
+        Convert to a dictionary (eg. to send back for a GET request).
+
+        Returns:
+            Dictionary based on the model instance.
+
+        """
+        ...
+
+    def to_str(self) -> str:
+        """
+        Convert to a JSON string (eg. to send back for a GET request).
+
+        Returns:
+            JSON string based on the model instance.
+
+        """
+        ...
+
+
+EmployeeProject: typing.Type[TEmployeeProject] = models.EmployeeProject  # type: ignore
