@@ -3,10 +3,9 @@
 from .... import exceptions
 from .... import helpers as oa_helpers
 from .... import types as oa_types
-from ... import helpers
 from .. import types
 
-TYPES = helpers.property_.simple.TYPES
+TYPES = oa_helpers.type_.SIMPLE_TYPES
 
 # Set of valid type and format combinations
 _VALID_TYPE_FORMAT = {

@@ -31,7 +31,7 @@ def convert(*, schema: oa_types.Schema, value: typing.Any) -> types.TAnyDict:
         return object_.convert(value, schema=schema)
     if type_ == "array":
         return array.convert(value, schema=schema)
-    if type_ in {"integer", "number", "string", "boolean"}:
+    if type_ in helpers.type_.SIMPLE_TYPES:
         return simple.convert(value, schema=schema)
     raise exceptions.FeatureNotImplementedError(f"Type {type_} is not supported.")
 

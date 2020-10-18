@@ -77,3 +77,11 @@ def get_ref_schema_many_to_x(
     ref_value = peek.ref(schema=items_schema, schemas=schemas)
     assert ref_value is not None
     return ref.get_ref(ref=ref_value, schemas=schemas)
+
+
+# def is_relationship_type(
+#     *, type_: Type, property_schema: types.Schema, schemas: types.Schemas
+# ) -> bool:
+#     """
+#     Check whether a property is a relationship of a particular type.
+#     """

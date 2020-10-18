@@ -36,7 +36,7 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
     """
     try:
         type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-        if type_ not in helpers.property_.TYPES:
+        if type_ not in oa_helpers.type_.TYPES:
             return types.Result(False, f"{type_} is not a supported type")
         oa_helpers.peek.json(schema=schema, schemas=schemas)
         oa_helpers.peek.read_only(schema=schema, schemas=schemas)

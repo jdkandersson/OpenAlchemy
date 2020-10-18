@@ -26,7 +26,7 @@ def _model_simple_property(
     *, artifacts: schemas_artifacts.types.SimplePropertyArtifacts
 ) -> str:
     """Calculate the Python type of a simple property."""
-    assert artifacts.open_api.type in artifacts_helpers.property_.simple.TYPES
+    assert artifacts.open_api.type in oa_helpers.type_.SIMPLE_TYPES
     type_ = _SIMPLE_TYPE_MAPPING[artifacts.open_api.type](artifacts.open_api.format)
     optional = oa_helpers.calculate_nullable(
         nullable=artifacts.open_api.nullable,

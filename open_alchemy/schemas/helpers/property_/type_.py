@@ -4,7 +4,6 @@ import enum
 
 from .... import helpers
 from .... import types
-from . import simple
 
 
 @enum.unique
@@ -42,7 +41,7 @@ def calculate(schemas: types.Schemas, schema: types.Schema) -> Type:
         return Type.JSON
 
     type_ = helpers.peek.type_(schema=schema, schemas=schemas)
-    if type_ in simple.TYPES:
+    if type_ in helpers.type_.SIMPLE_TYPES:
         return Type.SIMPLE
 
     read_only_value = helpers.peek.read_only(schema=schema, schemas=schemas)
