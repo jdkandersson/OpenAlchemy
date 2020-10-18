@@ -28,7 +28,6 @@ def test_integration_simple(schema, expected_schema):
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -76,7 +75,6 @@ def test_integration_simple_json(schema, expected_schema):
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -97,7 +95,6 @@ def test_integration_kwargs():
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema={},
     )
 
     assert column.doc == "doc 1"
@@ -117,7 +114,6 @@ def test_integration_all_of():
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -139,7 +135,6 @@ def test_integration_ref():
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema={},
     )
 
     assert logical_name == "column_1"
@@ -171,7 +166,6 @@ def test_integration_object_ref():
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema={"properties": {}},
     )
 
     assert tbl_logical_name == logical_name
@@ -203,7 +197,6 @@ def test_integration_object_ref_read_only():
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema={"properties": {}},
     )
 
     assert returned_schema == {
@@ -228,11 +221,6 @@ def test_integration_array_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {"id": {"type": "integer"}},
-    }
     logical_name = "ref_schema"
 
     (
@@ -242,7 +230,6 @@ def test_integration_array_ref():
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert tbl_logical_name == logical_name
@@ -280,18 +267,12 @@ def test_integration_array_ref_read_only():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    model_schema = {
-        "type": "object",
-        "x-tablename": "schema",
-        "properties": {"id": {"type": "integer"}},
-    }
     logical_name = "ref_schema"
 
     ([], returned_schema) = column_factory.column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert returned_schema == {

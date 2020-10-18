@@ -113,7 +113,6 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
         schemas=schemas,
         logical_name="id",
         required=None,
-        model_schema=model_schema,
     )
 
 
@@ -142,7 +141,6 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
         schemas=schemas,
         logical_name="id",
         required=False,
-        model_schema=model_schema,
     )
 
 
@@ -171,7 +169,6 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
         schemas=schemas,
         logical_name="id",
         required=True,
-        model_schema=model_schema,
     )
 
 

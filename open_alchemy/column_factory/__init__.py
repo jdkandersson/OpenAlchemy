@@ -3,8 +3,6 @@
 import re
 import typing
 
-from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import types as oa_types
 
@@ -13,9 +11,6 @@ from . import column
 from . import object_ref
 from . import read_only
 from . import types
-
-_REF_PATTER = re.compile(r"^#\/components\/schemas\/(\w+)$")
-
 
 _TReturnSchema = typing.Union[
     oa_types.ColumnSchema,
@@ -31,7 +26,6 @@ def column_factory(
     schemas: oa_types.Schemas,
     required: typing.Optional[bool] = None,
     logical_name: str,
-    model_schema: oa_types.Schema,
 ) -> typing.Tuple[types.TReturnValue, _TReturnSchema]:
     """
     Generate column based on OpenAPI schema property.
@@ -41,7 +35,6 @@ def column_factory(
         schemas: Used to resolve any $ref.
         required: Whether the object property is required.
         logical_name: The logical name in the specification for the schema.
-        model_schema: The schema for the model.
 
     Returns:
         The logical name, the SQLAlchemy column based on the schema and the
@@ -74,7 +67,6 @@ def column_factory(
     # Handle arrays
     return array_ref.handle_array(
         schema=schema,
-        model_schema=model_schema,
         schemas=schemas,
         logical_name=logical_name,
     )
