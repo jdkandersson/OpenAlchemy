@@ -107,6 +107,22 @@ PROCESS_TESTS = [
         {
             "Schema1": {
                 "type": "object",
+                "x-tablename": "schema",
+                "properties": {"prop_1": {"type": "integer"}},
+            },
+            "Schema2": {
+                "type": "object",
+                "x-tablename": "schema",
+                "properties": {"prop_2": {"type": "integer"}},
+            },
+        },
+        True,
+        id="multiple model duplicate tablename",
+    ),
+    pytest.param(
+        {
+            "Schema1": {
+                "type": "object",
                 "x-tablename": "schema_1",
                 "properties": {"prop_1": {"type": "integer"}},
             },
@@ -141,6 +157,7 @@ PROCESS_TESTS = [
 
 @pytest.mark.parametrize("schemas, raises", PROCESS_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_process(schemas, raises):
     """
     GIVEN schemas and whether an exception is expected
@@ -541,6 +558,7 @@ CHECK_TESTS = [
 
 @pytest.mark.parametrize("spec, expected_result", CHECK_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(spec, expected_result):
     """
     GIVEN spec and the expected result

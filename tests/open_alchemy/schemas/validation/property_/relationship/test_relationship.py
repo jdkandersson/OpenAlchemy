@@ -51,6 +51,7 @@ from open_alchemy.schemas.validation.property_ import relationship
     ],
 )
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(property_name, property_schema, parent_schema, schemas, expected_result):
     """
     GIVEN property name, schema, source schema, schemas and expected result

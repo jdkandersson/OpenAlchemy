@@ -223,6 +223,7 @@ CHECK_MODELS_TESTS = [
 
 @pytest.mark.parametrize("schemas, expected_result", CHECK_MODELS_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check_models(schemas, expected_result):
     """
     GIVEN schemas and the expected result
@@ -265,6 +266,7 @@ CHECK_TESTS = [
 
 @pytest.mark.parametrize("spec, expected_result", CHECK_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(spec, expected_result):
     """
     GIVEN spec and the expected result

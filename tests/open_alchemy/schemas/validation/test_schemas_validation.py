@@ -47,6 +47,7 @@ CHECK_TESTS = [
 
 @pytest.mark.parametrize("schemas, expected_result", CHECK_TESTS)
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(schemas, expected_result):
     """
     GIVEN schemas and the expected result

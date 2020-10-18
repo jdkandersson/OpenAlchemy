@@ -45,7 +45,9 @@ def _get_association_property_iterator(
         schemas and the parent schema.
 
     """
-    for schema in schemas.values():
+    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructable_schemas = map(lambda args: args[1], constructables)
+    for schema in constructable_schemas:
         properties = helpers.iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )

@@ -21,6 +21,16 @@ class TestGetAssociationPropertyIterator:
         pytest.param(
             {"Schema": {"properties": {"prop_1": {"type": "integer"}}}},
             [],
+            id="single schema not constructable",
+        ),
+        pytest.param(
+            {
+                "Schema": {
+                    "x-tablename": "schema",
+                    "properties": {"prop_1": {"type": "integer"}},
+                }
+            },
+            [],
             id="single schema single property not association",
         ),
         pytest.param(
@@ -35,15 +45,32 @@ class TestGetAssociationPropertyIterator:
                 },
                 "RefSchema": {"x-secondary": "association"},
             },
+            [],
+            id="single schema single association not constructable",
+        ),
+        pytest.param(
+            {
+                "Schema": {
+                    "x-tablename": "schema",
+                    "properties": {
+                        "prop_1": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/RefSchema"},
+                        }
+                    },
+                },
+                "RefSchema": {"x-secondary": "association"},
+            },
             [
                 (
                     {
+                        "x-tablename": "schema",
                         "properties": {
                             "prop_1": {
                                 "type": "array",
                                 "items": {"$ref": "#/components/schemas/RefSchema"},
                             }
-                        }
+                        },
                     },
                     {
                         "type": "array",
@@ -56,6 +83,7 @@ class TestGetAssociationPropertyIterator:
         pytest.param(
             {
                 "Schema": {
+                    "x-tablename": "schema",
                     "properties": {
                         "prop_1": {
                             "type": "array",
@@ -67,13 +95,14 @@ class TestGetAssociationPropertyIterator:
                             "key_2": "value 2",
                             "items": {"$ref": "#/components/schemas/RefSchema"},
                         },
-                    }
+                    },
                 },
                 "RefSchema": {"x-secondary": "association"},
             },
             [
                 (
                     {
+                        "x-tablename": "schema",
                         "properties": {
                             "prop_1": {
                                 "type": "array",
@@ -85,7 +114,7 @@ class TestGetAssociationPropertyIterator:
                                 "key_2": "value 2",
                                 "items": {"$ref": "#/components/schemas/RefSchema"},
                             },
-                        }
+                        },
                     },
                     {
                         "type": "array",
@@ -95,6 +124,7 @@ class TestGetAssociationPropertyIterator:
                 ),
                 (
                     {
+                        "x-tablename": "schema",
                         "properties": {
                             "prop_1": {
                                 "type": "array",
@@ -106,7 +136,7 @@ class TestGetAssociationPropertyIterator:
                                 "key_2": "value 2",
                                 "items": {"$ref": "#/components/schemas/RefSchema"},
                             },
-                        }
+                        },
                     },
                     {
                         "type": "array",
@@ -122,13 +152,14 @@ class TestGetAssociationPropertyIterator:
                 "Schema": {
                     "allOf": [
                         {
+                            "x-tablename": "schema",
                             "properties": {
                                 "prop_1": {
                                     "type": "array",
                                     "key_1": "value 1",
                                     "items": {"$ref": "#/components/schemas/RefSchema"},
                                 },
-                            }
+                            },
                         },
                         {
                             "properties": {
@@ -148,6 +179,7 @@ class TestGetAssociationPropertyIterator:
                     {
                         "allOf": [
                             {
+                                "x-tablename": "schema",
                                 "properties": {
                                     "prop_1": {
                                         "type": "array",
@@ -156,7 +188,7 @@ class TestGetAssociationPropertyIterator:
                                             "$ref": "#/components/schemas/RefSchema"
                                         },
                                     },
-                                }
+                                },
                             },
                             {
                                 "properties": {
@@ -181,6 +213,7 @@ class TestGetAssociationPropertyIterator:
                     {
                         "allOf": [
                             {
+                                "x-tablename": "schema",
                                 "properties": {
                                     "prop_1": {
                                         "type": "array",
@@ -189,7 +222,7 @@ class TestGetAssociationPropertyIterator:
                                             "$ref": "#/components/schemas/RefSchema"
                                         },
                                     },
-                                }
+                                },
                             },
                             {
                                 "properties": {
@@ -366,35 +399,38 @@ class TestGetAssociationPropertyIterator:
         pytest.param(
             {
                 "Schema1": {
+                    "x-tablename": "schema_1",
                     "properties": {
                         "prop_1": {
                             "type": "array",
                             "key_1": "value 1",
                             "items": {"$ref": "#/components/schemas/RefSchema"},
                         }
-                    }
+                    },
                 },
                 "Schema2": {
+                    "x-tablename": "schema_2",
                     "properties": {
                         "prop_2": {
                             "type": "array",
                             "key_2": "value 2",
                             "items": {"$ref": "#/components/schemas/RefSchema"},
                         }
-                    }
+                    },
                 },
                 "RefSchema": {"x-secondary": "association"},
             },
             [
                 (
                     {
+                        "x-tablename": "schema_1",
                         "properties": {
                             "prop_1": {
                                 "type": "array",
                                 "key_1": "value 1",
                                 "items": {"$ref": "#/components/schemas/RefSchema"},
                             }
-                        }
+                        },
                     },
                     {
                         "type": "array",
@@ -404,13 +440,14 @@ class TestGetAssociationPropertyIterator:
                 ),
                 (
                     {
+                        "x-tablename": "schema_2",
                         "properties": {
                             "prop_2": {
                                 "type": "array",
                                 "key_2": "value 2",
                                 "items": {"$ref": "#/components/schemas/RefSchema"},
                             }
-                        }
+                        },
                     },
                     {
                         "type": "array",

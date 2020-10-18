@@ -468,7 +468,7 @@ TESTS = [
     "schema, schemas, expected_result",
     TESTS,
 )
-@pytest.mark.validation
+@pytest.mark.validate
 @pytest.mark.schemas
 def test_check(schema, schemas, expected_result):
     """

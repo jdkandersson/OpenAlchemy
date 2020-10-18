@@ -10,6 +10,7 @@ from . import property_
 from . import schemas_validation
 from . import spec_validation
 from . import types
+from . import unique_tablename
 from . import unmanaged
 
 
@@ -55,6 +56,28 @@ def _process_model(
         )
 
 
+def _other_schemas_checks(*, schemas: _oa_types.Schemas) -> types.Result:
+    """
+    Check that at least 1 model is defined and for multiple tablename.
+
+    Args:
+        schemas: All defined schemas.
+
+    Returns:
+        Whether the schemas are valid with a reason if they are not.
+
+    """
+    one_model_result = check_one_model(schemas=schemas)
+    if not one_model_result.valid:
+        return one_model_result
+
+    unique_tablename_result = unique_tablename.check(schemas=schemas)
+    if not unique_tablename_result.valid:
+        return unique_tablename_result
+
+    return types.Result(valid=True, reason=None)
+
+
 def process(*, schemas: _oa_types.Schemas) -> None:
     """
     Validate schemas.
@@ -66,9 +89,6 @@ def process(*, schemas: _oa_types.Schemas) -> None:
     schemas_result = schemas_validation.check(schemas=schemas)
     if not schemas_result.valid:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
-    one_model_result = check_one_model(schemas=schemas)
-    if not one_model_result.valid:
-        raise _exceptions.MalformedSchemaError(one_model_result.reason)
 
     # Check constructable schemas model
     constructables = _helpers.iterate.constructable(schemas=schemas)
@@ -87,6 +107,10 @@ def process(*, schemas: _oa_types.Schemas) -> None:
     for constructable in constructables:
         name, schema = constructable
         _process_model(schemas, name, schema)
+
+    other_results_result = _other_schemas_checks(schemas=schemas)
+    if not other_results_result.valid:
+        raise _exceptions.MalformedSchemaError(other_results_result.reason)
 
 
 def check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
@@ -193,8 +217,8 @@ def check(*, spec: typing.Any) -> types.TSpec:
     assert isinstance(components, dict)
     schemas = components.get("schemas")
     assert isinstance(schemas, dict)
-    one_model_result = check_one_model(schemas=schemas)
-    if not one_model_result.valid:
-        return {"result": types.t_result_from_result(one_model_result)}
+    other_result = _other_schemas_checks(schemas=schemas)
+    if not other_result.valid:
+        return {"result": types.t_result_from_result(other_result)}
 
     return {"result": {"valid": True}, "models": check_models(schemas=schemas)}

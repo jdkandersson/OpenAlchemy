@@ -889,6 +889,7 @@ TESTS = [
     TESTS,
 )
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(schema, schemas, expected_result):
     """
     GIVEN schema, schemas and expected result
