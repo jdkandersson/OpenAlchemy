@@ -19,8 +19,8 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
         Whether the property requires an association table.
 
     """
-    property_type = helpers.property_.type_.calculate(schemas, schema)
-    if property_type != helpers.property_.type_.Type.RELATIONSHIP:
+    property_type = oa_helpers.property_.calculate_type(schemas, schema)
+    if property_type != oa_helpers.property_.Type.RELATIONSHIP:
         return False
 
     relationship_type = oa_helpers.relationship.calculate_type(

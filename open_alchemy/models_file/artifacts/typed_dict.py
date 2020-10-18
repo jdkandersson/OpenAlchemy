@@ -2,6 +2,7 @@
 
 import typing
 
+from open_alchemy import helpers
 from open_alchemy import schemas
 
 from .. import types
@@ -19,11 +20,11 @@ def _get_write_only(
     artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
 ) -> typing.Optional[bool]:
     """Get write only for any property artifacts."""
-    if artifacts.type == schemas.helpers.property_.type_.Type.SIMPLE:
+    if artifacts.type == helpers.property_.Type.SIMPLE:
         return artifacts.open_api.write_only
-    if artifacts.type == schemas.helpers.property_.type_.Type.JSON:
+    if artifacts.type == helpers.property_.Type.JSON:
         return artifacts.open_api.write_only
-    if artifacts.type == schemas.helpers.property_.type_.Type.RELATIONSHIP:
+    if artifacts.type == helpers.property_.Type.RELATIONSHIP:
         return artifacts.write_only
     return None
 
@@ -37,7 +38,7 @@ def _calculate(
     """Calculate the typed dict artifacts from property artifacts."""
     no_dict_ignore_properties = filter(
         lambda args: not (
-            args[1].type == schemas.helpers.property_.type_.Type.SIMPLE
+            args[1].type == helpers.property_.Type.SIMPLE
             and args[1].extension.dict_ignore
         ),
         artifacts,

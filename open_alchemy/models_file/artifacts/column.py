@@ -3,6 +3,7 @@
 import itertools
 import typing
 
+from open_alchemy import helpers
 from open_alchemy import schemas
 
 from .. import types
@@ -24,12 +25,12 @@ def calculate(
     """
     # Process properties
     no_backref_properties = filter(
-        lambda args: args[1].type != schemas.helpers.property_.type_.Type.BACKREF,
+        lambda args: args[1].type != helpers.property_.Type.BACKREF,
         artifacts.properties,
     )
     no_backref_no_dict_ignore_properties = filter(
         lambda args: not (
-            args[1].type == schemas.helpers.property_.type_.Type.SIMPLE
+            args[1].type == helpers.property_.Type.SIMPLE
             and args[1].extension.dict_ignore
         ),
         no_backref_properties,

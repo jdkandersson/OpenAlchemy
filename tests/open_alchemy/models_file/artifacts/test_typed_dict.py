@@ -7,7 +7,6 @@ import pytest
 from open_alchemy import helpers as oa_helpers
 from open_alchemy import models_file
 from open_alchemy.schemas import artifacts as schemas_artifacts
-from open_alchemy.schemas import helpers
 
 
 def _construct_model_artifacts(properties, backrefs):
@@ -31,7 +30,7 @@ def _construct_simple_property_artifacts(
 ):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
-        type=helpers.property_.type_.Type.SIMPLE,
+        type=oa_helpers.property_.Type.SIMPLE,
         open_api=schemas_artifacts.types.OpenApiSimplePropertyArtifacts(
             type="integer",
             format=None,
@@ -60,7 +59,7 @@ def _construct_simple_property_artifacts(
 def _construct_json_property_artifacts(write_only):
     """Construct the artifacts for a json property."""
     return schemas_artifacts.types.JsonPropertyArtifacts(
-        type=helpers.property_.type_.Type.JSON,
+        type=oa_helpers.property_.Type.JSON,
         open_api=schemas_artifacts.types.OpenApiJsonPropertyArtifacts(
             nullable=False,
             read_only=None,
@@ -83,7 +82,7 @@ def _construct_json_property_artifacts(write_only):
 def _construct_many_to_one_relationship_property_artifacts(write_only):
     """Construct many-to-one relationship property artifacts."""
     return schemas_artifacts.types.ManyToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.type_.Type.RELATIONSHIP,
+        type=oa_helpers.property_.Type.RELATIONSHIP,
         schema={},  # type: ignore
         sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
         parent="RefModel",
@@ -101,7 +100,7 @@ def _construct_many_to_one_relationship_property_artifacts(write_only):
 def _construct_one_to_one_relationship_property_artifacts(write_only):
     """Construct one-to-one relationship property artifacts."""
     return schemas_artifacts.types.OneToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.type_.Type.RELATIONSHIP,
+        type=oa_helpers.property_.Type.RELATIONSHIP,
         schema={},  # type: ignore
         sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
         parent="RefModel",
@@ -119,7 +118,7 @@ def _construct_one_to_one_relationship_property_artifacts(write_only):
 def _construct_one_to_many_relationship_property_artifacts(write_only):
     """Construct one-to-many relationship property artifacts."""
     return schemas_artifacts.types.OneToManyRelationshipPropertyArtifacts(
-        type=helpers.property_.type_.Type.RELATIONSHIP,
+        type=oa_helpers.property_.Type.RELATIONSHIP,
         schema={},  # type: ignore
         sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
         parent="RefModel",
@@ -136,7 +135,7 @@ def _construct_one_to_many_relationship_property_artifacts(write_only):
 def _construct_many_to_many_relationship_property_artifacts(write_only):
     """Construct many-to-many relationship artifacts."""
     return schemas_artifacts.types.ManyToManyRelationshipPropertyArtifacts(
-        type=helpers.property_.type_.Type.RELATIONSHIP,
+        type=oa_helpers.property_.Type.RELATIONSHIP,
         schema={},  # type: ignore
         sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
         parent="RefModel",
@@ -152,7 +151,7 @@ def _construct_many_to_many_relationship_property_artifacts(write_only):
 def _construct_backref_property_artifacts(sub_type):
     """Construct backref property artifacts."""
     return schemas_artifacts.types.BackrefPropertyArtifacts(
-        type=helpers.property_.type_.Type.BACKREF,
+        type=oa_helpers.property_.Type.BACKREF,
         sub_type=sub_type,
         schema={},  # type: ignore
         properties=[],

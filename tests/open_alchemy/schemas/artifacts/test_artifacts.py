@@ -2,8 +2,8 @@
 
 import pytest
 
+from open_alchemy import helpers as oa_helpers
 from open_alchemy.schemas import artifacts
-from open_alchemy.schemas import helpers
 
 GET_TESTS = [
     pytest.param(
@@ -381,7 +381,7 @@ def _construct_model_artifacts(tablename, inherits, parent, properties):
 def _construct_simple_property_artifacts(type_, required):
     """Construct the artifacts for a simple property."""
     return artifacts.types.SimplePropertyArtifacts(
-        type=helpers.property_.type_.Type.SIMPLE,
+        type=oa_helpers.property_.Type.SIMPLE,
         open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
             type=type_,
             format=None,

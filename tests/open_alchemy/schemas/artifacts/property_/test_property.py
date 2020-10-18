@@ -4,8 +4,8 @@ import functools
 
 import pytest
 
+from open_alchemy import helpers as oa_helpers
 from open_alchemy.schemas import artifacts
-from open_alchemy.schemas.helpers.property_ import type_
 
 GET_TESTS = [
     pytest.param(
@@ -31,7 +31,7 @@ GET_TESTS = [
         {"type": "integer"},
         {},
         "type",
-        type_.Type.SIMPLE,
+        oa_helpers.property_.Type.SIMPLE,
         artifacts.types.SimplePropertyArtifacts,
         id="simple type_",
     ),
@@ -58,7 +58,7 @@ GET_TESTS = [
         {"x-json": True},
         {},
         "type",
-        type_.Type.JSON,
+        oa_helpers.property_.Type.JSON,
         artifacts.types.JsonPropertyArtifacts,
         id="JSON type_",
     ),
@@ -67,7 +67,7 @@ GET_TESTS = [
         {"readOnly": True, "type": "object"},
         {},
         "type",
-        type_.Type.BACKREF,
+        oa_helpers.property_.Type.BACKREF,
         artifacts.types.BackrefPropertyArtifacts,
         id="backref type_",
     ),
@@ -94,7 +94,7 @@ GET_TESTS = [
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         "type",
-        type_.Type.RELATIONSHIP,
+        oa_helpers.property_.Type.RELATIONSHIP,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
         id="property type",
     ),

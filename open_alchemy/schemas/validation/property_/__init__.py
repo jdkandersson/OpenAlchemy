@@ -13,7 +13,7 @@ from . import json
 from . import relationship
 from . import simple
 
-Type = helpers.property_.type_.Type
+Type = oa_helpers.property_.Type
 
 
 def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
@@ -73,7 +73,7 @@ def check(
     if not type_result.valid:
         return type_result
 
-    type_ = helpers.property_.type_.calculate(schema=property_schema, schemas=schemas)
+    type_ = oa_helpers.property_.calculate_type(schema=property_schema, schemas=schemas)
 
     if type_ == Type.BACKREF:
         return backref.check(schema=property_schema, schemas=schemas)

@@ -23,9 +23,9 @@ def _get_read_only(
     artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
 ) -> typing.Optional[bool]:
     """Get read only for any property artifacts."""
-    if artifacts.type == schemas.helpers.property_.type_.Type.SIMPLE:
+    if artifacts.type == helpers.property_.Type.SIMPLE:
         return artifacts.open_api.read_only
-    if artifacts.type == schemas.helpers.property_.type_.Type.JSON:
+    if artifacts.type == helpers.property_.Type.JSON:
         return artifacts.open_api.read_only
     return None
 
@@ -46,7 +46,7 @@ def _map_default(
         The mapped default value.
 
     """
-    if artifacts.type != schemas.helpers.property_.type_.Type.SIMPLE:
+    if artifacts.type != helpers.property_.Type.SIMPLE:
         return None
 
     default = artifacts.open_api.default
@@ -83,12 +83,12 @@ def _calculate(
 ) -> typing.Iterable[types.ColumnArgArtifacts]:
     """Calculate the arg artifacts from property artifacts."""
     no_backref_properties = filter(
-        lambda args: args[1].type != schemas.helpers.property_.type_.Type.BACKREF,
+        lambda args: args[1].type != helpers.property_.Type.BACKREF,
         artifacts,
     )
     no_backref_no_dict_ignore_properties = filter(
         lambda args: not (
-            args[1].type == schemas.helpers.property_.type_.Type.SIMPLE
+            args[1].type == helpers.property_.Type.SIMPLE
             and args[1].extension.dict_ignore
         ),
         no_backref_properties,
