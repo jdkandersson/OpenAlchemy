@@ -16,6 +16,10 @@
   by pre-pending `Autogen` as many times as required.
 - Change the association table to no longer be constructed as a table and
   instead to be constructed as another model.
+- Fix bug where some properties were incorrectly picked from a reference even
+  though they existed locally (only impacts relationship properties where, for
+  example, `x-secondary` was defined both on the relationship property in
+  `allOf` and on the referenced model).
 
 ## Version 1.5.4 - 2020-10-10
 
