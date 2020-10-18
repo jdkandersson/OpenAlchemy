@@ -97,7 +97,7 @@ nullable.
             type: string
 
 :samp:`required` defined
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following schema has the :samp:`required` property and lists the
 :samp:`id` object property in the list which means that :samp:`id` has
@@ -140,7 +140,7 @@ has :samp:`nullable` set to :samp:`False` and :samp:`name` has
             type: string
 
 :samp:`nullable` and :samp:`required` conflict
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following schema has the :samp:`id` :samp:`object` property in the
 :samp:`required` list but has set the :samp:`nullable` property of :samp:`id`
