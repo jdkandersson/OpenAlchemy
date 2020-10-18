@@ -57,23 +57,29 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
         constructable_schemas,
     )
 
+    # Record the tablename against each schema name
     seen_tablenames: typing.Dict[str, str] = {}
+
     for name, schema in not_single_inheritance_schemas:
+        # Retrieve tablename
         tablename = oa_helpers.peek.prefer_local(
             get_value=oa_helpers.peek.tablename, schemas=schemas, schema=schema
         )
         assert tablename is not None
 
-        if tablename in seen_tablenames:
-            seen_on_schema = seen_tablenames[tablename]
-            return types.Result(
-                valid=False,
-                reason=(
-                    f'duplicate "x-tablename" value {tablename} defined on the schema '
-                    f"{name}, already defined on the schema {seen_on_schema}"
-                ),
-            )
+        # Check whether the tablename has already been seen
+        if tablename not in seen_tablenames:
+            seen_tablenames[tablename] = name
+            continue
 
-        seen_tablenames[tablename] = name
+        # Return result that is invalid with the reason
+        seen_on_schema = seen_tablenames[tablename]
+        return types.Result(
+            valid=False,
+            reason=(
+                f'duplicate "x-tablename" value {tablename} defined on the schema '
+                f"{name}, already defined on the schema {seen_on_schema}"
+            ),
+        )
 
     return types.Result(valid=True, reason=None)
