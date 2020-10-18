@@ -25,7 +25,6 @@ def init_model_factory(
     *,
     base: typing.Type,
     spec: oa_types.Schema,
-    define_all: bool = False,
     models_filename: typing.Optional[str] = None,
     spec_path: typing.Optional[str] = None,
 ) -> oa_types.ModelFactory:
@@ -35,7 +34,6 @@ def init_model_factory(
     Args:
         base: The declarative base for the models.
         spec: The OpenAPI specification in the form of a dictionary.
-        define_all: Whether to define all the models during initialization.
         models_filename: The name of the file to write the models typing information to.
         spec_path: The path the the OpenAPI specification. Mainly used to support remote
             references.
@@ -89,8 +87,7 @@ def init_model_factory(
         with open(models_filename, "w") as out_file:
             out_file.write(models_file_contents)
 
-    if define_all:
-        _helpers.define_all(model_factory=_register_model, schemas=schemas)
+    _helpers.define_all(model_factory=_register_model, schemas=schemas)
 
     return _register_model
 
@@ -102,7 +99,6 @@ def _init_optional_base(
     *,
     base: typing.Optional[typing.Type],
     spec: oa_types.Schema,
-    define_all: bool,
     models_filename: typing.Optional[str] = None,
     spec_path: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
@@ -114,7 +110,6 @@ def _init_optional_base(
         init_model_factory(
             base=base,
             spec=spec,
-            define_all=define_all,
             models_filename=models_filename,
             spec_path=spec_path,
         ),
@@ -125,7 +120,6 @@ def init_json(
     spec_filename: str,
     *,
     base: typing.Optional[typing.Type] = None,
-    define_all: bool = True,
     models_filename: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """
@@ -135,7 +129,6 @@ def init_json(
         spec_filename: filename of an OpenAPI spec in JSON format
         base: (optional) The declarative base for the models.
               If base=None, construct a new SQLAlchemy declarative base.
-        define_all: (optional) Whether to define all the models during initialization.
         models_filename: (optional) The path to write the models file to. If it is not
             provided, the models file is not created.
 
@@ -157,7 +150,6 @@ def init_json(
     return _init_optional_base(
         base=base,
         spec=spec,
-        define_all=define_all,
         models_filename=models_filename,
         spec_path=spec_filename,
     )
@@ -167,7 +159,6 @@ def init_yaml(
     spec_filename: str,
     *,
     base: typing.Optional[typing.Type] = None,
-    define_all: bool = True,
     models_filename: typing.Optional[str] = None,
 ) -> BaseAndModelFactory:
     """
@@ -179,7 +170,6 @@ def init_yaml(
         spec_filename: filename of an OpenAPI spec in YAML format
         base: (optional) The declarative base for the models.
               If base=None, construct a new SQLAlchemy declarative base.
-        define_all: (optional) Whether to define all the models during initialization.
         models_filename: (optional) The path to write the models file to. If it is not
             provided, the models file is not created.
 
@@ -204,7 +194,6 @@ def init_yaml(
     return _init_optional_base(
         base=base,
         spec=spec,
-        define_all=define_all,
         models_filename=models_filename,
         spec_path=spec_filename,
     )

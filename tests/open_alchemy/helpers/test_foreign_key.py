@@ -24,6 +24,30 @@ from open_alchemy.helpers import relationship
             id="many-to-one defined",
         ),
         pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {
+                "allOf": [
+                    {"x-foreign-key-column": "name_1"},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"x-foreign-key-column": "name_2"}},
+            "name_1",
+            id="many-to-one defined overridden first",
+        ),
+        pytest.param(
+            relationship.Type.MANY_TO_ONE,
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-foreign-key-column": "name_1"},
+                ]
+            },
+            {"RefSchema": {"x-foreign-key-column": "name_2"}},
+            "name_1",
+            id="many-to-one defined overridden second",
+        ),
+        pytest.param(
             relationship.Type.ONE_TO_ONE,
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-uselist": False}},
@@ -159,7 +183,35 @@ def test_get_target_schema(
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-tablename": "ref_schema"}},
             "ref_schema_prop_1_column_1",
-            id="one-to-many not defined",
+            id="one-to-many",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "column_1",
+            "prop_1",
+            {
+                "allOf": [
+                    {"x-inherits": True, "x-tablename": "child_table"},
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                ]
+            },
+            {"ParentSchema": {"x-tablename": "parent_schema"}},
+            "child_table_prop_1_column_1",
+            id="one-to-many joined table child first",
+        ),
+        pytest.param(
+            relationship.Type.ONE_TO_MANY,
+            "column_1",
+            "prop_1",
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/ParentSchema"},
+                    {"x-inherits": True, "x-tablename": "child_table"},
+                ]
+            },
+            {"ParentSchema": {"x-tablename": "parent_schema"}},
+            "child_table_prop_1_column_1",
+            id="one-to-many joined table child first",
         ),
     ],
 )
@@ -183,15 +235,46 @@ def test_calculate_prop_name(
     assert returned_name == expected_prop_name
 
 
+@pytest.mark.parametrize(
+    "target_schema, schemas, expected_key",
+    [
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"x-tablename": "table_1"}},
+            "table_1.fk_column",
+            id="plain",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"x-inherits": True, "x-tablename": "child_table"},
+                    {"$ref": "#/components/schemas/RefSchema"},
+                ]
+            },
+            {"RefSchema": {"x-tablename": "parent_table"}},
+            "child_table.fk_column",
+            id="joined table child first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-inherits": True, "x-tablename": "child_table"},
+                ]
+            },
+            {"RefSchema": {"x-tablename": "parent_table"}},
+            "child_table.fk_column",
+            id="joined table child last",
+        ),
+    ],
+)
 @pytest.mark.helper
-def test_calculate_foreign_key():
+def test_calculate_foreign_key(target_schema, schemas, expected_key):
     """
-    GIVEN the target schema and foreign key column name
+    GIVEN the target schema and foreign key column name and the expected key
     WHEN calculate_foreign_key is called with target schema and foreign key column name
     THEN the expected foreign key is returned.
     """
-    target_schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {"RefSchema": {"x-tablename": "table_1"}}
 
     returned_key = foreign_key.calculate_foreign_key(
         column_name="fk_column",
@@ -199,7 +282,7 @@ def test_calculate_foreign_key():
         schemas=schemas,
     )
 
-    assert returned_key == "table_1.fk_column"
+    assert returned_key == expected_key
 
 
 @pytest.mark.parametrize(
@@ -211,7 +294,7 @@ def test_calculate_foreign_key():
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
             {"parent_key": "parent value"},
-            id="one-to-many",
+            id="many-to-one",
         ),
         pytest.param(
             relationship.Type.ONE_TO_ONE,
@@ -227,23 +310,7 @@ def test_calculate_foreign_key():
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"ref_key": "ref value"}},
             {"ref_key": "ref value"},
-            id="many-to-one",
-        ),
-        pytest.param(
-            relationship.Type.ONE_TO_MANY,
-            {"parent_key": "parent value"},
-            {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
-            {"RefSchema": {"ref_key": "ref value"}},
-            {"ref_key": "ref value"},
-            id="allOf many-to-one",
-        ),
-        pytest.param(
-            relationship.Type.ONE_TO_MANY,
-            {"parent_key": "parent value"},
-            {"items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
-            {"RefSchema": {"ref_key": "ref value"}},
-            {"ref_key": "ref value"},
-            id="many-to-one allOf",
+            id="one-to-many",
         ),
     ],
 )

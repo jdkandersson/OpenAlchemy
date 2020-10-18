@@ -2,6 +2,7 @@
 
 from .. import types as _types
 from . import artifacts
+from . import association
 from . import backref
 from . import foreign_key
 from . import helpers
@@ -22,3 +23,4 @@ def process(*, schemas: _types.Schemas) -> None:
     validation.process(schemas=schemas)
     backref.process(schemas=schemas)
     foreign_key.process(schemas=schemas)
+    association.process(schemas=schemas)

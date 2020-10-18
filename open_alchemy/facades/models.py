@@ -7,7 +7,6 @@ from open_alchemy import types
 
 from ..utility_base import TOptUtilityBase
 from ..utility_base import TUtilityBase
-from . import sqlalchemy
 
 
 def get_base() -> typing.Any:
@@ -20,18 +19,6 @@ def get_base() -> typing.Any:
     """
     # pylint: disable=no-member
     return open_alchemy.models.Base  # type: ignore
-
-
-def set_association(*, table: sqlalchemy.Table, name: str) -> None:
-    """
-    Set an association table on the models.
-
-    Args:
-        table: The association table.
-        name: The attribute name to use.
-
-    """
-    setattr(open_alchemy.models, name, table)
 
 
 def get_model(*, name: str) -> TOptUtilityBase:

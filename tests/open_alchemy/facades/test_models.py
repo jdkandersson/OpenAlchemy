@@ -20,21 +20,6 @@ def test_get_base(mocked_models):
 
 
 @pytest.mark.facade
-def test_set_association(mocked_models):
-    """
-    GIVEN mocked models, mock table and name
-    WHEN set_association is called with the table and name
-    THEN the table is set as an attribute on the models with the name.
-    """
-    name = "association_1"
-    table = mock.MagicMock()
-
-    models.set_association(table=table, name=name)
-
-    assert getattr(mocked_models, name) == table
-
-
-@pytest.mark.facade
 def test_get_model(mocked_models):
     """
     GIVE mocked models and name

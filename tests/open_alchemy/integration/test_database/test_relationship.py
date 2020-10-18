@@ -511,68 +511,67 @@ def test_many_to_many(engine, sessionmaker):
 @pytest.mark.parametrize(
     "spec",
     [
-        {
-            "components": {
-                "schemas": {
-                    "Column": {"type": "integer", "x-primary-key": True},
-                    "Table": {
-                        "properties": {
-                            "column": {"$ref": "#/components/schemas/Column"}
+        pytest.param(
+            {
+                "components": {
+                    "schemas": {
+                        "Column": {"type": "integer", "x-primary-key": True},
+                        "Table": {
+                            "properties": {
+                                "column": {"$ref": "#/components/schemas/Column"}
+                            },
+                            "x-tablename": "table",
+                            "type": "object",
                         },
-                        "x-tablename": "table",
-                        "type": "object",
-                    },
-                }
-            }
-        },
-        {
-            "components": {
-                "schemas": {
-                    "Table": {"$ref": "#/components/schemas/RefTable"},
-                    "RefTable": {
-                        "properties": {
-                            "column": {"type": "integer", "x-primary-key": True}
-                        },
-                        "x-tablename": "table",
-                        "type": "object",
-                    },
-                }
-            }
-        },
-        {
-            "components": {
-                "schemas": {
-                    "Table": {
-                        "properties": {
-                            "column": {
-                                "allOf": [{"type": "integer", "x-primary-key": True}]
-                            }
-                        },
-                        "x-tablename": "table",
-                        "type": "object",
                     }
                 }
-            }
-        },
-        {
-            "components": {
-                "schemas": {
-                    "Table": {
-                        "allOf": [
-                            {
-                                "properties": {
-                                    "column": {"type": "integer", "x-primary-key": True}
-                                },
-                                "x-tablename": "table",
-                                "type": "object",
-                            }
-                        ]
+            },
+            id="ref column",
+        ),
+        pytest.param(
+            {
+                "components": {
+                    "schemas": {
+                        "Table": {
+                            "properties": {
+                                "column": {
+                                    "allOf": [
+                                        {"type": "integer", "x-primary-key": True}
+                                    ]
+                                }
+                            },
+                            "x-tablename": "table",
+                            "type": "object",
+                        }
                     }
                 }
-            }
-        },
+            },
+            id="allOf column",
+        ),
+        pytest.param(
+            {
+                "components": {
+                    "schemas": {
+                        "Table": {
+                            "allOf": [
+                                {
+                                    "properties": {
+                                        "column": {
+                                            "type": "integer",
+                                            "x-primary-key": True,
+                                        }
+                                    },
+                                    "x-tablename": "table",
+                                    "type": "object",
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            id="allOf model",
+        ),
     ],
-    ids=["ref column", "ref model", "allOf column", "allOf model"],
 )
 @pytest.mark.integration
 def test_ref_all_of(engine, sessionmaker, spec):

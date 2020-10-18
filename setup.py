@@ -54,6 +54,7 @@ setuptools.setup(
             "connexion[swagger-ui]",
             "Flask-SQLAlchemy",
             "alembic",
+            "rstcheck",
         ],
         "test": [
             "bandit",
