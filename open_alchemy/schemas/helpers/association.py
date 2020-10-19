@@ -37,6 +37,8 @@ def get_association_property_iterator(
     """
     Get an iterator for properties that require association tables from the schemas.
 
+    Assume that the schemas are individually valid.
+
     To ensure no duplication, property iteration stays within the model context.
 
     Args:
@@ -84,6 +86,35 @@ def get_secondary(*, schema: types.Schema, schemas: types.Schemas) -> str:
     )
     assert secondary is not None and isinstance(secondary, str)
     return secondary
+
+
+def get_secondary_parent_property_schema_mapping(
+    *, schemas: types.Schemas
+) -> typing.Dict[str, TParentPropertySchema]:
+    """
+    Get a mapping keyed with the x-secondary value and the parent and property schema.
+
+    Assume that the schemas are individually valid.
+
+    To ensure no duplication, property iteration stays within the model context.
+
+    Args:
+        schemas: All defined schemas.
+
+    Returns:
+        A dictionary with the x-secondary value is the key and the parent and property
+        schema of an association as the value.
+
+    """
+    association_properties = get_association_property_iterator(schemas=schemas)
+    association_name_parent_property_schemas = map(
+        lambda property_: (
+            get_secondary(schema=property_.property_schema, schemas=schemas),
+            property_,
+        ),
+        association_properties,
+    )
+    return dict(association_name_parent_property_schemas)
 
 
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
