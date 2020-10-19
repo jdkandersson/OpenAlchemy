@@ -1,8 +1,8 @@
-"""Tests for the association pre-processor."""
+"""Tests for the _requires_association association helper."""
 
 import pytest
 
-from open_alchemy.schemas import association
+from open_alchemy.schemas.helpers import association
 
 
 class TestRequiresAssociation:
@@ -28,7 +28,7 @@ class TestRequiresAssociation:
     @staticmethod
     @pytest.mark.parametrize("schema, schemas, expected_result", TESTS)
     @pytest.mark.schemas
-    @pytest.mark.association
+    @pytest.mark.helper
     def test_(schema, schemas, expected_result):
         """
         GIVEN schema, schemas and expected result

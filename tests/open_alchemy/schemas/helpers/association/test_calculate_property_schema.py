@@ -1,4 +1,4 @@
-"""Tests for the association pre-processor."""
+"""Tests for the calculate_property_schema association helper."""
 
 import pytest
 
