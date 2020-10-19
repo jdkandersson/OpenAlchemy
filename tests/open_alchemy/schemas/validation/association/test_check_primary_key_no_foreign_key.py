@@ -12,7 +12,6 @@ class TestGetDefinedAssociationIterator:
     # pylint: disable=protected-access
 
     TESTS = [
-        pytest.param({"properties": {}}, {}, True, None, id="empty properties"),
         pytest.param(
             {"properties": {"prop_1": {}}},
             {},
@@ -21,64 +20,11 @@ class TestGetDefinedAssociationIterator:
             id="single property not primary key",
         ),
         pytest.param(
-            {"properties": {"prop_1": {"x-primary-key": False}}},
-            {},
-            True,
-            None,
-            id="single property primary key false",
-        ),
-        pytest.param(
             {"properties": {"prop_1": {"x-primary-key": True}}},
             {},
             False,
             ("prop_1",),
             id="single property primary key no foreign key",
-        ),
-        pytest.param(
-            {"$ref": "#/components/schemas/RefSchema"},
-            {"RefSchema": {"properties": {"prop_1": {"x-primary-key": True}}}},
-            False,
-            ("prop_1",),
-            id="$ref single property primary key no foreign key",
-        ),
-        pytest.param(
-            {"allOf": [{"properties": {"prop_1": {"x-primary-key": True}}}]},
-            {},
-            False,
-            ("prop_1",),
-            id="allOf single property primary key no foreign key",
-        ),
-        pytest.param(
-            {
-                "properties": {
-                    "prop_1": {
-                        "allOf": [
-                            {"x-primary-key": False},
-                            {"$ref": "#/components/schemas/RefSchema"},
-                        ]
-                    }
-                }
-            },
-            {"RefSchema": {"x-primary-key": True}},
-            True,
-            None,
-            id="single property allOf not primary key $ref primary key local first",
-        ),
-        pytest.param(
-            {
-                "properties": {
-                    "prop_1": {
-                        "allOf": [
-                            {"$ref": "#/components/schemas/RefSchema"},
-                            {"x-primary-key": False},
-                        ]
-                    }
-                }
-            },
-            {"RefSchema": {"x-primary-key": True}},
-            True,
-            None,
-            id="single property allOf not primary key $ref primary key local first",
         ),
         pytest.param(
             {
@@ -90,6 +36,28 @@ class TestGetDefinedAssociationIterator:
             True,
             None,
             id="single property primary key with foreign key",
+        ),
+        pytest.param(
+            {"properties": {"prop_1": {"$ref": "#/components/schemas/RefSchema"}}},
+            {"RefSchema": {"x-primary-key": True, "x-foreign-key": "foreign.key"}},
+            True,
+            None,
+            id="single property $ref primary key with foreign key",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "prop_1": {
+                        "allOf": [
+                            {"x-primary-key": True, "x-foreign-key": "foreign.key"}
+                        ]
+                    }
+                }
+            },
+            {},
+            True,
+            None,
+            id="single property allOf primary key with foreign key",
         ),
         pytest.param(
             {

@@ -38,6 +38,31 @@ def _get_defined_association_iterator(
     )
 
 
+def _primary_key_property_items_iterator(
+    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+) -> typing.Iterator[typing.Tuple[str, oa_types.Schema]]:
+    """
+    Get an iterable with only primary key properties.
+
+    Args:
+        schema: The schema to get primary key properties from.
+        schemas: All defined schemas.
+
+    Returns:
+        An iterator with all primary key properties.
+
+    """
+    properties = helpers.iterate.properties_items(schema=schema, schemas=schemas)
+    return filter(
+        lambda args: oa_helpers.peek.prefer_local(
+            get_value=oa_helpers.peek.primary_key,
+            schema=args[1],
+            schemas=schemas,
+        ),
+        properties,
+    )
+
+
 def _check_primary_key_no_foreign_key(
     *,
     name: str,
@@ -58,17 +83,10 @@ def _check_primary_key_no_foreign_key(
         Whether the schema is valid with a reason if it is not.
 
     """
-    properties = helpers.iterate.properties_items(schema=schema, schemas=schemas)
-    for property_name, property_schema in properties:
-        # Check for primary key
-        primary_key = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.primary_key,
-            schema=property_schema,
-            schemas=schemas,
-        )
-        if not primary_key:
-            continue
-
+    primary_key_properties = _primary_key_property_items_iterator(
+        schema=schema, schemas=schemas
+    )
+    for property_name, property_schema in primary_key_properties:
         # Check for foreign key
         foreign_key = oa_helpers.peek.foreign_key(
             schema=property_schema, schemas=schemas
