@@ -26,7 +26,7 @@ def process(*, schemas: types.Schemas) -> None:
     association_schemas = list(
         map(
             lambda args: helpers.association.calculate_schema(
-                property_schema=args[2], parent_schema=args[1], schemas=args[0]
+                property_schema=args[1], parent_schema=args[0], schemas=schemas
             ),
             association_properties,
         )

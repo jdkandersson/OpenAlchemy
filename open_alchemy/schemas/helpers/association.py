@@ -26,7 +26,7 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
 
 def get_association_property_iterator(
     *, schemas: types.Schemas
-) -> typing.Iterable[typing.Tuple[types.Schemas, types.Schema, types.Schema]]:
+) -> typing.Iterable[typing.Tuple[types.Schema, types.Schema]]:
     """
     Get an iterator for properties that require association tables from the schemas.
 
@@ -50,9 +50,7 @@ def get_association_property_iterator(
         association_property_schemas = filter(
             functools.partial(_requires_association, schemas), property_schemas
         )
-        yield from (
-            (schemas, schema, property_) for property_ in association_property_schemas
-        )
+        yield from ((schema, property_) for property_ in association_property_schemas)
 
 
 def get_secondary(*, schema: types.Schema, schemas: types.Schemas) -> str:
@@ -76,6 +74,13 @@ def get_secondary(*, schema: types.Schema, schemas: types.Schemas) -> str:
     )
     assert secondary is not None and isinstance(secondary, str)
     return secondary
+
+
+class TSecondaryMapValue(typing.NamedTuple):
+    """Holds information about an association table."""
+
+    parent_schema: types.Schema
+    property_schema: types.Schema
 
 
 class TCalculatePropertySchemaReturn(typing.NamedTuple):

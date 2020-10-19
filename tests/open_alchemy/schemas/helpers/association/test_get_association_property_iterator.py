@@ -1,7 +1,5 @@
 """Tests for the get_association_property_iterator association helper."""
 
-import copy
-
 import pytest
 
 from open_alchemy.schemas.helpers import association
@@ -452,12 +450,9 @@ def test_(schemas, expected_items):
     WHEN get_association_property_iterator is called with the schemas
     THEN the expected items are returned.
     """
-    original_schemas = copy.deepcopy(schemas)
 
     returned_items = list(
         association.get_association_property_iterator(schemas=schemas)
     )
 
-    assert list(returned_items) == [
-        (original_schemas, *items) for items in expected_items
-    ]
+    assert list(returned_items) == expected_items
