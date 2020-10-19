@@ -83,17 +83,20 @@ def _check_primary_key_no_foreign_key(
         Whether the schema is valid with a reason if it is not.
 
     """
+    # Get first primary key property without foreign key
     primary_key_properties = _primary_key_property_items_iterator(
         schema=schema, schemas=schemas
     )
-    for property_name, property_schema in primary_key_properties:
-        # Check for foreign key
-        foreign_key = oa_helpers.peek.foreign_key(
-            schema=property_schema, schemas=schemas
-        )
-        if foreign_key:
-            continue
+    not_foreign_key_primary_key_properties = filter(
+        lambda args: oa_helpers.peek.foreign_key(schema=args[1], schemas=schemas)
+        is None,
+        primary_key_properties,
+    )
 
+    # Check for whether a primary key does not define a foreign key
+    property_ = next(not_foreign_key_primary_key_properties, None)
+    if property_ is not None:
+        property_name, _ = property_
         return types.Result(
             valid=False,
             reason=(
