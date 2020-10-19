@@ -34,7 +34,7 @@ class TParentPropertySchema(typing.NamedTuple):
     """Holds information about an association table."""
 
     parent: _TNameSchema
-    property_: _TNameSchema
+    property: _TNameSchema
 
 
 def get_association_property_iterator(
@@ -66,7 +66,7 @@ def get_association_property_iterator(
         yield from (
             TParentPropertySchema(
                 parent=_TNameSchema(name=name, schema=schema),
-                property_=_TNameSchema(name=property_name, schema=property_schema),
+                property=_TNameSchema(name=property_name, schema=property_schema),
             )
             for property_name, property_schema in association_property_schemas
         )
@@ -116,7 +116,7 @@ def get_secondary_parent_property_schema_mapping(
     association_properties = get_association_property_iterator(schemas=schemas)
     association_name_parent_property_schemas = map(
         lambda property_: (
-            get_secondary(schema=property_.property_.schema, schemas=schemas),
+            get_secondary(schema=property_.property.schema, schemas=schemas),
             property_,
         ),
         association_properties,

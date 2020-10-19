@@ -35,3 +35,6 @@ def _get_defined_association_iterator(
         in tablename_mapping,
         constructables,
     )
+
+
+# def validate_schema(*, name: str, schema: types.Schema, )
