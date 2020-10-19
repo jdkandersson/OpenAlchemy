@@ -115,9 +115,9 @@ def get_secondary_parent_property_schema_mapping(
     """
     association_properties = get_association_property_iterator(schemas=schemas)
     association_name_parent_property_schemas = map(
-        lambda property_: (
-            get_secondary(schema=property_.property.schema, schemas=schemas),
-            property_,
+        lambda association: (
+            get_secondary(schema=association.property.schema, schemas=schemas),
+            association,
         ),
         association_properties,
     )
