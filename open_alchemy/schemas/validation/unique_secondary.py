@@ -57,16 +57,9 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
                 continue
 
             # Retrieve secondary value
-            items_schema = oa_helpers.peek.items(
+            secondary = helpers.association.get_secondary(
                 schema=property_schema, schemas=schemas
             )
-            assert items_schema is not None
-            secondary = oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.secondary,
-                schema=items_schema,
-                schemas=schemas,
-            )
-            assert secondary is not None and isinstance(secondary, str)
 
             # Check whether secondary has already been seen
             if secondary not in seen_secondaries:

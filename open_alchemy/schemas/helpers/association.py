@@ -55,6 +55,29 @@ def get_association_property_iterator(
         )
 
 
+def get_secondary(*, schema: types.Schema, schemas: types.Schemas) -> str:
+    """
+    Get the secondary value from a many-to-many relationship property.
+
+    Assume that the property is a valid many-to-many relationship.
+
+    Args:
+        schema: The schema of the many-to-many property.
+        schemas: All defined schemas.
+
+    Returns:
+        The value of x-secondary.
+
+    """
+    items = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    assert items is not None
+    secondary = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.secondary, schema=items, schemas=schemas
+    )
+    assert secondary is not None and isinstance(secondary, str)
+    return secondary
+
+
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
     """The return type for the _calculate_property_schema function."""
 
@@ -199,15 +222,8 @@ def calculate_schema(
         The schema of the association table.
 
     """
-    items = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
-    assert items is not None
-    secondary = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.secondary, schema=items, schemas=schemas
-    )
-    assert secondary is not None and isinstance(secondary, str)
-
+    secondary = get_secondary(schema=property_schema, schemas=schemas)
     parent_property = calculate_property_schema(schema=parent_schema, schemas=schemas)
-
     _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
         property_schema=property_schema, schemas=schemas
     )
