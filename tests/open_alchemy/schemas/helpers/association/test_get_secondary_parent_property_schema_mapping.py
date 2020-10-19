@@ -1,4 +1,4 @@
-"""Tests for the get_association_property_iterator association helper."""
+"""Tests for the get_secondary_parent_property_schema_mapping association helper."""
 
 import pytest
 
@@ -35,19 +35,25 @@ TESTS = [
         },
         {
             "association": (
-                {
-                    "x-tablename": "schema",
-                    "properties": {
-                        "prop_1": {
-                            "type": "array",
-                            "items": {"$ref": "#/components/schemas/RefSchema"},
-                        }
+                (
+                    "Schema",
+                    {
+                        "x-tablename": "schema",
+                        "properties": {
+                            "prop_1": {
+                                "type": "array",
+                                "items": {"$ref": "#/components/schemas/RefSchema"},
+                            }
+                        },
                     },
-                },
-                {
-                    "type": "array",
-                    "items": {"$ref": "#/components/schemas/RefSchema"},
-                },
+                ),
+                (
+                    "prop_1",
+                    {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema"},
+                    },
+                ),
             )
         },
         id="single schema single association",
@@ -74,48 +80,60 @@ TESTS = [
         },
         {
             "association_1": (
-                {
-                    "x-tablename": "schema",
-                    "properties": {
-                        "prop_1": {
-                            "type": "array",
-                            "key_1": "value 1",
-                            "items": {"$ref": "#/components/schemas/RefSchema1"},
-                        },
-                        "prop_2": {
-                            "type": "array",
-                            "key_2": "value 2",
-                            "items": {"$ref": "#/components/schemas/RefSchema2"},
+                (
+                    "Schema",
+                    {
+                        "x-tablename": "schema",
+                        "properties": {
+                            "prop_1": {
+                                "type": "array",
+                                "key_1": "value 1",
+                                "items": {"$ref": "#/components/schemas/RefSchema1"},
+                            },
+                            "prop_2": {
+                                "type": "array",
+                                "key_2": "value 2",
+                                "items": {"$ref": "#/components/schemas/RefSchema2"},
+                            },
                         },
                     },
-                },
-                {
-                    "type": "array",
-                    "key_1": "value 1",
-                    "items": {"$ref": "#/components/schemas/RefSchema1"},
-                },
+                ),
+                (
+                    "prop_1",
+                    {
+                        "type": "array",
+                        "key_1": "value 1",
+                        "items": {"$ref": "#/components/schemas/RefSchema1"},
+                    },
+                ),
             ),
             "association_2": (
-                {
-                    "x-tablename": "schema",
-                    "properties": {
-                        "prop_1": {
-                            "type": "array",
-                            "key_1": "value 1",
-                            "items": {"$ref": "#/components/schemas/RefSchema1"},
-                        },
-                        "prop_2": {
-                            "type": "array",
-                            "key_2": "value 2",
-                            "items": {"$ref": "#/components/schemas/RefSchema2"},
+                (
+                    "Schema",
+                    {
+                        "x-tablename": "schema",
+                        "properties": {
+                            "prop_1": {
+                                "type": "array",
+                                "key_1": "value 1",
+                                "items": {"$ref": "#/components/schemas/RefSchema1"},
+                            },
+                            "prop_2": {
+                                "type": "array",
+                                "key_2": "value 2",
+                                "items": {"$ref": "#/components/schemas/RefSchema2"},
+                            },
                         },
                     },
-                },
-                {
-                    "type": "array",
-                    "key_2": "value 2",
-                    "items": {"$ref": "#/components/schemas/RefSchema2"},
-                },
+                ),
+                (
+                    "prop_2",
+                    {
+                        "type": "array",
+                        "key_2": "value 2",
+                        "items": {"$ref": "#/components/schemas/RefSchema2"},
+                    },
+                ),
             ),
         },
         id="single schema multiple association",
@@ -147,38 +165,50 @@ TESTS = [
         },
         {
             "association_1": (
-                {
-                    "x-tablename": "schema_1",
-                    "properties": {
-                        "prop_1": {
-                            "type": "array",
-                            "key_1": "value 1",
-                            "items": {"$ref": "#/components/schemas/RefSchema1"},
-                        }
+                (
+                    "Schema1",
+                    {
+                        "x-tablename": "schema_1",
+                        "properties": {
+                            "prop_1": {
+                                "type": "array",
+                                "key_1": "value 1",
+                                "items": {"$ref": "#/components/schemas/RefSchema1"},
+                            }
+                        },
                     },
-                },
-                {
-                    "type": "array",
-                    "key_1": "value 1",
-                    "items": {"$ref": "#/components/schemas/RefSchema1"},
-                },
+                ),
+                (
+                    "prop_1",
+                    {
+                        "type": "array",
+                        "key_1": "value 1",
+                        "items": {"$ref": "#/components/schemas/RefSchema1"},
+                    },
+                ),
             ),
             "association_2": (
-                {
-                    "x-tablename": "schema_2",
-                    "properties": {
-                        "prop_2": {
-                            "type": "array",
-                            "key_2": "value 2",
-                            "items": {"$ref": "#/components/schemas/RefSchema2"},
-                        }
+                (
+                    "Schema2",
+                    {
+                        "x-tablename": "schema_2",
+                        "properties": {
+                            "prop_2": {
+                                "type": "array",
+                                "key_2": "value 2",
+                                "items": {"$ref": "#/components/schemas/RefSchema2"},
+                            }
+                        },
                     },
-                },
-                {
-                    "type": "array",
-                    "key_2": "value 2",
-                    "items": {"$ref": "#/components/schemas/RefSchema2"},
-                },
+                ),
+                (
+                    "prop_2",
+                    {
+                        "type": "array",
+                        "key_2": "value 2",
+                        "items": {"$ref": "#/components/schemas/RefSchema2"},
+                    },
+                ),
             ),
         },
         id="multiple schema single association",

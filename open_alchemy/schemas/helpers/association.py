@@ -1,6 +1,5 @@
 """Helpers for association tables."""
 
-import functools
 import typing
 
 from ... import helpers as oa_helpers
@@ -24,11 +23,18 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     )
 
 
+class _TNameSchema(typing.NamedTuple):
+    """The name and schema of a property or schema."""
+
+    name: str
+    schema: types.Schema
+
+
 class TParentPropertySchema(typing.NamedTuple):
     """Holds information about an association table."""
 
-    parent_schema: types.Schema
-    property_schema: types.Schema
+    parent: _TNameSchema
+    property_: _TNameSchema
 
 
 def get_association_property_iterator(
@@ -50,18 +56,19 @@ def get_association_property_iterator(
 
     """
     constructables = helpers.iterate.constructable(schemas=schemas)
-    constructable_schemas = map(lambda args: args[1], constructables)
-    for schema in constructable_schemas:
+    for name, schema in constructables:
         properties = helpers.iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )
-        property_schemas = map(lambda args: args[1], properties)
         association_property_schemas = filter(
-            functools.partial(_requires_association, schemas), property_schemas
+            lambda args: _requires_association(schemas, args[1]), properties
         )
         yield from (
-            TParentPropertySchema(parent_schema=schema, property_schema=property_)
-            for property_ in association_property_schemas
+            TParentPropertySchema(
+                parent=_TNameSchema(name=name, schema=schema),
+                property_=_TNameSchema(name=property_name, schema=property_schema),
+            )
+            for property_name, property_schema in association_property_schemas
         )
 
 
@@ -109,7 +116,7 @@ def get_secondary_parent_property_schema_mapping(
     association_properties = get_association_property_iterator(schemas=schemas)
     association_name_parent_property_schemas = map(
         lambda property_: (
-            get_secondary(schema=property_.property_schema, schemas=schemas),
+            get_secondary(schema=property_.property_.schema, schemas=schemas),
             property_,
         ),
         association_properties,
