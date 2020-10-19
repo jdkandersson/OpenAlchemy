@@ -23,7 +23,7 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     )
 
 
-class _TNameSchema(typing.NamedTuple):
+class TNameSchema(typing.NamedTuple):
     """The name and schema of a property or schema."""
 
     name: str
@@ -33,8 +33,8 @@ class _TNameSchema(typing.NamedTuple):
 class TParentPropertySchema(typing.NamedTuple):
     """Holds information about an association table."""
 
-    parent: _TNameSchema
-    property: _TNameSchema
+    parent: TNameSchema
+    property: TNameSchema
 
 
 def get_association_property_iterator(
@@ -65,8 +65,8 @@ def get_association_property_iterator(
         )
         yield from (
             TParentPropertySchema(
-                parent=_TNameSchema(name=name, schema=schema),
-                property=_TNameSchema(name=property_name, schema=property_schema),
+                parent=TNameSchema(name=name, schema=schema),
+                property=TNameSchema(name=property_name, schema=property_schema),
             )
             for property_name, property_schema in association_property_schemas
         )

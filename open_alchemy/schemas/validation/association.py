@@ -3,13 +3,14 @@
 import typing
 
 from ... import helpers as oa_helpers
-from ... import types
+from ... import types as oa_types
 from .. import helpers
+from . import types
 
 
 def _get_defined_association_iterator(
-    *, schemas: types.Schemas, tablename_mapping: typing.Dict[str, typing.Any]
-) -> typing.Iterable[typing.Tuple[str, types.Schema]]:
+    *, schemas: oa_types.Schemas, tablename_mapping: typing.Dict[str, typing.Any]
+) -> typing.Iterable[typing.Tuple[str, oa_types.Schema]]:
     """
     Get an iterator with schemas that have a tablename as defined by a mapping.
 
@@ -37,4 +38,74 @@ def _get_defined_association_iterator(
     )
 
 
-# def validate_schema(*, name: str, schema: types.Schema, )
+def _check_primary_key_no_foreign_key(
+    *,
+    name: str,
+    schema: oa_types.Schema,
+    association: helpers.association.TParentPropertySchema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """
+    Check that all primary keys define foreign keys.
+
+    Args:
+        name: The name of the schema.
+        schema: The schema to validate.
+        association: Information about the association property.
+        schemas: All defined schemas.
+
+    Returns:
+        Whether the schema is valid with a reason if it is not.
+
+    """
+    properties = helpers.iterate.properties_items(schema=schema, schemas=schemas)
+    for property_name, property_schema in properties:
+        # Check for primary key
+        primary_key = oa_helpers.peek.prefer_local(
+            get_value=oa_helpers.peek.primary_key,
+            schema=property_schema,
+            schemas=schemas,
+        )
+        if not primary_key:
+            continue
+
+        # Check for foreign key
+        foreign_key = oa_helpers.peek.foreign_key(
+            schema=property_schema, schemas=schemas
+        )
+        if foreign_key:
+            continue
+
+        return types.Result(
+            valid=False,
+            reason=(
+                f'property "{property_name}" on schema "{name}" is a primary key and '
+                "therefore must define a foreign key because it implements an "
+                "association table for the many-to-many relationship property "
+                f'"{association.property.name}" on the schema '
+                f'"{association.parent.name}"'
+            ),
+        )
+
+    return types.Result(valid=True, reason=None)
+
+
+# def validate_schema(
+#     *,
+#     name: str,
+#     schema: oa_types.Schema,
+#     association: helpers.association.TParentPropertySchema,
+#     schemas: oa_types.Schemas,
+# ) -> types.Result:
+#     """
+#     Validate the schema for an association against the expected schema.
+
+#     Assume that schemas are individually valid.
+
+#     Args:
+#         name: The name of the schema.
+#         schema: The schema to validate.
+#         association: The information about the many-to-many property.
+#         schemas: All defined schemas.
+
+#     """
