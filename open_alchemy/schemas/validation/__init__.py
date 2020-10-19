@@ -5,6 +5,7 @@ import typing
 from ... import exceptions as _exceptions
 from ... import types as _oa_types
 from .. import helpers as _helpers
+from . import association
 from . import model
 from . import property_
 from . import schemas_validation
