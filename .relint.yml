@@ -1,5 +1,5 @@
 - name: No @pytest.mark.only_this
-  pattern: "@pytest\\.mark\\.only_this"
+  pattern: \@pytest\.mark\.only_this
   hint: No tests should be marked with only_this
   filePattern: test_.*\.py
   error: false
