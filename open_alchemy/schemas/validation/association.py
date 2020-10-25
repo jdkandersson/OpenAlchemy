@@ -80,7 +80,7 @@ def _check_2_or_fewer_primary_key(
         schemas: All defined schemas.
 
     Returns:
-        Whether the schema has 2 or fewer primary keys with a reason if not.
+        Whether the schema is valid with a reason if it is not.
 
     """
     # Get first primary key property without foreign key
@@ -142,6 +142,73 @@ def _check_primary_key_no_foreign_key(
             reason=(
                 f'property "{property_name}" on schema "{name}" is a primary key and '
                 "therefore must define a foreign key because it implements an "
+                "association table for the many-to-many relationship property "
+                f'"{association.property.name}" on the schema '
+                f'"{association.parent.name}"'
+            ),
+        )
+
+    return types.Result(valid=True, reason=None)
+
+
+def _assert_str(item: typing.Any) -> str:
+    """Check that item is a string."""
+    assert isinstance(item, str)
+    return item
+
+
+def _check_duplicate_foreign_key(
+    *,
+    name: str,
+    schema: oa_types.Schema,
+    association: helpers.association.TParentPropertySchema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """
+    Check that all primary key foreign keys are unique.
+
+    Assume that all primary keys define a foreign key.
+
+    Args:
+        name: The name of the schema.
+        schema: The schema to validate.
+        association: Information about the association property.
+        schemas: All defined schemas.
+
+    Returns:
+        Whether the schema is valid with a reason if it is not.
+
+    """
+    # Get first primary key property without foreign key
+    primary_key_properties = _primary_key_property_items_iterator(
+        schema=schema, schemas=schemas
+    )
+    foreign_keys = map(
+        lambda args: (
+            args[0],
+            oa_helpers.peek.prefer_local(
+                get_value=oa_helpers.peek.foreign_key, schema=args[1], schemas=schemas
+            ),
+        ),
+        primary_key_properties,
+    )
+    # Check that items are a string
+    foreign_keys = map(lambda args: (args[0], _assert_str(args[1])), foreign_keys)
+
+    # Check for duplicate foreign keys
+    seen_foreign_keys: typing.Dict[str, str] = {}
+    for property_name, foreign_key in foreign_keys:
+        if foreign_key not in seen_foreign_keys:
+            seen_foreign_keys[foreign_key] = property_name
+            continue
+
+        seen_on_property_name = seen_foreign_keys[foreign_key]
+        return types.Result(
+            valid=False,
+            reason=(
+                f'duplicate foreign key "{foreign_key}" defined on a primary key '
+                f'property "{property_name}" already defined on the property '
+                f'"{seen_on_property_name}" on the schema "{name}" that implements an '
                 "association table for the many-to-many relationship property "
                 f'"{association.property.name}" on the schema '
                 f'"{association.parent.name}"'
