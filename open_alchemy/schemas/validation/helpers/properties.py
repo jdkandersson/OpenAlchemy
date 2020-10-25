@@ -16,7 +16,7 @@ def check_properties_values(
         schemas: All defined schemas used to resolve any $ref.
 
     Returns:
-    The result if the properties values are not valid with a reason or None.
+        The result if the properties values are not valid with a reason or None.
 
     """
     properties_values = helpers.iterate.properties_values(
@@ -41,7 +41,7 @@ def check_properties_items(
         schemas: All defined schemas used to resolve any $ref.
 
     Returns:
-    The result if the properties items are not valid with a reason or None.
+        The result if the properties items are not valid with a reason or None.
 
     """
     # Check names are string and values are dictionaries

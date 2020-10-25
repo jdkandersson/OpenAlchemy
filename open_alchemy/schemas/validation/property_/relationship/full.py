@@ -10,47 +10,6 @@ from ... import types
 from .. import simple
 
 
-def _check_value_matches(
-    *,
-    func: oa_helpers.peek.PeekValue,
-    reference_schema: oa_types.Schema,
-    check_schema: oa_types.Schema,
-    schemas: oa_types.Schemas,
-) -> types.OptResult:
-    """
-    Check that the value matches in two schemas.
-
-    Args:
-        func: Used to retrieve the value.
-        reference_schema: The schema to check against.
-        check_schema: The schema to check
-        schemas: All defined schemas, used to resolve any $ref.
-
-    Returns:
-        An invalid result with reason if the values don't match otherwise None.
-
-    """
-    expected_value = func(schema=reference_schema, schemas=schemas)
-    if expected_value is None:
-        expected_value_str = "not to be defined"
-    else:
-        expected_value_str = str(expected_value)
-
-    actual_value = func(schema=check_schema, schemas=schemas)
-    if actual_value is None:
-        actual_value_str = "not defined"
-    else:
-        actual_value_str = str(actual_value)
-
-    if expected_value != actual_value:
-        return types.Result(
-            False,
-            f"expected {expected_value_str}, actual is {actual_value_str}.",
-        )
-
-    return None
-
-
 def _check_pre_defined_property_schema(
     *,
     property_name: str,
@@ -101,7 +60,7 @@ def _check_pre_defined_property_schema(
         ("default", oa_helpers.peek.default),
     )
     for key, func in checks:
-        match_result = _check_value_matches(
+        match_result = validation_helpers.value.check_matches(
             func=func,
             reference_schema=property_schema,
             check_schema=defined_property_schema,
@@ -111,7 +70,7 @@ def _check_pre_defined_property_schema(
             continue
 
         return types.Result(
-            match_result.valid, f"{property_name} :: {key} :: {match_result.reason}"
+            valid=False, reason=f"{property_name} :: {key} :: {match_result}"
         )
 
     # Check the foreign key
@@ -394,7 +353,7 @@ def _check_backref_property_properties(
         properties_items_value_results = map(
             lambda args: (
                 args[0],
-                _check_value_matches(
+                validation_helpers.value.check_matches(
                     func=func,
                     reference_schema=parent_properties[args[0]],
                     check_schema=args[1],
@@ -412,7 +371,7 @@ def _check_backref_property_properties(
             property_name, result = properties_items_value_result
             assert result is not None
             return types.Result(
-                result.valid, f"{property_name} :: {key} :: {result.reason}"
+                valid=False, reason=f"{property_name} :: {key} :: {result}"
             )
 
     return None

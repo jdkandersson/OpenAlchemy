@@ -218,6 +218,36 @@ def _check_duplicate_foreign_key(
     return types.Result(valid=True, reason=None)
 
 
+# def _check_properties_valid(
+#     *,
+#     name: str,
+#     schema: oa_types.Schema,
+#     association: helpers.association.TParentPropertySchema,
+#     schemas: oa_types.Schemas,
+# ) -> types.Result:
+#     """
+#     Check that all primary key properties are valid.
+
+#     Assume that all primary keys define a foreign key.
+
+#     Check that:
+#     1. the primary keys have one of the expected foreign keys,
+#     2. that the primary key type matches and
+#     3. that the format, maxLength match the expectation, including whether they should
+#         be defined.
+
+#     Args:
+#         name: The name of the schema.
+#         schema: The schema to validate.
+#         association: Information about the association property.
+#         schemas: All defined schemas.
+
+#     Returns:
+#         Whether the schema is valid with a reason if it is not.
+
+#     """
+
+
 # def validate_schema(
 #     *,
 #     name: str,

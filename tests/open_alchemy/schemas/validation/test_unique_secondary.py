@@ -416,7 +416,6 @@ CHECK_TESTS = [
 ]
 
 
-@pytest.mark.only_this
 @pytest.mark.schemas
 @pytest.mark.validate
 @pytest.mark.parametrize("schemas, expected_valid, expected_reasons", CHECK_TESTS)
