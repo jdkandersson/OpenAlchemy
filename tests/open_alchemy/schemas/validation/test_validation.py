@@ -164,6 +164,51 @@ PROCESS_TESTS = [
     ),
     pytest.param(
         {
+            "Schema": {
+                "type": "object",
+                "x-tablename": "schema",
+                "properties": {
+                    "schema_primary_key": {
+                        "type": "integer",
+                        "x-primary-key": True,
+                    },
+                    "schema_many_to_many": {
+                        "type": "array",
+                        "items": {
+                            "allOf": [
+                                {"x-secondary": "association"},
+                                {"$ref": "#/components/schemas/RefSchema"},
+                            ]
+                        },
+                    },
+                },
+            },
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "properties": {
+                    "ref_schema_primary_key": {
+                        "type": "string",
+                        "x-primary-key": True,
+                    }
+                },
+            },
+            "AssociationSchema": {
+                "type": "object",
+                "x-tablename": "association",
+                "properties": {
+                    "schema_prop": {
+                        "type": "boolean",
+                        "x-primary-key": True,
+                    }
+                },
+            },
+        },
+        True,
+        id="multiple model invalid association schema",
+    ),
+    pytest.param(
+        {
             "Schema1": {
                 "type": "object",
                 "x-tablename": "schema_1",

@@ -81,6 +81,10 @@ def _other_schemas_checks(*, schemas: _oa_types.Schemas) -> types.Result:
     if not unique_secondary_result.valid:
         return unique_secondary_result
 
+    association_result = association.check(schemas=schemas)
+    if not association_result.valid:
+        return association_result
+
     return types.Result(valid=True, reason=None)
 
 
