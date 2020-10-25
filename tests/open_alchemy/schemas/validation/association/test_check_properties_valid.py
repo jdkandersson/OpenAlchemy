@@ -130,6 +130,50 @@ class TestCheckPropertiesValid:
             {
                 "properties": {
                     "prop_1": {
+                        "allOf": [
+                            {
+                                "x-primary-key": True,
+                                "x-foreign-key": "parent_table.parent_column",
+                                "type": "parent type",
+                                "format": "parent format",
+                                "maxLength": 1,
+                            },
+                            {"$ref": "#/components/schemas/RefProperty"},
+                        ]
+                    }
+                }
+            },
+            {"RefProperty": {"x-foreign-key": "wrong foreign key"}},
+            True,
+            None,
+            id="single property parent valid foreign key local ref local first",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "prop_1": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefProperty"},
+                            {
+                                "x-primary-key": True,
+                                "x-foreign-key": "parent_table.parent_column",
+                                "type": "parent type",
+                                "format": "parent format",
+                                "maxLength": 1,
+                            },
+                        ]
+                    }
+                }
+            },
+            {"RefProperty": {"x-foreign-key": "wrong foreign key"}},
+            True,
+            None,
+            id="single property parent valid foreign key local ref ref first",
+        ),
+        pytest.param(
+            {
+                "properties": {
+                    "prop_1": {
                         "x-primary-key": True,
                         "x-foreign-key": "ref_table.ref_column",
                         "type": "wrong type",
@@ -215,7 +259,6 @@ class TestCheckPropertiesValid:
     ]
 
     @staticmethod
-    @pytest.mark.only_this
     @pytest.mark.schemas
     @pytest.mark.validate
     @pytest.mark.parametrize("schema, schemas, expected_valid, expected_reasons", TESTS)
