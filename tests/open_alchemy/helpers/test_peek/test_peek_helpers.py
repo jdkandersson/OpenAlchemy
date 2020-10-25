@@ -236,7 +236,6 @@ def test_peek_key_invalid(schema, schemas):
     ],
 )
 @pytest.mark.helper
-@pytest.mark.only_this
 def test_prefer_local(schema, schemas, expected_value):
     """
     GIVEN schema, schemas and expected value
@@ -279,7 +278,6 @@ def test_prefer_local(schema, schemas, expected_value):
     ],
 )
 @pytest.mark.helper
-@pytest.mark.only_this
 def test_prefer_local_invalid(schema, schemas):
     """
     GIVEN schema, schemas that are invalid

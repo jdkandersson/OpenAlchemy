@@ -10,7 +10,7 @@ from . import types
 
 
 def _get_defined_association_iterator(
-    *, schemas: oa_types.Schemas, tablename_mapping: typing.Dict[str, typing.Any]
+    schemas: oa_types.Schemas, tablename_mapping: typing.Dict[str, typing.Any]
 ) -> typing.Iterable[typing.Tuple[str, oa_types.Schema]]:
     """
     Get an iterator with schemas that have a tablename as defined by a mapping.
@@ -40,7 +40,7 @@ def _get_defined_association_iterator(
 
 
 def _primary_key_property_items_iterator(
-    *, schema: oa_types.Schema, schemas: oa_types.Schemas
+    schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[typing.Tuple[str, oa_types.Schema]]:
     """
     Get an iterable with only primary key properties.
@@ -65,7 +65,6 @@ def _primary_key_property_items_iterator(
 
 
 def _check_2_or_fewer_primary_key(
-    *,
     name: str,
     schema: oa_types.Schema,
     association: helpers.association.TParentPropertySchema,
@@ -85,9 +84,7 @@ def _check_2_or_fewer_primary_key(
 
     """
     # Get first primary key property without foreign key
-    primary_key_properties = _primary_key_property_items_iterator(
-        schema=schema, schemas=schemas
-    )
+    primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     primary_key_count = sum(1 for _ in primary_key_properties)
 
     if primary_key_count > 2:
@@ -105,7 +102,6 @@ def _check_2_or_fewer_primary_key(
 
 
 def _check_primary_key_no_foreign_key(
-    *,
     name: str,
     schema: oa_types.Schema,
     association: helpers.association.TParentPropertySchema,
@@ -125,9 +121,7 @@ def _check_primary_key_no_foreign_key(
 
     """
     # Get first primary key property without foreign key
-    primary_key_properties = _primary_key_property_items_iterator(
-        schema=schema, schemas=schemas
-    )
+    primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     not_foreign_key_primary_key_properties = filter(
         lambda args: oa_helpers.peek.foreign_key(schema=args[1], schemas=schemas)
         is None,
@@ -159,7 +153,6 @@ def _assert_str(item: typing.Any) -> str:
 
 
 def _check_duplicate_foreign_key(
-    *,
     name: str,
     schema: oa_types.Schema,
     association: helpers.association.TParentPropertySchema,
@@ -181,9 +174,7 @@ def _check_duplicate_foreign_key(
 
     """
     # Get first primary key property without foreign key
-    primary_key_properties = _primary_key_property_items_iterator(
-        schema=schema, schemas=schemas
-    )
+    primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     foreign_keys = map(
         lambda args: (
             args[0],
@@ -220,7 +211,6 @@ def _check_duplicate_foreign_key(
 
 
 def _check_properties_valid(
-    *,
     name: str,
     schema: oa_types.Schema,
     association: helpers.association.TParentPropertySchema,
@@ -260,9 +250,7 @@ def _check_properties_valid(
     }
 
     # Check primary keys
-    primary_key_properties = _primary_key_property_items_iterator(
-        schema=schema, schemas=schemas
-    )
+    primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     for property_name, property_schema in primary_key_properties:
         property_foreign_key = oa_helpers.peek.prefer_local(
             get_value=oa_helpers.peek.foreign_key,
@@ -319,22 +307,33 @@ def _check_properties_valid(
     return types.Result(valid=True, reason=None)
 
 
-# def validate_schema(
-#     *,
-#     name: str,
-#     schema: oa_types.Schema,
-#     association: helpers.association.TParentPropertySchema,
-#     schemas: oa_types.Schemas,
-# ) -> types.Result:
-#     """
-#     Validate the schema for an association against the expected schema.
+def _validate_schema(
+    *,
+    name: str,
+    schema: oa_types.Schema,
+    association: helpers.association.TParentPropertySchema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """
+    Validate the schema for an association against the expected schema.
 
-#     Assume that schemas are individually valid.
+    Assume that schemas are individually valid.
 
-#     Args:
-#         name: The name of the schema.
-#         schema: The schema to validate.
-#         association: The information about the many-to-many property.
-#         schemas: All defined schemas.
+    Args:
+        name: The name of the schema.
+        schema: The schema to validate.
+        association: The information about the many-to-many property.
+        schemas: All defined schemas.
 
-#     """
+    """
+    checks = [
+        _check_2_or_fewer_primary_key,
+        _check_primary_key_no_foreign_key,
+        _check_duplicate_foreign_key,
+        _check_properties_valid,
+    ]
+    for check in checks:
+        result = check(name, schema, association, schemas)
+        if not result.valid:
+            return result
+    return types.Result(valid=True, reason=None)
