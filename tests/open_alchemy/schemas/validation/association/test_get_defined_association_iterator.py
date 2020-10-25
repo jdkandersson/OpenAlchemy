@@ -25,8 +25,58 @@ class TestGetDefinedAssociationIterator:
         pytest.param(
             {"Schema1": {"x-tablename": "table_1"}},
             {"table_1": True},
-            [("Schema1", {"x-tablename": "table_1"})],
+            [("Schema1", {"x-tablename": "table_1"}, "table_1")],
             id="single mapping hit",
+        ),
+        pytest.param(
+            {
+                "Schema1": {
+                    "allOf": [
+                        {"x-tablename": "table_1"},
+                        {"$ref": "#/components/schemas/RefSchema"},
+                    ]
+                },
+                "RefSchema": {"x-tablename": "other_table"},
+            },
+            {"table_1": True},
+            [
+                (
+                    "Schema1",
+                    {
+                        "allOf": [
+                            {"x-tablename": "table_1"},
+                            {"$ref": "#/components/schemas/RefSchema"},
+                        ]
+                    },
+                    "table_1",
+                )
+            ],
+            id="single mapping hit local ref local first",
+        ),
+        pytest.param(
+            {
+                "Schema1": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-tablename": "table_1"},
+                    ]
+                },
+                "RefSchema": {"x-tablename": "other_table"},
+            },
+            {"table_1": True},
+            [
+                (
+                    "Schema1",
+                    {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefSchema"},
+                            {"x-tablename": "table_1"},
+                        ]
+                    },
+                    "table_1",
+                )
+            ],
+            id="single mapping hit local ref ref first",
         ),
         pytest.param(
             {
@@ -43,7 +93,7 @@ class TestGetDefinedAssociationIterator:
                 "Schema2": {"x-tablename": "table_2"},
             },
             {"table_1": True},
-            [("Schema1", {"x-tablename": "table_1"})],
+            [("Schema1", {"x-tablename": "table_1"}, "table_1")],
             id="multiple first hit",
         ),
         pytest.param(
@@ -52,7 +102,7 @@ class TestGetDefinedAssociationIterator:
                 "Schema2": {"x-tablename": "table_2"},
             },
             {"table_2": True},
-            [("Schema2", {"x-tablename": "table_2"})],
+            [("Schema2", {"x-tablename": "table_2"}, "table_2")],
             id="multiple second hit",
         ),
         pytest.param(
@@ -62,8 +112,8 @@ class TestGetDefinedAssociationIterator:
             },
             {"table_1": True, "table_2": True},
             [
-                ("Schema1", {"x-tablename": "table_1"}),
-                ("Schema2", {"x-tablename": "table_2"}),
+                ("Schema1", {"x-tablename": "table_1"}, "table_1"),
+                ("Schema2", {"x-tablename": "table_2"}, "table_2"),
             ],
             id="multiple all hit",
         ),

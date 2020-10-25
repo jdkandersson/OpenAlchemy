@@ -9,9 +9,17 @@ from . import helpers as validation_helpers
 from . import types
 
 
+class _TNameSchemaTablename(typing.NamedTuple):
+    """Holds the name, schema and tablename of a schema."""
+
+    name: str
+    schema: oa_types.Schema
+    tablename: str
+
+
 def _get_defined_association_iterator(
     schemas: oa_types.Schemas, tablename_mapping: typing.Dict[str, typing.Any]
-) -> typing.Iterable[typing.Tuple[str, oa_types.Schema]]:
+) -> typing.Iterable[_TNameSchemaTablename]:
     """
     Get an iterator with schemas that have a tablename as defined by a mapping.
 
@@ -32,10 +40,19 @@ def _get_defined_association_iterator(
 
     """
     constructables = helpers.iterate.constructable(schemas=schemas)
-    return filter(
-        lambda args: oa_helpers.peek.tablename(schema=args[1], schemas=schemas)
-        in tablename_mapping,
+    constructables_tablename = map(
+        lambda args: _TNameSchemaTablename(
+            name=args[0],
+            schema=args[1],
+            tablename=oa_helpers.peek.prefer_local(
+                get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+            ),
+        ),
         constructables,
+    )
+    return filter(
+        lambda args: args.tablename in tablename_mapping,
+        constructables_tablename,
     )
 
 
@@ -332,8 +349,39 @@ def _validate_schema(
         _check_duplicate_foreign_key,
         _check_properties_valid,
     ]
-    for check in checks:
-        result = check(name, schema, association, schemas)
+    for validation_check in checks:
+        result = validation_check(name, schema, association, schemas)
         if not result.valid:
             return result
     return types.Result(valid=True, reason=None)
+
+
+# def check(*, schemas: oa_types.Schemas) -> types.Result:
+#     """
+#     Check that any schemas that implement association tables are valid.
+
+#     Assume that schemas are otherwise valid.
+
+#     The algorithm is:
+#     1. get a mapping of x-secondary to property information,
+#     2. iterate over schemas and retrieve all that have define an association and
+#     3. validate those schemas.
+
+#     Args:
+#         schemas: The schemas to check.
+
+#     Returns:
+#         Whether the schemas that define association tables are valid.
+
+#     """
+#     secondary_parent_property_schema_mapping = (
+#         helpers.association.get_secondary_parent_property_schema_mapping(
+#             schemas=schemas
+#         )
+#     )
+#     association_schemas = _get_defined_association_iterator(
+#         schemas, secondary_parent_property_schema_mapping
+#     )
+#     for association_schema in association_schemas:
+#         tablename =
+#         association_info
