@@ -10,7 +10,7 @@ repos:
       - id: no-print
         name: No print
         description: This hook prevents print function calls
-        entry: "print\\("
+        entry: "print\\((?!.*allow-print)"
         language: pygrep
         types: [python]
   - repo: https://github.com/ambv/black
