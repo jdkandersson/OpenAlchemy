@@ -51,3 +51,7 @@ repos:
       - id: remove-crlf
       - id: forbid-tabs
       - id: remove-tabs
+  - repo: https://github.com/codingjoe/relint
+    rev: 1.2.0
+    hooks:
+      - id: relint

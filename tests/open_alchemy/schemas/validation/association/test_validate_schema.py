@@ -71,6 +71,7 @@ class TestValidateSchema:
     ]
 
     @staticmethod
+    @pytest.mark.only_this
     @pytest.mark.schemas
     @pytest.mark.validate
     @pytest.mark.parametrize("schema, expected_valid", TESTS)
