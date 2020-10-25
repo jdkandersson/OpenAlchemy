@@ -6,7 +6,7 @@ from open_alchemy.schemas import helpers
 from open_alchemy.schemas import validation
 
 
-class TestGetDefinedAssociationIterator:
+class TestCheck2OrFewerPrimaryKey:
     """Tests for _check_2_or_fewer_primary_key."""
 
     # pylint: disable=protected-access

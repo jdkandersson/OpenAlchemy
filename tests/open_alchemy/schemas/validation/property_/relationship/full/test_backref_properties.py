@@ -840,7 +840,6 @@ TESTS = [
     TESTS,
 )
 @pytest.mark.validate
-@pytest.mark.only_this
 @pytest.mark.schemas
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):
     """

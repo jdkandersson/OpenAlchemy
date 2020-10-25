@@ -5,7 +5,7 @@ import pytest
 from open_alchemy.schemas import validation
 
 
-class TestGetDefinedAssociationIterator:
+class TestPrimaryKeyPropertyItemsIterator:
     """Tests for _primary_key_property_items_iterator."""
 
     # pylint: disable=protected-access

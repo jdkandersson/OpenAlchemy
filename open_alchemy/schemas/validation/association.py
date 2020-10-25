@@ -5,6 +5,7 @@ import typing
 from ... import helpers as oa_helpers
 from ... import types as oa_types
 from .. import helpers
+from . import helpers as validation_helpers
 from . import types
 
 
@@ -218,34 +219,104 @@ def _check_duplicate_foreign_key(
     return types.Result(valid=True, reason=None)
 
 
-# def _check_properties_valid(
-#     *,
-#     name: str,
-#     schema: oa_types.Schema,
-#     association: helpers.association.TParentPropertySchema,
-#     schemas: oa_types.Schemas,
-# ) -> types.Result:
-#     """
-#     Check that all primary key properties are valid.
+def _check_properties_valid(
+    *,
+    name: str,
+    schema: oa_types.Schema,
+    association: helpers.association.TParentPropertySchema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """
+    Check that all primary key properties are valid.
 
-#     Assume that all primary keys define a foreign key.
+    Assume that all primary keys define a foreign key.
 
-#     Check that:
-#     1. the primary keys have one of the expected foreign keys,
-#     2. that the primary key type matches and
-#     3. that the format, maxLength match the expectation, including whether they should
-#         be defined.
+    Check that:
+    1. the primary keys have one of the expected foreign keys,
+    2. that the primary key type matches and
+    3. that the format, maxLength match the expectation, including whether they should
+        be defined.
 
-#     Args:
-#         name: The name of the schema.
-#         schema: The schema to validate.
-#         association: Information about the association property.
-#         schemas: All defined schemas.
+    Args:
+        name: The name of the schema.
+        schema: The schema to validate.
+        association: Information about the association property.
+        schemas: All defined schemas.
 
-#     Returns:
-#         Whether the schema is valid with a reason if it is not.
+    Returns:
+        Whether the schema is valid with a reason if it is not.
 
-#     """
+    """
+    # Calculate the expected schema
+    expected_schema = helpers.association.calculate_schema(
+        property_schema=association.property.schema,
+        parent_schema=association.parent.schema,
+        schemas=schemas,
+    ).schema
+    # Creating a mapping of foreign key to expected property schema
+    expected_foreign_key_properties = {
+        property_["x-foreign-key"]: property_
+        for property_ in expected_schema["properties"].values()
+    }
+
+    # Check primary keys
+    primary_key_properties = _primary_key_property_items_iterator(
+        schema=schema, schemas=schemas
+    )
+    for property_name, property_schema in primary_key_properties:
+        property_foreign_key = oa_helpers.peek.prefer_local(
+            get_value=oa_helpers.peek.foreign_key,
+            schema=property_schema,
+            schemas=schemas,
+        )
+
+        # Check that the foreign key is expected
+        if property_foreign_key not in expected_foreign_key_properties:
+            expected_foreign_keys = ", ".join(
+                map(lambda key: f'"{key}"', expected_foreign_key_properties.keys())
+            )
+            return types.Result(
+                valid=False,
+                reason=(
+                    f'unexpected foreign key "{property_foreign_key}" defined on a '
+                    f'primary key property "{property_name}" on the schema "{name}" '
+                    "that implements an association table for the many-to-many "
+                    f'relationship property "{association.property.name}" on the '
+                    f'schema "{association.parent.name}", expected one of '
+                    f"{expected_foreign_keys}"
+                ),
+            )
+
+        # Check that the property schema is as expected
+        expected_schema = expected_foreign_key_properties[property_foreign_key]
+        checks = (
+            ("type", oa_helpers.peek.type_),
+            ("format", oa_helpers.peek.format_),
+            ("maxLength", oa_helpers.peek.max_length),
+        )
+        for key, func in checks:
+            # Check that values match
+            result = validation_helpers.value.check_matches(
+                func=func,
+                reference_schema=expected_schema,
+                check_schema=property_schema,
+                schemas=schemas,
+            )
+            if result is None:
+                continue
+
+            return types.Result(
+                valid=False,
+                reason=(
+                    f"unexpected {key} ({result}) defined on a "
+                    f'primary key property "{property_name}" on the schema "{name}" '
+                    "that implements an association table for the many-to-many "
+                    f'relationship property "{association.property.name}" on the '
+                    f'schema "{association.parent.name}"'
+                ),
+            )
+
+    return types.Result(valid=True, reason=None)
 
 
 # def validate_schema(

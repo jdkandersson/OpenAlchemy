@@ -125,7 +125,7 @@ def get_secondary_parent_property_schema_mapping(
 
 
 class TCalculatePropertySchemaReturn(typing.NamedTuple):
-    """The return type for the _calculate_property_schema function."""
+    """The return type for the calculate_property_schema function."""
 
     name: str
     schema: types.ColumnSchema
@@ -204,7 +204,7 @@ def calculate_property_schema(
 
 
 class TCalculateSchemaReturn(typing.NamedTuple):
-    """The return type for the _calculate_schema function."""
+    """The return type for the calculate_schema function."""
 
     name: str
     schema: types.Schema

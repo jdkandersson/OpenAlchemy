@@ -6,7 +6,7 @@ from open_alchemy.schemas import helpers
 from open_alchemy.schemas import validation
 
 
-class TestGetDefinedAssociationIterator:
+class TestCheckDuplicateForeignKey:
     """Tests for _check_duplicate_foreign_key."""
 
     # pylint: disable=protected-access
