@@ -175,11 +175,68 @@ def test_peek_key_invalid(schema, schemas):
             },
             {"RefSchema": {"x-backref": "wrong_schema"}},
             "schema",
-            id="present locally in allOf and behind $ref",
+            id="present locally in allOf and behind $ref local first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {"$ref": "#/components/schemas/RefSchema"},
+                    {"x-backref": "schema"},
+                ]
+            },
+            {"RefSchema": {"x-backref": "wrong_schema"}},
+            "schema",
+            id="present locally in allOf and behind $ref ref first",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "allOf": [
+                        {"x-backref": "schema"},
+                        {"$ref": "#/components/schemas/NestedRefSchema"},
+                    ]
+                },
+                "NestedRefSchema": {"x-backref": "wrong_schema"},
+            },
+            "schema",
+            id="$ref present locally in allOf and behind $ref local first",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/NestedRefSchema"},
+                        {"x-backref": "schema"},
+                    ]
+                },
+                "NestedRefSchema": {"x-backref": "wrong_schema"},
+            },
+            "schema",
+            id="$ref present locally in allOf and behind $ref ref first",
+        ),
+        pytest.param(
+            {
+                "allOf": [
+                    {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/RefSchema"},
+                            {"x-backref": "schema"},
+                        ]
+                    }
+                ]
+            },
+            {
+                "RefSchema": {"x-backref": "wrong_schema"},
+            },
+            "schema",
+            id="$ref present locally in allOf and behind $ref ref first",
         ),
     ],
 )
 @pytest.mark.helper
+@pytest.mark.only_this
 def test_prefer_local(schema, schemas, expected_value):
     """
     GIVEN schema, schemas and expected value
@@ -191,3 +248,45 @@ def test_prefer_local(schema, schemas, expected_value):
     )
 
     assert returned_value == expected_value
+
+
+@pytest.mark.parametrize(
+    "schema, schemas",
+    [
+        pytest.param(True, {}, id="schema not dictionary"),
+        pytest.param({}, True, id="schemas not dictionary"),
+        pytest.param({"$ref": True}, {}, id="$ref not string"),
+        pytest.param({"allOf": True}, {}, id="allOf list"),
+        pytest.param({"allOf": [True]}, {}, id="allOf element not dict"),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"$ref": "#/components/schemas/RefSchema"}},
+            id="single step circular $ref",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {
+                "RefSchema": {"$ref": "#/components/schemas/NestedRefSchema"},
+                "NestedRefSchema": {"$ref": "#/components/schemas/RefSchema"},
+            },
+            id="multiple step circular $ref",
+        ),
+        pytest.param(
+            {"$ref": "#/components/schemas/RefSchema"},
+            {"RefSchema": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
+            id="allOf single step circular $ref",
+        ),
+    ],
+)
+@pytest.mark.helper
+@pytest.mark.only_this
+def test_prefer_local_invalid(schema, schemas):
+    """
+    GIVEN schema, schemas that are invalid
+    WHEN prefer_local is called with the schema and schemas
+    THEN MalformedSchemaError is raised.
+    """
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.prefer_local(
+            get_value=helpers.peek.max_length, schema=schema, schemas=schemas
+        )
