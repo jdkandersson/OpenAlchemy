@@ -63,6 +63,46 @@ def _primary_key_property_items_iterator(
     )
 
 
+def _check_2_or_fewer_primary_key(
+    *,
+    name: str,
+    schema: oa_types.Schema,
+    association: helpers.association.TParentPropertySchema,
+    schemas: oa_types.Schemas,
+) -> types.Result:
+    """
+    Check that at most 2 primary key columns have been defined.
+
+    Args:
+        name: The name of the schema.
+        schema: The schema to validate.
+        association: Information about the association property.
+        schemas: All defined schemas.
+
+    Returns:
+        Whether the schema has 2 or fewer primary keys with a reason if not.
+
+    """
+    # Get first primary key property without foreign key
+    primary_key_properties = _primary_key_property_items_iterator(
+        schema=schema, schemas=schemas
+    )
+    primary_key_count = sum(1 for _ in primary_key_properties)
+
+    if primary_key_count > 2:
+        return types.Result(
+            valid=False,
+            reason=(
+                f'schema "{name}" defines more than 2 primary keys which is too many '
+                "because it implements an association table for the many-to-many "
+                f'relationship property "{association.property.name}" on the schema '
+                f'"{association.parent.name}"'
+            ),
+        )
+
+    return types.Result(valid=True, reason=None)
+
+
 def _check_primary_key_no_foreign_key(
     *,
     name: str,
