@@ -22,6 +22,7 @@
   `allOf` and on the referenced model).
 - Add check enforcing unique `x-tablename` values.
 - Add check enforcing unique `x-secondary` values.
+- Add custom association schemas validation
 
 ## Version 1.5.4 - 2020-10-10
 

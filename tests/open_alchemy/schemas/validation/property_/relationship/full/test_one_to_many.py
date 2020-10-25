@@ -11,7 +11,7 @@ TESTS = [
         {"type": "array", "items": True},
         {"RefSchema": {}},
         (False, "malformed schema :: The items property must be of type dict. "),
-        id="one-to-many property schema malformed",
+        id="property schema malformed",
     ),
     pytest.param(
         {},
@@ -19,7 +19,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
         (False, "foreign key target schema :: every model must define x-tablename"),
-        id="one-to-many source schema no tablenamed",
+        id="source schema no tablenamed",
     ),
     pytest.param(
         {
@@ -31,7 +31,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {}},
         (False, "foreign key targeted schema must have the id property"),
-        id="one-to-many foreign key default not present",
+        id="foreign key default not present",
     ),
     pytest.param(
         {
@@ -43,7 +43,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-foreign-key-column": "name"}},
         (False, "foreign key targeted schema must have the name property"),
-        id="one-to-many foreign key configured not present",
+        id="foreign key configured not present",
     ),
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {"id": {}}},
@@ -54,7 +54,7 @@ TESTS = [
             False,
             "id property :: malformed schema :: Every property requires a type. ",
         ),
-        id="one-to-many foreign key default property invalid",
+        id="foreign key default property invalid",
     ),
     pytest.param(
         {"x-tablename": "schema", "type": "object", "properties": {"name": {}}},
@@ -65,7 +65,7 @@ TESTS = [
             False,
             "name property :: malformed schema :: Every property requires a type. ",
         ),
-        id="one-to-many foreign key configured property invalid",
+        id="foreign key configured property invalid",
     ),
     pytest.param(
         {
@@ -77,7 +77,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-tablename": "ref_schema"}},
         (True, None),
-        id="one-to-many foreign key property default valid",
+        id="foreign key property default valid",
     ),
     pytest.param(
         {
@@ -89,7 +89,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-foreign-key-column": "name", "x-tablename": "ref_schema"}},
         (True, None),
-        id="one-to-many foreign key property configured valid",
+        id="foreign key property configured valid",
     ),
     pytest.param(
         {
@@ -105,7 +105,7 @@ TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"x-tablename": "ref_schema"}},
         (True, None),
-        id="one-to-many foreign key allOf property valid",
+        id="foreign key allOf property valid",
     ),
     pytest.param(
         {
@@ -121,7 +121,7 @@ TESTS = [
             "schema_ref_schemas_id property :: malformed schema :: Every property "
             "requires a type. ",
         ),
-        id="one-to-many foreign key defined property invalid",
+        id="foreign key defined property invalid",
     ),
     pytest.param(
         {
@@ -134,9 +134,9 @@ TESTS = [
         {"RefSchema": {"properties": {"schema_ref_schemas_id": {"type": "string"}}}},
         (
             False,
-            "schema_ref_schemas_id :: type :: expected integer, actual is string.",
+            'schema_ref_schemas_id :: type :: expected "integer", actual is "string"',
         ),
-        id="one-to-many foreign key defined different type",
+        id="foreign key defined different type",
     ),
     pytest.param(
         {
@@ -158,7 +158,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many foreign key defined same type",
+        id="foreign key defined same type",
     ),
     pytest.param(
         {
@@ -184,7 +184,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many allOf foreign key defined same type",
+        id="allOf foreign key defined same type",
     ),
     pytest.param(
         {
@@ -207,63 +207,10 @@ TESTS = [
         },
         (
             False,
-            "schema_ref_schemas_id :: format :: expected int32, actual is "
-            "not defined.",
+            'schema_ref_schemas_id :: format :: expected "int32", actual is '
+            "not defined",
         ),
-        id="one-to-many foreign key defined format only on source",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "integer"}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: format :: expected not to be defined, "
-            "actual is int64.",
-        ),
-        id="one-to-many foreign key defined format only on referenced",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "integer", "format": "int32"}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: format :: expected int32, actual is int64.",
-        ),
-        id="one-to-many foreign key defined different format",
+        id="foreign key defined format only on source",
     ),
     pytest.param(
         {
@@ -286,7 +233,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many foreign key defined same format",
+        id="foreign key defined same format",
     ),
     pytest.param(
         {
@@ -309,63 +256,10 @@ TESTS = [
         },
         (
             False,
-            "schema_ref_schemas_id :: maxLength :: expected 1, actual is "
-            "not defined.",
+            'schema_ref_schemas_id :: maxLength :: expected "1", actual is '
+            "not defined",
         ),
-        id="one-to-many foreign key defined maxLength only on source",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "string"}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "string",
-                        "maxLength": 2,
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: maxLength :: expected not to be "
-            "defined, actual is 2.",
-        ),
-        id="one-to-many foreign key defined maxLength only on referenced",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "string", "maxLength": 1}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "string",
-                        "maxLength": 2,
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: maxLength :: expected 1, actual is 2.",
-        ),
-        id="one-to-many foreign key defined different maxLength",
+        id="foreign key defined maxLength only on source",
     ),
     pytest.param(
         {
@@ -388,7 +282,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many foreign key defined same maxLength",
+        id="foreign key defined same maxLength",
     ),
     pytest.param(
         {
@@ -411,62 +305,9 @@ TESTS = [
         },
         (
             False,
-            "schema_ref_schemas_id :: default :: expected 1, actual is not defined.",
+            'schema_ref_schemas_id :: default :: expected "1", actual is not defined',
         ),
-        id="one-to-many foreign key defined default only on source",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "integer"}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "integer",
-                        "default": 2,
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: default :: expected not to be defined, actual is "
-            "2.",
-        ),
-        id="one-to-many foreign key defined default only on referenced",
-    ),
-    pytest.param(
-        {
-            "x-tablename": "schema",
-            "type": "object",
-            "properties": {"id": {"type": "integer", "default": 1}},
-        },
-        "ref_schemas",
-        {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "properties": {
-                    "schema_ref_schemas_id": {
-                        "type": "integer",
-                        "default": 2,
-                        "x-foreign-key": "schema.id",
-                    }
-                },
-            }
-        },
-        (
-            False,
-            "schema_ref_schemas_id :: default :: expected 1, actual is 2.",
-        ),
-        id="one-to-many foreign key defined different default",
+        id="foreign key defined default only on source",
     ),
     pytest.param(
         {
@@ -489,7 +330,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many foreign key defined same default",
+        id="foreign key defined same default",
     ),
     pytest.param(
         {
@@ -506,7 +347,7 @@ TESTS = [
             }
         },
         (False, "schema_ref_schemas_id must define a foreign key"),
-        id="one-to-many foreign key defined no foreign key",
+        id="foreign key defined no foreign key",
     ),
     pytest.param(
         {
@@ -532,7 +373,7 @@ TESTS = [
             "the x-foreign-key of schema_ref_schemas_id is wrong, expected schema.id, "
             "the actual is wrong key",
         ),
-        id="one-to-many foreign key defined wrong foreign key",
+        id="foreign key defined wrong foreign key",
     ),
     pytest.param(
         {
@@ -554,7 +395,7 @@ TESTS = [
             }
         },
         (True, None),
-        id="one-to-many foreign key defined right foreign key",
+        id="foreign key defined right foreign key",
     ),
 ]
 
@@ -564,6 +405,7 @@ TESTS = [
     TESTS,
 )
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):
     """
     GIVEN schemas, the parent and property schema and the expected result

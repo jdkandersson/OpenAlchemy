@@ -494,12 +494,12 @@ def test_generate_type_return(tmp_path, artifacts):
 
     if returncode > 0:
         if normal_report:
-            print("\nType checking report:\n")
-            print(normal_report)  # stdout
+            print("\nType checking report:\n")  # allow-print
+            print(normal_report)  # stdout allow-print
 
         if error_report:
-            print("\nError report:\n")
-            print(error_report)  # stderr
+            print("\nError report:\n")  # allow-print
+            print(error_report)  # stderr allow-print
 
     assert returncode == 0
 

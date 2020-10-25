@@ -64,64 +64,6 @@ CHECK_TESTS = [
                     },
                     "prop_2": {
                         "type": "array",
-                        "items": {
-                            "allOf": [
-                                {"x-secondary": "association_2"},
-                                {"$ref": "#/components/schemas/RefSchema"},
-                            ]
-                        },
-                    },
-                },
-            },
-            "RefSchema": {"x-secondary": "association_1"},
-        },
-        True,
-        None,
-        id=(
-            "single schema multiple property many-to-many different secondary "
-            "local first"
-        ),
-    ),
-    pytest.param(
-        {
-            "Schema1": {
-                "x-tablename": "schema_1",
-                "properties": {
-                    "prop_1": {
-                        "type": "array",
-                        "items": {"x-secondary": "association_1"},
-                    },
-                    "prop_2": {
-                        "type": "array",
-                        "items": {
-                            "allOf": [
-                                {"$ref": "#/components/schemas/RefSchema"},
-                                {"x-secondary": "association_2"},
-                            ]
-                        },
-                    },
-                },
-            },
-            "RefSchema": {"x-secondary": "association_1"},
-        },
-        True,
-        None,
-        id=(
-            "single schema multiple property many-to-many different secondary "
-            "local last"
-        ),
-    ),
-    pytest.param(
-        {
-            "Schema1": {
-                "x-tablename": "schema_1",
-                "properties": {
-                    "prop_1": {
-                        "type": "array",
-                        "items": {"x-secondary": "association_1"},
-                    },
-                    "prop_2": {
-                        "type": "array",
                         "items": {"x-secondary": "association_1"},
                     },
                 },
@@ -474,7 +416,6 @@ CHECK_TESTS = [
 ]
 
 
-@pytest.mark.only_this
 @pytest.mark.schemas
 @pytest.mark.validate
 @pytest.mark.parametrize("schemas, expected_valid, expected_reasons", CHECK_TESTS)

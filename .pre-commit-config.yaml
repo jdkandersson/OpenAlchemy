@@ -1,4 +1,18 @@
 repos:
+  - repo: local
+    hooks:
+      - id: no-mark-only-this
+        name: No @pytest.mark.only_this
+        description: This hook prevents tests marked with @pytest.mark.only_this
+        entry: "@pytest.mark.only_this"
+        language: pygrep
+        types: [python]
+      - id: no-print
+        name: No print
+        description: This hook prevents print function calls
+        entry: "print\\((?!.*allow-print)"
+        language: pygrep
+        types: [python]
   - repo: https://github.com/ambv/black
     rev: 20.8b1
     hooks:

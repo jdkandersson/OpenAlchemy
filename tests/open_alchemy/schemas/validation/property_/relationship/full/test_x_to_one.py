@@ -207,7 +207,7 @@ TESTS = [
         },
         (
             False,
-            "ref_schema_id :: type :: expected integer, actual is string.",
+            'ref_schema_id :: type :: expected "integer", actual is "string"',
         ),
         id="x-to-one foreign key defined different type",
     ),
@@ -259,7 +259,7 @@ TESTS = [
         },
         (
             False,
-            "ref_schema_id :: type :: expected integer, actual is string.",
+            'ref_schema_id :: type :: expected "integer", actual is "string"',
         ),
         id="x-to-one foreign key defined different type single table inheritance",
     ),
@@ -301,31 +301,6 @@ TESTS = [
     ),
     pytest.param(
         {
-            "allOf": [
-                {
-                    "properties": {
-                        "ref_schema_id": {
-                            "type": "integer",
-                            "x-foreign-key": "ref_schema.id",
-                        }
-                    }
-                }
-            ]
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "integer"}},
-            }
-        },
-        (True, None),
-        id="x-to-one allOf foreign key defined same type",
-    ),
-    pytest.param(
-        {
             "properties": {
                 "ref_schema_id": {
                     "type": "integer",
@@ -346,55 +321,9 @@ TESTS = [
         (
             False,
             "ref_schema_id :: format :: expected not to be defined, actual "
-            "is int64.",
+            'is "int64"',
         ),
         id="x-to-one foreign key defined format only on source",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {"type": "integer", "x-foreign-key": "ref_schema.id"}
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "integer", "format": "int32"}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: format :: expected int32, actual is not defined.",
-        ),
-        id="x-to-one foreign key defined format only on referenced",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "x-foreign-key": "ref_schema.id",
-                }
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "integer", "format": "int32"}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: format :: expected int32, actual is int64.",
-        ),
-        id="x-to-one foreign key defined different format",
     ),
     pytest.param(
         {
@@ -439,55 +368,9 @@ TESTS = [
         },
         (
             False,
-            "ref_schema_id :: maxLength :: expected not to be defined, actual is 1.",
+            'ref_schema_id :: maxLength :: expected not to be defined, actual is "1"',
         ),
         id="x-to-one foreign key defined maxLength only on source",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {"type": "string", "x-foreign-key": "ref_schema.id"}
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "string", "maxLength": 2}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: maxLength :: expected 2, actual is not defined.",
-        ),
-        id="x-to-one foreign key defined maxLength only on referenced",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {
-                    "type": "string",
-                    "maxLength": 1,
-                    "x-foreign-key": "ref_schema.id",
-                }
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "string", "maxLength": 2}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: maxLength :: expected 2, actual is 1.",
-        ),
-        id="x-to-one foreign key defined different maxLength",
     ),
     pytest.param(
         {
@@ -532,55 +415,9 @@ TESTS = [
         },
         (
             False,
-            "ref_schema_id :: default :: expected not to be defined, actual is 1.",
+            'ref_schema_id :: default :: expected not to be defined, actual is "1"',
         ),
         id="x-to-one foreign key defined default only on source",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {"type": "integer", "x-foreign-key": "ref_schema.id"}
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "integer", "default": 2}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: default :: expected 2, actual is not defined.",
-        ),
-        id="x-to-one foreign key defined default only on referenced",
-    ),
-    pytest.param(
-        {
-            "properties": {
-                "ref_schema_id": {
-                    "type": "integer",
-                    "default": 1,
-                    "x-foreign-key": "ref_schema.id",
-                }
-            }
-        },
-        "ref_schema",
-        {"$ref": "#/components/schemas/RefSchema"},
-        {
-            "RefSchema": {
-                "x-tablename": "ref_schema",
-                "type": "object",
-                "properties": {"id": {"type": "integer", "default": 2}},
-            }
-        },
-        (
-            False,
-            "ref_schema_id :: default :: expected 2, actual is 1.",
-        ),
-        id="x-to-one foreign key defined different default",
     ),
     pytest.param(
         {
@@ -666,6 +503,7 @@ TESTS = [
     TESTS,
 )
 @pytest.mark.schemas
+@pytest.mark.validate
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):
     """
     GIVEN schemas, the parent and property schema and the expected result

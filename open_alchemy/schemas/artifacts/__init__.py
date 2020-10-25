@@ -1,6 +1,5 @@
 """Retrieve artifacts from the schemas."""
 
-import dataclasses
 import typing
 
 from ... import types as _oa_types

@@ -100,5 +100,4 @@ def is_relationship_type(
         return False
 
     relationship_type = calculate_type(schema=schema, schemas=schemas)
-    print(relationship_type)
     return relationship_type == type_

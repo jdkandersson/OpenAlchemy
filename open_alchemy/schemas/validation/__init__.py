@@ -5,6 +5,7 @@ import typing
 from ... import exceptions as _exceptions
 from ... import types as _oa_types
 from .. import helpers as _helpers
+from . import association
 from . import model
 from . import property_
 from . import schemas_validation
@@ -79,6 +80,10 @@ def _other_schemas_checks(*, schemas: _oa_types.Schemas) -> types.Result:
     unique_secondary_result = unique_secondary.check(schemas=schemas)
     if not unique_secondary_result.valid:
         return unique_secondary_result
+
+    association_result = association.check(schemas=schemas)
+    if not association_result.valid:
+        return association_result
 
     return types.Result(valid=True, reason=None)
 

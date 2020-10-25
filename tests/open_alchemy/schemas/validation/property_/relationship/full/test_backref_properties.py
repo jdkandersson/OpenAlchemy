@@ -133,7 +133,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: id :: type :: expected "
-            "integer, actual is string.",
+            '"integer", actual is "string"',
         ),
         id="many-to-one back reference has property different type",
     ),
@@ -273,7 +273,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: id :: format :: expected "
-            "format 2, actual is format 1.",
+            '"format 2", actual is "format 1"',
         ),
         id="many-to-one back reference has property format different",
     ),
@@ -359,8 +359,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: properties :: id :: maxLength :: expected 2, "
-            "actual is 1.",
+            "backref property :: items :: properties :: id :: maxLength :: expected "
+            '"2", actual is "1"',
         ),
         id="many-to-one back reference has property maxLength different",
     ),
@@ -445,8 +445,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: items :: properties :: id :: default :: expected 2, "
-            "actual is 1.",
+            'backref property :: items :: properties :: id :: default :: expected "2", '
+            'actual is "1"',
         ),
         id="many-to-one back reference has property default different",
     ),
@@ -607,8 +607,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: id :: type :: expected "
-            "integer, actual is "
-            "string.",
+            '"integer", actual is "string"',
         ),
         id="many-to-one back reference has multiple property first wrong type",
     ),
@@ -640,7 +639,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: name :: type :: expected "
-            "string, actual is integer.",
+            '"string", actual is "integer"',
         ),
         id="many-to-one back reference has multiple property second wrong type",
     ),
@@ -677,7 +676,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: name :: type :: expected "
-            "string, actual is integer.",
+            '"string", actual is "integer"',
         ),
         id="many-to-one back reference allOf multiple property second wrong type",
     ),
@@ -764,8 +763,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: properties :: id :: type :: expected integer, actual "
-            "is string.",
+            'backref property :: properties :: id :: type :: expected "integer", '
+            'actual is "string"',
         ),
         id="one-to-one back reference property wrong type",
     ),
@@ -794,8 +793,8 @@ TESTS = [
         },
         (
             False,
-            "backref property :: properties :: id :: type :: expected integer, actual "
-            "is string.",
+            'backref property :: properties :: id :: type :: expected "integer", '
+            'actual is "string"',
         ),
         id="one-to-many back reference property wrong type",
     ),
@@ -829,7 +828,7 @@ TESTS = [
         (
             False,
             "backref property :: items :: properties :: id :: type :: expected "
-            "integer, actual is string.",
+            '"integer", actual is "string"',
         ),
         id="many-to-many back reference property wrong type",
     ),
@@ -840,6 +839,7 @@ TESTS = [
     "parent_schema, property_name, property_schema, schemas, expected_result",
     TESTS,
 )
+@pytest.mark.validate
 @pytest.mark.schemas
 def test_check(parent_schema, property_name, property_schema, schemas, expected_result):
     """
