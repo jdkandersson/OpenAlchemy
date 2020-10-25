@@ -7,6 +7,12 @@ repos:
         entry: "@pytest.mark.only_this"
         language: pygrep
         types: [python]
+      - id: no-print
+        name: No print
+        description: This hook prevents print function calls
+        entry: "print\\("
+        language: pygrep
+        types: [python]
   - repo: https://github.com/ambv/black
     rev: 20.8b1
     hooks:

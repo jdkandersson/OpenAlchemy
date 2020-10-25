@@ -325,7 +325,6 @@ def _check_properties_valid(
 
 
 def _validate_schema(
-    *,
     name: str,
     schema: oa_types.Schema,
     association: helpers.association.TParentPropertySchema,
@@ -353,35 +352,52 @@ def _validate_schema(
         result = validation_check(name, schema, association, schemas)
         if not result.valid:
             return result
+
     return types.Result(valid=True, reason=None)
 
 
-# def check(*, schemas: oa_types.Schemas) -> types.Result:
-#     """
-#     Check that any schemas that implement association tables are valid.
+def check(*, schemas: oa_types.Schemas) -> types.Result:
+    """
+    Check that any schemas that implement association tables are valid.
 
-#     Assume that schemas are otherwise valid.
+    Assume that schemas are otherwise valid.
 
-#     The algorithm is:
-#     1. get a mapping of x-secondary to property information,
-#     2. iterate over schemas and retrieve all that have define an association and
-#     3. validate those schemas.
+    The algorithm is:
+    1. get a mapping of x-secondary to property information,
+    2. iterate over schemas and retrieve all that have define an association and
+    3. validate those schemas.
 
-#     Args:
-#         schemas: The schemas to check.
+    Args:
+        schemas: The schemas to check.
 
-#     Returns:
-#         Whether the schemas that define association tables are valid.
+    Returns:
+        Whether the schemas that define association tables are valid.
 
-#     """
-#     secondary_parent_property_schema_mapping = (
-#         helpers.association.get_secondary_parent_property_schema_mapping(
-#             schemas=schemas
-#         )
-#     )
-#     association_schemas = _get_defined_association_iterator(
-#         schemas, secondary_parent_property_schema_mapping
-#     )
-#     for association_schema in association_schemas:
-#         tablename =
-#         association_info
+    """
+    # Get mapping
+    secondary_parent_property_schema_mapping = (
+        helpers.association.get_secondary_parent_property_schema_mapping(
+            schemas=schemas
+        )
+    )
+
+    # Get association schemas
+    association_schemas = _get_defined_association_iterator(
+        schemas, secondary_parent_property_schema_mapping
+    )
+
+    # Validate schemas
+    for association_schema in association_schemas:
+        association_info = secondary_parent_property_schema_mapping[
+            association_schema.tablename
+        ]
+        result = _validate_schema(
+            association_schema.name,
+            association_schema.schema,
+            association_info,
+            schemas,
+        )
+        if not result.valid:
+            return result
+
+    return types.Result(valid=True, reason=None)
