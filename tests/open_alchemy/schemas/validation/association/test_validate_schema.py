@@ -71,13 +71,12 @@ class TestValidateSchema:
     ]
 
     @staticmethod
-    @pytest.mark.only_this
     @pytest.mark.schemas
     @pytest.mark.validate
     @pytest.mark.parametrize("schema, expected_valid", TESTS)
     def test_(schema, expected_valid):
         """
-        GIVEN schema, schemas, and expected  valid
+        GIVEN schema, schemas, and expected valid
         WHEN _validate_schema is called with the schema and schemas
         THEN the expected valid are returned.
         """
