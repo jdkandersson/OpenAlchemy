@@ -1,5 +1,0 @@
-- name: No pytest.mark.only_this
-  pattern: "@pytest\\.mark\\.only_this"
-  hint: Remove any @pytest.mark.only_this before committing!
-  filePattern: test.*\.py$
-  error: false
