@@ -19,7 +19,7 @@ CHECK_MATCHES_TESTS = [
         {"format": "format 1"},
         {},
         peek.format_,
-        ("expected", '"format 1"', "actual", "not `to be defined"),
+        ("expected", '"format 1"', "actual", "not to be defined"),
         id="actual not defined expected defined",
     ),
     pytest.param(
@@ -27,7 +27,7 @@ CHECK_MATCHES_TESTS = [
         {},
         {},
         peek.format_,
-        ("expected", "not `defined", "actual", '"format 1"'),
+        ("expected", "not defined", "actual", '"format 1"'),
         id="actual defined expected not defined",
     ),
     pytest.param(

@@ -208,7 +208,7 @@ TESTS = [
         (
             False,
             'schema_ref_schemas_id :: format :: expected "int32", actual is '
-            "not `defined",
+            "not defined",
         ),
         id="foreign key defined format only on source",
     ),
@@ -257,7 +257,7 @@ TESTS = [
         (
             False,
             'schema_ref_schemas_id :: maxLength :: expected "1", actual is '
-            "not `defined",
+            "not defined",
         ),
         id="foreign key defined maxLength only on source",
     ),
@@ -305,7 +305,7 @@ TESTS = [
         },
         (
             False,
-            'schema_ref_schemas_id :: default :: expected "1", actual is not `defined',
+            'schema_ref_schemas_id :: default :: expected "1", actual is not defined',
         ),
         id="foreign key defined default only on source",
     ),

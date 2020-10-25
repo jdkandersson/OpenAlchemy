@@ -30,7 +30,7 @@ def check_matches(
         get_value=func, schema=reference_schema, schemas=schemas
     )
     if expected_value is None:
-        expected_value_str = "not `to be defined"
+        expected_value_str = "not to be defined"
     else:
         expected_value_str = f'"{expected_value}"'
 
@@ -38,7 +38,7 @@ def check_matches(
         get_value=func, schema=check_schema, schemas=schemas
     )
     if actual_value is None:
-        actual_value_str = "not `defined"
+        actual_value_str = "not defined"
     else:
         actual_value_str = f'"{actual_value}"'
 

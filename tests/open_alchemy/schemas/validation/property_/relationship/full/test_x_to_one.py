@@ -320,7 +320,7 @@ TESTS = [
         },
         (
             False,
-            "ref_schema_id :: format :: expected not `to be defined, actual "
+            "ref_schema_id :: format :: expected not to be defined, actual "
             'is "int64"',
         ),
         id="x-to-one foreign key defined format only on source",
@@ -368,7 +368,7 @@ TESTS = [
         },
         (
             False,
-            'ref_schema_id :: maxLength :: expected not `to be defined, actual is "1"',
+            'ref_schema_id :: maxLength :: expected not to be defined, actual is "1"',
         ),
         id="x-to-one foreign key defined maxLength only on source",
     ),
@@ -415,7 +415,7 @@ TESTS = [
         },
         (
             False,
-            'ref_schema_id :: default :: expected not `to be defined, actual is "1"',
+            'ref_schema_id :: default :: expected not to be defined, actual is "1"',
         ),
         id="x-to-one foreign key defined default only on source",
     ),
