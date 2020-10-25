@@ -10,7 +10,7 @@ setuptools.setup(
     version="1.6.0",
     author="David Andersson",
     author_email="anderssonpublic@gmail.com",
-    description="Maps an OpenAPI schema to SQLAlchemy models.",
+    description="Maps an OpenAPI schema to SQLAlchemy models",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/jdkandersson/OpenAlchemy",
