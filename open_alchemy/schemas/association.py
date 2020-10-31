@@ -36,6 +36,46 @@ def _get_association_tablenames(
     return set(str_tablenames)
 
 
+_TTablenameNamesMapping = typing.Dict[str, typing.List[str]]
+
+
+def _get_tablename_schema_names(
+    *, schemas: types.Schemas, tablenames: typing.Set[str]
+) -> _TTablenameNamesMapping:
+    """
+    Get a mapping of tablenames to all schema names with that tablename.
+
+    Args:
+        schemas: All defines schemas.
+        tablenames: All tablenames to filter for.
+
+    Returns:
+        A mapping of association tablenames to all schema names using that tablename.
+
+    """
+    constructables = helpers.iterate.constructable(schemas=schemas)
+    name_tablenames = map(
+        lambda args: (
+            args[0],
+            oa_helpers.peek.prefer_local(
+                get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+            ),
+        ),
+        constructables,
+    )
+    filtered_name_tablenames = filter(
+        lambda args: args[1] in tablenames, name_tablenames
+    )
+
+    mapping: _TTablenameNamesMapping = {}
+    for name, tablename in filtered_name_tablenames:
+        if tablename not in mapping:
+            mapping[tablename] = []
+        mapping[tablename].append(name)
+
+    return mapping
+
+
 def process(*, schemas: types.Schemas) -> None:
     """
     Pre-process the schemas to add association schemas as necessary.
