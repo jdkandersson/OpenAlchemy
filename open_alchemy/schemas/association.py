@@ -52,6 +52,14 @@ def _get_tablename_schema_names(
     """
     Get a mapping of tablenames to all schema names with that tablename.
 
+    The algorithm is:
+    1. Get a mapping of the tablename to the parent schema name by skipping any single
+        table inheritance children.
+    2. Get a list of schema names and tablenames and filter for those that are in the
+        mapping.
+    3. Combine any schema names with the same tablename and lookup the parent schema
+        name.
+
     Args:
         schemas: All defines schemas.
         tablenames: All tablenames to filter for.
@@ -82,6 +90,7 @@ def _get_tablename_schema_names(
         )
     )
 
+    # Get a list of schema names and tablenames which appear in the mapping
     constructables = helpers.iterate.constructable(schemas=schemas)
     name_tablenames = map(
         lambda args: (
@@ -123,6 +132,13 @@ def _get_tablename_foreign_keys(
     """
     Get a mapping of tablename to foreign keys defined on that tablename.
 
+    Algorithm:
+    1. Combine all the schema names on the same tablename using allOf and get all the
+        properties on that tablename.
+    2. Retrieve the value of x-foreign-key on each property and filter for those that
+        are strings.
+    3. Combine into a mapping of tablename against the foreign keys and parent name.
+
     Args:
         tablename_parent_all_names: Mapping of tablename to schema names.
         schemas: All defined schemas.
@@ -132,6 +148,7 @@ def _get_tablename_foreign_keys(
         tablename.
 
     """
+    # Get all the properties on a tablename
     tablename_schemas = map(
         lambda args: (
             args[0],
@@ -151,6 +168,8 @@ def _get_tablename_foreign_keys(
         ),
         tablename_schemas,
     )
+
+    # Get all the foreign keys of the properties on the tablename
     tablename_foreign_keys = map(
         lambda args: (
             args[0],
@@ -175,6 +194,8 @@ def _get_tablename_foreign_keys(
     tablename_foreign_key_set = map(
         lambda args: (args[0], set(args[1])), tablename_str_foreign_keys
     )
+
+    # Combine the tablename against the parent name and foreign keys
     return dict(
         map(
             lambda args: (
@@ -186,6 +207,50 @@ def _get_tablename_foreign_keys(
             ),
             tablename_foreign_key_set,
         )
+    )
+
+
+def _combine_defined_expected_schema(
+    *,
+    parent_name_foreign_keys: _TParentNameForeignKeys,
+    expected_schema: types.TNameSchema,
+    schemas: types.Schemas,
+) -> types.TNameSchema:
+    """
+    Combine defined and expected association schema.
+
+    Algorithm:
+    1. For the expected schema:
+        a. Remove required array
+        b. Filter the properties where their foreign is already defined
+    2. Combine the expected schema in an allOf with the defined schema parent name.
+    3. Change the name to the parent name.
+
+    Args:
+        parent_name_foreign_keys: The parent name and defined foreign keys of the
+            defined association schema.
+        expected_schema: The expected schema.
+
+    Returns:
+        The combined expected and defined schema.
+
+    """
+    expected_schema_value = expected_schema.schema
+    del expected_schema_value["required"]
+    expected_schema_value["properties"] = {
+        property_[0]: property_[1]
+        for property_ in expected_schema_value["properties"].items()
+        if oa_helpers.peek.foreign_key(schema=property_[1], schemas={})
+        not in parent_name_foreign_keys.foreign_keys
+    }
+    return types.TNameSchema(
+        name=parent_name_foreign_keys.parent_name,
+        schema={
+            "allOf": [
+                expected_schema_value,
+                schemas[parent_name_foreign_keys.parent_name],
+            ]
+        },
     )
 
 
