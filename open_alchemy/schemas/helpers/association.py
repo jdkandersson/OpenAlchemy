@@ -23,18 +23,11 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     )
 
 
-class TNameSchema(typing.NamedTuple):
-    """The name and schema of a property or schema."""
-
-    name: str
-    schema: types.Schema
-
-
 class TParentPropertySchema(typing.NamedTuple):
     """Holds information about an association table."""
 
-    parent: TNameSchema
-    property: TNameSchema
+    parent: types.TNameSchema
+    property: types.TNameSchema
 
 
 def get_association_property_iterator(
@@ -65,8 +58,8 @@ def get_association_property_iterator(
         )
         yield from (
             TParentPropertySchema(
-                parent=TNameSchema(name=name, schema=schema),
-                property=TNameSchema(name=property_name, schema=property_schema),
+                parent=types.TNameSchema(name=name, schema=schema),
+                property=types.TNameSchema(name=property_name, schema=property_schema),
             )
             for property_name, property_schema in association_property_schemas
         )
@@ -124,16 +117,9 @@ def get_secondary_parent_property_schema_mapping(
     return dict(association_name_parent_property_schemas)
 
 
-class TCalculatePropertySchemaReturn(typing.NamedTuple):
-    """The return type for the calculate_property_schema function."""
-
-    name: str
-    schema: types.ColumnSchema
-
-
 def calculate_property_schema(
     *, schema: types.Schema, schemas: types.Schemas
-) -> TCalculatePropertySchemaReturn:
+) -> types.TNameSchema:
     """
     Calculate the property name and schema for a column for a many-to-many relationship.
 
@@ -200,7 +186,7 @@ def calculate_property_schema(
     if max_length is not None:
         property_schema["maxLength"] = max_length
 
-    return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
+    return types.TNameSchema(name=property_name, schema=property_schema)
 
 
 class TCalculateSchemaReturn(typing.NamedTuple):

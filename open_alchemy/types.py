@@ -241,3 +241,10 @@ class ReadOnlyArraySchema(_ReadOnlySchemaBase):
 
 
 ReadOnlySchema = typing.Union[ReadOnlyObjectSchema, ReadOnlyArraySchema]
+
+
+class TNameSchema(typing.NamedTuple):
+    """The name and schema of a schema."""
+
+    name: str
+    schema: Schema

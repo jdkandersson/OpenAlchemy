@@ -2,6 +2,7 @@
 
 import pytest
 
+from open_alchemy import types
 from open_alchemy.schemas import helpers
 from open_alchemy.schemas import validation
 
@@ -119,8 +120,8 @@ class TestCheckDuplicateForeignKey:
         """
         name = "Schema"
         association = helpers.association.TParentPropertySchema(
-            parent=helpers.association.TNameSchema(name="ParentSchema", schema={}),
-            property=helpers.association.TNameSchema(name="PropertySchema", schema={}),
+            parent=types.TNameSchema(name="ParentSchema", schema={}),
+            property=types.TNameSchema(name="PropertySchema", schema={}),
         )
 
         returned_result = validation.association._check_duplicate_foreign_key(

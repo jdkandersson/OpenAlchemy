@@ -335,6 +335,28 @@ def _validate_schema(
 
     Assume that schemas are individually valid.
 
+    A know limitation is that the following invalid schema would pass:
+    Parent:
+        x-tablename: parent
+    Child1:
+        allOf:
+            -   $ref: "#/components/schemas/Parent"
+            -   properties:
+                    x-inherits: true
+                    prop_1:
+                        primary_key: true
+                        x-foreign-key: foreign.key
+    Child2:
+        allOf:
+            -   $ref: "#/components/schemas/Parent"
+            -   properties:
+                    x-inherits: true
+                    prop_2:
+                        primary_key: true
+                        x-foreign-key: foreign.key
+    The problem is that both Child1 and Child2 define the same foreign key but are
+    different schemas. Schemas are considered in isolation.
+
     Args:
         name: The name of the schema.
         schema: The schema to validate.
