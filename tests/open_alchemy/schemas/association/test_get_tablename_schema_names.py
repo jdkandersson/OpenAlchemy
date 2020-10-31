@@ -22,7 +22,7 @@ class TestGetTablenameSchemaNames:
         pytest.param(
             {"Schema1": {"x-tablename": "table 1"}},
             {"table 1"},
-            {"table 1": ["Schema1"]},
+            {"table 1": ("Schema1", ["Schema1"])},
             id="single hit",
         ),
         pytest.param(
@@ -30,19 +30,33 @@ class TestGetTablenameSchemaNames:
                 "Schema1": {
                     "allOf": [
                         {"$ref": "#/components/schemas/RefSchema"},
-                        {"key": "value"},
+                        {"x-inherits": True},
                     ]
                 },
                 "RefSchema": {"x-tablename": "table 1"},
             },
             {"table 1"},
-            {"table 1": ["Schema1", "RefSchema"]},
-            id="single hit $ref",
+            {"table 1": ("RefSchema", ["Schema1", "RefSchema"])},
+            id="single hit $ref first",
+        ),
+        pytest.param(
+            {
+                "RefSchema": {"x-tablename": "table 1"},
+                "Schema1": {
+                    "allOf": [
+                        {"$ref": "#/components/schemas/RefSchema"},
+                        {"x-inherits": True},
+                    ]
+                },
+            },
+            {"table 1"},
+            {"table 1": ("RefSchema", ["RefSchema", "Schema1"])},
+            id="single hit $ref second",
         ),
         pytest.param(
             {"Schema1": {"allOf": [{"x-tablename": "table 1"}]}},
             {"table 1"},
-            {"table 1": ["Schema1"]},
+            {"table 1": ("Schema1", ["Schema1"])},
             id="single hit allOf",
         ),
         pytest.param(
@@ -56,7 +70,7 @@ class TestGetTablenameSchemaNames:
                 "RefSchema": {"x-tablename": "ref_table"},
             },
             {"table 1"},
-            {"table 1": ["Schema1"]},
+            {"table 1": ("Schema1", ["Schema1"])},
             id="single hit allOf local $ref local first",
         ),
         pytest.param(
@@ -70,7 +84,7 @@ class TestGetTablenameSchemaNames:
                 "RefSchema": {"x-tablename": "ref_table"},
             },
             {"table 1"},
-            {"table 1": ["Schema1"]},
+            {"table 1": ("Schema1", ["Schema1"])},
             id="single hit allOf local $ref $ref first",
         ),
         pytest.param(
@@ -88,7 +102,7 @@ class TestGetTablenameSchemaNames:
                 "Schema2": {"x-tablename": "table 2"},
             },
             {"table 1"},
-            {"table 1": ["Schema1"]},
+            {"table 1": ("Schema1", ["Schema1"])},
             id="multiple first hit",
         ),
         pytest.param(
@@ -97,7 +111,7 @@ class TestGetTablenameSchemaNames:
                 "Schema2": {"x-tablename": "table 2"},
             },
             {"table 2"},
-            {"table 2": ["Schema2"]},
+            {"table 2": ("Schema2", ["Schema2"])},
             id="multiple second hit",
         ),
         pytest.param(
@@ -106,7 +120,7 @@ class TestGetTablenameSchemaNames:
                 "Schema2": {"x-tablename": "table 2"},
             },
             {"table 1", "table 2"},
-            {"table 1": ["Schema1"], "table 2": ["Schema2"]},
+            {"table 1": ("Schema1", ["Schema1"]), "table 2": ("Schema2", ["Schema2"])},
             id="multiple all hit",
         ),
         pytest.param(
@@ -115,7 +129,7 @@ class TestGetTablenameSchemaNames:
                 "Schema2": {"x-tablename": "table 1"},
             },
             {"table 1"},
-            {"table 1": ["Schema1", "Schema2"]},
+            {"table 1": ("Schema2", ["Schema1", "Schema2"])},
             id="multiple same tablename",
         ),
         pytest.param(
@@ -125,7 +139,11 @@ class TestGetTablenameSchemaNames:
                 "Schema3": {"x-tablename": "table 3"},
             },
             {"table 1", "table 2", "table 3"},
-            {"table 1": ["Schema1"], "table 2": ["Schema2"], "table 3": ["Schema3"]},
+            {
+                "table 1": ("Schema1", ["Schema1"]),
+                "table 2": ("Schema2", ["Schema2"]),
+                "table 3": ("Schema3", ["Schema3"]),
+            },
             id="many different tablename",
         ),
         pytest.param(
@@ -135,7 +153,10 @@ class TestGetTablenameSchemaNames:
                 "Schema3": {"x-tablename": "table 3"},
             },
             {"table 1", "table 2", "table 3"},
-            {"table 1": ["Schema1", "Schema2"], "table 3": ["Schema3"]},
+            {
+                "table 1": ("Schema2", ["Schema1", "Schema2"]),
+                "table 3": ("Schema3", ["Schema3"]),
+            },
             id="many different first middle same tablename",
         ),
         pytest.param(
@@ -145,7 +166,10 @@ class TestGetTablenameSchemaNames:
                 "Schema3": {"x-tablename": "table 1"},
             },
             {"table 1", "table 2", "table 3"},
-            {"table 1": ["Schema1", "Schema3"], "table 2": ["Schema2"]},
+            {
+                "table 1": ("Schema3", ["Schema1", "Schema3"]),
+                "table 2": ("Schema2", ["Schema2"]),
+            },
             id="many first last same tablename",
         ),
         pytest.param(
@@ -155,7 +179,10 @@ class TestGetTablenameSchemaNames:
                 "Schema3": {"x-tablename": "table 2"},
             },
             {"table 1", "table 2", "table 3"},
-            {"table 1": ["Schema1"], "table 2": ["Schema2", "Schema3"]},
+            {
+                "table 1": ("Schema1", ["Schema1"]),
+                "table 2": ("Schema3", ["Schema2", "Schema3"]),
+            },
             id="many middle last same tablename",
         ),
         pytest.param(
@@ -165,7 +192,7 @@ class TestGetTablenameSchemaNames:
                 "Schema3": {"x-tablename": "table 1"},
             },
             {"table 1", "table 2", "table 3"},
-            {"table 1": ["Schema1", "Schema2", "Schema3"]},
+            {"table 1": ("Schema3", ["Schema1", "Schema2", "Schema3"])},
             id="many all same tablename",
         ),
     ]

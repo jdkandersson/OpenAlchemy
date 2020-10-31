@@ -36,12 +36,19 @@ def _get_association_tablenames(
     return set(str_tablenames)
 
 
-_TTablenameNames = typing.Dict[str, typing.List[str]]
+class _TParentAllNames(typing.NamedTuple):
+    """The name of the parent schema and all schemas with the same tablename."""
+
+    parent_name: str
+    all_names: typing.List[str]
+
+
+_TTablenameParentAllNames = typing.Dict[str, _TParentAllNames]
 
 
 def _get_tablename_schema_names(
     *, schemas: types.Schemas, tablenames: typing.Set[str]
-) -> _TTablenameNames:
+) -> _TTablenameParentAllNames:
     """
     Get a mapping of tablenames to all schema names with that tablename.
 
@@ -50,9 +57,31 @@ def _get_tablename_schema_names(
         tablenames: All tablenames to filter for.
 
     Returns:
-        A mapping of association tablenames to all schema names using that tablename.
+        A mapping of association tablenames to all schema names using that tablename
+        and the parent schema name of a tablename.
 
     """
+    # Get mapping of tablename to parent schema name
+    constructables = helpers.iterate.constructable(schemas=schemas)
+    not_single_inheritance_constructables = filter(
+        lambda args: oa_helpers.inheritance.calculate_type(
+            schema=args[1], schemas=schemas
+        )
+        != oa_helpers.inheritance.Type.SINGLE_TABLE,
+        constructables,
+    )
+    tablename_parent_name_map = dict(
+        map(
+            lambda args: (
+                oa_helpers.peek.prefer_local(
+                    get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+                ),
+                args[0],
+            ),
+            not_single_inheritance_constructables,
+        )
+    )
+
     constructables = helpers.iterate.constructable(schemas=schemas)
     name_tablenames = map(
         lambda args: (
@@ -67,38 +96,53 @@ def _get_tablename_schema_names(
         lambda args: args[1] in tablenames, name_tablenames
     )
 
-    mapping: _TTablenameNames = {}
+    mapping: _TTablenameParentAllNames = {}
     for name, tablename in filtered_name_tablenames:
         if tablename not in mapping:
-            mapping[tablename] = []
-        mapping[tablename].append(name)
+            mapping[tablename] = _TParentAllNames(
+                parent_name=tablename_parent_name_map[tablename], all_names=[]
+            )
+        mapping[tablename].all_names.append(name)
 
     return mapping
 
 
-_TTablenameForeignKeys = typing.Dict[str, typing.Set[str]]
+class _TParentNameForeignKeys(typing.NamedTuple):
+    """The name of the parent schema and all foreign keys on the same tablename."""
+
+    parent_name: str
+    foreign_keys: typing.Set[str]
+
+
+_TTablenameForeignKeys = typing.Dict[str, _TParentNameForeignKeys]
 
 
 def _get_tablename_foreign_keys(
-    *, tablename_names: _TTablenameNames, schemas: types.Schemas
+    *, tablename_parent_all_names: _TTablenameParentAllNames, schemas: types.Schemas
 ) -> _TTablenameForeignKeys:
     """
     Get a mapping of tablename to foreign keys defined on that tablename.
 
     Args:
-        tablename_names: Mapping of tablename to schema names.
+        tablename_parent_all_names: Mapping of tablename to schema names.
         schemas: All defined schemas.
 
     Returns:
-        Mapping of tablename to all foreign keys defined on that tablename.
+        Mapping of tablename to the parent schema and all foreign keys defined on that
+        tablename.
 
     """
     tablename_schemas = map(
         lambda args: (
             args[0],
-            {"allOf": [{"$ref": f"#/components/schemas/{name}"} for name in args[1]]},
+            {
+                "allOf": [
+                    {"$ref": f"#/components/schemas/{name}"}
+                    for name in args[1].all_names
+                ]
+            },
         ),
-        tablename_names.items(),
+        tablename_parent_all_names.items(),
     )
     tablename_properties = map(
         lambda args: (
@@ -131,7 +175,18 @@ def _get_tablename_foreign_keys(
     tablename_foreign_key_set = map(
         lambda args: (args[0], set(args[1])), tablename_str_foreign_keys
     )
-    return dict(tablename_foreign_key_set)
+    return dict(
+        map(
+            lambda args: (
+                args[0],
+                _TParentNameForeignKeys(
+                    parent_name=tablename_parent_all_names[args[0]].parent_name,
+                    foreign_keys=args[1],
+                ),
+            ),
+            tablename_foreign_key_set,
+        )
+    )
 
 
 def process(*, schemas: types.Schemas) -> None:
