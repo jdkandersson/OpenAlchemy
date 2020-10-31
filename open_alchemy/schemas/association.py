@@ -7,7 +7,7 @@ from .. import types
 from . import helpers
 
 
-def _is_string(value: typing.Any) -> str:
+def _assert_is_string(value: typing.Any) -> str:
     """Assert that a value is a string."""
     assert isinstance(value, str)
     return value
@@ -32,16 +32,16 @@ def _get_association_tablenames(
         ),
         association_schemas,
     )
-    str_tablenames = map(_is_string, tablenames)
+    str_tablenames = map(_assert_is_string, tablenames)
     return set(str_tablenames)
 
 
-_TTablenameNamesMapping = typing.Dict[str, typing.List[str]]
+_TTablenameNames = typing.Dict[str, typing.List[str]]
 
 
 def _get_tablename_schema_names(
     *, schemas: types.Schemas, tablenames: typing.Set[str]
-) -> _TTablenameNamesMapping:
+) -> _TTablenameNames:
     """
     Get a mapping of tablenames to all schema names with that tablename.
 
@@ -67,13 +67,71 @@ def _get_tablename_schema_names(
         lambda args: args[1] in tablenames, name_tablenames
     )
 
-    mapping: _TTablenameNamesMapping = {}
+    mapping: _TTablenameNames = {}
     for name, tablename in filtered_name_tablenames:
         if tablename not in mapping:
             mapping[tablename] = []
         mapping[tablename].append(name)
 
     return mapping
+
+
+_TTablenameForeignKeys = typing.Dict[str, typing.Set[str]]
+
+
+def _get_tablename_foreign_keys(
+    *, tablename_names: _TTablenameNames, schemas: types.Schemas
+) -> _TTablenameForeignKeys:
+    """
+    Get a mapping of tablename to foreign keys defined on that tablename.
+
+    Args:
+        tablename_names: Mapping of tablename to schema names.
+        schemas: All defined schemas.
+
+    Returns:
+        Mapping of tablename to all foreign keys defined on that tablename.
+
+    """
+    tablename_schemas = map(
+        lambda args: (
+            args[0],
+            {"allOf": [{"$ref": f"#/components/schemas/{name}"} for name in args[1]]},
+        ),
+        tablename_names.items(),
+    )
+    tablename_properties = map(
+        lambda args: (
+            args[0],
+            helpers.iterate.properties_items(schema=args[1], schemas=schemas),
+        ),
+        tablename_schemas,
+    )
+    tablename_foreign_keys = map(
+        lambda args: (
+            args[0],
+            map(
+                lambda property_: oa_helpers.peek.prefer_local(
+                    get_value=oa_helpers.peek.foreign_key,
+                    schema=property_[1],
+                    schemas=schemas,
+                ),
+                args[1],
+            ),
+        ),
+        tablename_properties,
+    )
+    tablename_str_foreign_keys = map(
+        lambda args: (
+            args[0],
+            filter(lambda foreign_key: isinstance(foreign_key, str), args[1]),
+        ),
+        tablename_foreign_keys,
+    )
+    tablename_foreign_key_set = map(
+        lambda args: (args[0], set(args[1])), tablename_str_foreign_keys
+    )
+    return dict(tablename_foreign_key_set)
 
 
 def process(*, schemas: types.Schemas) -> None:
