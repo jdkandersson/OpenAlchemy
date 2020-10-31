@@ -14,7 +14,8 @@ def _assert_is_string(value: typing.Any) -> str:
 
 
 def _get_association_tablenames(
-    *, association_schemas: typing.List[types.TNameSchema]
+    *,
+    association_schemas: typing.List[types.TNameSchema],
 ) -> typing.Set[str]:
     """
     Get the tablenames of the associations.
@@ -127,7 +128,7 @@ _TTablenameForeignKeys = typing.Dict[str, _TParentNameForeignKeys]
 
 
 def _get_tablename_foreign_keys(
-    *, tablename_parent_all_names: _TTablenameParentAllNames, schemas: types.Schemas
+    tablename_parent_all_names: _TTablenameParentAllNames, schemas: types.Schemas
 ) -> _TTablenameForeignKeys:
     """
     Get a mapping of tablename to foreign keys defined on that tablename.
@@ -211,7 +212,6 @@ def _get_tablename_foreign_keys(
 
 
 def _combine_defined_expected_schema(
-    *,
     parent_name_foreign_keys: _TParentNameForeignKeys,
     expected_schema: types.TNameSchema,
     schemas: types.Schemas,
@@ -252,6 +252,46 @@ def _combine_defined_expected_schema(
             ]
         },
     )
+
+
+def _combine_defined_expected_schemas(
+    association_schemas: typing.List[types.TNameSchema], schemas: types.Schemas
+) -> typing.Iterator[types.TNameSchema]:
+    """
+    Combine all association schemas with any defined schemas.
+
+    Algorithm:
+    1. Get a set
+
+    Args:
+        association_schemas: All expected association schemas.
+        schemas: All defined schemas.
+
+    Returns:
+        The association schemas merged with any existing schemas.
+
+    """
+    association_tablenames = _get_association_tablenames(
+        association_schemas=association_schemas
+    )
+    tablename_schema_names = _get_tablename_schema_names(
+        schemas=schemas, tablenames=association_tablenames
+    )
+    tablename_foreign_keys = _get_tablename_foreign_keys(
+        tablename_parent_all_names=tablename_schema_names, schemas=schemas
+    )
+
+    for association_schema in association_schemas:
+        association_tablename = oa_helpers.peek.tablename(
+            schema=association_schema.schema, schemas={}
+        )
+        if association_tablename not in tablename_foreign_keys:
+            yield association_schema
+            continue
+
+        yield _combine_defined_expected_schema(
+            tablename_foreign_keys[association_tablename], association_schema, schemas
+        )
 
 
 def process(*, schemas: types.Schemas) -> None:
