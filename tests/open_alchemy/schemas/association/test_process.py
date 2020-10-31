@@ -80,6 +80,90 @@ TESTS = [
                     "parent_prop_1": {"type": "integer", "x-primary-key": True},
                     "parent_prop_2": {
                         "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema"},
+                    },
+                },
+            },
+            "RefSchema": {
+                "x-tablename": "child_schema",
+                "x-secondary": "association",
+                "properties": {
+                    "child_prop_1": {"type": "string", "x-primary-key": True},
+                },
+            },
+            "DefinedAssociation": {
+                "type": "object",
+                "x-tablename": "association",
+                "properties": {
+                    "parent_schema_parent_prop_1": {
+                        "type": "integer",
+                        "x-primary-key": True,
+                        "x-foreign-key": "parent_schema.parent_prop_1",
+                    },
+                },
+                "required": [
+                    "parent_schema_parent_prop_1",
+                ],
+            },
+        },
+        {
+            "Schema": {
+                "x-tablename": "parent_schema",
+                "properties": {
+                    "parent_prop_1": {"type": "integer", "x-primary-key": True},
+                    "parent_prop_2": {
+                        "type": "array",
+                        "items": {"$ref": "#/components/schemas/RefSchema"},
+                    },
+                },
+            },
+            "RefSchema": {
+                "x-tablename": "child_schema",
+                "x-secondary": "association",
+                "properties": {
+                    "child_prop_1": {"type": "string", "x-primary-key": True},
+                },
+            },
+            "DefinedAssociation": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "x-tablename": "association",
+                        "properties": {
+                            "child_schema_child_prop_1": {
+                                "type": "string",
+                                "x-primary-key": True,
+                                "x-foreign-key": "child_schema.child_prop_1",
+                            },
+                        },
+                    },
+                    {
+                        "type": "object",
+                        "x-tablename": "association",
+                        "properties": {
+                            "parent_schema_parent_prop_1": {
+                                "type": "integer",
+                                "x-primary-key": True,
+                                "x-foreign-key": "parent_schema.parent_prop_1",
+                            },
+                        },
+                        "required": [
+                            "parent_schema_parent_prop_1",
+                        ],
+                    },
+                ]
+            },
+        },
+        id="single schema single association defined",
+    ),
+    pytest.param(
+        {
+            "Schema": {
+                "x-tablename": "parent_schema",
+                "properties": {
+                    "parent_prop_1": {"type": "integer", "x-primary-key": True},
+                    "parent_prop_2": {
+                        "type": "array",
                         "items": {"$ref": "#/components/schemas/RefSchema1"},
                     },
                     "parent_prop_3": {

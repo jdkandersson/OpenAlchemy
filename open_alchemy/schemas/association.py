@@ -255,7 +255,7 @@ def _combine_defined_expected_schema(
 
 
 def _combine_defined_expected_schemas(
-    association_schemas: typing.List[types.TNameSchema], schemas: types.Schemas
+    *, association_schemas: typing.List[types.TNameSchema], schemas: types.Schemas
 ) -> typing.Iterator[types.TNameSchema]:
     """
     Combine all association schemas with any defined schemas.
@@ -323,5 +323,8 @@ def process(*, schemas: types.Schemas) -> None:
             association_properties,
         )
     )
-    for association in association_schemas:
+    combined_association_schemas = _combine_defined_expected_schemas(
+        association_schemas=association_schemas, schemas=schemas
+    )
+    for association in combined_association_schemas:
         schemas[association.name] = association.schema
