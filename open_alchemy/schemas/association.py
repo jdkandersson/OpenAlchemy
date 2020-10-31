@@ -1,12 +1,39 @@
 """Pre-process schemas by adding any association tables as a schema to schemas."""
 
+import typing
+
+from .. import helpers as oa_helpers
 from .. import types
 from . import helpers
 
-# def _get_tablename_schema_names_mapping(
-#     *, association_schemas: typing.List[types.TNameSchema]
-# ) -> None:
-#     """"""
+
+def _is_string(value: typing.Any) -> str:
+    """Assert that a value is a string."""
+    assert isinstance(value, str)
+    return value
+
+
+def _get_association_tablenames(
+    *, association_schemas: typing.List[types.TNameSchema]
+) -> typing.Set[str]:
+    """
+    Get the tablenames of the associations.
+
+    Args:
+        association_schemas: All the association schemas.
+
+    Returns:
+        A set of tablenames from the associations.
+
+    """
+    tablenames = map(
+        lambda association: oa_helpers.peek.tablename(
+            schema=association.schema, schemas={}
+        ),
+        association_schemas,
+    )
+    str_tablenames = map(_is_string, tablenames)
+    return set(str_tablenames)
 
 
 def process(*, schemas: types.Schemas) -> None:
