@@ -143,6 +143,7 @@ An example API has been defined using connexion and Flask here:
 - one to one relationships,
 - one to many relationships,
 - many to many relationships,
+- many to many relationships with custom association tables,
 - custom foreign keys for relationships,
 - back references for relationships,
 - `allOf` inheritance for columns and models,

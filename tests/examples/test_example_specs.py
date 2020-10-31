@@ -343,6 +343,16 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
             },
             id="relationship-many-to-many",
         ),
+        pytest.param(
+            "relationship/many_to_many/pre-defined-example-spec.yml",
+            ("Employee", "Project"),
+            {
+                "id": 11,
+                "name": "employee 1",
+                "projects": [{"id": 12, "name": "project 1"}],
+            },
+            id="relationship-many-to-many",
+        ),
     ],
 )
 @pytest.mark.example
