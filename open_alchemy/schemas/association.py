@@ -260,9 +260,6 @@ def _combine_defined_expected_schemas(
     """
     Combine all association schemas with any defined schemas.
 
-    Algorithm:
-    1. Get a set
-
     Args:
         association_schemas: All expected association schemas.
         schemas: All defined schemas.
