@@ -4,14 +4,6 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-employee_project = sa.Table(
-    "employee_project",
-    Base.metadata,
-    sa.Column("project_id", sa.Integer, sa.ForeignKey("project.id")),
-    sa.Column("employee_id", sa.Integer, sa.ForeignKey("employee.id")),
-)
-
-
 class Project(Base):
     """A large sized business objective."""
 
