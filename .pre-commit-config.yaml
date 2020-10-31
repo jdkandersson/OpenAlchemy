@@ -40,8 +40,8 @@ repos:
     hooks:
       - id: pylint
         exclude: "^example|conf.py$"
-  - repo: https://github.com/prettier/prettier
-    rev: "2.1.1"
+  - repo: https://github.com/prettier/pre-commit
+    rev: "v2.1.2"
     hooks:
       - exclude: "^docs.*.yaml$"
         id: prettier

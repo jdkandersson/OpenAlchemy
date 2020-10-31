@@ -117,9 +117,16 @@ def get_secondary_parent_property_schema_mapping(
     return dict(association_name_parent_property_schemas)
 
 
+class TCalculatePropertySchemaReturn(typing.NamedTuple):
+    """The return type for the calculate_property_schema function."""
+
+    name: str
+    schema: types.ColumnSchema
+
+
 def calculate_property_schema(
     *, schema: types.Schema, schemas: types.Schemas
-) -> types.TNameSchema:
+) -> TCalculatePropertySchemaReturn:
     """
     Calculate the property name and schema for a column for a many-to-many relationship.
 
@@ -186,7 +193,7 @@ def calculate_property_schema(
     if max_length is not None:
         property_schema["maxLength"] = max_length
 
-    return types.TNameSchema(name=property_name, schema=property_schema)
+    return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
 
 
 class TCalculateSchemaReturn(typing.NamedTuple):

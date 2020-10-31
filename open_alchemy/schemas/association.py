@@ -3,6 +3,11 @@
 from .. import types
 from . import helpers
 
+# def _get_tablename_schema_names_mapping(
+#     *, association_schemas: typing.List[types.TNameSchema]
+# ) -> None:
+#     """"""
+
 
 def process(*, schemas: types.Schemas) -> None:
     """
