@@ -23,18 +23,11 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
     )
 
 
-class TNameSchema(typing.NamedTuple):
-    """The name and schema of a property or schema."""
-
-    name: str
-    schema: types.Schema
-
-
 class TParentPropertySchema(typing.NamedTuple):
     """Holds information about an association table."""
 
-    parent: TNameSchema
-    property: TNameSchema
+    parent: types.TNameSchema
+    property: types.TNameSchema
 
 
 def get_association_property_iterator(
@@ -65,8 +58,8 @@ def get_association_property_iterator(
         )
         yield from (
             TParentPropertySchema(
-                parent=TNameSchema(name=name, schema=schema),
-                property=TNameSchema(name=property_name, schema=property_schema),
+                parent=types.TNameSchema(name=name, schema=schema),
+                property=types.TNameSchema(name=property_name, schema=property_schema),
             )
             for property_name, property_schema in association_property_schemas
         )
@@ -203,19 +196,12 @@ def calculate_property_schema(
     return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
 
 
-class TCalculateSchemaReturn(typing.NamedTuple):
-    """The return type for the calculate_schema function."""
-
-    name: str
-    schema: types.Schema
-
-
 def calculate_schema(
     *,
     property_schema: types.Schema,
     parent_schema: types.Schema,
     schemas: types.Schemas,
-) -> TCalculateSchemaReturn:
+) -> types.TNameSchema:
     """
     Calculate the schema for the association table.
 
@@ -289,4 +275,4 @@ def calculate_schema(
     while name in schemas:
         name = f"Autogen{name}"
 
-    return TCalculateSchemaReturn(name=name, schema=schema)
+    return types.TNameSchema(name=name, schema=schema)

@@ -2,6 +2,7 @@
 
 import pytest
 
+from open_alchemy import types
 from open_alchemy.schemas import helpers
 from open_alchemy.schemas import validation
 
@@ -82,7 +83,7 @@ class TestValidateSchema:
         """
         name = "Schema"
         association = helpers.association.TParentPropertySchema(
-            parent=helpers.association.TNameSchema(
+            parent=types.TNameSchema(
                 name="ParentSchema",
                 schema={
                     "x-tablename": "parent_table",
@@ -96,7 +97,7 @@ class TestValidateSchema:
                     },
                 },
             ),
-            property=helpers.association.TNameSchema(
+            property=types.TNameSchema(
                 name="PropertySchema",
                 schema={"items": {"$ref": "#/components/schemas/RefSchema"}},
             ),
