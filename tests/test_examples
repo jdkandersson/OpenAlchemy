@@ -58,6 +58,8 @@ cd -
 cd examples/relationship/many_to_many
 python models.py
 python models_traditional.py
+python pre_defined_models.py
+python pre_defined_models_traditional.py
 cd -
 cd examples/inheritance
 python single_models.py
