@@ -24,7 +24,7 @@ def test_integration_simple(schema, expected_schema):
         schema.
     """
     schemas = {}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
@@ -71,7 +71,7 @@ def test_integration_simple_json(schema, expected_schema):
     THEN a SQLALchemy JSON column and the expected schema are returned.
     """
     schemas = {}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
@@ -91,7 +91,7 @@ def test_integration_kwargs():
     """
     schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
-    ([(_, column)], _) = column_factory.column_factory(
+    ([(_, column)], _) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
@@ -110,7 +110,7 @@ def test_integration_all_of():
     """
     schema = {"allOf": [{"type": "boolean"}]}
     schemas = {}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
@@ -131,7 +131,7 @@ def test_integration_ref():
     """
     schema = {"$ref": "#/components/schemas/RefSchema"}
     schemas = {"RefSchema": {"type": "boolean"}}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
@@ -162,7 +162,7 @@ def test_integration_object_ref():
     (
         [(tbl_logical_name, relationship)],
         returned_schema,
-    ) = column_factory.column_factory(
+    ) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
@@ -193,7 +193,7 @@ def test_integration_object_ref_read_only():
     }
     logical_name = "ref_schema"
 
-    ([], returned_schema) = column_factory.column_factory(
+    ([], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
@@ -226,7 +226,7 @@ def test_integration_array_ref():
     (
         [(tbl_logical_name, relationship)],
         returned_schema,
-    ) = column_factory.column_factory(
+    ) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
@@ -269,7 +269,7 @@ def test_integration_array_ref_read_only():
     }
     logical_name = "ref_schema"
 
-    ([], returned_schema) = column_factory.column_factory(
+    ([], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,

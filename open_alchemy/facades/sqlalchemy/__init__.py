@@ -6,16 +6,19 @@ import typing
 import sqlalchemy
 from sqlalchemy import orm
 
-from open_alchemy import types
+from open_alchemy import types as oa_types
 
 from . import column as column
+from . import simple as simple
 
 # Mapping from SQLAlchemy
 Table = sqlalchemy.Table
 Relationship = orm.RelationshipProperty
 
 
-def relationship(*, artifacts: types.RelationshipArtifacts) -> orm.RelationshipProperty:
+def relationship(
+    *, artifacts: oa_types.RelationshipArtifacts
+) -> orm.RelationshipProperty:
     """
     Construct relationship.
 

@@ -5,11 +5,13 @@ import typing
 
 from open_alchemy import helpers
 from open_alchemy import types as oa_types
+from open_alchemy.schemas.artifacts import property_
 
 from . import array_ref
 from . import column
 from . import object_ref
 from . import read_only
+from . import simple
 from . import types
 
 _TReturnSchema = typing.Union[
@@ -20,7 +22,7 @@ _TReturnSchema = typing.Union[
 ]
 
 
-def column_factory(
+def old_column_factory(
     *,
     schema: oa_types.Schema,
     schemas: oa_types.Schemas,
@@ -70,3 +72,35 @@ def column_factory(
         schemas=schemas,
         logical_name=logical_name,
     )
+
+
+# def column_factory(
+#     *,
+#     schema: oa_types.Schema,
+#     model_schema: oa_types.Schema,
+#     schemas: oa_types.Schemas,
+#     required: typing.Optional[bool] = None,
+#     logical_name: str,
+# ) -> typing.Tuple[types.TReturnValue, _TReturnSchema]:
+#     """
+#     Generate column based on OpenAPI schema property.
+
+#     Args:
+#         schema: The schema for the column.
+#         model_schema: The schema of the model.
+#         schemas: Used to resolve any $ref.
+#         required: Whether the object property is required.
+#         logical_name: The logical name in the specification for the schema.
+
+#     Returns:
+#         The logical name, the SQLAlchemy column based on the schema and the
+#         specification to store for the column.
+
+#     """
+#     artifacts = property_.get(
+#         schemas=schemas,
+#         model_schema=model_schema,
+#         property_name=logical_name,
+#         schema=schema,
+#         required=required,
+#     )
