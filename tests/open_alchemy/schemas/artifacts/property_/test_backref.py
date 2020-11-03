@@ -6,7 +6,7 @@ import typing
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 DEFAULT_SCHEMA: typing.Any = {"type": "object", "properties": {}}
@@ -16,7 +16,7 @@ GET_TESTS = [
         {**DEFAULT_SCHEMA},
         {},
         "type",
-        oa_helpers.property_.Type.BACKREF,
+        types.PropertyType.BACKREF,
         id="property type",
     ),
     pytest.param(

@@ -6,7 +6,7 @@ import pytest
 import sqlalchemy
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.facades.sqlalchemy import simple
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -14,7 +14,7 @@ from open_alchemy.schemas.artifacts import types as artifacts_types
 def _create_artifacts():
     """Create column artifacts."""
     return artifacts_types.SimplePropertyArtifacts(
-        type=helpers.property_.Type.SIMPLE,
+        type=types.PropertyType.SIMPLE,
         open_api=artifacts_types.OpenApiSimplePropertyArtifacts(
             type="integer",
             format=None,

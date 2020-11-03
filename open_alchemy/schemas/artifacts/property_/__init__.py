@@ -2,7 +2,6 @@
 
 from .... import helpers as oa_helpers
 from .... import types as oa_types
-from ... import helpers
 from .. import types
 from . import backref
 from . import json
@@ -33,14 +32,14 @@ def get(
     """
     type_ = oa_helpers.property_.calculate_type(schema=schema, schemas=schemas)
 
-    if type_ == oa_helpers.property_.Type.SIMPLE:
+    if type_ == oa_types.PropertyType.SIMPLE:
         return simple.get(schemas, schema, required)
 
-    if type_ == oa_helpers.property_.Type.JSON:
+    if type_ == oa_types.PropertyType.JSON:
         return json.get(schemas, schema, required)
 
-    if type_ == oa_helpers.property_.Type.BACKREF:
+    if type_ == oa_types.PropertyType.BACKREF:
         return backref.get(schemas, schema)
 
-    assert type_ == oa_helpers.property_.Type.RELATIONSHIP
+    assert type_ == oa_types.PropertyType.RELATIONSHIP
     return relationship.get(schemas, model_schema, property_name, schema, required)

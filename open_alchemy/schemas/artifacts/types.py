@@ -16,10 +16,10 @@ class PropertyArtifacts:
     """Information about a property."""
 
     type: types.Literal[
-        oa_helpers.property_.Type.SIMPLE,
-        oa_helpers.property_.Type.JSON,
-        oa_helpers.property_.Type.RELATIONSHIP,
-        oa_helpers.property_.Type.BACKREF,
+        types.PropertyType.SIMPLE,
+        types.PropertyType.JSON,
+        types.PropertyType.RELATIONSHIP,
+        types.PropertyType.BACKREF,
     ]
     schema: typing.Union[
         types.Schema,
@@ -185,7 +185,7 @@ class SimplePropertyTypedDict(_SimplePropertyTypedDictBase, total=True):
 class SimplePropertyArtifacts(PropertyArtifacts):
     """Information about a simple property."""
 
-    type: types.Literal[oa_helpers.property_.Type.SIMPLE]
+    type: types.Literal[types.PropertyType.SIMPLE]
     open_api: OpenApiSimplePropertyArtifacts
     extension: ExtensionSimplePropertyArtifacts
     schema: types.ColumnSchema
@@ -324,7 +324,7 @@ class JsonPropertyTypedDict(_JsonPropertyTypedDictBase, total=True):
 class JsonPropertyArtifacts(PropertyArtifacts):
     """Information about a JSON property."""
 
-    type: types.Literal[oa_helpers.property_.Type.JSON]
+    type: types.Literal[types.PropertyType.JSON]
     open_api: OpenApiJsonPropertyArtifacts
     extension: ExtensionJsonPropertyArtifacts
     schema: types.Schema
@@ -350,7 +350,7 @@ class JsonPropertyArtifacts(PropertyArtifacts):
 class RelationshipPropertyArtifacts(PropertyArtifacts):
     """Information about a relationship property."""
 
-    type: types.Literal[oa_helpers.property_.Type.RELATIONSHIP]
+    type: types.Literal[types.PropertyType.RELATIONSHIP]
     sub_type: types.Literal[
         oa_helpers.relationship.Type.MANY_TO_ONE,
         oa_helpers.relationship.Type.ONE_TO_ONE,
@@ -652,7 +652,7 @@ class BackrefSubType(str, enum.Enum):
 class BackrefPropertyArtifacts(PropertyArtifacts):
     """Information about a back reference property."""
 
-    type: types.Literal[oa_helpers.property_.Type.BACKREF]
+    type: types.Literal[types.PropertyType.BACKREF]
     sub_type: types.Literal[BackrefSubType.OBJECT, BackrefSubType.ARRAY]
     properties: typing.List[str]
     schema: types.Schema

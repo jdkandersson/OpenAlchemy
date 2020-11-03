@@ -69,7 +69,7 @@ def get(
             helpers.clean.extension(schema=property_schema)
 
     return types.BackrefPropertyArtifacts(
-        type=oa_helpers.property_.Type.BACKREF,
+        type=oa_types.PropertyType.BACKREF,
         description=description,
         sub_type=sub_type,
         schema=schema,

@@ -3,7 +3,7 @@
 import pytest
 
 from open_alchemy import facades
-from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.column_factory import json
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -16,7 +16,7 @@ def test_integration():
     THEN the logical name and an instance of SQLAlchemy Column is returned.
     """
     artifacts = artifacts_types.JsonPropertyArtifacts(
-        type=helpers.property_.Type.JSON,
+        type=types.PropertyType.JSON,
         open_api=artifacts_types.OpenApiJsonPropertyArtifacts(
             nullable=None,
             read_only=None,

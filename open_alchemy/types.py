@@ -1,6 +1,7 @@
 """Types shared across modules."""
 
 import datetime
+import enum
 import typing
 
 try:  # pragma: no cover
@@ -139,3 +140,13 @@ class TNameSchema(typing.NamedTuple):
 
     name: str
     schema: Schema
+
+
+@enum.unique
+class PropertyType(str, enum.Enum):
+    """The type of a property."""
+
+    SIMPLE = "SIMPLE"
+    JSON = "JSON"
+    RELATIONSHIP = "RELATIONSHIP"
+    BACKREF = "BACKREF"

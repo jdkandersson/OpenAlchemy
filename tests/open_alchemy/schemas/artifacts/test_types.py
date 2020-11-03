@@ -3,6 +3,7 @@
 import pytest
 
 from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 
@@ -81,7 +82,7 @@ from open_alchemy.schemas import artifacts
         ),
         pytest.param(
             artifacts.types.SimplePropertyArtifacts(
-                type=oa_helpers.property_.Type.SIMPLE,
+                type=types.PropertyType.SIMPLE,
                 description=None,
                 open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
                     type="integer",
@@ -116,7 +117,7 @@ from open_alchemy.schemas import artifacts
         ),
         pytest.param(
             artifacts.types.SimplePropertyArtifacts(
-                type=oa_helpers.property_.Type.SIMPLE,
+                type=types.PropertyType.SIMPLE,
                 description="description 1",
                 open_api=artifacts.types.OpenApiSimplePropertyArtifacts(
                     type="integer",
@@ -224,7 +225,7 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
         pytest.param(
             artifacts.types.JsonPropertyArtifacts(
                 description=None,
-                type=oa_helpers.property_.Type.JSON,
+                type=types.PropertyType.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
                     nullable=True,
                     read_only=None,
@@ -253,7 +254,7 @@ def test_simple_property_artifacts(artifacts_value, expected_dict):
         pytest.param(
             artifacts.types.JsonPropertyArtifacts(
                 description="description 1",
-                type=oa_helpers.property_.Type.JSON,
+                type=types.PropertyType.JSON,
                 open_api=artifacts.types.OpenApiJsonPropertyArtifacts(
                     nullable=True,
                     read_only=None,
@@ -300,7 +301,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
     [
         pytest.param(
             artifacts.types.OneToManyRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
@@ -331,7 +332,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.OneToManyRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
@@ -366,7 +367,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.ManyToOneRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
                 sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
                 parent="parent 1",
@@ -392,7 +393,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.ManyToOneRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
                 sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
                 parent="parent 1",
@@ -423,7 +424,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.OneToOneRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
                 sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
                 parent="parent 1",
@@ -449,7 +450,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.OneToOneRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
                 sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
                 parent="parent 1",
@@ -480,7 +481,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.ManyToManyRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
@@ -509,7 +510,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.ManyToManyRelationshipPropertyArtifacts(
-                type=oa_helpers.property_.Type.RELATIONSHIP,
+                type=types.PropertyType.RELATIONSHIP,
                 schema={
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
@@ -560,7 +561,7 @@ def test_relationship_property_artifacts(artifacts_value, expected_dict):
     [
         pytest.param(
             artifacts.types.BackrefPropertyArtifacts(
-                type=oa_helpers.property_.Type.BACKREF,
+                type=types.PropertyType.BACKREF,
                 sub_type=artifacts.types.BackrefSubType.OBJECT,
                 description=None,
                 schema={"type": "object"},
@@ -577,7 +578,7 @@ def test_relationship_property_artifacts(artifacts_value, expected_dict):
         ),
         pytest.param(
             artifacts.types.BackrefPropertyArtifacts(
-                type=oa_helpers.property_.Type.BACKREF,
+                type=types.PropertyType.BACKREF,
                 sub_type=artifacts.types.BackrefSubType.ARRAY,
                 description="description 1",
                 schema={"type": "array"},

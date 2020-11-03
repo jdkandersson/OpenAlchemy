@@ -96,7 +96,7 @@ def is_relationship_type(
 
     """
     property_type = property_.calculate_type(schema=schema, schemas=schemas)
-    if property_type != property_.Type.RELATIONSHIP:
+    if property_type != types.PropertyType.RELATIONSHIP:
         return False
 
     relationship_type = calculate_type(schema=schema, schemas=schemas)

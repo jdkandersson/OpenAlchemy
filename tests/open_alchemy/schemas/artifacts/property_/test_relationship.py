@@ -5,6 +5,7 @@ import functools
 import pytest
 
 from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 GET_TESTS = [
@@ -31,7 +32,7 @@ GET_TESTS = [
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         "type",
-        helpers.property_.Type.RELATIONSHIP,
+        types.PropertyType.RELATIONSHIP,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
         id="property type",
     ),

@@ -3,6 +3,7 @@
 import pytest
 
 from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.column_factory import relationship
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -15,7 +16,7 @@ def test_handle():
     THEN relationship is returned with the spec.
     """
     artifacts = artifacts_types.ManyToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={"key": "value"},
         required=False,
         description=None,

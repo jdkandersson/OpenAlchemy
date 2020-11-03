@@ -2,7 +2,6 @@
 
 import typing
 
-from open_alchemy import helpers
 from open_alchemy import types as oa_types
 from open_alchemy.schemas.artifacts import property_
 
@@ -50,12 +49,12 @@ def column_factory(
         schema=schema,
         required=required is True,
     )
-    if artifacts.type == helpers.property_.Type.SIMPLE:
+    if artifacts.type == oa_types.PropertyType.SIMPLE:
         simple_column_value, simple_column_schema = simple.handle(artifacts=artifacts)
         return ([(logical_name, simple_column_value)], simple_column_schema)
-    if artifacts.type == helpers.property_.Type.JSON:
+    if artifacts.type == oa_types.PropertyType.JSON:
         json_column_value, json_column_schema = json.handle(artifacts=artifacts)
         return ([(logical_name, json_column_value)], json_column_schema)
-    if artifacts.type == helpers.property_.Type.BACKREF:
+    if artifacts.type == oa_types.PropertyType.BACKREF:
         return backref.handle(artifacts=artifacts)
     return relationship.handle(artifacts=artifacts, logical_name=logical_name)

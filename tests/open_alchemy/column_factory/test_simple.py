@@ -3,7 +3,7 @@
 import pytest
 
 from open_alchemy import facades
-from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.column_factory import simple
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -16,7 +16,7 @@ def test_integration():
     THEN the logical name and an instance of SQLAlchemy Column is returned.
     """
     artifacts = artifacts_types.SimplePropertyArtifacts(
-        type=helpers.property_.Type.SIMPLE,
+        type=types.PropertyType.SIMPLE,
         open_api=artifacts_types.OpenApiSimplePropertyArtifacts(
             type="integer",
             format=None,

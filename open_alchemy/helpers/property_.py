@@ -1,23 +1,13 @@
 """Helpers to determine the type of a schema."""
 
-import enum
-
 from .. import types
 from . import peek
 from . import type_
 
 
-@enum.unique
-class Type(str, enum.Enum):
-    """The type of a property."""
-
-    SIMPLE = "SIMPLE"
-    JSON = "JSON"
-    RELATIONSHIP = "RELATIONSHIP"
-    BACKREF = "BACKREF"
-
-
-def calculate_type(*, schemas: types.Schemas, schema: types.Schema) -> Type:
+def calculate_type(
+    *, schemas: types.Schemas, schema: types.Schema
+) -> types.PropertyType:
     """
     Calculate the type of the property.
 
@@ -39,14 +29,14 @@ def calculate_type(*, schemas: types.Schemas, schema: types.Schema) -> Type:
     """
     json_value = peek.json(schema=schema, schemas=schemas)
     if json_value is True:
-        return Type.JSON
+        return types.PropertyType.JSON
 
     property_type = peek.type_(schema=schema, schemas=schemas)
     if property_type in type_.SIMPLE_TYPES:
-        return Type.SIMPLE
+        return types.PropertyType.SIMPLE
 
     read_only_value = peek.read_only(schema=schema, schemas=schemas)
     if read_only_value is True:
-        return Type.BACKREF
+        return types.PropertyType.BACKREF
 
-    return Type.RELATIONSHIP
+    return types.PropertyType.RELATIONSHIP

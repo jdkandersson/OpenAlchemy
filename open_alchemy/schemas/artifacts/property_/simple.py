@@ -94,7 +94,7 @@ def get(
         schema_artifact["x-dict-ignore"] = dict_ignore
 
     return types.SimplePropertyArtifacts(
-        type=oa_helpers.property_.Type.SIMPLE,
+        type=oa_types.PropertyType.SIMPLE,
         description=description,
         schema=schema_artifact,
         required=required,

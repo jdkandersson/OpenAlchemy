@@ -6,7 +6,7 @@ import typing
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 DEFAULT_SCHEMA: typing.Any = {"type": "default type"}
@@ -18,7 +18,7 @@ GET_TESTS = [
         {**DEFAULT_SCHEMA},
         {},
         "type",
-        oa_helpers.property_.Type.SIMPLE,
+        types.PropertyType.SIMPLE,
         id="property type",
     ),
     pytest.param(

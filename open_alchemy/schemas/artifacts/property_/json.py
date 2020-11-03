@@ -51,7 +51,7 @@ def get(
     schema["x-json"] = True
 
     return types.JsonPropertyArtifacts(
-        type=oa_helpers.property_.Type.JSON,
+        type=oa_types.PropertyType.JSON,
         description=description,
         schema=schema,
         required=required,

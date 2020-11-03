@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy import types as oa_types
 from open_alchemy.column_factory import backref
 from open_alchemy.schemas.artifacts import types
 
@@ -15,7 +15,7 @@ def test_handle():
     THEN the schema from the artifacts is returned.
     """
     artifacts = types.BackrefPropertyArtifacts(
-        type=helpers.property_.Type.BACKREF,
+        type=oa_types.PropertyType.BACKREF,
         schema={"key": "value"},
         required=None,
         description=None,

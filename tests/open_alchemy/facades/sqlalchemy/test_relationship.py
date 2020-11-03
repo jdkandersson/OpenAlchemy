@@ -4,6 +4,7 @@
 import pytest
 
 from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.facades.sqlalchemy import relationship
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -17,7 +18,7 @@ def test_construct_many_to_one():
     THEN a many to one relationship is returned.
     """
     artifacts = artifacts_types.ManyToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={},
         required=False,
         description=None,
@@ -47,7 +48,7 @@ def test_construct_many_to_one_backref():
     THEN a many to one relationship with backref is returned.
     """
     artifacts = artifacts_types.ManyToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={},
         required=False,
         description=None,
@@ -75,7 +76,7 @@ def test_construct_many_to_one_kwargs():
     THEN a many to one relationship with kwargs is returned.
     """
     artifacts = artifacts_types.ManyToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={},
         required=False,
         description=None,
@@ -103,7 +104,7 @@ def test_construct_one_to_one_backref():
     THEN a one to one relationship with backref is returned.
     """
     artifacts = artifacts_types.OneToOneRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={},
         required=False,
         description=None,
@@ -131,7 +132,7 @@ def test_construct_many_to_many():
     THEN a many to many relationship is returned.
     """
     artifacts = artifacts_types.ManyToManyRelationshipPropertyArtifacts(
-        type=helpers.property_.Type.RELATIONSHIP,
+        type=types.PropertyType.RELATIONSHIP,
         schema={},
         required=False,
         description=None,

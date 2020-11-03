@@ -5,7 +5,7 @@ import functools
 import pytest
 import sqlalchemy
 
-from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.facades.sqlalchemy import json
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
@@ -13,7 +13,7 @@ from open_alchemy.schemas.artifacts import types as artifacts_types
 def _create_artifacts():
     """Create column artifacts."""
     return artifacts_types.JsonPropertyArtifacts(
-        type=helpers.property_.Type.JSON,
+        type=types.PropertyType.JSON,
         open_api=artifacts_types.OpenApiJsonPropertyArtifacts(
             nullable=None,
             read_only=None,
