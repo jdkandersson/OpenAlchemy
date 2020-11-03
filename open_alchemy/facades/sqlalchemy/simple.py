@@ -2,15 +2,13 @@
 
 import typing
 
-from open_alchemy.schemas.artifacts import types as artifacts_types
-
 from ... import exceptions
 from ... import helpers
 from ... import types as oa_types
 from . import types
 
 
-def construct(*, artifacts: artifacts_types.SimplePropertyArtifacts) -> types.Column:
+def construct(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Column:
     """
     Construct column from artifacts.
 
@@ -71,9 +69,7 @@ def construct(*, artifacts: artifacts_types.SimplePropertyArtifacts) -> types.Co
     )
 
 
-def _determine_type(
-    *, artifacts: artifacts_types.SimplePropertyArtifacts
-) -> types.Type:
+def _determine_type(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Type:
     """
     Determine the type for a specification.
 
@@ -102,7 +98,7 @@ def _determine_type(
 
 
 def _handle_integer(
-    *, artifacts: artifacts_types.SimplePropertyArtifacts
+    *, artifacts: oa_types.SimplePropertyArtifacts
 ) -> typing.Union[types.Integer, types.BigInteger]:
     """
     Handle artifacts for an integer type.
@@ -125,9 +121,7 @@ def _handle_integer(
     )
 
 
-def _handle_number(
-    *, artifacts: artifacts_types.SimplePropertyArtifacts
-) -> types.Number:
+def _handle_number(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Number:
     """
     Handle artifacts for an number type.
 
@@ -148,7 +142,7 @@ def _handle_number(
 
 
 def _handle_string(
-    *, artifacts: artifacts_types.SimplePropertyArtifacts
+    *, artifacts: oa_types.SimplePropertyArtifacts
 ) -> typing.Union[types.String, types.Binary, types.Date, types.DateTime]:
     """
     Handle artifacts for an string type.

@@ -2,14 +2,12 @@
 
 import typing
 
-from open_alchemy.schemas.artifacts import types as artifacts_types
-
 from ... import helpers
 from ... import types as oa_types
 from . import types
 
 
-def construct(*, artifacts: artifacts_types.JsonPropertyArtifacts) -> types.Column:
+def construct(*, artifacts: oa_types.JsonPropertyArtifacts) -> types.Column:
     """
     Construct column from artifacts.
 

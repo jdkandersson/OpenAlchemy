@@ -5,13 +5,12 @@ import typing
 from sqlalchemy import orm
 
 from open_alchemy import types as oa_types
-from open_alchemy.schemas.artifacts import types as artifacts_types
 
 from . import types
 
 
 def construct(
-    *, artifacts: artifacts_types.TAnyRelationshipPropertyArtifacts
+    *, artifacts: oa_types.TAnyRelationshipPropertyArtifacts
 ) -> types.Relationship:
     """
     Construct relationship from artifacts.
