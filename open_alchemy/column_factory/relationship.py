@@ -15,10 +15,10 @@ def handle(
     types.TReturnValue, typing.Union[oa_types.ObjectRefSchema, oa_types.ArrayRefSchema]
 ]:
     """
-    Handle a json column.
+    Handle a relationship property.
 
     Args:
-        artifacts: The artifacts of the json column.
+        artifacts: The artifacts of the relationship property.
 
     Returns:
         The constructed column.

@@ -11,10 +11,10 @@ def handle(
     *, artifacts: artifact_types.JsonPropertyArtifacts
 ) -> typing.Tuple[facades.sqlalchemy.types.Column, types.Schema]:
     """
-    Handle a json column.
+    Handle a json property.
 
     Args:
-        artifacts: The artifacts of the json column.
+        artifacts: The artifacts of the json property.
 
     Returns:
         The constructed column.

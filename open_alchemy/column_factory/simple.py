@@ -11,10 +11,10 @@ def handle(
     *, artifacts: artifact_types.SimplePropertyArtifacts
 ) -> typing.Tuple[facades.sqlalchemy.types.Column, types.ColumnSchema]:
     """
-    Handle a simple column.
+    Handle a simple property.
 
     Args:
-        artifacts: The artifacts of the simple column.
+        artifacts: The artifacts of the simple property.
 
     Returns:
         The constructed column.
