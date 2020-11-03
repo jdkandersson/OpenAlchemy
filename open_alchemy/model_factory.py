@@ -50,10 +50,11 @@ def model_factory(
     if description is not None:
         model_schema["description"] = description
     for prop_name, prop_spec in schema.get("properties", []).items():
-        prop_class_vars, prop_final_spec = column_factory.old_column_factory(
+        prop_class_vars, prop_final_spec = column_factory.column_factory(
             schema=prop_spec,
             schemas=schemas,
             logical_name=prop_name,
+            model_schema=schema,
             required=prop_name in required_set if required_exists else None,
         )
         model_class_vars.append(prop_class_vars)

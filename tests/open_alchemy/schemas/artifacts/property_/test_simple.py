@@ -66,6 +66,14 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        {},
+        "schema",
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        id="schema keep x-dict-ignore",
+    ),
+    pytest.param(
+        None,
         {**DEFAULT_SCHEMA, "type": "type 1"},
         {},
         "open_api.type",

@@ -26,9 +26,14 @@ def construct(
     # Construct back reference
     backref = None
     if artifacts.backref_property is not None:
+        # Calculate uselist
+        uselist: typing.Optional[bool] = None
+        if artifacts.sub_type == helpers.relationship.Type.ONE_TO_ONE:
+            uselist = False
+
         backref = orm.backref(
             artifacts.backref_property,
-            uselist=artifacts.sub_type == helpers.relationship.Type.ONE_TO_ONE,
+            uselist=uselist,
         )
 
     # Calculate secondary

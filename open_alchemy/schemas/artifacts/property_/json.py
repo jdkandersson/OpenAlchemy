@@ -61,7 +61,7 @@ def get(
             write_only=write_only,
         ),
         extension=types.ExtensionJsonPropertyArtifacts(
-            primary_key=primary_key,
+            primary_key=primary_key is True,
             index=index,
             unique=unique,
             foreign_key=foreign_key,

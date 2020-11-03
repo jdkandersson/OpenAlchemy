@@ -19,7 +19,7 @@ def mocked_column_factory(monkeypatch):
     """Monkeypatches column_factory.column_factory."""
     mock_column_factory = mock.MagicMock()
     mock_column_factory.return_value = ([("logical name", "SQLAlchemy column")], {})
-    monkeypatch.setattr(column_factory, "old_column_factory", mock_column_factory)
+    monkeypatch.setattr(column_factory, "column_factory", mock_column_factory)
     return mock_column_factory
 
 

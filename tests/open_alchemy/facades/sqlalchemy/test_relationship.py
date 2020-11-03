@@ -63,7 +63,7 @@ def test_construct_many_to_one_backref():
 
     returned_relationship = relationship.construct(artifacts=artifacts)
 
-    assert returned_relationship.backref == ("prop_1", {"uselist": False})
+    assert returned_relationship.backref == ("prop_1", {"uselist": None})
 
 
 @pytest.mark.facade
@@ -119,7 +119,7 @@ def test_construct_one_to_one_backref():
 
     returned_relationship = relationship.construct(artifacts=artifacts)
 
-    assert returned_relationship.backref == ("prop_1", {"uselist": True})
+    assert returned_relationship.backref == ("prop_1", {"uselist": False})
 
 
 @pytest.mark.facade
