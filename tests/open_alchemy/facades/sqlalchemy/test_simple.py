@@ -50,6 +50,7 @@ def _create_artifacts():
     ],
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct(type_, expected_type):
     """
     GIVEN artifacts for a type
@@ -68,6 +69,7 @@ def test_construct(type_, expected_type):
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_foreign_key():
     """
     GIVEN artifacts with foreign key
@@ -86,6 +88,7 @@ def test_construct_foreign_key():
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_foreign_key_kwargs():
     """
     GIVEN artifacts with foreign key and foreign key kwargs
@@ -133,6 +136,7 @@ CONSTRUCT_ARGS_TESTS = [
     CONSTRUCT_ARGS_TESTS,
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_args(
     art_parent_key, art_item_key, art_value, column_key, column_value
 ):
@@ -153,6 +157,7 @@ def test_construct_args(
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_default_type_mapped():
     """
     GIVEN artifacts with a format that requires mapping with default value
@@ -178,6 +183,7 @@ def test_construct_default_type_mapped():
     ],
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_autoincrement(autoincrement, expected_autoincrement):
     """
     GIVEN value for autoincrement
@@ -194,6 +200,7 @@ def test_construct_autoincrement(autoincrement, expected_autoincrement):
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_kwargs():
     """
     GIVEN artifacts with kwargs
@@ -215,6 +222,7 @@ class TestDetermineType:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_unsupported():
         """
         GIVEN artifacts with an unsupported type
@@ -238,6 +246,7 @@ class TestDetermineType:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_supported(type_, expected_type):
         """
         GIVEN type
@@ -259,6 +268,7 @@ class TestHandleInteger:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -282,6 +292,7 @@ class TestHandleInteger:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_integer_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -304,6 +315,7 @@ class TestHandleNumber:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -326,6 +338,7 @@ class TestHandleNumber:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_number_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -380,6 +393,7 @@ class TestHandleString:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_type):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -403,6 +417,7 @@ class TestHandleString:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid_max_length(format_, expected_type):
         """
         GIVEN artifacts with max_length and given format
@@ -428,6 +443,7 @@ class TestHandleBoolean:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid():
         """
         GIVEN artifacts

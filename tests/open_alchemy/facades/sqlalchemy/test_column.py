@@ -30,6 +30,7 @@ ColArt = types.ColumnArtifacts
     ],
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_mapping(name, expected_value):
     """
     GIVEN name and expected value
@@ -52,6 +53,7 @@ def test_mapping(name, expected_value):
     ids=["integer", "number", "string", "boolean"],
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct(type_, expected_type):
     """
     GIVEN artifacts for a type
@@ -80,6 +82,7 @@ def test_construct(type_, expected_type):
     ],
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_json(type_):
     """
     GIVEN artifacts for a JSON type
@@ -95,6 +98,7 @@ def test_construct_json(type_):
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_foreign_key():
     """
     GIVEN artifacts with foreign key
@@ -115,6 +119,7 @@ def test_construct_foreign_key():
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_foreign_key_kwargs():
     """
     GIVEN artifacts with foreign key and foreign key kwargs
@@ -137,6 +142,7 @@ def test_construct_foreign_key_kwargs():
 
 @pytest.mark.parametrize("nullable", [True, False], ids=["true", "false"])
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_nullable(nullable):
     """
     GIVEN value for nullable
@@ -152,6 +158,7 @@ def test_construct_nullable(nullable):
 
 @pytest.mark.parametrize("default", [None, "value 1"], ids=["not set", "set"])
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_default(default):
     """
     GIVEN artifacts with default value
@@ -169,6 +176,7 @@ def test_construct_default(default):
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_default_type_mapped():
     """
     GIVEN artifacts with a format that requires mapping with default value
@@ -188,6 +196,7 @@ def test_construct_default_type_mapped():
     "primary_key", [False, True, False], ids=["none", "true", "false"]
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_primary_key(primary_key):
     """
     GIVEN value for primary_key
@@ -207,6 +216,7 @@ def test_construct_primary_key(primary_key):
     "autoincrement", ["auto", True, False], ids=["none", "true", "false"]
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_autoincrement(autoincrement):
     """
     GIVEN value for autoincrement
@@ -225,6 +235,7 @@ def test_construct_autoincrement(autoincrement):
 
 @pytest.mark.parametrize("index", [None, True, False], ids=["none", "true", "false"])
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_index(index):
     """
     GIVEN value for index
@@ -242,6 +253,7 @@ def test_construct_index(index):
 
 @pytest.mark.parametrize("unique", [None, True, False], ids=["none", "true", "false"])
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_unique(unique):
     """
     GIVEN value for unique
@@ -258,6 +270,7 @@ def test_construct_unique(unique):
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct_kwargs():
     """
     GIVEN artifacts with kwargs
@@ -280,6 +293,7 @@ class TestDetermineType:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_unsupported():
         """
         GIVEN artifacts with an unsupported type
@@ -302,6 +316,7 @@ class TestDetermineType:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_supported(type_, expected_type):
         """
         GIVEN type
@@ -325,6 +340,7 @@ class TestDetermineType:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_supported_json(type_):
         """
         GIVEN JSON artifacts and type
@@ -347,6 +363,7 @@ class TestHandleInteger:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -369,6 +386,7 @@ class TestHandleInteger:
         ids=["None", "int32", "int64"],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_integer_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -389,6 +407,7 @@ class TestHandleNumber:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_invalid_format():
         """
         GIVEN artifacts with format that is not supported
@@ -407,6 +426,7 @@ class TestHandleNumber:
         ids=["None", "float"],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_number_cls):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -459,6 +479,7 @@ class TestHandleString:
         ],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid(format_, expected_type):
         """
         GIVEN artifacts and expected SQLALchemy type
@@ -478,6 +499,7 @@ class TestHandleString:
         ids=["string", "binary"],
     )
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid_max_length(format_, expected_type):
         """
         GIVEN artifacts with max_length and given format
@@ -502,6 +524,7 @@ class TestHandleBoolean:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid():
         """
         GIVEN artifacts
@@ -522,6 +545,7 @@ class TestHandleJSON:
 
     @staticmethod
     @pytest.mark.facade
+    @pytest.mark.sqlalchemy
     def test_valid():
         """
         GIVEN artifacts

@@ -10,15 +10,6 @@ from ... import types as oa_types
 from . import types
 
 
-class _TOptColumnArgs(oa_types.TypedDict, total=False):
-    """Keyword arguments for Column."""
-
-    primary_key: bool
-    autoincrement: bool
-    index: bool
-    unique: bool
-
-
 def construct(*, artifacts: artifacts_types.SimplePropertyArtifacts) -> types.Column:
     """
     Construct column from artifacts.
@@ -57,7 +48,7 @@ def construct(*, artifacts: artifacts_types.SimplePropertyArtifacts) -> types.Co
     )
 
     # Generate optional keyword arguments
-    opt_kwargs: _TOptColumnArgs = {}
+    opt_kwargs: types.TOptColumnArgs = {}
     if artifacts.extension.primary_key is not None:
         opt_kwargs["primary_key"] = artifacts.extension.primary_key
     if artifacts.extension.autoincrement is not None:

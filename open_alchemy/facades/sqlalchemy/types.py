@@ -2,6 +2,8 @@
 
 import sqlalchemy
 
+from ... import types as oa_types
+
 # Remapping SQLAlchemy classes
 Column = sqlalchemy.Column
 Type = sqlalchemy.sql.type_api.TypeEngine
@@ -15,3 +17,12 @@ Date = sqlalchemy.Date
 DateTime = sqlalchemy.DateTime
 Boolean = sqlalchemy.Boolean
 JSON = sqlalchemy.JSON
+
+
+class TOptColumnArgs(oa_types.TypedDict, total=False):
+    """Keyword arguments for Column."""
+
+    primary_key: bool
+    autoincrement: bool
+    index: bool
+    unique: bool

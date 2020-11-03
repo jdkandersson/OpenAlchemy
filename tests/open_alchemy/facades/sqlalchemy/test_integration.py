@@ -13,6 +13,7 @@ from open_alchemy import types
     "name, expected_value", [("Table", sqlalchemy.Table)], ids=["Table"]
 )
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_mapping(name, expected_value):
     """
     GIVEN name and expected value
@@ -58,6 +59,7 @@ def test_mapping(name, expected_value):
 )
 @pytest.mark.facade
 @pytest.mark.sqlalchemy
+@pytest.mark.sqlalchemy
 def test_construct_relationship_plain(
     artifacts, exp_argument, exp_backref, exp_uselist, exp_secondary
 ):
@@ -79,6 +81,7 @@ def test_construct_relationship_plain(
 
 @pytest.mark.facade
 @pytest.mark.sqlalchemy
+@pytest.mark.sqlalchemy
 def test_construct_relationship_kwargs():
     """
     GIVEN given relationship artifacts with kwargs
@@ -93,13 +96,13 @@ def test_construct_relationship_kwargs():
 
 
 @pytest.mark.facade
+@pytest.mark.sqlalchemy
 def test_construct():
     """
     GIVEN tablename, mock base and 2 columns
     WHEN construct is called with the columns and base
     THEN a table with the correct name, columns and metadata is constructed.
     """
-    # pylint: disable=unsubscriptable-object
     tablename = "association"
     mock_base = mock.MagicMock()
     columns = (
