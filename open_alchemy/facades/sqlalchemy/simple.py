@@ -94,7 +94,7 @@ def _determine_type(
     if artifacts.open_api.type == "string":
         return _handle_string(artifacts=artifacts)
     if artifacts.open_api.type == "boolean":
-        return _handle_boolean(artifacts=artifacts)
+        return _handle_boolean()
 
     raise exceptions.FeatureNotImplementedError(
         f"{artifacts.open_api.type} has not been implemented"
@@ -175,10 +175,7 @@ def _handle_string(
     return types.String(length=artifacts.open_api.max_length)
 
 
-def _handle_boolean(
-    *,
-    artifacts: artifacts_types.SimplePropertyArtifacts,  # pylint: disable=unused-argument
-) -> types.Boolean:
+def _handle_boolean() -> types.Boolean:
     """
     Handle artifacts for an boolean type.
 

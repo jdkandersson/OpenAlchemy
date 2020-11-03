@@ -446,13 +446,10 @@ class TestHandleBoolean:
     @pytest.mark.sqlalchemy
     def test_valid():
         """
-        GIVEN artifacts
-        WHEN _handle_boolean is called with the artifacts
+        GIVEN
+        WHEN _handle_boolean is called
         THEN the boolean type is returned.
         """
-        artifacts = _create_artifacts()
-        artifacts.open_api.type = "boolean"
-
-        boolean = simple._handle_boolean(artifacts=artifacts)
+        boolean = simple._handle_boolean()
 
         assert isinstance(boolean, sqlalchemy.Boolean)
