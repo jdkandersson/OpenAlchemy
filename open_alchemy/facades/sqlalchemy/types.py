@@ -1,6 +1,7 @@
 """SQLAlchemy types."""
 
 import sqlalchemy
+from sqlalchemy import orm
 
 from ... import types as oa_types
 
@@ -17,6 +18,7 @@ Date = sqlalchemy.Date
 DateTime = sqlalchemy.DateTime
 Boolean = sqlalchemy.Boolean
 JSON = sqlalchemy.JSON
+Relationship = orm.RelationshipProperty
 
 
 class TOptColumnArgs(oa_types.TypedDict, total=False):

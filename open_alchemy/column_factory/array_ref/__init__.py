@@ -37,7 +37,9 @@ def handle_array(
     )
 
     # Construct relationship
-    relationship = facades.sqlalchemy.relationship(artifacts=artifacts.relationship)
+    relationship = facades.sqlalchemy.construct_relationship(
+        artifacts=artifacts.relationship
+    )
     # Construct entry for the addition for the model schema
     return_schema = _schema.calculate(artifacts=artifacts)
 

@@ -69,7 +69,7 @@ def test_construct_relationship_plain(
     THEN a relationship with the given expected argument, backref, uselist and secondary
         is returned.
     """
-    relationship = facades.sqlalchemy.relationship(artifacts=artifacts)
+    relationship = facades.sqlalchemy.construct_relationship(artifacts=artifacts)
 
     assert relationship.argument == exp_argument
     if exp_backref is None:
@@ -90,7 +90,7 @@ def test_construct_relationship_kwargs():
     """
     artifacts = types.RelationshipArtifacts("RefModel", kwargs={"order_by": "id"})
 
-    relationship = facades.sqlalchemy.relationship(artifacts=artifacts)
+    relationship = facades.sqlalchemy.construct_relationship(artifacts=artifacts)
 
     assert relationship.order_by == "id"
 

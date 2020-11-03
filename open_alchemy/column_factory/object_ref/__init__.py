@@ -52,5 +52,7 @@ def handle_object(
 
     return_schema = _schema.calculate(artifacts=obj_artifacts)
     # Create relationship
-    relationship = facades.sqlalchemy.relationship(artifacts=obj_artifacts.relationship)
+    relationship = facades.sqlalchemy.construct_relationship(
+        artifacts=obj_artifacts.relationship
+    )
     return ([(logical_name, relationship)], return_schema)

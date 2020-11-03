@@ -13,6 +13,7 @@ from . import column
 from . import json
 from . import object_ref
 from . import read_only
+from . import relationship
 from . import simple
 from . import types
 

@@ -1,4 +1,4 @@
-"""SQLAlchemy simple column generation."""
+"""SQLAlchemy json column generation."""
 
 import typing
 

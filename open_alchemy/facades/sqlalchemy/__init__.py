@@ -10,6 +10,7 @@ from open_alchemy import types as oa_types
 
 from . import column as column
 from . import json as json
+from . import relationship as relationship
 from . import simple as simple
 
 # Mapping from SQLAlchemy
@@ -17,7 +18,7 @@ Table = sqlalchemy.Table
 Relationship = orm.RelationshipProperty
 
 
-def relationship(
+def construct_relationship(
     *, artifacts: oa_types.RelationshipArtifacts
 ) -> orm.RelationshipProperty:
     """
