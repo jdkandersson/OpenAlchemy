@@ -9,6 +9,7 @@ from sqlalchemy import orm
 from open_alchemy import types as oa_types
 
 from . import column as column
+from . import json as json
 from . import simple as simple
 
 # Mapping from SQLAlchemy

@@ -10,6 +10,7 @@ from open_alchemy.schemas.artifacts import property_
 from . import array_ref
 from . import backref
 from . import column
+from . import json
 from . import object_ref
 from . import read_only
 from . import simple
