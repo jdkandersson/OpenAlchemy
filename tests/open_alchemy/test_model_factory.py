@@ -561,7 +561,7 @@ def test_mixin(monkeypatch):
         "Mixin1",
         (),
         {
-            "property_2": sqlalchemy.column.Column(sqlalchemy.column.Integer),
+            "property_2": sqlalchemy.types.Column(sqlalchemy.types.Integer),
             "__abstract__": True,
         },
     )

@@ -9,7 +9,7 @@ from open_alchemy.schemas.artifacts import types as artifact_types
 
 def handle(
     *, artifacts: artifact_types.SimplePropertyArtifacts
-) -> typing.Tuple[facades.sqlalchemy.column.Column, types.ColumnSchema]:
+) -> typing.Tuple[facades.sqlalchemy.types.Column, types.ColumnSchema]:
     """
     Handle a simple column.
 

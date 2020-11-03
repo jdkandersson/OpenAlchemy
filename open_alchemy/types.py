@@ -1,11 +1,10 @@
 """Types shared across modules."""
 
-import dataclasses
 import datetime
 import typing
 
 try:  # pragma: no cover
-    from typing import Literal
+    from typing import Literal  # pylint: disable=unused-import
     from typing import Protocol
     from typing import TypedDict
 except ImportError:  # pragma: no cover
@@ -107,90 +106,6 @@ class ColumnSchema(_ColumnSchemaBase, total=True):
     type: str
 
 
-@dataclasses.dataclass
-class OpenAPiColumnArtifacts:
-    """OpenAPI information required to construct a column."""
-
-    type: str
-    format: typing.Optional[str] = None
-    max_length: typing.Optional[int] = None
-    nullable: bool = True
-    description: typing.Optional[str] = None
-    default: TColumnDefault = None
-    read_only: typing.Optional[bool] = None
-    write_only: typing.Optional[bool] = None
-
-
-@dataclasses.dataclass
-class ExtensionColumnArtifacts:
-    """Extension property information required to construct a column."""
-
-    primary_key: typing.Optional[bool] = None
-    autoincrement: typing.Optional[bool] = None
-    index: typing.Optional[bool] = None
-    unique: typing.Optional[bool] = None
-    json: typing.Optional[bool] = None
-    foreign_key: typing.Optional[str] = None
-    foreign_key_kwargs: TOptKwargs = None
-    kwargs: TOptKwargs = None
-
-
-@dataclasses.dataclass
-class ColumnArtifacts:
-    """Information required to construct a column."""
-
-    open_api: OpenAPiColumnArtifacts
-    extension: ExtensionColumnArtifacts
-
-    def __init__(
-        self,
-        open_api: OpenAPiColumnArtifacts,
-        extension: typing.Optional[ExtensionColumnArtifacts] = None,
-    ) -> None:
-        """Construct."""
-        self.open_api = open_api
-        if extension is None:
-            extension = ExtensionColumnArtifacts()
-        self.extension = extension
-
-
-@dataclasses.dataclass
-class BackReferenceArtifacts:
-    """Information required to construct a back reference."""
-
-    # The property name under which to make the back reference available
-    property_name: str
-    # Whether to use a list
-    uselist: typing.Optional[bool] = None
-
-
-@dataclasses.dataclass
-class RelationshipArtifacts:
-    """Information required to construct a relationship to another model."""
-
-    # The name of the referenced model
-    model_name: str
-    # Information for the optional back reference
-    back_reference: typing.Optional[BackReferenceArtifacts] = None
-    # The name of the optional secondary table to use
-    secondary: typing.Optional[str] = None
-    # Keyword arguments for the relationship construction
-    kwargs: TOptKwargs = None
-
-
-@dataclasses.dataclass
-class ObjectArtifacts:
-    """Artifacts retrieved from object schema."""
-
-    spec: Schema
-    logical_name: str
-    fk_column: str
-    relationship: RelationshipArtifacts
-    nullable: typing.Optional[bool] = None
-    description: typing.Optional[str] = None
-    write_only: typing.Optional[bool] = None
-
-
 _ObjectRefSchemaBase = TypedDict(
     "_ObjectRefSchemaBase", {"type": str, "x-de-$ref": str}, total=True
 )
@@ -217,30 +132,6 @@ class ArrayRefSchema(_ArrayRefSchemaBase, total=True):
 
     type: str
     items: _ObjectRefSchemaBase
-
-
-_ReadOnlySchemaBase = TypedDict("_ReadOnlySchemaBase", {"readOnly": bool}, total=True)
-
-
-class ReadOnlySchemaObjectCommon(TypedDict, total=True):
-    """Base class for object schema."""
-
-    type: Literal["object"]
-    properties: Schema
-
-
-class ReadOnlyObjectSchema(ReadOnlySchemaObjectCommon, _ReadOnlySchemaBase):
-    """Base class for object readOnly schema."""
-
-
-class ReadOnlyArraySchema(_ReadOnlySchemaBase):
-    """Base class for object readOnly schema."""
-
-    type: Literal["array"]
-    items: ReadOnlySchemaObjectCommon
-
-
-ReadOnlySchema = typing.Union[ReadOnlyObjectSchema, ReadOnlyArraySchema]
 
 
 class TNameSchema(typing.NamedTuple):

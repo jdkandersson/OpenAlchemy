@@ -19,11 +19,10 @@ _resolver, (_SCHEMAS, _) = facades.jsonschema.resolver(  # pylint: disable=inval
 def get(
     *,
     source: typing.Union[
-        typing.Dict[str, typing.Any],
+        types.Schema,
         types.ColumnSchema,
         types.ObjectRefSchema,
         types.ArrayRefSchema,
-        types.ReadOnlySchema,
     ],
     name: str,
     default: typing.Optional[typing.Any] = None,
@@ -74,11 +73,10 @@ def get(
 def get_kwargs(
     *,
     source: typing.Union[
-        typing.Dict[str, typing.Any],
+        types.Schema,
         types.ColumnSchema,
         types.ObjectRefSchema,
         types.ArrayRefSchema,
-        types.ReadOnlySchema,
     ],
     reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,

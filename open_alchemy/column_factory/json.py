@@ -9,7 +9,7 @@ from open_alchemy.schemas.artifacts import types as artifact_types
 
 def handle(
     *, artifacts: artifact_types.JsonPropertyArtifacts
-) -> typing.Tuple[facades.sqlalchemy.column.Column, types.Schema]:
+) -> typing.Tuple[facades.sqlalchemy.types.Column, types.Schema]:
     """
     Handle a json column.
 

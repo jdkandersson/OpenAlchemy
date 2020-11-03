@@ -190,7 +190,7 @@ def test_schema():
     # Checking model
     assert model.__tablename__ == "table"
     assert hasattr(model, "column")
-    assert isinstance(model.column.type, facades.sqlalchemy.column.Integer)
+    assert isinstance(model.column.type, facades.sqlalchemy.types.Integer)
 
 
 BASIC_SPEC = {

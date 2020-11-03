@@ -36,7 +36,7 @@ def test_integration_simple(schema, expected_schema):
     )
 
     assert logical_name == "column_1"
-    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
+    assert isinstance(column.type, facades.sqlalchemy.types.Boolean)
     assert returned_schema == expected_schema
 
 
@@ -114,7 +114,7 @@ def test_integration_simple_json(schema, expected_schema):
     )
 
     assert logical_name == "column_1"
-    assert isinstance(column.type, facades.sqlalchemy.column.JSON)
+    assert isinstance(column.type, facades.sqlalchemy.types.JSON)
     assert returned_schema == expected_schema
 
 

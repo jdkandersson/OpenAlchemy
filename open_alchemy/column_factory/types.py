@@ -7,6 +7,8 @@ from open_alchemy import facades
 TReturnValue = typing.List[
     typing.Tuple[
         str,
-        typing.Union[facades.sqlalchemy.column.Column, facades.sqlalchemy.Relationship],
+        typing.Union[
+            facades.sqlalchemy.types.Column, facades.sqlalchemy.types.Relationship
+        ],
     ]
 ]

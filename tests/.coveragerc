@@ -1,5 +1,7 @@
 [run]
-omit = examples/app/app.py
+omit =
+    examples/app/app.py
+    open_alchemy/types.py
 branch = True
 
 [report]
