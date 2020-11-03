@@ -58,6 +58,16 @@ def get(
         )
     properties_names = map(lambda args: args[0], properties_items)
 
+    # Remove extension properties from schema
+    helpers.clean.extension(schema=schema)
+    if sub_type == types.BackrefSubType.ARRAY:  # noqa: E721
+        helpers.clean.extension(schema=schema["items"])
+        for property_schema in schema["items"]["properties"].values():
+            helpers.clean.extension(schema=property_schema)
+    else:
+        for property_schema in schema["properties"].values():
+            helpers.clean.extension(schema=property_schema)
+
     return types.BackrefPropertyArtifacts(
         type=oa_helpers.property_.Type.BACKREF,
         description=description,

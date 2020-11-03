@@ -64,7 +64,7 @@ GET_TESTS = [
     ),
     pytest.param(
         None,
-        {"readOnly": True, "type": "object"},
+        {"readOnly": True, "type": "object", "properties": {}},
         {},
         "type",
         oa_helpers.property_.Type.BACKREF,

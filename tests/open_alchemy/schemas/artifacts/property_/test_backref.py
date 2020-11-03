@@ -9,7 +9,7 @@ import pytest
 from open_alchemy import helpers as oa_helpers
 from open_alchemy.schemas import artifacts
 
-DEFAULT_SCHEMA: typing.Any = {"type": "object"}
+DEFAULT_SCHEMA: typing.Any = {"type": "object", "properties": {}}
 GET_TESTS = [
     pytest.param({**DEFAULT_SCHEMA}, {}, "required", None, id="required"),
     pytest.param(
@@ -28,7 +28,7 @@ GET_TESTS = [
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
-        {"RefSchema": {**DEFAULT_SCHEMA, "type": "array", "items": {}}},
+        {"RefSchema": {**DEFAULT_SCHEMA, "type": "array", "items": {"properties": {}}}},
         "sub_type",
         artifacts.types.BackrefSubType.ARRAY,
         id="$ref sub type array",
@@ -132,6 +132,76 @@ GET_TESTS = [
             "properties": {"prop_1": {"key_1": "value 1"}},
         },
         id="schema",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "x-tablename": "schema",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        {},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        id="schema extension key",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1", "x-autoincrement": True}},
+        },
+        {},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "object",
+            "properties": {"prop_1": {"key_1": "value 1"}},
+        },
+        id="schema property extension key",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "array",
+            "items": {
+                "x-tablename": "schema",
+                "properties": {"prop_1": {"key_1": "value 1"}},
+            },
+        },
+        {},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "array",
+            "items": {
+                "properties": {"prop_1": {"key_1": "value 1"}},
+            },
+        },
+        id="schema array extension key",
+    ),
+    pytest.param(
+        {
+            **DEFAULT_SCHEMA,
+            "type": "array",
+            "items": {
+                "properties": {"prop_1": {"key_1": "value 1", "x-autoincrement": True}},
+            },
+        },
+        {},
+        "schema",
+        {
+            **DEFAULT_SCHEMA,
+            "type": "array",
+            "items": {
+                "properties": {"prop_1": {"key_1": "value 1"}},
+            },
+        },
+        id="schema array properties extension key",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},

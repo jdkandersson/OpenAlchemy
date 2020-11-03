@@ -10,13 +10,10 @@ from open_alchemy import facades
 @pytest.mark.parametrize(
     "schema, expected_schema",
     [
-        pytest.param({"type": "boolean"}, {"type": "boolean"}, id="any basic type"),
-        pytest.param(
-            {"type": "boolean", "readOnly": True},
-            {"type": "boolean", "readOnly": True},
-            id="any basic type with readOnly",
-        ),
+        ({"type": "boolean"}, {"type": "boolean"}),
+        ({"type": "boolean", "readOnly": True}, {"type": "boolean", "readOnly": True}),
     ],
+    ids=["any basic type", "any basic type with readOnly"],
 )
 @pytest.mark.column
 def test_integration_simple(schema, expected_schema):
@@ -27,46 +24,15 @@ def test_integration_simple(schema, expected_schema):
         schema.
     """
     schemas = {}
-    model_schema = {"type": "object"}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema=model_schema,
     )
 
     assert logical_name == "column_1"
     assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
     assert returned_schema == expected_schema
-
-
-@pytest.mark.parametrize(
-    "required, expected_nullable",
-    [
-        pytest.param(None, True, id="None"),
-        pytest.param(False, True, id="False"),
-        pytest.param(True, False, id="True"),
-    ],
-)
-@pytest.mark.column
-def test_integration_simple_required(required, expected_nullable):
-    """
-    GIVEN required and expected nullable
-    WHEN column_factory is called with the required
-    THEN a SQLAlchemy boolean column is returned with the expected nullable value.
-    """
-    schema = {"type": "boolean"}
-    schemas = {}
-    model_schema = {"type": "object"}
-    ([(_, column)], _) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema=model_schema,
-        required=required,
-    )
-
-    assert column.nullable == expected_nullable
 
 
 @pytest.mark.parametrize(
@@ -105,12 +71,10 @@ def test_integration_simple_json(schema, expected_schema):
     THEN a SQLALchemy JSON column and the expected schema are returned.
     """
     schemas = {}
-    model_schema = {"type": "object"}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name="column_1",
-        model_schema=model_schema,
     )
 
     assert logical_name == "column_1"
@@ -127,11 +91,9 @@ def test_integration_kwargs():
     """
     schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
     schemas = {}
-    model_schema = {"type": "object"}
-    ([(_, column)], _) = column_factory.column_factory(
+    ([(_, column)], _) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
-        model_schema=model_schema,
         logical_name="column_1",
     )
 
@@ -139,7 +101,49 @@ def test_integration_kwargs():
 
 
 @pytest.mark.column
-def test_integration_relationship_many_to_one():
+def test_integration_all_of():
+    """
+    GIVEN schema with allOf statement
+    WHEN column_factory is called with the schema
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
+        schema.
+    """
+    schema = {"allOf": [{"type": "boolean"}]}
+    schemas = {}
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+    )
+
+    assert logical_name == "column_1"
+    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
+    assert returned_schema == {"type": "boolean"}
+
+
+@pytest.mark.column
+def test_integration_ref():
+    """
+    GIVEN schema that references another schema and schemas
+    WHEN column_factory is called with the schema and schemas
+    THEN SQLAlchemy boolean column is returned in a dictionary with logical name and
+        the schema.
+    """
+    schema = {"$ref": "#/components/schemas/RefSchema"}
+    schemas = {"RefSchema": {"type": "boolean"}}
+    ([(logical_name, column)], returned_schema) = column_factory.old_column_factory(
+        schema=schema,
+        schemas=schemas,
+        logical_name="column_1",
+    )
+
+    assert logical_name == "column_1"
+    assert isinstance(column.type, facades.sqlalchemy.column.Boolean)
+    assert returned_schema == {"type": "boolean"}
+
+
+@pytest.mark.column
+def test_integration_object_ref():
     """
     GIVEN schema that references another object schema and schemas
     WHEN column_factory is called with the schema and schemas
@@ -153,17 +157,15 @@ def test_integration_relationship_many_to_one():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    model_schema = {"type": "object"}
     logical_name = "ref_schema"
 
     (
         [(tbl_logical_name, relationship)],
         returned_schema,
-    ) = column_factory.column_factory(
+    ) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert tbl_logical_name == logical_name
@@ -189,14 +191,12 @@ def test_integration_object_ref_read_only():
             "readOnly": True,
         }
     }
-    model_schema = {"type": "object"}
     logical_name = "ref_schema"
 
-    ([], returned_schema) = column_factory.column_factory(
+    ([], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert returned_schema == {
@@ -221,17 +221,15 @@ def test_integration_array_ref():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    model_schema = {"type": "object", "x-tablename": "schema"}
     logical_name = "ref_schema"
 
     (
         [(tbl_logical_name, relationship)],
         returned_schema,
-    ) = column_factory.column_factory(
+    ) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert tbl_logical_name == logical_name
@@ -269,14 +267,12 @@ def test_integration_array_ref_read_only():
             "properties": {"id": {"type": "integer"}},
         }
     }
-    model_schema = {"type": "object", "x-tablename": "schema"}
     logical_name = "ref_schema"
 
-    ([], returned_schema) = column_factory.column_factory(
+    ([], returned_schema) = column_factory.old_column_factory(
         schema=schema,
         schemas=schemas,
         logical_name=logical_name,
-        model_schema=model_schema,
     )
 
     assert returned_schema == {
