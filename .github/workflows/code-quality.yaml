@@ -37,7 +37,7 @@ jobs:
           python -m pip install -e .[dev,test]
       - name: Test with pytest
         run: |
-          pytest
+          pytest -v
   staticPython:
     runs-on: ubuntu-latest
     strategy:

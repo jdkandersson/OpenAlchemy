@@ -2,6 +2,7 @@
 # pylint: disable=useless-import-alias
 
 from . import all_of as all_of
+from . import command
 from . import ext_prop as ext_prop
 from . import foreign_key as foreign_key
 from . import inheritance as inheritance

@@ -462,3 +462,11 @@ Examples
    :maxdepth: 3
 
    examples/index
+
+CLI
+---
+
+.. toctree::
+   :maxdepth: 3
+
+   cli

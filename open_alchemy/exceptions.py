@@ -70,3 +70,7 @@ class InheritanceError(BaseError):
 
 class BuildError(BaseError):
     """Raised when an error related to build occurs."""
+
+
+class CLIError(BaseError):
+    """Raised when an error occurs when the CLI is used."""
