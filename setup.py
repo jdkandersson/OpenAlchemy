@@ -41,8 +41,6 @@ setuptools.setup(
         "yaml": ["PyYAML"],
         "wheel": ["wheel"],
         "dev": [
-            "tox",
-            "tox-pyenv",
             "pylint",
             "mypy",
             "pydocstyle",

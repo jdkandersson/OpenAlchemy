@@ -6,7 +6,7 @@ import typing
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 DEFAULT_SCHEMA: typing.Any = {"type": "default type"}
@@ -18,7 +18,7 @@ GET_TESTS = [
         {**DEFAULT_SCHEMA},
         {},
         "type",
-        oa_helpers.property_.Type.SIMPLE,
+        types.PropertyType.SIMPLE,
         id="property type",
     ),
     pytest.param(
@@ -63,6 +63,14 @@ GET_TESTS = [
         "schema",
         {**DEFAULT_SCHEMA},
         id="schema remove extension",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        {},
+        "schema",
+        {**DEFAULT_SCHEMA, "x-dict-ignore": True},
+        id="schema keep x-dict-ignore",
     ),
     pytest.param(
         None,

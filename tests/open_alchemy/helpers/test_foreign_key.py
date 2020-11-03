@@ -2,29 +2,29 @@
 
 import pytest
 
+from open_alchemy import types
 from open_alchemy.helpers import foreign_key
-from open_alchemy.helpers import relationship
 
 
 @pytest.mark.parametrize(
     "type_, schema, schemas, expected_column_name",
     [
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {}},
             "id",
             id="many-to-one not defined",
         ),
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-foreign-key-column": "name"}},
             "name",
             id="many-to-one defined",
         ),
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {
                 "allOf": [
                     {"x-foreign-key-column": "name_1"},
@@ -36,7 +36,7 @@ from open_alchemy.helpers import relationship
             id="many-to-one defined overridden first",
         ),
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {
                 "allOf": [
                     {"$ref": "#/components/schemas/RefSchema"},
@@ -48,35 +48,35 @@ from open_alchemy.helpers import relationship
             id="many-to-one defined overridden second",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-uselist": False}},
             "id",
             id="one-to-one not defined",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"x-foreign-key-column": "name", "x-uselist": False}},
             "name",
             id="one-to-one defined",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {}},
             "id",
             id="one-to-many not defined",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"x-foreign-key-column": "name"}},
             "name",
             id="one-to-many defined",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
             {"RefSchema": {"x-foreign-key-column": "name"}},
             "name",
@@ -102,7 +102,7 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
     "type_, parent_schema, property_schema, schemas, expected_schema",
     [
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {"parent_key": "parent value"},
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -110,7 +110,7 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
             id="one-to-many",
         ),
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {"parent_key": "parent value"},
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -118,7 +118,7 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
             id="one-to-many allOf",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             {"parent_key": "parent value"},
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -126,7 +126,7 @@ def test_calculate_column_name(type_, schema, schemas, expected_column_name):
             id="one-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             {"parent_key": "parent value"},
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -159,7 +159,7 @@ def test_get_target_schema(
     "type_, column_name, property_name, schema, schemas, expected_prop_name",
     [
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             "column_1",
             "prop_1",
             {"$ref": "#/components/schemas/RefSchema"},
@@ -168,7 +168,7 @@ def test_get_target_schema(
             id="many-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             "column_1",
             "prop_1",
             {"$ref": "#/components/schemas/RefSchema"},
@@ -177,7 +177,7 @@ def test_get_target_schema(
             id="one-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "column_1",
             "prop_1",
             {"$ref": "#/components/schemas/RefSchema"},
@@ -186,7 +186,7 @@ def test_get_target_schema(
             id="one-to-many",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "column_1",
             "prop_1",
             {
@@ -200,7 +200,7 @@ def test_get_target_schema(
             id="one-to-many joined table child first",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "column_1",
             "prop_1",
             {
@@ -289,7 +289,7 @@ def test_calculate_foreign_key(target_schema, schemas, expected_key):
     "type_, parent_schema, property_schema, schemas, expected_schema",
     [
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             {"parent_key": "parent value"},
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -297,7 +297,7 @@ def test_calculate_foreign_key(target_schema, schemas, expected_key):
             id="many-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             {"parent_key": "parent value"},
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -305,7 +305,7 @@ def test_calculate_foreign_key(target_schema, schemas, expected_key):
             id="one-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             {"parent_key": "parent value"},
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -338,7 +338,7 @@ def test_get_modify_schema(
     "type_, parent_name, property_schema, schemas, expected_schema",
     [
         pytest.param(
-            relationship.Type.MANY_TO_ONE,
+            types.RelationshipType.MANY_TO_ONE,
             "ParentSchema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -346,7 +346,7 @@ def test_get_modify_schema(
             id="one-to-many",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_ONE,
+            types.RelationshipType.ONE_TO_ONE,
             "ParentSchema",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -354,7 +354,7 @@ def test_get_modify_schema(
             id="one-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "ParentSchema",
             {"items": {"$ref": "#/components/schemas/RefSchema"}},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -362,7 +362,7 @@ def test_get_modify_schema(
             id="many-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "ParentSchema",
             {"allOf": [{"items": {"$ref": "#/components/schemas/RefSchema"}}]},
             {"RefSchema": {"ref_key": "ref value"}},
@@ -370,7 +370,7 @@ def test_get_modify_schema(
             id="allOf many-to-one",
         ),
         pytest.param(
-            relationship.Type.ONE_TO_MANY,
+            types.RelationshipType.ONE_TO_MANY,
             "ParentSchema",
             {"items": {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]}},
             {"RefSchema": {"ref_key": "ref value"}},

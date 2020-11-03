@@ -1,7 +1,7 @@
 """Functions for calculating the type."""
 
-# from open_alchemy import exceptions
 from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 _SIMPLE_TYPE_STRING_FORMAT_MAPPING = {
@@ -40,12 +40,12 @@ def _model_simple_property(
 
 
 _RELATIONSHIP_TYPE_MAPPING = {
-    oa_helpers.relationship.Type.MANY_TO_ONE: lambda parent: f'"T{parent}"',
-    oa_helpers.relationship.Type.ONE_TO_ONE: lambda parent: f'"T{parent}"',
-    oa_helpers.relationship.Type.ONE_TO_MANY: (
+    types.RelationshipType.MANY_TO_ONE: lambda parent: f'"T{parent}"',
+    types.RelationshipType.ONE_TO_ONE: lambda parent: f'"T{parent}"',
+    types.RelationshipType.ONE_TO_MANY: (
         lambda parent: f'typing.Sequence["T{parent}"]'
     ),
-    oa_helpers.relationship.Type.MANY_TO_MANY: (
+    types.RelationshipType.MANY_TO_MANY: (
         lambda parent: f'typing.Sequence["T{parent}"]'
     ),
 }
@@ -58,8 +58,8 @@ def _model_relationship_property(
     type_ = _RELATIONSHIP_TYPE_MAPPING[artifacts.sub_type](artifacts.parent)
 
     if (
-        artifacts.sub_type == oa_helpers.relationship.Type.ONE_TO_MANY
-        or artifacts.sub_type == oa_helpers.relationship.Type.MANY_TO_MANY
+        artifacts.sub_type == types.RelationshipType.ONE_TO_MANY
+        or artifacts.sub_type == types.RelationshipType.MANY_TO_MANY
     ):
         return type_
 
@@ -88,12 +88,12 @@ def model(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str:
         The equivalent Python type.
 
     """
-    assert artifacts.type != oa_helpers.property_.Type.BACKREF
+    assert artifacts.type != types.PropertyType.BACKREF
 
-    if artifacts.type == oa_helpers.property_.Type.SIMPLE:
+    if artifacts.type == types.PropertyType.SIMPLE:
         return _model_simple_property(artifacts=artifacts)
 
-    if artifacts.type == oa_helpers.property_.Type.RELATIONSHIP:
+    if artifacts.type == types.PropertyType.RELATIONSHIP:
         return _model_relationship_property(artifacts=artifacts)
 
     return "typing.Any"
@@ -111,7 +111,7 @@ def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> s
 
     """
     model_type: str
-    if artifacts.type != oa_helpers.property_.Type.BACKREF:
+    if artifacts.type != types.PropertyType.BACKREF:
         # Calculate type the same way as for the model
         model_type = model(artifacts=artifacts)
     else:
@@ -122,16 +122,16 @@ def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> s
             model_type = f"typing.Sequence[{inner_type}]"
 
     # No more checks if JSON
-    if artifacts.type == oa_helpers.property_.Type.JSON:
+    if artifacts.type == types.PropertyType.JSON:
         return model_type
 
     # Modify the type in case of a relationship
-    if artifacts.type == oa_helpers.property_.Type.RELATIONSHIP:
+    if artifacts.type == types.PropertyType.RELATIONSHIP:
         model_type = model_type.replace(
             f"T{artifacts.parent}", f"{artifacts.parent}Dict"
         )
 
-    if artifacts.type == oa_helpers.property_.Type.SIMPLE:
+    if artifacts.type == types.PropertyType.SIMPLE:
         # Revert back to str for binary, date and date-time
         if artifacts.open_api.format == "binary":
             model_type = model_type.replace("bytes", "str")
@@ -156,12 +156,12 @@ def arg_init(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> str
         The equivalent Python type for the argument for the column.
 
     """
-    assert artifacts.type != oa_helpers.property_.Type.BACKREF
+    assert artifacts.type != types.PropertyType.BACKREF
 
     model_type = model(artifacts=artifacts)
 
     # If has a default value, remove optional
-    if artifacts.type == oa_helpers.property_.Type.SIMPLE:
+    if artifacts.type == types.PropertyType.SIMPLE:
         if artifacts.open_api.default is not None:
             if not model_type.startswith("typing.Optional["):
                 return model_type
@@ -186,17 +186,17 @@ def arg_from_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -
         The equivalent Python type for the argument for the column.
 
     """
-    assert artifacts.type != oa_helpers.property_.Type.BACKREF
+    assert artifacts.type != types.PropertyType.BACKREF
 
     # Calculate type the same way as for the model
     init_type = arg_init(artifacts=artifacts)
 
     # No more checks if JSON
-    if artifacts.type == oa_helpers.property_.Type.JSON:
+    if artifacts.type == types.PropertyType.JSON:
         return init_type
 
     # Modify the type in case of relationship
-    if artifacts.type == oa_helpers.property_.Type.RELATIONSHIP:
+    if artifacts.type == types.PropertyType.RELATIONSHIP:
         init_type = init_type.replace(f"T{artifacts.parent}", f"{artifacts.parent}Dict")
 
     return init_type

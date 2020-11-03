@@ -49,7 +49,7 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
         for property_name, property_schema in properties:
             # Skip properties that are not many-to-many relationships
             is_many_to_many = oa_helpers.relationship.is_relationship_type(
-                type_=oa_helpers.relationship.Type.MANY_TO_MANY,
+                type_=oa_types.RelationshipType.MANY_TO_MANY,
                 schema=property_schema,
                 schemas=schemas,
             )

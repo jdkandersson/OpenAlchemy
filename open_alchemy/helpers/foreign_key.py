@@ -7,7 +7,10 @@ from . import relationship
 
 
 def calculate_column_name(
-    *, type_: relationship.Type, property_schema: types.Schema, schemas: types.Schemas
+    *,
+    type_: types.RelationshipType,
+    property_schema: types.Schema,
+    schemas: types.Schemas,
 ) -> str:
     """
     Calculate the column name based on the relationship property schema.
@@ -24,9 +27,9 @@ def calculate_column_name(
         The name of the foreign key column.
 
     """
-    assert type_ != relationship.Type.MANY_TO_MANY
+    assert type_ != types.RelationshipType.MANY_TO_MANY
 
-    if type_ == relationship.Type.ONE_TO_MANY:
+    if type_ == types.RelationshipType.ONE_TO_MANY:
         items_schema = peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
         property_schema = items_schema
@@ -39,7 +42,7 @@ def calculate_column_name(
 
 def get_target_schema(
     *,
-    type_: relationship.Type,
+    type_: types.RelationshipType,
     parent_schema: types.Schema,
     property_schema: types.Schema,
     schemas: types.Schemas,
@@ -60,9 +63,9 @@ def get_target_schema(
         The schema that is the target of the foreign key.
 
     """
-    assert type_ != relationship.Type.MANY_TO_MANY
+    assert type_ != types.RelationshipType.MANY_TO_MANY
 
-    if type_ == relationship.Type.ONE_TO_MANY:
+    if type_ == types.RelationshipType.ONE_TO_MANY:
         return parent_schema
 
     ref = peek.ref(schema=property_schema, schemas=schemas)
@@ -73,7 +76,7 @@ def get_target_schema(
 
 def calculate_prop_name(
     *,
-    type_: relationship.Type,
+    type_: types.RelationshipType,
     column_name: str,
     property_name: str,
     target_schema: types.Schema,
@@ -100,9 +103,9 @@ def calculate_prop_name(
         The name of the foreign key property.
 
     """
-    assert type_ != relationship.Type.MANY_TO_MANY
+    assert type_ != types.RelationshipType.MANY_TO_MANY
 
-    if type_ == relationship.Type.ONE_TO_MANY:
+    if type_ == types.RelationshipType.ONE_TO_MANY:
         tablename = peek.prefer_local(
             get_value=peek.tablename, schema=target_schema, schemas=schemas
         )
@@ -140,7 +143,7 @@ def calculate_foreign_key(
 
 def get_modify_schema(
     *,
-    type_: relationship.Type,
+    type_: types.RelationshipType,
     parent_schema: types.Schema,
     property_schema: types.Schema,
     schemas: types.Schemas,
@@ -161,9 +164,9 @@ def get_modify_schema(
         The schema the foreign key needs to be defined on.
 
     """
-    assert type_ != relationship.Type.MANY_TO_MANY
+    assert type_ != types.RelationshipType.MANY_TO_MANY
 
-    if type_ == relationship.Type.ONE_TO_MANY:
+    if type_ == types.RelationshipType.ONE_TO_MANY:
         _, ref_schema = relationship.get_ref_schema_many_to_x(
             property_schema=property_schema, schemas=schemas
         )
@@ -174,7 +177,7 @@ def get_modify_schema(
 
 def get_modify_name(
     *,
-    type_: relationship.Type,
+    type_: types.RelationshipType,
     parent_name: str,
     property_schema: types.Schema,
     schemas: types.Schemas,
@@ -195,9 +198,9 @@ def get_modify_name(
         The schema the foreign key needs to be defined on.
 
     """
-    assert type_ != relationship.Type.MANY_TO_MANY
+    assert type_ != types.RelationshipType.MANY_TO_MANY
 
-    if type_ == relationship.Type.ONE_TO_MANY:
+    if type_ == types.RelationshipType.ONE_TO_MANY:
         ref_name, _ = relationship.get_ref_schema_many_to_x(
             property_schema=property_schema, schemas=schemas
         )

@@ -1,19 +1,15 @@
 """Validation for properties."""
 
-import enum
-import typing
-
 from .... import exceptions
 from .... import helpers as oa_helpers
 from .... import types as oa_types
-from ... import helpers
 from .. import types
 from . import backref
 from . import json
 from . import relationship
 from . import simple
 
-Type = oa_helpers.property_.Type
+Type = oa_types.PropertyType
 
 
 def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:

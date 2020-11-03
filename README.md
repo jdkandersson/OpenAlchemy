@@ -171,7 +171,7 @@ python -m pip install -e .[dev,test]
 To run tests:
 
 ```bash
-tox
+pytest
 ```
 
 Make your changes and raise a pull request.

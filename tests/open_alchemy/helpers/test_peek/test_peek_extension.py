@@ -115,7 +115,11 @@ def test_primary_key_wrong_type():
 
 @pytest.mark.parametrize(
     "schema, expected_primary_key",
-    [({}, False), ({"x-primary-key": False}, False), ({"x-primary-key": True}, True)],
+    [
+        pytest.param({}, None, id="missing"),
+        pytest.param({"x-primary-key": False}, False, id="False"),
+        pytest.param({"x-primary-key": True}, True, id="True"),
+    ],
     ids=["missing", "false", "true"],
 )
 @pytest.mark.helper

@@ -4,7 +4,7 @@ import functools
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 GET_TESTS = [
@@ -31,7 +31,7 @@ GET_TESTS = [
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         "type",
-        helpers.property_.Type.RELATIONSHIP,
+        types.PropertyType.RELATIONSHIP,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
         id="property type",
     ),
@@ -40,7 +40,7 @@ GET_TESTS = [
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         "sub_type",
-        helpers.relationship.Type.MANY_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
         artifacts.types.ManyToOneRelationshipPropertyArtifacts,
         id="sub type many-to-one",
     ),
@@ -55,7 +55,7 @@ GET_TESTS = [
             }
         },
         "sub_type",
-        helpers.relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
         artifacts.types.OneToOneRelationshipPropertyArtifacts,
         id="sub type one-to-one",
     ),
@@ -64,7 +64,7 @@ GET_TESTS = [
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         "sub_type",
-        helpers.relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         artifacts.types.OneToManyRelationshipPropertyArtifacts,
         id="sub type one-to-many",
     ),
@@ -79,7 +79,7 @@ GET_TESTS = [
             }
         },
         "sub_type",
-        helpers.relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         artifacts.types.ManyToManyRelationshipPropertyArtifacts,
         id="sub type many-to-many",
     ),

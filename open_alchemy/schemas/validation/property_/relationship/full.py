@@ -378,17 +378,17 @@ def _check_backref_property_properties(
 
 
 _BACKREF_EXPECTED_TYPE = {
-    oa_helpers.relationship.Type.MANY_TO_ONE: "array",
-    oa_helpers.relationship.Type.ONE_TO_ONE: "object",
-    oa_helpers.relationship.Type.ONE_TO_MANY: "object",
-    oa_helpers.relationship.Type.MANY_TO_MANY: "array",
+    oa_types.RelationshipType.MANY_TO_ONE: "array",
+    oa_types.RelationshipType.ONE_TO_ONE: "object",
+    oa_types.RelationshipType.ONE_TO_MANY: "object",
+    oa_types.RelationshipType.MANY_TO_MANY: "array",
 }
 
 
 def _check_backref_property(
     parent_schema: oa_types.Schema,
     property_name: str,
-    relationship_type: oa_helpers.relationship.Type,
+    relationship_type: oa_types.RelationshipType,
     backref_property_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
 ) -> types.OptResult:
@@ -414,8 +414,8 @@ def _check_backref_property(
 
     # Check the properties
     if relationship_type in {
-        oa_helpers.relationship.Type.MANY_TO_ONE,
-        oa_helpers.relationship.Type.MANY_TO_MANY,
+        oa_types.RelationshipType.MANY_TO_ONE,
+        oa_types.RelationshipType.MANY_TO_MANY,
     }:
         items_schema = oa_helpers.peek.items(
             schema=backref_property_schema, schemas=schemas
@@ -447,7 +447,7 @@ def _check_backref_property(
 def _check_backref(
     parent_schema: oa_types.Schema,
     property_name: str,
-    relationship_type: oa_helpers.relationship.Type,
+    relationship_type: oa_types.RelationshipType,
     property_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
 ) -> types.OptResult:
@@ -484,8 +484,8 @@ def _check_backref(
     # Get the object schema
     object_schema: oa_types.Schema
     if relationship_type in {
-        oa_helpers.relationship.Type.ONE_TO_MANY,
-        oa_helpers.relationship.Type.MANY_TO_MANY,
+        oa_types.RelationshipType.ONE_TO_MANY,
+        oa_types.RelationshipType.MANY_TO_MANY,
     }:
         items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
@@ -562,9 +562,9 @@ def check(
         )
 
         if type_ in {
-            oa_helpers.relationship.Type.MANY_TO_ONE,
-            oa_helpers.relationship.Type.ONE_TO_ONE,
-            oa_helpers.relationship.Type.ONE_TO_MANY,
+            oa_types.RelationshipType.MANY_TO_ONE,
+            oa_types.RelationshipType.ONE_TO_ONE,
+            oa_types.RelationshipType.ONE_TO_MANY,
         }:
             # Retrieve information required to check x-to-one and one-to-many
             # relationships

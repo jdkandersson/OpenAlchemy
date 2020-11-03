@@ -5,22 +5,27 @@ import functools
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
+from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
 GET_TESTS = [
     pytest.param(True, {}, {}, "required", True, id="required True"),
     pytest.param(False, {}, {}, "required", False, id="required False"),
+    pytest.param(None, {}, {}, "type", types.PropertyType.JSON, id="property type"),
     pytest.param(
-        None, {}, {}, "type", oa_helpers.property_.Type.JSON, id="property type"
+        None,
+        {"key": "value"},
+        {},
+        "schema",
+        {"key": "value", "x-json": True},
+        id="schema",
     ),
-    pytest.param(None, {"key": "value"}, {}, "schema", {"key": "value"}, id="schema"),
     pytest.param(
         None,
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"key": "value"}},
         "schema",
-        {"key": "value"},
+        {"key": "value", "x-json": True},
         id="$ref schema",
     ),
     pytest.param(
@@ -28,15 +33,15 @@ GET_TESTS = [
         {"allOf": [{"key": "value"}]},
         {},
         "schema",
-        {"key": "value"},
-        id="schema",
+        {"key": "value", "x-json": True},
+        id="allOf schema",
     ),
     pytest.param(
         None,
         {"properties": {"prop_1": {"$ref": "#/components/schemas/RefSchema"}}},
         {"RefSchema": {"key": "value"}},
         "schema",
-        {"properties": {"prop_1": {"key": "value"}}},
+        {"properties": {"prop_1": {"key": "value"}}, "x-json": True},
         id="$ref schema deep",
     ),
     pytest.param(
@@ -51,7 +56,7 @@ GET_TESTS = [
         },
         {},
         "schema",
-        {},
+        {"x-json": True},
         id="schema remove extension",
     ),
     pytest.param(None, {}, {}, "open_api.nullable", None, id="nullable undefined"),

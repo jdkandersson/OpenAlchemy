@@ -54,6 +54,7 @@ def model_factory(
             schema=prop_spec,
             schemas=schemas,
             logical_name=prop_name,
+            model_schema=schema,
             required=prop_name in required_set if required_exists else None,
         )
         model_class_vars.append(prop_class_vars)

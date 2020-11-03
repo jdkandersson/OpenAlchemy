@@ -90,9 +90,11 @@ def get(
         schema_artifact["readOnly"] = read_only
     if write_only is not None:
         schema_artifact["writeOnly"] = write_only
+    if dict_ignore is not None:
+        schema_artifact["x-dict-ignore"] = dict_ignore
 
     return types.SimplePropertyArtifacts(
-        type=oa_helpers.property_.Type.SIMPLE,
+        type=oa_types.PropertyType.SIMPLE,
         description=description,
         schema=schema_artifact,
         required=required,
@@ -106,7 +108,7 @@ def get(
             write_only=write_only,
         ),
         extension=types.ExtensionSimplePropertyArtifacts(
-            primary_key=primary_key,
+            primary_key=primary_key is True,
             autoincrement=autoincrement,
             index=index,
             unique=unique,

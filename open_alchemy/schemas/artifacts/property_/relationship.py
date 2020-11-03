@@ -78,7 +78,7 @@ def _get_description(
 
 def _get_foreign_key(
     *,
-    relationship_type: oa_helpers.relationship.Type,
+    relationship_type: oa_types.RelationshipType,
     schema: oa_types.Schema,
     parent_schema: oa_types.Schema,
     schemas: oa_types.Schemas
@@ -104,7 +104,7 @@ def _get_foreign_key(
 
 def _get_foreign_key_property(
     *,
-    relationship_type: oa_helpers.relationship.Type,
+    relationship_type: oa_types.RelationshipType,
     schema: oa_types.Schema,
     property_name: str,
     parent_schema: oa_types.Schema,
@@ -161,12 +161,12 @@ def _get_many_to_one(
 
     """
     sub_type: oa_types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_ONE
-    ] = oa_helpers.relationship.Type.MANY_TO_ONE
+        oa_types.RelationshipType.MANY_TO_ONE
+    ] = oa_types.RelationshipType.MANY_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.ManyToOneRelationshipPropertyArtifacts(
-        type=oa_helpers.property_.Type.RELATIONSHIP,
+        type=oa_types.PropertyType.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -215,12 +215,12 @@ def _get_one_to_one(
 
     """
     sub_type: oa_types.Literal[
-        oa_helpers.relationship.Type.ONE_TO_ONE
-    ] = oa_helpers.relationship.Type.ONE_TO_ONE
+        oa_types.RelationshipType.ONE_TO_ONE
+    ] = oa_types.RelationshipType.ONE_TO_ONE
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.OneToOneRelationshipPropertyArtifacts(
-        type=oa_helpers.property_.Type.RELATIONSHIP,
+        type=oa_types.PropertyType.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_x_to_one_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -288,15 +288,15 @@ def _get_one_to_many(
 
     """
     sub_type: oa_types.Literal[
-        oa_helpers.relationship.Type.ONE_TO_MANY
-    ] = oa_helpers.relationship.Type.ONE_TO_MANY
+        oa_types.RelationshipType.ONE_TO_MANY
+    ] = oa_types.RelationshipType.ONE_TO_MANY
     items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
     parent = _get_parent(schema=items_schema, schemas=schemas)
 
     return types.OneToManyRelationshipPropertyArtifacts(
-        type=oa_helpers.property_.Type.RELATIONSHIP,
+        type=oa_types.PropertyType.RELATIONSHIP,
         sub_type=sub_type,
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
@@ -353,8 +353,8 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_
     parent = _get_parent(schema=items_schema, schemas=schemas)
 
     return types.ManyToManyRelationshipPropertyArtifacts(
-        type=oa_helpers.property_.Type.RELATIONSHIP,
-        sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+        type=oa_types.PropertyType.RELATIONSHIP,
+        sub_type=oa_types.RelationshipType.MANY_TO_MANY,
         schema=_calculate_one_to_x_schema(
             parent=parent, schema=schema, schemas=schemas
         ),
@@ -368,11 +368,11 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_
     )
 
 
-_GET_MAPPING: typing.Dict[oa_helpers.relationship.Type, typing.Callable] = {
-    oa_helpers.relationship.Type.MANY_TO_ONE: _get_many_to_one,
-    oa_helpers.relationship.Type.ONE_TO_ONE: _get_one_to_one,
-    oa_helpers.relationship.Type.ONE_TO_MANY: _get_one_to_many,
-    oa_helpers.relationship.Type.MANY_TO_MANY: _get_many_to_many,
+_GET_MAPPING: typing.Dict[oa_types.RelationshipType, typing.Callable] = {
+    oa_types.RelationshipType.MANY_TO_ONE: _get_many_to_one,
+    oa_types.RelationshipType.ONE_TO_ONE: _get_one_to_one,
+    oa_types.RelationshipType.ONE_TO_MANY: _get_one_to_many,
+    oa_types.RelationshipType.MANY_TO_MANY: _get_many_to_many,
 }
 
 

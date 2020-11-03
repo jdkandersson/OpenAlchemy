@@ -112,6 +112,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
         schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
+        model_schema=model_schema,
         required=None,
     )
 
@@ -140,6 +141,7 @@ def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
         schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
+        model_schema=model_schema,
         required=False,
     )
 
@@ -168,6 +170,7 @@ def test_single_property_required(mocked_column_factory: mock.MagicMock):
         schema={"type": "integer"},
         schemas=schemas,
         logical_name="id",
+        model_schema=model_schema,
         required=True,
     )
 
@@ -261,7 +264,7 @@ def test_inherits():
 @pytest.mark.parametrize(
     "schemas, expected_schema",
     [
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -272,8 +275,9 @@ def test_inherits():
                 }
             },
             {"type": "object", "properties": {}},
+            id="single x-dict-ignore true",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -284,8 +288,9 @@ def test_inherits():
                 }
             },
             {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            id="single x-dict-ignore false",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -294,8 +299,9 @@ def test_inherits():
                 }
             },
             {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            id="single no required, backrefs",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -309,8 +315,9 @@ def test_inherits():
                 "properties": {"property_1": {"type": "integer"}},
                 "required": ["property_1"],
             },
+            id="single required",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -328,8 +335,9 @@ def test_inherits():
                     "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
                 },
             },
+            id="single x-backrefs",
         ),
-        (
+        pytest.param(
             {
                 "RefSchema": {"type": "integer"},
                 "Schema": {
@@ -341,8 +349,9 @@ def test_inherits():
                 },
             },
             {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            id="single ref",
         ),
-        (
+        pytest.param(
             {
                 "RefSchema": {
                     "x-tablename": "table 2",
@@ -363,8 +372,9 @@ def test_inherits():
                     "property_1": {"type": "object", "x-de-$ref": "RefSchema"}
                 },
             },
+            id="single ref object",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -373,8 +383,9 @@ def test_inherits():
                 }
             },
             {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            id="single allOf",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -388,8 +399,9 @@ def test_inherits():
                 "properties": {"property_1": {"type": "integer"}},
                 "description": "",
             },
+            id="single description empty",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -403,8 +415,9 @@ def test_inherits():
                 "properties": {"property_1": {"type": "integer"}},
                 "description": "description 1",
             },
+            id="single description",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "x-tablename": "table 1",
@@ -422,8 +435,9 @@ def test_inherits():
                     "property_2": {"type": "string"},
                 },
             },
+            id="multiple properties",
         ),
-        (
+        pytest.param(
             {
                 "Schema": {
                     "allOf": [
@@ -446,21 +460,8 @@ def test_inherits():
                 "properties": {"property_2": {"type": "string"}},
                 "x-inherits": "Parent",
             },
+            id="x-inherits",
         ),
-    ],
-    ids=[
-        "single x-dict-ignore true",
-        "single x-dict-ignore false",
-        "single no required, backrefs",
-        "single required",
-        "single x-backrefs",
-        "single ref",
-        "single ref object",
-        "single allOf",
-        "single description empty",
-        "single description",
-        "multiple properties",
-        "x-inherits",
     ],
 )
 @pytest.mark.model
@@ -560,7 +561,7 @@ def test_mixin(monkeypatch):
         "Mixin1",
         (),
         {
-            "property_2": sqlalchemy.column.Column(sqlalchemy.column.Integer),
+            "property_2": sqlalchemy.types.Column(sqlalchemy.types.Integer),
             "__abstract__": True,
         },
     )

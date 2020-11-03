@@ -259,7 +259,9 @@ def description(
     return value
 
 
-def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
+def primary_key(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[bool]:
     """
     Determine whether property schema is for a primary key.
 
@@ -275,7 +277,7 @@ def primary_key(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     """
     value = peek_key(schema=schema, schemas=schemas, key="x-primary-key")
     if value is None:
-        return False
+        return None
     if not isinstance(value, bool):
         raise exceptions.MalformedSchemaError(
             "The x-primary-key property must be of type boolean."
