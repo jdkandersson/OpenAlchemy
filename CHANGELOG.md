@@ -24,6 +24,7 @@
 - Add check enforcing unique `x-secondary` values.
 - Add custom association schemas validation
 - Add support for custom association tables
+- Refactor column factory to use the schemas artifacts
 
 ## Version 1.5.4 - 2020-10-10
 
