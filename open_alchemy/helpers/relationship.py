@@ -1,6 +1,5 @@
 """Helper functions for relationships."""
 
-import enum
 import typing
 
 from .. import types
@@ -9,17 +8,9 @@ from . import property_
 from . import ref
 
 
-@enum.unique
-class Type(str, enum.Enum):
-    """The relationship type."""
-
-    MANY_TO_ONE = "MANY_TO_ONE"
-    ONE_TO_ONE = "ONE_TO_ONE"
-    ONE_TO_MANY = "ONE_TO_MANY"
-    MANY_TO_MANY = "MANY_TO_MANY"
-
-
-def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:
+def calculate_type(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> types.RelationshipType:
     """
     Calculate the type of the relationship the schema defines.
 
@@ -44,16 +35,16 @@ def calculate_type(*, schema: types.Schema, schemas: types.Schemas) -> Type:
             get_value=peek.uselist, schema=schema, schemas=schemas
         )
         if uselist is False:
-            return Type.ONE_TO_ONE
-        return Type.MANY_TO_ONE
+            return types.RelationshipType.ONE_TO_ONE
+        return types.RelationshipType.MANY_TO_ONE
 
     # Retrieve the items schema
     items_schema = peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
     secondary = peek.secondary(schema=items_schema, schemas=schemas)
     if secondary is not None:
-        return Type.MANY_TO_MANY
-    return Type.ONE_TO_MANY
+        return types.RelationshipType.MANY_TO_MANY
+    return types.RelationshipType.ONE_TO_MANY
 
 
 def get_ref_schema_many_to_x(
@@ -81,7 +72,7 @@ def get_ref_schema_many_to_x(
 
 
 def is_relationship_type(
-    *, type_: Type, schema: types.Schema, schemas: types.Schemas
+    *, type_: types.RelationshipType, schema: types.Schema, schemas: types.Schemas
 ) -> bool:
     """
     Check whether a property is a relationship of a particular type.

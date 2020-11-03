@@ -4,7 +4,6 @@ import dataclasses
 import enum
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types
 
 TMixins = typing.List[str]
@@ -352,10 +351,10 @@ class RelationshipPropertyArtifacts(PropertyArtifacts):
 
     type: types.Literal[types.PropertyType.RELATIONSHIP]
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_ONE,
-        oa_helpers.relationship.Type.ONE_TO_ONE,
-        oa_helpers.relationship.Type.ONE_TO_MANY,
-        oa_helpers.relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
     ]
     parent: str
     backref_property: typing.Optional[str]
@@ -370,9 +369,9 @@ class NotManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a relationship that is not many-to-many property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_ONE,
-        oa_helpers.relationship.Type.ONE_TO_ONE,
-        oa_helpers.relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.MANY_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_MANY,
     ]
     foreign_key: str
     foreign_key_property: str
@@ -408,7 +407,7 @@ class OneToManyRelationshipPropertyArtifacts(
     """Information about a one-to-many relationship property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
     ]
     schema: types.ArrayRefSchema
 
@@ -471,8 +470,8 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
     """Information about a x-to-one relationship property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_ONE,
-        oa_helpers.relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
     ]
     schema: types.ObjectRefSchema
     nullable: typing.Optional[bool]
@@ -522,7 +521,7 @@ class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts
     """Information about a many-to-one relationship property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
     ]
 
     def to_dict(  # pylint: disable=useless-super-delegation
@@ -540,7 +539,7 @@ class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts)
     """Information about a one-to-one relationship property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
     ]
 
     def to_dict(  # pylint: disable=useless-super-delegation
@@ -577,7 +576,7 @@ class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a x-to-one relationship property."""
 
     sub_type: types.Literal[
-        oa_helpers.relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
     ]
     secondary: str
     schema: types.ArrayRefSchema

@@ -4,7 +4,6 @@
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
 from open_alchemy import models_file
 from open_alchemy import types
 from open_alchemy.schemas import artifacts as schemas_artifacts
@@ -85,7 +84,7 @@ def _construct_relationship_property_artifacts():
     return schemas_artifacts.types.ManyToOneRelationshipPropertyArtifacts(
         type=types.PropertyType.RELATIONSHIP,
         schema={},  # type: ignore
-        sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="RefModel",
         backref_property=None,
         kwargs=None,

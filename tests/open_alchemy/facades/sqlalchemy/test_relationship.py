@@ -3,7 +3,6 @@
 
 import pytest
 
-from open_alchemy import helpers
 from open_alchemy import types
 from open_alchemy.facades.sqlalchemy import relationship
 from open_alchemy.schemas.artifacts import types as artifacts_types
@@ -22,7 +21,7 @@ def test_construct_many_to_one():
         schema={},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="Parent",
         backref_property=None,
         kwargs=None,
@@ -52,7 +51,7 @@ def test_construct_many_to_one_backref():
         schema={},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="Parent",
         backref_property="prop_1",
         kwargs=None,
@@ -80,7 +79,7 @@ def test_construct_many_to_one_kwargs():
         schema={},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="Parent",
         backref_property=None,
         kwargs={"order_by": "id"},
@@ -108,7 +107,7 @@ def test_construct_one_to_one_backref():
         schema={},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.ONE_TO_ONE,
+        sub_type=types.RelationshipType.ONE_TO_ONE,
         parent="Parent",
         backref_property="prop_1",
         kwargs=None,
@@ -136,7 +135,7 @@ def test_construct_many_to_many():
         schema={},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.MANY_TO_MANY,
+        sub_type=types.RelationshipType.MANY_TO_MANY,
         parent="Parent",
         backref_property=None,
         kwargs=None,

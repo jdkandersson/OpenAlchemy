@@ -4,7 +4,7 @@ import typing
 
 from sqlalchemy import orm
 
-from open_alchemy import helpers
+from open_alchemy import types as oa_types
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
 from . import types
@@ -28,7 +28,7 @@ def construct(
     if artifacts.backref_property is not None:
         # Calculate uselist
         uselist: typing.Optional[bool] = None
-        if artifacts.sub_type == helpers.relationship.Type.ONE_TO_ONE:
+        if artifacts.sub_type == oa_types.RelationshipType.ONE_TO_ONE:
             uselist = False
 
         backref = orm.backref(
@@ -38,7 +38,7 @@ def construct(
 
     # Calculate secondary
     secondary: typing.Optional[str] = None
-    if artifacts.sub_type == helpers.relationship.Type.MANY_TO_MANY:
+    if artifacts.sub_type == oa_types.RelationshipType.MANY_TO_MANY:
         secondary = artifacts.secondary
 
     # Construct kwargs

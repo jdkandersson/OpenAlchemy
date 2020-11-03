@@ -2,7 +2,6 @@
 
 import pytest
 
-from open_alchemy import helpers
 from open_alchemy import types
 from open_alchemy.column_factory import relationship
 from open_alchemy.schemas.artifacts import types as artifacts_types
@@ -20,7 +19,7 @@ def test_handle():
         schema={"key": "value"},
         required=False,
         description=None,
-        sub_type=helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="Parent",
         backref_property=None,
         kwargs=None,

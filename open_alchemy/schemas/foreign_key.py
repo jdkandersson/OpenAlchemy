@@ -35,7 +35,7 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
     relationship_type = oa_helpers.relationship.calculate_type(
         schema=schema, schemas=schemas
     )
-    if relationship_type == oa_helpers.relationship.Type.MANY_TO_MANY:
+    if relationship_type == types.RelationshipType.MANY_TO_MANY:
         return False
     return True
 
@@ -137,7 +137,7 @@ def _calculate_foreign_key_property_artifacts(
     relationship_type = oa_helpers.relationship.calculate_type(
         schema=property_schema, schemas=schemas
     )
-    assert relationship_type != oa_helpers.relationship.Type.MANY_TO_MANY
+    assert relationship_type != types.RelationshipType.MANY_TO_MANY
 
     column_name = oa_helpers.foreign_key.calculate_column_name(
         type_=relationship_type,
@@ -161,7 +161,7 @@ def _calculate_foreign_key_property_artifacts(
 
     # Check whether the property is required
     required: typing.Optional[bool] = None
-    if relationship_type != oa_helpers.relationship.Type.ONE_TO_MANY:
+    if relationship_type != types.RelationshipType.ONE_TO_MANY:
         required_items = helpers.iterate.required_items(
             schema=parent_schema, schemas=schemas
         )
@@ -171,7 +171,7 @@ def _calculate_foreign_key_property_artifacts(
     relationship_type = oa_helpers.relationship.calculate_type(
         schema=property_schema, schemas=schemas
     )
-    if relationship_type != oa_helpers.relationship.Type.ONE_TO_MANY:
+    if relationship_type != types.RelationshipType.ONE_TO_MANY:
         nullable = oa_helpers.peek.nullable(schema=property_schema, schemas=schemas)
     default = oa_helpers.peek.default(schema=foreign_key_target_schema, schemas=schemas)
     nullable = oa_helpers.calculate_nullable(

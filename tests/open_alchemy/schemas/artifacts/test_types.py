@@ -2,7 +2,6 @@
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
 from open_alchemy import types
 from open_alchemy.schemas import artifacts
 
@@ -306,7 +305,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
                 },
-                sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
+                sub_type=types.RelationshipType.ONE_TO_MANY,
                 parent="parent 1",
                 backref_property=None,
                 kwargs=None,
@@ -337,7 +336,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
                 },
-                sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
+                sub_type=types.RelationshipType.ONE_TO_MANY,
                 parent="parent 1",
                 backref_property="backref 1",
                 kwargs={"key_": "value"},
@@ -369,7 +368,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.ManyToOneRelationshipPropertyArtifacts(
                 type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
-                sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+                sub_type=types.RelationshipType.MANY_TO_ONE,
                 parent="parent 1",
                 backref_property=None,
                 kwargs=None,
@@ -395,7 +394,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.ManyToOneRelationshipPropertyArtifacts(
                 type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
-                sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+                sub_type=types.RelationshipType.MANY_TO_ONE,
                 parent="parent 1",
                 backref_property="backref 1",
                 kwargs={"key_": "value"},
@@ -426,7 +425,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.OneToOneRelationshipPropertyArtifacts(
                 type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
-                sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
+                sub_type=types.RelationshipType.ONE_TO_ONE,
                 parent="parent 1",
                 backref_property=None,
                 kwargs=None,
@@ -452,7 +451,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
             artifacts.types.OneToOneRelationshipPropertyArtifacts(
                 type=types.PropertyType.RELATIONSHIP,
                 schema={"type": "object", "x-de-$ref": "parent"},
-                sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
+                sub_type=types.RelationshipType.ONE_TO_ONE,
                 parent="parent 1",
                 backref_property="backref 1",
                 kwargs={"key_": "value"},
@@ -486,7 +485,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
                 },
-                sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+                sub_type=types.RelationshipType.MANY_TO_MANY,
                 parent="parent 1",
                 backref_property=None,
                 kwargs=None,
@@ -515,7 +514,7 @@ def test_json_property_artifacts(artifacts_value, expected_dict):
                     "type": "array",
                     "items": {"type": "object", "x-de-$ref": "parent"},
                 },
-                sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+                sub_type=types.RelationshipType.MANY_TO_MANY,
                 parent="parent 1",
                 backref_property="backref 1",
                 kwargs={"key_": "value"},

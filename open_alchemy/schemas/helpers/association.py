@@ -19,7 +19,7 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
 
     """
     return oa_helpers.relationship.is_relationship_type(
-        type_=oa_helpers.relationship.Type.MANY_TO_MANY, schema=schema, schemas=schemas
+        type_=types.RelationshipType.MANY_TO_MANY, schema=schema, schemas=schemas
     )
 
 

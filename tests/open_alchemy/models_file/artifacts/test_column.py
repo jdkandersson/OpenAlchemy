@@ -4,7 +4,6 @@
 
 import pytest
 
-from open_alchemy import helpers as oa_helpers
 from open_alchemy import models_file
 from open_alchemy import types
 from open_alchemy.schemas import artifacts as schemas_artifacts
@@ -83,7 +82,7 @@ def _construct_many_to_one_relationship_property_artifacts():
     return schemas_artifacts.types.ManyToOneRelationshipPropertyArtifacts(
         type=types.PropertyType.RELATIONSHIP,
         schema={},  # type: ignore
-        sub_type=oa_helpers.relationship.Type.MANY_TO_ONE,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
         parent="RefModel",
         backref_property=None,
         kwargs=None,
@@ -101,7 +100,7 @@ def _construct_one_to_one_relationship_property_artifacts():
     return schemas_artifacts.types.OneToOneRelationshipPropertyArtifacts(
         type=types.PropertyType.RELATIONSHIP,
         schema={},  # type: ignore
-        sub_type=oa_helpers.relationship.Type.ONE_TO_ONE,
+        sub_type=types.RelationshipType.ONE_TO_ONE,
         parent="RefModel",
         backref_property=None,
         kwargs=None,
@@ -119,7 +118,7 @@ def _construct_one_to_many_relationship_property_artifacts():
     return schemas_artifacts.types.OneToManyRelationshipPropertyArtifacts(
         type=types.PropertyType.RELATIONSHIP,
         schema={},  # type: ignore
-        sub_type=oa_helpers.relationship.Type.ONE_TO_MANY,
+        sub_type=types.RelationshipType.ONE_TO_MANY,
         parent="RefModel",
         backref_property=None,
         kwargs=None,
@@ -136,7 +135,7 @@ def _construct_many_to_many_relationship_property_artifacts():
     return schemas_artifacts.types.ManyToManyRelationshipPropertyArtifacts(
         type=types.PropertyType.RELATIONSHIP,
         schema={},  # type: ignore
-        sub_type=oa_helpers.relationship.Type.MANY_TO_MANY,
+        sub_type=types.RelationshipType.MANY_TO_MANY,
         parent="RefModel",
         backref_property=None,
         kwargs=None,

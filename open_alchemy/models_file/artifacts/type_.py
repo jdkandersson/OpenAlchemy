@@ -40,12 +40,12 @@ def _model_simple_property(
 
 
 _RELATIONSHIP_TYPE_MAPPING = {
-    oa_helpers.relationship.Type.MANY_TO_ONE: lambda parent: f'"T{parent}"',
-    oa_helpers.relationship.Type.ONE_TO_ONE: lambda parent: f'"T{parent}"',
-    oa_helpers.relationship.Type.ONE_TO_MANY: (
+    types.RelationshipType.MANY_TO_ONE: lambda parent: f'"T{parent}"',
+    types.RelationshipType.ONE_TO_ONE: lambda parent: f'"T{parent}"',
+    types.RelationshipType.ONE_TO_MANY: (
         lambda parent: f'typing.Sequence["T{parent}"]'
     ),
-    oa_helpers.relationship.Type.MANY_TO_MANY: (
+    types.RelationshipType.MANY_TO_MANY: (
         lambda parent: f'typing.Sequence["T{parent}"]'
     ),
 }
@@ -58,8 +58,8 @@ def _model_relationship_property(
     type_ = _RELATIONSHIP_TYPE_MAPPING[artifacts.sub_type](artifacts.parent)
 
     if (
-        artifacts.sub_type == oa_helpers.relationship.Type.ONE_TO_MANY
-        or artifacts.sub_type == oa_helpers.relationship.Type.MANY_TO_MANY
+        artifacts.sub_type == types.RelationshipType.ONE_TO_MANY
+        or artifacts.sub_type == types.RelationshipType.MANY_TO_MANY
     ):
         return type_
 

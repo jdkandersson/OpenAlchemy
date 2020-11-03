@@ -2,31 +2,32 @@
 
 import pytest
 
+from open_alchemy import types
 from open_alchemy.helpers import relationship
 
 CALCULATE_TYPE_TESTS = [
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object"}},
-        relationship.Type.MANY_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
         id="many-to-one $ref",
     ),
     pytest.param(
         {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
         {"RefSchema": {"type": "object"}},
-        relationship.Type.MANY_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
         id="many-to-one allOf",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-uselist": True}},
-        relationship.Type.MANY_TO_ONE,
+        types.RelationshipType.MANY_TO_ONE,
         id="many-to-one $ref uselist true",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-uselist": False}},
-        relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
         id="one-to-one $ref",
     ),
     pytest.param(
@@ -37,7 +38,7 @@ CALCULATE_TYPE_TESTS = [
             ]
         },
         {"RefSchema": {"type": "object"}},
-        relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
         id="many-to-one allOf",
     ),
     pytest.param(
@@ -48,13 +49,13 @@ CALCULATE_TYPE_TESTS = [
             ]
         },
         {"RefSchema": {"type": "object", "x-uselist": True}},
-        relationship.Type.ONE_TO_ONE,
+        types.RelationshipType.ONE_TO_ONE,
         id="many-to-one allOf and $ref",
     ),
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object"}},
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         id="many-to-one $ref",
     ),
     pytest.param(
@@ -66,7 +67,7 @@ CALCULATE_TYPE_TESTS = [
             },
             "RefSchema": {"type": "object"},
         },
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         id="$ref many-to-one $ref",
     ),
     pytest.param(
@@ -79,7 +80,7 @@ CALCULATE_TYPE_TESTS = [
             ]
         },
         {"RefSchema": {"type": "object"}},
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         id="allOf many-to-one $ref",
     ),
     pytest.param(
@@ -92,13 +93,13 @@ CALCULATE_TYPE_TESTS = [
             ]
         },
         {"RefSchema": {"type": "object"}},
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         id="many-to-one allOf",
     ),
     pytest.param(
         {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}},
         {"RefSchema": {"type": "object", "x-secondary": "schema_ref_schema"}},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         id="many-to-many $ref",
     ),
     pytest.param(
@@ -112,7 +113,7 @@ CALCULATE_TYPE_TESTS = [
             },
         },
         {"RefSchema": {"type": "object"}},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         id="many-to-many allOf",
     ),
 ]
@@ -181,42 +182,42 @@ IS_RELATIONSHIP_TYPE_TESTS = [
     pytest.param(
         {"type": "integer"},
         {},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         False,
         id="many-to-many simple",
     ),
     pytest.param(
         {"type": "object"},
         {},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         False,
         id="many-to-many relationship not many-to-many",
     ),
     pytest.param(
         {"type": "array", "items": {"x-secondary": "association"}},
         {},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         True,
         id="many-to-many relationship many-to-many",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "array", "items": {"x-secondary": "association"}}},
-        relationship.Type.MANY_TO_MANY,
+        types.RelationshipType.MANY_TO_MANY,
         True,
         id="many-to-many $ref relationship many-to-many",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "array", "items": {"x-secondary": "association"}}},
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         False,
         id="one-to-many $ref relationship many-to-many",
     ),
     pytest.param(
         {"type": "array", "items": {}},
         {},
-        relationship.Type.ONE_TO_MANY,
+        types.RelationshipType.ONE_TO_MANY,
         True,
         id="one-to-many $ref relationship one-to-many",
     ),
