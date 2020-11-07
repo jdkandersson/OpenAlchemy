@@ -7,6 +7,8 @@ from open_alchemy import PackageFormat
 from open_alchemy import build_json
 from open_alchemy import build_yaml
 from open_alchemy import exceptions
+from open_alchemy import init_json
+from open_alchemy import init_yaml
 
 # Configure the logger.
 logging.basicConfig(format="%(message)s", level=logging.INFO)
@@ -75,6 +77,18 @@ def build_application_parser() -> argparse.Namespace:
     )
     build_parser.set_defaults(func=build)
 
+    # Define the parser for the "generate" subcommand.
+    generate_parser = subparsers.add_parser(
+        "generate",
+        description="Generate the SQLAlchemy models.",
+        help="regenerate models",
+    )
+    generate_parser.add_argument(
+        "specfile", type=str, help="specify the specification file"
+    )
+    generate_parser.add_argument("output", type=str, help="specify the output file")
+    generate_parser.set_defaults(func=generate)
+
     # Return the parsed arguments for a particular command.
     return parser.parse_args()
 
@@ -103,3 +117,22 @@ def build(args: argparse.Namespace) -> None:
     # Build the package.
     builder = builders.get(specfile.suffix.lower())
     builder(args.specfile, args.name, args.output, fmt.get(args.format))  # type: ignore
+
+
+def generate(args):
+    """
+    Define the generate subcommand.
+
+    Args:
+        args: CLI arguments from the parser.
+    """
+    # Check the specfile.
+    specfile = pathlib.Path(args.specfile)
+    validate_specfile(specfile)
+
+    # Select the generator method.
+    generators = dict(zip(VALID_EXTENSIONS, [init_json, init_yaml, init_yaml]))
+
+    # Regenerate the models.
+    generator = generators.get(specfile.suffix.lower())
+    generator(args.specfile, models_filename=args.output)

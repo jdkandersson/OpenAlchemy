@@ -21,8 +21,8 @@ Usage
 Extended Description
 ^^^^^^^^^^^^^^^^^^^^
 
-The :samp:`openalchemy build` command builds a reusable Python package based off of
-the specification file.
+The :samp:`openalchemy build` command builds a reusable Python package based off
+of the specification file.
 
 For instance, running the following command::
 
@@ -54,3 +54,29 @@ Options
 +-----------------+--------------+-------------------------------------------+
 | --format, -f    | sdist, wheel | limit the format to either sdist or wheel |
 +-----------------+--------------+-------------------------------------------+
+
+openalchemy generate
+---------------------
+
+Description
+^^^^^^^^^^^
+
+Generate the models described in the OpenAPI specification file.
+
+Usage
+^^^^^
+
+.. program:: openalchemy
+
+.. option:: openalchemy generate SPECFILE OUTPUT_FILE
+
+
+Extended Description
+^^^^^^^^^^^^^^^^^^^^
+
+The :samp:`openalchemy generate` command generates the models without having to
+start an application.
+
+Example::
+
+  openalchemy generate openapi.yml models.py
