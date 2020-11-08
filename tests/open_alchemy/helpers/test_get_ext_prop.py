@@ -46,6 +46,7 @@ def test_miss_default():
         pytest.param("x-foreign-key", True, id="x-foreign-key invalid type"),
         pytest.param("x-foreign-key", "no column", id="x-foreign-key invalid format"),
         pytest.param("x-foreign-key-column", True, id="x-foreign-key-column"),
+        pytest.param("x-server-default", True, id="x-server-default"),
         pytest.param("x-tablename", True, id="x-tablename"),
         pytest.param("x-tablename", None, id="x-tablename None"),
         pytest.param("x-de-$ref", True, id="x-de-$ref"),
@@ -119,6 +120,11 @@ def test_invalid(name, value):
             "x-foreign-key-column",
             "column 1",
             id="x-foreign-key-column",
+        ),
+        pytest.param(
+            "x-server-default",
+            "value 1",
+            id="x-server-default",
         ),
         pytest.param(
             "x-tablename",

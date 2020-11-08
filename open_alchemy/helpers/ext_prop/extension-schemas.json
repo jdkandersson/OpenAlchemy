@@ -53,6 +53,10 @@
     "type": "object",
     "additionalProperties": true
   },
+  "x-server-default": {
+    "description": "Get the server to calculate a default value.",
+    "type": "string"
+  },
   "x-tablename": {
     "description": "Define the name of a table.",
     "type": "string"
