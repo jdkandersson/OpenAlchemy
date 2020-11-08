@@ -9,6 +9,7 @@ Examples
    alembic
    simple
    default
+   server_default
    read_only
    write_only
    relationship/index

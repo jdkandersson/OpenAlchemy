@@ -46,6 +46,13 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         )
         if autoincrement is not None:
             return types.Result(False, "json properties do not support x-autoincrement")
+        server_default = helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key="x-server-default"
+        )
+        if server_default is not None:
+            return types.Result(
+                False, "json properties do not support x-server-default"
+            )
         # Checks kwargs, foreign key and foreign key kwargs
         kwargs_result = simple.check_kwargs(schema=schema, schemas=schemas)
         if kwargs_result is not None:

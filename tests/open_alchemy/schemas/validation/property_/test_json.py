@@ -159,6 +159,12 @@ CHECK_TESTS = [
         id="x-autoincrement defined",
     ),
     pytest.param(
+        {"x-server-default": "False"},
+        {},
+        (False, "json properties do not support x-server-default"),
+        id="x-server-default defined",
+    ),
+    pytest.param(
         {"x-foreign-key": True},
         {},
         (
