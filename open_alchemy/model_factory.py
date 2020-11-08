@@ -13,7 +13,11 @@ from . import utility_base
 
 
 def model_factory(
-    *, name: str, get_base: types.GetBase, schemas: types.Schemas
+    *,
+    name: str,
+    get_base: types.GetBase,
+    schemas: types.Schemas,
+    artifacts: types.ModelsModelArtifacts,  # pylint: disable=unused-argument
 ) -> typing.Type:
     """
     Convert OpenAPI schema to SQLAlchemy model.
@@ -22,6 +26,7 @@ def model_factory(
         name: The name of the schema.
         get_base: Funcrtion to retrieve the base class for the model.
         schemas: The OpenAPI schemas.
+        artifacts: The artifacts for the models.
 
     Returns:
         The model as a class.

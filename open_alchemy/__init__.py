@@ -62,9 +62,17 @@ def init_model_factory(
     # Pre-processing schemas
     _schemas_module.process(schemas=schemas)
 
+    # Getting artifacts
+    schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     # Binding the base and schemas
     bound_model_factories = functools.partial(
-        _model_factory.model_factory, schemas=schemas, get_base=_get_base
+        _model_factory.model_factory,
+        schemas=schemas,
+        artifacts=schemas_artifacts,
+        get_base=_get_base,
     )
     # Caching calls
     cached_model_factories = functools.lru_cache(maxsize=None)(bound_model_factories)
