@@ -111,6 +111,17 @@ TESTS = [
         id="format not string",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "format": True},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "format": "int32"}},
+        (False, "malformed schema :: A format value must be of type string. "),
+        id="format prefer local not string",
+    ),
+    pytest.param(
         {"type": "integer", "format": "unsupported"},
         {},
         (False, "unsupported format is not supported for integer"),
@@ -189,6 +200,17 @@ TESTS = [
         id="string maxLength not integer",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "string", "maxLength": "1"},
+            ]
+        },
+        {"RefSchema": {"type": "string", "maxLength": 1}},
+        (False, "malformed schema :: A maxLength value must be of type integer. "),
+        id="string maxLength prefer local not integer",
+    ),
+    pytest.param(
         {"type": "string", "maxLength": 1},
         {},
         (True, None),
@@ -231,6 +253,17 @@ TESTS = [
         id="integer nullable not boolean",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "nullable": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "nullable": True}},
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
+        id="integer nullable prefer local not boolean",
+    ),
+    pytest.param(
         {"type": "integer", "nullable": True},
         {},
         (True, None),
@@ -259,6 +292,17 @@ TESTS = [
         {},
         (False, "malformed schema :: A description value must be of type string. "),
         id="integer description not string",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "description": True},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "description": "description 1"}},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="integer description prefer local not string",
     ),
     pytest.param(
         {"type": "integer", "description": "description 1"},
@@ -294,6 +338,20 @@ TESTS = [
         id="integer x-primary-key not boolean",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-primary-key": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-primary-key": True}},
+        (
+            False,
+            "malformed schema :: The x-primary-key property must be of type boolean. ",
+        ),
+        id="integer x-primary-key prefer local not boolean",
+    ),
+    pytest.param(
         {"type": "integer", "x-primary-key": True},
         {},
         (True, None),
@@ -322,6 +380,17 @@ TESTS = [
         {},
         (False, "malformed schema :: A autoincrement value must be of type boolean. "),
         id="integer x-autoincrement not boolean",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-autoincrement": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-autoincrement": True}},
+        (False, "malformed schema :: A autoincrement value must be of type boolean. "),
+        id="integer x-autoincrement prefer local not boolean",
     ),
     pytest.param(
         {"type": "integer", "x-autoincrement": True},
@@ -354,6 +423,17 @@ TESTS = [
         id="integer x-index not boolean",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-index": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-index": True}},
+        (False, "malformed schema :: A index value must be of type boolean. "),
+        id="integer x-index prefer local not boolean",
+    ),
+    pytest.param(
         {"type": "integer", "x-index": True},
         {},
         (True, None),
@@ -382,6 +462,17 @@ TESTS = [
         {},
         (False, "malformed schema :: A unique value must be of type boolean. "),
         id="integer x-unique not boolean",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-unique": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-unique": True}},
+        (False, "malformed schema :: A unique value must be of type boolean. "),
+        id="integer x-unique prefer local not boolean",
     ),
     pytest.param(
         {"type": "integer", "x-unique": True},
@@ -417,6 +508,20 @@ TESTS = [
         id="integer x-foreign-key not string",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-foreign-key": True},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-foreign-key": "foreign.key"}},
+        (
+            False,
+            "malformed schema :: The x-foreign-key property must be of type string. ",
+        ),
+        id="integer x-foreign-key prefer local not string",
+    ),
+    pytest.param(
         {"type": "integer", "x-foreign-key": "foreign.key"},
         {},
         (True, None),
@@ -449,6 +554,21 @@ TESTS = [
             "value is: True ",
         ),
         id="integer default invalid",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "default": True},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "default": 1}},
+        (
+            False,
+            "malformed schema :: The default value does not conform to the schema. The "
+            "value is: True ",
+        ),
+        id="integer default prefer local invalid",
     ),
     pytest.param(
         {"type": "integer", "default": 1},
@@ -520,6 +640,20 @@ TESTS = [
         id="integer x-server-default not string",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-server-default": True},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-server-default": "value 1"}},
+        (
+            False,
+            "malformed schema :: A x-server-default value must be of type string. ",
+        ),
+        id="integer x-server-default prefer local not string",
+    ),
+    pytest.param(
         {"type": "integer", "x-server-default": "value 1"},
         {},
         (True, None),
@@ -544,10 +678,103 @@ TESTS = [
         id="boolean x-server-default",
     ),
     pytest.param(
+        {"type": "integer", "readOnly": "True"},
+        {},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="integer readOnly not boolean",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "readOnly": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "readOnly": True}},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="integer readOnly prefer local not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "readOnly": True},
+        {},
+        (True, None),
+        id="integer readOnly",
+    ),
+    pytest.param(
+        {"type": "number", "readOnly": True},
+        {},
+        (True, None),
+        id="number readOnly",
+    ),
+    pytest.param(
+        {"type": "string", "readOnly": True},
+        {},
+        (True, None),
+        id="string readOnly",
+    ),
+    pytest.param(
+        {"type": "boolean", "readOnly": True},
+        {},
+        (True, None),
+        id="boolean readOnly",
+    ),
+    pytest.param(
+        {"type": "integer", "writeOnly": "True"},
+        {},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="integer writeOnly not boolean",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "writeOnly": "True"},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "writeOnly": True}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="integer writeOnly prefer local not boolean",
+    ),
+    pytest.param(
+        {"type": "integer", "writeOnly": True},
+        {},
+        (True, None),
+        id="integer writeOnly",
+    ),
+    pytest.param(
+        {"type": "number", "writeOnly": True},
+        {},
+        (True, None),
+        id="number writeOnly",
+    ),
+    pytest.param(
+        {"type": "string", "writeOnly": True},
+        {},
+        (True, None),
+        id="string writeOnly",
+    ),
+    pytest.param(
+        {"type": "boolean", "writeOnly": True},
+        {},
+        (True, None),
+        id="boolean writeOnly",
+    ),
+    pytest.param(
         {"type": "integer", "x-kwargs": 1},
         {},
         (False, "malformed schema :: The x-kwargs property must be of type dict. "),
         id="x-kwargs not dict",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"type": "integer", "x-kwargs": 1},
+            ]
+        },
+        {"RefSchema": {"type": "integer", "x-kwargs": {"key": "value"}}},
+        (False, "malformed schema :: The x-kwargs property must be of type dict. "),
+        id="x-kwargs prefer local not dict",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {1: True}},
@@ -618,6 +845,31 @@ TESTS = [
             "dict. ",
         ),
         id="x-foreign-key-kwargs not dict",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {
+                    "type": "integer",
+                    "x-foreign-key-kwargs": 1,
+                    "x-foreign-key": "foreign.key",
+                },
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "integer",
+                "x-foreign-key-kwargs": {"key": "value"},
+                "x-foreign-key": "foreign.key",
+            }
+        },
+        (
+            False,
+            "malformed schema :: The x-foreign-key-kwargs property must be of type "
+            "dict. ",
+        ),
+        id="x-foreign-key-kwargs prefer local not dict",
     ),
     pytest.param(
         {
