@@ -1,15 +1,11 @@
 """Construct column for simple property."""
 
-import typing
-
-from open_alchemy import facades
-from open_alchemy import types
-from open_alchemy.schemas.artifacts import types as artifact_types
+from .. import facades
+from .. import types as oa_types
+from . import types
 
 
-def handle(
-    *, artifacts: artifact_types.SimplePropertyArtifacts
-) -> typing.Tuple[facades.sqlalchemy.types.Column, types.ColumnSchema]:
+def handle(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.TColumn:
     """
     Handle a simple property.
 
@@ -20,4 +16,4 @@ def handle(
         The constructed column.
 
     """
-    return facades.sqlalchemy.simple.construct(artifacts=artifacts), artifacts.schema
+    return facades.sqlalchemy.simple.construct(artifacts=artifacts)

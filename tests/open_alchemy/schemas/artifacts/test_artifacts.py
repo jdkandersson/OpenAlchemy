@@ -425,13 +425,13 @@ GET_FROM_SCHEMAS_TESTS = [
     pytest.param(
         {},
         False,
-        [],
+        {},
         id="no model",
     ),
     pytest.param(
         {"Schema1": {}},
         False,
-        [],
+        {},
         id="single model not constructable",
     ),
     pytest.param(
@@ -443,22 +443,19 @@ GET_FROM_SCHEMAS_TESTS = [
             }
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "schema_1",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
-            )
-        ],
+        {
+            "Schema1": _construct_model_artifacts(
+                "schema_1",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
+            ),
+        },
         id="single model single property not required",
     ),
     pytest.param(
@@ -471,17 +468,14 @@ GET_FROM_SCHEMAS_TESTS = [
             }
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "schema_1",
-                    None,
-                    None,
-                    [("prop_1", _construct_simple_property_artifacts("integer", True))],
-                ),
-            )
-        ],
+        {
+            "Schema1": _construct_model_artifacts(
+                "schema_1",
+                None,
+                None,
+                [("prop_1", _construct_simple_property_artifacts("integer", True))],
+            ),
+        },
         id="single model single property required",
     ),
     pytest.param(
@@ -503,35 +497,29 @@ GET_FROM_SCHEMAS_TESTS = [
             },
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "parent",
-                    True,
-                    "ParentSchema",
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        ),
-                        (
-                            "prop_2",
-                            _construct_simple_property_artifacts("string", False),
-                        ),
-                    ],
-                ),
-            ),
-            (
+        {
+            "Schema1": _construct_model_artifacts(
+                "parent",
+                True,
                 "ParentSchema",
-                _construct_model_artifacts(
-                    "parent",
-                    None,
-                    None,
-                    [("prop_2", _construct_simple_property_artifacts("string", False))],
-                ),
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    ),
+                    (
+                        "prop_2",
+                        _construct_simple_property_artifacts("string", False),
+                    ),
+                ],
             ),
-        ],
+            "ParentSchema": _construct_model_artifacts(
+                "parent",
+                None,
+                None,
+                [("prop_2", _construct_simple_property_artifacts("string", False))],
+            ),
+        },
         id="single model inherits property on parent stay within model False",
     ),
     pytest.param(
@@ -553,31 +541,25 @@ GET_FROM_SCHEMAS_TESTS = [
             },
         },
         True,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "parent",
-                    True,
-                    "ParentSchema",
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
-            ),
-            (
+        {
+            "Schema1": _construct_model_artifacts(
+                "parent",
+                True,
                 "ParentSchema",
-                _construct_model_artifacts(
-                    "parent",
-                    None,
-                    None,
-                    [("prop_2", _construct_simple_property_artifacts("string", False))],
-                ),
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
             ),
-        ],
+            "ParentSchema": _construct_model_artifacts(
+                "parent",
+                None,
+                None,
+                [("prop_2", _construct_simple_property_artifacts("string", False))],
+            ),
+        },
         id="single model inherits property on parent stay within model True",
     ),
     pytest.param(
@@ -592,32 +574,29 @@ GET_FROM_SCHEMAS_TESTS = [
             }
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "schema_1",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        ),
-                        (
-                            "prop_2",
-                            _construct_simple_property_artifacts("string", False),
-                        ),
-                    ],
-                ),
-            )
-        ],
+        {
+            "Schema1": _construct_model_artifacts(
+                "schema_1",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    ),
+                    (
+                        "prop_2",
+                        _construct_simple_property_artifacts("string", False),
+                    ),
+                ],
+            ),
+        },
         id="single model multiple property valid",
     ),
     pytest.param(
         {"Schema1": {}, "Schema2": {}},
         False,
-        [],
+        {},
         id="multiple model none constructable",
     ),
     pytest.param(
@@ -630,22 +609,19 @@ GET_FROM_SCHEMAS_TESTS = [
             },
         },
         False,
-        [
-            (
-                "Schema2",
-                _construct_model_artifacts(
-                    "schema_2",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
-            )
-        ],
+        {
+            "Schema2": _construct_model_artifacts(
+                "schema_2",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
+            ),
+        },
         id="multiple first not constructable",
     ),
     pytest.param(
@@ -658,22 +634,19 @@ GET_FROM_SCHEMAS_TESTS = [
             "Schema2": {},
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "schema_1",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
-            )
-        ],
+        {
+            "Schema1": _construct_model_artifacts(
+                "schema_1",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
+            ),
+        },
         id="multiple second not constructable",
     ),
     pytest.param(
@@ -690,36 +663,30 @@ GET_FROM_SCHEMAS_TESTS = [
             },
         },
         False,
-        [
-            (
-                "Schema1",
-                _construct_model_artifacts(
-                    "schema_1",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
+        {
+            "Schema1": _construct_model_artifacts(
+                "schema_1",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
             ),
-            (
-                "Schema2",
-                _construct_model_artifacts(
-                    "schema_2",
-                    None,
-                    None,
-                    [
-                        (
-                            "prop_1",
-                            _construct_simple_property_artifacts("integer", False),
-                        )
-                    ],
-                ),
+            "Schema2": _construct_model_artifacts(
+                "schema_2",
+                None,
+                None,
+                [
+                    (
+                        "prop_1",
+                        _construct_simple_property_artifacts("integer", False),
+                    )
+                ],
             ),
-        ],
+        },
         id="multiple all constructable",
     ),
 ]

@@ -89,21 +89,18 @@ def _construct_relationship_property_artifacts():
     "artifacts, expected_source",
     [
         pytest.param(
-            [
-                (
-                    "Model",
-                    _construct_model_artifacts(
-                        [
-                            (
-                                "id",
-                                _construct_simple_property_artifacts(
-                                    type_="integer", nullable=None
-                                ),
-                            )
-                        ]
-                    ),
-                )
-            ],
+            {
+                "Model": _construct_model_artifacts(
+                    [
+                        (
+                            "id",
+                            _construct_simple_property_artifacts(
+                                type_="integer", nullable=None
+                            ),
+                        )
+                    ]
+                ),
+            },
             f'''{_DOCSTRING}
 # pylint: disable=no-member,super-init-not-called,unused-argument
 
@@ -201,34 +198,28 @@ Model: typing.Type[TModel] = models.Model  # type: ignore
             id="single",
         ),
         pytest.param(
-            [
-                (
-                    "Model1",
-                    _construct_model_artifacts(
-                        [
-                            (
-                                "id",
-                                _construct_simple_property_artifacts(
-                                    type_="integer", nullable=None
-                                ),
-                            )
-                        ]
-                    ),
+            {
+                "Model1": _construct_model_artifacts(
+                    [
+                        (
+                            "id",
+                            _construct_simple_property_artifacts(
+                                type_="integer", nullable=None
+                            ),
+                        )
+                    ]
                 ),
-                (
-                    "Model2",
-                    _construct_model_artifacts(
-                        [
-                            (
-                                "id",
-                                _construct_simple_property_artifacts(
-                                    type_="string", nullable=None
-                                ),
-                            )
-                        ]
-                    ),
+                "Model2": _construct_model_artifacts(
+                    [
+                        (
+                            "id",
+                            _construct_simple_property_artifacts(
+                                type_="string", nullable=None
+                            ),
+                        )
+                    ]
                 ),
-            ],
+            },
             f'''{_DOCSTRING}
 # pylint: disable=no-member,super-init-not-called,unused-argument
 
@@ -434,45 +425,36 @@ def _create_source_file(source, tmp_path):
     "artifacts",
     [
         pytest.param(
-            [
-                (
-                    "Model",
-                    _construct_model_artifacts(
-                        [
-                            (
-                                "id",
-                                _construct_simple_property_artifacts(
-                                    type_="integer", nullable=None
-                                ),
-                            )
-                        ]
-                    ),
-                )
-            ],
+            {
+                "Model": _construct_model_artifacts(
+                    [
+                        (
+                            "id",
+                            _construct_simple_property_artifacts(
+                                type_="integer", nullable=None
+                            ),
+                        )
+                    ]
+                ),
+            },
             id="simple",
         ),
         pytest.param(
-            [
-                (
-                    "RefModel",
-                    _construct_model_artifacts(
-                        [
-                            (
-                                "id",
-                                _construct_simple_property_artifacts(
-                                    type_="integer", nullable=None
-                                ),
-                            )
-                        ]
-                    ),
+            {
+                "RefModel": _construct_model_artifacts(
+                    [
+                        (
+                            "id",
+                            _construct_simple_property_artifacts(
+                                type_="integer", nullable=None
+                            ),
+                        )
+                    ]
                 ),
-                (
-                    "Model",
-                    _construct_model_artifacts(
-                        [("model", _construct_relationship_property_artifacts())]
-                    ),
+                "Model": _construct_model_artifacts(
+                    [("model", _construct_relationship_property_artifacts())]
                 ),
-            ],
+            },
             id="relationship",
         ),
     ],
@@ -560,7 +542,7 @@ def test_generate_type_check(tmp_path, artifacts, mypy_check, expected_out_subst
     WHEN the models file is generated and mypy is run over it
     THEN the expected output substring is in the mypy output.
     """
-    source = models_file.generate(artifacts=[("Model", artifacts)]) + f"\n{mypy_check}"
+    source = models_file.generate(artifacts={"Model": artifacts}) + f"\n{mypy_check}"
     source_file = _create_source_file(source, tmp_path)
 
     out, _, _ = api.run([str(source_file)])

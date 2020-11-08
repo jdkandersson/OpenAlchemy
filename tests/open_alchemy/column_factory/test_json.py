@@ -35,8 +35,7 @@ def test_integration():
         description=None,
     )
 
-    returned_column, returned_schema = json.handle(artifacts=artifacts)
+    returned_column = json.handle(artifacts=artifacts)
 
     assert isinstance(returned_column, facades.sqlalchemy.types.Column)
     assert isinstance(returned_column.type, facades.sqlalchemy.types.JSON)
-    assert returned_schema == {"type": "integer"}

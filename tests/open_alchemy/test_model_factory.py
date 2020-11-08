@@ -12,6 +12,7 @@ from sqlalchemy import schema as sql_schema
 from open_alchemy import exceptions
 from open_alchemy import model_factory
 from open_alchemy.facades import sqlalchemy
+from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
 def _mock_get_base(**_):
@@ -26,16 +27,22 @@ def test_single_property():
     WHEN model_factory is called with the name of the schema
     THEN a model with the property is returned.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     assert hasattr(model, "property_1")
@@ -48,19 +55,25 @@ def test_multiple_property():
     WHEN model_factory is called with the name of the schema
     THEN a model with the properties is returned.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {
+                "property_1": {"type": "integer"},
+                "property_2": {"type": "integer"},
+            },
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {
-                    "property_1": {"type": "integer"},
-                    "property_2": {"type": "integer"},
-                },
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     assert hasattr(model, "property_1")
@@ -74,23 +87,29 @@ def test_tablename():
     WHEN model_factory is called with the name of the schema
     THEN a model where __tablename__ has been set to the x-tablename value.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     assert model.__tablename__ == "table 1"
 
 
 @pytest.mark.model
-def test_single_property_required_missing(mocked_column_factory: mock.MagicMock):
+def test_single_property_column_factory_call(mocked_column_factory: mock.MagicMock):
     """
     GIVEN mocked column_factory and schemas with schema that has single item properties
         key and does not have the required key
@@ -104,74 +123,18 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     }
     model_name = "SingleProperty"
     schemas = {model_name: model_schema}
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
     model_factory.model_factory(
-        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
+        name=model_name,
+        get_base=_mock_get_base,
+        schemas=copy.deepcopy(schemas),
+        artifacts=artifacts,
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=None,
-    )
-
-
-@pytest.mark.model
-def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
-    """
-    GIVEN mocked column_factory and schemas with schema that has single item properties
-        key and a required key without the key in properties
-    WHEN model_factory is called with the name of the schema
-    THEN column_factory is called with required reset.
-    """
-    model_schema = {
-        "x-tablename": "table 1",
-        "type": "object",
-        "properties": {"id": {"type": "integer"}},
-        "required": [],
-    }
-    model_name = "SingleProperty"
-    schemas = {model_name: model_schema}
-    model_factory.model_factory(
-        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
-    )
-
-    mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=False,
-    )
-
-
-@pytest.mark.model
-def test_single_property_required(mocked_column_factory: mock.MagicMock):
-    """
-    GIVEN mocked column_factory and schemas with schema that has single item properties
-        key and a required key with the key in properties
-    WHEN model_factory is called with the name of the schema
-    THEN column_factory is called with required reset.
-    """
-    model_schema = {
-        "x-tablename": "table 1",
-        "type": "object",
-        "properties": {"id": {"type": "integer"}},
-        "required": ["id"],
-    }
-    model_name = "SingleProperty"
-    schemas = {model_name: model_schema}
-    model_factory.model_factory(
-        name=model_name, get_base=_mock_get_base, schemas=copy.deepcopy(schemas)
-    )
-
-    mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=True,
+        artifacts=artifacts[model_name].properties[0][1]
     )
 
 
@@ -182,17 +145,20 @@ def test_ref():
     WHEN model_factory is called with the name of the schema
     THEN a model with the property and tablename is returned.
     """
-    model = model_factory.model_factory(
-        name="Schema",
-        get_base=_mock_get_base,
-        schemas={
-            "Schema": {"$ref": "#/components/schemas/RefSchema"},
-            "RefSchema": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-            },
+    schemas = {
+        "Schema": {"$ref": "#/components/schemas/RefSchema"},
+        "RefSchema": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
         },
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
+    model = model_factory.model_factory(
+        name="Schema", get_base=_mock_get_base, schemas=schemas, artifacts=artifacts
     )
 
     assert hasattr(model, "property_1")
@@ -206,20 +172,23 @@ def test_all_of():
     WHEN model_factory is called with the name of the schema
     THEN a model with the property and tablename is returned.
     """
+    schemas = {
+        "Schema": {
+            "allOf": [
+                {
+                    "x-tablename": "table 1",
+                    "type": "object",
+                    "properties": {"property_1": {"type": "integer"}},
+                }
+            ]
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
-        name="Schema",
-        get_base=_mock_get_base,
-        schemas={
-            "Schema": {
-                "allOf": [
-                    {
-                        "x-tablename": "table 1",
-                        "type": "object",
-                        "properties": {"property_1": {"type": "integer"}},
-                    }
-                ]
-            }
-        },
+        name="Schema", get_base=_mock_get_base, schemas=schemas, artifacts=artifacts
     )
 
     assert hasattr(model, "property_1")
@@ -234,26 +203,29 @@ def test_inherits():
     THEN a model which inherits from the parent and with only the child properties
         defined is returned.
     """
-    model = model_factory.model_factory(
-        name="Child",
-        get_base=_mock_get_base,
-        schemas={
-            "Child": {
-                "allOf": [
-                    {
-                        "x-inherits": True,
-                        "type": "object",
-                        "properties": {"property_2": {"type": "integer"}},
-                    },
-                    {"$ref": "#/components/schemas/Parent"},
-                ]
-            },
-            "Parent": {
-                "x-tablename": "parent",
-                "type": "object",
-                "properties": {"property_1": {"type": "string"}},
-            },
+    schemas = {
+        "Child": {
+            "allOf": [
+                {
+                    "x-inherits": True,
+                    "type": "object",
+                    "properties": {"property_2": {"type": "integer"}},
+                },
+                {"$ref": "#/components/schemas/Parent"},
+            ]
         },
+        "Parent": {
+            "x-tablename": "parent",
+            "type": "object",
+            "properties": {"property_1": {"type": "string"}},
+        },
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
+    model = model_factory.model_factory(
+        name="Child", get_base=_mock_get_base, schemas=schemas, artifacts=artifacts
     )
 
     assert not hasattr(model, "property_1")
@@ -287,7 +259,12 @@ def test_inherits():
                     },
                 }
             },
-            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            {
+                "type": "object",
+                "properties": {
+                    "property_1": {"type": "integer", "x-dict-ignore": False}
+                },
+            },
             id="single x-dict-ignore false",
         ),
         pytest.param(
@@ -316,26 +293,6 @@ def test_inherits():
                 "required": ["property_1"],
             },
             id="single required",
-        ),
-        pytest.param(
-            {
-                "Schema": {
-                    "x-tablename": "table 1",
-                    "type": "object",
-                    "properties": {"property_1": {"type": "integer"}},
-                    "x-backrefs": {
-                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
-                    },
-                }
-            },
-            {
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-                "x-backrefs": {
-                    "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
-                },
-            },
-            id="single x-backrefs",
         ),
         pytest.param(
             {
@@ -471,33 +428,15 @@ def test_schema(schemas, expected_schema):
     WHEN model_factory is called with the schemas and the name of a schema
     THEN a model with _schema set to the expected schema is returned.
     """
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
-        name="Schema", get_base=_mock_get_base, schemas=schemas
+        name="Schema", get_base=_mock_get_base, schemas=schemas, artifacts=artifacts
     )
 
     assert model._schema == expected_schema
-
-
-@pytest.mark.model
-def test_schema_relationship_invalid():
-    """
-    GIVEN schema with x-backrefs with invalid schema
-    WHEN model_factory is called with the schema
-    THEN MalformedExtensionPropertyError is raised.
-    """
-    schemas = {
-        "Schema": {
-            "x-tablename": "table 1",
-            "type": "object",
-            "properties": {"property_1": {"type": "integer"}},
-            "x-backrefs": {"ref_schema": "RefSchema"},
-        }
-    }
-
-    with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        model_factory.model_factory(
-            name="Schema", get_base=_mock_get_base, schemas=schemas
-        )
 
 
 @pytest.mark.model
@@ -507,17 +446,23 @@ def test_table_args_unique():
     WHEN model_factory is called with the name of the schema
     THEN a model with a unique constraint is returned.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+            "x-composite-unique": ["property_1"],
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-                "x-composite-unique": ["property_1"],
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     (unique,) = model.__table_args__
@@ -531,17 +476,23 @@ def test_table_args_index():
     WHEN model_factory is called with the name of the schema
     THEN a model with a composite index is returned.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+            "x-composite-index": ["property_1"],
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-                "x-composite-index": ["property_1"],
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     (index,) = model.__table_args__
@@ -568,17 +519,23 @@ def test_mixin(monkeypatch):
     mock_import_module.return_value.Mixin1 = mixin_class
     monkeypatch.setattr(importlib, "import_module", mock_import_module)
 
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "x-mixins": "module.Mixin1",
+            "properties": {"property_1": {"type": "integer"}},
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "x-mixins": "module.Mixin1",
-                "properties": {"property_1": {"type": "integer"}},
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     assert hasattr(model, "property_2")
@@ -788,17 +745,23 @@ def test_kwargs():
     WHEN model_factory is called with the name of the schema
     THEN a model with the kwargs is returned.
     """
+    schemas = {
+        "SingleProperty": {
+            "x-tablename": "table 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+            "x-kwargs": {"__mapper_args__": {"passive_deletes": True}},
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
     model = model_factory.model_factory(
         name="SingleProperty",
         get_base=_mock_get_base,
-        schemas={
-            "SingleProperty": {
-                "x-tablename": "table 1",
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-                "x-kwargs": {"__mapper_args__": {"passive_deletes": True}},
-            }
-        },
+        schemas=schemas,
+        artifacts=artifacts,
     )
 
     assert model.__mapper_args__ == {"passive_deletes": True}

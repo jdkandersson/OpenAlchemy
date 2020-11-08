@@ -960,4 +960,4 @@ class SpecValue(TypedDict, total=False):
     models: ModelsValue
 
 
-ModelsModelArtifacts = typing.List[typing.Tuple[str, ModelArtifacts]]
+ModelsModelArtifacts = typing.Dict[str, ModelArtifacts]

@@ -317,9 +317,8 @@ def test_model_database_type_simple(
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 1
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -390,9 +389,8 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 1
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[0]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )

@@ -1,6 +1,5 @@
 """Generate model from OpenAPI schema."""
 
-import itertools
 import typing
 
 from . import column_factory
@@ -13,7 +12,11 @@ from . import utility_base
 
 
 def model_factory(
-    *, name: str, get_base: types.GetBase, schemas: types.Schemas
+    *,
+    name: str,
+    get_base: types.GetBase,
+    schemas: types.Schemas,
+    artifacts: types.ModelsModelArtifacts,
 ) -> typing.Type:
     """
     Convert OpenAPI schema to SQLAlchemy model.
@@ -22,26 +25,27 @@ def model_factory(
         name: The name of the schema.
         get_base: Funcrtion to retrieve the base class for the model.
         schemas: The OpenAPI schemas.
+        artifacts: The artifacts for the models.
 
     Returns:
         The model as a class.
 
     """
     schema = _get_schema(name, schemas)
+    artifacts_name, _ = helpers.ref.resolve(
+        name=name, schema=schemas[name], schemas=schemas
+    )
+    model_artifacts = artifacts.get(artifacts_name)
+    assert model_artifacts is not None
 
     # Calculating the class variables for the model
-    model_class_vars = []
+    model_class_vars = {}
     required_exists = "required" in schema
     required_array = schema.get("required", [])
-    required_set = set(required_array)
     # Initializing the schema to record for the model
     model_schema: types.Schema = {"type": "object", "properties": {}}
     if required_exists:
         model_schema["required"] = required_array
-    if "x-backrefs" in schema:
-        model_schema["x-backrefs"] = helpers.ext_prop.get(
-            source=schema, name="x-backrefs"
-        )
     if "x-inherits" in schema:
         model_schema["x-inherits"] = helpers.ext_prop.get(
             source=schema, name="x-inherits"
@@ -49,20 +53,19 @@ def model_factory(
     description = helpers.peek.description(schema=schema, schemas={})
     if description is not None:
         model_schema["description"] = description
-    for prop_name, prop_spec in schema.get("properties", []).items():
-        prop_class_vars, prop_final_spec = column_factory.column_factory(
-            schema=prop_spec,
-            schemas=schemas,
-            logical_name=prop_name,
-            model_schema=schema,
-            required=prop_name in required_set if required_exists else None,
+
+    for prop_name, prop_artifacts in model_artifacts.properties:
+        prop_column = column_factory.column_factory(artifacts=prop_artifacts)
+        if prop_column is not None:
+            model_class_vars[prop_name] = prop_column
+
+        dict_ignore = (
+            prop_artifacts.type == types.PropertyType.SIMPLE
+            and prop_artifacts.extension.dict_ignore
         )
-        model_class_vars.append(prop_class_vars)
-        dict_ignore = helpers.ext_prop.get(
-            source=prop_final_spec, name="x-dict-ignore", default=False, pop=True
-        )
+
         if not dict_ignore:
-            model_schema["properties"][prop_name] = prop_final_spec
+            model_schema["properties"][prop_name] = prop_artifacts.schema
 
     # Retrieve mixins
     mixin_classes: typing.Tuple[typing.Type, ...] = tuple()
@@ -77,7 +80,7 @@ def model_factory(
         (base, utility_base.UtilityBase, *mixin_classes),
         {
             "_schema": model_schema,
-            **dict(itertools.chain.from_iterable(model_class_vars)),
+            **model_class_vars,
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
             **_prepare_model_dict(schema=schema),
