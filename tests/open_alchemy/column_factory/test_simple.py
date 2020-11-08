@@ -41,8 +41,7 @@ def test_integration():
         description=None,
     )
 
-    returned_column, returned_schema = simple.handle(artifacts=artifacts)
+    returned_column = simple.handle(artifacts=artifacts)
 
     assert isinstance(returned_column, facades.sqlalchemy.types.Column)
     assert isinstance(returned_column.type, facades.sqlalchemy.types.Integer)
-    assert returned_schema == {"type": "integer"}

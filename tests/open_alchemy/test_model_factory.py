@@ -109,7 +109,7 @@ def test_tablename():
 
 
 @pytest.mark.model
-def test_single_property_required_missing(mocked_column_factory: mock.MagicMock):
+def test_single_property_column_factory_call(mocked_column_factory: mock.MagicMock):
     """
     GIVEN mocked column_factory and schemas with schema that has single item properties
         key and does not have the required key
@@ -134,81 +134,7 @@ def test_single_property_required_missing(mocked_column_factory: mock.MagicMock)
     )
 
     mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=None,
-    )
-
-
-@pytest.mark.model
-def test_single_property_not_required(mocked_column_factory: mock.MagicMock):
-    """
-    GIVEN mocked column_factory and schemas with schema that has single item properties
-        key and a required key without the key in properties
-    WHEN model_factory is called with the name of the schema
-    THEN column_factory is called with required reset.
-    """
-    model_schema = {
-        "x-tablename": "table 1",
-        "type": "object",
-        "properties": {"id": {"type": "integer"}},
-        "required": [],
-    }
-    model_name = "SingleProperty"
-    schemas = {model_name: model_schema}
-    artifacts = schemas_artifacts.get_from_schemas(
-        schemas=schemas, stay_within_model=True
-    )
-    model_factory.model_factory(
-        name=model_name,
-        get_base=_mock_get_base,
-        schemas=copy.deepcopy(schemas),
-        artifacts=artifacts,
-    )
-
-    mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=False,
-    )
-
-
-@pytest.mark.model
-def test_single_property_required(mocked_column_factory: mock.MagicMock):
-    """
-    GIVEN mocked column_factory and schemas with schema that has single item properties
-        key and a required key with the key in properties
-    WHEN model_factory is called with the name of the schema
-    THEN column_factory is called with required reset.
-    """
-    model_schema = {
-        "x-tablename": "table 1",
-        "type": "object",
-        "properties": {"id": {"type": "integer"}},
-        "required": ["id"],
-    }
-    model_name = "SingleProperty"
-    schemas = {model_name: model_schema}
-    artifacts = schemas_artifacts.get_from_schemas(
-        schemas=schemas, stay_within_model=True
-    )
-    model_factory.model_factory(
-        name=model_name,
-        get_base=_mock_get_base,
-        schemas=copy.deepcopy(schemas),
-        artifacts=artifacts,
-    )
-
-    mocked_column_factory.assert_called_once_with(
-        schema={"type": "integer"},
-        schemas=schemas,
-        logical_name="id",
-        model_schema=model_schema,
-        required=True,
+        artifacts=artifacts[model_name].properties[0][1]
     )
 
 
@@ -333,7 +259,12 @@ def test_inherits():
                     },
                 }
             },
-            {"type": "object", "properties": {"property_1": {"type": "integer"}}},
+            {
+                "type": "object",
+                "properties": {
+                    "property_1": {"type": "integer", "x-dict-ignore": False}
+                },
+            },
             id="single x-dict-ignore false",
         ),
         pytest.param(
@@ -362,26 +293,6 @@ def test_inherits():
                 "required": ["property_1"],
             },
             id="single required",
-        ),
-        pytest.param(
-            {
-                "Schema": {
-                    "x-tablename": "table 1",
-                    "type": "object",
-                    "properties": {"property_1": {"type": "integer"}},
-                    "x-backrefs": {
-                        "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
-                    },
-                }
-            },
-            {
-                "type": "object",
-                "properties": {"property_1": {"type": "integer"}},
-                "x-backrefs": {
-                    "ref_schema": {"type": "object", "x-de-$ref": "RefSchema"}
-                },
-            },
-            id="single x-backrefs",
         ),
         pytest.param(
             {

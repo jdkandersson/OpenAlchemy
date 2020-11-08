@@ -1,286 +1,129 @@
 """Tests for the column factory."""
-# pylint: disable=protected-access
 
 import pytest
 
 from open_alchemy import column_factory
 from open_alchemy import facades
+from open_alchemy import types
 
 
-@pytest.mark.parametrize(
-    "schema, expected_schema",
-    [
-        pytest.param({"type": "boolean"}, {"type": "boolean"}, id="any basic type"),
-        pytest.param(
-            {"type": "boolean", "readOnly": True},
-            {"type": "boolean", "readOnly": True},
-            id="any basic type with readOnly",
-        ),
-    ],
-)
 @pytest.mark.column
-def test_integration_simple(schema, expected_schema):
+def test_integration_simple():
     """
-    GIVEN schema
-    WHEN column_factory is called with the schema
-    THEN a SQLAlchemy boolean column is returned in a tuple with logical name and
-        schema.
+    GIVEN simple column artifacts
+    WHEN column_factory is called with the artifacts
+    THEN a SQLAlchemy boolean column is returned.
     """
-    schemas = {}
-    model_schema = {"type": "object"}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema=model_schema,
+    artifacts = types.SimplePropertyArtifacts(
+        type=types.PropertyType.SIMPLE,
+        open_api=types.OpenApiSimplePropertyArtifacts(
+            type="boolean",
+            format=None,
+            max_length=None,
+            nullable=None,
+            default=None,
+            read_only=None,
+            write_only=None,
+        ),
+        extension=types.ExtensionSimplePropertyArtifacts(
+            primary_key=False,
+            autoincrement=None,
+            index=None,
+            unique=None,
+            foreign_key=None,
+            kwargs=None,
+            foreign_key_kwargs=None,
+            dict_ignore=False,
+        ),
+        schema={"type": "boolean"},
+        required=False,
+        description=None,
     )
 
-    assert logical_name == "column_1"
+    column = column_factory.column_factory(artifacts=artifacts)
+
+    assert isinstance(column, facades.sqlalchemy.types.Column)
     assert isinstance(column.type, facades.sqlalchemy.types.Boolean)
-    assert returned_schema == expected_schema
 
 
-@pytest.mark.parametrize(
-    "required, expected_nullable",
-    [
-        pytest.param(None, True, id="None"),
-        pytest.param(False, True, id="False"),
-        pytest.param(True, False, id="True"),
-    ],
-)
 @pytest.mark.column
-def test_integration_simple_required(required, expected_nullable):
+def test_integration_json():
     """
-    GIVEN required and expected nullable
-    WHEN column_factory is called with the required
-    THEN a SQLAlchemy boolean column is returned with the expected nullable value.
+    GIVEN json column artifacts
+    WHEN column_factory is called with the artifacts
+    THEN a SQLAlchemy JSON column is returned.
     """
-    schema = {"type": "boolean"}
-    schemas = {}
-    model_schema = {"type": "object"}
-    ([(_, column)], _) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema=model_schema,
-        required=required,
+    artifacts = types.JsonPropertyArtifacts(
+        type=types.PropertyType.JSON,
+        open_api=types.OpenApiJsonPropertyArtifacts(
+            nullable=None,
+            read_only=None,
+            write_only=None,
+        ),
+        extension=types.ExtensionJsonPropertyArtifacts(
+            primary_key=False,
+            index=None,
+            unique=None,
+            foreign_key=None,
+            kwargs=None,
+            foreign_key_kwargs=None,
+        ),
+        schema={"type": "boolean"},
+        required=False,
+        description=None,
     )
 
-    assert column.nullable == expected_nullable
+    column = column_factory.column_factory(artifacts=artifacts)
 
-
-@pytest.mark.parametrize(
-    "schema, expected_schema",
-    [
-        pytest.param(
-            {"type": "boolean", "x-json": True},
-            {"type": "boolean", "x-json": True},
-            id="simple",
-        ),
-        pytest.param(
-            {
-                "type": "object",
-                "x-json": True,
-                "properties": {"key": {"type": "integer"}},
-            },
-            {
-                "type": "object",
-                "x-json": True,
-                "properties": {"key": {"type": "integer"}},
-            },
-            id="object",
-        ),
-        pytest.param(
-            {"type": "array", "x-json": True},
-            {"type": "array", "x-json": True},
-            id="array",
-        ),
-    ],
-)
-@pytest.mark.column
-def test_integration_simple_json(schema, expected_schema):
-    """
-    GIVEN JSON schema and expected schema
-    WHEN column_factory is called with the schema
-    THEN a SQLALchemy JSON column and the expected schema are returned.
-    """
-    schemas = {}
-    model_schema = {"type": "object"}
-    ([(logical_name, column)], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name="column_1",
-        model_schema=model_schema,
-    )
-
-    assert logical_name == "column_1"
+    assert isinstance(column, facades.sqlalchemy.types.Column)
     assert isinstance(column.type, facades.sqlalchemy.types.JSON)
-    assert returned_schema == expected_schema
 
 
 @pytest.mark.column
-def test_integration_kwargs():
+def test_integration_relationship():
     """
-    GIVEN schema with kwargs
-    WHEN column_factory is called with the schema
-    THEN SQLAlchemy column is constructed with the kwargs.
+    GIVEN relationship property artifacts
+    WHEN column_factory is called with the artifacts
+    THEN a relationship is returned.
     """
-    schema = {"type": "boolean", "x-kwargs": {"doc": "doc 1"}}
-    schemas = {}
-    model_schema = {"type": "object"}
-    ([(_, column)], _) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        model_schema=model_schema,
-        logical_name="column_1",
+    artifacts = types.ManyToOneRelationshipPropertyArtifacts(
+        type=types.PropertyType.RELATIONSHIP,
+        sub_type=types.RelationshipType.MANY_TO_ONE,
+        parent="RefSchema",
+        backref_property=None,
+        kwargs=None,
+        write_only=None,
+        description=None,
+        required=False,
+        schema={"type": "object"},
+        foreign_key="foreign.key",
+        foreign_key_property="foreign_key",
+        nullable=None,
     )
 
-    assert column.doc == "doc 1"
+    relationship = column_factory.column_factory(artifacts=artifacts)
 
-
-@pytest.mark.column
-def test_integration_relationship_many_to_one():
-    """
-    GIVEN schema that references another object schema and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN foreign key reference and relationship is returned with the spec.
-    """
-    schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    model_schema = {"type": "object"}
-    logical_name = "ref_schema"
-
-    (
-        [(tbl_logical_name, relationship)],
-        returned_schema,
-    ) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-    )
-
-    assert tbl_logical_name == logical_name
     assert relationship.argument == "RefSchema"
     assert relationship.backref is None
     assert relationship.uselist is None
-    assert returned_schema == {"type": "object", "x-de-$ref": "RefSchema"}
 
 
 @pytest.mark.column
-def test_integration_object_ref_read_only():
+def test_integration_backref():
     """
-    GIVEN schema that references another object schema and is readOnly and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN no columns and the schema is returned.
+    GIVEN backref property artifacts
+    WHEN column_factory is called with the artifacts
+    THEN None is returned.
     """
-    schema = {"$ref": "#/components/schemas/RefSchema"}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "ref_schema",
-            "properties": {"id": {"type": "integer"}},
-            "readOnly": True,
-        }
-    }
-    model_schema = {"type": "object"}
-    logical_name = "ref_schema"
-
-    ([], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
+    artifacts = types.BackrefPropertyArtifacts(
+        type=types.PropertyType.BACKREF,
+        sub_type=types.BackrefSubType.OBJECT,
+        properties=[],
+        schema={},
+        required=None,
+        description=None,
     )
 
-    assert returned_schema == {
-        "type": "object",
-        "properties": {"id": {"type": "integer"}},
-        "readOnly": True,
-    }
+    backref = column_factory.column_factory(artifacts=artifacts)
 
-
-@pytest.mark.column
-def test_integration_array_ref():
-    """
-    GIVEN schema that references another object schema from an array and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN relationship is returned with the schema.
-    """
-    schema = {"type": "array", "items": {"$ref": "#/components/schemas/RefSchema"}}
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    model_schema = {"type": "object", "x-tablename": "schema"}
-    logical_name = "ref_schema"
-
-    (
-        [(tbl_logical_name, relationship)],
-        returned_schema,
-    ) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-    )
-
-    assert tbl_logical_name == logical_name
-    assert relationship.argument == "RefSchema"
-    assert returned_schema == {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": "RefSchema"},
-    }
-    assert schemas == {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {"id": {"type": "integer"}},
-        },
-    }
-
-
-@pytest.mark.column
-def test_integration_array_ref_read_only():
-    """
-    GIVEN schema that references another object schema from an array that is read only
-        and schemas
-    WHEN column_factory is called with the schema and schemas
-    THEN no columns and the schema is returned.
-    """
-    schema = {
-        "type": "array",
-        "items": {"$ref": "#/components/schemas/RefSchema"},
-        "readOnly": True,
-    }
-    schemas = {
-        "RefSchema": {
-            "type": "object",
-            "x-tablename": "table 1",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-    model_schema = {"type": "object", "x-tablename": "schema"}
-    logical_name = "ref_schema"
-
-    ([], returned_schema) = column_factory.column_factory(
-        schema=schema,
-        schemas=schemas,
-        logical_name=logical_name,
-        model_schema=model_schema,
-    )
-
-    assert returned_schema == {
-        "type": "array",
-        "items": {"type": "object", "properties": {"id": {"type": "integer"}}},
-        "readOnly": True,
-    }
+    assert backref is None

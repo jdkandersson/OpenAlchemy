@@ -28,18 +28,9 @@ def test_handle():
         foreign_key="foreign.key",
         nullable=False,
     )
-    logical_name = "ref_schema"
 
-    (
-        [(returned_logical_name, returned_relationship)],
-        returned_schema,
-    ) = relationship.handle(
-        artifacts=artifacts,
-        logical_name=logical_name,
-    )
+    returned_relationship = relationship.handle(artifacts=artifacts)
 
-    assert returned_logical_name == logical_name
     assert returned_relationship.argument == "Parent"
     assert returned_relationship.backref is None
     assert returned_relationship.uselist is None
-    assert returned_schema == {"key": "value"}
