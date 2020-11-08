@@ -529,6 +529,38 @@ def test_composite_unique(schema, expected_composite_unique):
     assert returned_composite_unique == expected_composite_unique
 
 
+@pytest.mark.helper
+def test_server_default_wrong_type():
+    """
+    GIVEN schema with server_default defined as a string
+    WHEN server_default is called with the schema
+    THEN MalformedSchemaError is raised.
+    """
+    schema = {"x-server-default": True}
+
+    with pytest.raises(exceptions.MalformedSchemaError):
+        helpers.peek.server_default(schema=schema, schemas={})
+
+
+@pytest.mark.parametrize(
+    "schema, expected_server_default",
+    [
+        pytest.param({}, None, id="missing"),
+        pytest.param({"x-server-default": "value 1"}, "value 1", id="defined"),
+    ],
+)
+@pytest.mark.helper
+def test_server_default(schema, expected_server_default):
+    """
+    GIVEN schema and expected server_default
+    WHEN server_default is called with the schema
+    THEN the expected server_default is returned.
+    """
+    returned_server_default = helpers.peek.server_default(schema=schema, schemas={})
+
+    assert returned_server_default == expected_server_default
+
+
 @pytest.mark.parametrize(
     "schema",
     [
