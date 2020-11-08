@@ -1,10 +1,16 @@
-![Code Quality Status](https://github.com/jdkandersson/OpenAlchemy/workflows/Code%20quality%20checks/badge.svg) ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/anderssonpublic/anderssonpublic/1) [![Documentation Status](https://readthedocs.org/projects/openapi-sqlalchemy/badge/?version=latest)](https://openapi-sqlalchemy.readthedocs.io/en/latest/?badge=latest) ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/jdkandersson/OpenAlchemy) ![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/jdkandersson/OpenAlchemy) ![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/jdkandersson/OpenAlchemy)
-
 # OpenAlchemy
+
+![Code Quality Status](https://github.com/jdkandersson/OpenAlchemy/workflows/Code%20quality%20checks/badge.svg)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/anderssonpublic/anderssonpublic/1)
+[![Documentation Status](https://readthedocs.org/projects/openapi-sqlalchemy/badge/?version=latest)](https://openapi-sqlalchemy.readthedocs.io/en/latest/?badge=latest)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/jdkandersson/OpenAlchemy)
+![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/jdkandersson/OpenAlchemy)
+![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/jdkandersson/OpenAlchemy)
 
 Translates an OpenAPI schema to SQLAlchemy models.
 
-Get started with the online editor that will guide you through using your existing OpenAPI specification to define your database schema:
+Get started with the online editor that will guide you through using your
+existing OpenAPI specification to define your database schema:
 [Online Editor](https://editor.openalchemy.io)
 
 ## Installation
@@ -91,7 +97,10 @@ from open_alchemy.models import Base
 from open_alchemy.models import Employee
 ```
 
-With the _models_filename_ parameter a file is auto generated with type hints for the SQLAlchemy models at the specified location, for example: [type hinted models example](examples/simple/models_auto.py). This adds support for IDE auto complete, for example for the model initialization:
+With the _models_filename_ parameter a file is auto generated with type hints
+for the SQLAlchemy models at the specified location, for example:
+[type hinted models example](examples/simple/models_auto.py). This adds support
+for IDE auto complete, for example for the model initialization:
 
 ![autocomplete init](examples/simple/models_autocomplete_init.png)
 
@@ -155,7 +164,8 @@ An example API has been defined using connexion and Flask here:
 - `__repr__` model methods to support the python `repr` function,
 - `to_dict` model methods to convert instances to dictionaries,
 - `readOnly` and `writeOnly` for influence the conversion to and from dictionaries,
-- exposing created models under `open_alchemy.models` removing the need for `models.py` files and
+- exposing created models under `open_alchemy.models` removing the need for
+  `models.py` files and
 - ability to mix in arbitrary classes into a model.
 
 ## Contributing

@@ -51,6 +51,7 @@ used in the code (the list will evolve over time):
 - Update the readme with any significant new features
 - Update the documentation and examples, if appropriate
 - Test docstrings should use the following structure:
+
   ```Python
   """
   GIVEN <preconditions>
@@ -58,6 +59,7 @@ used in the code (the list will evolve over time):
   THEN <this outcome is expected>
   """
   ```
+
 - Separate the code for GIVEN, WHEN and THEN in tests using a single blank line
   to indicate where each piece starts
 - Functions that are intended for re-use across the code base (e.g. helper
