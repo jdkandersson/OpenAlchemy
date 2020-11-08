@@ -16,7 +16,7 @@ def model_factory(
     name: str,
     get_base: types.GetBase,
     schemas: types.Schemas,
-    artifacts: types.ModelsModelArtifacts,  # pylint: disable=unused-argument
+    artifacts: types.ModelsModelArtifacts,
 ) -> typing.Type:
     """
     Convert OpenAPI schema to SQLAlchemy model.
