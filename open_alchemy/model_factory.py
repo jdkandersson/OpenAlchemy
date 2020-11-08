@@ -39,7 +39,7 @@ def model_factory(
     assert model_artifacts is not None
 
     # Calculating the class variables for the model
-    model_class_vars = []
+    model_class_vars = {}
     required_exists = "required" in schema
     required_array = schema.get("required", [])
     # Initializing the schema to record for the model
@@ -57,7 +57,7 @@ def model_factory(
     for prop_name, prop_artifacts in model_artifacts.properties:
         prop_column = column_factory.column_factory(artifacts=prop_artifacts)
         if prop_column is not None:
-            model_class_vars.append((prop_name, prop_column))
+            model_class_vars[prop_name] = prop_column
 
         dict_ignore = (
             prop_artifacts.type == types.PropertyType.SIMPLE
@@ -80,7 +80,7 @@ def model_factory(
         (base, utility_base.UtilityBase, *mixin_classes),
         {
             "_schema": model_schema,
-            **dict(model_class_vars),
+            **model_class_vars,
             "__table_args__": table_args.construct(schema=schema),
             **_get_kwargs(schema=schema),
             **_prepare_model_dict(schema=schema),
