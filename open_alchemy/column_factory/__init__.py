@@ -13,16 +13,10 @@ def column_factory(*, artifacts: oa_types.TAnyPropertyArtifacts) -> types.TRetur
     Generate column based on OpenAPI schema property.
 
     Args:
-        schema: The schema for the column.
         artifacts: The artifacts for the column.
-        model_schema: The schema of the model.
-        schemas: Used to resolve any $ref.
-        required: Whether the object property is required.
-        logical_name: The logical name in the specification for the schema.
 
     Returns:
-        The logical name, the SQLAlchemy column based on the schema and the
-        specification to store for the column.
+        The column, relationship or None if the property does not need it.
 
     """
     if artifacts.type == oa_types.PropertyType.SIMPLE:
