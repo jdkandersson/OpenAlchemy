@@ -68,6 +68,7 @@ def check_kwargs(
         unexpected_keys = {
             "nullable",
             "default",
+            "server_default",
             "primary_key",
             "autoincrement",
             "index",
@@ -129,6 +130,8 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         oa_helpers.peek.description(schema=schema, schemas=schemas)
         # Check default
         oa_helpers.peek.default(schema=schema, schemas=schemas)
+        # Check server default
+        oa_helpers.peek.server_default(schema=schema, schemas=schemas)
         # Check writeOnly
         oa_helpers.peek.write_only(schema=schema, schemas=schemas)
 

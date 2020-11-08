@@ -511,6 +511,39 @@ TESTS = [
         id="boolean default",
     ),
     pytest.param(
+        {"type": "integer", "x-server-default": True},
+        {},
+        (
+            False,
+            "malformed schema :: A x-server-default value must be of type string. ",
+        ),
+        id="integer x-server-default not string",
+    ),
+    pytest.param(
+        {"type": "integer", "x-server-default": "value 1"},
+        {},
+        (True, None),
+        id="integer x-server-default",
+    ),
+    pytest.param(
+        {"type": "number", "x-server-default": "value 1"},
+        {},
+        (True, None),
+        id="number x-server-default",
+    ),
+    pytest.param(
+        {"type": "string", "x-server-default": "value 1"},
+        {},
+        (True, None),
+        id="string x-server-default",
+    ),
+    pytest.param(
+        {"type": "boolean", "x-server-default": "value 1"},
+        {},
+        (True, None),
+        id="boolean x-server-default",
+    ),
+    pytest.param(
         {"type": "integer", "x-kwargs": 1},
         {},
         (False, "malformed schema :: The x-kwargs property must be of type dict. "),
@@ -533,6 +566,12 @@ TESTS = [
         {},
         (False, "x-kwargs :: may not contain the default key"),
         id="x-kwargs has default",
+    ),
+    pytest.param(
+        {"type": "integer", "x-kwargs": {"server_default": "value 1"}},
+        {},
+        (False, "x-kwargs :: may not contain the server_default key"),
+        id="x-kwargs has server_default",
     ),
     pytest.param(
         {"type": "integer", "x-kwargs": {"primary_key": True}},
