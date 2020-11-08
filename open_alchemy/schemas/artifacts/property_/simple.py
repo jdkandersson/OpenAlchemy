@@ -38,6 +38,9 @@ def get(
     default = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.default, schema=schema, schemas=schemas
     )
+    server_default = oa_helpers.peek.prefer_local(
+        get_value=oa_helpers.peek.server_default, schema=schema, schemas=schemas
+    )
 
     read_only = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.read_only, schema=schema, schemas=schemas
@@ -112,6 +115,7 @@ def get(
             autoincrement=autoincrement,
             index=index,
             unique=unique,
+            server_default=server_default,
             foreign_key=foreign_key,
             kwargs=kwargs,
             foreign_key_kwargs=foreign_key_kwargs,

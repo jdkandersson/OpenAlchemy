@@ -24,6 +24,10 @@ cd examples/default
 python models.py
 python models_traditional.py
 cd -
+cd examples/server_default
+python models.py
+python models_traditional.py
+cd -
 cd examples/read_only
 python models.py
 python models_traditional.py

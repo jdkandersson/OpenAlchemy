@@ -108,6 +108,13 @@ def cleanup_models():
             id="default Employee",
         ),
         pytest.param(
+            "server_default/example-spec.yml",
+            "Employee",
+            {"id": 1},
+            {"name": "Unknown"},
+            id="server_default Employee",
+        ),
+        pytest.param(
             "read_only/example-spec.yml",
             "Employee",
             {"name": "name 1"},

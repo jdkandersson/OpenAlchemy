@@ -63,6 +63,12 @@ TESTS = [
         id="many to one $ref JSON",
     ),
     pytest.param(
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-json": False}]},
+        {"RefSchema": {"type": "object", "x-tablename": "ref_schema", "x-json": True}},
+        (True, None),
+        id="many to one allOf prefer local json False",
+    ),
+    pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
@@ -128,6 +134,18 @@ TESTS = [
         id="many to one nullable allOf",
     ),
     pytest.param(
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"nullable": True}]},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "nullable": "True",
+            }
+        },
+        (True, None),
+        id="many to one nullable allOf prefer local",
+    ),
+    pytest.param(
         {
             "allOf": [
                 {"$ref": "#/components/schemas/RefSchema"},
@@ -179,6 +197,23 @@ TESTS = [
             "allOf": [
                 {"$ref": "#/components/schemas/RefSchema"},
                 {"description": "description 1"},
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "description": True,
+            }
+        },
+        (True, None),
+        id="many to one description allOf prefer local",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": "description 1"},
                 {"description": "description 2"},
             ]
         },
@@ -215,6 +250,18 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to one writeOnly allOf",
+    ),
+    pytest.param(
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"writeOnly": True}]},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "writeOnly": "True",
+            }
+        },
+        (True, None),
+        id="many to one writeOnly allOf prefer local",
     ),
     pytest.param(
         {
@@ -262,6 +309,23 @@ TESTS = [
         {"RefSchema": {"type": "object", "x-tablename": "ref_schema"}},
         (True, None),
         id="many to one backref allOf",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-backref": "schema"},
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-backref": True,
+            }
+        },
+        (True, None),
+        id="many to one backref allOf prefer local",
     ),
     pytest.param(
         {
@@ -319,6 +383,23 @@ TESTS = [
             "allOf": [
                 {"$ref": "#/components/schemas/RefSchema"},
                 {"x-foreign-key-column": "id"},
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-foreign-key-column": True,
+            }
+        },
+        (True, None),
+        id="many to one foreign-key-column allOf prefer local",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-foreign-key-column": "id"},
                 {"x-foreign-key-column": "name"},
             ]
         },
@@ -359,6 +440,23 @@ TESTS = [
         {
             "allOf": [
                 {"$ref": "#/components/schemas/RefSchema"},
+                {"x-kwargs": {"key": "value"}},
+            ]
+        },
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-kwargs": True,
+            }
+        },
+        (True, None),
+        id="many to one allOf kwargs prefer local",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
                 {"x-kwargs": {"backref": "schema"}},
             ]
         },
@@ -388,6 +486,30 @@ TESTS = [
         },
         (True, None),
         id="many to one $ref uselist",
+    ),
+    pytest.param(
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-uselist": "True",
+            }
+        },
+        (False, "malformed schema :: The x-uselist property must be of type boolean. "),
+        id="many to one $ref uselist invalid",
+    ),
+    pytest.param(
+        {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": True}]},
+        {
+            "RefSchema": {
+                "type": "object",
+                "x-tablename": "ref_schema",
+                "x-uselist": "True",
+            }
+        },
+        (True, None),
+        id="many to one $ref uselist prefer local",
     ),
     pytest.param(
         {"allOf": [{"$ref": "#/components/schemas/RefSchema"}, {"x-uselist": True}]},

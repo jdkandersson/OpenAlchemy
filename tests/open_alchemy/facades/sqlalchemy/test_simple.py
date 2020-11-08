@@ -29,6 +29,7 @@ def _create_artifacts():
             autoincrement=None,
             index=None,
             unique=None,
+            server_default=None,
             foreign_key=None,
             kwargs=None,
             foreign_key_kwargs=None,
@@ -109,9 +110,73 @@ def test_construct_foreign_key_kwargs():
 CONSTRUCT_ARGS_TESTS = [
     pytest.param("open_api", "nullable", True, "nullable", True, id="nullable true"),
     pytest.param("open_api", "nullable", False, "nullable", False, id="nullable false"),
+    pytest.param(
+        "open_api",
+        "default",
+        None,
+        "nullable",
+        True,
+        id="default None expect nullable true",
+    ),
+    pytest.param(
+        "open_api",
+        "default",
+        1,
+        "nullable",
+        False,
+        id="default set expect nullable false",
+    ),
+    pytest.param(
+        "extension",
+        "server_default",
+        None,
+        "nullable",
+        True,
+        id="server_default None expect nullable true",
+    ),
+    pytest.param(
+        "extension",
+        "server_default",
+        "value 1",
+        "nullable",
+        False,
+        id="server_default set expect nullable false",
+    ),
+    pytest.param(
+        "extension",
+        "server_default",
+        None,
+        "nullable",
+        True,
+        id="autoincrement None expect nullable true",
+    ),
+    pytest.param(
+        "extension",
+        "autoincrement",
+        True,
+        "nullable",
+        False,
+        id="autoincrement set expect nullable false",
+    ),
     pytest.param("open_api", "default", None, "default", None, id="default None"),
     pytest.param(
         "open_api", "default", "value 1", "default.arg", "value 1", id="default set"
+    ),
+    pytest.param(
+        "extension",
+        "server_default",
+        None,
+        "server_default",
+        None,
+        id="server_default None",
+    ),
+    pytest.param(
+        "extension",
+        "server_default",
+        "value 1",
+        "server_default.arg.text",
+        "value 1",
+        id="server_default set",
     ),
     pytest.param(
         "extension", "primary_key", None, "primary_key", False, id="primary key None"
@@ -154,6 +219,29 @@ def test_construct_args(
         functools.reduce(getattr, column_key.split("."), returned_column)
         == column_value
     )
+
+
+@pytest.mark.parametrize(
+    "required, expected_nullable",
+    [
+        pytest.param(False, True, id="required False"),
+        pytest.param(True, False, id="required True"),
+    ],
+)
+@pytest.mark.facade
+@pytest.mark.sqlalchemy
+def test_construct_args_required_nullable(required, expected_nullable):
+    """
+    GIVEN artifacts with given required
+    WHEN construct is called with the artifacts
+    THEN a column with the expected nullable value is returned.
+    """
+    artifacts = _create_artifacts()
+    artifacts.required = required
+
+    returned_column = simple.construct(artifacts=artifacts)
+
+    assert returned_column.nullable == expected_nullable
 
 
 @pytest.mark.facade

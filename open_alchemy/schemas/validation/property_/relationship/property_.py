@@ -19,7 +19,12 @@ def _check_type(
         if type_ not in {"object", "array"}:
             return types.Result(False, "type not an object nor array")
         # Check for JSON
-        if helpers.peek.json(schema=schema, schemas=schemas) is True:
+        if (
+            helpers.peek.prefer_local(
+                get_value=helpers.peek.json, schema=schema, schemas=schemas
+            )
+            is True
+        ):
             return types.Result(False, "property is JSON")
     except exceptions.SchemaNotFoundError as exc:
         return types.Result(False, f"reference :: {exc}")
@@ -56,9 +61,13 @@ def _check_object_backref_uselist(
 ) -> types.OptResult:
     """Check backref and uselist for an object."""
     # Check backref
-    backref = helpers.peek.backref(schema=schema, schemas=schemas)
+    backref = helpers.peek.prefer_local(
+        get_value=helpers.peek.backref, schema=schema, schemas=schemas
+    )
     # Check uselist
-    uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    uselist = helpers.peek.prefer_local(
+        get_value=helpers.peek.uselist, schema=schema, schemas=schemas
+    )
     if uselist is False and backref is None:
         return types.Result(
             False, "a one-to-one relationship must define a back reference"
@@ -71,7 +80,9 @@ def _check_kwargs(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the value of x-kwargs."""
-    kwargs = helpers.peek.kwargs(schema=schema, schemas=schemas)
+    kwargs = helpers.peek.prefer_local(
+        get_value=helpers.peek.kwargs, schema=schema, schemas=schemas
+    )
     # Check for unexpected keys
     if kwargs is not None:
         unexpected_keys = {"backref", "secondary"}
@@ -89,11 +100,17 @@ def _check_object_values(
 ) -> types.OptResult:
     """Check the values of the relationship."""
     # Check nullable
-    helpers.peek.nullable(schema=schema, schemas=schemas)
+    helpers.peek.prefer_local(
+        get_value=helpers.peek.nullable, schema=schema, schemas=schemas
+    )
     # Check description
-    helpers.peek.description(schema=schema, schemas=schemas)
+    helpers.peek.prefer_local(
+        get_value=helpers.peek.description, schema=schema, schemas=schemas
+    )
     # Check writeOnly
-    helpers.peek.write_only(schema=schema, schemas=schemas)
+    helpers.peek.prefer_local(
+        get_value=helpers.peek.write_only, schema=schema, schemas=schemas
+    )
     # Check backref and uselist
     backref_uselist_result = _check_object_backref_uselist(
         schema=schema, schemas=schemas
@@ -101,7 +118,9 @@ def _check_object_values(
     if backref_uselist_result is not None:
         return backref_uselist_result
     # Check foreign-key-column
-    helpers.peek.foreign_key_column(schema=schema, schemas=schemas)
+    helpers.peek.prefer_local(
+        get_value=helpers.peek.foreign_key_column, schema=schema, schemas=schemas
+    )
     # Check kwargs
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
     if kwargs_result is not None:

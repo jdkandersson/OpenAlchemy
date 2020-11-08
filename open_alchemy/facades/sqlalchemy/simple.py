@@ -2,6 +2,8 @@
 
 import typing
 
+import sqlalchemy
+
 from ... import exceptions
 from ... import helpers
 from ... import types as oa_types
@@ -37,11 +39,16 @@ def construct(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Column:
             format_=artifacts.open_api.format,
         )
 
+    # Calculate server default
+    server_default = None
+    if artifacts.extension.server_default is not None:
+        server_default = sqlalchemy.text(artifacts.extension.server_default)
+
     # Calculate nullable
     nullable = helpers.calculate_nullable(
         nullable=artifacts.open_api.nullable,
         generated=artifacts.extension.autoincrement is True,
-        defaulted=default is not None,
+        defaulted=default is not None or artifacts.extension.server_default is not None,
         required=artifacts.required,
     )
 
@@ -64,6 +71,7 @@ def construct(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Column:
         foreign_key,
         nullable=nullable,
         default=default,
+        server_default=server_default,
         **opt_kwargs,
         **kwargs,
     )

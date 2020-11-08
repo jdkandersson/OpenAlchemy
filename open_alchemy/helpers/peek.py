@@ -678,6 +678,32 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     return value
 
 
+def server_default(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the x-server-default property from a property schema.
+
+    Raises MalformedSchemaError if the x-server-default value is not a string.
+
+    Args:
+        schema: The schema to get the x-server-default from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-server-default value.
+
+    """
+    value = peek_key(schema=schema, schemas=schemas, key="x-server-default")
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "A x-server-default value must be of type string."
+        )
+    return value
+
+
 def mixins(
     *, schema: types.Schema, schemas: types.Schemas
 ) -> typing.Optional[typing.List[str]]:

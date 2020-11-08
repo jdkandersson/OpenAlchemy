@@ -275,6 +275,54 @@ def test_types_default(engine, sessionmaker, type_, format_, default, expected_v
     assert queried_model.column == expected_value
 
 
+@pytest.mark.integration
+def test_types_server_default(engine, sessionmaker):
+    """
+    GIVEN specification with a schema with a column that has a server default
+    WHEN schema is created and an instance is added to the session
+    THEN the instance with the default value is returned when the session is queried for
+        it.
+    """
+    # Defining specification
+    column_schema = {
+        "type": "string",
+        "format": "date-time",
+        "x-server-default": "CURRENT_TIMESTAMP",
+    }
+    spec = {
+        "components": {
+            "schemas": {
+                "Table": {
+                    "properties": {
+                        "id": {"type": "integer", "x-primary-key": True},
+                        "column": column_schema,
+                    },
+                    "x-tablename": "table",
+                    "type": "object",
+                }
+            }
+        }
+    }
+    # Creating model factory
+    base = declarative.declarative_base()
+    model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
+    model = model_factory(name="Table")
+
+    # Creating models
+    base.metadata.create_all(engine)
+    # Creating model instance
+    model_instance = model(id=1)
+    session = sessionmaker()
+    session.add(model_instance)
+    session.flush()
+
+    # Querying session
+    queried_model = session.query(model).first()
+    assert queried_model.column.timestamp() == pytest.approx(
+        datetime.datetime.utcnow().timestamp(), abs=10
+    )
+
+
 @pytest.mark.parametrize("index", ["x-primary-key", "x-index", "x-unique"])
 @pytest.mark.integration
 def test_indexes(engine, index: str):

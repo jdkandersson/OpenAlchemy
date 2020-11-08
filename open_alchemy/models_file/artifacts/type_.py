@@ -31,7 +31,8 @@ def _model_simple_property(
         nullable=artifacts.open_api.nullable,
         generated=artifacts.extension.autoincrement is True,
         required=artifacts.required,
-        defaulted=artifacts.open_api.default is not None,
+        defaulted=artifacts.open_api.default is not None
+        or artifacts.extension.server_default is not None,
     )
 
     if optional:

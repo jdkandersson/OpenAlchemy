@@ -9,42 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add check enforcing unique `x-tablename` values.
-- Add check enforcing unique `x-secondary` values.
-- Add custom association schemas validation
-- Add support for custom association tables
-- Add `openalchemy` CLI with a first subcommand to build a Python package from a
-  specification file. [#201]
-- Add a CLI subcommand to regenerate models. [#202]
+- Add check enforcing unique `x-tablename` values. [#189]
+- Add check enforcing unique `x-secondary` values. [#189]
+- Add custom association schemas validation [#189]
+- Add support for custom association tables [#189]
+- Add `openalchemy` CLI with a first sub command to build a Python package
+  from a specification file. [#201]
+- Add a CLI sub command to regenerate models. [#202]
+- Add support for database default values using `x-server-default`. [#196]
 
 ### Changed
 
 - Change the association table to no longer be noted on the models based on
   the `x-secondary` value and instead be noted based on converting the
   `x-secondary` value from snake_case to PascalCase. Name clashes are avoided
-  by pre-pending `Autogen` as many times as required.
+  by pre-pending `Autogen` as many times as required. [#189]
 - Change the association table to no longer be constructed as a table and
-  instead to be constructed as another model.
-- Refactor column factory to use the schemas artifacts
-- Refactor model factory to use the schemas artifacts
+  instead to be constructed as another model. [#189]
+- Refactor column factory to use the schemas artifacts [#196]
+- Refactor model factory to use the schemas artifacts [#196]
 
 ### Fixed
 
 - Fix bug where the association table defined for `many-to-many` relationships
   did not make the foreign key columns referencing the two sides of the
   relationship primary keys. _This may require a database migration if alembic
-  was used to generate the database schema._
+  was used to generate the database schema._ [#189]
 - Fix bug where some properties were incorrectly picked from a reference even
   though they existed locally (only impacts relationship properties where, for
   example, `x-secondary` was defined both on the relationship property in
-  `allOf` and on the referenced model).
+  `allOf` and on the referenced model). [#189]
 
 ### Removed
 
 - Remove `define_all` parameter for `init_model_factory`, `init_json` and
   `init_yaml`. OpenAlchemy now behaves as though `define_all` is set to
   `True`. _This means that a pure model reference (a schema with only the
-  `$ref` key) can no longer be used to change the name of a model._
+  `$ref` key) can no longer be used to change the name of a model._ [#189]
 
 ## [1.6.0] - 2020-10-10
 

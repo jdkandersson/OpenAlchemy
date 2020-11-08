@@ -13,10 +13,32 @@ CHECK_TESTS = [
         id="malformed nullable",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"nullable": "True"},
+            ]
+        },
+        {"RefSchema": {"nullable": True}},
+        (False, "malformed schema :: A nullable value must be of type boolean. "),
+        id="integer nullable prefer local not boolean",
+    ),
+    pytest.param(
         {"description": True},
         {},
         (False, "malformed schema :: A description value must be of type string. "),
         id="malformed description",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"description": True},
+            ]
+        },
+        {"RefSchema": {"description": "description 1"}},
+        (False, "malformed schema :: A description value must be of type string. "),
+        id="integer description prefer local not string",
     ),
     pytest.param(
         {"readOnly": "False"},
@@ -25,16 +47,49 @@ CHECK_TESTS = [
         id="malformed readOnly",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"readOnly": "True"},
+            ]
+        },
+        {"RefSchema": {"readOnly": True}},
+        (False, "malformed schema :: A readOnly property must be of type boolean. "),
+        id="integer readOnly prefer local not boolean",
+    ),
+    pytest.param(
         {"writeOnly": "False"},
         {},
         (False, "malformed schema :: A writeOnly property must be of type boolean. "),
         id="malformed writeOnly",
     ),
     pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"writeOnly": "True"},
+            ]
+        },
+        {"RefSchema": {"writeOnly": True}},
+        (False, "malformed schema :: A writeOnly property must be of type boolean. "),
+        id="integer writeOnly prefer local not boolean",
+    ),
+    pytest.param(
         {"x-index": "False"},
         {},
         (False, "malformed schema :: A index value must be of type boolean. "),
         id="malformed x-index",
+    ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-index": "True"},
+            ]
+        },
+        {"RefSchema": {"x-index": True}},
+        (False, "malformed schema :: A index value must be of type boolean. "),
+        id="integer x-index prefer local not boolean",
     ),
     pytest.param(
         {"$ref": "#/components/schemas/RefSchema"},
@@ -61,6 +116,17 @@ CHECK_TESTS = [
         (False, "malformed schema :: A unique value must be of type boolean. "),
         id="malformed x-unique",
     ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-unique": "True"},
+            ]
+        },
+        {"RefSchema": {"x-unique": True}},
+        (False, "malformed schema :: A unique value must be of type boolean. "),
+        id="integer x-unique prefer local not boolean",
+    ),
     pytest.param({"x-unique": True}, {}, (True, None), id="x-unique"),
     pytest.param(
         {"x-primary-key": "False"},
@@ -71,12 +137,32 @@ CHECK_TESTS = [
         ),
         id="malformed x-primary-key",
     ),
+    pytest.param(
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {"x-primary-key": "True"},
+            ]
+        },
+        {"RefSchema": {"x-primary-key": True}},
+        (
+            False,
+            "malformed schema :: The x-primary-key property must be of type boolean. ",
+        ),
+        id="integer x-primary-key prefer local not boolean",
+    ),
     pytest.param({"x-primary-key": True}, {}, (True, None), id="x-primary-key"),
     pytest.param(
         {"x-autoincrement": "False"},
         {},
         (False, "json properties do not support x-autoincrement"),
         id="x-autoincrement defined",
+    ),
+    pytest.param(
+        {"x-server-default": "False"},
+        {},
+        (False, "json properties do not support x-server-default"),
+        id="x-server-default defined",
     ),
     pytest.param(
         {"x-foreign-key": True},

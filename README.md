@@ -147,7 +147,7 @@ An example API has been defined using connexion and Flask here:
 - composite unique constraints,
 - column nullability,
 - foreign keys,
-- default values for columns,
+- default values for columns (both application and database side),
 - many to one relationships,
 - one to one relationships,
 - one to many relationships,
