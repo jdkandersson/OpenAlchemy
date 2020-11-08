@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change the association table to no longer be constructed as a table and
   instead to be constructed as another model.
 - Refactor column factory to use the schemas artifacts
+- Refactor model factory to use the schemas artifacts
 
 ### Fixed
 
