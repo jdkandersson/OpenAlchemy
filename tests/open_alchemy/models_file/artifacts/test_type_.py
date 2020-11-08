@@ -9,7 +9,14 @@ from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
 def _construct_simple_artifacts(
-    *, type_, format_=None, nullable=None, generated=None, default=None, required=False
+    *,
+    type_,
+    format_=None,
+    nullable=None,
+    generated=None,
+    default=None,
+    required=False,
+    server_default=None
 ):
     """Construct the artifacts for a simple property."""
     return schemas_artifacts.types.SimplePropertyArtifacts(
@@ -28,7 +35,7 @@ def _construct_simple_artifacts(
             autoincrement=generated,
             index=None,
             unique=None,
-            server_default=None,
+            server_default=server_default,
             foreign_key=None,
             kwargs=None,
             foreign_key_kwargs=None,
@@ -233,6 +240,7 @@ def _construct_backref_property_artifacts(sub_type):
                 required=False,
                 generated=None,
                 default=None,
+                server_default=None,
             ),
             "typing.Optional[int]",
             id="simple nullable and required None",
@@ -244,6 +252,7 @@ def _construct_backref_property_artifacts(sub_type):
                 required=True,
                 generated=None,
                 default=None,
+                server_default=None,
             ),
             "int",
             id="simple nullable None required True",
@@ -255,6 +264,7 @@ def _construct_backref_property_artifacts(sub_type):
                 required=False,
                 generated=True,
                 default=None,
+                server_default=None,
             ),
             "int",
             id="simple nullable None generated True",
@@ -266,6 +276,7 @@ def _construct_backref_property_artifacts(sub_type):
                 required=False,
                 generated=False,
                 default=None,
+                server_default=None,
             ),
             "typing.Optional[int]",
             id="simple nullable None generated False",
@@ -277,6 +288,19 @@ def _construct_backref_property_artifacts(sub_type):
                 required=False,
                 generated=None,
                 default=1,
+                server_default=None,
+            ),
+            "int",
+            id="simple nullable None default given",
+        ),
+        pytest.param(
+            _construct_simple_artifacts(
+                type_="integer",
+                nullable=None,
+                required=False,
+                generated=None,
+                default=None,
+                server_default="value 1",
             ),
             "int",
             id="simple nullable None default given",
