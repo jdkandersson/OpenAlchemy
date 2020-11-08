@@ -209,6 +209,33 @@ CALC_F_K_PROP_ART_TESTS = [
             "RefSchema": {
                 "x-tablename": "ref_schema",
                 "type": "object",
+                "properties": {
+                    "id": {"type": "integer", "x-server-default": "value 1"}
+                },
+            }
+        },
+        (
+            "Schema",
+            "ref_schema_id",
+            {
+                "type": "integer",
+                "x-server-default": "value 1",
+                "x-foreign-key": "ref_schema.id",
+                "x-dict-ignore": True,
+                "nullable": False,
+            },
+        ),
+        id="many-to-one server default",
+    ),
+    pytest.param(
+        "Schema",
+        {},
+        "ref_schema",
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                "x-tablename": "ref_schema",
+                "type": "object",
                 "properties": {"id": {"type": "integer", "x-primary-key": True}},
             }
         },

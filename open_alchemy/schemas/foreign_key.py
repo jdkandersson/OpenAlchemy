@@ -174,10 +174,13 @@ def _calculate_foreign_key_property_artifacts(
     if relationship_type != types.RelationshipType.ONE_TO_MANY:
         nullable = oa_helpers.peek.nullable(schema=property_schema, schemas=schemas)
     default = oa_helpers.peek.default(schema=foreign_key_target_schema, schemas=schemas)
+    server_default = oa_helpers.peek.server_default(
+        schema=foreign_key_target_schema, schemas=schemas
+    )
     nullable = oa_helpers.calculate_nullable(
         nullable=nullable,
         generated=False,
-        defaulted=default is not None,
+        defaulted=default is not None or server_default is not None,
         required=required,
     )
 
@@ -208,6 +211,8 @@ def _calculate_foreign_key_property_artifacts(
         foreign_key_property_schema["maxLength"] = max_length
     if default is not None:
         foreign_key_property_schema["default"] = default
+    if server_default is not None:
+        foreign_key_property_schema["x-server-default"] = server_default
 
     # Calculate other artifacts
     modify_name = oa_helpers.foreign_key.get_modify_name(

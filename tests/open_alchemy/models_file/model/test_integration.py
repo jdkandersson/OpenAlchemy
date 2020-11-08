@@ -53,6 +53,7 @@ def test_generate():
                         autoincrement=None,
                         index=None,
                         unique=None,
+                        server_default=None,
                         foreign_key=None,
                         kwargs=None,
                         foreign_key_kwargs=None,

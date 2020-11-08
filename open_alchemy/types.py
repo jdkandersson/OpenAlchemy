@@ -93,6 +93,7 @@ _ColumnSchemaBase = TypedDict(
         "description": str,
         "x-json": bool,
         "default": TColumnDefault,
+        "x-server-default": str,
         "x-generated": bool,
         "readOnly": bool,
         "writeOnly": bool,
@@ -256,6 +257,7 @@ class _ExtensionSimplePropertyTypedDictBase(TypedDict, total=False):
     autoincrement: bool
     index: bool
     unique: bool
+    server_default: str
 
     foreign_key: str
 
@@ -279,6 +281,7 @@ class ExtensionSimplePropertyArtifacts:
     autoincrement: typing.Optional[bool]
     index: typing.Optional[bool]
     unique: typing.Optional[bool]
+    server_default: typing.Optional[str]
 
     foreign_key: typing.Optional[str]
 
@@ -298,6 +301,7 @@ class ExtensionSimplePropertyArtifacts:
                 "autoincrement",
                 "index",
                 "unique",
+                "server_default",
                 "foreign_key",
                 "kwargs",
                 "foreign_key_kwargs",
@@ -306,6 +310,7 @@ class ExtensionSimplePropertyArtifacts:
             "autoincrement",
             "index",
             "unique",
+            "server_default",
             "foreign_key",
             "kwargs",
             "foreign_key_kwargs",

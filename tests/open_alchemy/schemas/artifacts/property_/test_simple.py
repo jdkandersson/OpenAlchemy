@@ -55,6 +55,7 @@ GET_TESTS = [
             "x-primary-key": True,
             "x-index": True,
             "x-unique": True,
+            "x-server-default": "value 1",
             "x-foreign-key": "foreign.key",
             "x-kwargs": {"key": "value"},
             "x-foreign-key-kwargs": {"key": "value"},
@@ -275,6 +276,49 @@ GET_TESTS = [
         "open_api.default",
         3,
         id="allOf default prefer local",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA, "type": "integer"},
+        {},
+        "extension.server_default",
+        None,
+        id="server default undefined",
+    ),
+    pytest.param(
+        None,
+        {**DEFAULT_SCHEMA, "type": "integer", "x-server-default": "value 1"},
+        {},
+        "extension.server_default",
+        "value 1",
+        id="server default",
+    ),
+    pytest.param(
+        None,
+        {"$ref": "#/components/schemas/RefSchema"},
+        {
+            "RefSchema": {
+                **DEFAULT_SCHEMA,
+                "type": "integer",
+                "x-server-default": "value 2",
+            }
+        },
+        "extension.server_default",
+        "value 2",
+        id="$ref server default",
+    ),
+    pytest.param(
+        None,
+        {
+            "allOf": [
+                {"$ref": "#/components/schemas/RefSchema"},
+                {**DEFAULT_SCHEMA, "type": "integer", "x-server-default": "value 3"},
+            ]
+        },
+        {"RefSchema": {"server default": 4}},
+        "extension.server_default",
+        "value 3",
+        id="allOf server default prefer local",
     ),
     pytest.param(
         None,

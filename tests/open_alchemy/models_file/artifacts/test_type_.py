@@ -28,6 +28,7 @@ def _construct_simple_artifacts(
             autoincrement=generated,
             index=None,
             unique=None,
+            server_default=None,
             foreign_key=None,
             kwargs=None,
             foreign_key_kwargs=None,
