@@ -28,7 +28,7 @@ def generate(*, artifacts: schemas.artifacts.types.ModelsModelArtifacts) -> str:
     model_sources = list(
         map(
             lambda args: _model.generate(artifacts=args[1], name=args[0]),
-            artifacts,
+            artifacts.items(),
         )
     )
     raw_source = _models.generate(models=model_sources)

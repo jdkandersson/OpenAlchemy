@@ -55,9 +55,8 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
-    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
-    assert ref_model_schemas_name == "RefTable"
+    assert "RefTable" in schemas_artifacts
+    ref_model_schemas_artifacts = schemas_artifacts["RefTable"]
     ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
@@ -65,8 +64,8 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     tables_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
     assert tables_column_artifacts.name == "tables"
     calculated_backref_type_str = tables_column_artifacts.type
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -171,9 +170,8 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -240,9 +238,8 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
-    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
-    assert ref_model_schemas_name == "RefTable"
+    assert "RefTable" in schemas_artifacts
+    ref_model_schemas_artifacts = schemas_artifacts["RefTable"]
     ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
@@ -250,8 +247,8 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
     assert table_column_artifacts.name == "table"
     calculated_backref_type_str = table_column_artifacts.type
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -350,9 +347,8 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
-    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
-    assert ref_model_schemas_name == "RefTable"
+    assert "RefTable" in schemas_artifacts
+    ref_model_schemas_artifacts = schemas_artifacts["RefTable"]
     ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
@@ -360,8 +356,8 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
     assert table_column_artifacts.name == "table"
     calculated_backref_type_str = table_column_artifacts.type
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -450,9 +446,8 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     schemas_artifacts = schemas.artifacts.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
-    assert len(schemas_artifacts) == 2
-    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
-    assert ref_model_schemas_name == "RefTable"
+    assert "RefTable" in schemas_artifacts
+    ref_model_schemas_artifacts = schemas_artifacts["RefTable"]
     ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
@@ -460,8 +455,8 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     table_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
     assert table_column_artifacts.name == "table"
     calculated_backref_type_str = table_column_artifacts.type
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
@@ -566,9 +561,8 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     # Expecting 3 due to association
-    assert len(schemas_artifacts) == 3
-    ref_model_schemas_name, ref_model_schemas_artifacts = schemas_artifacts[0]
-    assert ref_model_schemas_name == "RefTable"
+    assert "RefTable" in schemas_artifacts
+    ref_model_schemas_artifacts = schemas_artifacts["RefTable"]
     ref_model_models_artifacts = models_file._artifacts.calculate(
         artifacts=ref_model_schemas_artifacts, name="RefTable"
     )
@@ -576,8 +570,8 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     tables_column_artifacts = ref_model_models_artifacts.sqlalchemy.columns[2]
     assert tables_column_artifacts.name == "tables"
     calculated_backref_type_str = tables_column_artifacts.type
-    model_schemas_name, model_schemas_artifacts = schemas_artifacts[1]
-    assert model_schemas_name == "Table"
+    assert "Table" in schemas_artifacts
+    model_schemas_artifacts = schemas_artifacts["Table"]
     model_models_artifacts = models_file._artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )

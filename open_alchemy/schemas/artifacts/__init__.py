@@ -201,7 +201,7 @@ def get_from_schemas(
 
     """
     constructables = _helpers.iterate.constructable(schemas=schemas)
-    return list(
+    return dict(
         map(
             lambda args: (
                 args[0],
