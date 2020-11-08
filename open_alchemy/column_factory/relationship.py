@@ -1,12 +1,13 @@
 """Construct column for relationship property."""
 
-from open_alchemy import facades
-from open_alchemy.schemas.artifacts import types as artifact_types
+from .. import facades
+from .. import types as oa_types
+from . import types
 
 
 def handle(
-    *, artifacts: artifact_types.TAnyRelationshipPropertyArtifacts
-) -> facades.sqlalchemy.types.Relationship:
+    *, artifacts: oa_types.TAnyRelationshipPropertyArtifacts
+) -> types.TRelationship:
     """
     Handle a relationship property.
 

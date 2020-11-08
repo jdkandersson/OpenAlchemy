@@ -1,12 +1,11 @@
 """Construct column for json property."""
 
-from open_alchemy import facades
-from open_alchemy.schemas.artifacts import types as artifact_types
+from .. import facades
+from .. import types as oa_types
+from . import types
 
 
-def handle(
-    *, artifacts: artifact_types.JsonPropertyArtifacts
-) -> facades.sqlalchemy.types.Column:
+def handle(*, artifacts: oa_types.JsonPropertyArtifacts) -> types.TColumn:
     """
     Handle a json property.
 
