@@ -459,7 +459,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.4
 [1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
 [//]: # "Issue/PR links"
+[#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
+[#196]: https://github.com/jdkandersson/OpenAlchemy/issues/196
 [#198]: https://github.com/jdkandersson/OpenAlchemy/issues/198
 [#201]: https://github.com/jdkandersson/OpenAlchemy/issues/201
 [#202]: https://github.com/jdkandersson/OpenAlchemy/issues/202
