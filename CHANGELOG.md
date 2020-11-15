@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.0.0] - 2020-11-15
+
 ### Added
 
 - Add check enforcing unique `x-tablename` values. [#189]
@@ -47,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `True`. _This means that a pure model reference (a schema with only the
   `$ref` key) can no longer be used to change the name of a model._ [#189]
 
-## [1.6.0] - 2020-10-10
+## [v1.6.0] - 2020-10-10
 
 ### Added
 
@@ -62,32 +64,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   directory.
 - Drop support for Python 3.6 and add support for Python 3.9. [#198]
 
-## [1.5.4] - 2020-08-30
+## [v1.5.4] - 2020-08-30
 
 ### Changed
 
 - Move `description` to be a top level property artifact for every property.
 
-## [1.5.3] - 2020-08-29
+## [1v.5.3] - 2020-08-29
 
 ### Fixed
 
 - Correct `format` key to no longer have a trailing `_` for artifacts.
 
-## [1.5.2] - 2020-08-29
+## [v1.5.2] - 2020-08-29
 
 ### Changed
 
 - Expose function that collects artifacts for the models.
 - Expose function that collects artifacts for the model properties.
 
-## [1.5.1] - 2020-08-23
+## [v1.5.1] - 2020-08-23
 
 ### Added
 
 - Add support for arbitrary mix in classes.
 
-## [1.5.0] - 2020-08-22
+## [v1.5.0] - 2020-08-22
 
 ### Added
 
@@ -103,13 +105,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change schema validation to process properties even if the model is not
   valid.
 
-## [1.4.3] - 2020-08-16
+## [v1.4.3] - 2020-08-16
 
 ### Removed
 
 - Remove dependency on black
 
-## [1.4.2] - 2020-08-16
+## [v1.4.2] - 2020-08-16
 
 ### Fixed
 
@@ -117,13 +119,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   exceptions
 - Add black dependency back in
 
-## [1.4.1] - 2020-08-09
+## [v1.4.1] - 2020-08-09
 
 ### Removed
 
 - Remove black dependency
 
-## [1.4.0] - 2020-08-09
+## [v1.4.0] - 2020-08-09
 
 ### Added
 
@@ -448,16 +450,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.1.1
 [1.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.2.0
 [1.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.3.0
-[1.4.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.0
-[1.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.1
-[1.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.2
-[1.4.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.3
-[1.5.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.0
-[1.5.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.1
-[1.5.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.2
-[1.5.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.3
-[1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.4
-[1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
+[v1.4.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.0
+[v1.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.1
+[v1.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.2
+[v1.4.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.3
+[v1.5.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.0
+[v1.5.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.1
+[v1.5.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.2
+[v1.5.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.3
+[v1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.4
+[v1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
+[v2.0.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.0
 [//]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
