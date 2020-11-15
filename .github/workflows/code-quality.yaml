@@ -188,7 +188,8 @@ jobs:
           body: ${{ steps.changelog_entry.outputs.log_entry }}
           files: |
             dist/*
-      - name: Publish the packages
-        run: |
-          python -m pip install --upgrade twine
-          python -m twine upload dist/
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.test_pypi_password }}
+          repository_url: https://test.pypi.org/legacy/
