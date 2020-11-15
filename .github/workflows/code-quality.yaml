@@ -173,6 +173,8 @@ jobs:
           path: dist/
       - name: Publish the release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           body: ${{ steps.changelog_entry.outputs.log_entry }}
           files: |
