@@ -25,6 +25,8 @@ def test_autoincrement_wrong_type():
         ({}, None),
         ({"x-autoincrement": True}, True),
         ({"x-autoincrement": False}, False),
+        ({"x-openalchemy-autoincrement": False}, False),
+        ({"x-openalchemy-autoincrement": True}, True),
     ],
     ids=["missing", "true", "false"],
 )
