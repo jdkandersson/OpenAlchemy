@@ -180,15 +180,15 @@ jobs:
         with:
           name: wheel
           path: dist/
-      - run: tree -l 3
-      - name: Publish the release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body: ${{ steps.changelog_entry.outputs.log_entry }}
-          files: |
-            dist/*
+      - run: ls -R
+      # - name: Publish the release
+      #   uses: softprops/action-gh-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     body: ${{ steps.changelog_entry.outputs.log_entry }}
+      #     files: |
+      #       dist/*
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
