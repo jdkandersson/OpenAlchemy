@@ -9,6 +9,9 @@ from open_alchemy import types
 from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
 
+# Define valid OpenAlchemy prefixes.
+VALID_PREFIXES = ["x-", "x-open-alchemy-"]
+
 
 class PeekValue(types.Protocol):
     """Defines interface for peek functions."""
@@ -855,9 +858,11 @@ def _peek_key(
     _check_schema_schemas_dict(schema, schemas)
 
     # Base case, look for type key
-    value = schema.get(key)
-    if value is not None:
-        return value
+    keys = [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
+    for k in keys:
+        value = schema.get(k)
+        if value is not None:
+            return value
 
     # Recursive case, look for $ref
     ref_value = schema.get("$ref")

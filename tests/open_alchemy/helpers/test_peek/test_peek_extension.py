@@ -14,6 +14,7 @@ def test_autoincrement_wrong_type():
     THEN MalformedSchemaError is raised.
     """
     schema = {"x-autoincrement": "True"}
+    schema = {"x-openalchemy-autoincrement": "True"}
 
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.autoincrement(schema=schema, schemas={})
@@ -25,8 +26,10 @@ def test_autoincrement_wrong_type():
         ({}, None),
         ({"x-autoincrement": True}, True),
         ({"x-autoincrement": False}, False),
+        ({"x-openalchemy-autoincrement": True}, True),
+        ({"x-openalchemy-autoincrement": False}, False),
     ],
-    ids=["missing", "true", "false"],
+    # ids=["missing", "true", "false"],
 )
 @pytest.mark.helper
 def test_autoincrement(schema, expected_autoincrement):
