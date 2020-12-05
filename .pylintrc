@@ -401,6 +401,8 @@ known-third-party=enchant
 # only in one or another interpreter, leading to false positives when analysed.
 analyse-fallback-blocks=no
 
+# This will keep pylint from thinking there is no-member (E1101) on the models module.
+generated-members=models.*
 
 [EXCEPTIONS]
 

@@ -8,9 +8,6 @@ based on the OpenAPI specification. By combining connexion with
 OpenAlchemy, the OpenAPI specification not only defines the Flask application
 but also the SQLALchemy models.
 
-.. contents::
-    :depth: 2
-
 .. seealso::
 
     `connexion documentation <https://connexion.readthedocs.io/en/latest/>`_

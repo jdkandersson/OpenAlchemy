@@ -46,6 +46,7 @@
     "noqa",
     "datetime",
     "chdir",
+    "pylintrc",
     // RST
     "seealso",
     "literalinclude",
