@@ -14,7 +14,7 @@ def test_autoincrement_wrong_type():
     THEN MalformedSchemaError is raised.
     """
     schema = {"x-autoincrement": "True"}
-    schema = {"x-openalchemy-autoincrement": "True"}
+    schema = {"x-open-alchemy-autoincrement": "True"}
 
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.autoincrement(schema=schema, schemas={})
@@ -26,10 +26,10 @@ def test_autoincrement_wrong_type():
         ({}, None),
         ({"x-autoincrement": True}, True),
         ({"x-autoincrement": False}, False),
-        ({"x-openalchemy-autoincrement": True}, True),
-        ({"x-openalchemy-autoincrement": False}, False),
+        ({"x-open-alchemy-autoincrement": True}, True),
+        ({"x-open-alchemy-autoincrement": False}, False),
     ],
-    # ids=["missing", "true", "false"],
+    ids=["missing", "true", "false", "true", "false"],
 )
 @pytest.mark.helper
 def test_autoincrement(schema, expected_autoincrement):
@@ -43,23 +43,34 @@ def test_autoincrement(schema, expected_autoincrement):
     assert returned_autoincrement == expected_autoincrement
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-index": "True"}),
+        ({"x-open-alchemy-index": "True"}),
+    ],
+)
 @pytest.mark.helper
-def test_index_wrong_type():
+def test_index_wrong_type(schema):
     """
     GIVEN schema with index defined as a string
     WHEN index is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-index": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.index(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_index",
-    [({}, None), ({"x-index": True}, True), ({"x-index": False}, False)],
-    ids=["missing", "true", "false"],
+    [
+        ({}, None),
+        ({"x-index": True}, True),
+        ({"x-index": False}, False),
+        ({"x-open-alchemy-index": True}, True),
+        ({"x-open-alchemy-index": False}, False),
+    ],
+    ids=["missing", "true", "false", "true", "false"],
 )
 @pytest.mark.helper
 def test_index(schema, expected_index):
@@ -73,23 +84,34 @@ def test_index(schema, expected_index):
     assert returned_index == expected_index
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-unique": "True"}),
+        ({"x-open-alchemy-unique": "True"}),
+    ],
+)
 @pytest.mark.helper
-def test_unique_wrong_type():
+def test_unique_wrong_type(schema):
     """
     GIVEN schema with unique defined as a string
     WHEN unique is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-unique": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.unique(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_unique",
-    [({}, None), ({"x-unique": True}, True), ({"x-unique": False}, False)],
-    ids=["missing", "true", "false"],
+    [
+        ({}, None),
+        ({"x-unique": True}, True),
+        ({"x-unique": False}, False),
+        ({"x-open-alchemy-unique": True}, True),
+        ({"x-open-alchemy-unique": False}, False),
+    ],
+    ids=["missing", "true", "false", "true", "false"],
 )
 @pytest.mark.helper
 def test_unique(schema, expected_unique):
@@ -103,15 +125,20 @@ def test_unique(schema, expected_unique):
     assert returned_unique == expected_unique
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-primary-key": "True"}),
+        ({"x-open-alchemy-primary-key": "True"}),
+    ],
+)
 @pytest.mark.helper
-def test_primary_key_wrong_type():
+def test_primary_key_wrong_type(schema):
     """
     GIVEN schema with primary key defined as a string
     WHEN primary_key is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-primary-key": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.primary_key(schema=schema, schemas={})
 
@@ -122,8 +149,19 @@ def test_primary_key_wrong_type():
         pytest.param({}, None, id="missing"),
         pytest.param({"x-primary-key": False}, False, id="False"),
         pytest.param({"x-primary-key": True}, True, id="True"),
+        pytest.param(
+            {"x-open-alchemyprimary-key": False},
+            False,
+            id="False",
+            marks=pytest.mark.xfail,
+        ),
+        pytest.param(
+            {"x-open-alchemyprimary-key": True},
+            True,
+            id="True",
+            marks=pytest.mark.xfail,
+        ),
     ],
-    ids=["missing", "false", "true"],
 )
 @pytest.mark.helper
 def test_primary_key(schema, expected_primary_key):
@@ -137,23 +175,32 @@ def test_primary_key(schema, expected_primary_key):
     assert returned_primary_key == expected_primary_key
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-tablename": True}),
+        pytest.param({"x-open-alchemy-tablename": True}, marks=pytest.mark.xfail),
+    ],
+)
 @pytest.mark.helper
-def test_tablename_wrong_type():
+def test_tablename_wrong_type(schema):
     """
     GIVEN schema with tablename defined as a boolean
     WHEN tablename is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-tablename": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.tablename(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_tablename",
-    [({}, None), ({"x-tablename": "table 1"}, "table 1")],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-tablename": "table 1"}, "table 1"),
+        ({"x-open-alchemy-tablename": "table 1"}, "table 1"),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_tablename(schema, expected_tablename):
@@ -167,23 +214,40 @@ def test_tablename(schema, expected_tablename):
     assert returned_tablename == expected_tablename
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-inherits": 1}),
+        ({"x-open-alchemy-inherits": 1}),
+    ],
+)
 @pytest.mark.helper
-def test_inherits_wrong_type():
+def test_inherits_wrong_type(schema):
     """
     GIVEN schema with x-inherits defined as an integer
     WHEN inherits is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-inherits": 1}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.inherits(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_inherits",
-    [({}, None), ({"x-inherits": "Parent1"}, "Parent1"), ({"x-inherits": True}, True)],
-    ids=["missing", "defined string", "defined boolean"],
+    [
+        ({}, None),
+        ({"x-inherits": "Parent1"}, "Parent1"),
+        ({"x-inherits": True}, True),
+        ({"x-open-alchemy-inherits": "Parent1"}, "Parent1"),
+        ({"x-open-alchemy-inherits": True}, True),
+    ],
+    ids=[
+        "missing",
+        "defined string",
+        "defined boolean",
+        "defined string",
+        "defined boolean",
+    ],
 )
 @pytest.mark.helper
 def test_inherits(schema, expected_inherits):
@@ -197,23 +261,32 @@ def test_inherits(schema, expected_inherits):
     assert returned_inherits == expected_inherits
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-json": 1}),
+        ({"x-open-alchemy-json": 1}),
+    ],
+)
 @pytest.mark.helper
-def test_json_wrong_type():
+def test_json_wrong_type(schema):
     """
     GIVEN schema with x-json defined as an integer
     WHEN json is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-json": 1}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.json(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_json",
-    [({}, None), ({"x-json": True}, True)],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-json": True}, True),
+        ({"x-open-alchemy-json": True}, True),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_json(schema, expected_json):
@@ -227,23 +300,32 @@ def test_json(schema, expected_json):
     assert returned_json == expected_json
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-backref": True}),
+        ({"x-open-alchemy-backref": True}),
+    ],
+)
 @pytest.mark.helper
-def test_backref_wrong_type():
+def test_backref_wrong_type(schema):
     """
     GIVEN schema with backref defined as a boolean
     WHEN backref is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-backref": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.backref(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_backref",
-    [({}, None), ({"x-backref": "table 1"}, "table 1")],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-backref": "table 1"}, "table 1"),
+        ({"x-open-alchemy-backref": "table 1"}, "table 1"),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_backref(schema, expected_backref):
@@ -257,23 +339,32 @@ def test_backref(schema, expected_backref):
     assert returned_backref == expected_backref
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-secondary": True}),
+        ({"x-open-alchemy-secondary": True}),
+    ],
+)
 @pytest.mark.helper
-def test_secondary_wrong_type():
+def test_secondary_wrong_type(schema):
     """
     GIVEN schema with secondary defined as a boolean
     WHEN secondary is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-secondary": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.secondary(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_secondary",
-    [({}, None), ({"x-secondary": "table 1"}, "table 1")],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-secondary": "table 1"}, "table 1"),
+        ({"x-open-alchemy-secondary": "table 1"}, "table 1"),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_secondary(schema, expected_secondary):
@@ -287,23 +378,32 @@ def test_secondary(schema, expected_secondary):
     assert returned_secondary == expected_secondary
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-uselist": "True"}),
+        ({"x-open-alchemy-uselist": "True"}),
+    ],
+)
 @pytest.mark.helper
-def test_uselist_wrong_type():
+def test_uselist_wrong_type(schema):
     """
     GIVEN schema with uselist defined as a boolean
     WHEN uselist is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-uselist": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.uselist(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_uselist",
-    [({}, None), ({"x-uselist": True}, True)],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-uselist": True}, True),
+        ({"x-open-alchemy-uselist": True}, True),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_uselist(schema, expected_uselist):
@@ -331,6 +431,7 @@ def test_uselist(schema, expected_uselist):
         pytest.param(
             {"x-kwargs": {1: True, 2: False}}, id="multiple key all not string"
         ),
+        pytest.param({"x-open-alchemy-kwargs": True}, id="not dict"),
     ],
 )
 @pytest.mark.helper
@@ -346,8 +447,12 @@ def test_kwargs_wrong_type(schema):
 
 @pytest.mark.parametrize(
     "schema, expected_kwargs",
-    [({}, None), ({"x-kwargs": {"key": "value"}}, {"key": "value"})],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-kwargs": {"key": "value"}}, {"key": "value"}),
+        ({"x-open-alchemy-kwargs": {"key": "value"}}, {"key": "value"}),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_kwargs(schema, expected_kwargs):
@@ -378,6 +483,7 @@ def test_kwargs(schema, expected_kwargs):
             {"x-foreign-key-kwargs": {1: True, 2: False}},
             id="multiple key all not string",
         ),
+        pytest.param({"x-open-alchemy-foreign-key-kwargs": True}, id="not dict"),
     ],
 )
 @pytest.mark.helper
@@ -393,8 +499,12 @@ def test_foreign_key_kwargs_wrong_type(schema):
 
 @pytest.mark.parametrize(
     "schema, expected_foreign_key_kwargs",
-    [({}, None), ({"x-foreign-key-kwargs": {"key": "value"}}, {"key": "value"})],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-foreign-key-kwargs": {"key": "value"}}, {"key": "value"}),
+        ({"x-open-alchemy-foreign-key-kwargs": {"key": "value"}}, {"key": "value"}),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_foreign_key_kwargs(schema, expected_foreign_key_kwargs):
@@ -410,23 +520,32 @@ def test_foreign_key_kwargs(schema, expected_foreign_key_kwargs):
     assert returned_foreign_key_kwargs == expected_foreign_key_kwargs
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-foreign-key": True}),
+        ({"x-open-alchemy-foreign-key": True}),
+    ],
+)
 @pytest.mark.helper
-def test_foreign_key_wrong_type():
+def test_foreign_key_wrong_type(schema):
     """
     GIVEN schema with foreign-key defined as a boolean
     WHEN foreign_key is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-foreign-key": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.foreign_key(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_foreign_key",
-    [({}, None), ({"x-foreign-key": "id"}, "id")],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-foreign-key": "id"}, "id"),
+        ({"x-open-alchemy-foreign-key": "id"}, "id"),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_foreign_key(schema, expected_foreign_key):
@@ -440,23 +559,32 @@ def test_foreign_key(schema, expected_foreign_key):
     assert returned_foreign_key == expected_foreign_key
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-foreign-key-column": True}),
+        ({"x-open-alchemy-foreign-key-column": True}),
+    ],
+)
 @pytest.mark.helper
-def test_foreign_key_column_wrong_type():
+def test_foreign_key_column_wrong_type(schema):
     """
     GIVEN schema with foreign-key-column defined as a boolean
     WHEN foreign_key_column is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-foreign-key-column": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.foreign_key_column(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_foreign_key_column",
-    [({}, None), ({"x-foreign-key-column": "id"}, "id")],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-foreign-key-column": "id"}, "id"),
+        ({"x-open-alchemy-foreign-key-column": "id"}, "id"),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_foreign_key_column(schema, expected_foreign_key_column):
@@ -472,23 +600,32 @@ def test_foreign_key_column(schema, expected_foreign_key_column):
     assert returned_foreign_key_column == expected_foreign_key_column
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-composite-index": True}),
+        ({"x-open-alchemy-composite-index": True}),
+    ],
+)
 @pytest.mark.helper
-def test_composite_index_wrong_type():
+def test_composite_index_wrong_type(schema):
     """
     GIVEN schema with composite-index defined as a boolean
     WHEN composite_index is called with the schema
     THEN MalformedExtensionPropertyError is raised.
     """
-    schema = {"x-composite-index": True}
-
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
         helpers.peek.composite_index(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_composite_index",
-    [({}, None), ({"x-composite-index": ["id"]}, ["id"])],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-composite-index": ["id"]}, ["id"]),
+        ({"x-open-alchemy-composite-index": ["id"]}, ["id"]),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_composite_index(schema, expected_composite_index):
@@ -502,23 +639,32 @@ def test_composite_index(schema, expected_composite_index):
     assert returned_composite_index == expected_composite_index
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-composite-unique": True}),
+        ({"x-open-alchemy-composite-unique": True}),
+    ],
+)
 @pytest.mark.helper
-def test_composite_unique_wrong_type():
+def test_composite_unique_wrong_type(schema):
     """
     GIVEN schema with composite-unique defined as a boolean
     WHEN composite_unique is called with the schema
     THEN MalformedExtensionPropertyError is raised.
     """
-    schema = {"x-composite-unique": True}
-
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
         helpers.peek.composite_unique(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
     "schema, expected_composite_unique",
-    [({}, None), ({"x-composite-unique": ["id"]}, ["id"])],
-    ids=["missing", "defined"],
+    [
+        ({}, None),
+        ({"x-composite-unique": ["id"]}, ["id"]),
+        ({"x-open-alchemy-composite-unique": ["id"]}, ["id"]),
+    ],
+    ids=["missing", "defined", "defined"],
 )
 @pytest.mark.helper
 def test_composite_unique(schema, expected_composite_unique):
@@ -532,15 +678,20 @@ def test_composite_unique(schema, expected_composite_unique):
     assert returned_composite_unique == expected_composite_unique
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-server-default": True}),
+        ({"x-open-alchemy-server-default": True}),
+    ],
+)
 @pytest.mark.helper
-def test_server_default_wrong_type():
+def test_server_default_wrong_type(schema):
     """
     GIVEN schema with server_default defined as a string
     WHEN server_default is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-server-default": True}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.server_default(schema=schema, schemas={})
 
@@ -550,6 +701,9 @@ def test_server_default_wrong_type():
     [
         pytest.param({}, None, id="missing"),
         pytest.param({"x-server-default": "value 1"}, "value 1", id="defined"),
+        pytest.param(
+            {"x-open-alchemy-server-default": "value 1"}, "value 1", id="defined"
+        ),
     ],
 )
 @pytest.mark.helper
@@ -589,6 +743,7 @@ def test_server_default(schema, expected_server_default):
         pytest.param(
             {"x-mixins": ["first.", ".second"]}, id="list multiple all invalid"
         ),
+        pytest.param({"x-open-alchemy-mixins": "MissingDot"}, id="no dot"),
     ],
 )
 @pytest.mark.helper
@@ -635,6 +790,12 @@ def test_mixins_invalid(schema):
             ["first.second1", "first.second2"],
             id="list multiple",
         ),
+        pytest.param(
+            {"x-open-alchemy-mixins": "first.second"},
+            {},
+            ["first.second"],
+            id="string single dot",
+        ),
     ],
 )
 @pytest.mark.helper
@@ -649,15 +810,23 @@ def test_mixins(schema, schemas, expected_mixins):
     assert mixins == expected_mixins
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [
+        ({"x-dict-ignore": "True"}),
+        pytest.param(
+            {"x-open-alchemy-dict-ignore": "True"},
+            marks=pytest.mark.xfail,
+        ),
+    ],
+)
 @pytest.mark.helper
-def test_dict_ignore_wrong_type():
+def test_dict_ignore_wrong_type(schema):
     """
     GIVEN schema with dict_ignore defined as a string
     WHEN dict_ignore is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-dict-ignore": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.dict_ignore(schema=schema, schemas={})
 
@@ -668,8 +837,10 @@ def test_dict_ignore_wrong_type():
         ({}, None),
         ({"x-dict-ignore": True}, True),
         ({"x-dict-ignore": False}, False),
+        ({"x-open-alchemy-dict-ignore": True}, True),
+        ({"x-open-alchemy-dict-ignore": False}, False),
     ],
-    ids=["missing", "true", "false"],
+    ids=["missing", "true", "false", "true", "false"],
 )
 @pytest.mark.helper
 def test_dict_ignore(schema, expected_dict_ignore):
