@@ -59,7 +59,7 @@ used in the code (the list will evolve over time):
   functions) should use keyword only arguments for increased clarity. Private
   module/ class functions may optionally use positional arguments for enhanced
   execution speed.
-  
+
 ## Tests
 
 - In tests, preferable use parameterization instead of a for loop in the test
@@ -85,4 +85,3 @@ used in the code (the list will evolve over time):
 
 - Use passive language in documentation.
 - The maximum line length is 80 in the documentation.
-
