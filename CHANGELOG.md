@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.0.1] - 2020-12-08
+
 ### Added
 
 - Add version, title and description (if defined) into the JSON OpenAPI
@@ -466,6 +468,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.4
 [v1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
 [v2.0.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.0
+[v2.0.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.1
 [//]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
