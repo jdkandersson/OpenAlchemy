@@ -67,30 +67,123 @@ def test_get_schemas_valid():
     }
 
 
+@pytest.mark.parametrize(
+    "schemas, version, title, description, expected_spec_str",
+    [
+        pytest.param(
+            {"Schema1": {}},
+            "version 1",
+            None,
+            None,
+            '{"info":{"version":"version 1"},"components":{"schemas":{"Schema1":{}}}}',
+            id="no title description",
+        ),
+        pytest.param(
+            {"Schema2": {}},
+            "version 2",
+            None,
+            None,
+            '{"info":{"version":"version 2"},"components":{"schemas":{"Schema2":{}}}}',
+            id="no title description different schema",
+        ),
+        pytest.param(
+            {},
+            "v1",
+            "title 1",
+            None,
+            '{"info":{"version":"v1","title":"title 1"},"components":{"schemas":{}}}',
+            id="with title",
+        ),
+        pytest.param(
+            {},
+            "v1",
+            None,
+            "d1",
+            '{"info":{"version":"v1","description":"d1"},"components":{"schemas":{}}}',
+            id="with description",
+        ),
+    ],
+)
 @pytest.mark.build
-def test_generate_spec():
+def test_generate_spec_str(schemas, version, title, description, expected_spec_str):
     """
-    GIVEN schemas
-    WHEN generate_spec is called with the schemas
-    THEN the spec.json file contents with the schemas are returned.
+    GIVEN schemas, version, title and description
+    WHEN generate_spec_str is called with the schemas, version, title and description
+    THEN the spected spec string is returned.
     """
-    schemas = {
-        "Schema1": {
-            "type": "object",
-            "x-tablename": "schema_1",
-            "properties": {"id": {"type": "integer"}},
-        }
-    }
-
-    returned_contents = build.generate_spec(schemas=schemas)
-
-    expected_contents = (
-        '{"components":{"schemas":{"Schema1":'
-        '{"type":"object","x-tablename":"schema_1",'
-        '"properties":{"id":{"type":"integer"}}}}}}'
+    returned_spec_str = build.generate_spec_str(
+        schemas=schemas, version=version, title=title, description=description
     )
 
-    assert returned_contents == expected_contents
+    assert returned_spec_str == expected_spec_str
+
+
+@pytest.mark.build
+def test_calculate_spec_info_version():
+    """
+    GIVEN spec with version
+    WHEN calculate_spec_info is called with the spec
+    THEN the version is returned.
+    """
+    version = "version 1"
+    spec = {"info": {"version": version}}
+    schemas = {}
+
+    spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
+
+    assert spec_info.version == version
+
+
+@pytest.mark.parametrize(
+    "info, expected_title",
+    [
+        pytest.param({}, None, id="not defined"),
+        pytest.param({"title": "title 1"}, "title 1", id="defined"),
+        pytest.param({"title": "title 2"}, "title 2", id="defined different"),
+    ],
+)
+@pytest.mark.build
+def test_calculate_spec_info_title(info, expected_title):
+    """
+    GIVEN info and spec
+    WHEN calculate_spec_info is called with the spec
+    THEN the title is returned.
+    """
+    spec = {"info": info}
+    schemas = {}
+
+    spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
+
+    assert spec_info.title == expected_title
+    if expected_title is not None:
+        assert expected_title in spec_info.spec_str
+
+
+@pytest.mark.parametrize(
+    "info, expected_description",
+    [
+        pytest.param({}, None, id="not defined"),
+        pytest.param({"description": "description 1"}, "description 1", id="defined"),
+        pytest.param(
+            {"description": "description 2"}, "description 2", id="defined different"
+        ),
+    ],
+)
+@pytest.mark.build
+def test_calculate_spec_info_description(info, expected_description):
+    """
+    GIVEN info and spec
+    WHEN calculate_spec_info is called with the spec
+    THEN the description is returned.
+    """
+    spec = {"info": info}
+    schemas = {}
+
+    spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
+
+    assert spec_info.description == expected_description
+    if expected_description is not None:
+        assert expected_description in spec_info.spec_str
 
 
 @pytest.mark.build
@@ -525,9 +618,6 @@ def test_calculate_version(spec, schemas, expected_version):
         ),
     ],
 )
-# @pytest.mark.xfail(
-#     condition=sys.platform == "win32", reason="feature not supported on Windows"
-# )
 @pytest.mark.build
 def test_execute(tmp_path, package_format, extensions):
     """
@@ -565,43 +655,25 @@ def test_execute(tmp_path, package_format, extensions):
     expected_setup_path = project_path / "setup.py"
     assert expected_setup_path.is_file()
     with open(expected_setup_path) as in_file:
-        assert (
-            in_file.read()
-            == f"""import setuptools
-
-setuptools.setup(
-    name="{name}",
-    version="{version}",
-    packages=setuptools.find_packages(),
-    python_requires=">=3.6",
-    install_requires=[
-        "OpenAlchemy",
-    ],
-    include_package_data=True,
-)
-"""
-        )
+        setup_file_contents = in_file.read()
+        assert name in setup_file_contents
+        assert version in setup_file_contents
 
     # Check manifest file
     expected_manifest_path = project_path / "MANIFEST.in"
     assert expected_manifest_path.is_file()
     with open(expected_manifest_path) as in_file:
-        assert (
-            in_file.read()
-            == f"""recursive-include {name} *.json
-remove .*
-"""
-        )
+        manifest_file_contents = in_file.read()
+        assert name in manifest_file_contents
 
     # Check spec file
     expected_spec_path = package_path / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
-        assert in_file.read() == (
-            '{"components":{"schemas":{"Schema":'
-            '{"type":"object","x-tablename":"schema",'
-            '"properties":{"id":{"type":"integer"}}}}}}'
-        )
+        spec_file_contents = in_file.read()
+        assert version in spec_file_contents
+        assert "Schema" in spec_file_contents
+        assert "x-tablename" in spec_file_contents
 
     # Check init file
     expected_init_path = package_path / "__init__.py"
@@ -630,9 +702,6 @@ init_json(parent_path / "spec.json")"""
         assert len(files) == 1
 
 
-# @pytest.mark.xfail(
-#     condition=sys.platform == "win32", reason="feature not supported on Windows"
-# )
 @pytest.mark.integration
 def test_build_dist_wheel_import_error(tmp_path):
     """

@@ -10,8 +10,6 @@ import typing
 
 import jinja2
 
-from open_alchemy.helpers.peek import description
-
 from .. import exceptions
 from .. import helpers
 from .. import models_file as models_file_module
@@ -95,21 +93,44 @@ def get_schemas(*, spec: typing.Any) -> types.Schemas:
     return schemas
 
 
-def generate_spec(*, schemas: types.Schemas) -> str:
+TVersion = str
+TTitle = typing.Optional[str]
+TDescription = typing.Optional[str]
+TSpecStr = str
+
+
+def generate_spec_str(
+    *,
+    schemas: types.Schemas,
+    version: TVersion,
+    title: TTitle,
+    description: TDescription,
+) -> TSpecStr:
     """
-    Generate the spec.json file contents.
+    Generate a string representation of the spec.
 
     Args:
-        schemas: The schemas to generate the spec for.
+        schemas: The schemas of the spec.
+        version: The version of the spec.
+        title: The title of the spec.
+        description: The description of the spec.
 
     Returns:
         The JSON encoded schemas.
 
     """
-    return json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
+    info = {"version": version}
+    if title is not None:
+        info["title"] = title
+    if description is not None:
+        info["description"] = description
+
+    return json.dumps(
+        {"info": info, "components": {"schemas": schemas}}, separators=(",", ":")
+    )
 
 
-def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> str:
+def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> TVersion:
     """
     Calculate the version for a spec.
 
@@ -127,7 +148,7 @@ def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> str:
     """
     try:
         spec_version = spec["info"]["version"]
-        if isinstance(spec_version, str):
+        if isinstance(spec_version, TVersion):
             return spec_version
     except (KeyError, TypeError):
         pass
@@ -140,10 +161,10 @@ def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> str:
 class TSpecInfo:
     """Information about the spec."""
 
-    version: str
-    spec_str: str
-    title: typing.Optional[str]
-    description: typing.Optional[str]
+    version: TVersion
+    spec_str: TSpecStr
+    title: TTitle
+    description: TDescription
 
 
 def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
@@ -160,9 +181,20 @@ def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInf
 
     """
     version = calculate_version(spec=spec, schemas=schemas)
-    spec_str = generate_spec(schemas=schemas)
 
-    return TSpecInfo(version=version, spec_str=spec_str, title=None, description=None)
+    title: TTitle = None
+    description: TDescription = None
+    if "info" in spec:
+        title = spec["info"].get("title")
+        description = spec["info"].get("description")
+
+    spec_str = generate_spec_str(
+        schemas=schemas, version=version, title=title, description=description
+    )
+
+    return TSpecInfo(
+        version=version, spec_str=spec_str, title=title, description=description
+    )
 
 
 def generate_setup(*, name: str, version: str) -> str:
