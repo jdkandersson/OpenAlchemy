@@ -125,13 +125,12 @@ def test_calculate_spec_info_version():
     WHEN calculate_spec_info is called with the spec
     THEN the version is returned.
     """
-    version = "version 1"
-    spec = {"info": {"version": version}}
+    spec = {}
     schemas = {}
 
     spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
 
-    assert spec_info.version == version
+    assert spec_info.version == "63581fa2bdc5cef14183"
 
 
 @pytest.mark.parametrize(
@@ -394,7 +393,7 @@ def test_dump(tmp_path):
     name = "name 1"
     setup = "setup file"
     manifest = "manifest file"
-    spec = "spec file"
+    spec_str = "spec file"
     init = "init file"
 
     build.dump(
@@ -402,7 +401,7 @@ def test_dump(tmp_path):
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec,
+        spec_str=spec_str,
         init=init,
     )
 
@@ -426,7 +425,7 @@ def test_dump(tmp_path):
     expected_spec_path = package_path / "spec.json"
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
-        assert in_file.read() == spec
+        assert in_file.read() == spec_str
 
     # Check init file
     expected_init_path = package_path / "__init__.py"
@@ -447,7 +446,7 @@ def test_dump_path_not_exists(tmp_path):
     name = "name 1"
     setup = "setup file"
     manifest = "manifest file"
-    spec = "spec file"
+    spec_str = "spec file"
     init = "init file"
 
     build.dump(
@@ -455,7 +454,7 @@ def test_dump_path_not_exists(tmp_path):
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec,
+        spec_str=spec_str,
         init=init,
     )
 
@@ -474,7 +473,7 @@ def test_dump_path_is_file(tmp_path):
     name = "name 1"
     setup = "setup file"
     manifest = "manifest file"
-    spec = "spec file"
+    spec_str = "spec file"
     init = "init file"
 
     with pytest.raises(exceptions.BuildError):
@@ -483,7 +482,7 @@ def test_dump_path_is_file(tmp_path):
             name=name,
             setup=setup,
             manifest=manifest,
-            spec=spec,
+            spec_str=spec_str,
             init=init,
         )
 
@@ -501,7 +500,7 @@ def test_dump_path_name_exists(tmp_path):
     name = "name 1"
     setup = "setup file"
     manifest = "manifest file"
-    spec = "spec file"
+    spec_str = "spec file"
     init = "init file"
 
     (dist_path / name).mkdir()
@@ -511,7 +510,7 @@ def test_dump_path_name_exists(tmp_path):
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec,
+        spec_str=spec_str,
         init=init,
     )
 
@@ -529,7 +528,7 @@ def test_dump_path_name_is_file(tmp_path):
     name = "name 1"
     setup = "setup file"
     manifest = "manifest file"
-    spec = "spec file"
+    spec_str = "spec file"
     init = "init file"
 
     with open(dist_path / name, "w") as out_file:
@@ -541,7 +540,7 @@ def test_dump_path_name_is_file(tmp_path):
             name=name,
             setup=setup,
             manifest=manifest,
-            spec=spec,
+            spec_str=spec_str,
             init=init,
         )
 

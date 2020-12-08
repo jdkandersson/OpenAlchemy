@@ -197,7 +197,10 @@ def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInf
     )
 
 
-def generate_setup(*, name: str, version: str) -> str:
+TName = str
+
+
+def generate_setup(*, name: TName, version: TVersion) -> str:
     """
     Generate the content of the setup.py file.
 
@@ -217,7 +220,7 @@ def generate_setup(*, name: str, version: str) -> str:
     )
 
 
-def generate_manifest(*, name: str) -> str:
+def generate_manifest(*, name: TName) -> str:
     """
     Generate the content of the MANIFEST.in file.
 
@@ -286,8 +289,17 @@ def generate_init(open_alchemy: str, models_file: str) -> str:
     )
 
 
+TPath = str
+
+
 def dump(
-    *, path: str, name: str, setup: str, manifest: str, spec: str, init: str
+    *,
+    path: TPath,
+    name: TName,
+    setup: str,
+    manifest: str,
+    spec_str: TSpecStr,
+    init: str,
 ) -> None:
     """
     Dump the files needed for the package at a path.
@@ -311,13 +323,13 @@ def dump(
         # Write files in the package directory.
         package = directory / name
         package.mkdir(parents=True, exist_ok=True)
-        (package / "spec.json").write_text(spec)
+        (package / "spec.json").write_text(spec_str)
         (package / "__init__.py").write_text(init)
     except OSError as exc:
         raise exceptions.BuildError(str(exc)) from exc
 
 
-def build_dist(name: str, path: str, format_: PackageFormat) -> None:
+def build_dist(name: TName, path: TPath, format_: PackageFormat) -> None:
     """
     Build a distribution package.
 
@@ -338,7 +350,7 @@ def build_dist(name: str, path: str, format_: PackageFormat) -> None:
         build_wheel(name, path)
 
 
-def build_sdist(name: str, path: str) -> None:
+def build_sdist(name: TName, path: TPath) -> None:
     """
     Build a .tar.gz source distribution and place it in a "dist" folder.
 
@@ -351,7 +363,7 @@ def build_sdist(name: str, path: str) -> None:
     helpers.command.run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
-def build_wheel(name: str, path: str) -> None:
+def build_wheel(name: TName, path: TPath) -> None:
     """
     Build a .whl package and place it in a "dist" folder.
 
@@ -373,8 +385,8 @@ def build_wheel(name: str, path: str) -> None:
 def execute(
     *,
     spec: typing.Any,
-    name: str,
-    path: str,
+    name: TName,
+    path: TPath,
     format_: PackageFormat,
 ) -> None:
     """
@@ -402,7 +414,7 @@ def execute(
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec_info.spec_str,
+        spec_str=spec_info.spec_str,
         init=init,
     )
 
