@@ -454,41 +454,54 @@ def test_dump_path_name_is_file(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "spec, spec_str, expected_version",
+    "spec, schemas, expected_version",
     [
-        pytest.param(True, "spec 1", "f4a5bcd43eea1bff7e15", id="spec not dict"),
-        pytest.param({}, "spec 1", "f4a5bcd43eea1bff7e15", id="spec info missing"),
         pytest.param(
-            {"info": True}, "spec 1", "f4a5bcd43eea1bff7e15", id="spec info not dict"
+            True, {"key": "value 1"}, "8a9545946e69e534df1d", id="spec not dict"
+        ),
+        pytest.param(
+            True,
+            {"key": "value 2"},
+            "e44d6e49a1b667e4b9bf",
+            id="spec not dict schemas different",
+        ),
+        pytest.param(
+            {}, {"key": "value 1"}, "8a9545946e69e534df1d", id="spec info missing"
+        ),
+        pytest.param(
+            {"info": True},
+            {"key": "value 1"},
+            "8a9545946e69e534df1d",
+            id="spec info not dict",
         ),
         pytest.param(
             {"info": {}},
-            "spec 1",
-            "f4a5bcd43eea1bff7e15",
+            {"key": "value 1"},
+            "8a9545946e69e534df1d",
             id="spec info version missing",
         ),
         pytest.param(
             {"info": {"version": True}},
-            "spec 1",
-            "f4a5bcd43eea1bff7e15",
+            {"key": "value 1"},
+            "8a9545946e69e534df1d",
             id="spec info version not string",
         ),
         pytest.param(
             {"info": {"version": "version 1"}},
-            "spec 1",
+            {"key": "value 1"},
             "version 1",
             id="spec info version string",
         ),
     ],
 )
 @pytest.mark.build
-def test_calculate_version(spec, spec_str, expected_version):
+def test_calculate_version(spec, schemas, expected_version):
     """
-    GIVEN spec, spec string and expected version
-    WHEN calculate_version is called with the spec and spec string
+    GIVEN spec and schemas
+    WHEN calculate_version is called with the spec and schemas
     THEN the expected version is returned.
     """
-    returned_version = build.calculate_version(spec=spec, spec_str=spec_str)
+    returned_version = build.calculate_version(spec=spec, schemas=schemas)
 
     assert returned_version == expected_version
 

@@ -1,5 +1,6 @@
 """Build a package with the OpenAlchemy models."""
 
+import dataclasses
 import enum
 import hashlib
 import json
@@ -8,6 +9,8 @@ import sys
 import typing
 
 import jinja2
+
+from open_alchemy.helpers.peek import description
 
 from .. import exceptions
 from .. import helpers
@@ -106,7 +109,7 @@ def generate_spec(*, schemas: types.Schemas) -> str:
     return json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
 
 
-def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
+def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> str:
     """
     Calculate the version for a spec.
 
@@ -129,7 +132,33 @@ def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
     except (KeyError, TypeError):
         pass
 
+    spec_str = json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
+
+
+@dataclasses.dataclass
+class TSpecInfo:
+    """Information about the spec."""
+
+    version: str
+    spec_str: str
+    title: typing.Optional[str]
+    description: typing.Optional[str]
+
+
+# def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
+#     """
+#     Calculate the information about the spec.
+
+#     Args:
+#         schemas: The schemas from the spec.
+#         spec: The spec as a dictionary.
+
+#     Returns:
+#         The spec string to be stored, the version, and the title and description (if
+#         they are defined).
+
+#     """
 
 
 def generate_setup(*, name: str, version: str) -> str:
@@ -325,7 +354,7 @@ def execute(
     validate_dist_format(format_)
     schemas = get_schemas(spec=spec)
     spec_str = generate_spec(schemas=schemas)
-    version = calculate_version(spec=spec, spec_str=spec_str)
+    version = calculate_version(spec=spec, schemas=schemas)
     setup = generate_setup(name=name, version=version)
     manifest = generate_manifest(name=name)
 
