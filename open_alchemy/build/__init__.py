@@ -159,7 +159,16 @@ def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> TVersion:
 
 @dataclasses.dataclass
 class TSpecInfo:
-    """Information about the spec."""
+    """
+    Information about the spec.
+
+    Attrs:
+        version: Unique identifier for this instance.
+        spec_str: The string representation.
+        title: A name describing the spec.
+        description: More detailed summary of the spec.
+
+    """
 
     version: TVersion
     spec_str: TSpecStr
@@ -169,7 +178,7 @@ class TSpecInfo:
 
 def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
     """
-    Calculate the information about the spec.
+    Calculate information about the spec.
 
     Args:
         schemas: The schemas from the spec.

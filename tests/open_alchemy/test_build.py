@@ -121,7 +121,7 @@ def test_generate_spec_str(schemas, version, title, description, expected_spec_s
 @pytest.mark.build
 def test_calculate_spec_info_version():
     """
-    GIVEN spec with version
+    GIVEN spec
     WHEN calculate_spec_info is called with the spec
     THEN the version is returned.
     """
@@ -131,6 +131,24 @@ def test_calculate_spec_info_version():
     spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
 
     assert spec_info.version == "63581fa2bdc5cef14183"
+
+
+@pytest.mark.build
+def test_calculate_spec_info_spec_str():
+    """
+    GIVEN spec
+    WHEN calculate_spec_info is called with the spec
+    THEN the string representation of it is returned.
+    """
+    spec = {}
+    schemas = {}
+
+    spec_info = build.calculate_spec_info(spec=spec, schemas=schemas)
+
+    assert (
+        spec_info.spec_str
+        == '{"info":{"version":"63581fa2bdc5cef14183"},"components":{"schemas":{}}}'
+    )
 
 
 @pytest.mark.parametrize(
