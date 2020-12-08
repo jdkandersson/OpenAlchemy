@@ -6,16 +6,17 @@ from open_alchemy import exceptions
 from open_alchemy import helpers
 
 
+@pytest.mark.parametrize(
+    "schema",
+    [({f"{prefix}autoincrement": "True"}) for prefix in helpers.peek.VALID_PREFIXES],
+)
 @pytest.mark.helper
-def test_autoincrement_wrong_type():
+def test_autoincrement_wrong_type(schema):
     """
     GIVEN schema with autoincrement defined as a string
     WHEN autoincrement is called with the schema
     THEN MalformedSchemaError is raised.
     """
-    schema = {"x-autoincrement": "True"}
-    schema = {"x-open-alchemy-autoincrement": "True"}
-
     with pytest.raises(exceptions.MalformedSchemaError):
         helpers.peek.autoincrement(schema=schema, schemas={})
 
@@ -23,13 +24,14 @@ def test_autoincrement_wrong_type():
 @pytest.mark.parametrize(
     "schema, expected_autoincrement",
     [
-        ({}, None),
-        ({"x-autoincrement": True}, True),
-        ({"x-autoincrement": False}, False),
-        ({"x-open-alchemy-autoincrement": True}, True),
-        ({"x-open-alchemy-autoincrement": False}, False),
+        pytest.param(params[0], params[1], id=f"{prefix}{params[2]}")
+        for prefix in helpers.peek.VALID_PREFIXES
+        for params in [
+            ({}, None, "missing"),
+            ({f"{prefix}autoincrement": True}, True, "true"),
+            ({f"{prefix}autoincrement": False}, False, "false"),
+        ]
     ],
-    ids=["missing", "true", "false", "true", "false"],
 )
 @pytest.mark.helper
 def test_autoincrement(schema, expected_autoincrement):
@@ -150,16 +152,14 @@ def test_primary_key_wrong_type(schema):
         pytest.param({"x-primary-key": False}, False, id="False"),
         pytest.param({"x-primary-key": True}, True, id="True"),
         pytest.param(
-            {"x-open-alchemyprimary-key": False},
+            {"x-open-alchemy-primary-key": False},
             False,
             id="False",
-            marks=pytest.mark.xfail,
         ),
         pytest.param(
-            {"x-open-alchemyprimary-key": True},
+            {"x-open-alchemy-primary-key": True},
             True,
             id="True",
-            marks=pytest.mark.xfail,
         ),
     ],
 )
@@ -179,7 +179,7 @@ def test_primary_key(schema, expected_primary_key):
     "schema",
     [
         ({"x-tablename": True}),
-        pytest.param({"x-open-alchemy-tablename": True}, marks=pytest.mark.xfail),
+        pytest.param({"x-open-alchemy-tablename": True}),
     ],
 )
 @pytest.mark.helper
@@ -816,7 +816,6 @@ def test_mixins(schema, schemas, expected_mixins):
         ({"x-dict-ignore": "True"}),
         pytest.param(
             {"x-open-alchemy-dict-ignore": "True"},
-            marks=pytest.mark.xfail,
         ),
     ],
 )

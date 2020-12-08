@@ -859,10 +859,9 @@ def _peek_key(
 
     # Base case, look for type key
     keys = [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
-    for k in keys:
-        value = schema.get(k)
-        if value is not None:
-            return value
+    value = next(filter(lambda value: value is not None, map(schema.get, keys)), None)
+    if value is not None:
+        return value
 
     # Recursive case, look for $ref
     ref_value = schema.get("$ref")
