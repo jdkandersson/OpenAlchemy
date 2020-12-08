@@ -1,5 +1,6 @@
 """Build a package with the OpenAlchemy models."""
 
+import dataclasses
 import enum
 import hashlib
 import json
@@ -92,21 +93,44 @@ def get_schemas(*, spec: typing.Any) -> types.Schemas:
     return schemas
 
 
-def generate_spec(*, schemas: types.Schemas) -> str:
+TVersion = str
+TTitle = typing.Optional[str]
+TDescription = typing.Optional[str]
+TSpecStr = str
+
+
+def generate_spec_str(
+    *,
+    schemas: types.Schemas,
+    version: TVersion,
+    title: TTitle,
+    description: TDescription,
+) -> TSpecStr:
     """
-    Generate the spec.json file contents.
+    Generate a string representation of the spec.
 
     Args:
-        schemas: The schemas to generate the spec for.
+        schemas: The schemas of the spec.
+        version: The version of the spec.
+        title: The title of the spec.
+        description: The description of the spec.
 
     Returns:
         The JSON encoded schemas.
 
     """
-    return json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
+    info = {"version": version}
+    if title is not None:
+        info["title"] = title
+    if description is not None:
+        info["description"] = description
+
+    return json.dumps(
+        {"info": info, "components": {"schemas": schemas}}, separators=(",", ":")
+    )
 
 
-def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
+def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> TVersion:
     """
     Calculate the version for a spec.
 
@@ -124,15 +148,68 @@ def calculate_version(*, spec: typing.Any, spec_str: str) -> str:
     """
     try:
         spec_version = spec["info"]["version"]
-        if isinstance(spec_version, str):
+        if isinstance(spec_version, TVersion):
             return spec_version
     except (KeyError, TypeError):
         pass
 
+    spec_str = json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
     return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
 
 
-def generate_setup(*, name: str, version: str) -> str:
+@dataclasses.dataclass
+class TSpecInfo:
+    """
+    Information about the spec.
+
+    Attrs:
+        version: Unique identifier for this instance.
+        spec_str: The string representation.
+        title: A name describing the spec.
+        description: More detailed summary of the spec.
+
+    """
+
+    version: TVersion
+    spec_str: TSpecStr
+    title: TTitle
+    description: TDescription
+
+
+def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
+    """
+    Calculate information about the spec.
+
+    Args:
+        schemas: The schemas from the spec.
+        spec: The spec as a dictionary.
+
+    Returns:
+        The spec string to be stored, the version, and the title and description (if
+        they are defined).
+
+    """
+    version = calculate_version(spec=spec, schemas=schemas)
+
+    title: TTitle = None
+    description: TDescription = None
+    if "info" in spec:
+        title = spec["info"].get("title")
+        description = spec["info"].get("description")
+
+    spec_str = generate_spec_str(
+        schemas=schemas, version=version, title=title, description=description
+    )
+
+    return TSpecInfo(
+        version=version, spec_str=spec_str, title=title, description=description
+    )
+
+
+TName = str
+
+
+def generate_setup(*, name: TName, version: TVersion) -> str:
     """
     Generate the content of the setup.py file.
 
@@ -152,7 +229,7 @@ def generate_setup(*, name: str, version: str) -> str:
     )
 
 
-def generate_manifest(*, name: str) -> str:
+def generate_manifest(*, name: TName) -> str:
     """
     Generate the content of the MANIFEST.in file.
 
@@ -221,8 +298,17 @@ def generate_init(open_alchemy: str, models_file: str) -> str:
     )
 
 
+TPath = str
+
+
 def dump(
-    *, path: str, name: str, setup: str, manifest: str, spec: str, init: str
+    *,
+    path: TPath,
+    name: TName,
+    setup: str,
+    manifest: str,
+    spec_str: TSpecStr,
+    init: str,
 ) -> None:
     """
     Dump the files needed for the package at a path.
@@ -246,13 +332,13 @@ def dump(
         # Write files in the package directory.
         package = directory / name
         package.mkdir(parents=True, exist_ok=True)
-        (package / "spec.json").write_text(spec)
+        (package / "spec.json").write_text(spec_str)
         (package / "__init__.py").write_text(init)
     except OSError as exc:
         raise exceptions.BuildError(str(exc)) from exc
 
 
-def build_dist(name: str, path: str, format_: PackageFormat) -> None:
+def build_dist(name: TName, path: TPath, format_: PackageFormat) -> None:
     """
     Build a distribution package.
 
@@ -273,7 +359,7 @@ def build_dist(name: str, path: str, format_: PackageFormat) -> None:
         build_wheel(name, path)
 
 
-def build_sdist(name: str, path: str) -> None:
+def build_sdist(name: TName, path: TPath) -> None:
     """
     Build a .tar.gz source distribution and place it in a "dist" folder.
 
@@ -286,7 +372,7 @@ def build_sdist(name: str, path: str) -> None:
     helpers.command.run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
-def build_wheel(name: str, path: str) -> None:
+def build_wheel(name: TName, path: TPath) -> None:
     """
     Build a .whl package and place it in a "dist" folder.
 
@@ -308,8 +394,8 @@ def build_wheel(name: str, path: str) -> None:
 def execute(
     *,
     spec: typing.Any,
-    name: str,
-    path: str,
+    name: TName,
+    path: TPath,
     format_: PackageFormat,
 ) -> None:
     """
@@ -324,9 +410,8 @@ def execute(
     """
     validate_dist_format(format_)
     schemas = get_schemas(spec=spec)
-    spec_str = generate_spec(schemas=schemas)
-    version = calculate_version(spec=spec, spec_str=spec_str)
-    setup = generate_setup(name=name, version=version)
+    spec_info = calculate_spec_info(schemas=schemas, spec=spec)
+    setup = generate_setup(name=name, version=spec_info.version)
     manifest = generate_manifest(name=name)
 
     init_open_alchemy = generate_init_open_alchemy()
@@ -338,7 +423,7 @@ def execute(
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec_str,
+        spec_str=spec_info.spec_str,
         init=init,
     )
 
