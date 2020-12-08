@@ -146,19 +146,23 @@ class TSpecInfo:
     description: typing.Optional[str]
 
 
-# def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
-#     """
-#     Calculate the information about the spec.
+def calculate_spec_info(*, schemas: types.Schemas, spec: typing.Any) -> TSpecInfo:
+    """
+    Calculate the information about the spec.
 
-#     Args:
-#         schemas: The schemas from the spec.
-#         spec: The spec as a dictionary.
+    Args:
+        schemas: The schemas from the spec.
+        spec: The spec as a dictionary.
 
-#     Returns:
-#         The spec string to be stored, the version, and the title and description (if
-#         they are defined).
+    Returns:
+        The spec string to be stored, the version, and the title and description (if
+        they are defined).
 
-#     """
+    """
+    version = calculate_version(spec=spec, schemas=schemas)
+    spec_str = generate_spec(schemas=schemas)
+
+    return TSpecInfo(version=version, spec_str=spec_str, title=None, description=None)
 
 
 def generate_setup(*, name: str, version: str) -> str:
@@ -353,9 +357,8 @@ def execute(
     """
     validate_dist_format(format_)
     schemas = get_schemas(spec=spec)
-    spec_str = generate_spec(schemas=schemas)
-    version = calculate_version(spec=spec, schemas=schemas)
-    setup = generate_setup(name=name, version=version)
+    spec_info = calculate_spec_info(schemas=schemas, spec=spec)
+    setup = generate_setup(name=name, version=spec_info.version)
     manifest = generate_manifest(name=name)
 
     init_open_alchemy = generate_init_open_alchemy()
@@ -367,7 +370,7 @@ def execute(
         name=name,
         setup=setup,
         manifest=manifest,
-        spec=spec_str,
+        spec=spec_info.spec_str,
         init=init,
     )
 
