@@ -82,6 +82,7 @@ def test_mixins(schema, schemas, expected_mixins):
             ("primary-key", True, True),
             ("primary-key", False, False),
             ("tablename", "table 1", "table 1"),
+            ("tablename", "table 2", "table 2"),
             ("inherits", "Parent1", "Parent1"),
             ("inherits", True, True),
             ("json", True, True),
@@ -131,8 +132,7 @@ def test_mixins(schema, schemas, expected_mixins):
 @pytest.mark.helper
 def test_peek_value_func(prefix, key_values, func, expected_value):
     """
-    GIVEN prefix and keys and values to build the schema and function to retrieve a
-        value
+    GIVEN prefix, keys and values to build the schema and function to retrieve a value
     WHEN the function called with the schema
     THEN the expected value is returned.
     """
@@ -186,8 +186,8 @@ def test_peek_value_func(prefix, key_values, func, expected_value):
 @pytest.mark.helper
 def test_peek_malformed_schema_error(prefix, key_values, func):
     """
-    GIVEN schema with autoincrement defined as a string
-    WHEN autoincrement is called with the schema
+    GIVEN schema with an extension property defined as a string
+    WHEN extension property is called with the schema
     THEN MalformedSchemaError is raised.
     """
     schema = {f"{prefix}{key}": value for key, value in key_values}
@@ -227,9 +227,9 @@ def test_peek_malformed_schema_error(prefix, key_values, func):
 @pytest.mark.helper
 def test_peek_malformed_extension_property_error(prefix, key_values, func):
     """
-    GIVEN schema with autoincrement defined as a string
-    WHEN autoincrement is called with the schema
-    THEN MalformedSchemaError is raised.
+    GIVEN schema with an extension property defined as a string
+    WHEN extension property is called with the schema
+    THEN MalformedExtensionPropertyError is raised.
     """
     schema = {f"{prefix}{key}": value for key, value in key_values}
 
