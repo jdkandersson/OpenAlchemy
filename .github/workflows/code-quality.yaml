@@ -168,7 +168,7 @@ jobs:
           python-version: 3.9
       - name: Get latest Changelog Entry
         id: changelog_entry
-        uses: mindsers/changelog-reader-action@v1.1.0
+        uses: mindsers/changelog-reader-action@v2
       - name: Retrieve packages
         uses: actions/download-artifact@v1
         with:
