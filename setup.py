@@ -46,7 +46,7 @@ setuptools.setup(
             "pydocstyle",
             "black",
             "pre-commit",
-            "isort<5.0.0",
+            "isort<6.0.0",
             "Sphinx",
             "doc8",
             "connexion[swagger-ui]",
