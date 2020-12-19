@@ -163,7 +163,7 @@ jobs:
           name: docs
           path: docs/build/html/
 
-  release:
+  test-release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs:
@@ -174,36 +174,17 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Get latest Changelog Entry
-        id: changelog_entry
-        uses: mindsers/changelog-reader-action@v2
-      - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.7
-        with:
-          name: wheel
-          path: dist/
-      - name: Publish the release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body: ${{ steps.changelog_entry.outputs.log_entry }}
-          files: |
-            dist/*
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.1
         with:
           password: ${{ secrets.test_pypi_password }}
           repository_url: https://test.pypi.org/legacy/
-      # - name: Publish distribution 📦 to PyPI
-      #   if: startsWith(github.ref, 'refs/tags')
-      #   uses: pypa/gh-action-pypi-publish@v1.4.1
-      #   with:
-      #     password: ${{ secrets.pypi_password }}
-      #     repository_url: https://upload.pypi.org/legacy/
 
   test-production-test-pypi:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-release
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -237,3 +218,89 @@ jobs:
         working-directory: tests/production
         run: |
           pipenv run test
+
+  release-pipy:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-production-test-pypi
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Retrieve packages
+        uses: actions/download-artifact@v2.0.7
+        with:
+          name: wheel
+          path: dist/
+      - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@v1.4.1
+        with:
+          password: ${{ secrets.pypi_password }}
+          repository_url: https://upload.pypi.org/legacy/
+
+  test-production-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-release
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+      - name: prepare tests
+        working-directory: tests/production
+        env:
+          PYPI_MIRROR: https://pypi.org/simple/
+        run: |
+          ./prepare.sh
+      - name: cache pipenv
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: tests/production/.venv
+          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
+      - name: install dependencies
+        working-directory: tests/production
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+        run: |
+          pipenv install --dev
+      - name: run tests
+        working-directory: tests/production
+        run: |
+          pipenv run test
+
+  release-github:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-production-pypi
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get latest Changelog Entry
+        id: changelog_entry
+        uses: mindsers/changelog-reader-action@v2
+      - name: Retrieve packages
+        uses: actions/download-artifact@v2.0.7
+        with:
+          name: wheel
+          path: dist/
+      - name: Publish the release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: ${{ steps.changelog_entry.outputs.log_entry }}
+          files: |
+            dist/*
