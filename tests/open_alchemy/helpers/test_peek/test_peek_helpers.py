@@ -11,13 +11,15 @@ from open_alchemy import helpers
     [
         pytest.param("key", {}, {}, None, id="missing"),
         pytest.param("key", {"key": "value 1"}, {}, "value 1", id="plain"),
-        pytest.param("x-key", {"x-key": "value 1"}, {}, "value 1", id="extension x-"),
-        pytest.param(
-            "x-key",
-            {"x-open-alchemy-key": "value 1"},
-            {},
-            "value 1",
-            id="extension x-open-alchemy",
+        *(
+            pytest.param(
+                "x-key",
+                {f"{prefix}key": "value 1"},
+                {},
+                "value 1",
+                id=f"extension {prefix}",
+            )
+            for prefix in helpers.peek.VALID_PREFIXES
         ),
         pytest.param(
             "key",
