@@ -6,6 +6,12 @@ updates:
     schedule:
       interval: "weekly"
 
+  # Maintain Python production test dependencies.
+  - package-ecosystem: "pip"
+    directory: "tests/production"
+    schedule:
+      interval: "weekly"
+
   # Maintain dependencies for GitHub Actions.
   - package-ecosystem: "github-actions"
     directory: "/"

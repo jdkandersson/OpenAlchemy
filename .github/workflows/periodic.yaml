@@ -3,6 +3,7 @@ name: Code quality checks
 on:
   schedule:
     - cron: "0 1 * * *"
+  workflow_dispatch:
 
 jobs:
   test-production-test-pypi:
@@ -28,17 +29,8 @@ jobs:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
           ./prepare.sh
-      - name: cache pipenv
-        id: cache-pipenv
-        uses: actions/cache@v2
-        with:
-          path: tests/production/.venv
-          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
       - name: install dependencies
         working-directory: tests/production
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        env:
-          PIPENV_VENV_IN_PROJECT: 1
         run: |
           pipenv install --dev
       - name: run tests

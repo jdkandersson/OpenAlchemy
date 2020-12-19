@@ -206,17 +206,8 @@ jobs:
           PYPI_MIRROR: https://test.pypi.org/simple/
         run: |
           ./prepare.sh
-      - name: cache pipenv
-        id: cache-pipenv
-        uses: actions/cache@v2
-        with:
-          path: tests/production/.venv
-          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
       - name: install dependencies
         working-directory: tests/production
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        env:
-          PIPENV_VENV_IN_PROJECT: 1
         run: |
           pipenv install --dev
       - name: run tests
@@ -268,17 +259,8 @@ jobs:
           PYPI_MIRROR: https://pypi.org/simple/
         run: |
           ./prepare.sh
-      - name: cache pipenv
-        id: cache-pipenv
-        uses: actions/cache@v2
-        with:
-          path: tests/production/.venv
-          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
       - name: install dependencies
         working-directory: tests/production
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        env:
-          PIPENV_VENV_IN_PROJECT: 1
         run: |
           pipenv install --dev
       - name: run tests
