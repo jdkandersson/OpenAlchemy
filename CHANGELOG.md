@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.0.2] - 2020-12-19
+
 ### Changed
 
 - Changed from `setup.py` to poetry
@@ -473,6 +475,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
 [v2.0.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.0
 [v2.0.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.1
+[v2.0.2]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.2
 [//]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190

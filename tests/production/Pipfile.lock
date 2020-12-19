@@ -200,7 +200,7 @@
                 "sha256:4a0e087621794483eea3c1859b16190bb4047e4020f91e37517763af3fc5a411"
             ],
             "index": "open-alchemy-pypi",
-            "version": "==2.0.1"
+            "version": "==2.0.2"
         },
         "openapi-spec-validator": {
             "hashes": [
