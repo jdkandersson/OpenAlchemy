@@ -154,7 +154,7 @@ def _check_invalid_keys(
     """Check for keys that are not valid on a model."""
     invalid_keys = (
         "x-primary-key",
-        "x-autoincrement",
+        oa_types.ExtensionProperties.AUTOINCREMENT,
         "x-index",
         "x-unique",
         "x-foreign-key",

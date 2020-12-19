@@ -42,6 +42,8 @@ class OpenApiProperties(str, enum.Enum):
 class ExtensionProperties(str, enum.Enum):
     """All the extension properties that can be defined."""
 
+    AUTOINCREMENT: typing.Literal["x-autoincrement"] = "x-autoincrement"
+
 
 class ModelFactory(Protocol):
     """Defines interface for model factory."""

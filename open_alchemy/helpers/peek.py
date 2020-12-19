@@ -107,7 +107,9 @@ def autoincrement(
         The x-autoincrement value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-autoincrement")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.AUTOINCREMENT
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

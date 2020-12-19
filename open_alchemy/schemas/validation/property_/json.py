@@ -42,10 +42,16 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
             get_value=helpers.peek.primary_key, schema=schema, schemas=schemas
         )
         autoincrement = helpers.peek.peek_key(
-            schema=schema, schemas=schemas, key="x-autoincrement"
+            schema=schema,
+            schemas=schemas,
+            key=oa_types.ExtensionProperties.AUTOINCREMENT,
         )
         if autoincrement is not None:
-            return types.Result(False, "json properties do not support x-autoincrement")
+            return types.Result(
+                False,
+                "json properties do not support "
+                f"{oa_types.ExtensionProperties.AUTOINCREMENT}",
+            )
         server_default = helpers.peek.peek_key(
             schema=schema, schemas=schemas, key="x-server-default"
         )
