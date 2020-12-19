@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "OpenAlchemy"
+version = "2.0.1"
+description = "Maps an OpenAPI schema to SQLAlchemy models."
+authors = ["David Andersson <anderssonpublic@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/jdkandersson/OpenAlchemy"
+repository = "https://github.com/jdkandersson/OpenAlchemy"
+documentation = "https://openapi-sqlalchemy.readthedocs.io/en/latest/index.html"
+keywords = ["OpenAPI", "SQLAlchemy", "Python", "models", "database"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Natural Language :: English",
+    "Topic :: Database",
+    "Topic :: Database :: Front-Ends",
+    "Topic :: Internet",
+    "Typing :: Typed",
+]
+include = ["open_alchemy", "*.json", "*.j2"]
+exclude = ["docs", "examples", "tests"]
+packages = [
+    { include = "open_alchemy" },
+]
+
+[tool.poetry.scripts]
+openalchemy = "open_alchemy.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+SQLAlchemy = "^1.0"
+jsonschema = "^3"
+Jinja2 = "^2"
+sqlalchemy-stubs = "^0.3"
+typing_extensions = { version = "^3.7.4", python = "<3.8" }
+
+[tool.poetry.extras]
+yaml = ["PyYAML"]
+wheel = ["wheel"]
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.6.0"
+mypy = "^0.790"
+pydocstyle = "^5.1.1"
+black = "^20.8b1"
+pre-commit = "^2.9.3"
+isort = "^5.6.4"
+Sphinx = "^3.3.1"
+doc8 = "^0.8.1"
+connexion = {version = "^2.7.0", extras = ["swagger-ui"]}
+Flask-SQLAlchemy = "^2.4.4"
+alembic = "^1.4.3"
+rstcheck = "^3.3.1"
+bandit = "^1.7.0"
+pytest = "^6.2.1"
+pytest-cov = "^2.10.1"
+pytest-flake8 = "^1.0.7"
+pytest-flask = "^1.1.0"
+pytest-flask-sqlalchemy = "^1.0.2"
+pytest-randomly = "^3.5.0"
+PyYAML = "^5.3.1"
+typeguard = "^2.10.0"
+sqlalchemy_mixins = "^1.2.1"
+wheel = "^0.36.2"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

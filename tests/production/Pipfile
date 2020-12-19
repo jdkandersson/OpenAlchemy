@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "$PYPI_MIRROR"
+verify_ssl = true
+name = "open-alchemy-pypi"
+
+[packages]
+openalchemy = {version="2.0.1", index="open-alchemy-pypi"}
+connexion = {extras = ["swagger-ui"], version = "2.7.0", index="pypi"}
+Flask-SQLAlchemy = {version = "2.4.4", index="pypi"}
+
+[dev-packages]
+pytest = "6.2.1"
+pytest-flask = "1.1.0"
+pytest-flask-sqlalchemy = "1.0.2"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test = "pytest"

@@ -1,0 +1,6 @@
+*
+!Pipfile
+!Pipfile.lock
+!prepare.sh
+!.gitignore
+!setup.cfg

@@ -28,57 +28,66 @@ jobs:
             python-version: 3.7
           - os: macos-latest
             python-version: 3.8
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
-        id: cache
+        id: cache-poetry
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-pip-
-      - name: Install dependencies
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+      - name: Configure poetry for ci
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .[dev,test]
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          poetry install
       - name: Test with pytest
         run: |
-          pytest -v
+          poetry run pytest
       - name: Test the examples
-        run: bash tests/test_examples
+        run: |
+          poetry run ./tests/test_examples
+
   staticPython:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         command:
-          - bandit -r open_alchemy -s B101,B303,B310
-          - rstcheck -r docs
-
+          - poetry run bandit -r open_alchemy -s B101,B303,B310
+          - poetry run rstcheck -r docs
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
-        id: cache
+        id: cache-poetry
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install dependencies
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+      - name: Configure poetry for ci
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .[dev,test]
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          poetry install
       - name: Run static code analyser
         run: |
           ${{ matrix.command }}
+
   staticNode:
     runs-on: ubuntu-latest
     strategy:
@@ -86,13 +95,12 @@ jobs:
         command:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
           - find examples -name "*spec.yml" ! -path "*/remote/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node
         uses: actions/setup-node@v2.1.4
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: Install dependencies
         run: npm install cspell @apidevtools/swagger-cli
       - name: Run static code analyser
@@ -110,32 +118,34 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
     needs:
       - pre-commit
       - test
       - staticNode
       - staticPython
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
-        id: cache
+        id: cache-poetry
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install dependencies
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+      - name: Configure poetry for ci
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .[dev,test]
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          poetry install
       - name: Build packages
-        run: python setup.py sdist bdist_wheel
+        run: poetry build
       - name: Upload artifacts for release
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2.2.1
@@ -145,7 +155,7 @@ jobs:
       - name: Build the documentation
         run: |
           cd docs
-          make html
+          poetry run make html
       - name: Upload documentation for release
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2.2.1
@@ -153,19 +163,131 @@ jobs:
           name: docs
           path: docs/build/html/
 
-  release:
+  release-test-pypi:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-
     needs:
       - build
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@v1.4.1
+        with:
+          password: ${{ secrets.test_pypi_password }}
+          repository_url: https://test.pypi.org/legacy/
+
+  test-production-test-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - release-test-pypi
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+      - name: prepare tests
+        working-directory: tests/production
+        env:
+          PYPI_MIRROR: https://test.pypi.org/simple/
+        run: |
+          ./prepare.sh
+      - name: cache pipenv
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: tests/production/.venv
+          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
+      - name: install dependencies
+        working-directory: tests/production
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+        run: |
+          pipenv install --dev
+      - name: run tests
+        working-directory: tests/production
+        run: |
+          pipenv run test
+
+  release-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-production-test-pypi
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Retrieve packages
+        uses: actions/download-artifact@v2.0.7
+        with:
+          name: wheel
+          path: dist/
+      - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@v1.4.1
+        with:
+          password: ${{ secrets.pypi_password }}
+          repository_url: https://upload.pypi.org/legacy/
+
+  test-production-pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - release-pypi
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+      - name: prepare tests
+        working-directory: tests/production
+        env:
+          PYPI_MIRROR: https://pypi.org/simple/
+        run: |
+          ./prepare.sh
+      - name: cache pipenv
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: tests/production/.venv
+          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
+      - name: install dependencies
+        working-directory: tests/production
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+        run: |
+          pipenv install --dev
+      - name: run tests
+        working-directory: tests/production
+        run: |
+          pipenv run test
+
+  release-github:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - test-production-pypi
+    steps:
+      - uses: actions/checkout@v2
       - name: Get latest Changelog Entry
         id: changelog_entry
         uses: mindsers/changelog-reader-action@v2
@@ -182,14 +304,3 @@ jobs:
           body: ${{ steps.changelog_entry.outputs.log_entry }}
           files: |
             dist/*
-      - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.4.1
-        with:
-          password: ${{ secrets.test_pypi_password }}
-          repository_url: https://test.pypi.org/legacy/
-      - name: Publish distribution 📦 to PyPI
-        if: startsWith(github.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@v1.4.1
-        with:
-          password: ${{ secrets.pypi_password }}
-          repository_url: https://upload.pypi.org/legacy/
