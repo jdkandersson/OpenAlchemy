@@ -472,7 +472,7 @@ def test_generate_type_return(tmp_path, artifacts):
     source_file = _create_source_file(source, tmp_path)
 
     normal_report, error_report, returncode = api.run(
-        [str(source_file), "--ignore-missing-imports"]
+        [str(source_file), "--ignore-missing-imports", "--follow-imports", "skip"]
     )
 
     if returncode > 0:
