@@ -39,14 +39,13 @@ jobs:
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
-          path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-no-root-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-root
-      - name: Install root
-        run: |
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
           poetry install
       - name: Test with pytest
         run: |
@@ -73,12 +72,14 @@ jobs:
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
-          path: ~/.venv
-          key: ${{ runner.os }}-poetry-no-root-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-root
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
+          poetry install
       - name: Run static code analyser
         run: |
           ${{ matrix.command }}
@@ -129,12 +130,14 @@ jobs:
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
-          path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-no-root-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+          path: ~/.virtualenvs
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-root
+          poetry config virtualenvs.in-project false --local
+          poetry config virtualenvs.path ~/.virtualenvs --local
+          poetry install
       - name: Build packages
         run: poetry build
       - name: Upload artifacts for release
