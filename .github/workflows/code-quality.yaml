@@ -227,8 +227,11 @@ jobs:
           PIPENV_VENV_IN_PROJECT: 1
         run: |
           pipenv install --dev
-      - name: run tests
+      - name: prepare tests
         working-directory: tests/production/test-pypi
         run: |
           ./prepare.sh
+      - name: run tests
+        working-directory: tests/production/test-pypi
+        run: |
           pipenv run test
