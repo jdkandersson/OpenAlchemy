@@ -25,12 +25,12 @@ jobs:
           pip install pipenv
       - name: prepare tests
         working-directory: tests/production
-        env:
-          PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
           ./prepare.sh
       - name: install dependencies
         working-directory: tests/production
+        env:
+          PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
           pipenv install --dev
       - name: run tests

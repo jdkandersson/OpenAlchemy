@@ -4,3 +4,4 @@
 !prepare.sh
 !.gitignore
 !setup.cfg
+!template_*.py

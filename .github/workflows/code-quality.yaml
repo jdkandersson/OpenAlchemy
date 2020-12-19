@@ -202,11 +202,11 @@ jobs:
           pip install pipenv
       - name: prepare tests
         working-directory: tests/production
-        env:
-          PYPI_MIRROR: https://test.pypi.org/simple/
         run: |
           ./prepare.sh
       - name: install dependencies
+        env:
+          PYPI_MIRROR: https://test.pypi.org/simple/
         working-directory: tests/production
         run: |
           pipenv install --dev
@@ -255,12 +255,12 @@ jobs:
           pip install pipenv
       - name: prepare tests
         working-directory: tests/production
-        env:
-          PYPI_MIRROR: https://pypi.org/simple/
         run: |
           ./prepare.sh
       - name: install dependencies
         working-directory: tests/production
+        env:
+          PYPI_MIRROR: https://pypi.org/simple/
         run: |
           pipenv install --dev
       - name: run tests
