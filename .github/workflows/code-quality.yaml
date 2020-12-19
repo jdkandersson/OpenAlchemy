@@ -44,7 +44,10 @@ jobs:
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install  --no-root
+          poetry install --no-root
+      - name: Install root
+        run: |
+          poetry install
       - name: Test with pytest
         run: |
           poetry run pytest
