@@ -51,7 +51,7 @@ jobs:
           poetry run pytest
       - name: Test the examples
         run: |
-          poetry shell
+          poetry shell -n
           bash tests/test_examples
   staticPython:
     runs-on: ubuntu-latest
