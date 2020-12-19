@@ -184,7 +184,7 @@ def calculate_property_schema(
     # Calculate name and schema
     property_name = f"{tablename}_{primary_key_property_name}"
     property_schema: types.ColumnSchema = {
-        "type": type_,
+        types.OpenApiProperties.TYPE.value: type_,
         "x-primary-key": True,
         "x-foreign-key": foreign_key,
     }
@@ -262,7 +262,7 @@ def calculate_schema(
     ref_property = calculate_property_schema(schema=ref_schema, schemas=schemas)
 
     schema = {
-        "type": "object",
+        types.OpenApiProperties.TYPE: "object",
         "x-tablename": secondary,
         "properties": {
             parent_property.name: parent_property.schema,

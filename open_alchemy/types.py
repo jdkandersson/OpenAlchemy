@@ -29,6 +29,18 @@ class KeyPrefixes(str, enum.Enum):
     NAMESPACES = "x-open-alchemy-"
 
 
+@enum.unique
+class OpenApiProperties(str, enum.Enum):
+    """All the OpenAPI properties that can be defined."""
+
+    TYPE: typing.Literal["type"] = "type"
+
+
+@enum.unique
+class ExtensionProperties(str, enum.Enum):
+    """All the extension properties that can be defined."""
+
+
 class ModelFactory(Protocol):
     """Defines interface for model factory."""
 

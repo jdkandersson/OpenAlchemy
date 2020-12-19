@@ -77,7 +77,7 @@ def get(
 
     # Generate the schema
     schema_artifact: oa_types.ColumnSchema = {
-        "type": type_,
+        oa_types.OpenApiProperties.TYPE.value: type_
     }
     if format_ is not None:
         schema_artifact["format"] = format_

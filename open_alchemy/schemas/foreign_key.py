@@ -200,7 +200,7 @@ def _calculate_foreign_key_property_artifacts(
 
     # Calculate the schema
     foreign_key_property_schema: types.ColumnSchema = {
-        "type": property_type,
+        types.OpenApiProperties.TYPE.value: property_type,
         "x-dict-ignore": True,
         "nullable": nullable,
         "x-foreign-key": foreign_key,
@@ -298,7 +298,7 @@ def _foreign_keys_to_schema(
 
     """
     return {
-        "type": "object",
+        types.OpenApiProperties.TYPE: "object",
         "properties": {
             property_name: schema for _, property_name, schema in foreign_keys
         },

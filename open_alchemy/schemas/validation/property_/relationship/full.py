@@ -54,7 +54,7 @@ def _check_pre_defined_property_schema(
 
     # Check that key information matches
     checks = (
-        ("type", oa_helpers.peek.type_),
+        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         ("format", oa_helpers.peek.format_),
         ("maxLength", oa_helpers.peek.max_length),
         ("default", oa_helpers.peek.default),
@@ -339,7 +339,7 @@ def _check_backref_property_properties(
 
     # Check schema matches
     checks = (
-        ("type", oa_helpers.peek.type_),
+        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         ("format", oa_helpers.peek.format_),
         ("maxLength", oa_helpers.peek.max_length),
         ("default", oa_helpers.peek.default),

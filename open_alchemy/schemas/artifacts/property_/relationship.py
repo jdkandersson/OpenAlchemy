@@ -19,7 +19,10 @@ def _calculate_x_to_one_schema(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> oa_types.ObjectRefSchema:
     """Calculate the schema for a x-to-one relationship."""
-    return_schema: oa_types.ObjectRefSchema = {"type": "object", "x-de-$ref": parent}
+    return_schema: oa_types.ObjectRefSchema = {
+        oa_types.OpenApiProperties.TYPE.value: "object",
+        "x-de-$ref": parent,
+    }
 
     description = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
@@ -253,8 +256,8 @@ def _calculate_one_to_x_schema(
 ) -> oa_types.ArrayRefSchema:
     """Calculate the schema for a x-to-one relationship."""
     return_schema: oa_types.ArrayRefSchema = {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": parent},
+        oa_types.OpenApiProperties.TYPE.value: "array",
+        "items": {oa_types.OpenApiProperties.TYPE.value: "object", "x-de-$ref": parent},
     }
 
     description = _get_description(schema=schema, schemas=schemas, parent=parent)

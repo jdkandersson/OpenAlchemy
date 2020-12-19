@@ -33,7 +33,7 @@ def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
         The type of the schema.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="type")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.TYPE)
     if value is None:
         raise exceptions.TypeMissingError("Every property requires a type.")
     if not isinstance(value, str):
@@ -660,7 +660,7 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
         return None
     # Assemble schema
     resolved_schema: types.ColumnSchema = {
-        "type": type_(schema=schema, schemas=schemas)
+        types.OpenApiProperties.TYPE.value: type_(schema=schema, schemas=schemas)
     }
     format_value = format_(schema=schema, schemas=schemas)
     max_length_value = max_length(schema=schema, schemas=schemas)

@@ -137,9 +137,10 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
             )
         schema["x-inherits"] = parent
     # Checking for object type
-    if schema.get("type") != "object":
+    type_ = schema.get(types.OpenApiProperties.TYPE)
+    if type_ != "object":
         raise exceptions.FeatureNotImplementedError(
-            f"{schema.get('type')} is not supported in {name}."
+            f"{type_} is not supported in {name}."
         )
     if not schema.get("properties"):
         raise exceptions.MalformedSchemaError(
