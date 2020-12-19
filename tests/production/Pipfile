@@ -4,12 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [[source]]
-url = "https://test.pypi.org/simple"
+url = "$PYPI_MIRROR"
 verify_ssl = true
-name = "test-pypi"
+name = "open-alchemy-pypi"
 
 [packages]
-openalchemy = {version="2.0.1", index="test-pypi"}
+openalchemy = {version="2.0.1", index="open-alchemy-pypi"}
 connexion = {extras = ["swagger-ui"], version = "2.7.0", index="pypi"}
 Flask-SQLAlchemy = {version = "2.4.4", index="pypi"}
 

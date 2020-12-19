@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a4e7810d4f9dc5d3c5d62af370f24ca51a933cf9792aebc6440715038a66632e"
+            "sha256": "a94e3d4cf1e4321d36390c0451cf6e5b4d5d2d6faeb939fa4d5ead379db18a20"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -14,8 +14,8 @@
                 "verify_ssl": true
             },
             {
-                "name": "test-pypi",
-                "url": "https://test.pypi.org/simple",
+                "name": "open-alchemy-pypi",
+                "url": "$PYPI_MIRROR",
                 "verify_ssl": true
             }
         ]
@@ -199,7 +199,7 @@
                 "sha256:2f8a469c942fe4db3c16928ae57bc55cadc4d3bc8fb4a84b27372a4d7f4f174d",
                 "sha256:4a0e087621794483eea3c1859b16190bb4047e4020f91e37517763af3fc5a411"
             ],
-            "index": "test-pypi",
+            "index": "open-alchemy-pypi",
             "version": "==2.0.1"
         },
         "openapi-spec-validator": {

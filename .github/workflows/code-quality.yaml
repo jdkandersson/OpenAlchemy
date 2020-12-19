@@ -214,24 +214,26 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
+      - name: prepare tests
+        working-directory: tests/production
+        env:
+          PYPI_MIRROR: https://test.pypi.org/simple/
+        run: |
+          ./prepare.sh
       - name: cache pipenv
         id: cache-pipenv
         uses: actions/cache@v2
         with:
-          path: tests/production/test-pypi/.venv
-          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/test-pypi/Pipfile.lock') }}
+          path: tests/production/.venv
+          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/Pipfile.lock') }}
       - name: install dependencies
-        working-directory: tests/production/test-pypi
+        working-directory: tests/production
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         env:
           PIPENV_VENV_IN_PROJECT: 1
         run: |
           pipenv install --dev
-      - name: prepare tests
-        working-directory: tests/production/test-pypi
-        run: |
-          ./prepare.sh
       - name: run tests
-        working-directory: tests/production/test-pypi
+        working-directory: tests/production
         run: |
           pipenv run test
