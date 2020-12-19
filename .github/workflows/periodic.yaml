@@ -33,7 +33,6 @@ jobs:
           PYPI_MIRROR: ${{ matrix.PYPI_MIRROR }}
         run: |
           pipenv install --dev
-          cat Pipfile.lock
       - name: run tests
         working-directory: tests/production
         run: |
