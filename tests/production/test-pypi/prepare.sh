@@ -6,4 +6,5 @@ cp ../../../examples/app/app.py ../../../examples/app/api.yaml ../../../examples
 # Copy test files
 mkdir -p tests
 touch tests/__init__.py
-cp ../../examples/app/test_app.py ../conftest.py tests/
+cp ../../examples/app/test_app.py tests/
+cp ../conftest_template.py tests/conftest.py
