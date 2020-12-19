@@ -4,6 +4,7 @@ import pytest
 
 from open_alchemy import exceptions
 from open_alchemy import helpers
+from open_alchemy import types
 
 
 @pytest.mark.parametrize(
@@ -19,7 +20,7 @@ from open_alchemy import helpers
                 "value 1",
                 id=f"extension {prefix}",
             )
-            for prefix in helpers.peek.VALID_PREFIXES
+            for prefix in types.KeyPrefixes
         ),
         pytest.param(
             "key",

@@ -4,6 +4,7 @@ import pytest
 
 from open_alchemy import exceptions
 from open_alchemy import helpers
+from open_alchemy import types
 
 
 @pytest.mark.parametrize(
@@ -61,7 +62,7 @@ def test_mixins(schema, schemas, expected_mixins):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func, expected_value",
@@ -147,7 +148,7 @@ def test_peek_value_func(prefix, key_values, func, expected_value):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func",
@@ -200,7 +201,7 @@ def test_peek_malformed_schema_error(prefix, key_values, func):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func",

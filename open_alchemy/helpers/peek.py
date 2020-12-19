@@ -9,9 +9,6 @@ from open_alchemy import types
 from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
 
-# Define valid OpenAlchemy prefixes.
-VALID_PREFIXES = ["x-", "x-open-alchemy-"]
-
 
 class PeekValue(types.Protocol):
     """Defines interface for peek functions."""
@@ -859,7 +856,7 @@ def _peek_key(
 
     # Base case, look for type key
     keys = (
-        [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
+        [key.replace("x-", prefix) for prefix in types.KeyPrefixes]
         if key.startswith("x-")
         else [key]
     )

@@ -21,6 +21,14 @@ TKwargs = typing.Dict[str, typing.Any]
 TOptKwargs = typing.Optional[TKwargs]
 
 
+@enum.unique
+class KeyPrefixes(str, enum.Enum):
+    """The allowed prefixes for extension properties."""
+
+    SHORT = "x-"
+    NAMESPACES = "x-open-alchemy-"
+
+
 class ModelFactory(Protocol):
     """Defines interface for model factory."""
 
