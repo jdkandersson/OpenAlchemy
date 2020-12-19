@@ -173,15 +173,13 @@ An example API has been defined using connexion and Flask here:
 Fork and checkout the repository. To install:
 
 ```bash
-python -m venv venv
-source ./venv/bin/activate
-python -m pip install -e .[dev,test]
+poetry install
 ```
 
 To run tests:
 
 ```bash
-pytest
+poetry run pytest
 ```
 
 Make your changes and raise a pull request.
@@ -189,7 +187,7 @@ Make your changes and raise a pull request.
 ## Compiling Docs
 
 ```bash
-python -m venv venv
+poetry shell
 cd docs
 make html
 ```
@@ -200,9 +198,6 @@ This creates the `index.html` file in `docs/build/html/index.html`.
 
 ```bash
 rm -r dist/*
-python -m pip install --upgrade pip
-python -m pip install --upgrade setuptools wheel
-python setup.py sdist bdist_wheel
-python -m pip install --upgrade twine
-python -m twine upload dist/*
+poetry build
+poetry publish
 ```
