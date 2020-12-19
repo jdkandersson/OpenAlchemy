@@ -41,7 +41,7 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
@@ -73,7 +73,7 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
@@ -131,7 +131,7 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
