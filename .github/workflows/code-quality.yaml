@@ -35,7 +35,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: abatilo/actions-poetry@v2.0.0
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
@@ -66,7 +67,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - uses: abatilo/actions-poetry@v2.0.0
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
@@ -123,7 +125,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - uses: abatilo/actions-poetry@v2.0.0
+      - name: Install poetry
+        run: pip install poetry
       - uses: actions/cache@v2.1.3
         id: cache-poetry
         with:
