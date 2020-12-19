@@ -57,7 +57,9 @@ def nullable(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional
         The nullable value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="nullable")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.NULLABLE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

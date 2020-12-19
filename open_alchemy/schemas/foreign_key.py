@@ -202,7 +202,7 @@ def _calculate_foreign_key_property_artifacts(
     foreign_key_property_schema: types.ColumnSchema = {
         types.OpenApiProperties.TYPE.value: property_type,
         "x-dict-ignore": True,
-        "nullable": nullable,
+        types.OpenApiProperties.NULLABLE.value: nullable,
         "x-foreign-key": foreign_key,
     }
     if format_ is not None:

@@ -74,7 +74,7 @@ def check_kwargs(
     # Check for unexpected keys
     if kwargs is not None:
         unexpected_keys = {
-            "nullable",
+            oa_types.OpenApiProperties.NULLABLE.value,
             "default",
             "server_default",
             "primary_key",

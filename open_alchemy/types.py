@@ -34,6 +34,7 @@ class OpenApiProperties(str, enum.Enum):
     """All the OpenAPI properties that can be defined."""
 
     TYPE: typing.Literal["type"] = "type"
+    NULLABLE: typing.Literal["nullable"] = "nullable"
 
 
 @enum.unique
@@ -256,7 +257,7 @@ class OpenApiSimplePropertyArtifacts:
         ] = [
             "format",
             "max_length",
-            "nullable",
+            OpenApiProperties.NULLABLE.value,
             "default",
             "read_only",
             "write_only",
@@ -410,7 +411,7 @@ class OpenApiJsonPropertyArtifacts:
         return_dict: OpenApiJsonPropertyTypedDict = {}
 
         opt_keys: typing.List[Literal["nullable", "read_only", "write_only"]] = [
-            "nullable",
+            OpenApiProperties.NULLABLE.value,
             "read_only",
             "write_only",
         ]
@@ -682,7 +683,7 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
             "kwargs",
             "write_only",
             "description",
-            "nullable",
+            OpenApiProperties.NULLABLE.value,
         ]
         for opt_key in opt_keys:
             value = getattr(self, opt_key)

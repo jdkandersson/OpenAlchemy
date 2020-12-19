@@ -33,7 +33,7 @@ def _calculate_x_to_one_schema(
         get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
     )
     if nullable is not None:
-        return_schema["nullable"] = nullable
+        return_schema[oa_types.OpenApiProperties.NULLABLE.value] = nullable
     write_only = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
     )
