@@ -858,7 +858,11 @@ def _peek_key(
     _check_schema_schemas_dict(schema, schemas)
 
     # Base case, look for type key
-    keys = [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
+    keys = (
+        [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
+        if key.startswith("x-")
+        else [key]
+    )
     value = next(filter(lambda value: value is not None, map(schema.get, keys)), None)
     if value is not None:
         return value
