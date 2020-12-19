@@ -296,7 +296,7 @@ def _check_properties_valid(
         expected_schema = expected_foreign_key_properties[property_foreign_key]
         checks = (
             (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-            ("format", oa_helpers.peek.format_),
+            (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
             ("maxLength", oa_helpers.peek.max_length),
         )
         for key, func in checks:

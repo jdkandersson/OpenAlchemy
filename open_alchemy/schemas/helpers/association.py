@@ -189,7 +189,7 @@ def calculate_property_schema(
         "x-foreign-key": foreign_key,
     }
     if format_ is not None:
-        property_schema["format"] = format_
+        property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
         property_schema["maxLength"] = max_length
 

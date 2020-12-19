@@ -206,7 +206,7 @@ def _calculate_foreign_key_property_artifacts(
         "x-foreign-key": foreign_key,
     }
     if format_ is not None:
-        foreign_key_property_schema["format"] = format_
+        foreign_key_property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
         foreign_key_property_schema["maxLength"] = max_length
     if default is not None:

@@ -35,6 +35,7 @@ class OpenApiProperties(str, enum.Enum):
 
     TYPE: typing.Literal["type"] = "type"
     NULLABLE: typing.Literal["nullable"] = "nullable"
+    FORMAT: typing.Literal["format"] = "format"
 
 
 @enum.unique
@@ -255,7 +256,7 @@ class OpenApiSimplePropertyArtifacts:
                 "write_only",
             ]
         ] = [
-            "format",
+            OpenApiProperties.FORMAT.value,
             "max_length",
             OpenApiProperties.NULLABLE.value,
             "default",

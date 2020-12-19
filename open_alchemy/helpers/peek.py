@@ -83,7 +83,7 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The format value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="format")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.FORMAT)
     if value is None:
         return None
     if not isinstance(value, str):
@@ -667,7 +667,7 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     format_value = format_(schema=schema, schemas=schemas)
     max_length_value = max_length(schema=schema, schemas=schemas)
     if format_value is not None:
-        resolved_schema["format"] = format_value
+        resolved_schema[types.OpenApiProperties.FORMAT.value] = format_value
     if max_length_value is not None:
         resolved_schema["maxLength"] = max_length_value
     try:
