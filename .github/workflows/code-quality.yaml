@@ -28,7 +28,6 @@ jobs:
             python-version: 3.7
           - os: macos-latest
             python-version: 3.8
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -52,6 +51,7 @@ jobs:
       - name: Test the examples
         run: |
           poetry run ./tests/test_examples
+
   staticPython:
     runs-on: ubuntu-latest
     strategy:
@@ -59,7 +59,6 @@ jobs:
         command:
           - poetry run bandit -r open_alchemy -s B101,B303,B310
           - poetry run rstcheck -r docs
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -72,14 +71,15 @@ jobs:
         id: cache-poetry
         with:
           path: ~/.venv
-          key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install
+          poetry install --no-root
       - name: Run static code analyser
         run: |
           ${{ matrix.command }}
+
   staticNode:
     runs-on: ubuntu-latest
     strategy:
@@ -87,7 +87,6 @@ jobs:
         command:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
           - find examples -name "*spec.yml" ! -path "*/remote/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node
@@ -111,13 +110,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
     needs:
       - pre-commit
       - test
       - staticNode
       - staticPython
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -157,10 +154,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-
     needs:
       - build
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
