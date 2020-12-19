@@ -471,7 +471,9 @@ def test_generate_type_return(tmp_path, artifacts):
     source = models_file.generate(artifacts=artifacts)
     source_file = _create_source_file(source, tmp_path)
 
-    normal_report, error_report, returncode = api.run([str(source_file)])
+    normal_report, error_report, returncode = api.run(
+        [str(source_file), "--ignore-missing-imports"]
+    )
 
     if returncode > 0:
         if normal_report:
