@@ -41,11 +41,13 @@ jobs:
         with:
           path: ~/.virtualenvs
           key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
-      - name: Install dependencies
-        if: steps.cache-poetry.outputs.cache-hit != 'true'
+      - name: Configure poetry for ci
         run: |
           poetry config virtualenvs.in-project false --local
           poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
           poetry install
       - name: Test with pytest
         run: |
@@ -74,11 +76,13 @@ jobs:
         with:
           path: ~/.virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
-      - name: Install dependencies
-        if: steps.cache-poetry.outputs.cache-hit != 'true'
+      - name: Configure poetry for ci
         run: |
           poetry config virtualenvs.in-project false --local
           poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
           poetry install
       - name: Run static code analyser
         run: |
@@ -132,11 +136,13 @@ jobs:
         with:
           path: ~/.virtualenvs
           key: ${{ runner.os }}-${{ matrix.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock', 'poetry.toml') }}
-      - name: Install dependencies
-        if: steps.cache-poetry.outputs.cache-hit != 'true'
+      - name: Configure poetry for ci
         run: |
           poetry config virtualenvs.in-project false --local
           poetry config virtualenvs.path ~/.virtualenvs --local
+      - name: Install dependencies
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
           poetry install
       - name: Build packages
         run: poetry build
