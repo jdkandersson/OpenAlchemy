@@ -201,3 +201,34 @@ jobs:
       #   with:
       #     password: ${{ secrets.pypi_password }}
       #     repository_url: https://upload.pypi.org/legacy/
+
+  test-production-test-pypi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+      - name: cache pipenv
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: tests/production/test-pypi/.venv
+          key: ${{ runner.os }}-pipenv-production-test-pypi-${{ hashFiles('tests/production/test-pypi/Pipfile.lock') }}
+      - name: install dependencies
+        working-directory: tests/production/test-pypi
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        env:
+          PIPENV_VENV_IN_PROJECT: 1
+        run: |
+          pipenv install --dev
+      - name: run tests
+        working-directory: tests/production/test-pypi
+        run: |
+          ./prepare.sh
+          pipenv run test
