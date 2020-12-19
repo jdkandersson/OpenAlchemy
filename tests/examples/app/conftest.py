@@ -1,5 +1,5 @@
 """Fixtures for example app."""
-# pylint: disable=no-member, unused-argument
+# pylint: disable=no-member
 
 import sys
 
@@ -35,7 +35,7 @@ def _db(app):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture(autouse=True)
-def cleanup(db_session, client):
+def cleanup(db_session):
     """Clean out Employees."""
     db_session.query(models.Employee).delete()
     db_session.commit()
