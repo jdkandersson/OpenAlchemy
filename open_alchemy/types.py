@@ -420,7 +420,7 @@ class OpenApiJsonPropertyArtifacts:
         return_dict: OpenApiJsonPropertyTypedDict = {}
 
         opt_keys: typing.List[Literal["nullable", "read_only", "write_only"]] = [
-            OpenApiProperties.NULLABLE.value,
+            "nullable",
             "read_only",
             "write_only",
         ]
@@ -688,7 +688,7 @@ class XToOneRelationshipPropertyArtifacts(NotManyToManyRelationshipPropertyArtif
             "kwargs",
             "write_only",
             "description",
-            OpenApiProperties.NULLABLE.value,
+            "nullable",
         ]
         for opt_key in opt_keys:
             value = getattr(self, opt_key)
