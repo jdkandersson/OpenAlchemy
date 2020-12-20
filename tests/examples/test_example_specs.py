@@ -45,6 +45,13 @@ def cleanup_models():
             id="simple Employee all",
         ),
         pytest.param(
+            "namespaced/example-spec.yml",
+            "Employee",
+            {"id": 11, "name": "employee 1", "division": "division 1", "salary": 12},
+            {},
+            id="namespaced Employee",
+        ),
+        pytest.param(
             "all_of/column-example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "salary": 12},
