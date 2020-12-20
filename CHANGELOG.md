@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add support for namespaced `x-open-alchemy-` prefix on top of the shorter
-  `x-` prefix for extension properties.
+  `x-` prefix for extension properties. [#236]
 
 ## [v2.0.2] - 2020-12-19
 
@@ -488,3 +488,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#198]: https://github.com/jdkandersson/OpenAlchemy/issues/198
 [#201]: https://github.com/jdkandersson/OpenAlchemy/issues/201
 [#202]: https://github.com/jdkandersson/OpenAlchemy/issues/202
+[#236]: https://github.com/jdkandersson/OpenAlchemy/issues/236
