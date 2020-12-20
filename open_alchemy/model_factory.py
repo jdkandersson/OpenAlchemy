@@ -11,10 +11,18 @@ from . import types
 from . import utility_base
 
 
+class GetBase(types.Protocol):
+    """Defines interface for the get_base function."""
+
+    def __call__(self, *, name: str, schemas: types.Schemas) -> typing.Type:
+        """Call signature for get_base."""
+        ...
+
+
 def model_factory(
     *,
     name: str,
-    get_base: types.GetBase,
+    get_base: GetBase,
     schemas: types.Schemas,
     artifacts: types.ModelsModelArtifacts,
 ) -> typing.Type:
