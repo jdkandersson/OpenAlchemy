@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "OpenAlchemy"
-version = "2.0.2"
+version = "2.1.0"
 description = "Maps an OpenAPI schema to SQLAlchemy models."
 authors = ["David Andersson <anderssonpublic@gmail.com>"]
 license = "Apache-2.0"
