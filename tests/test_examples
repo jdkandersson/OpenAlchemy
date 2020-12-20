@@ -8,6 +8,10 @@ cd examples/simple
 python models.py
 python models_traditional.py
 cd -
+cd examples/namespaced
+python models.py
+python models_traditional.py
+cd -
 cd examples/all_of
 python column_models.py
 python model_models.py

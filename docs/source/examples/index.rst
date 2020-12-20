@@ -8,6 +8,7 @@ Examples
    connexion
    alembic
    simple
+   namespaced
    default
    server_default
    read_only
