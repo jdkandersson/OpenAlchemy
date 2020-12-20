@@ -51,6 +51,10 @@ class ExtensionProperties(str, enum.Enum):
     PRIMARY_KEY: typing.Literal["x-primary-key"] = "x-primary-key"
     TABLENAME: typing.Literal["x-tablename"] = "x-tablename"
     INHERITS: typing.Literal["x-inherits"] = "x-inherits"
+    JSON: typing.Literal["x-json"] = "x-json"
+    BACKREF: typing.Literal["x-backref"] = "x-backref"
+    SECONDARY: typing.Literal["x-secondary"] = "x-secondary"
+    USELIST: typing.Literal["x-uselist"] = "x-uselist"
 
 
 class ModelFactory(Protocol):

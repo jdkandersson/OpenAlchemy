@@ -192,7 +192,9 @@ def _check_array_root(
 
     # Check secondary
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-secondary")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.SECONDARY
+        )
         is not None
     ):
         return types.Result(
@@ -201,7 +203,9 @@ def _check_array_root(
         )
     # Check backref
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-backref")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.BACKREF
+        )
         is not None
     ):
         return types.Result(
@@ -231,7 +235,9 @@ def _check_array_root(
         )
     # Check uselist
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-uselist")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.USELIST
+        )
         is not None
     ):
         return types.Result(

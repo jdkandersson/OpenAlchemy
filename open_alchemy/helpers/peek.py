@@ -371,7 +371,7 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
         The x-json value or None if the schema does not have the key.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-json")
+    value = peek_key(schema=schema, schemas=schemas, key=types.ExtensionProperties.JSON)
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -395,7 +395,9 @@ def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The x-backref or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-backref")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.BACKREF
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -419,7 +421,9 @@ def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         The x-secondary or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-secondary")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.SECONDARY
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -443,7 +447,9 @@ def uselist(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The x-uselist or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-uselist")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.USELIST
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
