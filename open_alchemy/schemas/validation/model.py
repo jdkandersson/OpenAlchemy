@@ -155,7 +155,7 @@ def _check_invalid_keys(
     invalid_keys = (
         "x-primary-key",
         oa_types.ExtensionProperties.AUTOINCREMENT,
-        "x-index",
+        oa_types.ExtensionProperties.INDEX,
         "x-unique",
         "x-foreign-key",
         "x-foreign-key-kwargs",

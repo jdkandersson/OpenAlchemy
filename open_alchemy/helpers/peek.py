@@ -133,7 +133,9 @@ def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bo
         The x-index value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-index")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.INDEX
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

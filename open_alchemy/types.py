@@ -43,6 +43,7 @@ class ExtensionProperties(str, enum.Enum):
     """All the extension properties that can be defined."""
 
     AUTOINCREMENT: typing.Literal["x-autoincrement"] = "x-autoincrement"
+    INDEX: typing.Literal["x-index"] = "x-index"
 
 
 class ModelFactory(Protocol):
