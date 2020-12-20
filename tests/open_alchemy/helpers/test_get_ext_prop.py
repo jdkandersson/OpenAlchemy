@@ -6,6 +6,7 @@ import pytest
 
 from open_alchemy import exceptions
 from open_alchemy import helpers
+from open_alchemy import types
 
 
 @pytest.mark.helper
@@ -69,121 +70,133 @@ def test_invalid(name, value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "name, value",
     [
         pytest.param(
-            "x-backref",
+            "backref",
             "table 1",
-            id="x-backref",
+            id="backref",
         ),
         pytest.param(
-            "x-uselist",
+            "uselist",
             True,
-            id="x-uselist",
+            id="uselist",
         ),
         pytest.param(
-            "x-secondary",
+            "secondary",
             "association",
-            id="x-secondary",
+            id="secondary",
         ),
         pytest.param(
-            "x-primary-key",
+            "primary-key",
             True,
-            id="x-primary-key",
+            id="primary-key",
         ),
         pytest.param(
-            "x-autoincrement",
+            "autoincrement",
             True,
-            id="x-autoincrement",
+            id="autoincrement",
         ),
         pytest.param(
-            "x-index",
+            "index",
             True,
-            id="x-index",
+            id="index",
         ),
         pytest.param(
-            "x-unique",
+            "unique",
             True,
-            id="x-unique",
+            id="unique",
         ),
         pytest.param(
-            "x-json",
+            "json",
             True,
-            id="x-json",
+            id="json",
         ),
         pytest.param(
-            "x-foreign-key",
+            "foreign-key",
             "table 1.column 1",
-            id="x-foreign-key",
+            id="foreign-key",
         ),
         pytest.param(
-            "x-foreign-key-column",
+            "foreign-key-column",
             "column 1",
-            id="x-foreign-key-column",
+            id="foreign-key-column",
         ),
         pytest.param(
-            "x-server-default",
+            "server-default",
             "value 1",
-            id="x-server-default",
+            id="server-default",
         ),
         pytest.param(
-            "x-tablename",
+            "tablename",
             "table 1",
-            id="x-tablename",
+            id="tablename",
         ),
         pytest.param(
-            "x-de-$ref",
+            "de-$ref",
             "Table1",
-            id="x-de-$ref",
+            id="de-$ref",
         ),
         pytest.param(
-            "x-dict-ignore",
+            "dict-ignore",
             True,
-            id="x-dict-ignore",
+            id="dict-ignore",
         ),
         pytest.param(
-            "x-generated",
+            "generated",
             True,
-            id="x-generated",
+            id="generated",
         ),
         pytest.param(
-            "x-inherits",
+            "inherits",
             True,
-            id="x-inherits bool",
+            id="inherits bool",
         ),
         pytest.param(
-            "x-inherits",
+            "inherits",
             "Parent",
-            id="x-inherits string",
+            id="inherits string",
         ),
     ],
 )
 @pytest.mark.helper
-def test_valid(name, value):
+def test_valid(prefix, name, value):
     """
-    GIVEN property and valid value
+    GIVEN prefix, property and valid value
     WHEN get is called with a source made of the property and value
     THEN the value is returned.
     """
-    source = {name: value}
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name)
+    returned_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert returned_value == value
 
 
+@pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
 @pytest.mark.helper
-def test_pop():
+def test_pop(prefix):
     """
-    GIVEN property and valid value
+    GIVEN prefix, property and valid value
     WHEN get is called with the name, value and pop set
     THEN the key is removed from the dictionary.
     """
-    name = "x-dict-ignore"
+    name = "dict-ignore"
     value = True
-    source = {name: value}
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name, pop=True)
+    returned_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}", pop=True
+    )
 
     assert returned_value == value
     assert source == {}
@@ -217,6 +230,10 @@ def test_unique_constraint_invalid(value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "value",
     [
         ["column 1"],
@@ -234,16 +251,18 @@ def test_unique_constraint_invalid(value):
     ],
 )
 @pytest.mark.helper
-def test_unique_constraint_valid(value):
+def test_unique_constraint_valid(prefix, value):
     """
-    GIVEN value for x-composite-unique that has a valid format
+    GIVEN prefix and value for x-composite-unique that has a valid format
     WHEN get with x-composite-unique and the value
     THEN the value is returned.
     """
-    name = "x-composite-unique"
-    source = {name: value}
+    name = "composite-unique"
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name)
+    returned_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert returned_value == value
 
@@ -286,6 +305,10 @@ def test_composite_index_invalid(value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "value",
     [
         ["column 1"],
@@ -305,16 +328,18 @@ def test_composite_index_invalid(value):
     ],
 )
 @pytest.mark.helper
-def test_composite_index_valid(value):
+def test_composite_index_valid(prefix, value):
     """
-    GIVEN value for x-composite-index that has a valid format
+    GIVEN prefix and value for x-composite-index that has a valid format
     WHEN get is called with x-composite-index and the value
     THEN the value is returned.
     """
-    name = "x-composite-index"
-    source = {name: value}
+    name = "composite-index"
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name)
+    returned_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert returned_value == value
 
@@ -361,6 +386,10 @@ def test_relationship_backrefs_invalid(value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "value",
     [
         {},
@@ -379,16 +408,18 @@ def test_relationship_backrefs_invalid(value):
     ids=["empty", "single object type", "single array type", "multiple"],
 )
 @pytest.mark.helper
-def test_relationship_backrefs_valid(value):
+def test_relationship_backrefs_valid(prefix, value):
     """
-    GIVEN value for x-backrefs with a valid format
+    GIVEN prefix and value for x-backrefs with a valid format
     WHEN get is called with x-backrefs and the value
     THEN value is returned.
     """
-    name = "x-backrefs"
-    source = {name: value}
+    name = "backrefs"
+    source = {f"{prefix}{name}": value}
 
-    return_value = helpers.ext_prop.get(source=source, name=name)
+    return_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert return_value == value
 
@@ -425,6 +456,10 @@ def test_kwargs_invalid(value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "value",
     [
         {"key": "value"},
@@ -442,32 +477,38 @@ def test_kwargs_invalid(value):
     ],
 )
 @pytest.mark.helper
-def test_kwargs_valid(value):
+def test_kwargs_valid(prefix, value):
     """
-    GIVEN value for x-kwargs that has a valid format
+    GIVEN prefix and value for x-kwargs that has a valid format
     WHEN get_kwargs is called with the value
     THEN the value is returned.
     """
-    name = "x-kwargs"
-    source = {name: value}
+    name = "kwargs"
+    source = {f"{prefix}{name}": value}
 
     returned_value = helpers.ext_prop.get_kwargs(source=source)
 
     assert returned_value == value
 
 
+@pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
 @pytest.mark.helper
-def test_kwargs_valid_name():
+def test_kwargs_valid_name(prefix):
     """
-    GIVEN value for kwargs that has a valid format and a property name
+    GIVEN prefix and value for kwargs that has a valid format and a property name
     WHEN get_kwargs is called with the value and the name
     THEN the value is returned.
     """
-    name = "x-foreign-key-kwargs"
+    name = "foreign-key-kwargs"
     value = {"key": "value"}
-    source = {name: value}
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get_kwargs(source=source, name=name)
+    returned_value = helpers.ext_prop.get_kwargs(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert returned_value == value
 
@@ -564,6 +605,10 @@ def test_mixins_invalid(value):
 
 
 @pytest.mark.parametrize(
+    "prefix",
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
+)
+@pytest.mark.parametrize(
     "value",
     [
         pytest.param("mixin 1", id="string"),
@@ -572,15 +617,17 @@ def test_mixins_invalid(value):
     ],
 )
 @pytest.mark.helper
-def test_mixins_valid(value):
+def test_mixins_valid(prefix, value):
     """
-    GIVEN value for x-mixins that has a valid format
+    GIVEN prefix and value for x-mixins that has a valid format
     WHEN get with x-mixins and the value
     THEN the value is returned.
     """
-    name = "x-mixins"
-    source = {name: value}
+    name = "mixins"
+    source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(source=source, name=name)
+    returned_value = helpers.ext_prop.get(
+        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
+    )
 
     assert returned_value == value
