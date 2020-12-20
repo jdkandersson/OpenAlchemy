@@ -28,7 +28,7 @@ def convert(
 
     """
     # Check the schema
-    items_schema = schema.get("items")
+    items_schema = helpers.peek.items(schema=schema, schemas={})
     if items_schema is None:
         raise exceptions.MalformedSchemaError(
             "To construct array parameters the schema for the property "

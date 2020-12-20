@@ -57,7 +57,10 @@ def _get_kwargs(
 ) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """Retrieve the kwargs name from an object reference."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="x-kwargs", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.ExtensionProperties.KWARGS,
+        skip_ref=parent,
     )
 
 
@@ -263,7 +266,10 @@ def _calculate_one_to_x_schema(
     """Calculate the schema for a x-to-one relationship."""
     return_schema: oa_types.ArrayRefSchema = {
         oa_types.OpenApiProperties.TYPE.value: "array",
-        "items": {oa_types.OpenApiProperties.TYPE.value: "object", "x-de-$ref": parent},
+        oa_types.OpenApiProperties.ITEMS.value: {
+            oa_types.OpenApiProperties.TYPE.value: "object",
+            "x-de-$ref": parent,
+        },
     }
 
     description = _get_description(schema=schema, schemas=schemas, parent=parent)

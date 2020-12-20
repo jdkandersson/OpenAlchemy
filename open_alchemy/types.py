@@ -39,6 +39,7 @@ class OpenApiProperties(str, enum.Enum):
     READ_ONLY: typing.Literal["readOnly"] = "readOnly"
     WRITE_ONLY: typing.Literal["writeOnly"] = "writeOnly"
     DESCRIPTION: typing.Literal["description"] = "description"
+    ITEMS: typing.Literal["items"] = "items"
 
 
 @enum.unique
@@ -55,6 +56,7 @@ class ExtensionProperties(str, enum.Enum):
     BACKREF: typing.Literal["x-backref"] = "x-backref"
     SECONDARY: typing.Literal["x-secondary"] = "x-secondary"
     USELIST: typing.Literal["x-uselist"] = "x-uselist"
+    KWARGS: typing.Literal["x-kwargs"] = "x-kwargs"
 
 
 class ModelFactory(Protocol):

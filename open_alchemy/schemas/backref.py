@@ -67,7 +67,10 @@ def _calculate_artifacts(
         "x-de-$ref": schema_name,
     }
     if is_array:
-        return_schema = {types.OpenApiProperties.TYPE: "array", "items": return_schema}
+        return_schema = {
+            types.OpenApiProperties.TYPE: "array",
+            types.OpenApiProperties.ITEMS: return_schema,
+        }
 
     return TArtifacts(ref_schema_name, backref, return_schema)
 

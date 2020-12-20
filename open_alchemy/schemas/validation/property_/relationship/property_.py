@@ -226,7 +226,9 @@ def _check_array_root(
         )
     # Check kwargs
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-kwargs")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.KWARGS
+        )
         is not None
     ):
         return types.Result(

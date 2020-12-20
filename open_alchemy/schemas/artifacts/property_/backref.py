@@ -61,8 +61,10 @@ def get(
     # Remove extension properties from schema
     helpers.clean.extension(schema=schema)
     if sub_type == types.BackrefSubType.ARRAY:  # noqa: E721
-        helpers.clean.extension(schema=schema["items"])
-        for property_schema in schema["items"]["properties"].values():
+        helpers.clean.extension(schema=schema[oa_types.OpenApiProperties.ITEMS])
+        for property_schema in schema[oa_types.OpenApiProperties.ITEMS][
+            "properties"
+        ].values():
             helpers.clean.extension(schema=property_schema)
     else:
         for property_schema in schema["properties"].values():

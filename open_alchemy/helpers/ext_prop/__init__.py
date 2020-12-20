@@ -81,7 +81,7 @@ def get_kwargs(
     reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
-    name: str = "x-kwargs",
+    name: str = types.ExtensionProperties.KWARGS,
 ) -> types.TOptKwargs:
     """
     Read the value of x-kwargs, validate the schema and return it.

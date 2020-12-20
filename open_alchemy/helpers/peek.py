@@ -473,7 +473,7 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
         The items or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="items")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.ITEMS)
     if value is None:
         return None
     if not isinstance(value, dict):
@@ -515,7 +515,7 @@ def kwargs(
         The x-kwargs or None.
 
     """
-    key = "x-kwargs"
+    key = types.ExtensionProperties.KWARGS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None

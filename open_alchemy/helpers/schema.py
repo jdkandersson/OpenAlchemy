@@ -114,8 +114,10 @@ def prepare_deep(schema: types.Schema, schemas: types.Schemas):
             properties[name] = prepare_deep(schema=prop_schema, schemas=schemas)
 
     # Resolve $ref of any items
-    items_schema = schema.get("items", None)
+    items_schema = peek.items(schema=schema, schemas={})
     if items_schema is not None:
-        schema["items"] = prepare_deep(schema=items_schema, schemas=schemas)
+        schema[types.OpenApiProperties.ITEMS] = prepare_deep(
+            schema=items_schema, schemas=schemas
+        )
 
     return schema
