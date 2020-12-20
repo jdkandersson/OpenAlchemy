@@ -169,11 +169,6 @@ jobs:
     needs:
       - build
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
       - name: Retrieve packages
         uses: actions/download-artifact@v2.0.7
         with:
@@ -221,11 +216,6 @@ jobs:
     needs:
       - test-production-test-pypi
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
       - name: Retrieve packages
         uses: actions/download-artifact@v2.0.7
         with:
