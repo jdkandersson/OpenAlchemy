@@ -303,7 +303,7 @@ def _foreign_keys_to_schema(
     """
     return {
         types.OpenApiProperties.TYPE: "object",
-        "properties": {
+        types.OpenApiProperties.PROPERTIES: {
             property_name: schema for _, property_name, schema in foreign_keys
         },
     }

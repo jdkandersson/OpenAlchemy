@@ -207,7 +207,10 @@ def properties_values(
         return
 
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=skip_name, key="properties"
+        schema=schema,
+        schemas=schemas,
+        skip_name=skip_name,
+        key=types.OpenApiProperties.PROPERTIES,
     )
 
 
@@ -316,7 +319,10 @@ def required_values(
         return
 
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=skip_name, key="required"
+        schema=schema,
+        schemas=schemas,
+        skip_name=skip_name,
+        key=types.OpenApiProperties.REQUIRED,
     )
 
 
@@ -409,5 +415,8 @@ def backrefs_values(
 
     """
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=None, key="x-backrefs"
+        schema=schema,
+        schemas=schemas,
+        skip_name=None,
+        key=types.ExtensionProperties.BACKREFS,
     )

@@ -61,7 +61,7 @@ class UtilityBase:
         """
         schema = cls._get_schema()
         # Checking that _schema has properties
-        properties = schema.get("properties")
+        properties = schema.get(oa_types.OpenApiProperties.PROPERTIES)
         if properties is None:
             raise exceptions.MalformedSchemaError(
                 "The model schema does not have any properties.", schema=schema

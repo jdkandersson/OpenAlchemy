@@ -63,11 +63,11 @@ def get(
     if sub_type == types.BackrefSubType.ARRAY:  # noqa: E721
         helpers.clean.extension(schema=schema[oa_types.OpenApiProperties.ITEMS])
         for property_schema in schema[oa_types.OpenApiProperties.ITEMS][
-            "properties"
+            oa_types.OpenApiProperties.PROPERTIES
         ].values():
             helpers.clean.extension(schema=property_schema)
     else:
-        for property_schema in schema["properties"].values():
+        for property_schema in schema[oa_types.OpenApiProperties.PROPERTIES].values():
             helpers.clean.extension(schema=property_schema)
 
     return types.BackrefPropertyArtifacts(

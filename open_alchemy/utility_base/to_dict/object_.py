@@ -51,7 +51,7 @@ def _convert_read_only(
     if value is None:
         return None
 
-    properties = schema.get("properties")
+    properties = schema.get(oa_types.OpenApiProperties.PROPERTIES)
     if properties is None:
         raise exceptions.MalformedSchemaError(
             "readOnly object definition must have properties."

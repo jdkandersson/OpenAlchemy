@@ -264,11 +264,11 @@ def calculate_schema(
     schema = {
         types.OpenApiProperties.TYPE: "object",
         types.ExtensionProperties.TABLENAME: secondary,
-        "properties": {
+        types.OpenApiProperties.PROPERTIES: {
             parent_property.name: parent_property.schema,
             ref_property.name: ref_property.schema,
         },
-        "required": [parent_property.name, ref_property.name],
+        types.OpenApiProperties.REQUIRED: [parent_property.name, ref_property.name],
     }
 
     name = secondary.title().replace("_", "")

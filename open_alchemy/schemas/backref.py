@@ -124,7 +124,9 @@ def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schem
     """
     return {
         types.OpenApiProperties.TYPE: "object",
-        "x-backrefs": {property_name: schema for _, property_name, schema in backrefs},
+        types.ExtensionProperties.BACKREFS: {
+            property_name: schema for _, property_name, schema in backrefs
+        },
     }
 
 

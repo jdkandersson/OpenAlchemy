@@ -108,7 +108,7 @@ def prepare_deep(schema: types.Schema, schemas: types.Schemas):
     schema = prepare(schema=schema, schemas=schemas)
 
     # Resolve $ref in any properties
-    properties = schema.get("properties", None)
+    properties = schema.get(types.OpenApiProperties.PROPERTIES, None)
     if properties is not None:
         for name, prop_schema in properties.items():
             properties[name] = prepare_deep(schema=prop_schema, schemas=schemas)

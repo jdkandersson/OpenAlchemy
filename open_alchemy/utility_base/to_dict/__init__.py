@@ -57,8 +57,8 @@ def return_none(*, schema: oa_types.Schema, property_name: str) -> bool:
 
     """
     # Retrieve input
-    required_array = schema.get("required", None)
-    property_schema = schema["properties"][property_name]
+    required_array = schema.get(oa_types.OpenApiProperties.REQUIRED, None)
+    property_schema = schema[oa_types.OpenApiProperties.PROPERTIES][property_name]
 
     # Check for required and nullable
     if required_array is not None and property_name in set(required_array):

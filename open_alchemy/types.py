@@ -42,6 +42,8 @@ class OpenApiProperties(str, enum.Enum):
     ITEMS: typing.Literal["items"] = "items"
     REF: typing.Literal["$ref"] = "$ref"
     DEFAULT: typing.Literal["default"] = "default"
+    REQUIRED: typing.Literal["required"] = "required"
+    PROPERTIES: typing.Literal["properties"] = "properties"
 
 
 @enum.unique
@@ -67,6 +69,7 @@ class ExtensionProperties(str, enum.Enum):
     SERVER_DEFAULT: typing.Literal["x-server-default"] = "x-server-default"
     MIXINS: typing.Literal["x-mixins"] = "x-mixins"
     DICT_IGNORE: typing.Literal["x-dict-ignore"] = "x-dict-ignore"
+    BACKREFS: typing.Literal["x-backrefs"] = "x-backrefs"
 
 
 class ModelFactory(Protocol):

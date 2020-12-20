@@ -48,12 +48,15 @@ def model_factory(
 
     # Calculating the class variables for the model
     model_class_vars = {}
-    required_exists = "required" in schema
-    required_array = schema.get("required", [])
+    required_exists = types.OpenApiProperties.REQUIRED in schema
+    required_array = schema.get(types.OpenApiProperties.REQUIRED, [])
     # Initializing the schema to record for the model
-    model_schema: types.Schema = {"type": "object", "properties": {}}
+    model_schema: types.Schema = {
+        types.OpenApiProperties.TYPE: "object",
+        types.OpenApiProperties.PROPERTIES: {},
+    }
     if required_exists:
-        model_schema["required"] = required_array
+        model_schema[types.OpenApiProperties.REQUIRED] = required_array
     inherits = helpers.peek.inherits(schema=schema, schemas={})
     if inherits is not None:
         model_schema[types.ExtensionProperties.INHERITS] = inherits
@@ -72,7 +75,9 @@ def model_factory(
         )
 
         if not dict_ignore:
-            model_schema["properties"][prop_name] = prop_artifacts.schema
+            model_schema[types.OpenApiProperties.PROPERTIES][
+                prop_name
+            ] = prop_artifacts.schema
 
     # Retrieve mixins
     mixin_classes: typing.Tuple[typing.Type, ...] = tuple()
@@ -153,7 +158,7 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
         raise exceptions.FeatureNotImplementedError(
             f"{type_} is not supported in {name}."
         )
-    if not schema.get("properties"):
+    if not schema.get(types.OpenApiProperties.PROPERTIES):
         raise exceptions.MalformedSchemaError(
             f"At least 1 property is required for {name}."
         )

@@ -263,7 +263,7 @@ def _check_properties_valid(
     # Creating a mapping of foreign key to expected property schema
     expected_foreign_key_properties = {
         property_[oa_types.ExtensionProperties.FOREIGN_KEY]: property_
-        for property_ in expected_schema["properties"].values()
+        for property_ in expected_schema[oa_types.OpenApiProperties.PROPERTIES].values()
     }
 
     # Check primary keys
