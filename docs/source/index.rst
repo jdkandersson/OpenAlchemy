@@ -382,6 +382,9 @@ OpenAlchemy currently supports 2 extension property prefixes. The shorter
 same way. The longer prefix is offered to avoid extension property name clashes
 with other tools.
 
+For example, the tablename can be specified either using the
+:samp:`x-tablename` or the :samp:`x-open-alchemy-tablename` extension property.
+
 .. _how-does-it-work:
 
 How Does It Work?
