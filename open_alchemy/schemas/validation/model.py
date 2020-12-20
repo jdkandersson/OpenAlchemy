@@ -157,8 +157,8 @@ def _check_invalid_keys(
         oa_types.ExtensionProperties.AUTOINCREMENT,
         oa_types.ExtensionProperties.INDEX,
         oa_types.ExtensionProperties.UNIQUE,
-        "x-foreign-key",
-        "x-foreign-key-kwargs",
+        oa_types.ExtensionProperties.FOREIGN_KEY,
+        oa_types.ExtensionProperties.FOREIGN_KEY_KWARGS,
     )
     seen_invalid_keys = filter(
         lambda key: oa_helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)

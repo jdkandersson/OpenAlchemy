@@ -539,7 +539,7 @@ def foreign_key_kwargs(
         The x-foreign-key-kwargs or None.
 
     """
-    key = "x-foreign-key-kwargs"
+    key = types.ExtensionProperties.FOREIGN_KEY_KWARGS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -561,7 +561,7 @@ def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]
         The $ref or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="$ref")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.REF)
     if value is None:
         return None
     if not isinstance(value, str):
@@ -587,7 +587,9 @@ def foreign_key(
         The x-foreign-key or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.FOREIGN_KEY
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -613,7 +615,9 @@ def foreign_key_column(
         The x-foreign-key-column or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key-column")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.FOREIGN_KEY_COLUMN
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -637,7 +641,7 @@ def composite_index(
         The x-composite-index or None.
 
     """
-    key = "x-composite-index"
+    key = types.ExtensionProperties.COMPOSITE_INDEX
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -660,7 +664,7 @@ def composite_unique(
         The x-composite-unique or None.
 
     """
-    key = "x-composite-unique"
+    key = types.ExtensionProperties.COMPOSITE_UNIQUE
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -893,7 +897,7 @@ def _peek_key(
         return value
 
     # Recursive case, look for $ref
-    ref_value = schema.get("$ref")
+    ref_value = schema.get(types.OpenApiProperties.REF)
     if ref_value is not None:
         ref_value_str = _check_ref_string(ref_value)
         _check_circular_ref(ref_value_str, seen_refs)
@@ -950,7 +954,7 @@ def _prefer_local(
     _check_schema_schemas_dict(schema, schemas)
 
     # Handle $ref
-    ref_value = schema.get("$ref")
+    ref_value = schema.get(types.OpenApiProperties.REF)
     if ref_value is not None:
         ref_value_str = _check_ref_string(ref_value)
         _check_circular_ref(ref_value_str, seen_refs)
@@ -965,7 +969,9 @@ def _prefer_local(
         all_of_list_dict = map(_check_sub_schema_dict, all_of_list)
         # Order putting any $ref last
         sorted_all_of = sorted(
-            all_of_list_dict, key=lambda sub_schema: sub_schema.get("$ref") is not None
+            all_of_list_dict,
+            key=lambda sub_schema: sub_schema.get(types.OpenApiProperties.REF)
+            is not None,
         )
 
         def map_to_value(sub_schema: types.Schema) -> typing.Any:

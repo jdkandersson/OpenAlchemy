@@ -262,7 +262,7 @@ def _check_properties_valid(
     ).schema
     # Creating a mapping of foreign key to expected property schema
     expected_foreign_key_properties = {
-        property_["x-foreign-key"]: property_
+        property_[oa_types.ExtensionProperties.FOREIGN_KEY]: property_
         for property_ in expected_schema["properties"].values()
     }
 

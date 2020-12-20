@@ -203,7 +203,7 @@ def _calculate_foreign_key_property_artifacts(
         types.OpenApiProperties.TYPE.value: property_type,
         "x-dict-ignore": True,
         types.OpenApiProperties.NULLABLE.value: nullable,
-        "x-foreign-key": foreign_key,
+        types.ExtensionProperties.FOREIGN_KEY.value: foreign_key,
     }
     if format_ is not None:
         foreign_key_property_schema[types.OpenApiProperties.FORMAT.value] = format_

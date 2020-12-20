@@ -27,7 +27,7 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if not isinstance(schema, dict):
         return False
     # Check for reference only models
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     if ref is not None and (not isinstance(ref, str) or ref.startswith("#")):
         return False
     # Check allOf

@@ -215,7 +215,9 @@ def _check_array_root(
     # Check foreign-key-column
     if (
         helpers.peek.peek_key(
-            schema=schema, schemas=schemas, key="x-foreign-key-column"
+            schema=schema,
+            schemas=schemas,
+            key=oa_types.ExtensionProperties.FOREIGN_KEY_COLUMN,
         )
         is not None
     ):

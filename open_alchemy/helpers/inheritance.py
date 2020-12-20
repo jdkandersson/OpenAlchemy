@@ -59,7 +59,7 @@ def _check_parent(
 ) -> bool:
     """Implement check_parent."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
     if ref is None and all_of is None:
         return False
@@ -135,7 +135,7 @@ def _get_parent(
 ) -> str:
     """Implement get_parent."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
     if ref is None and all_of is None:
         raise exceptions.MalformedSchemaError(
@@ -213,7 +213,7 @@ def _get_parents(
 ) -> typing.Generator[str, None, None]:
     """Implement get_parents."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
 
     # Handle $ref

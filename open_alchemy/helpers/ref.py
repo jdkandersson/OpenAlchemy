@@ -55,7 +55,7 @@ def _resolve(
 ) -> NameSchema:
     """Implement resolve."""
     # Checking whether schema is a reference schema
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     if ref is None:
         return name, schema
     # Check that ref is string

@@ -186,7 +186,7 @@ def calculate_property_schema(
     property_schema: types.ColumnSchema = {
         types.OpenApiProperties.TYPE.value: type_,
         types.ExtensionProperties.PRIMARY_KEY.value: True,
-        "x-foreign-key": foreign_key,
+        types.ExtensionProperties.FOREIGN_KEY.value: foreign_key,
     }
     if format_ is not None:
         property_schema[types.OpenApiProperties.FORMAT.value] = format_

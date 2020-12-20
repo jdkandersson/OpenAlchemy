@@ -155,7 +155,7 @@ def _get_tablename_foreign_keys(
             args[0],
             {
                 "allOf": [
-                    {"$ref": f"#/components/schemas/{name}"}
+                    {types.OpenApiProperties.REF: f"#/components/schemas/{name}"}
                     for name in args[1].all_names
                 ]
             },
