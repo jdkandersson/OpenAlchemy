@@ -16,7 +16,6 @@ except ImportError:  # pragma: no cover
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
-AllOfSpec = typing.List[Schema]
 TKwargs = typing.Dict[str, typing.Any]
 TOptKwargs = typing.Optional[TKwargs]
 
@@ -60,7 +59,6 @@ class ModelFactory(Protocol):
         ...
 
 
-# Unique consraint types
 ColumnList = typing.List[str]
 ColumnListList = typing.List[ColumnList]
 
@@ -79,7 +77,6 @@ class Unique(_UniqueBase, total=False):
 
 UniqueList = typing.List[Unique]
 AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
-# Index types
 
 
 class _IndexBase(TypedDict, total=True):
@@ -97,9 +94,7 @@ class Index(_IndexBase, total=False):
 
 IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
-# Type for the default value
 TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
-# Type for the default value expressed in Python
 TPyColumnDefault = typing.Optional[
     typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime]
 ]
