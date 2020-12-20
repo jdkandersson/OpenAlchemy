@@ -44,6 +44,7 @@ class ExtensionProperties(str, enum.Enum):
 
     AUTOINCREMENT: typing.Literal["x-autoincrement"] = "x-autoincrement"
     INDEX: typing.Literal["x-index"] = "x-index"
+    UNIQUE: typing.Literal["x-unique"] = "x-unique"
 
 
 class ModelFactory(Protocol):

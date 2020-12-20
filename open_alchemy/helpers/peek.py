@@ -157,7 +157,9 @@ def unique(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[b
         The x-unique value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-unique")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.UNIQUE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
