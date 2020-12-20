@@ -45,11 +45,19 @@ def get(
 
     """
     # Check for presence of name
-    if name not in source:
+    keys = [name.replace("x-", prefix) for prefix in types.KeyPrefixes]
+    key, found = next(
+        filter(
+            lambda key_value: key_value[1] is True,
+            map(lambda key: (key, key in source), keys),
+        ),
+        ("", False),
+    )
+    if not found:
         return default
 
     # Retrieve value
-    value = source.get(name)
+    value = source.get(key)
     if value is None:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {name} extension property cannot be null."
@@ -66,7 +74,7 @@ def get(
             f"The given value is {json.dumps(value)}."
         ) from exc
     if pop:
-        del source[name]  # type: ignore
+        del source[key]  # type: ignore
     return value
 
 
@@ -81,7 +89,7 @@ def get_kwargs(
     reserved: typing.Optional[typing.Set[str]] = None,
     default: typing.Optional[typing.Any] = None,
     pop: bool = False,
-    name: str = "x-kwargs",
+    name: str = types.ExtensionProperties.KWARGS,
 ) -> types.TOptKwargs:
     """
     Read the value of x-kwargs, validate the schema and return it.

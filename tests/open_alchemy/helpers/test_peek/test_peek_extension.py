@@ -4,6 +4,7 @@ import pytest
 
 from open_alchemy import exceptions
 from open_alchemy import helpers
+from open_alchemy import types
 
 
 @pytest.mark.parametrize(
@@ -61,72 +62,74 @@ def test_mixins(schema, schemas, expected_mixins):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func, expected_value",
     [
-        pytest.param(
-            [(extension, value)],
-            getattr(helpers.peek, extension.replace("-", "_")),
-            expected,
-            id=f"valid {extension}",
-        )
-        for extension, value, expected in [
-            ("index", True, True),
-            ("index", False, False),
-            ("unique", True, True),
-            ("unique", False, False),
-            ("autoincrement", True, True),
-            ("autoincrement", False, False),
-            ("primary-key", True, True),
-            ("primary-key", False, False),
-            ("tablename", "table 1", "table 1"),
-            ("tablename", "table 2", "table 2"),
-            ("inherits", "Parent1", "Parent1"),
-            ("inherits", True, True),
-            ("json", True, True),
-            ("backref", "table 1", "table 1"),
-            ("secondary", "table 1", "table 1"),
-            ("uselist", True, True),
-            ("kwargs", {"key": "value"}, {"key": "value"}),
-            ("foreign-key-kwargs", {"key": "value"}, {"key": "value"}),
-            ("foreign-key", "id", "id"),
-            ("foreign-key-column", "id", "id"),
-            ("composite-index", ["id"], ["id"]),
-            ("composite-unique", ["id"], ["id"]),
-            ("server-default", "value 1", "value 1"),
-            ("dict-ignore", True, True),
-            ("dict-ignore", False, False),
-        ]
-    ]
-    + [
-        pytest.param(
-            [],
-            getattr(helpers.peek, extension.replace("-", "_")),
-            None,
-            id=f"{extension} missing",
-        )
-        for extension in [
-            "index",
-            "unique",
-            "autoincrement",
-            "primary-key",
-            "tablename",
-            "inherits",
-            "json",
-            "backref",
-            "secondary",
-            "uselist",
-            "kwargs",
-            "foreign-key-kwargs",
-            "foreign-key",
-            "foreign-key-column",
-            "composite-index",
-            "composite-unique",
-            "server-default",
-            "dict-ignore",
-        ]
+        *(
+            pytest.param(
+                [(extension, value)],
+                getattr(helpers.peek, extension.replace("-", "_")),
+                expected,
+                id=f"valid {extension}",
+            )
+            for extension, value, expected in [
+                ("index", True, True),
+                ("index", False, False),
+                ("unique", True, True),
+                ("unique", False, False),
+                ("autoincrement", True, True),
+                ("autoincrement", False, False),
+                ("primary-key", True, True),
+                ("primary-key", False, False),
+                ("tablename", "table 1", "table 1"),
+                ("tablename", "table 2", "table 2"),
+                ("inherits", "Parent1", "Parent1"),
+                ("inherits", True, True),
+                ("json", True, True),
+                ("backref", "table 1", "table 1"),
+                ("secondary", "table 1", "table 1"),
+                ("uselist", True, True),
+                ("kwargs", {"key": "value"}, {"key": "value"}),
+                ("foreign-key-kwargs", {"key": "value"}, {"key": "value"}),
+                ("foreign-key", "id", "id"),
+                ("foreign-key-column", "id", "id"),
+                ("composite-index", ["id"], ["id"]),
+                ("composite-unique", ["id"], ["id"]),
+                ("server-default", "value 1", "value 1"),
+                ("dict-ignore", True, True),
+                ("dict-ignore", False, False),
+            ]
+        ),
+        *(
+            pytest.param(
+                [],
+                getattr(helpers.peek, extension.replace("-", "_")),
+                None,
+                id=f"{extension} missing",
+            )
+            for extension in [
+                "index",
+                "unique",
+                "autoincrement",
+                "primary-key",
+                "tablename",
+                "inherits",
+                "json",
+                "backref",
+                "secondary",
+                "uselist",
+                "kwargs",
+                "foreign-key-kwargs",
+                "foreign-key",
+                "foreign-key-column",
+                "composite-index",
+                "composite-unique",
+                "server-default",
+                "dict-ignore",
+            ]
+        ),
     ],
 )
 @pytest.mark.helper
@@ -145,7 +148,7 @@ def test_peek_value_func(prefix, key_values, func, expected_value):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func",
@@ -198,7 +201,7 @@ def test_peek_malformed_schema_error(prefix, key_values, func):
 
 @pytest.mark.parametrize(
     "prefix",
-    [pytest.param(p, id=p) for p in helpers.peek.VALID_PREFIXES],
+    [pytest.param(p, id=p) for p in types.KeyPrefixes],
 )
 @pytest.mark.parametrize(
     "key_values, func",

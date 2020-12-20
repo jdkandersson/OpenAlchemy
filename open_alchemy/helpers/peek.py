@@ -9,9 +9,6 @@ from open_alchemy import types
 from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
 
-# Define valid OpenAlchemy prefixes.
-VALID_PREFIXES = ["x-", "x-open-alchemy-"]
-
 
 class PeekValue(types.Protocol):
     """Defines interface for peek functions."""
@@ -36,7 +33,7 @@ def type_(*, schema: types.Schema, schemas: types.Schemas) -> str:
         The type of the schema.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="type")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.TYPE)
     if value is None:
         raise exceptions.TypeMissingError("Every property requires a type.")
     if not isinstance(value, str):
@@ -60,7 +57,9 @@ def nullable(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional
         The nullable value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="nullable")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.NULLABLE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -84,7 +83,7 @@ def format_(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The format value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="format")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.FORMAT)
     if value is None:
         return None
     if not isinstance(value, str):
@@ -108,7 +107,9 @@ def autoincrement(
         The x-autoincrement value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-autoincrement")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.AUTOINCREMENT
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -132,7 +133,9 @@ def index(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[bo
         The x-index value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-index")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.INDEX
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -154,7 +157,9 @@ def unique(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[b
         The x-unique value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-unique")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.UNIQUE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -176,7 +181,9 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
         The maxLength value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="maxLength")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.MAX_LENGTH
+    )
     if value is None:
         return None
     if not isinstance(value, int) or isinstance(value, bool):
@@ -200,7 +207,9 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         Whether the schema is readOnly.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="readOnly")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.READ_ONLY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -226,7 +235,9 @@ def write_only(
         Whether the schema is writeOnly.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="writeOnly")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.WRITE_ONLY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -252,7 +263,9 @@ def description(
         The description value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="description")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.DESCRIPTION
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -278,7 +291,9 @@ def primary_key(
         Whether the schema is for a primary key property.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-primary-key")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.PRIMARY_KEY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -302,7 +317,9 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         The x-tablename or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.TABLENAME
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -328,7 +345,9 @@ def inherits(
         The inherits or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-inherits")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.INHERITS
+    )
     if value is None:
         return None
     if not isinstance(value, (str, bool)):
@@ -352,7 +371,7 @@ def json(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[boo
         The x-json value or None if the schema does not have the key.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-json")
+    value = peek_key(schema=schema, schemas=schemas, key=types.ExtensionProperties.JSON)
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -376,7 +395,9 @@ def backref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The x-backref or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-backref")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.BACKREF
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -400,7 +421,9 @@ def secondary(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         The x-secondary or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-secondary")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.SECONDARY
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -424,7 +447,9 @@ def uselist(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[
         The x-uselist or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-uselist")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.USELIST
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -448,7 +473,7 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
         The items or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="items")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.ITEMS)
     if value is None:
         return None
     if not isinstance(value, dict):
@@ -490,7 +515,7 @@ def kwargs(
         The x-kwargs or None.
 
     """
-    key = "x-kwargs"
+    key = types.ExtensionProperties.KWARGS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -514,7 +539,7 @@ def foreign_key_kwargs(
         The x-foreign-key-kwargs or None.
 
     """
-    key = "x-foreign-key-kwargs"
+    key = types.ExtensionProperties.FOREIGN_KEY_KWARGS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -536,7 +561,7 @@ def ref(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[str]
         The $ref or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="$ref")
+    value = peek_key(schema=schema, schemas=schemas, key=types.OpenApiProperties.REF)
     if value is None:
         return None
     if not isinstance(value, str):
@@ -562,7 +587,9 @@ def foreign_key(
         The x-foreign-key or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.FOREIGN_KEY
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -588,7 +615,9 @@ def foreign_key_column(
         The x-foreign-key-column or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-foreign-key-column")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.FOREIGN_KEY_COLUMN
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -612,7 +641,7 @@ def composite_index(
         The x-composite-index or None.
 
     """
-    key = "x-composite-index"
+    key = types.ExtensionProperties.COMPOSITE_INDEX
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -635,7 +664,7 @@ def composite_unique(
         The x-composite-unique or None.
 
     """
-    key = "x-composite-unique"
+    key = types.ExtensionProperties.COMPOSITE_UNIQUE
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -658,19 +687,21 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
 
     """
     # Retrieve value
-    value = peek_key(schema=schema, schemas=schemas, key="default")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.DEFAULT
+    )
     if value is None:
         return None
     # Assemble schema
     resolved_schema: types.ColumnSchema = {
-        "type": type_(schema=schema, schemas=schemas)
+        types.OpenApiProperties.TYPE.value: type_(schema=schema, schemas=schemas)
     }
     format_value = format_(schema=schema, schemas=schemas)
     max_length_value = max_length(schema=schema, schemas=schemas)
     if format_value is not None:
-        resolved_schema["format"] = format_value
+        resolved_schema[types.OpenApiProperties.FORMAT.value] = format_value
     if max_length_value is not None:
-        resolved_schema["maxLength"] = max_length_value
+        resolved_schema[types.OpenApiProperties.MAX_LENGTH.value] = max_length_value
     try:
         facades.jsonschema.validate(value, resolved_schema)
     except facades.jsonschema.ValidationError as exc:
@@ -697,7 +728,9 @@ def server_default(
         The x-server-default value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-server-default")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.SERVER_DEFAULT
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -721,7 +754,7 @@ def mixins(
         The x-mixins or None.
 
     """
-    key = "x-mixins"
+    key = types.ExtensionProperties.MIXINS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -772,7 +805,9 @@ def dict_ignore(
         The x-dict-ignore value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-dict-ignore")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.DICT_IGNORE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -858,13 +893,17 @@ def _peek_key(
     _check_schema_schemas_dict(schema, schemas)
 
     # Base case, look for type key
-    keys = [key.replace("x-", prefix) for prefix in VALID_PREFIXES]
+    keys = (
+        [key.replace("x-", prefix) for prefix in types.KeyPrefixes]
+        if key.startswith("x-")
+        else [key]
+    )
     value = next(filter(lambda value: value is not None, map(schema.get, keys)), None)
     if value is not None:
         return value
 
     # Recursive case, look for $ref
-    ref_value = schema.get("$ref")
+    ref_value = schema.get(types.OpenApiProperties.REF)
     if ref_value is not None:
         ref_value_str = _check_ref_string(ref_value)
         _check_circular_ref(ref_value_str, seen_refs)
@@ -921,7 +960,7 @@ def _prefer_local(
     _check_schema_schemas_dict(schema, schemas)
 
     # Handle $ref
-    ref_value = schema.get("$ref")
+    ref_value = schema.get(types.OpenApiProperties.REF)
     if ref_value is not None:
         ref_value_str = _check_ref_string(ref_value)
         _check_circular_ref(ref_value_str, seen_refs)
@@ -936,7 +975,9 @@ def _prefer_local(
         all_of_list_dict = map(_check_sub_schema_dict, all_of_list)
         # Order putting any $ref last
         sorted_all_of = sorted(
-            all_of_list_dict, key=lambda sub_schema: sub_schema.get("$ref") is not None
+            all_of_list_dict,
+            key=lambda sub_schema: sub_schema.get(types.OpenApiProperties.REF)
+            is not None,
         )
 
         def map_to_value(sub_schema: types.Schema) -> typing.Any:

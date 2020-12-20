@@ -155,7 +155,7 @@ def _get_tablename_foreign_keys(
             args[0],
             {
                 "allOf": [
-                    {"$ref": f"#/components/schemas/{name}"}
+                    {types.OpenApiProperties.REF: f"#/components/schemas/{name}"}
                     for name in args[1].all_names
                 ]
             },
@@ -236,10 +236,12 @@ def _combine_defined_expected_schema(
 
     """
     expected_schema_value = expected_schema.schema
-    del expected_schema_value["required"]
-    expected_schema_value["properties"] = {
+    del expected_schema_value[types.OpenApiProperties.REQUIRED]
+    expected_schema_value[types.OpenApiProperties.PROPERTIES] = {
         property_[0]: property_[1]
-        for property_ in expected_schema_value["properties"].items()
+        for property_ in expected_schema_value[
+            types.OpenApiProperties.PROPERTIES
+        ].items()
         if oa_helpers.peek.foreign_key(schema=property_[1], schemas={})
         not in parent_name_foreign_keys.foreign_keys
     }

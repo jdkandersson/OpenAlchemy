@@ -200,19 +200,23 @@ def _calculate_foreign_key_property_artifacts(
 
     # Calculate the schema
     foreign_key_property_schema: types.ColumnSchema = {
-        "type": property_type,
-        "x-dict-ignore": True,
-        "nullable": nullable,
-        "x-foreign-key": foreign_key,
+        types.OpenApiProperties.TYPE.value: property_type,
+        types.ExtensionProperties.DICT_IGNORE.value: True,
+        types.OpenApiProperties.NULLABLE.value: nullable,
+        types.ExtensionProperties.FOREIGN_KEY.value: foreign_key,
     }
     if format_ is not None:
-        foreign_key_property_schema["format"] = format_
+        foreign_key_property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        foreign_key_property_schema["maxLength"] = max_length
+        foreign_key_property_schema[
+            types.OpenApiProperties.MAX_LENGTH.value
+        ] = max_length
     if default is not None:
-        foreign_key_property_schema["default"] = default
+        foreign_key_property_schema[types.OpenApiProperties.DEFAULT.value] = default
     if server_default is not None:
-        foreign_key_property_schema["x-server-default"] = server_default
+        foreign_key_property_schema[
+            types.ExtensionProperties.SERVER_DEFAULT.value
+        ] = server_default
 
     # Calculate other artifacts
     modify_name = oa_helpers.foreign_key.get_modify_name(
@@ -298,8 +302,8 @@ def _foreign_keys_to_schema(
 
     """
     return {
-        "type": "object",
-        "properties": {
+        types.OpenApiProperties.TYPE: "object",
+        types.OpenApiProperties.PROPERTIES: {
             property_name: schema for _, property_name, schema in foreign_keys
         },
     }

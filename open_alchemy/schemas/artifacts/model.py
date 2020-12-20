@@ -15,13 +15,17 @@ def _calculate_backref(schema: oa_types.Schema) -> types.ModelBackrefArtifacts:
     assert type_ in {"object", "array"}
 
     if type_ == "object":
-        parent = oa_helpers.ext_prop.get(source=schema, name="x-de-$ref")
+        parent = oa_helpers.ext_prop.get(
+            source=schema, name=oa_types.ExtensionProperties.DE_REF
+        )
         assert isinstance(parent, str)
         return types.ModelBackrefArtifacts(types.BackrefSubType.OBJECT, parent)
 
     items_schema = oa_helpers.peek.items(schema=schema, schemas={})
     assert items_schema is not None
-    parent = oa_helpers.ext_prop.get(source=items_schema, name="x-de-$ref")
+    parent = oa_helpers.ext_prop.get(
+        source=items_schema, name=oa_types.ExtensionProperties.DE_REF
+    )
     assert isinstance(parent, str)
     return types.ModelBackrefArtifacts(types.BackrefSubType.ARRAY, parent)
 

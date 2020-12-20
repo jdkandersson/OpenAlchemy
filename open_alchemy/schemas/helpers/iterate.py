@@ -207,7 +207,10 @@ def properties_values(
         return
 
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=skip_name, key="properties"
+        schema=schema,
+        schemas=schemas,
+        skip_name=skip_name,
+        key=types.OpenApiProperties.PROPERTIES,
     )
 
 
@@ -223,7 +226,7 @@ def _any_key(
         return
 
     # Handle $ref
-    if schema.get("$ref") is not None:
+    if schema.get(types.OpenApiProperties.REF) is not None:
         try:
             _, ref_schema = helpers.ref.resolve(
                 name="", schema=schema, schemas=schemas, skip_name=skip_name
@@ -247,7 +250,7 @@ def _any_key(
         # Process not $ref first
         all_of_no_ref = filter(
             lambda sub_schema: not helpers.peek.peek_key(
-                schema=sub_schema, schemas=schemas, key="$ref"
+                schema=sub_schema, schemas=schemas, key=types.OpenApiProperties.REF
             ),
             all_of_dicts,
         )
@@ -259,7 +262,7 @@ def _any_key(
         # Process $ref
         all_of_ref = filter(
             lambda sub_schema: helpers.peek.peek_key(
-                schema=sub_schema, schemas=schemas, key="$ref"
+                schema=sub_schema, schemas=schemas, key=types.OpenApiProperties.REF
             ),
             all_of_dicts,
         )
@@ -316,7 +319,10 @@ def required_values(
         return
 
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=skip_name, key="required"
+        schema=schema,
+        schemas=schemas,
+        skip_name=skip_name,
+        key=types.OpenApiProperties.REQUIRED,
     )
 
 
@@ -409,5 +415,8 @@ def backrefs_values(
 
     """
     yield from _any_key(
-        schema=schema, schemas=schemas, skip_name=None, key="x-backrefs"
+        schema=schema,
+        schemas=schemas,
+        skip_name=None,
+        key=types.ExtensionProperties.BACKREFS,
     )

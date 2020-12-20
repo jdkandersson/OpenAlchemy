@@ -7,7 +7,6 @@ from .. import exceptions
 from .. import facades
 from .. import types
 from . import all_of as all_of_helper
-from . import ext_prop as ext_prop_helper
 from . import peek as peek_helper
 from . import ref as ref_helper
 from . import schema as schema_helper
@@ -60,7 +59,7 @@ def _check_parent(
 ) -> bool:
     """Implement check_parent."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
     if ref is None and all_of is None:
         return False
@@ -136,7 +135,7 @@ def _get_parent(
 ) -> str:
     """Implement get_parent."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
     if ref is None and all_of is None:
         raise exceptions.MalformedSchemaError(
@@ -214,7 +213,7 @@ def _get_parents(
 ) -> typing.Generator[str, None, None]:
     """Implement get_parents."""
     # Check for $ref and allOf
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     all_of = schema.get("allOf")
 
     # Handle $ref
@@ -311,7 +310,7 @@ def _retrieve_model_parents_schema(
         Generator with all the schemas.
 
     """
-    inherits = ext_prop_helper.get(source=schema, name="x-inherits")
+    inherits = peek_helper.inherits(schema=schema, schemas={})
     if isinstance(inherits, str):
         parent_schema = facades.models.get_model_schema(name=inherits)
         if parent_schema is None:

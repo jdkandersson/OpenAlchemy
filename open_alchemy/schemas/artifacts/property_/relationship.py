@@ -19,23 +19,26 @@ def _calculate_x_to_one_schema(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> oa_types.ObjectRefSchema:
     """Calculate the schema for a x-to-one relationship."""
-    return_schema: oa_types.ObjectRefSchema = {"type": "object", "x-de-$ref": parent}
+    return_schema: oa_types.ObjectRefSchema = {
+        oa_types.OpenApiProperties.TYPE.value: "object",
+        oa_types.ExtensionProperties.DE_REF.value: parent,
+    }
 
     description = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
     )
     if description is not None:
-        return_schema["description"] = description
+        return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
     nullable = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
     )
     if nullable is not None:
-        return_schema["nullable"] = nullable
+        return_schema[oa_types.OpenApiProperties.NULLABLE.value] = nullable
     write_only = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
     )
     if write_only is not None:
-        return_schema["writeOnly"] = write_only
+        return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
 
     return return_schema
 
@@ -54,7 +57,10 @@ def _get_kwargs(
 ) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """Retrieve the kwargs name from an object reference."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="x-kwargs", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.ExtensionProperties.KWARGS,
+        skip_ref=parent,
     )
 
 
@@ -63,7 +69,10 @@ def _get_write_only(
 ) -> typing.Optional[bool]:
     """Retrieve the writeOnly value from a schema."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="writeOnly", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.OpenApiProperties.WRITE_ONLY,
+        skip_ref=parent,
     )
 
 
@@ -72,7 +81,10 @@ def _get_description(
 ) -> typing.Optional[str]:
     """Retrieve the description value from a schema."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="description", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.OpenApiProperties.DESCRIPTION,
+        skip_ref=parent,
     )
 
 
@@ -253,16 +265,19 @@ def _calculate_one_to_x_schema(
 ) -> oa_types.ArrayRefSchema:
     """Calculate the schema for a x-to-one relationship."""
     return_schema: oa_types.ArrayRefSchema = {
-        "type": "array",
-        "items": {"type": "object", "x-de-$ref": parent},
+        oa_types.OpenApiProperties.TYPE.value: "array",
+        oa_types.OpenApiProperties.ITEMS.value: {
+            oa_types.OpenApiProperties.TYPE.value: "object",
+            oa_types.ExtensionProperties.DE_REF.value: parent,
+        },
     }
 
     description = _get_description(schema=schema, schemas=schemas, parent=parent)
     if description is not None:
-        return_schema["description"] = description
+        return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
     if write_only is not None:
-        return_schema["writeOnly"] = write_only
+        return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
 
     return return_schema
 

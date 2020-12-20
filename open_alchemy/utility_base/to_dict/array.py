@@ -28,7 +28,7 @@ def convert(value: typing.Any, *, schema: ao_types.Schema) -> types.TOptArrayDic
     """
     if value is None:
         return None
-    item_schema = schema.get("items")
+    item_schema = helpers.peek.items(schema=schema, schemas={})
     if item_schema is None:
         raise exceptions.MalformedSchemaError(
             "The array item schema must have an items property."

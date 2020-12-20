@@ -262,8 +262,8 @@ def _check_properties_valid(
     ).schema
     # Creating a mapping of foreign key to expected property schema
     expected_foreign_key_properties = {
-        property_["x-foreign-key"]: property_
-        for property_ in expected_schema["properties"].values()
+        property_[oa_types.ExtensionProperties.FOREIGN_KEY]: property_
+        for property_ in expected_schema[oa_types.OpenApiProperties.PROPERTIES].values()
     }
 
     # Check primary keys
@@ -295,9 +295,9 @@ def _check_properties_valid(
         # Check that the property schema is as expected
         expected_schema = expected_foreign_key_properties[property_foreign_key]
         checks = (
-            ("type", oa_helpers.peek.type_),
-            ("format", oa_helpers.peek.format_),
-            ("maxLength", oa_helpers.peek.max_length),
+            (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
+            (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
+            (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
         )
         for key, func in checks:
             # Check that values match

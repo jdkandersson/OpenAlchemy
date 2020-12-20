@@ -192,7 +192,9 @@ def _check_array_root(
 
     # Check secondary
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-secondary")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.SECONDARY
+        )
         is not None
     ):
         return types.Result(
@@ -201,7 +203,9 @@ def _check_array_root(
         )
     # Check backref
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-backref")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.BACKREF
+        )
         is not None
     ):
         return types.Result(
@@ -211,7 +215,9 @@ def _check_array_root(
     # Check foreign-key-column
     if (
         helpers.peek.peek_key(
-            schema=schema, schemas=schemas, key="x-foreign-key-column"
+            schema=schema,
+            schemas=schemas,
+            key=oa_types.ExtensionProperties.FOREIGN_KEY_COLUMN,
         )
         is not None
     ):
@@ -222,7 +228,9 @@ def _check_array_root(
         )
     # Check kwargs
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-kwargs")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.KWARGS
+        )
         is not None
     ):
         return types.Result(
@@ -231,7 +239,9 @@ def _check_array_root(
         )
     # Check uselist
     if (
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="x-uselist")
+        helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.USELIST
+        )
         is not None
     ):
         return types.Result(

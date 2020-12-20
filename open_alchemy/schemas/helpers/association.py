@@ -184,14 +184,14 @@ def calculate_property_schema(
     # Calculate name and schema
     property_name = f"{tablename}_{primary_key_property_name}"
     property_schema: types.ColumnSchema = {
-        "type": type_,
-        "x-primary-key": True,
-        "x-foreign-key": foreign_key,
+        types.OpenApiProperties.TYPE.value: type_,
+        types.ExtensionProperties.PRIMARY_KEY.value: True,
+        types.ExtensionProperties.FOREIGN_KEY.value: foreign_key,
     }
     if format_ is not None:
-        property_schema["format"] = format_
+        property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        property_schema["maxLength"] = max_length
+        property_schema[types.OpenApiProperties.MAX_LENGTH.value] = max_length
 
     return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
 
@@ -262,13 +262,13 @@ def calculate_schema(
     ref_property = calculate_property_schema(schema=ref_schema, schemas=schemas)
 
     schema = {
-        "type": "object",
-        "x-tablename": secondary,
-        "properties": {
+        types.OpenApiProperties.TYPE: "object",
+        types.ExtensionProperties.TABLENAME: secondary,
+        types.OpenApiProperties.PROPERTIES: {
             parent_property.name: parent_property.schema,
             ref_property.name: ref_property.schema,
         },
-        "required": [parent_property.name, ref_property.name],
+        types.OpenApiProperties.REQUIRED: [parent_property.name, ref_property.name],
     }
 
     name = secondary.title().replace("_", "")

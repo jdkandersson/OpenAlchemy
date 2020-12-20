@@ -16,9 +16,61 @@ except ImportError:  # pragma: no cover
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
-AllOfSpec = typing.List[Schema]
 TKwargs = typing.Dict[str, typing.Any]
 TOptKwargs = typing.Optional[TKwargs]
+
+
+@enum.unique
+class KeyPrefixes(str, enum.Enum):
+    """The allowed prefixes for extension properties."""
+
+    SHORT = "x-"
+    NAMESPACES = "x-open-alchemy-"
+
+
+@enum.unique
+class OpenApiProperties(str, enum.Enum):
+    """All the OpenAPI properties that can be defined."""
+
+    TYPE: Literal["type"] = "type"
+    NULLABLE: Literal["nullable"] = "nullable"
+    FORMAT: Literal["format"] = "format"
+    MAX_LENGTH: Literal["maxLength"] = "maxLength"
+    READ_ONLY: Literal["readOnly"] = "readOnly"
+    WRITE_ONLY: Literal["writeOnly"] = "writeOnly"
+    DESCRIPTION: Literal["description"] = "description"
+    ITEMS: Literal["items"] = "items"
+    REF: Literal["$ref"] = "$ref"
+    DEFAULT: Literal["default"] = "default"
+    REQUIRED: Literal["required"] = "required"
+    PROPERTIES: Literal["properties"] = "properties"
+
+
+@enum.unique
+class ExtensionProperties(str, enum.Enum):
+    """All the extension properties that can be defined."""
+
+    AUTOINCREMENT: Literal["x-autoincrement"] = "x-autoincrement"
+    INDEX: Literal["x-index"] = "x-index"
+    UNIQUE: Literal["x-unique"] = "x-unique"
+    PRIMARY_KEY: Literal["x-primary-key"] = "x-primary-key"
+    TABLENAME: Literal["x-tablename"] = "x-tablename"
+    INHERITS: Literal["x-inherits"] = "x-inherits"
+    JSON: Literal["x-json"] = "x-json"
+    BACKREF: Literal["x-backref"] = "x-backref"
+    SECONDARY: Literal["x-secondary"] = "x-secondary"
+    USELIST: Literal["x-uselist"] = "x-uselist"
+    KWARGS: Literal["x-kwargs"] = "x-kwargs"
+    FOREIGN_KEY_KWARGS: Literal["x-foreign-key-kwargs"] = "x-foreign-key-kwargs"
+    FOREIGN_KEY: Literal["x-foreign-key"] = "x-foreign-key"
+    FOREIGN_KEY_COLUMN: Literal["x-foreign-key-column"] = "x-foreign-key-column"
+    COMPOSITE_INDEX: Literal["x-composite-index"] = "x-composite-index"
+    COMPOSITE_UNIQUE: Literal["x-composite-unique"] = "x-composite-unique"
+    SERVER_DEFAULT: Literal["x-server-default"] = "x-server-default"
+    MIXINS: Literal["x-mixins"] = "x-mixins"
+    DICT_IGNORE: Literal["x-dict-ignore"] = "x-dict-ignore"
+    BACKREFS: Literal["x-backrefs"] = "x-backrefs"
+    DE_REF: Literal["x-de-$ref"] = "x-de-$ref"
 
 
 class ModelFactory(Protocol):
@@ -29,15 +81,6 @@ class ModelFactory(Protocol):
         ...
 
 
-class GetBase(Protocol):
-    """Defines interface for the get_base function."""
-
-    def __call__(self, *, name: str, schemas: Schemas) -> typing.Type:
-        """Call signature for get_base."""
-        ...
-
-
-# Unique consraint types
 ColumnList = typing.List[str]
 ColumnListList = typing.List[ColumnList]
 
@@ -56,7 +99,6 @@ class Unique(_UniqueBase, total=False):
 
 UniqueList = typing.List[Unique]
 AnyUnique = typing.Union[ColumnList, ColumnListList, Unique, UniqueList]
-# Index types
 
 
 class _IndexBase(TypedDict, total=True):
@@ -74,9 +116,7 @@ class Index(_IndexBase, total=False):
 
 IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
-# Type for the default value
 TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
-# Type for the default value expressed in Python
 TPyColumnDefault = typing.Optional[
     typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime]
 ]
@@ -193,9 +233,7 @@ class _OpenApiSimplePropertyTypedDictBase(TypedDict, total=False):
     format: str
     max_length: int
     nullable: bool
-
     default: typing.Union[int, float, str, bool]
-
     read_only: bool
     write_only: bool
 
@@ -214,9 +252,7 @@ class OpenApiSimplePropertyArtifacts:
     format: typing.Optional[str]
     max_length: typing.Optional[int]
     nullable: typing.Optional[bool]
-
     default: typing.Optional[typing.Union[int, float, str, bool]]
-
     read_only: typing.Optional[bool]
     write_only: typing.Optional[bool]
 
@@ -258,9 +294,7 @@ class _ExtensionSimplePropertyTypedDictBase(TypedDict, total=False):
     index: bool
     unique: bool
     server_default: str
-
     foreign_key: str
-
     kwargs: TKwargs
     foreign_key_kwargs: TKwargs
 
@@ -282,12 +316,9 @@ class ExtensionSimplePropertyArtifacts:
     index: typing.Optional[bool]
     unique: typing.Optional[bool]
     server_default: typing.Optional[str]
-
     foreign_key: typing.Optional[str]
-
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
-
     dict_ignore: typing.Optional[bool]
 
     def to_dict(self) -> ExtensionSimplePropertyTypedDict:
@@ -371,7 +402,6 @@ class OpenApiJsonPropertyTypedDict(TypedDict, total=False):
     """TypedDict representation of the OpenAPI artifacts for a JSON property."""
 
     nullable: bool
-
     read_only: bool
     write_only: bool
 
@@ -409,9 +439,7 @@ class _ExtensionJsonPropertyTypedDictBase(TypedDict, total=False):
 
     index: bool
     unique: bool
-
     foreign_key: str
-
     kwargs: TKwargs
     foreign_key_kwargs: TKwargs
 
@@ -429,9 +457,7 @@ class ExtensionJsonPropertyArtifacts:
     primary_key: bool
     index: typing.Optional[bool]
     unique: typing.Optional[bool]
-
     foreign_key: typing.Optional[str]
-
     kwargs: typing.Optional[TKwargs]
     foreign_key_kwargs: typing.Optional[TKwargs]
 
@@ -861,13 +887,9 @@ class _ModelTypedDictBase(TypedDict, total=False):
 
     inherits: bool
     parent: str
-
     description: str
-
     mixins: TMixins
-
     kwargs: TKwargs
-
     composite_index: IndexList
     composite_unique: UniqueList
 
@@ -904,16 +926,11 @@ class ModelExPropertiesArtifacts:
     tablename: str
     inherits: typing.Optional[bool]
     parent: typing.Optional[str]
-
     description: typing.Optional[str]
-
     mixins: typing.Optional[TMixins]
-
     kwargs: typing.Optional[TKwargs]
-
     composite_index: typing.Optional[IndexList]
     composite_unique: typing.Optional[UniqueList]
-
     backrefs: typing.List[typing.Tuple[str, ModelBackrefArtifacts]]
 
     def to_dict(self) -> ModelTypedDict:

@@ -153,12 +153,12 @@ def _check_invalid_keys(
 ) -> types.OptResult:
     """Check for keys that are not valid on a model."""
     invalid_keys = (
-        "x-primary-key",
-        "x-autoincrement",
-        "x-index",
-        "x-unique",
-        "x-foreign-key",
-        "x-foreign-key-kwargs",
+        oa_types.ExtensionProperties.PRIMARY_KEY,
+        oa_types.ExtensionProperties.AUTOINCREMENT,
+        oa_types.ExtensionProperties.INDEX,
+        oa_types.ExtensionProperties.UNIQUE,
+        oa_types.ExtensionProperties.FOREIGN_KEY,
+        oa_types.ExtensionProperties.FOREIGN_KEY_KWARGS,
     )
     seen_invalid_keys = filter(
         lambda key: oa_helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)

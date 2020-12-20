@@ -22,269 +22,156 @@ def test_type_no_type(schema, schemas):
         helpers.peek.type_(schema=schema, schemas=schemas)
 
 
+VALID_TESTS = [
+    pytest.param([("type", "type 1")], helpers.peek.type_, "type 1", id="type"),
+    pytest.param([], helpers.peek.nullable, None, id="nullable missing"),
+    pytest.param(
+        [("nullable", True)], helpers.peek.nullable, True, id="nullable defined"
+    ),
+    pytest.param(
+        [("nullable", False)],
+        helpers.peek.nullable,
+        False,
+        id="nullable defined different",
+    ),
+    pytest.param([], helpers.peek.format_, None, id="format missing"),
+    pytest.param(
+        [("format", "format 1")],
+        helpers.peek.format_,
+        "format 1",
+        id="format defined",
+    ),
+    pytest.param(
+        [("format", "format 2")],
+        helpers.peek.format_,
+        "format 2",
+        id="format defined different",
+    ),
+    pytest.param([], helpers.peek.max_length, None, id="maxLength missing"),
+    pytest.param(
+        [("maxLength", 1)], helpers.peek.max_length, 1, id="maxLength defined"
+    ),
+    pytest.param(
+        [("maxLength", 2)],
+        helpers.peek.max_length,
+        2,
+        id="maxLength defined different",
+    ),
+    pytest.param([], helpers.peek.read_only, None, id="readOnly missing"),
+    pytest.param(
+        [("readOnly", True)], helpers.peek.read_only, True, id="readOnly defined"
+    ),
+    pytest.param(
+        [("readOnly", False)],
+        helpers.peek.read_only,
+        False,
+        id="readOnly defined different",
+    ),
+    pytest.param([], helpers.peek.write_only, None, id="writeOnly missing"),
+    pytest.param(
+        [("writeOnly", True)], helpers.peek.write_only, True, id="writeOnly defined"
+    ),
+    pytest.param(
+        [("writeOnly", False)],
+        helpers.peek.write_only,
+        False,
+        id="writeOnly defined different",
+    ),
+    pytest.param([], helpers.peek.description, None, id="description missing"),
+    pytest.param(
+        [("description", "description 1")],
+        helpers.peek.description,
+        "description 1",
+        id="description defined",
+    ),
+    pytest.param(
+        [("description", "description 2")],
+        helpers.peek.description,
+        "description 2",
+        id="description defined different",
+    ),
+    pytest.param([], helpers.peek.items, None, id="items missing"),
+    pytest.param(
+        [("items", {"key_1": "value 1"})],
+        helpers.peek.items,
+        {"key_1": "value 1"},
+        id="items defined",
+    ),
+    pytest.param(
+        [("items", {"key_2": "value 2"})],
+        helpers.peek.items,
+        {"key_2": "value 2"},
+        id="items defined different",
+    ),
+    pytest.param([], helpers.peek.ref, None, id="ref missing"),
+    pytest.param(
+        [("$ref", "value 1")],
+        helpers.peek.ref,
+        "value 1",
+        id="ref defined",
+    ),
+    pytest.param(
+        [("allOf", [{"$ref": "value 2"}])],
+        helpers.peek.ref,
+        "value 2",
+        id="ref defined different",
+    ),
+]
+
+
+@pytest.mark.parametrize("key_values, func, expected_value", VALID_TESTS)
 @pytest.mark.helper
-def test_type():
+def test_key_value(key_values, func, expected_value):
     """
-    GIVEN schema with type
-    WHEN type_ is called with the schema
-    THEN the type of the schema is returned.
+    GIVEN key and values for a schema and a function
+    WHEN the function is called with the schema
+    THEN expected value is returned.
     """
-    type_ = "type 1"
-    schema = {"type": type_}
+    schema = dict(key_values)
 
-    returned_type = helpers.peek.type_(schema=schema, schemas={})
+    returned_type = func(schema=schema, schemas={})
 
-    assert returned_type == type_
+    assert returned_type == expected_value
 
 
-@pytest.mark.parametrize(
-    "schema",
-    [{"nullable": "1"}, {"nullable": 1}, {"nullable": 1.1}],
-)
+INVALID_TESTS = [
+    pytest.param(
+        "nullable", "1", helpers.peek.nullable, "boolean", id="nullable string"
+    ),
+    pytest.param(
+        "nullable", 1, helpers.peek.nullable, "boolean", id="nullable integer"
+    ),
+    pytest.param(
+        "nullable", 1.1, helpers.peek.nullable, "boolean", id="nullable number"
+    ),
+    pytest.param("format", True, helpers.peek.format_, "string", id="format"),
+    pytest.param("maxLength", "1", helpers.peek.max_length, "integer", id="maxLength"),
+    pytest.param("readOnly", "1", helpers.peek.read_only, "boolean", id="readOnly"),
+    pytest.param("writeOnly", "1", helpers.peek.write_only, "boolean", id="writeOnly"),
+    pytest.param(
+        "description", True, helpers.peek.description, "string", id="description"
+    ),
+    pytest.param("items", True, helpers.peek.items, "dict", id="items"),
+    pytest.param("$ref", True, helpers.peek.ref, "string", id="$ref"),
+]
+
+
+@pytest.mark.parametrize("key, value, func, expected_type", INVALID_TESTS)
 @pytest.mark.helper
-def test_nullable_wrong_type(schema):
+def test_key_value_wrong_type(key, value, func, expected_type):
     """
-    GIVEN schema with nullable defined as a string
-    WHEN nullable is called with the schema
-    THEN MalformedSchemaError is raised.
+    GIVEN key and value for a schema and function
+    WHEN the function is called with the schema
+    THEN MalformedSchemaError is raised where the message contains the key and expected
+        type.
     """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.nullable(schema=schema, schemas={})
+    schema = {key: value}
 
+    with pytest.raises(exceptions.MalformedSchemaError) as exc:
+        func(schema=schema, schemas={})
 
-@pytest.mark.parametrize(
-    "schema, expected_nullable",
-    [({}, None), ({"nullable": True}, True), ({"nullable": False}, False)],
-    ids=["missing", "true", "false"],
-)
-@pytest.mark.helper
-def test_nullable(schema, expected_nullable):
-    """
-    GIVEN schema and expected nullable
-    WHEN nullable is called with the schema
-    THEN the expected nullable is returned.
-    """
-    returned_nullable = helpers.peek.nullable(schema=schema, schemas={})
-
-    assert returned_nullable == expected_nullable
-
-
-@pytest.mark.helper
-def test_format_wrong_type():
-    """
-    GIVEN schema with format defined as a boolean
-    WHEN format_ is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"format": True}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.format_(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_format",
-    [({}, None), ({"format": "format 1"}, "format 1")],
-    ids=["missing", "present"],
-)
-@pytest.mark.helper
-def test_format(schema, expected_format):
-    """
-    GIVEN schema and expected format
-    WHEN format_ is called with the schema
-    THEN the expected format is returned.
-    """
-    returned_format = helpers.peek.format_(schema=schema, schemas={})
-
-    assert returned_format == expected_format
-
-
-@pytest.mark.parametrize(
-    "schema",
-    [{"maxLength": "1"}, {"maxLength": True}],
-)
-@pytest.mark.helper
-def test_max_length_wrong_type(schema):
-    """
-    GIVEN schema with max_length of the wrong type
-    WHEN max_length is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.max_length(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_max_length",
-    [({}, None), ({"maxLength": 1}, 1)],
-    ids=["missing", "present"],
-)
-@pytest.mark.helper
-def test_max_length(schema, expected_max_length):
-    """
-    GIVEN schema and expected max_length
-    WHEN max_length is called with the schema
-    THEN the expected max_length is returned.
-    """
-    returned_max_length = helpers.peek.max_length(schema=schema, schemas={})
-
-    assert returned_max_length == expected_max_length
-
-
-@pytest.mark.helper
-def test_read_only_wrong_type():
-    """
-    GIVEN schema with readOnly defined as a string
-    WHEN read_only is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"readOnly": "true"}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.read_only(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_read_only",
-    [({}, None), ({"readOnly": False}, False), ({"readOnly": True}, True)],
-    ids=["missing", "false", "true"],
-)
-@pytest.mark.helper
-def test_read_only(schema, expected_read_only):
-    """
-    GIVEN schema and expected readOnly
-    WHEN read_only is called with the schema
-    THEN the expected readOnly is returned.
-    """
-
-    returned_read_only = helpers.peek.read_only(schema=schema, schemas={})
-
-    assert returned_read_only == expected_read_only
-
-
-@pytest.mark.helper
-def test_write_only_wrong_type():
-    """
-    GIVEN schema with writeOnly defined as a string
-    WHEN write_only is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"writeOnly": "true"}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.write_only(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_write_only",
-    [({}, None), ({"writeOnly": False}, False), ({"writeOnly": True}, True)],
-    ids=["missing", "false", "true"],
-)
-@pytest.mark.helper
-def test_write_only(schema, expected_write_only):
-    """
-    GIVEN schema and expected writeOnly
-    WHEN write_only is called with the schema
-    THEN the expected writeOnly is returned.
-    """
-
-    returned_write_only = helpers.peek.write_only(schema=schema, schemas={})
-
-    assert returned_write_only == expected_write_only
-
-
-@pytest.mark.helper
-def test_description_wrong_type():
-    """
-    GIVEN schema with description defined as a boolean
-    WHEN description is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"description": True}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.description(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_description",
-    [({}, None), ({"description": "description 1"}, "description 1")],
-    ids=["missing", "present"],
-)
-@pytest.mark.helper
-def test_description(schema, expected_description):
-    """
-    GIVEN schema and expected description
-    WHEN description is called with the schema
-    THEN the expected description is returned.
-    """
-    returned_description = helpers.peek.description(schema=schema, schemas={})
-
-    assert returned_description == expected_description
-
-
-@pytest.mark.helper
-def test_items_wrong_type():
-    """
-    GIVEN schema with items defined as a boolean
-    WHEN items is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"items": True}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.items(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_items",
-    [({}, None), ({"items": {"key": "value"}}, {"key": "value"})],
-    ids=["missing", "defined"],
-)
-@pytest.mark.helper
-def test_items(schema, expected_items):
-    """
-    GIVEN schema and expected items
-    WHEN items is called with the schema
-    THEN the expected items is returned.
-    """
-    returned_items = helpers.peek.items(schema=schema, schemas={})
-
-    assert returned_items == expected_items
-
-
-@pytest.mark.helper
-def test_ref_wrong_type():
-    """
-    GIVEN schema with $ref defined as a boolean
-    WHEN $ref is called with the schema
-    THEN MalformedSchemaError is raised.
-    """
-    schema = {"$ref": True}
-
-    with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.ref(schema=schema, schemas={})
-
-
-@pytest.mark.parametrize(
-    "schema, expected_ref",
-    [
-        ({}, None),
-        ({"$ref": "value"}, "value"),
-        ({"allOf": [{"$ref": "value"}]}, "value"),
-    ],
-    ids=["missing", "defined", "allOf"],
-)
-@pytest.mark.helper
-def test_ref(schema, expected_ref):
-    """
-    GIVEN schema and expected $ref
-    WHEN $ref is called with the schema
-    THEN the expected $ref is returned.
-    """
-    returned_ref = helpers.peek.ref(schema=schema, schemas={})
-
-    assert returned_ref == expected_ref
+    assert key in str(exc)
+    assert expected_type in str(exc)
 
 
 @pytest.mark.parametrize(

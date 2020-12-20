@@ -374,6 +374,17 @@ alembic is supported. The following instructions show how to get started:
 .. literalinclude:: ../../examples/alembic/readme.md
     :language: md
 
+Extension Property Prefix
+-------------------------
+
+OpenAlchemy currently supports 2 extension property prefixes. The shorter
+:samp:`x-` and the longer :samp:`x-open-alchemy-`. Both prefixes behave in the
+same way. The longer prefix is offered to avoid extension property name clashes
+with other tools.
+
+For example, the tablename can be specified either using the
+:samp:`x-tablename` or the :samp:`x-open-alchemy-tablename` extension property.
+
 .. _how-does-it-work:
 
 How Does It Work?

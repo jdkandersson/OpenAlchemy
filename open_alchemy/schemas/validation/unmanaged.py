@@ -33,11 +33,14 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
     """
     try:
         # Check type
-        type_ = _oa_helpers.peek.peek_key(schema=schema, schemas=schemas, key="type")
+        type_ = _oa_helpers.peek.peek_key(
+            schema=schema, schemas=schemas, key=_oa_types.OpenApiProperties.TYPE
+        )
         if type_ is None:
             return {
                 "result": _reason_to_result(
-                    reason='no "type" key was found, define a type'
+                    reason=f'no "{_oa_types.OpenApiProperties.TYPE}" key was found, '
+                    "define a type"
                 )
             }
         if not isinstance(type_, str):
@@ -63,7 +66,8 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
     # tablename is not defined
     return {
         "result": _reason_to_result(
-            reason='no "x-tablename" key was found, define the name of the table'
+            reason=f'no "{_oa_types.ExtensionProperties.TABLENAME}" key was found, '
+            "define the name of the table"
         )
     }
 

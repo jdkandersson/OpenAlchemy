@@ -27,7 +27,7 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
     if not isinstance(schema, dict):
         return False
     # Check for reference only models
-    ref = schema.get("$ref")
+    ref = schema.get(types.OpenApiProperties.REF)
     if ref is not None and (not isinstance(ref, str) or ref.startswith("#")):
         return False
     # Check allOf
@@ -37,7 +37,9 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
             return False
         return constructable(schema=all_of[0], schemas=schemas)
     # Check for tablename and inherits
-    tablename = peek.peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    tablename = peek.peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.TABLENAME
+    )
     try:
         schema_inherits = inherits(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:
@@ -106,14 +108,16 @@ def prepare_deep(schema: types.Schema, schemas: types.Schemas):
     schema = prepare(schema=schema, schemas=schemas)
 
     # Resolve $ref in any properties
-    properties = schema.get("properties", None)
+    properties = schema.get(types.OpenApiProperties.PROPERTIES, None)
     if properties is not None:
         for name, prop_schema in properties.items():
             properties[name] = prepare_deep(schema=prop_schema, schemas=schemas)
 
     # Resolve $ref of any items
-    items_schema = schema.get("items", None)
+    items_schema = peek.items(schema=schema, schemas={})
     if items_schema is not None:
-        schema["items"] = prepare_deep(schema=items_schema, schemas=schemas)
+        schema[types.OpenApiProperties.ITEMS] = prepare_deep(
+            schema=items_schema, schemas=schemas
+        )
 
     return schema

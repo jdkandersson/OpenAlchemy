@@ -50,14 +50,14 @@ def _merge(
         merged_sub_schema = _merge(ref_schema, schemas, skip_name)
 
         # Capturing required arrays
-        merged_required = merged_schema.get("required")
-        sub_required = merged_sub_schema.get("required")
+        merged_required = merged_schema.get(types.OpenApiProperties.REQUIRED)
+        sub_required = merged_sub_schema.get(types.OpenApiProperties.REQUIRED)
         # Capturing properties
-        merged_properties = merged_schema.get("properties")
-        sub_properties = merged_sub_schema.get("properties")
+        merged_properties = merged_schema.get(types.OpenApiProperties.PROPERTIES)
+        sub_properties = merged_sub_schema.get(types.OpenApiProperties.PROPERTIES)
         # Capturing backrefs
-        merged_backrefs = merged_schema.get("x-backrefs")
-        sub_backrefs = merged_sub_schema.get("x-backrefs")
+        merged_backrefs = merged_schema.get(types.ExtensionProperties.BACKREFS)
+        sub_backrefs = merged_sub_schema.get(types.ExtensionProperties.BACKREFS)
 
         # Combining sub into merged specification
         merged_schema = {**merged_schema, **merged_sub_schema}
@@ -66,16 +66,22 @@ def _merge(
         if merged_required is not None and sub_required is not None:
             # Both have a required array, need to merge them together
             required_set = set(merged_required).union(sub_required)
-            merged_schema["required"] = list(required_set)
+            merged_schema[types.OpenApiProperties.REQUIRED] = list(required_set)
 
         # Checking whether properties was present on both specs
         if merged_properties is not None and sub_properties is not None:
             # Both have properties, merge properties
-            merged_schema["properties"] = {**merged_properties, **sub_properties}
+            merged_schema[types.OpenApiProperties.PROPERTIES] = {
+                **merged_properties,
+                **sub_properties,
+            }
 
         # Checking whether backrefs was present on both specs
         if merged_backrefs is not None and sub_backrefs is not None:
             # Both have backrefs, merge backrefs
-            merged_schema["x-backrefs"] = {**merged_backrefs, **sub_backrefs}
+            merged_schema[types.ExtensionProperties.BACKREFS] = {
+                **merged_backrefs,
+                **sub_backrefs,
+            }
 
     return merged_schema

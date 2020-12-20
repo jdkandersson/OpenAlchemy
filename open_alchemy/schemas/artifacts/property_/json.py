@@ -48,7 +48,7 @@ def get(
     # Remove extension properties from schema
     helpers.clean.extension(schema=schema)
     # Add in x-json
-    schema["x-json"] = True
+    schema[oa_types.ExtensionProperties.JSON] = True
 
     return types.JsonPropertyArtifacts(
         type=oa_types.PropertyType.JSON,

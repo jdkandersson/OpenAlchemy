@@ -11,10 +11,18 @@ from . import types
 from . import utility_base
 
 
+class GetBase(types.Protocol):
+    """Defines interface for the get_base function."""
+
+    def __call__(self, *, name: str, schemas: types.Schemas) -> typing.Type:
+        """Call signature for get_base."""
+        ...
+
+
 def model_factory(
     *,
     name: str,
-    get_base: types.GetBase,
+    get_base: GetBase,
     schemas: types.Schemas,
     artifacts: types.ModelsModelArtifacts,
 ) -> typing.Type:
@@ -40,19 +48,21 @@ def model_factory(
 
     # Calculating the class variables for the model
     model_class_vars = {}
-    required_exists = "required" in schema
-    required_array = schema.get("required", [])
+    required_exists = types.OpenApiProperties.REQUIRED in schema
+    required_array = schema.get(types.OpenApiProperties.REQUIRED, [])
     # Initializing the schema to record for the model
-    model_schema: types.Schema = {"type": "object", "properties": {}}
+    model_schema: types.Schema = {
+        types.OpenApiProperties.TYPE: "object",
+        types.OpenApiProperties.PROPERTIES: {},
+    }
     if required_exists:
-        model_schema["required"] = required_array
-    if "x-inherits" in schema:
-        model_schema["x-inherits"] = helpers.ext_prop.get(
-            source=schema, name="x-inherits"
-        )
+        model_schema[types.OpenApiProperties.REQUIRED] = required_array
+    inherits = helpers.peek.inherits(schema=schema, schemas={})
+    if inherits is not None:
+        model_schema[types.ExtensionProperties.INHERITS] = inherits
     description = helpers.peek.description(schema=schema, schemas={})
     if description is not None:
-        model_schema["description"] = description
+        model_schema[types.OpenApiProperties.DESCRIPTION.value] = description
 
     for prop_name, prop_artifacts in model_artifacts.properties:
         prop_column = column_factory.column_factory(artifacts=prop_artifacts)
@@ -65,7 +75,9 @@ def model_factory(
         )
 
         if not dict_ignore:
-            model_schema["properties"][prop_name] = prop_artifacts.schema
+            model_schema[types.OpenApiProperties.PROPERTIES][
+                prop_name
+            ] = prop_artifacts.schema
 
     # Retrieve mixins
     mixin_classes: typing.Tuple[typing.Type, ...] = tuple()
@@ -120,9 +132,11 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
         # De-referencing schema
         schema = helpers.schema.prepare(schema=schema, schemas=schemas)
         # Checking for tablename key
-        if "x-tablename" not in schema:
+        tablename = helpers.peek.tablename(schema=schema, schemas={})
+        if tablename is None:
             raise exceptions.MalformedSchemaError(
-                f'"x-tablename" is a required schema property for {name}.'
+                f'"{types.ExtensionProperties.TABLENAME}" is a required schema '
+                f"property for {name}."
             )
     else:
         parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
@@ -131,17 +145,20 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
             schema=schema, schemas=schemas, skip_name=parent
         )
         # Checking for inherits key
-        if "x-inherits" not in schema:
+        inherits_schema_value = helpers.peek.inherits(schema=schema, schemas={})
+        if inherits_schema_value is None:
             raise exceptions.MalformedSchemaError(
-                f'"x-inherits" is a required schema property for {name}.'
+                f'"{types.ExtensionProperties.INHERITS}" is a required schema property '
+                f"for {name}."
             )
-        schema["x-inherits"] = parent
+        schema[types.ExtensionProperties.INHERITS] = parent
     # Checking for object type
-    if schema.get("type") != "object":
+    type_ = schema.get(types.OpenApiProperties.TYPE)
+    if type_ != "object":
         raise exceptions.FeatureNotImplementedError(
-            f"{schema.get('type')} is not supported in {name}."
+            f"{type_} is not supported in {name}."
         )
-    if not schema.get("properties"):
+    if not schema.get(types.OpenApiProperties.PROPERTIES):
         raise exceptions.MalformedSchemaError(
             f"At least 1 property is required for {name}."
         )

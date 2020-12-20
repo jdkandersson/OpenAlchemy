@@ -77,24 +77,24 @@ def get(
 
     # Generate the schema
     schema_artifact: oa_types.ColumnSchema = {
-        "type": type_,
+        oa_types.OpenApiProperties.TYPE.value: type_
     }
     if format_ is not None:
-        schema_artifact["format"] = format_
+        schema_artifact[oa_types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        schema_artifact["maxLength"] = max_length
+        schema_artifact[oa_types.OpenApiProperties.MAX_LENGTH.value] = max_length
     if description is not None:
-        schema_artifact["description"] = description
+        schema_artifact[oa_types.OpenApiProperties.DESCRIPTION.value] = description
     if nullable is not None:
-        schema_artifact["nullable"] = nullable
+        schema_artifact[oa_types.OpenApiProperties.NULLABLE.value] = nullable
     if default is not None:
-        schema_artifact["default"] = default
+        schema_artifact[oa_types.OpenApiProperties.DEFAULT.value] = default
     if read_only is not None:
-        schema_artifact["readOnly"] = read_only
+        schema_artifact[oa_types.OpenApiProperties.READ_ONLY.value] = read_only
     if write_only is not None:
-        schema_artifact["writeOnly"] = write_only
+        schema_artifact[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
     if dict_ignore is not None:
-        schema_artifact["x-dict-ignore"] = dict_ignore
+        schema_artifact[oa_types.ExtensionProperties.DICT_IGNORE.value] = dict_ignore
 
     return types.SimplePropertyArtifacts(
         type=oa_types.PropertyType.SIMPLE,

@@ -4,55 +4,78 @@ import pytest
 
 from open_alchemy import exceptions
 from open_alchemy import helpers
+from open_alchemy import types
 
 
 @pytest.mark.parametrize(
-    "schema, schemas, expected_value",
+    "key, schema, schemas, expected_value",
     [
-        ({}, {}, None),
-        ({"key": "value 1"}, {}, "value 1"),
-        (
+        pytest.param("key", {}, {}, None, id="missing"),
+        pytest.param("key", {"key": "value 1"}, {}, "value 1", id="plain"),
+        *(
+            pytest.param(
+                "x-key",
+                {f"{prefix}key": "value 1"},
+                {},
+                "value 1",
+                id=f"extension {prefix}",
+            )
+            for prefix in types.KeyPrefixes
+        ),
+        pytest.param(
+            "key",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"key": "value 1"}},
             "value 1",
+            id="$ref",
         ),
-        ({"allOf": []}, {}, None),
-        ({"allOf": [{"key": "value 1"}]}, {}, "value 1"),
-        ({"allOf": [{}]}, {}, None),
-        ({"allOf": [{"key": "value 1"}, {"key": "value 2"}]}, {}, "value 1"),
-        ({"allOf": [{"key": "value 2"}, {"key": "value 1"}]}, {}, "value 2"),
-        (
+        pytest.param("key", {"allOf": []}, {}, None, id="allOf empty"),
+        pytest.param(
+            "key",
+            {"allOf": [{"key": "value 1"}]},
+            {},
+            "value 1",
+            id="allOf single no type",
+        ),
+        pytest.param("key", {"allOf": [{}]}, {}, None, id="allOf single"),
+        pytest.param(
+            "key",
+            {"allOf": [{"key": "value 1"}, {"key": "value 2"}]},
+            {},
+            "value 1",
+            id="allOf multiple first",
+        ),
+        pytest.param(
+            "key",
+            {"allOf": [{"key": "value 2"}, {"key": "value 1"}]},
+            {},
+            "value 2",
+            id="allOf multiple last",
+        ),
+        pytest.param(
+            "key",
             {"$ref": "#/components/schemas/RefSchema"},
             {"RefSchema": {"allOf": [{"key": "value 1"}]}},
             "value 1",
+            id="$ref then allOf",
         ),
-        (
+        pytest.param(
+            "key",
             {"allOf": [{"$ref": "#/components/schemas/RefSchema"}]},
             {"RefSchema": {"allOf": [{"key": "value 1"}]}},
             "value 1",
+            id="allOf with $ref",
         ),
-    ],
-    ids=[
-        "missing",
-        "plain",
-        "$ref",
-        "allOf empty",
-        "allOf single no type",
-        "allOf single",
-        "allOf multiple first",
-        "allOf multiple last",
-        "$ref then allOf",
-        "allOf with $ref",
     ],
 )
 @pytest.mark.helper
-def test_peek_key(schema, schemas, expected_value):
+def test_peek_key(key, schema, schemas, expected_value):
     """
     GIVEN schema, schemas and expected value
     WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
-    returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
+    returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)
 
     assert returned_type == expected_value
 

@@ -1,6 +1,5 @@
 """Base class providing utilities for SQLAlchemy models."""
 
-import functools
 import json
 import typing
 
@@ -62,7 +61,7 @@ class UtilityBase:
         """
         schema = cls._get_schema()
         # Checking that _schema has properties
-        properties = schema.get("properties")
+        properties = schema.get(oa_types.OpenApiProperties.PROPERTIES)
         if properties is None:
             raise exceptions.MalformedSchemaError(
                 "The model schema does not have any properties.", schema=schema
@@ -72,7 +71,7 @@ class UtilityBase:
     @staticmethod
     def _get_parent(*, schema: oa_types.Schema) -> typing.Type[TUtilityBase]:
         """Get the parent model of a model."""
-        parent_name = helpers.ext_prop.get(source=schema, name="x-inherits")
+        parent_name = helpers.peek.inherits(schema=schema, schemas={})
         if parent_name is None or not isinstance(parent_name, str):
             raise exceptions.MalformedSchemaError(
                 "To construct a model that inherits x-inherits must be present and a "

@@ -155,13 +155,13 @@ CHECK_TESTS = [
     pytest.param(
         {"x-autoincrement": "False"},
         {},
-        (False, "json properties do not support x-autoincrement"),
+        (False, 'json properties do not support "x-autoincrement"'),
         id="x-autoincrement defined",
     ),
     pytest.param(
         {"x-server-default": "False"},
         {},
-        (False, "json properties do not support x-server-default"),
+        (False, 'json properties do not support "x-server-default"'),
         id="x-server-default defined",
     ),
     pytest.param(

@@ -62,9 +62,15 @@ def _calculate_artifacts(
 
     # Calculate schema
     assert backref is not None
-    return_schema: types.Schema = {"type": "object", "x-de-$ref": schema_name}
+    return_schema: types.Schema = {
+        types.OpenApiProperties.TYPE: "object",
+        types.ExtensionProperties.DE_REF: schema_name,
+    }
     if is_array:
-        return_schema = {"type": "array", "items": return_schema}
+        return_schema = {
+            types.OpenApiProperties.TYPE: "array",
+            types.OpenApiProperties.ITEMS: return_schema,
+        }
 
     return TArtifacts(ref_schema_name, backref, return_schema)
 
@@ -117,8 +123,10 @@ def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schem
 
     """
     return {
-        "type": "object",
-        "x-backrefs": {property_name: schema for _, property_name, schema in backrefs},
+        types.OpenApiProperties.TYPE: "object",
+        types.ExtensionProperties.BACKREFS: {
+            property_name: schema for _, property_name, schema in backrefs
+        },
     }
 
 
