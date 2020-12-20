@@ -38,7 +38,7 @@ def _calculate_x_to_one_schema(
         get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
     )
     if write_only is not None:
-        return_schema["writeOnly"] = write_only
+        return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
 
     return return_schema
 
@@ -66,7 +66,10 @@ def _get_write_only(
 ) -> typing.Optional[bool]:
     """Retrieve the writeOnly value from a schema."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="writeOnly", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.OpenApiProperties.WRITE_ONLY,
+        skip_ref=parent,
     )
 
 
@@ -265,7 +268,7 @@ def _calculate_one_to_x_schema(
         return_schema["description"] = description
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
     if write_only is not None:
-        return_schema["writeOnly"] = write_only
+        return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
 
     return return_schema
 

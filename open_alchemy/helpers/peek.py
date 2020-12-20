@@ -207,7 +207,9 @@ def read_only(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         Whether the schema is readOnly.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="readOnly")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.READ_ONLY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):
@@ -233,7 +235,9 @@ def write_only(
         Whether the schema is writeOnly.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="writeOnly")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.WRITE_ONLY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

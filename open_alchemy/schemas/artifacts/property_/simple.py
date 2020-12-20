@@ -90,9 +90,9 @@ def get(
     if default is not None:
         schema_artifact["default"] = default
     if read_only is not None:
-        schema_artifact["readOnly"] = read_only
+        schema_artifact[oa_types.OpenApiProperties.READ_ONLY.value] = read_only
     if write_only is not None:
-        schema_artifact["writeOnly"] = write_only
+        schema_artifact[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
     if dict_ignore is not None:
         schema_artifact["x-dict-ignore"] = dict_ignore
 
