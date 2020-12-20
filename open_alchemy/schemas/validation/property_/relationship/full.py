@@ -57,7 +57,7 @@ def _check_pre_defined_property_schema(
         (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
         (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        ("default", oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
     )
     for key, func in checks:
         match_result = validation_helpers.value.check_matches(
@@ -342,7 +342,7 @@ def _check_backref_property_properties(
         (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
         (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        ("default", oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
     )
     for key, func in checks:
         properties_items = helpers.iterate.properties_items(

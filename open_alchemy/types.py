@@ -41,6 +41,7 @@ class OpenApiProperties(str, enum.Enum):
     DESCRIPTION: typing.Literal["description"] = "description"
     ITEMS: typing.Literal["items"] = "items"
     REF: typing.Literal["$ref"] = "$ref"
+    DEFAULT: typing.Literal["default"] = "default"
 
 
 @enum.unique
@@ -63,6 +64,7 @@ class ExtensionProperties(str, enum.Enum):
     FOREIGN_KEY_COLUMN: typing.Literal["x-foreign-key-column"] = "x-foreign-key-column"
     COMPOSITE_INDEX: typing.Literal["x-composite-index"] = "x-composite-index"
     COMPOSITE_UNIQUE: typing.Literal["x-composite-unique"] = "x-composite-unique"
+    SERVER_DEFAULT: typing.Literal["x-server-default"] = "x-server-default"
 
 
 class ModelFactory(Protocol):
@@ -262,9 +264,9 @@ class OpenApiSimplePropertyArtifacts:
                 "write_only",
             ]
         ] = [
-            OpenApiProperties.FORMAT.value,
+            "format",
             "max_length",
-            OpenApiProperties.NULLABLE.value,
+            "nullable",
             "default",
             "read_only",
             "write_only",

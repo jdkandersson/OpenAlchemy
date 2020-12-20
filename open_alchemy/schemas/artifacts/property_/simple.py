@@ -88,7 +88,7 @@ def get(
     if nullable is not None:
         schema_artifact[oa_types.OpenApiProperties.NULLABLE.value] = nullable
     if default is not None:
-        schema_artifact["default"] = default
+        schema_artifact[oa_types.OpenApiProperties.DEFAULT.value] = default
     if read_only is not None:
         schema_artifact[oa_types.OpenApiProperties.READ_ONLY.value] = read_only
     if write_only is not None:

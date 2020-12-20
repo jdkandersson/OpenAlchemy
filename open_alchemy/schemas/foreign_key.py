@@ -212,9 +212,11 @@ def _calculate_foreign_key_property_artifacts(
             types.OpenApiProperties.MAX_LENGTH.value
         ] = max_length
     if default is not None:
-        foreign_key_property_schema["default"] = default
+        foreign_key_property_schema[types.OpenApiProperties.DEFAULT.value] = default
     if server_default is not None:
-        foreign_key_property_schema["x-server-default"] = server_default
+        foreign_key_property_schema[
+            types.ExtensionProperties.SERVER_DEFAULT.value
+        ] = server_default
 
     # Calculate other artifacts
     modify_name = oa_helpers.foreign_key.get_modify_name(

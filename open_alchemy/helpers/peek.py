@@ -687,7 +687,9 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
 
     """
     # Retrieve value
-    value = peek_key(schema=schema, schemas=schemas, key="default")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.DEFAULT
+    )
     if value is None:
         return None
     # Assemble schema
@@ -726,7 +728,9 @@ def server_default(
         The x-server-default value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-server-default")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.SERVER_DEFAULT
+    )
     if value is None:
         return None
     if not isinstance(value, str):
