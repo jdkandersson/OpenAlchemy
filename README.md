@@ -137,7 +137,8 @@ An example API has been defined using connexion and Flask here:
 - `date-time`,
 - generic JSON data,
 - `$ref` references for columns and models,
-- remote `$ref` to other files on the same file system (_not supported on Windows_),
+- remote `$ref` to other files on the same file system
+  (_not supported on Windows_),
 - remote `$ref` to other files at a URL,
 - primary keys,
 - auto incrementing,
@@ -163,11 +164,13 @@ An example API has been defined using connexion and Flask here:
 - `__str__` model methods to support the python `str` function,
 - `__repr__` model methods to support the python `repr` function,
 - `to_dict` model methods to convert instances to dictionaries,
-- `readOnly` and `writeOnly` for influence the conversion to and from dictionaries,
+- `readOnly` and `writeOnly` for influence the conversion to and from
+  dictionaries,
 - exposing created models under `open_alchemy.models` removing the need for
   `models.py` files,
 - ability to mix in arbitrary classes into a model and
-- can use the short `x-` prefix or a namespaced `x-open-alchemy-` prefix.
+- can use the short `x-` prefix or a namespaced `x-open-alchemy-` prefix for
+  extension properties.
 
 ## Contributing
 
