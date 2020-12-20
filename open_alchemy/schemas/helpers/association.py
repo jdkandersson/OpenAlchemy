@@ -185,7 +185,7 @@ def calculate_property_schema(
     property_name = f"{tablename}_{primary_key_property_name}"
     property_schema: types.ColumnSchema = {
         types.OpenApiProperties.TYPE.value: type_,
-        "x-primary-key": True,
+        types.ExtensionProperties.PRIMARY_KEY.value: True,
         "x-foreign-key": foreign_key,
     }
     if format_ is not None:

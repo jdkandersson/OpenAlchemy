@@ -153,7 +153,7 @@ def _check_invalid_keys(
 ) -> types.OptResult:
     """Check for keys that are not valid on a model."""
     invalid_keys = (
-        "x-primary-key",
+        oa_types.ExtensionProperties.PRIMARY_KEY,
         oa_types.ExtensionProperties.AUTOINCREMENT,
         oa_types.ExtensionProperties.INDEX,
         oa_types.ExtensionProperties.UNIQUE,

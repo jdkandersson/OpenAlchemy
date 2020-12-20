@@ -39,6 +39,7 @@ class OpenApiProperties(str, enum.Enum):
     MAX_LENGTH: typing.Literal["maxLength"] = "maxLength"
     READ_ONLY: typing.Literal["readOnly"] = "readOnly"
     WRITE_ONLY: typing.Literal["writeOnly"] = "writeOnly"
+    DESCRIPTION: typing.Literal["description"] = "description"
 
 
 @enum.unique
@@ -48,6 +49,7 @@ class ExtensionProperties(str, enum.Enum):
     AUTOINCREMENT: typing.Literal["x-autoincrement"] = "x-autoincrement"
     INDEX: typing.Literal["x-index"] = "x-index"
     UNIQUE: typing.Literal["x-unique"] = "x-unique"
+    PRIMARY_KEY: typing.Literal["x-primary-key"] = "x-primary-key"
 
 
 class ModelFactory(Protocol):

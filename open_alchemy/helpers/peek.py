@@ -263,7 +263,9 @@ def description(
         The description value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="description")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.DESCRIPTION
+    )
     if value is None:
         return None
     if not isinstance(value, str):
@@ -289,7 +291,9 @@ def primary_key(
         Whether the schema is for a primary key property.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-primary-key")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.PRIMARY_KEY
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

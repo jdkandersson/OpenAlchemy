@@ -28,7 +28,7 @@ def _calculate_x_to_one_schema(
         get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
     )
     if description is not None:
-        return_schema["description"] = description
+        return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
     nullable = oa_helpers.peek.prefer_local(
         get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
     )
@@ -78,7 +78,10 @@ def _get_description(
 ) -> typing.Optional[str]:
     """Retrieve the description value from a schema."""
     return oa_helpers.peek.peek_key(
-        schema=schema, schemas=schemas, key="description", skip_ref=parent
+        schema=schema,
+        schemas=schemas,
+        key=oa_types.OpenApiProperties.DESCRIPTION,
+        skip_ref=parent,
     )
 
 
@@ -265,7 +268,7 @@ def _calculate_one_to_x_schema(
 
     description = _get_description(schema=schema, schemas=schemas, parent=parent)
     if description is not None:
-        return_schema["description"] = description
+        return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
     write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
     if write_only is not None:
         return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only

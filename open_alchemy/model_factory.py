@@ -52,7 +52,7 @@ def model_factory(
         )
     description = helpers.peek.description(schema=schema, schemas={})
     if description is not None:
-        model_schema["description"] = description
+        model_schema[types.OpenApiProperties.DESCRIPTION.value] = description
 
     for prop_name, prop_artifacts in model_artifacts.properties:
         prop_column = column_factory.column_factory(artifacts=prop_artifacts)
