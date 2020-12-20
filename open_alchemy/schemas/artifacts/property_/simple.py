@@ -94,7 +94,7 @@ def get(
     if write_only is not None:
         schema_artifact[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
     if dict_ignore is not None:
-        schema_artifact["x-dict-ignore"] = dict_ignore
+        schema_artifact[oa_types.ExtensionProperties.DICT_IGNORE.value] = dict_ignore
 
     return types.SimplePropertyArtifacts(
         type=oa_types.PropertyType.SIMPLE,

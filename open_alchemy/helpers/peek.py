@@ -754,7 +754,7 @@ def mixins(
         The x-mixins or None.
 
     """
-    key = "x-mixins"
+    key = types.ExtensionProperties.MIXINS
     value = peek_key(schema=schema, schemas=schemas, key=key)
     if value is None:
         return None
@@ -805,7 +805,9 @@ def dict_ignore(
         The x-dict-ignore value.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-dict-ignore")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.DICT_IGNORE
+    )
     if value is None:
         return None
     if not isinstance(value, bool):

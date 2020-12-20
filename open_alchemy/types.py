@@ -65,6 +65,8 @@ class ExtensionProperties(str, enum.Enum):
     COMPOSITE_INDEX: typing.Literal["x-composite-index"] = "x-composite-index"
     COMPOSITE_UNIQUE: typing.Literal["x-composite-unique"] = "x-composite-unique"
     SERVER_DEFAULT: typing.Literal["x-server-default"] = "x-server-default"
+    MIXINS: typing.Literal["x-mixins"] = "x-mixins"
+    DICT_IGNORE: typing.Literal["x-dict-ignore"] = "x-dict-ignore"
 
 
 class ModelFactory(Protocol):
