@@ -49,6 +49,7 @@ class ExtensionProperties(str, enum.Enum):
     INDEX: typing.Literal["x-index"] = "x-index"
     UNIQUE: typing.Literal["x-unique"] = "x-unique"
     PRIMARY_KEY: typing.Literal["x-primary-key"] = "x-primary-key"
+    TABLENAME: typing.Literal["x-tablename"] = "x-tablename"
 
 
 class ModelFactory(Protocol):

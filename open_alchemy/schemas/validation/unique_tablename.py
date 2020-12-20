@@ -77,7 +77,8 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
         return types.Result(
             valid=False,
             reason=(
-                f'duplicate "x-tablename" value {tablename} defined on the schema '
+                f'duplicate "{oa_types.ExtensionProperties.TABLENAME}" value '
+                f"{tablename} defined on the schema "
                 f"{name}, already defined on the schema {seen_on_schema}"
             ),
         )

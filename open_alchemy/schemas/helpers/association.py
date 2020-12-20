@@ -263,7 +263,7 @@ def calculate_schema(
 
     schema = {
         types.OpenApiProperties.TYPE: "object",
-        "x-tablename": secondary,
+        types.ExtensionProperties.TABLENAME: secondary,
         "properties": {
             parent_property.name: parent_property.schema,
             ref_property.name: ref_property.schema,

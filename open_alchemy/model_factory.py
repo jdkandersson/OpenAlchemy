@@ -128,9 +128,11 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
         # De-referencing schema
         schema = helpers.schema.prepare(schema=schema, schemas=schemas)
         # Checking for tablename key
-        if "x-tablename" not in schema:
+        tablename = helpers.peek.tablename(schema=schema, schemas={})
+        if tablename is None:
             raise exceptions.MalformedSchemaError(
-                f'"x-tablename" is a required schema property for {name}.'
+                f'"{types.ExtensionProperties.TABLENAME}" is a required schema '
+                f"property for {name}."
             )
     else:
         parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)

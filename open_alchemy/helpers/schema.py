@@ -37,7 +37,9 @@ def constructable(*, schema: types.Schema, schemas: types.Schemas) -> bool:
             return False
         return constructable(schema=all_of[0], schemas=schemas)
     # Check for tablename and inherits
-    tablename = peek.peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    tablename = peek.peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.TABLENAME
+    )
     try:
         schema_inherits = inherits(schema=schema, schemas=schemas)
     except exceptions.MalformedSchemaError:

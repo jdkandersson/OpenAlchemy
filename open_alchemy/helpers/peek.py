@@ -317,7 +317,9 @@ def tablename(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optiona
         The x-tablename or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-tablename")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.TABLENAME
+    )
     if value is None:
         return None
     if not isinstance(value, str):

@@ -66,7 +66,8 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
     # tablename is not defined
     return {
         "result": _reason_to_result(
-            reason='no "x-tablename" key was found, define the name of the table'
+            reason=f'no "{_oa_types.ExtensionProperties.TABLENAME}" key was found, '
+            "define the name of the table"
         )
     }
 
