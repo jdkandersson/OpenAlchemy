@@ -54,10 +54,9 @@ def model_factory(
     model_schema: types.Schema = {"type": "object", "properties": {}}
     if required_exists:
         model_schema["required"] = required_array
-    if "x-inherits" in schema:
-        model_schema["x-inherits"] = helpers.ext_prop.get(
-            source=schema, name="x-inherits"
-        )
+    inherits = helpers.peek.inherits(schema=schema, schemas={})
+    if inherits is not None:
+        model_schema[types.ExtensionProperties.INHERITS] = inherits
     description = helpers.peek.description(schema=schema, schemas={})
     if description is not None:
         model_schema[types.OpenApiProperties.DESCRIPTION.value] = description
@@ -141,11 +140,13 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
             schema=schema, schemas=schemas, skip_name=parent
         )
         # Checking for inherits key
-        if "x-inherits" not in schema:
+        inherits_schema_value = helpers.peek.inherits(schema=schema, schemas={})
+        if inherits_schema_value is None:
             raise exceptions.MalformedSchemaError(
-                f'"x-inherits" is a required schema property for {name}.'
+                f'"{types.ExtensionProperties.INHERITS}" is a required schema property '
+                f"for {name}."
             )
-        schema["x-inherits"] = parent
+        schema[types.ExtensionProperties.INHERITS] = parent
     # Checking for object type
     type_ = schema.get(types.OpenApiProperties.TYPE)
     if type_ != "object":

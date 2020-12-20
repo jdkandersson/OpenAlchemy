@@ -345,7 +345,9 @@ def inherits(
         The inherits or None.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="x-inherits")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.INHERITS
+    )
     if value is None:
         return None
     if not isinstance(value, (str, bool)):
