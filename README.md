@@ -165,8 +165,9 @@ An example API has been defined using connexion and Flask here:
 - `to_dict` model methods to convert instances to dictionaries,
 - `readOnly` and `writeOnly` for influence the conversion to and from dictionaries,
 - exposing created models under `open_alchemy.models` removing the need for
-  `models.py` files and
-- ability to mix in arbitrary classes into a model.
+  `models.py` files,
+- ability to mix in arbitrary classes into a model and
+- can use the short `x-` prefix or a namespaced `x-open-alchemy-` prefix.
 
 ## Contributing
 
