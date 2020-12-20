@@ -70,6 +70,7 @@ class ExtensionProperties(str, enum.Enum):
     MIXINS: Literal["x-mixins"] = "x-mixins"
     DICT_IGNORE: Literal["x-dict-ignore"] = "x-dict-ignore"
     BACKREFS: Literal["x-backrefs"] = "x-backrefs"
+    DE_REF: Literal["x-de-$ref"] = "x-de-$ref"
 
 
 class ModelFactory(Protocol):

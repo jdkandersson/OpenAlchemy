@@ -23,7 +23,9 @@ def convert(
         The converted value.
 
     """
-    ref_model_name = helpers.ext_prop.get(source=schema, name="x-de-$ref")
+    ref_model_name = helpers.ext_prop.get(
+        source=schema, name=oa_types.ExtensionProperties.DE_REF
+    )
     if ref_model_name is None:
         raise exceptions.MalformedSchemaError(
             "To construct object parameters the schema for the property must "

@@ -21,7 +21,7 @@ def _calculate_x_to_one_schema(
     """Calculate the schema for a x-to-one relationship."""
     return_schema: oa_types.ObjectRefSchema = {
         oa_types.OpenApiProperties.TYPE.value: "object",
-        "x-de-$ref": parent,
+        oa_types.ExtensionProperties.DE_REF.value: parent,
     }
 
     description = oa_helpers.peek.prefer_local(
@@ -268,7 +268,7 @@ def _calculate_one_to_x_schema(
         oa_types.OpenApiProperties.TYPE.value: "array",
         oa_types.OpenApiProperties.ITEMS.value: {
             oa_types.OpenApiProperties.TYPE.value: "object",
-            "x-de-$ref": parent,
+            oa_types.ExtensionProperties.DE_REF.value: parent,
         },
     }
 

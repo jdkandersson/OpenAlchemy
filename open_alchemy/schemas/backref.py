@@ -64,7 +64,7 @@ def _calculate_artifacts(
     assert backref is not None
     return_schema: types.Schema = {
         types.OpenApiProperties.TYPE: "object",
-        "x-de-$ref": schema_name,
+        types.ExtensionProperties.DE_REF: schema_name,
     }
     if is_array:
         return_schema = {
