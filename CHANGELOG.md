@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for namespaced `x-open-alchemy-` prefix on top of the shorter
+  `x-` prefix.
+
 ## [v2.0.2] - 2020-12-19
 
 ### Changed
