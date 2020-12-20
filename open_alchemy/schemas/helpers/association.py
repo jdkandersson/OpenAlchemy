@@ -191,7 +191,7 @@ def calculate_property_schema(
     if format_ is not None:
         property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        property_schema["maxLength"] = max_length
+        property_schema[types.OpenApiProperties.MAX_LENGTH.value] = max_length
 
     return TCalculatePropertySchemaReturn(name=property_name, schema=property_schema)
 

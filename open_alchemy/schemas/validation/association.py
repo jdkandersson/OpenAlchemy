@@ -297,7 +297,7 @@ def _check_properties_valid(
         checks = (
             (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
             (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-            ("maxLength", oa_helpers.peek.max_length),
+            (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
         )
         for key, func in checks:
             # Check that values match

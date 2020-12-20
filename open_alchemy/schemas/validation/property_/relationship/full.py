@@ -56,7 +56,7 @@ def _check_pre_defined_property_schema(
     checks = (
         (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        ("maxLength", oa_helpers.peek.max_length),
+        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
         ("default", oa_helpers.peek.default),
     )
     for key, func in checks:
@@ -341,7 +341,7 @@ def _check_backref_property_properties(
     checks = (
         (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
         (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        ("maxLength", oa_helpers.peek.max_length),
+        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
         ("default", oa_helpers.peek.default),
     )
     for key, func in checks:

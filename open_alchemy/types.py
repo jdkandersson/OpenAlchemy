@@ -36,6 +36,7 @@ class OpenApiProperties(str, enum.Enum):
     TYPE: typing.Literal["type"] = "type"
     NULLABLE: typing.Literal["nullable"] = "nullable"
     FORMAT: typing.Literal["format"] = "format"
+    MAX_LENGTH: typing.Literal["maxLength"] = "maxLength"
 
 
 @enum.unique

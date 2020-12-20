@@ -181,7 +181,9 @@ def max_length(*, schema: types.Schema, schemas: types.Schemas) -> typing.Option
         The maxLength value or None if it was not found.
 
     """
-    value = peek_key(schema=schema, schemas=schemas, key="maxLength")
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.OpenApiProperties.MAX_LENGTH
+    )
     if value is None:
         return None
     if not isinstance(value, int) or isinstance(value, bool):
@@ -675,7 +677,7 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     if format_value is not None:
         resolved_schema[types.OpenApiProperties.FORMAT.value] = format_value
     if max_length_value is not None:
-        resolved_schema["maxLength"] = max_length_value
+        resolved_schema[types.OpenApiProperties.MAX_LENGTH.value] = max_length_value
     try:
         facades.jsonschema.validate(value, resolved_schema)
     except facades.jsonschema.ValidationError as exc:

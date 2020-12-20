@@ -82,7 +82,7 @@ def get(
     if format_ is not None:
         schema_artifact[oa_types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        schema_artifact["maxLength"] = max_length
+        schema_artifact[oa_types.OpenApiProperties.MAX_LENGTH.value] = max_length
     if description is not None:
         schema_artifact["description"] = description
     if nullable is not None:

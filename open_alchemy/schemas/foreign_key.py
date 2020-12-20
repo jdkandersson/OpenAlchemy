@@ -208,7 +208,9 @@ def _calculate_foreign_key_property_artifacts(
     if format_ is not None:
         foreign_key_property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        foreign_key_property_schema["maxLength"] = max_length
+        foreign_key_property_schema[
+            types.OpenApiProperties.MAX_LENGTH.value
+        ] = max_length
     if default is not None:
         foreign_key_property_schema["default"] = default
     if server_default is not None:
