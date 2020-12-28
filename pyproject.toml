@@ -51,7 +51,7 @@ pydocstyle = "^5.1.1"
 black = "^20.8b1"
 pre-commit = "^2.9.3"
 isort = "^5.6.4"
-Sphinx = "^3.4.0"
+Sphinx = "^3.4.1"
 doc8 = "^0.8.1"
 connexion = {version = "^2.7.0", extras = ["swagger-ui"]}
 Flask-SQLAlchemy = "^2.4.4"
