@@ -1,4 +1,3 @@
-.. contents::
 
 .. _null:
 

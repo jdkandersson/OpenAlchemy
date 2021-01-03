@@ -19,11 +19,11 @@
 # -- Project information -----------------------------------------------------
 
 project = "OpenAlchemy"
-copyright = "2019, David Andersson"
+copyright = "2021, David Andersson"
 author = "David Andersson"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.0"
+release = "2.0.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -31,7 +31,10 @@ release = "0.2.0"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = [
+    "myst_parser",
+    "sphinx_copybutton",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -47,7 +50,7 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "alabaster"
+html_theme = "furo"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -60,7 +63,16 @@ master_doc = "index"
 # of the sidebar.
 #
 html_logo = "logo.png"
+html_title = ""
 
-html_sidebars = {
-    "**": ["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
-}
+# html_sidebars = {"**": ["relations.html", "sourcelink.html", "searchbox.html"]}
+# html_sidebars = {
+#     "**": [
+#         "sidebar/scroll-start.html",
+#         "sidebar/brand.html",
+#         "sidebar/search.html",
+#         "sidebar/navigation.html",
+#         "sidebar/ethical-ads.html",
+#         "sidebar/scroll-end.html",
+#     ]
+# }
