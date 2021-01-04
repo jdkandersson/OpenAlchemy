@@ -122,7 +122,7 @@ An example API has been defined using connexion and Flask here:
 
 ## Buy me a coffee
 
-[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png =217x60)](https://www.buymeacoffee.com/jdkandersson)
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/jdkandersson)
 
 ## Features
 
