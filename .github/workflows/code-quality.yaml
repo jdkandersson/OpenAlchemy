@@ -170,7 +170,7 @@ jobs:
       - build
     steps:
       - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.7
+        uses: actions/download-artifact@v2.0.8
         with:
           name: wheel
           path: dist/
@@ -217,7 +217,7 @@ jobs:
       - test-production-test-pypi
     steps:
       - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.7
+        uses: actions/download-artifact@v2.0.8
         with:
           name: wheel
           path: dist/
@@ -277,7 +277,7 @@ jobs:
           version: v${{ steps.tag_name.outputs.current_version }}
           path: ./CHANGELOG.md
       - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.7
+        uses: actions/download-artifact@v2.0.8
         with:
           name: wheel
           path: dist/
