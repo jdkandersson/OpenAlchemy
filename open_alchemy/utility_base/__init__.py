@@ -4,9 +4,10 @@ import json
 import typing
 
 from .. import exceptions
-from .. import facades
 from .. import helpers
 from .. import types as oa_types
+from ..facades import jsonschema
+from ..facades import models
 from . import from_dict
 from . import repr_
 from . import to_dict
@@ -81,7 +82,7 @@ class UtilityBase:
                 x_inherits_type=type(parent_name),
             )
         # Try to get model
-        parent: TOptUtilityBase = facades.models.get_model(name=parent_name)
+        parent: TOptUtilityBase = models.get_model(name=parent_name)
         if parent is None:
             raise exceptions.SchemaNotFoundError(
                 "The parent model was not found on open_alchemy.models.",
@@ -98,8 +99,8 @@ class UtilityBase:
         # Check dictionary
         schema = cls._get_schema()
         try:
-            facades.jsonschema.validate(instance=kwargs, schema=schema)
-        except facades.jsonschema.ValidationError as exc:
+            jsonschema.validate(instance=kwargs, schema=schema)
+        except jsonschema.ValidationError as exc:
             raise exceptions.MalformedModelDictionaryError(
                 "The dictionary passed to from_dict is not a valid instance of the "
                 "model schema.",

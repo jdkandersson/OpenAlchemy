@@ -4,9 +4,9 @@
 import dataclasses
 import typing
 
-from open_alchemy import facades
 from open_alchemy import schemas
 from open_alchemy import types as oa_types
+from open_alchemy.facades import code_formatter
 
 from . import artifacts as _artifacts
 from . import model as _model
@@ -32,4 +32,4 @@ def generate(*, artifacts: schemas.artifacts.types.ModelsModelArtifacts) -> str:
         )
     )
     raw_source = _models.generate(models=model_sources)
-    return facades.code_formatter.apply(source=raw_source)
+    return code_formatter.apply(source=raw_source)

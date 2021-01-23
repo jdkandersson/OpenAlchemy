@@ -5,13 +5,13 @@ import os
 import typing
 
 from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy import types
+from open_alchemy.facades import jsonschema
 
 _DIRECTORY = os.path.dirname(__file__)
 _SCHEMAS_FILE = os.path.join(_DIRECTORY, "extension-schemas.json")
 _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, "common-schemas.json")
-_resolver, (_SCHEMAS, _) = facades.jsonschema.resolver(  # pylint: disable=invalid-name
+_resolver, (_SCHEMAS, _) = jsonschema.resolver(  # pylint: disable=invalid-name
     _SCHEMAS_FILE, _COMMON_SCHEMAS_FILE
 )
 
@@ -65,8 +65,8 @@ def get(
 
     schema = _SCHEMAS.get(name)
     try:
-        facades.jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
-    except facades.jsonschema.ValidationError as exc:
+        jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
+    except jsonschema.ValidationError as exc:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "
             "valid. "

@@ -4,8 +4,8 @@ import enum
 import typing
 
 from .. import exceptions
-from .. import facades
 from .. import types
+from ..facades import models
 from . import all_of as all_of_helper
 from . import peek as peek_helper
 from . import ref as ref_helper
@@ -312,7 +312,7 @@ def _retrieve_model_parents_schema(
     """
     inherits = peek_helper.inherits(schema=schema, schemas={})
     if isinstance(inherits, str):
-        parent_schema = facades.models.get_model_schema(name=inherits)
+        parent_schema = models.get_model_schema(name=inherits)
         if parent_schema is None:
             raise exceptions.InheritanceError(f"The parent {inherits} is not defined.")
         yield from _retrieve_model_parents_schema(parent_schema)
