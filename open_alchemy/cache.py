@@ -138,9 +138,11 @@ def schemas_are_valid(filename: str) -> None:
     """
     path = pathlib.Path(filename)
     if not path.exists():
-        raise exceptions.CacheError(f"the spec file does not exists, {filename=}")
+        raise exceptions.CacheError(
+            f"the spec file does not exists, filename={filename}"
+        )
     if not path.is_file():
-        raise exceptions.CacheError(f"the spec file is not a file, {filename=}")
+        raise exceptions.CacheError(f"the spec file is not a file, filename={filename}")
     file_hash = calculate_hash(path.read_text())
 
     cache_path = calculate_cache_path(path)
