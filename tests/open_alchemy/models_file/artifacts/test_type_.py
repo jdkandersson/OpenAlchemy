@@ -1,5 +1,4 @@
 """Tests for type_."""
-# pylint: disable=protected-access
 
 import pytest
 

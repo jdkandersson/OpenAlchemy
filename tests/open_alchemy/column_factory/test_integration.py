@@ -3,8 +3,8 @@
 import pytest
 
 from open_alchemy import column_factory
-from open_alchemy import facades
 from open_alchemy import types
+from open_alchemy.facades import sqlalchemy
 
 
 @pytest.mark.column
@@ -43,8 +43,8 @@ def test_integration_simple():
 
     column = column_factory.column_factory(artifacts=artifacts)
 
-    assert isinstance(column, facades.sqlalchemy.types.Column)
-    assert isinstance(column.type, facades.sqlalchemy.types.Boolean)
+    assert isinstance(column, sqlalchemy.types.Column)
+    assert isinstance(column.type, sqlalchemy.types.Boolean)
 
 
 @pytest.mark.column
@@ -76,8 +76,8 @@ def test_integration_json():
 
     column = column_factory.column_factory(artifacts=artifacts)
 
-    assert isinstance(column, facades.sqlalchemy.types.Column)
-    assert isinstance(column.type, facades.sqlalchemy.types.JSON)
+    assert isinstance(column, sqlalchemy.types.Column)
+    assert isinstance(column.type, sqlalchemy.types.JSON)
 
 
 @pytest.mark.column

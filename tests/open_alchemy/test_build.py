@@ -270,7 +270,6 @@ init_json(parent_path / "spec.json")"""
 
 
 GENERATE_INIT_MODELS_FILE_TESTS = [
-    # pylint: disable=line-too-long
     pytest.param(
         {
             "Schema1": {

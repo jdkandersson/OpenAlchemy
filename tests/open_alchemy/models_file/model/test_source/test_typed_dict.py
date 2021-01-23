@@ -1,13 +1,13 @@
 """Tests for model."""
-# pylint: disable=protected-access
 
 import pytest
 
-from open_alchemy import models_file
+from open_alchemy.models_file import types
+from open_alchemy.models_file.model import source as model_source
 
-_ColumnArtifacts = models_file.types.ColumnArtifacts
-_TypedDictArtifacts = models_file.types.TypedDictArtifacts
-_TypedDictClassArtifacts = models_file.types.TypedDictClassArtifacts
+_ColumnArtifacts = types.ColumnArtifacts
+_TypedDictArtifacts = types.TypedDictArtifacts
+_TypedDictClassArtifacts = types.TypedDictClassArtifacts
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ def test_typed_dict_required(artifacts, expected_source):
     WHEN typed_dict_required is called with the artifacts
     THEN the source code for the typed dict class is returned.
     """
-    source = models_file._model._source.typed_dict_required(artifacts=artifacts)
+    source = model_source.typed_dict_required(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -132,6 +132,6 @@ def test_typed_dict_not_required(artifacts, expected_source):
     WHEN typed_dict_not_required is called with the artifacts
     THEN the source code for the typed dict class is returned.
     """
-    source = models_file._model._source.typed_dict_not_required(artifacts=artifacts)
+    source = model_source.typed_dict_not_required(artifacts=artifacts)
 
     assert source == expected_source

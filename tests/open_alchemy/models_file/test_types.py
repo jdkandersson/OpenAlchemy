@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy import models_file
+from open_alchemy.models_file import types
 
 
 @pytest.mark.parametrize(
@@ -58,7 +58,7 @@ from open_alchemy import models_file
         ),
         (
             None,
-            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            [types.ColumnArtifacts(name="column_1", type="type_1")],
             """
     SQLAlchemy model protocol.
 
@@ -70,8 +70,8 @@ from open_alchemy import models_file
         (
             None,
             [
-                models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                types.ColumnArtifacts(name="column_1", type="type_1"),
+                types.ColumnArtifacts(name="column_2", type="type_2"),
             ],
             """
     SQLAlchemy model protocol.
@@ -84,7 +84,7 @@ from open_alchemy import models_file
         ),
         (
             "description 1",
-            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            [types.ColumnArtifacts(name="column_1", type="type_1")],
             """
     SQLAlchemy model protocol.
 
@@ -114,16 +114,16 @@ def test_docstring(description, columns, expected_docstring):
     WHEN model_docstring is called with the artifacts with the description and columns
     THEN the expected docstring is returned.
     """
-    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+    artifacts = types.SQLAlchemyModelArtifacts(
         name="Model 1",
         empty=not columns,
         columns=columns,
-        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        arg=types.ArgArtifacts(required=[], not_required=[]),
         parent_cls="Parent 1",
         description=description,
     )
 
-    returned_description = models_file.types.model_docstring(artifacts=artifacts)
+    returned_description = types.model_docstring(artifacts=artifacts)
 
     assert returned_description == expected_docstring
 
@@ -144,7 +144,7 @@ def test_docstring(description, columns, expected_docstring):
         """,
         ),
         (
-            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            [types.ColumnArtifacts(name="column_1", type="type_1")],
             None,
             """
         function description 1
@@ -155,7 +155,7 @@ def test_docstring(description, columns, expected_docstring):
         """,
         ),
         (
-            [models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
+            [types.ColumnArtifacts(name="column_1", type="type_1")],
             "return value description 1",
             """
         function description 1
@@ -170,8 +170,8 @@ def test_docstring(description, columns, expected_docstring):
         ),
         (
             [
-                models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
-                models_file.types.ColumnArtifacts(name="column_2", type="type_2"),
+                types.ColumnArtifacts(name="column_1", type="type_1"),
+                types.ColumnArtifacts(name="column_2", type="type_2"),
             ],
             None,
             """
@@ -201,16 +201,16 @@ def test_model_function_docstring(
     WHEN model_function_docstring is called with the artifacts with the columns
     THEN the expected docstring is returned.
     """
-    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+    artifacts = types.SQLAlchemyModelArtifacts(
         name="Model 1",
         empty=not columns,
         columns=columns,
-        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        arg=types.ArgArtifacts(required=[], not_required=[]),
         parent_cls="Parent 1",
         description=None,
     )
 
-    returned_description = models_file.types.model_function_docstring(
+    returned_description = types.model_function_docstring(
         artifacts=artifacts,
         function_description="function description 1",
         return_value_description=return_value_description,
@@ -223,17 +223,17 @@ def test_model_function_docstring(
     "artifacts, expected_docs",
     [
         (
-            models_file.types.ColumnArtifacts(name="column_1", type="type_1"),
+            types.ColumnArtifacts(name="column_1", type="type_1"),
             "column_1: The column_1 of the Model.",
         ),
         (
-            models_file.types.ColumnArtifacts(
+            types.ColumnArtifacts(
                 name="column_1", type="type_1", description="description 1"
             ),
             "column_1: description 1",
         ),
         (
-            models_file.types.ColumnArtifacts(
+            types.ColumnArtifacts(
                 name="column_1",
                 type="type_1",
                 description=(
@@ -243,7 +243,7 @@ def test_model_function_docstring(
             "column_1: description 1 that is very long and will cause line wrappingg",
         ),
         (
-            models_file.types.ColumnArtifacts(
+            types.ColumnArtifacts(
                 name="column_1",
                 type="type_1",
                 description=(
@@ -254,7 +254,7 @@ def test_model_function_docstring(
             wrappinggg""",
         ),
         (
-            models_file.types.ColumnArtifacts(
+            types.ColumnArtifacts(
                 name="column_1",
                 type="type_1",
                 description=(
@@ -268,7 +268,7 @@ def test_model_function_docstring(
             write""",
         ),
         (
-            models_file.types.ColumnArtifacts(
+            types.ColumnArtifacts(
                 name="column_1",
                 type="type_1",
                 description=(
@@ -300,9 +300,7 @@ def test_attr(artifacts, expected_docs):
     WHEN model_attr_docs is called with the artifacts and name
     THEN the expected docs are returned.
     """
-    returned_docs = models_file.types.model_attr_docs(
-        artifacts=artifacts, model_name="Model"
-    )
+    returned_docs = types.model_attr_docs(artifacts=artifacts, model_name="Model")
 
     assert returned_docs == expected_docs
 
@@ -350,13 +348,11 @@ def test_arg(description, expected_docs):
     WHEN model_arg_docs is called with the artifacts and name
     THEN the expected docs are returned.
     """
-    artifacts = models_file.types.ColumnArtifacts(
+    artifacts = types.ColumnArtifacts(
         name="column_1", type="type_1", description=description
     )
 
-    returned_docs = models_file.types.model_arg_docs(
-        artifacts=artifacts, model_name="Model"
-    )
+    returned_docs = types.model_arg_docs(artifacts=artifacts, model_name="Model")
 
     assert returned_docs == expected_docs
 
@@ -368,11 +364,11 @@ def test_sqlalchemy_model_artifacts_docs():
     WHEN documentation properties are accessed
     THEN the documentation is produced.
     """
-    artifacts = models_file.types.SQLAlchemyModelArtifacts(
+    artifacts = types.SQLAlchemyModelArtifacts(
         name="Model 1",
         empty=False,
-        columns=[models_file.types.ColumnArtifacts(name="column_1", type="type_1")],
-        arg=models_file.types.ArgArtifacts(required=[], not_required=[]),
+        columns=[types.ColumnArtifacts(name="column_1", type="type_1")],
+        arg=types.ArgArtifacts(required=[], not_required=[]),
         parent_cls="Parent 1",
         description="description 1",
     )

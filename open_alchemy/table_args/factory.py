@@ -9,8 +9,8 @@ import typing
 from sqlalchemy import schema
 
 from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy import types
+from open_alchemy.facades import jsonschema
 
 _DIRECTORY = os.path.dirname(__file__)
 _PATHS = ("..", "helpers", "ext_prop")
@@ -18,7 +18,7 @@ _COMMON_SCHEMAS_FILE = os.path.join(_DIRECTORY, *_PATHS, "common-schemas.json")
 (
     _resolver,  # pylint: disable=invalid-name
     (_COMMON_SCHEMAS,),
-) = facades.jsonschema.resolver(_COMMON_SCHEMAS_FILE)
+) = jsonschema.resolver(_COMMON_SCHEMAS_FILE)
 
 
 def _spec_to_schema_name(
@@ -45,11 +45,11 @@ def _spec_to_schema_name(
 
     for name in schema_names:
         try:
-            facades.jsonschema.validate(
+            jsonschema.validate(
                 instance=spec, schema=_COMMON_SCHEMAS[name], resolver=_resolver
             )
             return name
-        except facades.jsonschema.ValidationError:
+        except jsonschema.ValidationError:
             continue
     raise exceptions.SchemaNotFoundError("Specification did not match any schemas.")
 

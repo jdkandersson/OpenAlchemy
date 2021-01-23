@@ -8,7 +8,7 @@ import pytest
 import yaml
 
 import open_alchemy
-from open_alchemy import facades
+from open_alchemy.facades.sqlalchemy import types as sqlalchemy_types
 
 
 @pytest.mark.integration
@@ -190,7 +190,7 @@ def test_schema():
     # Checking model
     assert model.__tablename__ == "table"
     assert hasattr(model, "column")
-    assert isinstance(model.column.type, facades.sqlalchemy.types.Integer)
+    assert isinstance(model.column.type, sqlalchemy_types.Integer)
 
 
 BASIC_SPEC = {

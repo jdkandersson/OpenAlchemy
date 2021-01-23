@@ -4,8 +4,9 @@
 
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
+from open_alchemy.models_file import types as models_types
+from open_alchemy.models_file.artifacts import typed_dict as models_typed_dict
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
@@ -181,7 +182,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type=(
                     "typing.Optional[typing.Dict["
@@ -202,7 +203,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type=(
                     "typing.Sequence[typing.Dict["
@@ -235,7 +236,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
@@ -256,7 +257,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
@@ -279,7 +280,7 @@ _CALCULATE_TESTS = [
     pytest.param(
         [("prop_1", _construct_json_property_artifacts(write_only=None))],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Any",
                 description=None,
@@ -290,7 +291,7 @@ _CALCULATE_TESTS = [
     pytest.param(
         [("prop_1", _construct_json_property_artifacts(write_only=False))],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Any",
                 description=None,
@@ -311,7 +312,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='"RefModelDict"',
                 description=None,
@@ -329,7 +330,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='"RefModelDict"',
                 description=None,
@@ -355,7 +356,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='"RefModelDict"',
                 description=None,
@@ -371,7 +372,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Sequence["RefModelDict"]',
                 description=None,
@@ -389,7 +390,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Sequence["RefModelDict"]',
                 description=None,
@@ -410,7 +411,7 @@ _CALCULATE_TESTS = [
             )
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description="description 1",
@@ -434,12 +435,12 @@ _CALCULATE_TESTS = [
             ),
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="int",
                 description=None,
@@ -459,7 +460,7 @@ def test__calculate(artifacts, expected_columns):
     WHEN _calculate is called with the artifacts
     THEN the expected columns are returned.
     """
-    returned_columns = models_file.artifacts._typed_dict._calculate(artifacts=artifacts)
+    returned_columns = models_typed_dict._calculate(artifacts=artifacts)
 
     assert list(returned_columns) == expected_columns
 
@@ -488,7 +489,7 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
@@ -514,7 +515,7 @@ CALCULATE_TESTS = [
         ),
         [],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
@@ -547,12 +548,12 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="int",
                 description=None,
@@ -586,14 +587,14 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="int",
                 description=None,
             ),
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
@@ -626,14 +627,14 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
             ),
         ],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="int",
                 description=None,
@@ -667,12 +668,12 @@ CALCULATE_TESTS = [
         ),
         [],
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="int",
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="int",
                 description=None,
@@ -695,7 +696,7 @@ def test_calculate(artifacts, expected_required_columns, expected_not_required_c
     WHEN calculate is called with the artifacts
     THEN the expected columns are returned.
     """
-    returned_columns = models_file.artifacts._typed_dict.calculate(artifacts=artifacts)
+    returned_columns = models_typed_dict.calculate(artifacts=artifacts)
 
     assert returned_columns.required == expected_required_columns
     assert returned_columns.not_required == expected_not_required_columns

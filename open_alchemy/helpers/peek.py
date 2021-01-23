@@ -3,8 +3,8 @@
 import typing
 
 from open_alchemy import exceptions
-from open_alchemy import facades
 from open_alchemy import types
+from open_alchemy.facades import jsonschema
 
 from . import ext_prop as ext_prop_helper
 from . import ref as ref_helper
@@ -703,8 +703,8 @@ def default(*, schema: types.Schema, schemas: types.Schemas) -> types.TColumnDef
     if max_length_value is not None:
         resolved_schema[types.OpenApiProperties.MAX_LENGTH.value] = max_length_value
     try:
-        facades.jsonschema.validate(value, resolved_schema)
-    except facades.jsonschema.ValidationError as exc:
+        jsonschema.validate(value, resolved_schema)
+    except jsonschema.ValidationError as exc:
         raise exceptions.MalformedSchemaError(
             "The default value does not conform to the schema. "
             f"The value is: {repr(value)}"

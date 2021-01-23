@@ -1,14 +1,14 @@
 """Tests for model source generation."""
-# pylint: disable=protected-access
 
 import pytest
 
-from open_alchemy import models_file
+from open_alchemy.models_file import types
+from open_alchemy.models_file.model import source as model_source
 
-_SQLAlchemyModelArtifacts = models_file.types.SQLAlchemyModelArtifacts
-_ArgArtifacts = models_file.types.ArgArtifacts
-_ColumnArtifacts = models_file.types.ColumnArtifacts
-_ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
+_SQLAlchemyModelArtifacts = types.SQLAlchemyModelArtifacts
+_ArgArtifacts = types.ArgArtifacts
+_ColumnArtifacts = types.ColumnArtifacts
+_ColumnArgArtifacts = types.ColumnArgArtifacts
 
 
 @pytest.mark.parametrize(
@@ -386,6 +386,6 @@ def test_sqlalchemy(artifacts, expected_source):
     WHEN sqlalchemy is called with the artifacts
     THEN the source code for the model class is returned.
     """
-    source = models_file._model._source.sqlalchemy(artifacts=artifacts)
+    source = model_source.sqlalchemy(artifacts=artifacts)
 
     assert source == expected_source

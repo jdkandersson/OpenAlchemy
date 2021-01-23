@@ -1,17 +1,17 @@
 """Tests for model."""
-# pylint: disable=protected-access
 
 import pytest
 
-from open_alchemy import models_file
+from open_alchemy.models_file import types
+from open_alchemy.models_file.model import source as models_source
 
-_SQLAlchemyModelArtifacts = models_file.types.SQLAlchemyModelArtifacts
-_ArgArtifacts = models_file.types.ArgArtifacts
-_ColumnArtifacts = models_file.types.ColumnArtifacts
-_ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
-_TypedDictArtifacts = models_file.types.TypedDictArtifacts
-_TypedDictClassArtifacts = models_file.types.TypedDictClassArtifacts
-_ModelArtifacts = models_file.types.ModelArtifacts
+_SQLAlchemyModelArtifacts = types.SQLAlchemyModelArtifacts
+_ArgArtifacts = types.ArgArtifacts
+_ColumnArtifacts = types.ColumnArtifacts
+_ColumnArgArtifacts = types.ColumnArgArtifacts
+_TypedDictArtifacts = types.TypedDictArtifacts
+_TypedDictClassArtifacts = types.TypedDictClassArtifacts
+_ModelArtifacts = types.ModelArtifacts
 
 
 @pytest.mark.parametrize(
@@ -472,6 +472,6 @@ def test_generate(artifacts, expected_source):
     WHEN generate is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.generate(artifacts=artifacts)
+    source = models_source.generate(artifacts=artifacts)
 
     assert source == expected_source

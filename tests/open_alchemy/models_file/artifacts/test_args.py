@@ -4,7 +4,6 @@
 
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
 from open_alchemy.models_file import types as models_types
 from open_alchemy.models_file.artifacts import args
@@ -537,7 +536,7 @@ def test__calculate(artifacts, expected_columns):
     WHEN _calculate is called with the artifacts
     THEN the expected columns are returned.
     """
-    returned_columns = models_file.artifacts._args._calculate(artifacts=artifacts)
+    returned_columns = args._calculate(artifacts=artifacts)
 
     assert list(returned_columns) == expected_columns
 
