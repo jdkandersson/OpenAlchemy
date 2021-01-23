@@ -53,6 +53,10 @@ repos:
       - id: check-docstring-first
         exclude: ".*\/dist\/.*"
       - id: check-merge-conflict
+      - id: check-json
+      - id: check-yaml
+        exclude: "^docs/"
+      - id: check-toml
       - id: debug-statements
       - id: name-tests-test
         args: ["--django"]
@@ -70,3 +74,8 @@ repos:
     hooks:
       - id: markdownlint-cli2
         language_version: system
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v2.2.1"
+    hooks:
+      - exclude: "^docs/|.vscode|.ts$"
+        id: prettier

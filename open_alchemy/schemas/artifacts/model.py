@@ -2,12 +2,12 @@
 
 import typing
 
-from ... import table_args
 from ... import types as oa_types
 from ...helpers import ext_prop
 from ...helpers import inheritance
 from ...helpers import peek
 from ...helpers import schema as schema_helper
+from ...table_args import factory
 from ..helpers import iterate
 from . import types
 
@@ -67,14 +67,14 @@ def get(
         get_value=peek.composite_index, schema=schema, schemas=schemas
     )
     if composite_index_value is not None:
-        composite_index = table_args.factory.map_index(spec=composite_index_value)
+        composite_index = factory.map_index(spec=composite_index_value)
 
     composite_unique: typing.Optional[oa_types.UniqueList] = None
     composite_unique_value = peek.prefer_local(
         get_value=peek.composite_unique, schema=schema, schemas=schemas
     )
     if composite_unique_value is not None:
-        composite_unique = table_args.factory.map_unique(spec=composite_unique_value)
+        composite_unique = factory.map_unique(spec=composite_unique_value)
 
     backrefs = iterate.backrefs_items(schema=schema, schemas=schemas)
     backrefs_artifacts = map(

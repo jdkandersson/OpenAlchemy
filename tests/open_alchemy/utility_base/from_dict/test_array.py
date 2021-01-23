@@ -3,7 +3,7 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base.from_dict import array
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,7 @@ def test_convert_invalid(schema, value, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.from_dict.array.convert(value, schema=schema)
+        array.convert(value, schema=schema)
 
 
 @pytest.mark.parametrize(
@@ -63,6 +63,6 @@ def test_convert_valid(
     from_dict_func = mocked_facades_models_get_model.return_value.from_dict
     from_dict_func.side_effect = from_dict_side_effect
 
-    returned_value = utility_base.from_dict.array.convert(value, schema=schema)
+    returned_value = array.convert(value, schema=schema)
 
     assert returned_value == expected_value

@@ -3,11 +3,11 @@
 import typing
 
 from ... import exceptions
-from ... import table_args
 from ... import types as oa_types
 from ...helpers import inheritance
 from ...helpers import peek
 from ...helpers import schema as schema_helper
+from ...table_args import factory
 from ..helpers import iterate
 from . import types
 from .helpers import properties
@@ -209,9 +209,7 @@ def _check_modifiers(
     # Check composite index
     index_spec = peek.composite_index(schema=schema, schemas=schemas)
     if index_spec is not None:
-        index_expressions = set(
-            table_args.factory.iter_index_expressions(spec=index_spec)
-        )
+        index_expressions = set(factory.iter_index_expressions(spec=index_spec))
         property_names = set(_get_property_names_table(schema=schema, schemas=schemas))
         index_not_properties = index_expressions - property_names
         if index_not_properties:
@@ -224,7 +222,7 @@ def _check_modifiers(
     # Check composite unique
     unique_spec = peek.composite_unique(schema=schema, schemas=schemas)
     if unique_spec is not None:
-        unique_columns = set(table_args.factory.iter_unique_columns(spec=unique_spec))
+        unique_columns = set(factory.iter_unique_columns(spec=unique_spec))
         property_names = set(_get_property_names_table(schema=schema, schemas=schemas))
         unique_not_properties = unique_columns - property_names
         if unique_not_properties:

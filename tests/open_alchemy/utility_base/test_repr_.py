@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from open_alchemy import utility_base
+from open_alchemy.utility_base import repr_
 
 
 class Model:
@@ -58,8 +58,6 @@ def test_calculate(properties, expected_repr):
     """
     instance = Model()
 
-    returned_repr = utility_base.repr_.calculate(
-        instance=instance, properties=properties
-    )
+    returned_repr = repr_.calculate(instance=instance, properties=properties)
 
     assert returned_repr == expected_repr

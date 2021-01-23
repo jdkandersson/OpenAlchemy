@@ -3,7 +3,7 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base.from_dict import object_
 
 
 @pytest.mark.parametrize(
@@ -22,7 +22,7 @@ def test_convert_invalid(schema, value, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.from_dict.object_.convert(value, schema=schema)
+        object_.convert(value, schema=schema)
 
 
 @pytest.mark.utility_base
@@ -37,7 +37,7 @@ def test_convert_invalid_missing_model(mocked_facades_models_get_model):
     value = {}
 
     with pytest.raises(exceptions.SchemaNotFoundError):
-        utility_base.from_dict.object_.convert(value, schema=schema)
+        object_.convert(value, schema=schema)
 
 
 @pytest.mark.utility_base
@@ -51,7 +51,7 @@ def test_convert_valid(mocked_facades_models_get_model):
     schema = {"x-de-$ref": "RefModel"}
     value = {"key": "value"}
 
-    returned_value = utility_base.from_dict.object_.convert(value, schema=schema)
+    returned_value = object_.convert(value, schema=schema)
 
     mocked_facades_models_get_model.assert_called_once_with(name="RefModel")
     mocked_facades_models_get_model.return_value.from_dict.assert_called_once_with(

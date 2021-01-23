@@ -1,6 +1,5 @@
 {
   "words": [
-    // Library
     "tablename",
     "uselist",
     "sqlalchemy",
@@ -17,7 +16,6 @@
     "Autogen",
     "openalchemy",
     "SPECFILE",
-    // Python
     "myapp",
     "mymodel",
     "DBAPI",
@@ -47,14 +45,12 @@
     "datetime",
     "chdir",
     "pylintrc",
-    // RST
     "seealso",
     "literalinclude",
     "linenos",
     "samp",
     "toctree",
     "maxdepth",
-    // People
     "rgreinho",
     "Andersson",
     "jdkandersson"
