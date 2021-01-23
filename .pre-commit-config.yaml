@@ -29,7 +29,7 @@ repos:
         args: ["--add-select=D213,D404", "--ignore=D202,D212,D406,D407,D203"]
         exclude: "^test|^example"
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.780
+    rev: v0.790
     hooks:
       - id: mypy
         exclude: "^example|conf.py$"
