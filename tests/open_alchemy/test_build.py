@@ -3,6 +3,7 @@
 import pytest
 
 from open_alchemy import build
+from open_alchemy import cache
 from open_alchemy import exceptions
 from open_alchemy.helpers import command
 
@@ -221,7 +222,7 @@ setuptools.setup(
     name="name 1",
     version="version 1",
     packages=setuptools.find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
         "OpenAlchemy",
     ],
@@ -243,7 +244,7 @@ def test_generate_manifest():
 
     returned_contents = build.generate_manifest(name=name)
 
-    expected_contents = """recursive-include name 1 *.json
+    expected_contents = """recursive-include name 1 *.json __open_alchemy_*_cache__
 remove .*
 """
 
@@ -443,6 +444,11 @@ def test_dump(tmp_path):
     assert expected_spec_path.is_file()
     with open(expected_spec_path) as in_file:
         assert in_file.read() == spec_str
+
+    # Check cache
+    expected_cache_path = cache.calculate_cache_path(expected_spec_path)
+    assert expected_cache_path.is_file()
+    assert cache.schemas_valid(str(expected_spec_path))
 
     # Check init file
     expected_init_path = package_path / "__init__.py"
@@ -690,6 +696,11 @@ def test_execute(tmp_path, package_format, extensions):
         assert version in spec_file_contents
         assert "Schema" in spec_file_contents
         assert "x-tablename" in spec_file_contents
+
+    # Check cache
+    expected_cache_path = cache.calculate_cache_path(expected_spec_path)
+    assert expected_cache_path.is_file()
+    assert cache.schemas_valid(str(expected_spec_path))
 
     # Check init file
     expected_init_path = package_path / "__init__.py"
