@@ -64,7 +64,7 @@ def init_model_factory(
     schemas = components.get("schemas", {})
 
     # Pre-processing schemas
-    _schemas_module.process(schemas=schemas)
+    _schemas_module.process(schemas=schemas, spec_filename=spec_path)
 
     # Getting artifacts
     schemas_artifacts = _schemas_artifacts.get_from_schemas(
