@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.2.0] - 2020-12-20
+
 ### Fixed
 
 - Removed unnecessary imports in `__init__.py` files. [#255]
@@ -492,6 +494,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v2.0.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.1
 [v2.0.2]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.2
 [v2.1.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.1.0
+[v2.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.2.0
 [///]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
