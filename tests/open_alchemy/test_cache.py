@@ -6,6 +6,7 @@ import pathlib
 import pytest
 
 from open_alchemy import cache
+from open_alchemy import exceptions
 
 
 @pytest.mark.parametrize(
@@ -233,3 +234,126 @@ def test_schemas_valid(tmpdir, spec_contents, cache_contents, expected_result):
     returned_result = cache.schemas_valid(str(spec_file))
 
     assert returned_result == expected_result
+
+
+@pytest.mark.cache
+def test_schemas_are_valid_spec_missing(tmpdir):
+    """
+    GIVEN spec is missing
+    WHEN schemas_are_valid is called with the spec filename
+    THEN CacheError is raised.
+    """
+    path_tmpdir = pathlib.Path(tmpdir)
+    spec_filename = "spec.json"
+    spec_file = path_tmpdir / spec_filename
+
+    with pytest.raises(exceptions.CacheError):
+        cache.schemas_are_valid(str(spec_file))
+
+
+@pytest.mark.cache
+def test_schemas_are_valid_spec_not_file(tmpdir):
+    """
+    GIVEN spec is actually a folder
+    WHEN schemas_are_valid is called with the spec filename
+    THEN CacheError is raised.
+    """
+    path_tmpdir = pathlib.Path(tmpdir)
+    spec_filename = "spec.json"
+    spec_file = path_tmpdir / spec_filename
+    spec_file.mkdir()
+
+    with pytest.raises(exceptions.CacheError):
+        cache.schemas_are_valid(str(spec_file))
+
+
+@pytest.mark.cache
+def test_schemas_are_valid(tmpdir):
+    """
+    GIVEN spec in a file and the cache is actually a folder
+    WHEN schemas_are_valid is called with the spec filename
+    THEN schemas_valid returns True if it is called afterwards.
+    """
+    path_tmpdir = pathlib.Path(tmpdir)
+    spec_filename = "spec.json"
+    spec_file = path_tmpdir / spec_filename
+    spec_file.write_text("spec 1", encoding="utf-8")
+    cache_file = (
+        path_tmpdir / f"__open_alchemy_{cache.calculate_hash(spec_filename)}_cache__"
+    )
+    cache_file.mkdir()
+    cache_sub_file = cache_file / "some.file"
+    cache_sub_file.write_text("some contents")
+
+    cache.schemas_are_valid(str(spec_file))
+
+    assert cache.schemas_valid(str(spec_file)) is True
+
+
+@pytest.mark.cache
+def test_schemas_are_valid_cache_folder(tmpdir):
+    """
+    GIVEN spec in a file
+    WHEN schemas_are_valid is called with the spec filename
+    THEN schemas_valid returns True if it is called afterwards.
+    """
+    path_tmpdir = pathlib.Path(tmpdir)
+    spec_filename = "spec.json"
+    spec_file = path_tmpdir / spec_filename
+    spec_file.write_text("spec 1", encoding="utf-8")
+
+    cache.schemas_are_valid(str(spec_file))
+
+    assert cache.schemas_valid(str(spec_file)) is True
+
+
+@pytest.mark.parametrize(
+    "cache_contents",
+    [
+        pytest.param("", id="empty"),
+        pytest.param("not valid JSON", id="invalid JSON"),
+        pytest.param(json.dumps(True), id="not dict"),
+        pytest.param(json.dumps({}), id="empty dict"),
+        pytest.param(json.dumps({"hash": None}), id="hash exists"),
+        pytest.param(json.dumps({"data": None}), id="data exists not dict"),
+        pytest.param(json.dumps({"data": {}}), id="data exists empty"),
+        pytest.param(
+            json.dumps({"data": {"schemas": None}}), id="data schema not dict"
+        ),
+        pytest.param(json.dumps({"data": {"schemas": {}}}), id="data schema empty"),
+        pytest.param(
+            json.dumps({"data": {"schemas": {"valid": None}}}),
+            id="data schema valid not boolean",
+        ),
+        pytest.param(
+            json.dumps({"data": {"schemas": {"valid": False}}}),
+            id="data schema valid False",
+        ),
+        pytest.param(
+            json.dumps({"data": {"schemas": {"valid": True}}}),
+            id="data schema valid True",
+        ),
+    ],
+)
+@pytest.mark.cache
+def test_schemas_are_valid_cache_exists(tmpdir, cache_contents):
+    """
+    GIVEN spec in a file
+    WHEN schemas_are_valid is called with the spec filename
+    THEN schemas_valid returns True if it is called afterwards.
+    """
+    path_tmpdir = pathlib.Path(tmpdir)
+    spec_filename = "spec.json"
+    spec_file = path_tmpdir / spec_filename
+    spec_file.write_text("spec 1", encoding="utf-8")
+    cache_file = (
+        path_tmpdir / f"__open_alchemy_{cache.calculate_hash(spec_filename)}_cache__"
+    )
+    cache_file.write_text(
+        cache_contents,
+        encoding="utf-8",
+    )
+
+    cache.schemas_are_valid(str(spec_file))
+
+    assert cache.schemas_valid(str(spec_file)) is True

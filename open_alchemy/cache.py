@@ -19,6 +19,9 @@ The structure of the file is:
 import hashlib
 import json
 import pathlib
+import shutil
+
+from . import exceptions
 
 
 def calculate_hash(value: str) -> str:
@@ -107,3 +110,62 @@ def schemas_valid(filename: str) -> bool:
         return False
 
     return cache[_DATA_KEY][_DATA_SCHEMAS_KEY][_DATA_SCHEMAS_VALID_KEY] is True
+
+
+def schemas_are_valid(filename: str) -> None:
+    """
+    Update the cache to indicate that the filename is valid.
+
+    Algorithm:
+    1. If the spec filename is actually a folder, raise a CacheError.
+    2. If the spec filename does not exist, raise a CacheError.
+    3. Calculate the hash of the spec file contents.
+    4. If the chache is actually a folder, delete the folder.
+    5. If the cache does not exist, create the cache.
+    6. Read the contents of the cache. If it is not a dictionary, throw the contents
+        away and create an empty dictionary.
+    7. Create or update the hash key in the cache dictionary to be the calculated value.
+    8. Look for the data key in the cache dictionary. If it does not exist or is not a
+        dictionary, make it an empty dictionary.
+    9. Look for the schemas key under data in the cache dictionary. If it does not exist
+        or is not a dictionary, set it to be an empty dictionary.
+    10. Create or update the valid key under data.schemas and set it to True.
+    11. Write the dictionary to the file as JSON.
+
+    Args:
+        filename: The name of the spec file.
+
+    """
+    path = pathlib.Path(filename)
+    if not path.exists():
+        raise exceptions.CacheError(f"the spec file does not exists, {filename=}")
+    if not path.is_file():
+        raise exceptions.CacheError(f"the spec file is not a file, {filename=}")
+    file_hash = calculate_hash(path.read_text())
+
+    cache_path = calculate_cache_path(path)
+    if cache_path.exists() and not cache_path.is_file():
+        shutil.rmtree(cache_path)
+    if not cache_path.exists():
+        cache_path.write_text("", encoding="utf-8")
+
+    try:
+        cache = json.loads(cache_path.read_text())
+    except json.JSONDecodeError:
+        cache = {}
+    if not isinstance(cache, dict):
+        cache = {}
+
+    cache[_HASH_KEY] = file_hash
+
+    if _DATA_KEY not in cache or not isinstance(cache[_DATA_KEY], dict):
+        cache[_DATA_KEY] = {}
+    cache_data = cache[_DATA_KEY]
+    if _DATA_SCHEMAS_KEY not in cache_data or not isinstance(
+        cache_data[_DATA_SCHEMAS_KEY], dict
+    ):
+        cache_data[_DATA_SCHEMAS_KEY] = {}
+    cache_data_schemas = cache_data[_DATA_SCHEMAS_KEY]
+    cache_data_schemas[_DATA_SCHEMAS_VALID_KEY] = True
+
+    cache_path.write_text(json.dumps(cache), encoding="utf-8")
