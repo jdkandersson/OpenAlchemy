@@ -1125,14 +1125,14 @@ SQLAlchemy = ">=1.0"
 
 [[package]]
 name = "sqlalchemy-stubs"
-version = "0.3"
+version = "0.4"
 description = "SQLAlchemy stubs and mypy plugin"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-mypy = ">=0.720"
+mypy = ">=0.790"
 typing-extensions = ">=3.7.4"
 
 [[package]]
@@ -1273,7 +1273,7 @@ yaml = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "139bce8fb6dfe4208bec96013b1b04f4b6529c87dbbc1f1ef20ae5c1a7c74786"
+content-hash = "3008f9870363a892d71579407bb29394caab63c19a25902a079def26e0389b4e"
 
 [metadata.files]
 alabaster = [
@@ -1844,8 +1844,8 @@ sqlalchemy-mixins = [
     {file = "sqlalchemy_mixins-1.2.1.tar.gz", hash = "sha256:784a4dad4779c1acf33c4897001c1acbf35f5c37ffd537b596fbde138ca1693e"},
 ]
 sqlalchemy-stubs = [
-    {file = "sqlalchemy-stubs-0.3.tar.gz", hash = "sha256:a3318c810697164e8c818aa2d90bac570c1a0e752ced3ec25455b309c0bee8fd"},
-    {file = "sqlalchemy_stubs-0.3-py3-none-any.whl", hash = "sha256:ca1250605a39648cc433f5c70cb1a6f9fe0b60bdda4c51e1f9a2ab3651daadc8"},
+    {file = "sqlalchemy-stubs-0.4.tar.gz", hash = "sha256:c665d6dd4482ef642f01027fa06c3d5e91befabb219dc71fc2a09e7d7695f7ae"},
+    {file = "sqlalchemy_stubs-0.4-py3-none-any.whl", hash = "sha256:5eec7aa110adf9b957b631799a72fef396b23ff99fe296df726645d01e312aa5"},
 ]
 stevedore = [
     {file = "stevedore-3.3.0-py3-none-any.whl", hash = "sha256:50d7b78fbaf0d04cd62411188fa7eedcb03eb7f4c4b37005615ceebe582aa82a"},
