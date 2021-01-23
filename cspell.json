@@ -53,7 +53,8 @@
     "maxdepth",
     "rgreinho",
     "Andersson",
-    "jdkandersson"
+    "jdkandersson",
+    "installable"
   ],
   "dictionaries": ["python"],
   "ignorePaths": [

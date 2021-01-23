@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Removed unnecessary imports in `__init__.py` files.
+
 ## [v2.1.0] - 2020-12-20
 
 ### Added

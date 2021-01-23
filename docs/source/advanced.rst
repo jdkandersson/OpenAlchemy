@@ -68,6 +68,10 @@ installed. The :samp:`build_yaml` interface accepts the following arguments:
     It can be installed separately with ``pip install wheel``, or with
     OpenAlchemy directly with ``pip install OpenAlchemy[wheel]``.
 
+.. seealso::
+    :ref:`package-service`
+      Service that creates pip installable models from your OpenAPI specification.
+
 .. _models-file:
 
 Models File

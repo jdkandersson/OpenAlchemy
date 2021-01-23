@@ -156,6 +156,7 @@ Table of Content
   examples/index
   cli
   advanced
+  package_service
   CHANGELOG
 
 .. toctree::
