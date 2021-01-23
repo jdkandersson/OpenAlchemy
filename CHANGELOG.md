@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Removed unnecessary imports in `__init__.py` files.
+- Removed unnecessary imports in `__init__.py` files. [#255]
+
+### Added
+
+- Caching validation results to speed up startup. [#251]
 
 ## [v2.1.0] - 2020-12-20
 
@@ -496,3 +500,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#201]: https://github.com/jdkandersson/OpenAlchemy/issues/201
 [#202]: https://github.com/jdkandersson/OpenAlchemy/issues/202
 [#236]: https://github.com/jdkandersson/OpenAlchemy/issues/236
+[#251]: https://github.com/jdkandersson/OpenAlchemy/issues/251
+[#255]: https://github.com/jdkandersson/OpenAlchemy/issues/255
