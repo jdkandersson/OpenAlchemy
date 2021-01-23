@@ -74,3 +74,7 @@ class BuildError(BaseError):
 
 class CLIError(BaseError):
     """Raised when an error occurs when the CLI is used."""
+
+
+class CacheError(BaseError):
+    """Raised when an error occurs when the cache is used."""

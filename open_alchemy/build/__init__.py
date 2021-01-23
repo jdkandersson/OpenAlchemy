@@ -10,6 +10,7 @@ import typing
 
 import jinja2
 
+from .. import cache
 from .. import exceptions
 from .. import models_file as models_file_module
 from .. import schemas as schemas_module
@@ -336,7 +337,9 @@ def dump(
         # Write files in the package directory.
         package = directory / name
         package.mkdir(parents=True, exist_ok=True)
-        (package / "spec.json").write_text(spec_str)
+        spec_file = package / "spec.json"
+        spec_file.write_text(spec_str)
+        cache.schemas_are_valid(str(spec_file))
         (package / "__init__.py").write_text(init)
     except OSError as exc:
         raise exceptions.BuildError(str(exc)) from exc

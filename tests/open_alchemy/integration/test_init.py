@@ -8,6 +8,7 @@ import pytest
 import yaml
 
 import open_alchemy
+from open_alchemy import cache
 from open_alchemy.facades.sqlalchemy import types as sqlalchemy_types
 
 
@@ -236,6 +237,9 @@ def test_init_json(engine, sessionmaker, tmp_path):
     queried_model = session.query(model).first()
     assert queried_model.column == value
 
+    # Checking for cache
+    assert cache.schemas_valid(str(spec_file)) is True
+
 
 @pytest.mark.integration
 def test_init_json_remote(engine, sessionmaker, tmp_path, _clean_remote_schemas_store):
@@ -314,6 +318,9 @@ def test_init_yaml(engine, sessionmaker, tmp_path):
     # Querying session
     queried_model = session.query(model).first()
     assert queried_model.column == value
+
+    # Checking for cache
+    assert cache.schemas_valid(str(spec_file)) is True
 
 
 @pytest.mark.integration

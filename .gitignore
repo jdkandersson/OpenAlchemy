@@ -22,3 +22,4 @@ venv36
 coverage.xml
 docs/source/_*
 __pycache__
+__open_alchemy_*_cache__
