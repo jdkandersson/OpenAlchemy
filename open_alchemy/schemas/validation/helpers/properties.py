@@ -1,7 +1,7 @@
 """Helpers for properties."""
 
 from .... import types as oa_types
-from ... import helpers
+from ...helpers import iterate
 from .. import types
 
 
@@ -19,9 +19,7 @@ def check_properties_values(
         The result if the properties values are not valid with a reason or None.
 
     """
-    properties_values = helpers.iterate.properties_values(
-        schema=schema, schemas=schemas
-    )
+    properties_values = iterate.properties_values(schema=schema, schemas=schemas)
     not_dict_value = next(
         filter(lambda arg: not isinstance(arg, dict), properties_values), None
     )
@@ -45,7 +43,7 @@ def check_properties_items(
 
     """
     # Check names are string and values are dictionaries
-    properties_items = helpers.iterate.properties_items(schema=schema, schemas=schemas)
+    properties_items = iterate.properties_items(schema=schema, schemas=schemas)
 
     def check_property(args) -> types.OptResult:
         """Check key and value of property."""

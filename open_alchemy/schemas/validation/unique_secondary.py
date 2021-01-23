@@ -4,7 +4,8 @@ import typing
 
 from ... import types as oa_types
 from ...helpers import relationship
-from .. import helpers
+from ..helpers import association as association_helper
+from ..helpers import iterate
 from . import types
 
 
@@ -36,13 +37,13 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
         Whether the schemas have unique secondary values and the reason if not.
 
     """
-    constructable_schemas = helpers.iterate.constructable(schemas=schemas)
+    constructable_schemas = iterate.constructable(schemas=schemas)
 
     # Track information about the x-secondary values that are encountered
     seen_secondaries: typing.Dict[str, _TSeenSecondary] = {}
 
     for schema_name, schema in constructable_schemas:
-        properties = helpers.iterate.properties_items(
+        properties = iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )
 
@@ -57,7 +58,7 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
                 continue
 
             # Retrieve secondary value
-            secondary = helpers.association.get_secondary(
+            secondary = association_helper.get_secondary(
                 schema=property_schema, schemas=schemas
             )
 

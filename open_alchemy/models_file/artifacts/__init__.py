@@ -3,7 +3,7 @@
 import sys
 import typing
 
-from open_alchemy import schemas
+from open_alchemy.schemas.artifacts import types as artifacts_types
 
 from .. import types
 from . import args as _args
@@ -12,7 +12,7 @@ from . import typed_dict as _typed_dict
 
 
 def calculate(
-    *, artifacts: schemas.artifacts.types.ModelArtifacts, name: str
+    *, artifacts: artifacts_types.ModelArtifacts, name: str
 ) -> types.ModelArtifacts:
     """
     Calculate the model artifacts from the schema.

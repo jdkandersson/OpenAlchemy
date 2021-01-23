@@ -2,8 +2,8 @@
 
 import typing
 
-from open_alchemy import schemas
 from open_alchemy import types as oa_types
+from open_alchemy.schemas.artifacts import types as artifacts_types
 
 from .. import types
 from . import type_
@@ -17,7 +17,7 @@ class ReturnValue(typing.NamedTuple):
 
 
 def _get_write_only(
-    artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
+    artifacts: artifacts_types.TAnyPropertyArtifacts,
 ) -> typing.Optional[bool]:
     """Get write only for any property artifacts."""
     if artifacts.type == oa_types.PropertyType.SIMPLE:
@@ -31,9 +31,7 @@ def _get_write_only(
 
 def _calculate(
     *,
-    artifacts: typing.Iterable[
-        typing.Tuple[str, schemas.artifacts.types.TAnyPropertyArtifacts]
-    ]
+    artifacts: typing.Iterable[typing.Tuple[str, artifacts_types.TAnyPropertyArtifacts]]
 ) -> typing.Iterable[types.ColumnArtifacts]:
     """Calculate the typed dict artifacts from property artifacts."""
     no_dict_ignore_properties = filter(
@@ -57,7 +55,7 @@ def _calculate(
     )
 
 
-def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnValue:
+def calculate(*, artifacts: artifacts_types.ModelArtifacts) -> ReturnValue:
     """
     Calculate the typed dict artifacts from model schema artifacts.
 

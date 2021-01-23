@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas import validation
+from open_alchemy.schemas.validation import unmanaged
 
 CHECK_MODEL_TESTS = [
     pytest.param(
@@ -149,7 +149,7 @@ def test_check_model(schema, schemas, expected_result):
     WHEN check_model is called with the schema and schemas
     THEN the expected result is returned.
     """
-    returned_result = validation.unmanaged.check_model(schemas, schema)
+    returned_result = unmanaged.check_model(schemas, schema)
 
     assert returned_result == expected_result
 
@@ -230,7 +230,7 @@ def test_check_models(schemas, expected_result):
     WHEN check_models is called with the schemas
     THEN the expected result is returned.
     """
-    returned_result = validation.unmanaged.check_models(schemas=schemas)
+    returned_result = unmanaged.check_models(schemas=schemas)
 
     assert returned_result == expected_result
 
@@ -273,6 +273,6 @@ def test_check(spec, expected_result):
     WHEN check is called with the spec
     THEN the expected result is returned.
     """
-    returned_result = validation.unmanaged.check(spec=spec)
+    returned_result = unmanaged.check(spec=spec)
 
     assert returned_result == expected_result

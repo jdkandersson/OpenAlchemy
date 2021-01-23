@@ -19,6 +19,7 @@ from .helpers import define_all as _define_all
 from .helpers import inheritance as _inheritance
 from .helpers import ref as _ref
 from .helpers import schema as _schema_helper
+from .schemas import artifacts as _schemas_artifacts
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["open_alchemy.models"] = models
@@ -66,7 +67,7 @@ def init_model_factory(
     _schemas_module.process(schemas=schemas)
 
     # Getting artifacts
-    schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+    schemas_artifacts = _schemas_artifacts.get_from_schemas(
         schemas=schemas, stay_within_model=True
     )
 
@@ -91,7 +92,7 @@ def init_model_factory(
         return model
 
     if models_filename is not None:
-        schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+        schemas_artifacts = _schemas_artifacts.get_from_schemas(
             schemas=schemas, stay_within_model=False
         )
         models_file_contents = _models_file.generate(artifacts=schemas_artifacts)

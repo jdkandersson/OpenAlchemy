@@ -5,7 +5,8 @@ import typing
 from .. import types
 from ..helpers import inheritance
 from ..helpers import peek
-from . import helpers
+from .helpers import association as association_helper
+from .helpers import iterate
 
 
 def _assert_is_string(value: typing.Any) -> str:
@@ -70,7 +71,7 @@ def _get_tablename_schema_names(
 
     """
     # Get mapping of tablename to parent schema name
-    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     not_single_inheritance_constructables = filter(
         lambda args: inheritance.calculate_type(schema=args[1], schemas=schemas)
         != inheritance.Type.SINGLE_TABLE,
@@ -89,7 +90,7 @@ def _get_tablename_schema_names(
     )
 
     # Get a list of schema names and tablenames which appear in the mapping
-    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     name_tablenames = map(
         lambda args: (
             args[0],
@@ -162,7 +163,7 @@ def _get_tablename_foreign_keys(
     tablename_properties = map(
         lambda args: (
             args[0],
-            helpers.iterate.properties_items(schema=args[1], schemas=schemas),
+            iterate.properties_items(schema=args[1], schemas=schemas),
         ),
         tablename_schemas,
     )
@@ -306,12 +307,12 @@ def process(*, schemas: types.Schemas) -> None:
         schemas: The schemas to process.
 
     """
-    association_properties = helpers.association.get_association_property_iterator(
+    association_properties = association_helper.get_association_property_iterator(
         schemas=schemas
     )
     association_schemas = list(
         map(
-            lambda args: helpers.association.calculate_schema(
+            lambda args: association_helper.calculate_schema(
                 property_schema=args.property.schema,
                 parent_schema=args.parent.schema,
                 schemas=schemas,

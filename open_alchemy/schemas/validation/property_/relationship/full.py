@@ -5,10 +5,12 @@ from ..... import types as oa_types
 from .....helpers import foreign_key as foreign_key_helper
 from .....helpers import peek
 from .....helpers import relationship
-from .... import helpers
-from ... import helpers as validation_helpers
+from ....helpers import backref as backref_helper
+from ....helpers import iterate
 from ... import model
 from ... import types
+from ...helpers import properties as properties_helper
+from ...helpers import value as value_helper
 from .. import simple
 
 
@@ -37,7 +39,7 @@ def _check_pre_defined_property_schema(
 
     """
     # Get the pre-defined property schema if it exists
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
@@ -62,7 +64,7 @@ def _check_pre_defined_property_schema(
         (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
-        match_result = validation_helpers.value.check_matches(
+        match_result = value_helper.check_matches(
             func=func,
             reference_schema=property_schema,
             check_schema=defined_property_schema,
@@ -119,7 +121,7 @@ def _check_target_schema(
 
     """
     # Look for foreign key property schema
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=target_schema,
         schemas=schemas,
         stay_within_tablename=True,
@@ -182,7 +184,7 @@ def _check_many_to_many_schema(
         return model_result
 
     # Check for primary key
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
@@ -272,16 +274,14 @@ def _check_backref_property_properties_basics(
         return types.Result(False, "the back reference schema must be an object")
 
     # Check properties values
-    properties_values_result = validation_helpers.properties.check_properties_values(
+    properties_values_result = properties_helper.check_properties_values(
         schema=backref_schema, schemas=schemas
     )
     if properties_values_result is not None:
         return properties_values_result
 
     # Check whether any property names match the property name
-    properties_items = helpers.iterate.properties_items(
-        schema=backref_schema, schemas=schemas
-    )
+    properties_items = iterate.properties_items(schema=backref_schema, schemas=schemas)
     property_name_matches = next(
         filter(lambda args: args[0] == property_name, properties_items), None
     )
@@ -317,13 +317,11 @@ def _check_backref_property_properties(
         return basics_result
 
     # Check for backreference properties not in the parent schema properties
-    parent_properties_items = helpers.iterate.properties_items(
+    parent_properties_items = iterate.properties_items(
         schema=parent_schema, schemas=schemas
     )
     parent_properties = dict(parent_properties_items)
-    properties_items = helpers.iterate.properties_items(
-        schema=backref_schema, schemas=schemas
-    )
+    properties_items = iterate.properties_items(schema=backref_schema, schemas=schemas)
     property_name_not_in_parent = next(
         filter(lambda args: args[0] not in parent_properties, properties_items), None
     )
@@ -332,7 +330,7 @@ def _check_backref_property_properties(
         return types.Result(False, f"could not find {name} in the model schema")
 
     # Check properties are dictionaries
-    properties_items_result = validation_helpers.properties.check_properties_items(
+    properties_items_result = properties_helper.check_properties_items(
         schema=backref_schema, schemas=schemas
     )
     if properties_items_result is not None:
@@ -346,7 +344,7 @@ def _check_backref_property_properties(
         (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
-        properties_items = helpers.iterate.properties_items(
+        properties_items = iterate.properties_items(
             schema=backref_schema, schemas=schemas
         )
         # pylint: disable=cell-var-from-loop
@@ -354,7 +352,7 @@ def _check_backref_property_properties(
         properties_items_value_results = map(
             lambda args: (
                 args[0],
-                validation_helpers.value.check_matches(
+                value_helper.check_matches(
                     func=func,
                     reference_schema=parent_properties[args[0]],
                     check_schema=args[1],
@@ -472,7 +470,7 @@ def _check_backref(
         If the back reference is invalid, returns result with reason, otherwise None.
 
     """
-    backref = helpers.backref.get(schema=property_schema, schemas=schemas)
+    backref = backref_helper.get(schema=property_schema, schemas=schemas)
     if backref is None:
         return None
 
@@ -489,7 +487,7 @@ def _check_backref(
         object_schema = property_schema
 
     # Look for backref property
-    properties = helpers.iterate.properties_items(schema=object_schema, schemas=schemas)
+    properties = iterate.properties_items(schema=object_schema, schemas=schemas)
     property_ = next(filter(lambda args: args[0] == backref, properties), None)
     if property_ is None:
         return None

@@ -5,7 +5,7 @@ import copy
 from .... import types as oa_types
 from ....helpers import peek
 from ....helpers import schema as schema_helper
-from ... import helpers
+from ...helpers import clean
 from .. import types
 
 
@@ -43,7 +43,7 @@ def get(
     foreign_key_kwargs = peek.foreign_key_kwargs(schema=schema, schemas=schemas)
 
     # Remove extension properties from schema
-    helpers.clean.extension(schema=schema)
+    clean.extension(schema=schema)
     # Add in x-json
     schema[oa_types.ExtensionProperties.JSON] = True
 

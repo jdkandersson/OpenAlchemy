@@ -6,7 +6,7 @@ from ... import types as oa_types
 from ...helpers import inheritance
 from ...helpers import peek
 from ...helpers import schema as schema_helper
-from .. import helpers
+from ..helpers import iterate
 from . import types
 
 
@@ -51,7 +51,7 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
         Whether the schemas have unique tablenames and the reason if not.
 
     """
-    constructable_schemas = helpers.iterate.constructable(schemas=schemas)
+    constructable_schemas = iterate.constructable(schemas=schemas)
     not_single_inheritance_schemas = filter(
         lambda args: not _is_single_table_inheritance(schemas, args[1]),
         constructable_schemas,

@@ -8,7 +8,8 @@ from ..helpers import foreign_key as foreign_key_helper
 from ..helpers import peek
 from ..helpers import property_
 from ..helpers import relationship
-from . import helpers
+from .helpers import iterate
+from .helpers import process as process_helper
 
 
 def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
@@ -92,7 +93,7 @@ def _foreign_key_property_not_defined(
         property_schema=property_schema,
         schemas=schemas,
     )
-    properties = helpers.iterate.properties_items(schema=modify_schema, schemas=schemas)
+    properties = iterate.properties_items(schema=modify_schema, schemas=schemas)
     property_names = map(lambda arg: arg[0], properties)
     contains_foreign_key_property_name = any(
         filter(lambda name: name == foreign_key_property_name, property_names)
@@ -102,7 +103,7 @@ def _foreign_key_property_not_defined(
     return True
 
 
-class TArtifacts(helpers.process.TArtifacts):
+class TArtifacts(process_helper.TArtifacts):
     """The return value of _calculate_schema."""
 
     property_schema: types.ColumnSchema
@@ -150,7 +151,7 @@ def _calculate_foreign_key_property_artifacts(
         property_schema=property_schema,
         schemas=schemas,
     )
-    target_schema_properties = helpers.iterate.properties_items(
+    target_schema_properties = iterate.properties_items(
         schema=target_schema, schemas=schemas
     )
     foreign_key_target = next(
@@ -162,9 +163,7 @@ def _calculate_foreign_key_property_artifacts(
     # Check whether the property is required
     required: typing.Optional[bool] = None
     if relationship_type != types.RelationshipType.ONE_TO_MANY:
-        required_items = helpers.iterate.required_items(
-            schema=parent_schema, schemas=schemas
-        )
+        required_items = iterate.required_items(schema=parent_schema, schemas=schemas)
         required = any(filter(lambda name: name == property_name, required_items))
     # Calculate nullable for all but one-to-many relationships based on property
     nullable: typing.Optional[bool] = None
@@ -238,7 +237,7 @@ def _get_schema_foreign_keys(
     schemas: types.Schemas,
     schema_name: str,
     schema: types.Schema,
-) -> helpers.process.TArtifactsIter:
+) -> process_helper.TArtifactsIter:
     """
     Retrieve the foreign keys for a schema.
 
@@ -260,7 +259,7 @@ def _get_schema_foreign_keys(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.properties_items(
+    names_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Validate and remove properties that don't require foreign keys
@@ -285,7 +284,7 @@ def _get_schema_foreign_keys(
 
 
 def _foreign_keys_to_schema(
-    foreign_keys: helpers.process.TArtifactsIter,
+    foreign_keys: process_helper.TArtifactsIter,
 ) -> types.Schema:
     """
     Convert to the schema with the foreign keys from foreign key artifacts.
@@ -314,11 +313,11 @@ def process(*, schemas: types.Schemas):
 
     """
     # Retrieve foreign keys
-    foreign_keys = helpers.process.get_artifacts(
+    foreign_keys = process_helper.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_foreign_keys
     )
     # Map to a schema for each grouped foreign keys
-    foreign_key_schemas = helpers.process.calculate_outputs(
+    foreign_key_schemas = process_helper.calculate_outputs(
         artifacts=foreign_keys, calculate_output=_foreign_keys_to_schema
     )
     # Convert to list to resolve iterator

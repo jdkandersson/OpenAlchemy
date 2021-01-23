@@ -10,8 +10,8 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import schemas
 from open_alchemy.models_file import artifacts
+from open_alchemy.schemas import artifacts as schemas_artifacts_module
 
 
 @pytest.mark.parametrize(
@@ -314,7 +314,7 @@ def test_model_database_type_simple(
     model = model_factory(name="Table")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "Table" in schemas_artifacts
@@ -386,7 +386,7 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     model = model_factory(name="Table")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "Table" in schemas_artifacts

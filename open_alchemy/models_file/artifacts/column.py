@@ -3,15 +3,15 @@
 import itertools
 import typing
 
-from open_alchemy import schemas
 from open_alchemy import types as oa_types
+from open_alchemy.schemas.artifacts import types as artifacts_types
 
 from .. import types
 from . import type_
 
 
 def calculate(
-    *, artifacts: schemas.artifacts.types.ModelArtifacts
+    *, artifacts: artifacts_types.ModelArtifacts
 ) -> typing.List[types.ColumnArtifacts]:
     """
     Calculate the column artifacts from model schema artifacts.
@@ -49,7 +49,7 @@ def calculate(
         lambda args: types.ColumnArtifacts(
             name=args[0],
             type=f'typing.Optional["T{args[1].child}"]'
-            if args[1].type == schemas.artifacts.types.BackrefSubType.OBJECT
+            if args[1].type == artifacts_types.BackrefSubType.OBJECT
             else f'typing.Sequence["T{args[1].child}"]',
             description=None,
         ),

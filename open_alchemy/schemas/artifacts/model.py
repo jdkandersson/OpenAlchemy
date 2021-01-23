@@ -8,7 +8,7 @@ from ...helpers import ext_prop
 from ...helpers import inheritance
 from ...helpers import peek
 from ...helpers import schema as schema_helper
-from .. import helpers
+from ..helpers import iterate
 from . import types
 
 
@@ -76,7 +76,7 @@ def get(
     if composite_unique_value is not None:
         composite_unique = table_args.factory.map_unique(spec=composite_unique_value)
 
-    backrefs = helpers.iterate.backrefs_items(schema=schema, schemas=schemas)
+    backrefs = iterate.backrefs_items(schema=schema, schemas=schemas)
     backrefs_artifacts = map(
         lambda args: (args[0], _calculate_backref(args[1])), backrefs
     )

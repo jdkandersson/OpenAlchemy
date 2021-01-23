@@ -4,9 +4,9 @@ from .... import exceptions
 from .... import types as oa_types
 from ....helpers import peek
 from ....helpers import type_ as type_helper
-from ... import helpers
-from .. import helpers as validation_helpers
+from ...helpers import iterate
 from .. import types
+from ..helpers import properties
 
 
 def _check_object(
@@ -14,19 +14,19 @@ def _check_object(
 ) -> types.Result:
     """Check readOnly object."""
     # Check properties values and items
-    properties_values_result = validation_helpers.properties.check_properties_values(
+    properties_values_result = properties.check_properties_values(
         schema=schema, schemas=schemas
     )
     if properties_values_result is not None:
         return properties_values_result
-    properties_items_result = validation_helpers.properties.check_properties_items(
+    properties_items_result = properties.check_properties_items(
         schema=schema, schemas=schemas
     )
     if properties_items_result is not None:
         return properties_items_result
 
     # Get types of properties
-    properties_items = helpers.iterate.properties_items(schema=schema, schemas=schemas)
+    properties_items = iterate.properties_items(schema=schema, schemas=schemas)
     properties_items_type = map(
         lambda args: (args[0], peek.type_(schema=args[1], schemas=schemas)),
         properties_items,

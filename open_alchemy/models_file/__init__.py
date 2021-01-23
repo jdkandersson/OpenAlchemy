@@ -1,13 +1,13 @@
 """Generate the models file."""
 
-from open_alchemy import schemas
 from open_alchemy.facades import code_formatter
+from open_alchemy.schemas.artifacts.types import ModelsModelArtifacts
 
 from . import model as _model
 from . import models as _models
 
 
-def generate(*, artifacts: schemas.artifacts.types.ModelsModelArtifacts) -> str:
+def generate(*, artifacts: ModelsModelArtifacts) -> str:
     """
     Generate the models file from schema artifacts.
 

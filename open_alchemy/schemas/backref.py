@@ -6,10 +6,12 @@ import typing
 from .. import types
 from ..helpers import peek
 from ..helpers import ref as ref_helper
-from . import helpers
+from .helpers import backref as backref_helper
+from .helpers import iterate
+from .helpers import process as process_helper
 
 
-class TArtifacts(helpers.process.TArtifacts):
+class TArtifacts(process_helper.TArtifacts):
     """The return value of _calculate_schema."""
 
     property_schema: types.Schema
@@ -80,7 +82,7 @@ def _get_schema_backrefs(
     schemas: types.Schemas,
     schema_name: str,
     schema: types.Schema,
-) -> helpers.process.TArtifactsIter:
+) -> process_helper.TArtifactsIter:
     """
     Get the backrefs for a schema.
 
@@ -97,13 +99,13 @@ def _get_schema_backrefs(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.properties_items(
+    names_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Remove property name
     properties = map(lambda arg: arg[1], names_properties)
     # Remove properties that don't define back references
-    defines_backref_schemas = functools.partial(helpers.backref.defined, schemas)
+    defines_backref_schemas = functools.partial(backref_helper.defined, schemas)
     backref_properties = filter(defines_backref_schemas, properties)
     # Capture information for back references
     calculate_artifacts_schema_name_schemas = functools.partial(
@@ -112,7 +114,7 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schema:
+def _backrefs_to_schema(backrefs: process_helper.TArtifactsIter) -> types.Schema:
     """
     Convert to the schema with the x-backrefs value from backrefs.
 
@@ -143,11 +145,11 @@ def process(*, schemas: types.Schemas) -> None:
 
     """
     # Retrieve back references
-    backrefs = helpers.process.get_artifacts(
+    backrefs = process_helper.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_backrefs
     )
     # Map to a schema for each grouped back references
-    backref_schemas = helpers.process.calculate_outputs(
+    backref_schemas = process_helper.calculate_outputs(
         artifacts=backrefs, calculate_output=_backrefs_to_schema
     )
     # Convert to list to resolve iterator

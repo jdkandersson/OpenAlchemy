@@ -5,7 +5,7 @@ import typing
 from ... import exceptions
 from ... import types as _oa_types
 from ...helpers import peek
-from .. import helpers as _helpers
+from ..helpers import iterate
 from . import spec_validation
 from . import types
 
@@ -85,7 +85,7 @@ def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
         The result for each model.
 
     """
-    not_constructables = _helpers.iterate.not_constructable(schemas=schemas)
+    not_constructables = iterate.not_constructable(schemas=schemas)
     not_constructables_result = map(
         lambda args: (args[0], check_model(schemas, args[1])), not_constructables
     )

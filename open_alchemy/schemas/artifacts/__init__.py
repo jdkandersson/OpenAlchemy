@@ -3,8 +3,8 @@
 import typing
 
 from ... import types as _oa_types
-from .. import helpers as _helpers
 from .. import validation
+from ..helpers import iterate
 from . import model
 from . import property_
 from . import types
@@ -15,10 +15,10 @@ def _get_properties_artifacts(
 ) -> typing.Iterable[typing.Tuple[str, types.TAnyPropertyArtifacts]]:
     """Get an iterator with properties artifacts."""
     # Get model properties
-    properties = _helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
-    required_set = set(_helpers.iterate.required_items(schema=schema, schemas=schemas))
+    required_set = set(iterate.required_items(schema=schema, schemas=schemas))
     # Filter for valid properties
     valid_properties = filter(
         lambda args: validation.property_.check(
@@ -94,7 +94,7 @@ def get_models(*, schemas: _oa_types.Schemas) -> types.ModelsValue:
         The artifacts for each model.
 
     """
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     valid_constructables = filter(
         lambda args: validation.model.check(schemas, args[1]).valid, constructables
     )
@@ -134,10 +134,10 @@ def _from_schemas_get_properties_artifacts(
 ) -> typing.Iterable[typing.Tuple[str, types.TAnyPropertyArtifacts]]:
     """Get an iterator with properties artifacts."""
     # Get model properties
-    properties = _helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=stay_within_model
     )
-    required_set = set(_helpers.iterate.required_items(schema=schema, schemas=schemas))
+    required_set = set(iterate.required_items(schema=schema, schemas=schemas))
     return map(
         lambda args: (
             args[0],
@@ -200,7 +200,7 @@ def get_from_schemas(
         The artifacts for the schemas.
 
     """
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     return dict(
         map(
             lambda args: (

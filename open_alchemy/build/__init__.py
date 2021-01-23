@@ -15,6 +15,10 @@ from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
 from ..helpers import command
+from ..schemas import artifacts as schemas_artifacts
+from ..schemas import backref as schemas_backref
+from ..schemas import validation
+from ..schemas.validation import spec_validation
 
 # TODO(rgreinho)): Fix above nosec it in the future when  # pylint: disable=W0511
 # following issue is resolved:
@@ -73,7 +77,7 @@ def get_schemas(*, spec: typing.Any) -> types.Schemas:
 
     """
     # Check to schemas
-    result = schemas_module.validation.spec_validation.check(spec=spec)
+    result = spec_validation.check(spec=spec)
     if not result.valid:
         raise exceptions.MalformedSchemaError(result.reason)
 
@@ -83,7 +87,7 @@ def get_schemas(*, spec: typing.Any) -> types.Schemas:
     assert isinstance(components, dict)
     schemas = components.get("schemas")
     assert isinstance(schemas, dict)
-    one_model_result = schemas_module.validation.check_one_model(schemas=schemas)
+    one_model_result = validation.check_one_model(schemas=schemas)
     if not one_model_result.valid:
         raise exceptions.MalformedSchemaError(one_model_result.reason)
 
@@ -271,8 +275,8 @@ def generate_init_models_file(schemas: types.Schemas) -> str:
         The models file component of the schemas.
 
     """
-    schemas_module.backref.process(schemas=schemas)
-    artifacts = schemas_module.artifacts.get_from_schemas(
+    schemas_backref.process(schemas=schemas)
+    artifacts = schemas_artifacts.get_from_schemas(
         schemas=schemas, stay_within_model=False
     )
     return models_file_module.generate(artifacts=artifacts)

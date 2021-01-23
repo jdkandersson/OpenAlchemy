@@ -6,7 +6,7 @@ from ... import types
 from ...helpers import foreign_key as foreign_key_helper
 from ...helpers import peek
 from ...helpers import relationship
-from .. import helpers
+from ..helpers import iterate
 
 
 def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
@@ -50,9 +50,9 @@ def get_association_property_iterator(
         schemas and the parent schema.
 
     """
-    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     for name, schema in constructables:
-        properties = helpers.iterate.properties_items(
+        properties = iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )
         association_property_schemas = filter(
@@ -155,7 +155,7 @@ def calculate_property_schema(
 
     """
     # Retrieve primary key column
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(

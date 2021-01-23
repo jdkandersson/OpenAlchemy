@@ -8,9 +8,9 @@ from ... import types as oa_types
 from ...helpers import inheritance
 from ...helpers import peek
 from ...helpers import schema as schema_helper
-from .. import helpers
-from . import helpers as validation_helpers
+from ..helpers import iterate
 from . import types
+from .helpers import properties
 
 
 def _check_properties(
@@ -18,14 +18,14 @@ def _check_properties(
 ) -> types.OptResult:
     """Check properties."""
     # Check property values
-    properties_values_result = validation_helpers.properties.check_properties_values(
+    properties_values_result = properties.check_properties_values(
         schema=schema, schemas=schemas
     )
     if properties_values_result is not None:
         return properties_values_result
 
     # Check there is at least a single property
-    properties_items = helpers.iterate.properties_items(
+    properties_items = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     first_property = next(properties_items, None)
@@ -33,7 +33,7 @@ def _check_properties(
         return types.Result(False, "models must have at least 1 property themself")
 
     # Check that all property names are strings
-    properties_items_result = validation_helpers.properties.check_properties_items(
+    properties_items_result = properties.check_properties_items(
         schema=schema, schemas=schemas
     )
     if properties_items_result is not None:
@@ -46,7 +46,7 @@ def _get_property_names_model(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.properties_items(
+    properties_items = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     return map(lambda prop: prop[0], properties_items)
@@ -60,7 +60,7 @@ def _check_required(
     property_name_set = set(_get_property_names_model(schema=schema, schemas=schemas))
 
     # Check that all required values are lists
-    required_values = helpers.iterate.required_values(schema=schema, schemas=schemas)
+    required_values = iterate.required_values(schema=schema, schemas=schemas)
     any_required_value_not_list = any(
         filter(
             lambda required_value: not isinstance(required_value, list), required_values
@@ -70,7 +70,7 @@ def _check_required(
         return types.Result(False, "value of required must be a list")
 
     # Check required values
-    required_items = helpers.iterate.required_items(
+    required_items = iterate.required_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     required_items_set = set(required_items)
@@ -177,7 +177,7 @@ def _get_property_names_table(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Iterator[str]:
     """Retrieve all property names."""
-    properties_items = helpers.iterate.properties_items(
+    properties_items = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     return map(lambda prop: prop[0], properties_items)

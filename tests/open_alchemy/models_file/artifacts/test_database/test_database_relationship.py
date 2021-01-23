@@ -8,8 +8,8 @@ import sqlalchemy
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import schemas
 from open_alchemy.models_file import artifacts
+from open_alchemy.schemas import artifacts as schemas_artifacts_module
 
 
 @pytest.mark.models_file
@@ -52,7 +52,7 @@ def test_model_database_type_many_to_one(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "RefTable" in schemas_artifacts
@@ -167,7 +167,7 @@ def test_model_database_type_many_to_one_not_nullable(engine, sessionmaker):
     model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "Table" in schemas_artifacts
@@ -235,7 +235,7 @@ def test_model_database_type_one_to_one(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "RefTable" in schemas_artifacts
@@ -344,7 +344,7 @@ def test_model_database_type_one_to_one_not_nullable(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "RefTable" in schemas_artifacts
@@ -443,7 +443,7 @@ def test_model_database_type_one_to_many(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "RefTable" in schemas_artifacts
@@ -557,7 +557,7 @@ def test_model_database_type_many_to_many(engine, sessionmaker):
     ref_model = model_factory(name="RefTable")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     # Expecting 3 due to association
