@@ -1,7 +1,7 @@
 """Construct column for simple property."""
 
-from .. import facades
 from .. import types as oa_types
+from ..facades.sqlalchemy import simple
 from . import types
 
 
@@ -16,4 +16,4 @@ def handle(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.TColumn:
         The constructed column.
 
     """
-    return facades.sqlalchemy.simple.construct(artifacts=artifacts)
+    return simple.construct(artifacts=artifacts)

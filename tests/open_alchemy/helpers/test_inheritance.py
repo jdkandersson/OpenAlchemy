@@ -639,13 +639,15 @@ def test_retrieve_parent_valid(schema, schemas):
     ids=["not inherits", "inherits"],
 )
 @pytest.mark.helper
-def test_retrieve_model_parents_schema(schema, expected_schema, mocked_facades_models):
+def test_retrieve_model_parents_schema(
+    schema, expected_schema, mocked_facades_models_get_model_schema
+):
     """
     GIVEN schema that does not inherit
     WHEN retrieve_model_parents_schema is called
     THEN the schema is returned.
     """
-    mocked_facades_models.get_model_schema.return_value = {"parent_key": "parent value"}
+    mocked_facades_models_get_model_schema.return_value = {"parent_key": "parent value"}
 
     returned_schema = helpers.inheritance.retrieve_model_parents_schema(schema=schema)
 
@@ -659,7 +661,7 @@ class TestRetrieveModelParentsSchema:
 
     @staticmethod
     @pytest.mark.helper
-    def test_no_inheritance(mocked_facades_models):
+    def test_no_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that does not inherit
         WHEN _retrieve_model_parents_schema is called with the schema
@@ -671,18 +673,18 @@ class TestRetrieveModelParentsSchema:
 
         assert isinstance(schemas_generator, types.GeneratorType)
         assert list(schemas_generator) == [{"key": "value"}]
-        mocked_facades_models.get_model_schema.assert_not_called()
+        mocked_facades_models_get_model_schema.assert_not_called()
 
     @staticmethod
     @pytest.mark.helper
-    def test_single_inheritance_not_exists(mocked_facades_models):
+    def test_single_inheritance_not_exists(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.return_value = None
+        mocked_facades_models_get_model_schema.return_value = None
 
         schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
 
@@ -691,14 +693,14 @@ class TestRetrieveModelParentsSchema:
 
     @staticmethod
     @pytest.mark.helper
-    def test_single_inheritance(mocked_facades_models):
+    def test_single_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.return_value = {
+        mocked_facades_models_get_model_schema.return_value = {
             "parent_key": "parent value"
         }
 
@@ -708,18 +710,18 @@ class TestRetrieveModelParentsSchema:
             {"parent_key": "parent value"},
             {"key": "value", "x-inherits": "Parent"},
         ]
-        mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
+        mocked_facades_models_get_model_schema.assert_called_once_with(name="Parent")
 
     @staticmethod
     @pytest.mark.helper
-    def test_multiple_inheritance(mocked_facades_models):
+    def test_multiple_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.side_effect = [
+        mocked_facades_models_get_model_schema.side_effect = [
             {"parent_key": "parent value", "x-inherits": "Grandparent"},
             {"grandparent_key": "grandparent value"},
         ]
@@ -731,9 +733,9 @@ class TestRetrieveModelParentsSchema:
             {"parent_key": "parent value", "x-inherits": "Grandparent"},
             {"key": "value", "x-inherits": "Parent"},
         ]
-        assert mocked_facades_models.get_model_schema.call_count == 2
-        mocked_facades_models.get_model_schema.assert_any_call(name="Grandparent")
-        mocked_facades_models.get_model_schema.assert_any_call(name="Parent")
+        assert mocked_facades_models_get_model_schema.call_count == 2
+        mocked_facades_models_get_model_schema.assert_any_call(name="Grandparent")
+        mocked_facades_models_get_model_schema.assert_any_call(name="Parent")
 
 
 @pytest.mark.parametrize(

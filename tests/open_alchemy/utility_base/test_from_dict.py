@@ -219,7 +219,7 @@ def test_from_dict_inheritance_model_undefined(__init__):
 
 
 @pytest.mark.utility_base
-def test_from_dict_inheritance_call(mocked_facades_models, __init__):
+def test_from_dict_inheritance_call(mocked_facades_models_get_model, __init__):
     """
     GIVEN schema with parent model that has been mocked and dictionary
     WHEN from_dict is called with the dictionary
@@ -240,20 +240,20 @@ def test_from_dict_inheritance_call(mocked_facades_models, __init__):
 
     model.from_dict(**{"key": "value", "parent_key": "parent value"})
 
-    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
-    check_func = mocked_facades_models.get_model.return_value.construct_from_dict_init
+    mocked_facades_models_get_model.assert_called_once_with(name="Parent")
+    check_func = mocked_facades_models_get_model.return_value.construct_from_dict_init
     check_func.assert_called_once_with(**{"parent_key": "parent value"})
 
 
 @pytest.mark.utility_base
-def test_from_dict_inheritance_return(mocked_facades_models, __init__):
+def test_from_dict_inheritance_return(mocked_facades_models_get_model, __init__):
     """
     GIVEN schema with parent model that has been mocked and dictionary
     WHEN from_dict is called with the dictionary
     THEN the from_dict on the mocked model return value is merged with the from_dict for
         the child.
     """
-    return_func = mocked_facades_models.get_model.return_value.construct_from_dict_init
+    return_func = mocked_facades_models_get_model.return_value.construct_from_dict_init
     return_func.return_value = {"parent_key": "parent value"}
     model = type(
         "model",
@@ -269,7 +269,7 @@ def test_from_dict_inheritance_return(mocked_facades_models, __init__):
 
     instance = model.from_dict(**{"key": "value", "parent_key": "parent value"})
 
-    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
+    mocked_facades_models_get_model.assert_called_once_with(name="Parent")
     assert instance.key == "value"  # pylint: disable=no-member
     assert instance.parent_key == "parent value"  # pylint: disable=no-member
 

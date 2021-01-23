@@ -26,13 +26,13 @@ def test_convert_invalid(schema, value, exception):
 
 
 @pytest.mark.utility_base
-def test_convert_invalid_missing_model(mocked_facades_models):
+def test_convert_invalid_missing_model(mocked_facades_models_get_model):
     """
     GIVEN mocked models facade that returns None for the model
     WHEN convert is called
     THEN SchemaNotFoundError is raised.
     """
-    mocked_facades_models.get_model.return_value = None
+    mocked_facades_models_get_model.return_value = None
     schema = {"x-de-$ref": "RefModel"}
     value = {}
 
@@ -41,7 +41,7 @@ def test_convert_invalid_missing_model(mocked_facades_models):
 
 
 @pytest.mark.utility_base
-def test_convert_valid(mocked_facades_models):
+def test_convert_valid(mocked_facades_models_get_model):
     """
     GIVEN mocked models facade, schema and value
     WHEN convert is called
@@ -53,9 +53,9 @@ def test_convert_valid(mocked_facades_models):
 
     returned_value = utility_base.from_dict.object_.convert(value, schema=schema)
 
-    mocked_facades_models.get_model.assert_called_once_with(name="RefModel")
-    mocked_facades_models.get_model.return_value.from_dict.assert_called_once_with(
+    mocked_facades_models_get_model.assert_called_once_with(name="RefModel")
+    mocked_facades_models_get_model.return_value.from_dict.assert_called_once_with(
         **{"key": "value"}
     )
-    expected_value = mocked_facades_models.get_model.return_value.from_dict.return_value
+    expected_value = mocked_facades_models_get_model.return_value.from_dict.return_value
     assert returned_value == expected_value

@@ -143,7 +143,7 @@ def test_to_dict_error(__init__):
 
 
 @pytest.mark.utility_base
-def test_to_dict_inheritance_call(mocked_facades_models, __init__):
+def test_to_dict_inheritance_call(mocked_facades_models_get_model, __init__):
     """
     GIVEN class that derives from UtilityBase with a schema that inherits
     WHEN to_dict is called
@@ -154,7 +154,7 @@ def test_to_dict_inheritance_call(mocked_facades_models, __init__):
         "properties": {"key": {"type": "string"}},
         "x-inherits": "Parent",
     }
-    mocked_facades_models.get_model.return_value.instance_to_dict.return_value = {
+    mocked_facades_models_get_model.return_value.instance_to_dict.return_value = {
         "parent_key": "parent value"
     }
     model = type(
@@ -165,8 +165,8 @@ def test_to_dict_inheritance_call(mocked_facades_models, __init__):
     returned_dict = instance.to_dict()
 
     assert returned_dict == {"key": "value", "parent_key": "parent value"}
-    mocked_facades_models.get_model.assert_called_once_with(name="Parent")
-    check_func = mocked_facades_models.get_model.return_value.instance_to_dict
+    mocked_facades_models_get_model.assert_called_once_with(name="Parent")
+    check_func = mocked_facades_models_get_model.return_value.instance_to_dict
     check_func.assert_called_once_with(instance)
 
 

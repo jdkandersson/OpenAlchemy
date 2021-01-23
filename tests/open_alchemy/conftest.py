@@ -9,9 +9,11 @@ from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import column_factory
+from open_alchemy import facades
 from open_alchemy import helpers
 from open_alchemy import model_factory
 from open_alchemy import models
+from open_alchemy.facades import models as models_facade
 
 
 @pytest.fixture
@@ -107,24 +109,26 @@ def mocked_declarative_base(monkeypatch):
 
 
 @pytest.fixture
-def mocked_facades_models(monkeypatch):
+def mocked_facades_models_get_model(monkeypatch):
     """Monkeypatch open_alchemy.facades.models."""
-    mock_models = mock.MagicMock()
-    monkeypatch.setattr(open_alchemy.facades, "models", mock_models)
-    return mock_models
+    mock_get_model = mock.MagicMock()
+    monkeypatch.setattr(models_facade, "get_model", mock_get_model)
+    return mock_get_model
 
 
 @pytest.fixture
-def _mocked_facades_models(mocked_facades_models):
-    """Suppress unused argument error."""
-    return mocked_facades_models
+def mocked_facades_models_get_model_schema(monkeypatch):
+    """Monkeypatch open_alchemy.facades.models."""
+    mock_get_model_schema = mock.MagicMock()
+    monkeypatch.setattr(models_facade, "get_model_schema", mock_get_model_schema)
+    return mock_get_model_schema
 
 
 @pytest.fixture
 def mocked_facades_sqlalchemy(monkeypatch):
     """Monkeypatch open_alchemy.facades.sqlalchemy."""
     mock_sqlalchemy = mock.MagicMock()
-    monkeypatch.setattr(open_alchemy.facades, "sqlalchemy", mock_sqlalchemy)
+    monkeypatch.setattr(facades, "sqlalchemy", mock_sqlalchemy)
     return mock_sqlalchemy
 
 

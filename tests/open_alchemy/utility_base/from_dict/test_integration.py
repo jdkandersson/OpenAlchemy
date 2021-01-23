@@ -67,7 +67,7 @@ def test_convert_valid(schema, value):
 
 
 @pytest.mark.utility_base
-def test_convert_object(mocked_facades_models):
+def test_convert_object(mocked_facades_models_get_model):
     """
     GIVEN schema for object property and value
     WHEN convert is called with the schema and value
@@ -78,12 +78,12 @@ def test_convert_object(mocked_facades_models):
 
     returned_value = utility_base.from_dict.convert(schema=schema, value=value)
 
-    expected_value = mocked_facades_models.get_model.return_value.from_dict.return_value
+    expected_value = mocked_facades_models_get_model.return_value.from_dict.return_value
     assert returned_value == expected_value
 
 
 @pytest.mark.utility_base
-def test_convert_array(mocked_facades_models):
+def test_convert_array(mocked_facades_models_get_model):
     """
     GIVEN schema for array property and value
     WHEN convert is called with the schema and value
@@ -95,6 +95,6 @@ def test_convert_array(mocked_facades_models):
     returned_value = utility_base.from_dict.convert(schema=schema, value=value)
 
     expected_value = [
-        mocked_facades_models.get_model.return_value.from_dict.return_value
+        mocked_facades_models_get_model.return_value.from_dict.return_value
     ]
     assert returned_value == expected_value

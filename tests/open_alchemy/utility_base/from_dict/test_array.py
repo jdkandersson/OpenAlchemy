@@ -52,7 +52,7 @@ def test_convert_invalid(schema, value, exception):
 )
 @pytest.mark.utility_base
 def test_convert_valid(
-    value, from_dict_side_effect, expected_value, mocked_facades_models
+    value, from_dict_side_effect, expected_value, mocked_facades_models_get_model
 ):
     """
     GIVEN invalid schema and value and expected exception
@@ -60,7 +60,7 @@ def test_convert_valid(
     THEN the expected exception is raised.
     """
     schema = {"items": {"type": "object", "x-de-$ref": "RefModel"}}
-    from_dict_func = mocked_facades_models.get_model.return_value.from_dict
+    from_dict_func = mocked_facades_models_get_model.return_value.from_dict
     from_dict_func.side_effect = from_dict_side_effect
 
     returned_value = utility_base.from_dict.array.convert(value, schema=schema)
