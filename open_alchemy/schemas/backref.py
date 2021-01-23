@@ -3,12 +3,15 @@
 import functools
 import typing
 
-from .. import helpers as oa_helpers
 from .. import types
-from . import helpers
+from ..helpers import peek
+from ..helpers import ref as ref_helper
+from .helpers import backref as backref_helper
+from .helpers import iterate
+from .helpers import process as process_helper
 
 
-class TArtifacts(helpers.process.TArtifacts):
+class TArtifacts(process_helper.TArtifacts):
     """The return value of _calculate_schema."""
 
     property_schema: types.Schema
@@ -35,30 +38,30 @@ def _calculate_artifacts(
     backref: typing.Optional[str]
 
     # Handle array
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     if items_schema is not None:
-        if oa_helpers.peek.secondary(schema=items_schema, schemas=schemas) is not None:
+        if peek.secondary(schema=items_schema, schemas=schemas) is not None:
             is_array = True
 
-        ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
-        backref = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.backref, schema=items_schema, schemas=schemas
+        ref = peek.ref(schema=items_schema, schemas=schemas)
+        backref = peek.prefer_local(
+            get_value=peek.backref, schema=items_schema, schemas=schemas
         )
     # Handle object
     else:
-        uselist: typing.Optional[bool] = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.uselist, schema=schema, schemas=schemas
+        uselist: typing.Optional[bool] = peek.prefer_local(
+            get_value=peek.uselist, schema=schema, schemas=schemas
         )
         if uselist is not False:
             is_array = True
-        ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
-        backref = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
+        ref = peek.ref(schema=schema, schemas=schemas)
+        backref = peek.prefer_local(
+            get_value=peek.backref, schema=schema, schemas=schemas
         )
 
     # Resolve name
     assert ref is not None
-    ref_schema_name, _ = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
+    ref_schema_name, _ = ref_helper.get_ref(ref=ref, schemas=schemas)
 
     # Calculate schema
     assert backref is not None
@@ -79,7 +82,7 @@ def _get_schema_backrefs(
     schemas: types.Schemas,
     schema_name: str,
     schema: types.Schema,
-) -> helpers.process.TArtifactsIter:
+) -> process_helper.TArtifactsIter:
     """
     Get the backrefs for a schema.
 
@@ -96,13 +99,13 @@ def _get_schema_backrefs(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.properties_items(
+    names_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Remove property name
     properties = map(lambda arg: arg[1], names_properties)
     # Remove properties that don't define back references
-    defines_backref_schemas = functools.partial(helpers.backref.defined, schemas)
+    defines_backref_schemas = functools.partial(backref_helper.defined, schemas)
     backref_properties = filter(defines_backref_schemas, properties)
     # Capture information for back references
     calculate_artifacts_schema_name_schemas = functools.partial(
@@ -111,7 +114,7 @@ def _get_schema_backrefs(
     return map(calculate_artifacts_schema_name_schemas, backref_properties)
 
 
-def _backrefs_to_schema(backrefs: helpers.process.TArtifactsIter) -> types.Schema:
+def _backrefs_to_schema(backrefs: process_helper.TArtifactsIter) -> types.Schema:
     """
     Convert to the schema with the x-backrefs value from backrefs.
 
@@ -142,11 +145,11 @@ def process(*, schemas: types.Schemas) -> None:
 
     """
     # Retrieve back references
-    backrefs = helpers.process.get_artifacts(
+    backrefs = process_helper.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_backrefs
     )
     # Map to a schema for each grouped back references
-    backref_schemas = helpers.process.calculate_outputs(
+    backref_schemas = process_helper.calculate_outputs(
         artifacts=backrefs, calculate_output=_backrefs_to_schema
     )
     # Convert to list to resolve iterator

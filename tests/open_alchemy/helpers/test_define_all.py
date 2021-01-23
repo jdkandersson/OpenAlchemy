@@ -4,7 +4,8 @@ from unittest import mock
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy.helpers import define_all
+from open_alchemy.helpers import ref
 
 
 @pytest.mark.parametrize(
@@ -112,7 +113,7 @@ def test_call(schemas, expected_calls):
     """
     model_factory = mock.MagicMock()
 
-    helpers.define_all(model_factory=model_factory, schemas=schemas)
+    define_all.define_all(model_factory=model_factory, schemas=schemas)
 
     model_factory.assert_has_calls(
         list(mock.call(name=name) for name in expected_calls)
@@ -133,8 +134,8 @@ def test_remote_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Table": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref.set_context(path=str(schemas_file))
     schemas = {"RefTable": {"$ref": "remote.json#/Table"}}
     model_factory = mock.MagicMock()
 
-    helpers.define_all(model_factory=model_factory, schemas=schemas)
+    define_all.define_all(model_factory=model_factory, schemas=schemas)

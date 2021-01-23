@@ -1,11 +1,12 @@
 """Define validation rules for simple properties."""
 
 from .... import exceptions
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
+from ....helpers import type_ as type_helper
 from .. import types
 
-TYPES = oa_helpers.type_.SIMPLE_TYPES
+TYPES = type_helper.SIMPLE_TYPES
 
 # Set of valid type and format combinations
 _VALID_TYPE_FORMAT = {
@@ -23,14 +24,12 @@ def _check_modifiers(
 ) -> types.OptResult:
     """Check property schema modifiers."""
     # check type
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     if type_ not in TYPES:
         return types.Result(False, f"{type_} type is not supported")
 
     # check format
-    format_ = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.format_, schema=schema, schemas=schemas
-    )
+    format_ = peek.prefer_local(get_value=peek.format_, schema=schema, schemas=schemas)
     type_format = (type_, format_)
     # Check type and format combination
     if type_ != "string" and type_format not in _VALID_TYPE_FORMAT:
@@ -42,8 +41,8 @@ def _check_modifiers(
         format_str = f" {format_} format"
 
     # Check maxLength
-    max_length = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.max_length, schema=schema, schemas=schemas
+    max_length = peek.prefer_local(
+        get_value=peek.max_length, schema=schema, schemas=schemas
     )
     if max_length is not None:
         if type_ != "string" or format_ in {"date", "date-time"}:
@@ -52,8 +51,8 @@ def _check_modifiers(
             )
 
     # Check autoincrement
-    autoincrement = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.autoincrement, schema=schema, schemas=schemas
+    autoincrement = peek.prefer_local(
+        get_value=peek.autoincrement, schema=schema, schemas=schemas
     )
     if autoincrement is not None and type_ != "integer":
         return types.Result(
@@ -68,9 +67,7 @@ def check_kwargs(
 ) -> types.OptResult:
     """Check the value of kwargs."""
     # Check kwargs
-    kwargs = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.kwargs, schema=schema, schemas=schemas
-    )
+    kwargs = peek.prefer_local(get_value=peek.kwargs, schema=schema, schemas=schemas)
     # Check for unexpected keys
     if kwargs is not None:
         unexpected_keys = {
@@ -89,13 +86,13 @@ def check_kwargs(
             )
 
     # Check foreign_key
-    foreign_key = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.foreign_key, schema=schema, schemas=schemas
+    foreign_key = peek.prefer_local(
+        get_value=peek.foreign_key, schema=schema, schemas=schemas
     )
 
     # Check foreign key kwargs
-    foreign_key_kwargs = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.foreign_key_kwargs, schema=schema, schemas=schemas
+    foreign_key_kwargs = peek.prefer_local(
+        get_value=peek.foreign_key_kwargs, schema=schema, schemas=schemas
     )
     if foreign_key_kwargs is not None and foreign_key is None:
         return types.Result(
@@ -129,41 +126,23 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
             return kwargs_result
 
         # Check nullable
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.nullable, schema=schema, schemas=schemas)
         # Check primary_key
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.primary_key, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.primary_key, schema=schema, schemas=schemas)
         # Check index
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.index, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.index, schema=schema, schemas=schemas)
         # Check unique
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.unique, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.unique, schema=schema, schemas=schemas)
         # Check description
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.description, schema=schema, schemas=schemas)
         # Check default
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.default, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.default, schema=schema, schemas=schemas)
         # Check server default
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.server_default, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.server_default, schema=schema, schemas=schemas)
         # Check readOnly
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.read_only, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.read_only, schema=schema, schemas=schemas)
         # Check writeOnly
-        oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.write_only, schema=schema, schemas=schemas)
 
     except exceptions.SchemaNotFoundError as exc:
         return types.Result(False, f"reference :: {exc}")

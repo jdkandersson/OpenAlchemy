@@ -3,9 +3,9 @@
 import pytest
 
 from open_alchemy.schemas import backref
-from open_alchemy.schemas import helpers
+from open_alchemy.schemas.helpers import process
 
-TArt = helpers.process.TArtifacts
+TArt = process.TArtifacts
 
 
 class TestBackrefsToSchema:

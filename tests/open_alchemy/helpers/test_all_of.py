@@ -3,7 +3,7 @@
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy.helpers import all_of
 
 
 @pytest.mark.parametrize(
@@ -54,7 +54,7 @@ def test_valid(schema, schemas, expected_schema):
     WHEN merge is called with the schema and schemas
     THEN the expected schema is returned.
     """
-    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
+    return_schema = all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema == expected_schema
 
@@ -92,9 +92,7 @@ def test_skip(schema, schemas, expected_schema):
     """
     skip_name = "RefSchema"
 
-    return_schema = helpers.all_of.merge(
-        schema=schema, schemas=schemas, skip_name=skip_name
-    )
+    return_schema = all_of.merge(schema=schema, schemas=schemas, skip_name=skip_name)
 
     assert return_schema == expected_schema
 
@@ -120,7 +118,7 @@ def test_required(all_of_schema, expected_required):
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
+    return_schema = all_of.merge(schema=schema, schemas=schemas)
 
     assert sorted(return_schema["required"]) == sorted(expected_required)
 
@@ -168,7 +166,7 @@ def test_properties(all_of_schema, expected_properties):
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
+    return_schema = all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["properties"] == expected_properties
 
@@ -216,6 +214,6 @@ def test_backrefs(all_of_schema, expected_backrefs):
     schema = {"allOf": all_of_schema}
     schemas = {}
 
-    return_schema = helpers.all_of.merge(schema=schema, schemas=schemas)
+    return_schema = all_of.merge(schema=schema, schemas=schemas)
 
     assert return_schema["x-backrefs"] == expected_backrefs

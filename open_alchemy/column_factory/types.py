@@ -2,8 +2,8 @@
 
 import typing
 
-from open_alchemy import facades
+from open_alchemy.facades.sqlalchemy import types
 
-TColumn = facades.sqlalchemy.types.Column
-TRelationship = facades.sqlalchemy.types.Relationship
+TColumn = types.Column
+TRelationship = types.Relationship
 TReturnValue = typing.Optional[typing.Union[TColumn, TRelationship]]

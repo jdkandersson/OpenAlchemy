@@ -2,9 +2,11 @@
 
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types
-from .. import helpers
+from ...helpers import foreign_key as foreign_key_helper
+from ...helpers import peek
+from ...helpers import relationship
+from ..helpers import iterate
 
 
 def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
@@ -18,7 +20,7 @@ def _requires_association(schemas: types.Schemas, schema: types.Schema) -> bool:
         Whether the property requires an association table.
 
     """
-    return oa_helpers.relationship.is_relationship_type(
+    return relationship.is_relationship_type(
         type_=types.RelationshipType.MANY_TO_MANY, schema=schema, schemas=schemas
     )
 
@@ -48,9 +50,9 @@ def get_association_property_iterator(
         schemas and the parent schema.
 
     """
-    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     for name, schema in constructables:
-        properties = helpers.iterate.properties_items(
+        properties = iterate.properties_items(
             schema=schema, schemas=schemas, stay_within_model=True
         )
         association_property_schemas = filter(
@@ -79,10 +81,10 @@ def get_secondary(*, schema: types.Schema, schemas: types.Schemas) -> str:
         The value of x-secondary.
 
     """
-    items = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items = peek.items(schema=schema, schemas=schemas)
     assert items is not None
-    secondary = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.secondary, schema=items, schemas=schemas
+    secondary = peek.prefer_local(
+        get_value=peek.secondary, schema=items, schemas=schemas
     )
     assert secondary is not None and isinstance(secondary, str)
     return secondary
@@ -153,12 +155,11 @@ def calculate_property_schema(
 
     """
     # Retrieve primary key column
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
-        lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)
-        is True,
+        lambda args: peek.primary_key(schema=args[1], schemas=schemas) is True,
         properties,
     )
     primary_key_property = next(primary_key_properties, None)
@@ -166,18 +167,14 @@ def calculate_property_schema(
     assert next(primary_key_properties, None) is None
 
     # Get artifacts
-    tablename = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.tablename, schema=schema, schemas=schemas
+    tablename = peek.prefer_local(
+        get_value=peek.tablename, schema=schema, schemas=schemas
     )
     primary_key_property_name, primary_key_property_schema = primary_key_property
-    type_ = oa_helpers.peek.type_(schema=primary_key_property_schema, schemas=schemas)
-    format_ = oa_helpers.peek.format_(
-        schema=primary_key_property_schema, schemas=schemas
-    )
-    max_length = oa_helpers.peek.max_length(
-        schema=primary_key_property_schema, schemas=schemas
-    )
-    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+    type_ = peek.type_(schema=primary_key_property_schema, schemas=schemas)
+    format_ = peek.format_(schema=primary_key_property_schema, schemas=schemas)
+    max_length = peek.max_length(schema=primary_key_property_schema, schemas=schemas)
+    foreign_key = foreign_key_helper.calculate_foreign_key(
         column_name=primary_key_property_name, target_schema=schema, schemas=schemas
     )
 
@@ -256,7 +253,7 @@ def calculate_schema(
     """
     secondary = get_secondary(schema=property_schema, schemas=schemas)
     parent_property = calculate_property_schema(schema=parent_schema, schemas=schemas)
-    _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
+    _, ref_schema = relationship.get_ref_schema_many_to_x(
         property_schema=property_schema, schemas=schemas
     )
     ref_property = calculate_property_schema(schema=ref_schema, schemas=schemas)

@@ -1,12 +1,16 @@
 """Validate the full schema (property, source and referenced)."""
 
 from ..... import exceptions
-from ..... import helpers as oa_helpers
 from ..... import types as oa_types
-from .... import helpers
-from ... import helpers as validation_helpers
+from .....helpers import foreign_key as foreign_key_helper
+from .....helpers import peek
+from .....helpers import relationship
+from ....helpers import backref as backref_helper
+from ....helpers import iterate
 from ... import model
 from ... import types
+from ...helpers import properties as properties_helper
+from ...helpers import value as value_helper
 from .. import simple
 
 
@@ -35,7 +39,7 @@ def _check_pre_defined_property_schema(
 
     """
     # Get the pre-defined property schema if it exists
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     filtered_properties = filter(lambda arg: arg[0] == property_name, properties)
@@ -54,13 +58,13 @@ def _check_pre_defined_property_schema(
 
     # Check that key information matches
     checks = (
-        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-        (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.TYPE, peek.type_),
+        (oa_types.OpenApiProperties.FORMAT, peek.format_),
+        (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
+        (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
-        match_result = validation_helpers.value.check_matches(
+        match_result = value_helper.check_matches(
             func=func,
             reference_schema=property_schema,
             check_schema=defined_property_schema,
@@ -74,7 +78,7 @@ def _check_pre_defined_property_schema(
         )
 
     # Check the foreign key
-    actual_foreign_key = oa_helpers.peek.foreign_key(
+    actual_foreign_key = peek.foreign_key(
         schema=defined_property_schema, schemas=schemas
     )
     if actual_foreign_key is None:
@@ -117,7 +121,7 @@ def _check_target_schema(
 
     """
     # Look for foreign key property schema
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=target_schema,
         schemas=schemas,
         stay_within_tablename=True,
@@ -143,7 +147,7 @@ def _check_target_schema(
         )
 
     # Check for pre-defined foreign key property
-    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+    foreign_key = foreign_key_helper.calculate_foreign_key(
         column_name=column_name,
         target_schema=target_schema,
         schemas=schemas,
@@ -180,12 +184,11 @@ def _check_many_to_many_schema(
         return model_result
 
     # Check for primary key
-    properties = helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
-        lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)
-        is True,
+        lambda args: peek.primary_key(schema=args[1], schemas=schemas) is True,
         properties,
     )
     primary_key_property = next(primary_key_properties, None)
@@ -239,7 +242,7 @@ def _check_many_to_many(
         )
 
     # Checking referenced schema
-    _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
+    _, ref_schema = relationship.get_ref_schema_many_to_x(
         property_schema=property_schema, schemas=schemas
     )
     ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
@@ -266,21 +269,19 @@ def _check_backref_property_properties_basics(
         schemas: All defined schemas used to resolve any $ref.
     """
     # Check for object type
-    type_ = oa_helpers.peek.type_(schema=backref_schema, schemas=schemas)
+    type_ = peek.type_(schema=backref_schema, schemas=schemas)
     if type_ != "object":
         return types.Result(False, "the back reference schema must be an object")
 
     # Check properties values
-    properties_values_result = validation_helpers.properties.check_properties_values(
+    properties_values_result = properties_helper.check_properties_values(
         schema=backref_schema, schemas=schemas
     )
     if properties_values_result is not None:
         return properties_values_result
 
     # Check whether any property names match the property name
-    properties_items = helpers.iterate.properties_items(
-        schema=backref_schema, schemas=schemas
-    )
+    properties_items = iterate.properties_items(schema=backref_schema, schemas=schemas)
     property_name_matches = next(
         filter(lambda args: args[0] == property_name, properties_items), None
     )
@@ -316,13 +317,11 @@ def _check_backref_property_properties(
         return basics_result
 
     # Check for backreference properties not in the parent schema properties
-    parent_properties_items = helpers.iterate.properties_items(
+    parent_properties_items = iterate.properties_items(
         schema=parent_schema, schemas=schemas
     )
     parent_properties = dict(parent_properties_items)
-    properties_items = helpers.iterate.properties_items(
-        schema=backref_schema, schemas=schemas
-    )
+    properties_items = iterate.properties_items(schema=backref_schema, schemas=schemas)
     property_name_not_in_parent = next(
         filter(lambda args: args[0] not in parent_properties, properties_items), None
     )
@@ -331,7 +330,7 @@ def _check_backref_property_properties(
         return types.Result(False, f"could not find {name} in the model schema")
 
     # Check properties are dictionaries
-    properties_items_result = validation_helpers.properties.check_properties_items(
+    properties_items_result = properties_helper.check_properties_items(
         schema=backref_schema, schemas=schemas
     )
     if properties_items_result is not None:
@@ -339,13 +338,13 @@ def _check_backref_property_properties(
 
     # Check schema matches
     checks = (
-        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-        (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.TYPE, peek.type_),
+        (oa_types.OpenApiProperties.FORMAT, peek.format_),
+        (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
+        (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
-        properties_items = helpers.iterate.properties_items(
+        properties_items = iterate.properties_items(
             schema=backref_schema, schemas=schemas
         )
         # pylint: disable=cell-var-from-loop
@@ -353,7 +352,7 @@ def _check_backref_property_properties(
         properties_items_value_results = map(
             lambda args: (
                 args[0],
-                validation_helpers.value.check_matches(
+                value_helper.check_matches(
                     func=func,
                     reference_schema=parent_properties[args[0]],
                     check_schema=args[1],
@@ -394,16 +393,12 @@ def _check_backref_property(
 ) -> types.OptResult:
     """Check the back reference property."""
     # Check the type of the property
-    read_only = oa_helpers.peek.read_only(
-        schema=backref_property_schema, schemas=schemas
-    )
+    read_only = peek.read_only(schema=backref_property_schema, schemas=schemas)
     if not read_only:
         return types.Result(False, "the property must be readOnly")
 
     # Check the type of the backref property
-    property_type = oa_helpers.peek.type_(
-        schema=backref_property_schema, schemas=schemas
-    )
+    property_type = peek.type_(schema=backref_property_schema, schemas=schemas)
     expected_property_type = _BACKREF_EXPECTED_TYPE[relationship_type]
     if expected_property_type != property_type:
         return types.Result(
@@ -417,9 +412,7 @@ def _check_backref_property(
         oa_types.RelationshipType.MANY_TO_ONE,
         oa_types.RelationshipType.MANY_TO_MANY,
     }:
-        items_schema = oa_helpers.peek.items(
-            schema=backref_property_schema, schemas=schemas
-        )
+        items_schema = peek.items(schema=backref_property_schema, schemas=schemas)
         if items_schema is None:
             return types.Result(False, "items must be defined")
         properties_result = _check_backref_property_properties(
@@ -477,7 +470,7 @@ def _check_backref(
         If the back reference is invalid, returns result with reason, otherwise None.
 
     """
-    backref = helpers.backref.get(schema=property_schema, schemas=schemas)
+    backref = backref_helper.get(schema=property_schema, schemas=schemas)
     if backref is None:
         return None
 
@@ -487,14 +480,14 @@ def _check_backref(
         oa_types.RelationshipType.ONE_TO_MANY,
         oa_types.RelationshipType.MANY_TO_MANY,
     }:
-        items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+        items_schema = peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
         object_schema = items_schema
     else:
         object_schema = property_schema
 
     # Look for backref property
-    properties = helpers.iterate.properties_items(schema=object_schema, schemas=schemas)
+    properties = iterate.properties_items(schema=object_schema, schemas=schemas)
     property_ = next(filter(lambda args: args[0] == backref, properties), None)
     if property_ is None:
         return None
@@ -557,9 +550,7 @@ def check(
 
     """
     try:
-        type_ = oa_helpers.relationship.calculate_type(
-            schema=property_schema, schemas=schemas
-        )
+        type_ = relationship.calculate_type(schema=property_schema, schemas=schemas)
 
         if type_ in {
             oa_types.RelationshipType.MANY_TO_ONE,
@@ -568,12 +559,12 @@ def check(
         }:
             # Retrieve information required to check x-to-one and one-to-many
             # relationships
-            column_name = oa_helpers.foreign_key.calculate_column_name(
+            column_name = foreign_key_helper.calculate_column_name(
                 type_=type_,
                 property_schema=property_schema,
                 schemas=schemas,
             )
-            target_schema = oa_helpers.foreign_key.get_target_schema(
+            target_schema = foreign_key_helper.get_target_schema(
                 type_=type_,
                 parent_schema=parent_schema,
                 property_schema=property_schema,
@@ -587,13 +578,13 @@ def check(
                     False,
                     f"foreign key target schema :: {target_schema_model_result.reason}",
                 )
-            modify_schema = oa_helpers.foreign_key.get_modify_schema(
+            modify_schema = foreign_key_helper.get_modify_schema(
                 type_=type_,
                 parent_schema=parent_schema,
                 property_schema=property_schema,
                 schemas=schemas,
             )
-            foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+            foreign_key_property_name = foreign_key_helper.calculate_prop_name(
                 type_=type_,
                 column_name=column_name,
                 property_name=property_name,

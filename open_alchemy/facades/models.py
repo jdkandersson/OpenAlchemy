@@ -5,9 +5,6 @@ import typing
 import open_alchemy
 from open_alchemy import types
 
-from ..utility_base import TOptUtilityBase
-from ..utility_base import TUtilityBase
-
 
 def get_base() -> typing.Any:
     """
@@ -21,7 +18,7 @@ def get_base() -> typing.Any:
     return open_alchemy.models.Base  # type: ignore
 
 
-def get_model(*, name: str) -> TOptUtilityBase:
+def get_model(*, name: str) -> typing.Optional[typing.Type]:
     """
     Get a model by name from models.
 
@@ -52,7 +49,7 @@ def get_model_schema(*, name: str) -> typing.Optional[types.Schema]:
     return model._schema  # pylint: disable=protected-access
 
 
-def set_model(*, name: str, model: TUtilityBase) -> None:
+def set_model(*, name: str, model: typing.Type) -> None:
     """
     Set model by name on models.
 

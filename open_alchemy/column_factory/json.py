@@ -1,7 +1,7 @@
 """Construct column for json property."""
 
-from .. import facades
 from .. import types as oa_types
+from ..facades.sqlalchemy import json
 from . import types
 
 
@@ -16,4 +16,4 @@ def handle(*, artifacts: oa_types.JsonPropertyArtifacts) -> types.TColumn:
         The constructed column.
 
     """
-    return facades.sqlalchemy.json.construct(artifacts=artifacts)
+    return json.construct(artifacts=artifacts)

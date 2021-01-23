@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base import from_dict
 
 
 @pytest.mark.parametrize(
@@ -29,7 +29,7 @@ def test_convert_invalid(schema, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.from_dict.convert(schema=schema, value=mock.MagicMock())
+        from_dict.convert(schema=schema, value=mock.MagicMock())
 
 
 @pytest.mark.parametrize(
@@ -59,15 +59,13 @@ def test_convert_valid(schema, value):
     WHEN convert is called with the schema and value
     THEN the converted value is returned.
     """
-    returned_value = utility_base.from_dict.convert(
-        schema=schema, value=copy.deepcopy(value)
-    )
+    returned_value = from_dict.convert(schema=schema, value=copy.deepcopy(value))
 
     assert returned_value == value
 
 
 @pytest.mark.utility_base
-def test_convert_object(mocked_facades_models):
+def test_convert_object(mocked_facades_models_get_model):
     """
     GIVEN schema for object property and value
     WHEN convert is called with the schema and value
@@ -76,14 +74,14 @@ def test_convert_object(mocked_facades_models):
     schema = {"type": "object", "x-de-$ref": "RefModel"}
     value = {"key": "value"}
 
-    returned_value = utility_base.from_dict.convert(schema=schema, value=value)
+    returned_value = from_dict.convert(schema=schema, value=value)
 
-    expected_value = mocked_facades_models.get_model.return_value.from_dict.return_value
+    expected_value = mocked_facades_models_get_model.return_value.from_dict.return_value
     assert returned_value == expected_value
 
 
 @pytest.mark.utility_base
-def test_convert_array(mocked_facades_models):
+def test_convert_array(mocked_facades_models_get_model):
     """
     GIVEN schema for array property and value
     WHEN convert is called with the schema and value
@@ -92,9 +90,9 @@ def test_convert_array(mocked_facades_models):
     schema = {"type": "array", "items": {"type": "object", "x-de-$ref": "RefModel"}}
     value = [{"key": "value"}]
 
-    returned_value = utility_base.from_dict.convert(schema=schema, value=value)
+    returned_value = from_dict.convert(schema=schema, value=value)
 
     expected_value = [
-        mocked_facades_models.get_model.return_value.from_dict.return_value
+        mocked_facades_models_get_model.return_value.from_dict.return_value
     ]
     assert returned_value == expected_value

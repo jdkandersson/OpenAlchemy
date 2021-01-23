@@ -1,7 +1,7 @@
 """Retrieve artifacts for a simple property."""
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
 from .. import types
 
 
@@ -20,60 +20,50 @@ def get(
         The artifacts for the property.
 
     """
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-    format_ = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.format_, schema=schema, schemas=schemas
+    type_ = peek.type_(schema=schema, schemas=schemas)
+    format_ = peek.prefer_local(get_value=peek.format_, schema=schema, schemas=schemas)
+    max_length = peek.prefer_local(
+        get_value=peek.max_length, schema=schema, schemas=schemas
     )
-    max_length = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.max_length, schema=schema, schemas=schemas
-    )
-    nullable = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
+    nullable = peek.prefer_local(
+        get_value=peek.nullable, schema=schema, schemas=schemas
     )
 
-    description = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
+    description = peek.prefer_local(
+        get_value=peek.description, schema=schema, schemas=schemas
     )
 
-    default = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.default, schema=schema, schemas=schemas
-    )
-    server_default = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.server_default, schema=schema, schemas=schemas
+    default = peek.prefer_local(get_value=peek.default, schema=schema, schemas=schemas)
+    server_default = peek.prefer_local(
+        get_value=peek.server_default, schema=schema, schemas=schemas
     )
 
-    read_only = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.read_only, schema=schema, schemas=schemas
+    read_only = peek.prefer_local(
+        get_value=peek.read_only, schema=schema, schemas=schemas
     )
-    write_only = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
-    )
-
-    primary_key = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.primary_key, schema=schema, schemas=schemas
-    )
-    autoincrement = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.autoincrement, schema=schema, schemas=schemas
-    )
-    index = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.index, schema=schema, schemas=schemas
-    )
-    unique = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.unique, schema=schema, schemas=schemas
+    write_only = peek.prefer_local(
+        get_value=peek.write_only, schema=schema, schemas=schemas
     )
 
-    foreign_key = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.foreign_key, schema=schema, schemas=schemas
+    primary_key = peek.prefer_local(
+        get_value=peek.primary_key, schema=schema, schemas=schemas
+    )
+    autoincrement = peek.prefer_local(
+        get_value=peek.autoincrement, schema=schema, schemas=schemas
+    )
+    index = peek.prefer_local(get_value=peek.index, schema=schema, schemas=schemas)
+    unique = peek.prefer_local(get_value=peek.unique, schema=schema, schemas=schemas)
+
+    foreign_key = peek.prefer_local(
+        get_value=peek.foreign_key, schema=schema, schemas=schemas
     )
 
-    kwargs = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.kwargs, schema=schema, schemas=schemas
-    )
-    foreign_key_kwargs = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.foreign_key_kwargs, schema=schema, schemas=schemas
+    kwargs = peek.prefer_local(get_value=peek.kwargs, schema=schema, schemas=schemas)
+    foreign_key_kwargs = peek.prefer_local(
+        get_value=peek.foreign_key_kwargs, schema=schema, schemas=schemas
     )
 
-    dict_ignore = oa_helpers.peek.dict_ignore(schema=schema, schemas=schemas)
+    dict_ignore = peek.dict_ignore(schema=schema, schemas=schemas)
 
     # Generate the schema
     schema_artifact: oa_types.ColumnSchema = {

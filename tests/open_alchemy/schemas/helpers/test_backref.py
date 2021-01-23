@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy.schemas import helpers
+from open_alchemy.schemas.helpers import backref
 
 
 @pytest.mark.parametrize(
@@ -85,7 +85,7 @@ def test_get(schema, schemas, expected_backref):
     WHEN get is called with the schema and schemas
     THEN the expected backref is returned.
     """
-    returned_backref = helpers.backref.get(schemas, schema)
+    returned_backref = backref.get(schemas, schema)
 
     assert returned_backref == expected_backref
 
@@ -170,6 +170,6 @@ def test_defined(schema, schemas, expected_result):
     WHEN defined is called with the schema and schemas
     THEN the expected result is returned.
     """
-    returned_result = helpers.backref.defined(schemas, schema)
+    returned_result = backref.defined(schemas, schema)
 
     assert returned_result == expected_result

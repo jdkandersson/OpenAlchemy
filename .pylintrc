@@ -300,7 +300,7 @@ contextmanager-decorators=contextlib.contextmanager
 [VARIABLES]
 
 # Tells whether we should check for unused import in __init__ files.
-init-import=no
+init-import=yes
 
 # A regular expression matching the name of dummy variables (i.e. expectedly
 # not used).

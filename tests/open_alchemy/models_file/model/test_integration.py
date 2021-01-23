@@ -1,12 +1,11 @@
 """Tests for model."""
-# pylint: disable=protected-access
 
 import sys
 
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
+from open_alchemy.models_file import model
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 _EXPECTED_TD_BASE = "typing.TypedDict"
@@ -67,7 +66,7 @@ def test_generate():
         ],
     )
 
-    source = models_file._model.generate(artifacts=artifacts, name="Model")
+    source = model.generate(artifacts=artifacts, name="Model")
 
     expected_source = f'''
 

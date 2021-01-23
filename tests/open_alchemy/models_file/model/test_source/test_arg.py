@@ -1,12 +1,12 @@
 """Tests for model."""
-# pylint: disable=protected-access
 
 import pytest
 
-from open_alchemy import models_file
+from open_alchemy.models_file import types
+from open_alchemy.models_file.model import source as models_source
 
-_ArgArtifacts = models_file.types.ArgArtifacts
-_ColumnArgArtifacts = models_file.types.ColumnArgArtifacts
+_ArgArtifacts = types.ArgArtifacts
+_ColumnArgArtifacts = types.ColumnArgArtifacts
 
 
 @pytest.mark.parametrize(
@@ -111,7 +111,7 @@ def test_arg_init(artifacts, expected_source):
     WHEN arg_init is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_init(artifacts=artifacts)
+    source = models_source.arg_init(artifacts=artifacts)
 
     assert source == expected_source
 
@@ -324,9 +324,7 @@ def test_remove_read_only_args(artifacts, expected_artifacts):
     WHEN remove_read_only_args is called
     THEN the expected artifacts are returned.
     """
-    returned_artifacts = models_file._model._source.remove_read_only_args(
-        artifacts=artifacts
-    )
+    returned_artifacts = models_source.remove_read_only_args(artifacts=artifacts)
 
     assert returned_artifacts == expected_artifacts
 
@@ -463,6 +461,6 @@ def test_arg_from_dict(artifacts, expected_source):
     WHEN arg_from_dict is called with the artifacts
     THEN the expected source is returned.
     """
-    source = models_file._model._source.arg_from_dict(artifacts=artifacts)
+    source = models_source.arg_from_dict(artifacts=artifacts)
 
     assert source == expected_source

@@ -1,10 +1,9 @@
 """Tests for type_."""
-# pylint: disable=protected-access
 
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
+from open_alchemy.models_file.artifacts import type_ as artifacts_type
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
@@ -390,7 +389,7 @@ def test_model(artifacts, expected_type):
     WHEN model is called with the artifacts
     THEN the expected type is returned.
     """
-    returned_type = models_file._artifacts._type.model(artifacts=artifacts)
+    returned_type = artifacts_type.model(artifacts=artifacts)
 
     assert returned_type == expected_type
 
@@ -467,7 +466,7 @@ def test_dict(artifacts, expected_type):
     WHEN typed_dict is called with the artifacts
     THEN the given expected type is returned.
     """
-    returned_type = models_file._artifacts._type.typed_dict(artifacts=artifacts)
+    returned_type = artifacts_type.typed_dict(artifacts=artifacts)
 
     assert returned_type == expected_type
 
@@ -499,7 +498,7 @@ def test_arg_init(nullable, required, default, expected_type):
         type_="integer", nullable=nullable, required=required, default=default
     )
 
-    returned_type = models_file._artifacts._type.arg_init(artifacts=artifacts)
+    returned_type = artifacts_type.arg_init(artifacts=artifacts)
 
     assert returned_type == expected_type
 
@@ -547,6 +546,6 @@ def test_arg_from_dict(artifacts, expected_type):
     WHEN arg_from_dict is called with the type, format, nullable, required and de_ref
     THEN the given expected type is returned.
     """
-    returned_type = models_file._artifacts._type.arg_from_dict(artifacts=artifacts)
+    returned_type = artifacts_type.arg_from_dict(artifacts=artifacts)
 
     assert returned_type == expected_type

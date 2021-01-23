@@ -5,7 +5,7 @@ import types
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
+from open_alchemy.helpers import inheritance
 
 
 @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ def test_check_parent_invalid(schema, schemas, exception):
     parent_name = "Parent"
 
     with pytest.raises(exception):
-        helpers.inheritance.check_parent(
+        inheritance.check_parent(
             schema=schema, parent_name=parent_name, schemas=schemas
         )
 
@@ -207,7 +207,7 @@ def test_check_parent(schema, schemas, expected_result):
     """
     parent_name = "Parent"
 
-    result = helpers.inheritance.check_parent(
+    result = inheritance.check_parent(
         schema=schema, parent_name=parent_name, schemas=schemas
     )
 
@@ -276,7 +276,7 @@ def test_get_parent_invalid(schema, schemas, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+        inheritance.get_parent(schema=schema, schemas=schemas)
 
 
 @pytest.mark.parametrize(
@@ -356,7 +356,7 @@ def test_get_parent_valid(schema, schemas, expected_name):
     WHEN get_parent is called with the schema and schemas
     THEN the expected name is returned.
     """
-    name = helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+    name = inheritance.get_parent(schema=schema, schemas=schemas)
 
     assert name == expected_name
 
@@ -415,7 +415,7 @@ def test_get_parents_invalid(schema, schemas, exception):
     THEN the expect exception is raised.
     """
     with pytest.raises(exception):
-        list(helpers.inheritance.get_parents(schema=schema, schemas=schemas))
+        list(inheritance.get_parents(schema=schema, schemas=schemas))
 
 
 @pytest.mark.parametrize(
@@ -575,7 +575,7 @@ def test_get_parents_valid(schema, schemas, expected_parents):
     WHEN get_parents is called with the schema and schemas
     THEN the expect parents are returned.
     """
-    generator = helpers.inheritance.get_parents(schema=schema, schemas=schemas)
+    generator = inheritance.get_parents(schema=schema, schemas=schemas)
 
     assert isinstance(generator, types.GeneratorType)
     assert list(generator) == expected_parents
@@ -598,7 +598,7 @@ def test_retrieve_parent_invalid(schema, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        helpers.inheritance.retrieve_parent(schema=schema, schemas={})
+        inheritance.retrieve_parent(schema=schema, schemas={})
 
 
 @pytest.mark.parametrize(
@@ -622,7 +622,7 @@ def test_retrieve_parent_valid(schema, schemas):
     WHEN retrieve_parent is called with the schema
     THEN the expected exception is raised.
     """
-    parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+    parent = inheritance.retrieve_parent(schema=schema, schemas=schemas)
 
     assert parent == "Parent"
 
@@ -639,15 +639,17 @@ def test_retrieve_parent_valid(schema, schemas):
     ids=["not inherits", "inherits"],
 )
 @pytest.mark.helper
-def test_retrieve_model_parents_schema(schema, expected_schema, mocked_facades_models):
+def test_retrieve_model_parents_schema(
+    schema, expected_schema, mocked_facades_models_get_model_schema
+):
     """
     GIVEN schema that does not inherit
     WHEN retrieve_model_parents_schema is called
     THEN the schema is returned.
     """
-    mocked_facades_models.get_model_schema.return_value = {"parent_key": "parent value"}
+    mocked_facades_models_get_model_schema.return_value = {"parent_key": "parent value"}
 
-    returned_schema = helpers.inheritance.retrieve_model_parents_schema(schema=schema)
+    returned_schema = inheritance.retrieve_model_parents_schema(schema=schema)
 
     assert returned_schema == expected_schema
 
@@ -659,7 +661,7 @@ class TestRetrieveModelParentsSchema:
 
     @staticmethod
     @pytest.mark.helper
-    def test_no_inheritance(mocked_facades_models):
+    def test_no_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that does not inherit
         WHEN _retrieve_model_parents_schema is called with the schema
@@ -667,79 +669,79 @@ class TestRetrieveModelParentsSchema:
         """
         schema = {"key": "value"}
 
-        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+        schemas_generator = inheritance._retrieve_model_parents_schema(schema)
 
         assert isinstance(schemas_generator, types.GeneratorType)
         assert list(schemas_generator) == [{"key": "value"}]
-        mocked_facades_models.get_model_schema.assert_not_called()
+        mocked_facades_models_get_model_schema.assert_not_called()
 
     @staticmethod
     @pytest.mark.helper
-    def test_single_inheritance_not_exists(mocked_facades_models):
+    def test_single_inheritance_not_exists(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.return_value = None
+        mocked_facades_models_get_model_schema.return_value = None
 
-        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+        schemas_generator = inheritance._retrieve_model_parents_schema(schema)
 
         with pytest.raises(exceptions.InheritanceError):
             list(schemas_generator)
 
     @staticmethod
     @pytest.mark.helper
-    def test_single_inheritance(mocked_facades_models):
+    def test_single_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.return_value = {
+        mocked_facades_models_get_model_schema.return_value = {
             "parent_key": "parent value"
         }
 
-        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+        schemas_generator = inheritance._retrieve_model_parents_schema(schema)
 
         assert list(schemas_generator) == [
             {"parent_key": "parent value"},
             {"key": "value", "x-inherits": "Parent"},
         ]
-        mocked_facades_models.get_model_schema.assert_called_once_with(name="Parent")
+        mocked_facades_models_get_model_schema.assert_called_once_with(name="Parent")
 
     @staticmethod
     @pytest.mark.helper
-    def test_multiple_inheritance(mocked_facades_models):
+    def test_multiple_inheritance(mocked_facades_models_get_model_schema):
         """
         GIVEN schema that has a parent
         WHEN _retrieve_model_parents_schema is called with the schema
         THEN the schema and the parent schema.
         """
         schema = {"key": "value", "x-inherits": "Parent"}
-        mocked_facades_models.get_model_schema.side_effect = [
+        mocked_facades_models_get_model_schema.side_effect = [
             {"parent_key": "parent value", "x-inherits": "Grandparent"},
             {"grandparent_key": "grandparent value"},
         ]
 
-        schemas_generator = helpers.inheritance._retrieve_model_parents_schema(schema)
+        schemas_generator = inheritance._retrieve_model_parents_schema(schema)
 
         assert list(schemas_generator) == [
             {"grandparent_key": "grandparent value"},
             {"parent_key": "parent value", "x-inherits": "Grandparent"},
             {"key": "value", "x-inherits": "Parent"},
         ]
-        assert mocked_facades_models.get_model_schema.call_count == 2
-        mocked_facades_models.get_model_schema.assert_any_call(name="Grandparent")
-        mocked_facades_models.get_model_schema.assert_any_call(name="Parent")
+        assert mocked_facades_models_get_model_schema.call_count == 2
+        mocked_facades_models_get_model_schema.assert_any_call(name="Grandparent")
+        mocked_facades_models_get_model_schema.assert_any_call(name="Parent")
 
 
 @pytest.mark.parametrize(
     "schema, schemas, expected_type",
     [
-        pytest.param({}, {}, helpers.inheritance.Type.NONE, id="not inherits"),
+        pytest.param({}, {}, inheritance.Type.NONE, id="not inherits"),
         pytest.param(
             {
                 "allOf": [
@@ -748,7 +750,7 @@ class TestRetrieveModelParentsSchema:
                 ]
             },
             {"RefSchema": {"x-tablename": "ref_schema"}},
-            helpers.inheritance.Type.JOINED_TABLE,
+            inheritance.Type.JOINED_TABLE,
             id="joined table",
         ),
         pytest.param(
@@ -759,7 +761,7 @@ class TestRetrieveModelParentsSchema:
                 ]
             },
             {"RefSchema": {"x-tablename": "ref_schema"}},
-            helpers.inheritance.Type.SINGLE_TABLE,
+            inheritance.Type.SINGLE_TABLE,
             id="single table",
         ),
     ],
@@ -771,6 +773,6 @@ def test_calculate_type(schema, schemas, expected_type):
     WHEN calculate_type is called with the schema and schemas
     THEN the expected type is returned.
     """
-    returned_type = helpers.inheritance.calculate_type(schema=schema, schemas=schemas)
+    returned_type = inheritance.calculate_type(schema=schema, schemas=schemas)
 
     assert returned_type == expected_type

@@ -3,7 +3,7 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base.from_dict import array
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,7 @@ def test_convert_invalid(schema, value, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.from_dict.array.convert(value, schema=schema)
+        array.convert(value, schema=schema)
 
 
 @pytest.mark.parametrize(
@@ -52,7 +52,7 @@ def test_convert_invalid(schema, value, exception):
 )
 @pytest.mark.utility_base
 def test_convert_valid(
-    value, from_dict_side_effect, expected_value, mocked_facades_models
+    value, from_dict_side_effect, expected_value, mocked_facades_models_get_model
 ):
     """
     GIVEN invalid schema and value and expected exception
@@ -60,9 +60,9 @@ def test_convert_valid(
     THEN the expected exception is raised.
     """
     schema = {"items": {"type": "object", "x-de-$ref": "RefModel"}}
-    from_dict_func = mocked_facades_models.get_model.return_value.from_dict
+    from_dict_func = mocked_facades_models_get_model.return_value.from_dict
     from_dict_func.side_effect = from_dict_side_effect
 
-    returned_value = utility_base.from_dict.array.convert(value, schema=schema)
+    returned_value = array.convert(value, schema=schema)
 
     assert returned_value == expected_value

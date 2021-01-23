@@ -2,9 +2,9 @@
 
 import pytest
 
-from open_alchemy import facades
 from open_alchemy import types
 from open_alchemy.column_factory import simple
+from open_alchemy.facades.sqlalchemy import types as sqlalchemy_types
 from open_alchemy.schemas.artifacts import types as artifacts_types
 
 
@@ -44,5 +44,5 @@ def test_integration():
 
     returned_column = simple.handle(artifacts=artifacts)
 
-    assert isinstance(returned_column, facades.sqlalchemy.types.Column)
-    assert isinstance(returned_column.type, facades.sqlalchemy.types.Integer)
+    assert isinstance(returned_column, sqlalchemy_types.Column)
+    assert isinstance(returned_column.type, sqlalchemy_types.Integer)

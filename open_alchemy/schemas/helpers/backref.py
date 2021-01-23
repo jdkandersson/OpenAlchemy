@@ -2,8 +2,8 @@
 
 import typing
 
-from ... import helpers
 from ... import types
+from ...helpers import peek
 
 
 def get(schemas: types.Schemas, schema: types.Schema) -> typing.Optional[str]:
@@ -24,12 +24,12 @@ def get(schemas: types.Schemas, schema: types.Schema) -> typing.Optional[str]:
 
     """
     # Handle items
-    items_schema = helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     if items_schema is not None:
         return get(schema=items_schema, schemas=schemas)
 
     # Peek for backref
-    return helpers.peek.backref(schema=schema, schemas=schemas)
+    return peek.backref(schema=schema, schemas=schemas)
 
 
 def defined(schemas: types.Schemas, schema: types.Schema) -> bool:

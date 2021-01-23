@@ -1,9 +1,9 @@
 """Convert object dictionary to column value."""
 
 from ... import exceptions
-from ... import facades
-from ... import helpers
 from ... import types as oa_types
+from ...facades import models
+from ...helpers import ext_prop
 from .. import types
 
 
@@ -23,7 +23,7 @@ def convert(
         The converted value.
 
     """
-    ref_model_name = helpers.ext_prop.get(
+    ref_model_name = ext_prop.get(
         source=schema, name=oa_types.ExtensionProperties.DE_REF
     )
     if ref_model_name is None:
@@ -36,7 +36,7 @@ def convert(
         raise exceptions.InvalidInstanceError(
             "The value for an object parameter must be a dictionary."
         )
-    ref_model = facades.models.get_model(name=ref_model_name)
+    ref_model = models.get_model(name=ref_model_name)
     if ref_model is None:
         raise exceptions.SchemaNotFoundError(
             f"The referenced model {ref_model} was not found in the models."

@@ -11,11 +11,15 @@ from open_alchemy import types as oa_types
 
 from . import build as _build_module
 from . import exceptions
-from . import helpers as _helpers
 from . import model_factory as _model_factory
 from . import models_file as _models_file
 from . import schemas as _schemas_module
 from .build import PackageFormat
+from .helpers import define_all as _define_all
+from .helpers import inheritance as _inheritance
+from .helpers import ref as _ref
+from .helpers import schema as _schema_helper
+from .schemas import artifacts as _schemas_artifacts
 
 models = py_types.ModuleType("models")  # pylint: disable=invalid-name
 sys.modules["open_alchemy.models"] = models
@@ -45,7 +49,7 @@ def init_model_factory(
     """
     # Record the spec path
     if spec_path is not None:
-        _helpers.ref.set_context(path=spec_path)
+        _ref.set_context(path=spec_path)
 
     # Retrieving the schema from the specification
     if "components" not in spec:
@@ -63,7 +67,7 @@ def init_model_factory(
     _schemas_module.process(schemas=schemas)
 
     # Getting artifacts
-    schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+    schemas_artifacts = _schemas_artifacts.get_from_schemas(
         schemas=schemas, stay_within_model=True
     )
 
@@ -88,14 +92,14 @@ def init_model_factory(
         return model
 
     if models_filename is not None:
-        schemas_artifacts = _schemas_module.artifacts.get_from_schemas(
+        schemas_artifacts = _schemas_artifacts.get_from_schemas(
             schemas=schemas, stay_within_model=False
         )
         models_file_contents = _models_file.generate(artifacts=schemas_artifacts)
         with open(models_filename, "w") as out_file:
             out_file.write(models_file_contents)
 
-    _helpers.define_all(model_factory=_register_model, schemas=schemas)
+    _define_all.define_all(model_factory=_register_model, schemas=schemas)
 
     return _register_model
 
@@ -232,8 +236,8 @@ def _get_base(*, name: str, schemas: oa_types.Schemas) -> typing.Type:
     if schema is None:
         raise exceptions.SchemaNotFoundError(f"Could not fund schema {name}.")
 
-    if _helpers.schema.inherits(schema=schema, schemas=schemas):
-        parent = _helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+    if _schema_helper.inherits(schema=schema, schemas=schemas):
+        parent = _inheritance.retrieve_parent(schema=schema, schemas=schemas)
         try:
             return getattr(models, parent)
         except AttributeError as exc:

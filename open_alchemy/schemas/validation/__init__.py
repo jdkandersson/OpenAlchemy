@@ -4,7 +4,7 @@ import typing
 
 from ... import exceptions as _exceptions
 from ... import types as _oa_types
-from .. import helpers as _helpers
+from ..helpers import iterate
 from . import association
 from . import model
 from . import property_
@@ -13,7 +13,6 @@ from . import spec_validation
 from . import types
 from . import unique_secondary
 from . import unique_tablename
-from . import unmanaged
 
 
 def _get_properties_results(
@@ -21,7 +20,7 @@ def _get_properties_results(
 ) -> typing.Iterable[typing.Tuple[str, types.Result]]:
     """Get an iterator with properties results."""
     # Get model properties
-    properties = _helpers.iterate.properties_items(
+    properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Filter any keys that are not string
@@ -101,7 +100,7 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
 
     # Check constructable schemas model
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     model_results = map(
         lambda args: (args[0], model.check(schemas, args[1])), constructables
     )
@@ -113,7 +112,7 @@ def process(*, schemas: _oa_types.Schemas) -> None:
         raise _exceptions.MalformedSchemaError(f"{name} :: {result.reason}")
 
     # Check constructable schemas properties
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     for constructable in constructables:
         name, schema = constructable
         _process_model(schemas, name, schema)
@@ -134,7 +133,7 @@ def check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
         Whether the schemas contain at least 1 model.
 
     """
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     if not any(constructables):
         return types.Result(
             False,
@@ -198,7 +197,7 @@ def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
         The result for each model.
 
     """
-    constructables = _helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     constructables_result = map(
         lambda args: (args[0], _check_model(schemas, args[1])), constructables
     )

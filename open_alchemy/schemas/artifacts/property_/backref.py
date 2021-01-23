@@ -3,9 +3,11 @@
 import copy
 import typing
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
-from ... import helpers
+from ....helpers import peek
+from ....helpers import schema as schema_helper
+from ...helpers import clean
+from ...helpers import iterate
 from .. import types
 
 OPEN_API_TO_SUB_TYPE: typing.Dict[
@@ -34,41 +36,37 @@ def get(
         The artifacts for the property.
 
     """
-    schema = copy.deepcopy(
-        oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
-    )
+    schema = copy.deepcopy(schema_helper.prepare_deep(schema=schema, schemas=schemas))
 
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = peek.description(schema=schema, schemas=schemas)
 
     # Get property names
     properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
     if sub_type == types.BackrefSubType.OBJECT:  # noqa: E721
-        properties_items = helpers.iterate.properties_items(
-            schema=schema, schemas=schemas
-        )
+        properties_items = iterate.properties_items(schema=schema, schemas=schemas)
     else:
-        items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+        items_schema = peek.items(schema=schema, schemas=schemas)
         assert items_schema is not None
-        properties_items = helpers.iterate.properties_items(
+        properties_items = iterate.properties_items(
             schema=items_schema, schemas=schemas
         )
     properties_names = map(lambda args: args[0], properties_items)
 
     # Remove extension properties from schema
-    helpers.clean.extension(schema=schema)
+    clean.extension(schema=schema)
     if sub_type == types.BackrefSubType.ARRAY:  # noqa: E721
-        helpers.clean.extension(schema=schema[oa_types.OpenApiProperties.ITEMS])
+        clean.extension(schema=schema[oa_types.OpenApiProperties.ITEMS])
         for property_schema in schema[oa_types.OpenApiProperties.ITEMS][
             oa_types.OpenApiProperties.PROPERTIES
         ].values():
-            helpers.clean.extension(schema=property_schema)
+            clean.extension(schema=property_schema)
     else:
         for property_schema in schema[oa_types.OpenApiProperties.PROPERTIES].values():
-            helpers.clean.extension(schema=property_schema)
+            clean.extension(schema=property_schema)
 
     return types.BackrefPropertyArtifacts(
         type=oa_types.PropertyType.BACKREF,

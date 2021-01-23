@@ -9,9 +9,9 @@ from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import column_factory
-from open_alchemy import helpers
 from open_alchemy import model_factory
 from open_alchemy import models
+from open_alchemy.facades import models as models_facade
 
 
 @pytest.fixture
@@ -29,15 +29,6 @@ def mocked_model_factory(monkeypatch):
     mock_model_factory = mock.MagicMock()
     monkeypatch.setattr(model_factory, "model_factory", mock_model_factory)
     return mock_model_factory
-
-
-@pytest.fixture
-def mocked_ref_resolve(monkeypatch):
-    """Monkeypatches helpers.ref.resolve."""
-    mock_ref_resolve = mock.MagicMock()
-    mock_ref_resolve.return_value = (mock.MagicMock(), mock.MagicMock())
-    monkeypatch.setattr(helpers.ref, "resolve", mock_ref_resolve)
-    return mock_ref_resolve
 
 
 @pytest.fixture
@@ -107,25 +98,19 @@ def mocked_declarative_base(monkeypatch):
 
 
 @pytest.fixture
-def mocked_facades_models(monkeypatch):
+def mocked_facades_models_get_model(monkeypatch):
     """Monkeypatch open_alchemy.facades.models."""
-    mock_models = mock.MagicMock()
-    monkeypatch.setattr(open_alchemy.facades, "models", mock_models)
-    return mock_models
+    mock_get_model = mock.MagicMock()
+    monkeypatch.setattr(models_facade, "get_model", mock_get_model)
+    return mock_get_model
 
 
 @pytest.fixture
-def _mocked_facades_models(mocked_facades_models):
-    """Suppress unused argument error."""
-    return mocked_facades_models
-
-
-@pytest.fixture
-def mocked_facades_sqlalchemy(monkeypatch):
-    """Monkeypatch open_alchemy.facades.sqlalchemy."""
-    mock_sqlalchemy = mock.MagicMock()
-    monkeypatch.setattr(open_alchemy.facades, "sqlalchemy", mock_sqlalchemy)
-    return mock_sqlalchemy
+def mocked_facades_models_get_model_schema(monkeypatch):
+    """Monkeypatch open_alchemy.facades.models."""
+    mock_get_model_schema = mock.MagicMock()
+    monkeypatch.setattr(models_facade, "get_model_schema", mock_get_model_schema)
+    return mock_get_model_schema
 
 
 @pytest.fixture(autouse=True)

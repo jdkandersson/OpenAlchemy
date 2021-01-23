@@ -3,8 +3,8 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
 from open_alchemy import types
+from open_alchemy.helpers import peek
 
 
 @pytest.mark.parametrize(
@@ -55,7 +55,7 @@ def test_mixins(schema, schemas, expected_mixins):
     WHEN mixins is called with the schema and schemas
     THEN the expected mixins value is returned.
     """
-    mixins = helpers.peek.mixins(schema=schema, schemas=schemas)
+    mixins = peek.mixins(schema=schema, schemas=schemas)
 
     assert mixins == expected_mixins
 
@@ -70,7 +70,7 @@ def test_mixins(schema, schemas, expected_mixins):
         *(
             pytest.param(
                 [(extension, value)],
-                getattr(helpers.peek, extension.replace("-", "_")),
+                getattr(peek, extension.replace("-", "_")),
                 expected,
                 id=f"valid {extension}",
             )
@@ -105,7 +105,7 @@ def test_mixins(schema, schemas, expected_mixins):
         *(
             pytest.param(
                 [],
-                getattr(helpers.peek, extension.replace("-", "_")),
+                getattr(peek, extension.replace("-", "_")),
                 None,
                 id=f"{extension} missing",
             )
@@ -155,7 +155,7 @@ def test_peek_value_func(prefix, key_values, func, expected_value):
     [
         pytest.param(
             [(extension, value)],
-            getattr(helpers.peek, extension.replace("-", "_")),
+            getattr(peek, extension.replace("-", "_")),
             id=f"invalid {extension}",
         )
         for extension, value in [
@@ -208,7 +208,7 @@ def test_peek_malformed_schema_error(prefix, key_values, func):
     [
         pytest.param(
             [(extension, value)],
-            getattr(helpers.peek, extension.replace("-", "_")),
+            getattr(peek, extension.replace("-", "_")),
             id=f"invalid {extension}",
         )
         for extension, value in [

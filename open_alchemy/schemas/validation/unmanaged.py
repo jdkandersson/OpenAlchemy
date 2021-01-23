@@ -3,9 +3,9 @@
 import typing
 
 from ... import exceptions
-from ... import helpers as _oa_helpers
 from ... import types as _oa_types
-from .. import helpers as _helpers
+from ...helpers import peek
+from ..helpers import iterate
 from . import spec_validation
 from . import types
 
@@ -33,7 +33,7 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
     """
     try:
         # Check type
-        type_ = _oa_helpers.peek.peek_key(
+        type_ = peek.peek_key(
             schema=schema, schemas=schemas, key=_oa_types.OpenApiProperties.TYPE
         )
         if type_ is None:
@@ -85,7 +85,7 @@ def check_models(*, schemas: _oa_types.Schemas) -> types.TModels:
         The result for each model.
 
     """
-    not_constructables = _helpers.iterate.not_constructable(schemas=schemas)
+    not_constructables = iterate.not_constructable(schemas=schemas)
     not_constructables_result = map(
         lambda args: (args[0], check_model(schemas, args[1])), not_constructables
     )

@@ -10,7 +10,8 @@
 Translates an OpenAPI schema to SQLAlchemy models.
 
 Get started with the online editor that will guide you through using your
-existing OpenAPI specification to define your database schema:
+existing OpenAPI specification to define your database schema and offers
+installing your models using `pip`:
 [Online Editor](https://editor.openalchemy.io)
 
 ## Installation

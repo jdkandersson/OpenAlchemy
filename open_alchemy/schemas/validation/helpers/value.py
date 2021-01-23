@@ -2,13 +2,13 @@
 
 import typing
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
 
 
 def check_matches(
     *,
-    func: oa_helpers.peek.PeekValue,
+    func: peek.PeekValue,
     reference_schema: oa_types.Schema,
     check_schema: oa_types.Schema,
     schemas: oa_types.Schemas,
@@ -26,7 +26,7 @@ def check_matches(
         An invalid result with reason if the values don't match otherwise None.
 
     """
-    expected_value = oa_helpers.peek.prefer_local(
+    expected_value = peek.prefer_local(
         get_value=func, schema=reference_schema, schemas=schemas
     )
     if expected_value is None:
@@ -34,7 +34,7 @@ def check_matches(
     else:
         expected_value_str = f'"{expected_value}"'
 
-    actual_value = oa_helpers.peek.prefer_local(
+    actual_value = peek.prefer_local(
         get_value=func, schema=check_schema, schemas=schemas
     )
     if actual_value is None:

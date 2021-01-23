@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy.helpers import calculate_nullable
 
 
 @pytest.mark.parametrize(
@@ -91,7 +91,7 @@ def test_calculate_nullable(required, generated, defaulted, nullable, expected_r
     WHEN calculate_nullable is called with nullable, defaulted, generated and required
     THEN the expected result is returned.
     """
-    result = helpers.calculate_nullable(
+    result = calculate_nullable.calculate_nullable(
         nullable=nullable, generated=generated, required=required, defaulted=defaulted
     )
 

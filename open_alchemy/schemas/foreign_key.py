@@ -2,9 +2,14 @@
 
 import typing
 
-from .. import helpers as oa_helpers
 from .. import types
-from . import helpers
+from ..helpers import calculate_nullable
+from ..helpers import foreign_key as foreign_key_helper
+from ..helpers import peek
+from ..helpers import property_
+from ..helpers import relationship
+from .helpers import iterate
+from .helpers import process as process_helper
 
 
 def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
@@ -27,14 +32,12 @@ def _requires_foreign_key(schemas: types.Schemas, schema: types.Schema) -> bool:
 
     """
     # Filter for relationship properties
-    property_type = oa_helpers.property_.calculate_type(schemas=schemas, schema=schema)
+    property_type = property_.calculate_type(schemas=schemas, schema=schema)
     if property_type != types.PropertyType.RELATIONSHIP:
         return False
 
     # Filter for not many-to-many relationship
-    relationship_type = oa_helpers.relationship.calculate_type(
-        schema=schema, schemas=schemas
-    )
+    relationship_type = relationship.calculate_type(schema=schema, schemas=schemas)
     if relationship_type == types.RelationshipType.MANY_TO_MANY:
         return False
     return True
@@ -62,21 +65,19 @@ def _foreign_key_property_not_defined(
 
     """
     # Retrieve the property name
-    type_ = oa_helpers.relationship.calculate_type(
-        schema=property_schema, schemas=schemas
-    )
-    column_name = oa_helpers.foreign_key.calculate_column_name(
+    type_ = relationship.calculate_type(schema=property_schema, schemas=schemas)
+    column_name = foreign_key_helper.calculate_column_name(
         type_=type_,
         property_schema=property_schema,
         schemas=schemas,
     )
-    target_schema = oa_helpers.foreign_key.get_target_schema(
+    target_schema = foreign_key_helper.get_target_schema(
         type_=type_,
         parent_schema=parent_schema,
         property_schema=property_schema,
         schemas=schemas,
     )
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+    foreign_key_property_name = foreign_key_helper.calculate_prop_name(
         type_=type_,
         column_name=column_name,
         property_name=property_name,
@@ -86,13 +87,13 @@ def _foreign_key_property_not_defined(
 
     # Look for the foreign key property name on the schema the foreign key needs to be
     # defined on
-    modify_schema = oa_helpers.foreign_key.get_modify_schema(
+    modify_schema = foreign_key_helper.get_modify_schema(
         type_=type_,
         parent_schema=parent_schema,
         property_schema=property_schema,
         schemas=schemas,
     )
-    properties = helpers.iterate.properties_items(schema=modify_schema, schemas=schemas)
+    properties = iterate.properties_items(schema=modify_schema, schemas=schemas)
     property_names = map(lambda arg: arg[0], properties)
     contains_foreign_key_property_name = any(
         filter(lambda name: name == foreign_key_property_name, property_names)
@@ -102,7 +103,7 @@ def _foreign_key_property_not_defined(
     return True
 
 
-class TArtifacts(helpers.process.TArtifacts):
+class TArtifacts(process_helper.TArtifacts):
     """The return value of _calculate_schema."""
 
     property_schema: types.ColumnSchema
@@ -134,23 +135,23 @@ def _calculate_foreign_key_property_artifacts(
 
     """
     # Retrieve the schema of the property that is targeted by the foreign key
-    relationship_type = oa_helpers.relationship.calculate_type(
+    relationship_type = relationship.calculate_type(
         schema=property_schema, schemas=schemas
     )
     assert relationship_type != types.RelationshipType.MANY_TO_MANY
 
-    column_name = oa_helpers.foreign_key.calculate_column_name(
+    column_name = foreign_key_helper.calculate_column_name(
         type_=relationship_type,
         property_schema=property_schema,
         schemas=schemas,
     )
-    target_schema = oa_helpers.foreign_key.get_target_schema(
+    target_schema = foreign_key_helper.get_target_schema(
         type_=relationship_type,
         parent_schema=parent_schema,
         property_schema=property_schema,
         schemas=schemas,
     )
-    target_schema_properties = helpers.iterate.properties_items(
+    target_schema_properties = iterate.properties_items(
         schema=target_schema, schemas=schemas
     )
     foreign_key_target = next(
@@ -162,22 +163,20 @@ def _calculate_foreign_key_property_artifacts(
     # Check whether the property is required
     required: typing.Optional[bool] = None
     if relationship_type != types.RelationshipType.ONE_TO_MANY:
-        required_items = helpers.iterate.required_items(
-            schema=parent_schema, schemas=schemas
-        )
+        required_items = iterate.required_items(schema=parent_schema, schemas=schemas)
         required = any(filter(lambda name: name == property_name, required_items))
     # Calculate nullable for all but one-to-many relationships based on property
     nullable: typing.Optional[bool] = None
-    relationship_type = oa_helpers.relationship.calculate_type(
+    relationship_type = relationship.calculate_type(
         schema=property_schema, schemas=schemas
     )
     if relationship_type != types.RelationshipType.ONE_TO_MANY:
-        nullable = oa_helpers.peek.nullable(schema=property_schema, schemas=schemas)
-    default = oa_helpers.peek.default(schema=foreign_key_target_schema, schemas=schemas)
-    server_default = oa_helpers.peek.server_default(
+        nullable = peek.nullable(schema=property_schema, schemas=schemas)
+    default = peek.default(schema=foreign_key_target_schema, schemas=schemas)
+    server_default = peek.server_default(
         schema=foreign_key_target_schema, schemas=schemas
     )
-    nullable = oa_helpers.calculate_nullable(
+    nullable = calculate_nullable.calculate_nullable(
         nullable=nullable,
         generated=False,
         defaulted=default is not None or server_default is not None,
@@ -185,18 +184,14 @@ def _calculate_foreign_key_property_artifacts(
     )
 
     # Retrieve information about the foreign key schema
-    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+    foreign_key = foreign_key_helper.calculate_foreign_key(
         column_name=column_name,
         target_schema=target_schema,
         schemas=schemas,
     )
-    property_type = oa_helpers.peek.type_(
-        schema=foreign_key_target_schema, schemas=schemas
-    )
-    format_ = oa_helpers.peek.format_(schema=foreign_key_target_schema, schemas=schemas)
-    max_length = oa_helpers.peek.max_length(
-        schema=foreign_key_target_schema, schemas=schemas
-    )
+    property_type = peek.type_(schema=foreign_key_target_schema, schemas=schemas)
+    format_ = peek.format_(schema=foreign_key_target_schema, schemas=schemas)
+    max_length = peek.max_length(schema=foreign_key_target_schema, schemas=schemas)
 
     # Calculate the schema
     foreign_key_property_schema: types.ColumnSchema = {
@@ -219,13 +214,13 @@ def _calculate_foreign_key_property_artifacts(
         ] = server_default
 
     # Calculate other artifacts
-    modify_name = oa_helpers.foreign_key.get_modify_name(
+    modify_name = foreign_key_helper.get_modify_name(
         type_=relationship_type,
         parent_name=parent_name,
         property_schema=property_schema,
         schemas=schemas,
     )
-    foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+    foreign_key_property_name = foreign_key_helper.calculate_prop_name(
         type_=relationship_type,
         column_name=column_name,
         property_name=property_name,
@@ -242,7 +237,7 @@ def _get_schema_foreign_keys(
     schemas: types.Schemas,
     schema_name: str,
     schema: types.Schema,
-) -> helpers.process.TArtifactsIter:
+) -> process_helper.TArtifactsIter:
     """
     Retrieve the foreign keys for a schema.
 
@@ -264,7 +259,7 @@ def _get_schema_foreign_keys(
 
     """
     # Get all the properties of the schema
-    names_properties = helpers.iterate.properties_items(
+    names_properties = iterate.properties_items(
         schema=schema, schemas=schemas, stay_within_model=True
     )
     # Validate and remove properties that don't require foreign keys
@@ -289,7 +284,7 @@ def _get_schema_foreign_keys(
 
 
 def _foreign_keys_to_schema(
-    foreign_keys: helpers.process.TArtifactsIter,
+    foreign_keys: process_helper.TArtifactsIter,
 ) -> types.Schema:
     """
     Convert to the schema with the foreign keys from foreign key artifacts.
@@ -318,11 +313,11 @@ def process(*, schemas: types.Schemas):
 
     """
     # Retrieve foreign keys
-    foreign_keys = helpers.process.get_artifacts(
+    foreign_keys = process_helper.get_artifacts(
         schemas=schemas, get_schema_artifacts=_get_schema_foreign_keys
     )
     # Map to a schema for each grouped foreign keys
-    foreign_key_schemas = helpers.process.calculate_outputs(
+    foreign_key_schemas = process_helper.calculate_outputs(
         artifacts=foreign_keys, calculate_output=_foreign_keys_to_schema
     )
     # Convert to list to resolve iterator

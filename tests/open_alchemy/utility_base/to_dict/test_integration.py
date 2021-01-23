@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base import to_dict
 
 
 @pytest.mark.parametrize(
@@ -24,7 +24,7 @@ def test_invalid(schema, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.to_dict.convert(schema=schema, value=mock.MagicMock())
+        to_dict.convert(schema=schema, value=mock.MagicMock())
 
 
 @pytest.mark.parametrize(
@@ -70,6 +70,6 @@ def test_valid(schema, value, expected_value):
     WHEN convert is called with the schema and value
     THEN the expected value is returned.
     """
-    returned_value = utility_base.to_dict.convert(schema=schema, value=value)
+    returned_value = to_dict.convert(schema=schema, value=value)
 
     assert returned_value == expected_value

@@ -8,7 +8,7 @@ import pytest
 import sqlalchemy
 from sqlalchemy import orm
 
-from open_alchemy import helpers
+from open_alchemy.helpers import ref
 
 
 @pytest.fixture(scope="function", params=["sqlite:///:memory:"])
@@ -28,11 +28,11 @@ def _clean_remote_schemas_store():
     """Clean remote schemas store before and after test execution."""
     # pylint: disable=protected-access
 
-    helpers.ref._remote_schema_store.reset()
+    ref._remote_schema_store.reset()
 
     yield
 
-    helpers.ref._remote_schema_store.reset()
+    ref._remote_schema_store.reset()
 
 
 @pytest.fixture(scope="function")

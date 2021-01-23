@@ -4,23 +4,23 @@ import itertools
 import json
 import typing
 
-from open_alchemy import helpers
-from open_alchemy import schemas
 from open_alchemy import types as oa_types
+from open_alchemy.helpers import oa_to_py_type
+from open_alchemy.schemas.artifacts import types as artifacts_types
 
-from .. import types
+from ..types import ColumnArgArtifacts
 from . import type_
 
 
 class ReturnValue(typing.NamedTuple):
     """The return value for the calculated artifacts."""
 
-    required: typing.List[types.ColumnArgArtifacts]
-    not_required: typing.List[types.ColumnArgArtifacts]
+    required: typing.List[ColumnArgArtifacts]
+    not_required: typing.List[ColumnArgArtifacts]
 
 
 def _get_read_only(
-    artifacts: schemas.artifacts.types.TAnyPropertyArtifacts,
+    artifacts: artifacts_types.TAnyPropertyArtifacts,
 ) -> typing.Optional[bool]:
     """Get read only for any property artifacts."""
     if artifacts.type == oa_types.PropertyType.SIMPLE:
@@ -31,7 +31,7 @@ def _get_read_only(
 
 
 def _map_default(
-    *, artifacts: schemas.artifacts.types.TAnyPropertyArtifacts
+    *, artifacts: artifacts_types.TAnyPropertyArtifacts
 ) -> oa_types.TColumnDefault:
     """
     Map default value from OpenAPI to be ready to be inserted into a Python file.
@@ -65,7 +65,7 @@ def _map_default(
         return f"b{default}"
 
     # Map type
-    mapped_default = helpers.oa_to_py_type.convert(
+    mapped_default = oa_to_py_type.convert(
         value=default, type_=artifacts.open_api.type, format_=artifacts.open_api.format
     )
 
@@ -78,9 +78,9 @@ def _map_default(
 def _calculate(
     *,
     artifacts: typing.Iterable[
-        typing.Tuple[str, schemas.artifacts.types.TAnyPropertyArtifacts]
+        typing.Tuple[str, artifacts_types.TAnyPropertyArtifacts]
     ],
-) -> typing.Iterable[types.ColumnArgArtifacts]:
+) -> typing.Iterable[ColumnArgArtifacts]:
     """Calculate the arg artifacts from property artifacts."""
     no_backref_properties = filter(
         lambda args: args[1].type != oa_types.PropertyType.BACKREF,
@@ -94,7 +94,7 @@ def _calculate(
         no_backref_properties,
     )
     return map(
-        lambda args: types.ColumnArgArtifacts(
+        lambda args: ColumnArgArtifacts(
             name=args[0],
             init_type=type_.arg_init(artifacts=args[1]),
             from_dict_type=type_.arg_from_dict(artifacts=args[1]),
@@ -105,7 +105,7 @@ def _calculate(
     )
 
 
-def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnValue:
+def calculate(*, artifacts: artifacts_types.ModelArtifacts) -> ReturnValue:
     """
     Calculate the args artifacts from model schema artifacts.
 
@@ -121,10 +121,10 @@ def calculate(*, artifacts: schemas.artifacts.types.ModelArtifacts) -> ReturnVal
 
     # Process back references
     backrefs_columns = map(
-        lambda args: types.ColumnArgArtifacts(
+        lambda args: ColumnArgArtifacts(
             name=args[0],
             init_type=f'typing.Optional["T{args[1].child}"]'
-            if args[1].type == schemas.artifacts.types.BackrefSubType.OBJECT
+            if args[1].type == artifacts_types.BackrefSubType.OBJECT
             else f'typing.Optional[typing.Sequence["T{args[1].child}"]]',
             from_dict_type="",
             read_only=True,

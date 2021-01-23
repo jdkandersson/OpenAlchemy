@@ -3,8 +3,10 @@
 import typing
 
 from ..... import exceptions
-from ..... import helpers
 from ..... import types as oa_types
+from .....helpers import peek
+from .....helpers import ref as ref_helper
+from .....helpers import schema as schema_helper
 from ... import types
 
 
@@ -14,15 +16,13 @@ def _check_type(
     """Check whether the type of the property is an object or array."""
     # Check type
     try:
-        type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+        type_ = peek.type_(schema=schema, schemas=schemas)
         # Check type value
         if type_ not in {"object", "array"}:
             return types.Result(False, "type not an object nor array")
         # Check for JSON
         if (
-            helpers.peek.prefer_local(
-                get_value=helpers.peek.json, schema=schema, schemas=schemas
-            )
+            peek.prefer_local(get_value=peek.json, schema=schema, schemas=schemas)
             is True
         ):
             return types.Result(False, "property is JSON")
@@ -44,13 +44,13 @@ def _check_object_ref(
 
     """
     # Check for $ref
-    ref = helpers.peek.ref(schema=schema, schemas=schemas)
+    ref = peek.ref(schema=schema, schemas=schemas)
     if ref is None:
         return types.Result(False, "not a reference to another object")
 
     # Check referenced schema is constructable
-    _, ref_schema = helpers.ref.get_ref(ref=ref, schemas=schemas)
-    if not helpers.schema.constructable(schema=ref_schema, schemas=schemas):
+    _, ref_schema = ref_helper.get_ref(ref=ref, schemas=schemas)
+    if not schema_helper.constructable(schema=ref_schema, schemas=schemas):
         return types.Result(False, "referenced schema not constructable")
 
     return None
@@ -61,13 +61,9 @@ def _check_object_backref_uselist(
 ) -> types.OptResult:
     """Check backref and uselist for an object."""
     # Check backref
-    backref = helpers.peek.prefer_local(
-        get_value=helpers.peek.backref, schema=schema, schemas=schemas
-    )
+    backref = peek.prefer_local(get_value=peek.backref, schema=schema, schemas=schemas)
     # Check uselist
-    uselist = helpers.peek.prefer_local(
-        get_value=helpers.peek.uselist, schema=schema, schemas=schemas
-    )
+    uselist = peek.prefer_local(get_value=peek.uselist, schema=schema, schemas=schemas)
     if uselist is False and backref is None:
         return types.Result(
             False, "a one-to-one relationship must define a back reference"
@@ -80,9 +76,7 @@ def _check_kwargs(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check the value of x-kwargs."""
-    kwargs = helpers.peek.prefer_local(
-        get_value=helpers.peek.kwargs, schema=schema, schemas=schemas
-    )
+    kwargs = peek.prefer_local(get_value=peek.kwargs, schema=schema, schemas=schemas)
     # Check for unexpected keys
     if kwargs is not None:
         unexpected_keys = {"backref", "secondary"}
@@ -100,17 +94,11 @@ def _check_object_values(
 ) -> types.OptResult:
     """Check the values of the relationship."""
     # Check nullable
-    helpers.peek.prefer_local(
-        get_value=helpers.peek.nullable, schema=schema, schemas=schemas
-    )
+    peek.prefer_local(get_value=peek.nullable, schema=schema, schemas=schemas)
     # Check description
-    helpers.peek.prefer_local(
-        get_value=helpers.peek.description, schema=schema, schemas=schemas
-    )
+    peek.prefer_local(get_value=peek.description, schema=schema, schemas=schemas)
     # Check writeOnly
-    helpers.peek.prefer_local(
-        get_value=helpers.peek.write_only, schema=schema, schemas=schemas
-    )
+    peek.prefer_local(get_value=peek.write_only, schema=schema, schemas=schemas)
     # Check backref and uselist
     backref_uselist_result = _check_object_backref_uselist(
         schema=schema, schemas=schemas
@@ -118,9 +106,7 @@ def _check_object_values(
     if backref_uselist_result is not None:
         return backref_uselist_result
     # Check foreign-key-column
-    helpers.peek.prefer_local(
-        get_value=helpers.peek.foreign_key_column, schema=schema, schemas=schemas
-    )
+    peek.prefer_local(get_value=peek.foreign_key_column, schema=schema, schemas=schemas)
     # Check kwargs
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
     if kwargs_result is not None:
@@ -186,13 +172,13 @@ def _check_array_root(
 ) -> types.OptResult:
     """Check for invalid keys at the array schema root."""
     # Check description
-    helpers.peek.description(schema=schema, schemas=schemas)
+    peek.description(schema=schema, schemas=schemas)
     # Check writeOnly
-    helpers.peek.write_only(schema=schema, schemas=schemas)
+    peek.write_only(schema=schema, schemas=schemas)
 
     # Check secondary
     if (
-        helpers.peek.peek_key(
+        peek.peek_key(
             schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.SECONDARY
         )
         is not None
@@ -203,7 +189,7 @@ def _check_array_root(
         )
     # Check backref
     if (
-        helpers.peek.peek_key(
+        peek.peek_key(
             schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.BACKREF
         )
         is not None
@@ -214,7 +200,7 @@ def _check_array_root(
         )
     # Check foreign-key-column
     if (
-        helpers.peek.peek_key(
+        peek.peek_key(
             schema=schema,
             schemas=schemas,
             key=oa_types.ExtensionProperties.FOREIGN_KEY_COLUMN,
@@ -228,7 +214,7 @@ def _check_array_root(
         )
     # Check kwargs
     if (
-        helpers.peek.peek_key(
+        peek.peek_key(
             schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.KWARGS
         )
         is not None
@@ -239,7 +225,7 @@ def _check_array_root(
         )
     # Check uselist
     if (
-        helpers.peek.peek_key(
+        peek.peek_key(
             schema=schema, schemas=schemas, key=oa_types.ExtensionProperties.USELIST
         )
         is not None
@@ -257,12 +243,12 @@ def _check_array_items_values(
 ) -> types.OptResult:
     """Check individual values of array items."""
     # Check items nullable
-    items_nullable = helpers.peek.nullable(schema=schema, schemas=schemas)
+    items_nullable = peek.nullable(schema=schema, schemas=schemas)
     if items_nullable is True:
         return types.Result(False, "x-to-many relationships are not nullable")
 
     # Check items uselist
-    items_uselist = helpers.peek.uselist(schema=schema, schemas=schemas)
+    items_uselist = peek.uselist(schema=schema, schemas=schemas)
     if items_uselist is False:
         return types.Result(
             False, "x-to-many relationships do not support x-uselist False"
@@ -276,12 +262,12 @@ def _check_many_to_many(
 ) -> types.OptResult:
     """Check many to many schema."""
     # Check items secondary
-    secondary = helpers.peek.secondary(schema=schema, schemas=schemas)
+    secondary = peek.secondary(schema=schema, schemas=schemas)
     if secondary is None:
         return None
 
     # Check for foreign key column
-    if helpers.peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
+    if peek.foreign_key_column(schema=schema, schemas=schemas) is not None:
         return types.Result(
             False, "many-to-many relationship does not support x-foreign-key-column"
         )
@@ -300,7 +286,7 @@ def _check_array_items(
             type_result.valid,
             f"items property :: {type_result.reason}".replace(" nor array", ""),
         )
-    type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     if type_ != "object":
         return types.Result(
             False,
@@ -336,7 +322,7 @@ def _check_array(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types
             return root_result
 
         # Retrieve items schema
-        items_schema = helpers.peek.items(schema=schema, schemas=schemas)
+        items_schema = peek.items(schema=schema, schemas=schemas)
         if items_schema is None:
             return types.Result(
                 False, "array type properties must define the items schema"
@@ -386,7 +372,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
         return type_result
 
     # Handle object
-    type_ = helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     if type_ == "object":
         return _check_object(schema=schema, schemas=schemas)
 

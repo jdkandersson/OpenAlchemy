@@ -8,17 +8,7 @@ from urllib import error
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
-
-
-@pytest.mark.helper
-def test_ref_resolve_exists():
-    """
-    GIVEN
-    WHEN
-    THEN helpers has ref_resolve property.
-    """
-    assert hasattr(helpers.ref, "resolve")
+from open_alchemy.helpers import ref as ref_helper
 
 
 @pytest.mark.parametrize(
@@ -50,7 +40,7 @@ def test_resolve_valid(schema, schemas, expected_name):
     """
     name = "Schema"
 
-    (return_name, return_schema) = helpers.ref.resolve(
+    (return_name, return_schema) = ref_helper.resolve(
         name=name, schema=schema, schemas=schemas
     )
 
@@ -95,7 +85,7 @@ def test_resolve_valid_skip(schema, schemas, expected_name, expected_schema):
     name = "Schema"
     skip_name = "RefSchema"
 
-    (return_name, return_schema) = helpers.ref.resolve(
+    (return_name, return_schema) = ref_helper.resolve(
         name=name, schema=schema, schemas=schemas, skip_name=skip_name
     )
 
@@ -146,7 +136,7 @@ def test_resolve_error(schema, schemas, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        helpers.ref.resolve(name="name 1", schema=schema, schemas=schemas)
+        ref_helper.resolve(name="name 1", schema=schema, schemas=schemas)
 
 
 @pytest.mark.parametrize(
@@ -169,7 +159,7 @@ def test_norm_context(context, expected_context):
     THEN the expected context is returned.
     """
     # pylint: disable=protected-access
-    returned_context = helpers.ref._norm_context(context=context)
+    returned_context = ref_helper._norm_context(context=context)
 
     assert returned_context == expected_context
 
@@ -188,7 +178,7 @@ class TestSeperateContextPath:
         THEN MalformedSchemaError is raised.
         """
         with pytest.raises(exceptions.MalformedSchemaError):
-            helpers.ref._separate_context_path(ref="invalid")
+            ref_helper._separate_context_path(ref="invalid")
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -203,7 +193,7 @@ class TestSeperateContextPath:
         WHEN _separate_context_path is called with the ref
         THEN the expected context and path is returned.
         """
-        context, path = helpers.ref._separate_context_path(ref=ref)
+        context, path = ref_helper._separate_context_path(ref=ref)
 
         assert context == expected_context
         assert path == expected_path
@@ -232,7 +222,7 @@ class TestAddRemoteContext:
         THEN the given expected exception is raised.
         """
         with pytest.raises(exp_exception):
-            helpers.ref._add_remote_context(context=context, ref=ref)
+            ref_helper._add_remote_context(context=context, ref=ref)
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -400,7 +390,7 @@ class TestAddRemoteContext:
         WHEN _add_remote_context is called with the context and value
         THEN the expected reference value is returned.
         """
-        returned_ref = helpers.ref._add_remote_context(context=context, ref=ref)
+        returned_ref = ref_helper._add_remote_context(context=context, ref=ref)
 
         assert returned_ref == expected_ref
 
@@ -430,7 +420,7 @@ def test_map_remote_schema_ref(schema, expected_schema):
     # pylint: disable=protected-access
     context = "doc.ext"
 
-    returned_schema = helpers.ref._map_remote_schema_ref(schema=schema, context=context)
+    returned_schema = ref_helper._map_remote_schema_ref(schema=schema, context=context)
 
     assert returned_schema == expected_schema
 
@@ -448,7 +438,7 @@ class TestRemoteSchemaStore:
         WHEN _RemoteSchemaStore is initialized
         THEN empty store is created.
         """
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
 
         assert store._schemas == {}
         assert store.spec_context is None
@@ -461,7 +451,7 @@ class TestRemoteSchemaStore:
         WHEN reset is called
         THEN the state is removed.
         """
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store._schemas["key"] = "value"
         store.spec_context = "path 1"
 
@@ -478,7 +468,7 @@ class TestRemoteSchemaStore:
         WHEN get_schemas is called
         THEN MissingArgumentError is raised.
         """
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
 
         with pytest.raises(exceptions.MissingArgumentError):
             store.get_schemas(context="doc.ext")
@@ -494,7 +484,7 @@ class TestRemoteSchemaStore:
         WHEN get_schemas is called
         THEN SchemaNotFoundError is raised.
         """
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = "doc.ext"
 
         with pytest.raises(exceptions.SchemaNotFoundError):
@@ -513,7 +503,7 @@ class TestRemoteSchemaStore:
         directory.mkdir()
         schemas_file = directory / "original.json"
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
         with pytest.raises(exceptions.SchemaNotFoundError):
@@ -539,7 +529,7 @@ class TestRemoteSchemaStore:
         remote_schemas_file = directory / remote_context
         remote_schemas_file.write_text(contents)
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
         with pytest.raises(exceptions.SchemaNotFoundError):
@@ -571,7 +561,7 @@ class TestRemoteSchemaStore:
         remote_schemas_file = directory / remote_context
         remote_schemas_file.write_text(contents)
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
         remote_schemas = store.get_schemas(context=remote_context)
@@ -594,7 +584,7 @@ class TestRemoteSchemaStore:
         remote_schemas_file = directory / "remote.json"
         remote_schemas_file.write_text('{"key": "value"}')
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
         store.get_schemas(context="remote.json")
@@ -620,7 +610,7 @@ class TestRemoteSchemaStore:
         remote_schemas_file = remote_directory / "remote.json"
         remote_schemas_file.write_text('{"key": "value"}')
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = str(schemas_file)
 
         remote_schemas = store.get_schemas(context="remote/remote.json")
@@ -642,7 +632,7 @@ class TestRemoteSchemaStore:
         response_cm.__enter__.return_value = response_cm
         mocked_urlopen.return_value = response_cm
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = "path1"
         remote_context = "http://host.com/doc.json"
 
@@ -663,7 +653,7 @@ class TestRemoteSchemaStore:
             url="some url", code=404, msg="message", hdrs="headers", fp="fp"
         )
         # Create store
-        store = helpers.ref._RemoteSchemaStore()
+        store = ref_helper._RemoteSchemaStore()
         store.spec_context = "path1"
         remote_context = "http://host.com/doc.json"
 
@@ -693,7 +683,7 @@ class TestRetrieveSchema:
         THEN SchemaNotFoundError is raised.
         """
         with pytest.raises(exceptions.SchemaNotFoundError):
-            helpers.ref._retrieve_schema(schemas=schemas, path=path)
+            ref_helper._retrieve_schema(schemas=schemas, path=path)
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -719,7 +709,7 @@ class TestRetrieveSchema:
         WHEN _retrieve_schema is called with the schemas and path
         THEN the schema at the path is returned.
         """
-        name, schema = helpers.ref._retrieve_schema(schemas=schemas, path=path)
+        name, schema = ref_helper._retrieve_schema(schemas=schemas, path=path)
 
         assert schema == {"key1": "value1"}
         assert name == "Schema1"
@@ -739,11 +729,11 @@ def test_get_remote_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
-    name, schema = helpers.ref.get_remote_ref(ref=ref)
+    name, schema = ref_helper.get_remote_ref(ref=ref)
 
     assert schema == {"key": "value"}
     assert name == "Schema1"
@@ -766,13 +756,13 @@ def test_get_remote_ref_norm(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "subdir/../remote.json#/Schema1"
 
-    helpers.ref.get_remote_ref(ref=ref)
+    ref_helper.get_remote_ref(ref=ref)
 
-    assert "remote.json" in helpers.ref._remote_schema_store._schemas
+    assert "remote.json" in ref_helper._remote_schema_store._schemas
 
 
 @pytest.mark.helper
@@ -789,11 +779,11 @@ def test_get_remote_ref_ref(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"$ref": "#/Schema2"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
-    name, schema = helpers.ref.get_remote_ref(ref=ref)
+    name, schema = ref_helper.get_remote_ref(ref=ref)
 
     assert schema == {"$ref": "remote.json#/Schema2"}
     assert name == "Schema1"
@@ -818,11 +808,11 @@ def test_get_remote_ref_remote_ref(tmp_path, _clean_remote_schemas_store):
         '{"Schema1": {"$ref": "dir1/other_remote.json#/Schema2"}}'
     )
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     # Calculate $ref
     ref = "remote.json#/Schema1"
 
-    name, schema = helpers.ref.get_remote_ref(ref=ref)
+    name, schema = ref_helper.get_remote_ref(ref=ref)
 
     assert schema == {"$ref": "dir1/other_remote.json#/Schema2"}
     assert name == "Schema1"
@@ -842,11 +832,11 @@ def test_resolve_remote(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Schema1": {"key": "value"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     # Calculate $ref
     schema = {"$ref": "remote.json#/Schema1"}
 
-    returned_name, returned_schema = helpers.ref.resolve(
+    returned_name, returned_schema = ref_helper.resolve(
         name="name 1", schema=schema, schemas={}
     )
 
@@ -868,11 +858,11 @@ def test_resolve_remote_url(mocked_urlopen, _clean_remote_schemas_store):
     response_cm.__enter__.return_value = response_cm
     mocked_urlopen.return_value = response_cm
     # Set up remote schemas store
-    helpers.ref.set_context(path="path1")
+    ref_helper.set_context(path="path1")
     # Calculate $ref
     schema = {"$ref": "http://host.com/remote.json#/Schema1"}
 
-    returned_name, returned_schema = helpers.ref.resolve(
+    returned_name, returned_schema = ref_helper.resolve(
         name="name 1", schema=schema, schemas={}
     )
 
@@ -889,6 +879,6 @@ def test_set_spec_context(_clean_remote_schemas_store):
     """
     # pylint: disable=protected-access
 
-    helpers.ref.set_context(path="path1")
+    ref_helper.set_context(path="path1")
 
-    assert helpers.ref._remote_schema_store.spec_context == "path1"
+    assert ref_helper._remote_schema_store.spec_context == "path1"

@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base.to_dict import array
 
 
 @pytest.mark.parametrize(
@@ -41,7 +41,7 @@ def test_convert_invalid(schema, value, exception):
     THEN the expected exception is raised.
     """
     with pytest.raises(exception):
-        utility_base.to_dict.array.convert(schema=schema, value=value)
+        array.convert(schema=schema, value=value)
 
 
 @pytest.mark.parametrize(
@@ -80,6 +80,6 @@ def test_convert_valid(value, schema, expected_value):
     WHEN convert is called with the schema and value
     THEN the expected value is returned.
     """
-    returned_value = utility_base.to_dict.array.convert(schema=schema, value=value)
+    returned_value = array.convert(schema=schema, value=value)
 
     assert returned_value == expected_value

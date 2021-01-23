@@ -1,7 +1,7 @@
 """Construct column for relationship property."""
 
-from .. import facades
 from .. import types as oa_types
+from ..facades.sqlalchemy import relationship
 from . import types
 
 
@@ -18,4 +18,4 @@ def handle(
         The constructed column.
 
     """
-    return facades.sqlalchemy.relationship.construct(artifacts=artifacts)
+    return relationship.construct(artifacts=artifacts)

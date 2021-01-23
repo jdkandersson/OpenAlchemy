@@ -3,8 +3,8 @@
 import pytest
 
 from open_alchemy import types
-from open_alchemy.schemas import helpers
 from open_alchemy.schemas import validation
+from open_alchemy.schemas.helpers import association as association_helper
 
 
 class TestCheck2OrFewerPrimaryKey:
@@ -86,7 +86,7 @@ class TestCheck2OrFewerPrimaryKey:
         THEN the expected valid and reasons are returned.
         """
         name = "Schema"
-        association = helpers.association.TParentPropertySchema(
+        association = association_helper.TParentPropertySchema(
             parent=types.TNameSchema(name="ParentSchema", schema={}),
             property=types.TNameSchema(name="PropertySchema", schema={}),
         )

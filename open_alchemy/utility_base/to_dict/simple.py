@@ -3,8 +3,8 @@
 import datetime
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import peek
 from .. import types
 
 
@@ -24,7 +24,7 @@ def convert(
         The value converted to the expected dictionary value.
 
     """
-    type_ = helpers.peek.type_(schema=schema, schemas={})
+    type_ = peek.type_(schema=schema, schemas={})
     if value is None:
         return None
 
@@ -65,7 +65,7 @@ def _handle_string(value: types.TSimpleCol, *, schema: oa_types.Schema) -> str:
         The converted value.
 
     """
-    format_ = helpers.peek.format_(schema=schema, schemas={})
+    format_ = peek.format_(schema=schema, schemas={})
     if format_ == "date":
         if not isinstance(value, datetime.date):
             raise exceptions.InvalidInstanceError(

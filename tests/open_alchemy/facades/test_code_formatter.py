@@ -2,7 +2,7 @@
 
 import pytest
 
-from open_alchemy import facades
+from open_alchemy.facades import code_formatter
 
 
 @pytest.mark.parametrize(
@@ -17,6 +17,6 @@ def test_apply(source, expected_source):
     WHEN apply is called with the source code
     THEN the expected source code is returned.
     """
-    returned_source = facades.code_formatter.apply(source=source)
+    returned_source = code_formatter.apply(source=source)
 
     assert returned_source == expected_source

@@ -1,5 +1,5 @@
 """Tests for type_."""
-# pylint: disable=protected-access,unused-import
+# pylint: disable=unused-import
 
 import datetime
 import typing  # noqa: F401
@@ -10,8 +10,8 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import models_file
-from open_alchemy import schemas
+from open_alchemy.models_file import artifacts
+from open_alchemy.schemas import artifacts as schemas_artifacts_module
 
 
 @pytest.mark.parametrize(
@@ -314,12 +314,12 @@ def test_model_database_type_simple(
     model = model_factory(name="Table")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "Table" in schemas_artifacts
     model_schemas_artifacts = schemas_artifacts["Table"]
-    model_models_artifacts = models_file._artifacts.calculate(
+    model_models_artifacts = artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2
@@ -386,12 +386,12 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     model = model_factory(name="Table")
 
     # Calculate the expected type
-    schemas_artifacts = schemas.artifacts.get_from_schemas(
+    schemas_artifacts = schemas_artifacts_module.get_from_schemas(
         schemas=spec["components"]["schemas"], stay_within_model=False
     )
     assert "Table" in schemas_artifacts
     model_schemas_artifacts = schemas_artifacts["Table"]
-    model_models_artifacts = models_file._artifacts.calculate(
+    model_models_artifacts = artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2

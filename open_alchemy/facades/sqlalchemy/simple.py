@@ -5,8 +5,9 @@ import typing
 import sqlalchemy
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import calculate_nullable
+from ...helpers import oa_to_py_type
 from . import types
 
 
@@ -33,7 +34,7 @@ def construct(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Column:
     # Map default value
     default = None
     if artifacts.open_api.default is not None:
-        default = helpers.oa_to_py_type.convert(
+        default = oa_to_py_type.convert(
             value=artifacts.open_api.default,
             type_=artifacts.open_api.type,
             format_=artifacts.open_api.format,
@@ -45,7 +46,7 @@ def construct(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Column:
         server_default = sqlalchemy.text(artifacts.extension.server_default)
 
     # Calculate nullable
-    nullable = helpers.calculate_nullable(
+    nullable = calculate_nullable.calculate_nullable(
         nullable=artifacts.open_api.nullable,
         generated=artifacts.extension.autoincrement is True,
         defaulted=default is not None or artifacts.extension.server_default is not None,

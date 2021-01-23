@@ -5,7 +5,7 @@ import datetime
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
+from open_alchemy.helpers import oa_to_py_type
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,7 @@ def test_convert_invalid(value, type_, format_):
     THEN MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.oa_to_py_type.convert(value=value, type_=type_, format_=format_)
+        oa_to_py_type.convert(value=value, type_=type_, format_=format_)
 
 
 @pytest.mark.parametrize(
@@ -81,8 +81,6 @@ def test_convert(value, type_, format_, expected_value):
     WHEN value, type and format are passed to convert
     THEN the expected value is returned.
     """
-    returned_value = helpers.oa_to_py_type.convert(
-        value=value, type_=type_, format_=format_
-    )
+    returned_value = oa_to_py_type.convert(value=value, type_=type_, format_=format_)
 
     assert returned_value == expected_value

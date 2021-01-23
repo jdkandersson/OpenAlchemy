@@ -1,11 +1,10 @@
 """Tests for calculating column artifacts."""
 
-# pylint: disable=protected-access
-
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
+from open_alchemy.models_file import types as models_types
+from open_alchemy.models_file.artifacts import column
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
@@ -206,7 +205,7 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Optional[int]",
                 description=None,
@@ -219,7 +218,7 @@ CALCULATE_TESTS = [
             [("prop_1", _construct_json_property_artifacts())], []
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Any",
                 description=None,
@@ -232,7 +231,7 @@ CALCULATE_TESTS = [
             [("prop_1", _construct_many_to_one_relationship_property_artifacts())], []
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Optional["TRefModel"]',
                 description=None,
@@ -245,7 +244,7 @@ CALCULATE_TESTS = [
             [("prop_1", _construct_one_to_one_relationship_property_artifacts())], []
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Optional["TRefModel"]',
                 description=None,
@@ -258,7 +257,7 @@ CALCULATE_TESTS = [
             [("prop_1", _construct_one_to_many_relationship_property_artifacts())], []
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Sequence["TRefModel"]',
                 description=None,
@@ -271,7 +270,7 @@ CALCULATE_TESTS = [
             [("prop_1", _construct_many_to_many_relationship_property_artifacts())], []
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type='typing.Sequence["TRefModel"]',
                 description=None,
@@ -292,7 +291,7 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Optional[int]",
                 description="description 1",
@@ -319,12 +318,12 @@ CALCULATE_TESTS = [
             [],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Optional[int]",
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_2",
                 type="typing.Optional[int]",
                 description=None,
@@ -345,7 +344,7 @@ CALCULATE_TESTS = [
             ],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="backref_1",
                 type='typing.Optional["TParent1"]',
                 description=None,
@@ -366,7 +365,7 @@ CALCULATE_TESTS = [
             ],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="backref_1",
                 type='typing.Sequence["TChild1"]',
                 description=None,
@@ -393,12 +392,12 @@ CALCULATE_TESTS = [
             ],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="backref_1",
                 type='typing.Optional["TChild1"]',
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="backref_2",
                 type='typing.Optional["TChild2"]',
                 description=None,
@@ -426,12 +425,12 @@ CALCULATE_TESTS = [
             ],
         ),
         [
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="prop_1",
                 type="typing.Optional[int]",
                 description=None,
             ),
-            models_file.types.ColumnArtifacts(
+            models_types.ColumnArtifacts(
                 name="backref_1",
                 type='typing.Sequence["TChild1"]',
                 description=None,
@@ -451,6 +450,6 @@ def test_calculate(artifacts, expected_columns):
     WHEN calculate is called with the artifacts
     THEN the expected columns are returned.
     """
-    returned_columns = models_file.artifacts._column.calculate(artifacts=artifacts)
+    returned_columns = column.calculate(artifacts=artifacts)
 
     assert returned_columns == expected_columns

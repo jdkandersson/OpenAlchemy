@@ -4,7 +4,7 @@ import pytest
 
 from open_alchemy import build
 from open_alchemy import exceptions
-from open_alchemy import helpers
+from open_alchemy.helpers import command
 
 
 @pytest.mark.parametrize(
@@ -270,7 +270,6 @@ init_json(parent_path / "spec.json")"""
 
 
 GENERATE_INIT_MODELS_FILE_TESTS = [
-    # pylint: disable=line-too-long
     pytest.param(
         {
             "Schema1": {
@@ -747,13 +746,13 @@ def test_build_dist_wheel_import_error(tmp_path):
     }
 
     try:
-        helpers.command.run(["pip", "uninstall", "-y", "wheel"], ".")
+        command.run(["pip", "uninstall", "-y", "wheel"], ".")
         with pytest.raises(RuntimeError):
             build.execute(
                 spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
             )
     finally:
-        helpers.command.run(["pip", "install", "wheel"], ".")
+        command.run(["pip", "install", "wheel"], ".")
 
 
 @pytest.mark.parametrize(

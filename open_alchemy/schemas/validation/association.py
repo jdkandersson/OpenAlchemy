@@ -2,11 +2,12 @@
 
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types as oa_types
-from .. import helpers
-from . import helpers as validation_helpers
+from ...helpers import peek
+from ..helpers import association as association_helper
+from ..helpers import iterate
 from . import types
+from .helpers import value
 
 
 class _TNameSchemaTablename(typing.NamedTuple):
@@ -39,13 +40,13 @@ def _get_defined_association_iterator(
         tablename mapping.
 
     """
-    constructables = helpers.iterate.constructable(schemas=schemas)
+    constructables = iterate.constructable(schemas=schemas)
     constructables_tablename = map(
         lambda args: _TNameSchemaTablename(
             name=args[0],
             schema=args[1],
-            tablename=oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+            tablename=peek.prefer_local(
+                get_value=peek.tablename, schema=args[1], schemas=schemas
             ),
         ),
         constructables,
@@ -70,10 +71,10 @@ def _primary_key_property_items_iterator(
         An iterator with all primary key properties.
 
     """
-    properties = helpers.iterate.properties_items(schema=schema, schemas=schemas)
+    properties = iterate.properties_items(schema=schema, schemas=schemas)
     return filter(
-        lambda args: oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.primary_key,
+        lambda args: peek.prefer_local(
+            get_value=peek.primary_key,
             schema=args[1],
             schemas=schemas,
         ),
@@ -84,7 +85,7 @@ def _primary_key_property_items_iterator(
 def _check_2_or_fewer_primary_key(
     name: str,
     schema: oa_types.Schema,
-    association: helpers.association.TParentPropertySchema,
+    association: association_helper.TParentPropertySchema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -121,7 +122,7 @@ def _check_2_or_fewer_primary_key(
 def _check_primary_key_no_foreign_key(
     name: str,
     schema: oa_types.Schema,
-    association: helpers.association.TParentPropertySchema,
+    association: association_helper.TParentPropertySchema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -140,8 +141,7 @@ def _check_primary_key_no_foreign_key(
     # Get first primary key property without foreign key
     primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     not_foreign_key_primary_key_properties = filter(
-        lambda args: oa_helpers.peek.foreign_key(schema=args[1], schemas=schemas)
-        is None,
+        lambda args: peek.foreign_key(schema=args[1], schemas=schemas) is None,
         primary_key_properties,
     )
 
@@ -172,7 +172,7 @@ def _assert_str(item: typing.Any) -> str:
 def _check_duplicate_foreign_key(
     name: str,
     schema: oa_types.Schema,
-    association: helpers.association.TParentPropertySchema,
+    association: association_helper.TParentPropertySchema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -195,8 +195,8 @@ def _check_duplicate_foreign_key(
     foreign_keys = map(
         lambda args: (
             args[0],
-            oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.foreign_key, schema=args[1], schemas=schemas
+            peek.prefer_local(
+                get_value=peek.foreign_key, schema=args[1], schemas=schemas
             ),
         ),
         primary_key_properties,
@@ -230,7 +230,7 @@ def _check_duplicate_foreign_key(
 def _check_properties_valid(
     name: str,
     schema: oa_types.Schema,
-    association: helpers.association.TParentPropertySchema,
+    association: association_helper.TParentPropertySchema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -255,7 +255,7 @@ def _check_properties_valid(
 
     """
     # Calculate the expected schema
-    expected_schema = helpers.association.calculate_schema(
+    expected_schema = association_helper.calculate_schema(
         property_schema=association.property.schema,
         parent_schema=association.parent.schema,
         schemas=schemas,
@@ -269,8 +269,8 @@ def _check_properties_valid(
     # Check primary keys
     primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     for property_name, property_schema in primary_key_properties:
-        property_foreign_key = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.foreign_key,
+        property_foreign_key = peek.prefer_local(
+            get_value=peek.foreign_key,
             schema=property_schema,
             schemas=schemas,
         )
@@ -295,13 +295,13 @@ def _check_properties_valid(
         # Check that the property schema is as expected
         expected_schema = expected_foreign_key_properties[property_foreign_key]
         checks = (
-            (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-            (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-            (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
+            (oa_types.OpenApiProperties.TYPE, peek.type_),
+            (oa_types.OpenApiProperties.FORMAT, peek.format_),
+            (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
         )
         for key, func in checks:
             # Check that values match
-            result = validation_helpers.value.check_matches(
+            result = value.check_matches(
                 func=func,
                 reference_schema=expected_schema,
                 check_schema=property_schema,
@@ -327,7 +327,7 @@ def _check_properties_valid(
 def _validate_schema(
     name: str,
     schema: oa_types.Schema,
-    association: helpers.association.TParentPropertySchema,
+    association: association_helper.TParentPropertySchema,
     schemas: oa_types.Schemas,
 ) -> types.Result:
     """
@@ -398,9 +398,7 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
     """
     # Get mapping
     secondary_parent_property_schema_mapping = (
-        helpers.association.get_secondary_parent_property_schema_mapping(
-            schemas=schemas
-        )
+        association_helper.get_secondary_parent_property_schema_mapping(schemas=schemas)
     )
 
     # Get association schemas

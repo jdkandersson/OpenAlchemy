@@ -3,9 +3,9 @@
 import pytest
 
 from open_alchemy.schemas import foreign_key
-from open_alchemy.schemas import helpers
+from open_alchemy.schemas.helpers import process
 
-Art = helpers.process.TArtifacts
+Art = process.TArtifacts
 
 
 class TestForeignKeysToSchema:

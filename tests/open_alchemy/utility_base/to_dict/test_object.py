@@ -5,7 +5,7 @@ from unittest import mock
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import utility_base
+from open_alchemy.utility_base.to_dict import object_
 
 
 class TestConvertRelationship:
@@ -25,7 +25,7 @@ class TestConvertRelationship:
         del value.to_dict
 
         with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.to_dict.object_._convert_relationship(value=value)
+            object_._convert_relationship(value=value)
 
     @staticmethod
     @pytest.mark.utility_base
@@ -44,9 +44,7 @@ class TestConvertRelationship:
         object_value_expects_args.to_dict = to_dict_with_args
 
         with pytest.raises(exceptions.InvalidModelInstanceError):
-            utility_base.to_dict.object_._convert_relationship(
-                value=object_value_expects_args
-            )
+            object_._convert_relationship(value=object_value_expects_args)
 
     @staticmethod
     @pytest.mark.utility_base
@@ -58,9 +56,7 @@ class TestConvertRelationship:
         """
         object_value = mock.MagicMock()
 
-        returned_value = utility_base.to_dict.object_._convert_relationship(
-            value=object_value
-        )
+        returned_value = object_._convert_relationship(value=object_value)
 
         object_value.to_dict.assert_called_once_with()  # pylint: disable=no-member
         expected_return_value = (
@@ -76,7 +72,7 @@ class TestConvertRelationship:
         WHEN _convert_relationship is called with the value
         THEN None is returned.
         """
-        returned_value = utility_base.to_dict.object_._convert_relationship(value=None)
+        returned_value = object_._convert_relationship(value=None)
 
         assert returned_value is None
 
@@ -104,9 +100,7 @@ class TestConvertReadOnly:
         THEN the expected exception is raised.
         """
         with pytest.raises(exception):
-            utility_base.to_dict.object_._convert_read_only(
-                schema=schema, value=mock.MagicMock()
-            )
+            object_._convert_read_only(schema=schema, value=mock.MagicMock())
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -153,9 +147,7 @@ class TestConvertReadOnly:
         WHEN _convert_read_only is called with the schema and value
         THEN the expected value is returned..
         """
-        returned_value = utility_base.to_dict.object_._convert_read_only(
-            schema=schema, value=value
-        )
+        returned_value = object_._convert_read_only(schema=schema, value=value)
 
         assert returned_value == expected_value
 
@@ -212,8 +204,6 @@ def test_convert(schema, value, read_only):
     WHEN convert is called with the schema, value and readOnly
     THEN the dictionary is returned.
     """
-    return_value = utility_base.to_dict.object_.convert(
-        schema=schema, value=value, read_only=read_only
-    )
+    return_value = object_.convert(schema=schema, value=value, read_only=read_only)
 
     assert return_value == {"key": "value"}

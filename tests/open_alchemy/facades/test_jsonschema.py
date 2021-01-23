@@ -3,7 +3,7 @@
 import jsonschema
 import pytest
 
-from open_alchemy import facades
+from open_alchemy.facades import jsonschema as jsonschema_facade
 
 
 @pytest.mark.facade
@@ -20,7 +20,7 @@ def test_filename_to_dict(tmp_path):
     json_file = directory / "dict.json"
     json_file.write_text('{"key": "value"}')
 
-    returned_dict = facades.jsonschema._filename_to_dict(str(json_file))
+    returned_dict = jsonschema_facade._filename_to_dict(str(json_file))
 
     assert returned_dict == {"key": "value"}
 
@@ -41,7 +41,7 @@ def test_resolver_single(tmp_path):
     schema = {"$ref": "#/RefSchema"}
     instance = "test"
 
-    resolver, (schema_dict,) = facades.jsonschema.resolver(str(json_file))
+    resolver, (schema_dict,) = jsonschema_facade.resolver(str(json_file))
     jsonschema.validate(instance, schema, resolver=resolver)
     assert schema_dict == {"RefSchema": {"type": "string"}}
 
@@ -71,7 +71,7 @@ def test_resolver_multiple(tmp_path):
     }
     instance = {"key1": "value 1", "key2": 1}
 
-    resolver, (schema1_dict, schema2_dict) = facades.jsonschema.resolver(
+    resolver, (schema1_dict, schema2_dict) = jsonschema_facade.resolver(
         str(json_file1), str(json_file2)
     )
     jsonschema.validate(instance, schema, resolver=resolver)
