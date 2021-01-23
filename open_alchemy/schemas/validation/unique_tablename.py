@@ -2,8 +2,10 @@
 
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types as oa_types
+from ...helpers import inheritance
+from ...helpers import peek
+from ...helpers import schema as schema_helper
 from .. import helpers
 from . import types
 
@@ -22,13 +24,11 @@ def _is_single_table_inheritance(
         Whether the schema uses single table inheritance.
 
     """
-    if not oa_helpers.schema.inherits(schema=schema, schemas=schemas):
+    if not schema_helper.inherits(schema=schema, schemas=schemas):
         return False
 
-    inheritance_type = oa_helpers.inheritance.calculate_type(
-        schema=schema, schemas=schemas
-    )
-    return inheritance_type == oa_helpers.inheritance.Type.SINGLE_TABLE
+    inheritance_type = inheritance.calculate_type(schema=schema, schemas=schemas)
+    return inheritance_type == inheritance.Type.SINGLE_TABLE
 
 
 def check(*, schemas: oa_types.Schemas) -> types.Result:
@@ -62,8 +62,8 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
 
     for name, schema in not_single_inheritance_schemas:
         # Retrieve tablename
-        tablename = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.tablename, schemas=schemas, schema=schema
+        tablename = peek.prefer_local(
+            get_value=peek.tablename, schemas=schemas, schema=schema
         )
         assert tablename is not None
 

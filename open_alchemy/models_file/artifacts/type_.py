@@ -1,7 +1,8 @@
 """Functions for calculating the type."""
 
-from open_alchemy import helpers as oa_helpers
 from open_alchemy import types
+from open_alchemy.helpers import calculate_nullable
+from open_alchemy.helpers import type_ as type_helper
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 _SIMPLE_TYPE_STRING_FORMAT_MAPPING = {
@@ -25,9 +26,9 @@ def _model_simple_property(
     *, artifacts: schemas_artifacts.types.SimplePropertyArtifacts
 ) -> str:
     """Calculate the Python type of a simple property."""
-    assert artifacts.open_api.type in oa_helpers.type_.SIMPLE_TYPES
+    assert artifacts.open_api.type in type_helper.SIMPLE_TYPES
     type_ = _SIMPLE_TYPE_MAPPING[artifacts.open_api.type](artifacts.open_api.format)
-    optional = oa_helpers.calculate_nullable(
+    optional = calculate_nullable.calculate_nullable(
         nullable=artifacts.open_api.nullable,
         generated=artifacts.extension.autoincrement is True,
         required=artifacts.required,
@@ -64,7 +65,7 @@ def _model_relationship_property(
     ):
         return type_
 
-    optional = oa_helpers.calculate_nullable(
+    optional = calculate_nullable.calculate_nullable(
         nullable=artifacts.nullable,
         generated=False,
         required=artifacts.required,

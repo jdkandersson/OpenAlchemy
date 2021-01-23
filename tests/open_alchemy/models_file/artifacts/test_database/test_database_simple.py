@@ -1,5 +1,5 @@
 """Tests for type_."""
-# pylint: disable=protected-access,unused-import
+# pylint: disable=unused-import
 
 import datetime
 import typing  # noqa: F401
@@ -10,8 +10,8 @@ import typeguard
 from sqlalchemy.ext import declarative
 
 import open_alchemy
-from open_alchemy import models_file
 from open_alchemy import schemas
+from open_alchemy.models_file import artifacts
 
 
 @pytest.mark.parametrize(
@@ -319,7 +319,7 @@ def test_model_database_type_simple(
     )
     assert "Table" in schemas_artifacts
     model_schemas_artifacts = schemas_artifacts["Table"]
-    model_models_artifacts = models_file._artifacts.calculate(
+    model_models_artifacts = artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2
@@ -391,7 +391,7 @@ def test_model_database_type_simple_json(engine, sessionmaker, type_, value):
     )
     assert "Table" in schemas_artifacts
     model_schemas_artifacts = schemas_artifacts["Table"]
-    model_models_artifacts = models_file._artifacts.calculate(
+    model_models_artifacts = artifacts.calculate(
         artifacts=model_schemas_artifacts, name="Table"
     )
     assert len(model_models_artifacts.sqlalchemy.columns) == 2

@@ -3,8 +3,8 @@
 import typing
 
 from ... import exceptions
-from ... import helpers as _oa_helpers
 from ... import types as _oa_types
+from ...helpers import peek
 from .. import helpers as _helpers
 from . import spec_validation
 from . import types
@@ -33,7 +33,7 @@ def check_model(schemas: _oa_types.Schemas, schema: _oa_types.Schema) -> types.T
     """
     try:
         # Check type
-        type_ = _oa_helpers.peek.peek_key(
+        type_ = peek.peek_key(
             schema=schema, schemas=schemas, key=_oa_types.OpenApiProperties.TYPE
         )
         if type_ is None:

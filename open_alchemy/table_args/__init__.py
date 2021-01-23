@@ -5,8 +5,8 @@ import typing
 
 from sqlalchemy import schema as sa_schema
 
-from open_alchemy import helpers
 from open_alchemy import types
+from open_alchemy.helpers import ext_prop
 
 from . import factory
 
@@ -32,13 +32,13 @@ def construct(*, schema: types.Schema) -> TableArgs:
     table_args: typing.List[typing.Iterable[TableArg]] = []
 
     # Handle x-composite-unique
-    unique_spec = helpers.ext_prop.get(
+    unique_spec = ext_prop.get(
         source=schema, name=types.ExtensionProperties.COMPOSITE_UNIQUE
     )
     if unique_spec is not None:
         table_args.append(factory.unique_factory(spec=unique_spec))
     # Handle x-composite-index
-    index_spec = helpers.ext_prop.get(
+    index_spec = ext_prop.get(
         source=schema, name=types.ExtensionProperties.COMPOSITE_INDEX
     )
     if index_spec is not None:

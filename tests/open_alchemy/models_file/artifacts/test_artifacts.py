@@ -1,13 +1,12 @@
 """Tests for artifacts"""
 
-# pylint: disable=protected-access
-
 import sys
 
 import pytest
 
-from open_alchemy import models_file
 from open_alchemy import types
+from open_alchemy.models_file import artifacts as models_artifacts
+from open_alchemy.models_file import types as models_types
 from open_alchemy.schemas import artifacts as schemas_artifacts
 
 
@@ -68,9 +67,7 @@ def test_calculate_name():
     artifacts = _construct_model_artifacts([], None)
     name = "Model"
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name=name
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name=name)
 
     assert returned_artifacts.sqlalchemy.name == name
 
@@ -94,9 +91,7 @@ def test_calculate_description(artifacts, expected_description):
     """
     name = "Model"
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name=name
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name=name)
 
     assert returned_artifacts.sqlalchemy.description == expected_description
 
@@ -116,9 +111,7 @@ def test_calculate_parent():
     """
     artifacts = _construct_model_artifacts([], None)
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.sqlalchemy.parent_cls == _EXPECTED_CLS_BASE
 
@@ -141,12 +134,10 @@ def test_calculate_column():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.sqlalchemy.columns == [
-        models_file.types.ColumnArtifacts(
+        models_types.ColumnArtifacts(
             name="prop_1",
             type="int",
             description=None,
@@ -181,9 +172,7 @@ def test_calculate_column_empty(artifacts, expected_empty):
     WHEN calculate is called with the artifacts
     THEN the given expected columns are added to the artifacts.
     """
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.sqlalchemy.empty == expected_empty
 
@@ -210,12 +199,10 @@ def test_calculate_arg():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.sqlalchemy.arg.not_required == [
-        models_file.types.ColumnArgArtifacts(
+        models_types.ColumnArgArtifacts(
             name="prop_1",
             init_type="typing.Optional[int]",
             from_dict_type="typing.Optional[int]",
@@ -224,7 +211,7 @@ def test_calculate_arg():
         )
     ]
     assert returned_artifacts.sqlalchemy.arg.required == [
-        models_file.types.ColumnArgArtifacts(
+        models_types.ColumnArgArtifacts(
             name="prop_2",
             init_type="int",
             from_dict_type="int",
@@ -256,19 +243,17 @@ def test_calculate_typed_dict_column():
         None,
     )
 
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.typed_dict.not_required.props == [
-        models_file.types.ColumnArtifacts(
+        models_types.ColumnArtifacts(
             name="prop_1",
             type="int",
             description=None,
         )
     ]
     assert returned_artifacts.typed_dict.required.props == [
-        models_file.types.ColumnArtifacts(
+        models_types.ColumnArtifacts(
             name="prop_2",
             type="int",
             description=None,
@@ -338,9 +323,7 @@ def test_calculate_typed_dict_column_empty(
     WHEN calculate is called with the artifacts
     THEN the typed dict required and not required empty are as expected.
     """
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.typed_dict.required.empty == expected_required_empty
     assert (
@@ -433,9 +416,7 @@ def test_calculate_td_names(
     THEN the given expected td required and not required names are added to the
         artifacts.
     """
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert returned_artifacts.typed_dict.required.name == expected_required_name
     assert returned_artifacts.typed_dict.not_required.name == expected_not_required_name
@@ -531,9 +512,7 @@ def test_calculate_td_parent(
     THEN the given expected td required and not required parents are added to the
         artifacts.
     """
-    returned_artifacts = models_file._artifacts.calculate(
-        artifacts=artifacts, name="Model"
-    )
+    returned_artifacts = models_artifacts.calculate(artifacts=artifacts, name="Model")
 
     assert (
         returned_artifacts.typed_dict.required.parent_class == expected_required_parent

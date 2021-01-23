@@ -2,8 +2,8 @@
 
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types as oa_types
+from ...helpers import peek
 from .. import helpers
 from . import helpers as validation_helpers
 from . import types
@@ -44,8 +44,8 @@ def _get_defined_association_iterator(
         lambda args: _TNameSchemaTablename(
             name=args[0],
             schema=args[1],
-            tablename=oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+            tablename=peek.prefer_local(
+                get_value=peek.tablename, schema=args[1], schemas=schemas
             ),
         ),
         constructables,
@@ -72,8 +72,8 @@ def _primary_key_property_items_iterator(
     """
     properties = helpers.iterate.properties_items(schema=schema, schemas=schemas)
     return filter(
-        lambda args: oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.primary_key,
+        lambda args: peek.prefer_local(
+            get_value=peek.primary_key,
             schema=args[1],
             schemas=schemas,
         ),
@@ -140,8 +140,7 @@ def _check_primary_key_no_foreign_key(
     # Get first primary key property without foreign key
     primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     not_foreign_key_primary_key_properties = filter(
-        lambda args: oa_helpers.peek.foreign_key(schema=args[1], schemas=schemas)
-        is None,
+        lambda args: peek.foreign_key(schema=args[1], schemas=schemas) is None,
         primary_key_properties,
     )
 
@@ -195,8 +194,8 @@ def _check_duplicate_foreign_key(
     foreign_keys = map(
         lambda args: (
             args[0],
-            oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.foreign_key, schema=args[1], schemas=schemas
+            peek.prefer_local(
+                get_value=peek.foreign_key, schema=args[1], schemas=schemas
             ),
         ),
         primary_key_properties,
@@ -269,8 +268,8 @@ def _check_properties_valid(
     # Check primary keys
     primary_key_properties = _primary_key_property_items_iterator(schema, schemas)
     for property_name, property_schema in primary_key_properties:
-        property_foreign_key = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.foreign_key,
+        property_foreign_key = peek.prefer_local(
+            get_value=peek.foreign_key,
             schema=property_schema,
             schemas=schemas,
         )
@@ -295,9 +294,9 @@ def _check_properties_valid(
         # Check that the property schema is as expected
         expected_schema = expected_foreign_key_properties[property_foreign_key]
         checks = (
-            (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-            (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-            (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
+            (oa_types.OpenApiProperties.TYPE, peek.type_),
+            (oa_types.OpenApiProperties.FORMAT, peek.format_),
+            (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
         )
         for key, func in checks:
             # Check that values match

@@ -3,8 +3,9 @@
 import copy
 import typing
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
+from ....helpers import schema as schema_helper
 from ... import helpers
 from .. import types
 
@@ -34,15 +35,13 @@ def get(
         The artifacts for the property.
 
     """
-    schema = copy.deepcopy(
-        oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
-    )
+    schema = copy.deepcopy(schema_helper.prepare_deep(schema=schema, schemas=schemas))
 
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     assert type_ in OPEN_API_TO_SUB_TYPE
     sub_type = OPEN_API_TO_SUB_TYPE[type_]
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = peek.description(schema=schema, schemas=schemas)
 
     # Get property names
     properties_items: typing.Iterable[typing.Tuple[str, typing.Any]]
@@ -51,7 +50,7 @@ def get(
             schema=schema, schemas=schemas
         )
     else:
-        items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+        items_schema = peek.items(schema=schema, schemas=schemas)
         assert items_schema is not None
         properties_items = helpers.iterate.properties_items(
             schema=items_schema, schemas=schemas

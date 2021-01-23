@@ -3,8 +3,8 @@
 import functools
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import peek
 from .. import types
 from . import object_
 
@@ -28,14 +28,14 @@ def convert(
 
     """
     # Check the schema
-    items_schema = helpers.peek.items(schema=schema, schemas={})
+    items_schema = peek.items(schema=schema, schemas={})
     if items_schema is None:
         raise exceptions.MalformedSchemaError(
             "To construct array parameters the schema for the property "
             "must include the items property with the information about "
             "the array items."
         )
-    items_type = helpers.peek.type_(schema=items_schema, schemas={})
+    items_type = peek.type_(schema=items_schema, schemas={})
     if items_type != "object":
         raise exceptions.MalformedSchemaError(
             "The type of the array items must be object."

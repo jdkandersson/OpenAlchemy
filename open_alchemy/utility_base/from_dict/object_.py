@@ -1,9 +1,9 @@
 """Convert object dictionary to column value."""
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
 from ...facades import models
+from ...helpers import ext_prop
 from .. import types
 
 
@@ -23,7 +23,7 @@ def convert(
         The converted value.
 
     """
-    ref_model_name = helpers.ext_prop.get(
+    ref_model_name = ext_prop.get(
         source=schema, name=oa_types.ExtensionProperties.DE_REF
     )
     if ref_model_name is None:

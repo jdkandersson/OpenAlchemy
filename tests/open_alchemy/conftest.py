@@ -10,7 +10,6 @@ from sqlalchemy.ext import declarative
 import open_alchemy
 from open_alchemy import column_factory
 from open_alchemy import facades
-from open_alchemy import helpers
 from open_alchemy import model_factory
 from open_alchemy import models
 from open_alchemy.facades import models as models_facade
@@ -31,15 +30,6 @@ def mocked_model_factory(monkeypatch):
     mock_model_factory = mock.MagicMock()
     monkeypatch.setattr(model_factory, "model_factory", mock_model_factory)
     return mock_model_factory
-
-
-@pytest.fixture
-def mocked_ref_resolve(monkeypatch):
-    """Monkeypatches helpers.ref.resolve."""
-    mock_ref_resolve = mock.MagicMock()
-    mock_ref_resolve.return_value = (mock.MagicMock(), mock.MagicMock())
-    monkeypatch.setattr(helpers.ref, "resolve", mock_ref_resolve)
-    return mock_ref_resolve
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 """Gather artifacts for a property."""
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import property_
 from .. import types
 from . import backref
 from . import json
@@ -30,7 +30,7 @@ def get(
         The artifacts for the property.
 
     """
-    type_ = oa_helpers.property_.calculate_type(schema=schema, schemas=schemas)
+    type_ = property_.calculate_type(schema=schema, schemas=schemas)
 
     if type_ == oa_types.PropertyType.SIMPLE:
         return simple.get(schemas, schema, required)

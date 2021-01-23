@@ -8,7 +8,6 @@ from open_alchemy import schemas
 from .. import types
 from . import args as _args
 from . import column as _column
-from . import type_ as _type
 from . import typed_dict as _typed_dict
 
 

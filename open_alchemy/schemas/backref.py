@@ -3,8 +3,9 @@
 import functools
 import typing
 
-from .. import helpers as oa_helpers
 from .. import types
+from ..helpers import peek
+from ..helpers import ref as ref_helper
 from . import helpers
 
 
@@ -35,30 +36,30 @@ def _calculate_artifacts(
     backref: typing.Optional[str]
 
     # Handle array
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     if items_schema is not None:
-        if oa_helpers.peek.secondary(schema=items_schema, schemas=schemas) is not None:
+        if peek.secondary(schema=items_schema, schemas=schemas) is not None:
             is_array = True
 
-        ref = oa_helpers.peek.ref(schema=items_schema, schemas=schemas)
-        backref = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.backref, schema=items_schema, schemas=schemas
+        ref = peek.ref(schema=items_schema, schemas=schemas)
+        backref = peek.prefer_local(
+            get_value=peek.backref, schema=items_schema, schemas=schemas
         )
     # Handle object
     else:
-        uselist: typing.Optional[bool] = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.uselist, schema=schema, schemas=schemas
+        uselist: typing.Optional[bool] = peek.prefer_local(
+            get_value=peek.uselist, schema=schema, schemas=schemas
         )
         if uselist is not False:
             is_array = True
-        ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
-        backref = oa_helpers.peek.prefer_local(
-            get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
+        ref = peek.ref(schema=schema, schemas=schemas)
+        backref = peek.prefer_local(
+            get_value=peek.backref, schema=schema, schemas=schemas
         )
 
     # Resolve name
     assert ref is not None
-    ref_schema_name, _ = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
+    ref_schema_name, _ = ref_helper.get_ref(ref=ref, schemas=schemas)
 
     # Calculate schema
     assert backref is not None

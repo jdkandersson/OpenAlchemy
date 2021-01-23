@@ -2,7 +2,8 @@
 
 import pytest
 
-from open_alchemy import helpers
+from open_alchemy.helpers import ref as ref_helper
+from open_alchemy.helpers import schema as schema_helper
 
 
 @pytest.mark.parametrize(
@@ -69,7 +70,7 @@ def test_constructable(schema, schemas, expected_result):
     WHEN constructable is called with the schema and schemas
     THEN the expected constructable is returned.
     """
-    result = helpers.schema.constructable(schema=schema, schemas=schemas)
+    result = schema_helper.constructable(schema=schema, schemas=schemas)
 
     assert result == expected_result
 
@@ -88,10 +89,10 @@ def test_constructable_remote(tmp_path, _clean_remote_schemas_store):
     remote_schemas_file = directory / "remote.json"
     remote_schemas_file.write_text('{"Table": {"x-tablename": "table 1"}}')
     # Set up remote schemas store
-    helpers.ref.set_context(path=str(schemas_file))
+    ref_helper.set_context(path=str(schemas_file))
     schema = {"$ref": "remote.json#/Table"}
 
-    result = helpers.schema.constructable(schema=schema, schemas={})
+    result = schema_helper.constructable(schema=schema, schemas={})
 
     assert result is True
 
@@ -114,7 +115,7 @@ def test_inherits(schema, expected_result):
     WHEN inherits is called with the schema
     THEN the expected result is returned.
     """
-    result = helpers.schema.inherits(schema=schema, schemas={})
+    result = schema_helper.inherits(schema=schema, schemas={})
 
     assert result == expected_result
 
@@ -143,7 +144,7 @@ def test_prepare(schema, schemas):
     WHEN prepare is called with the schema and schemas
     THEN the expected schema is returned.
     """
-    returned_schema = helpers.schema.prepare(schema=schema, schemas=schemas)
+    returned_schema = schema_helper.prepare(schema=schema, schemas=schemas)
 
     assert returned_schema == {"key": "value"}
 
@@ -166,7 +167,7 @@ def test_prepare_skip(schema, schemas):
     WHEN prepare is called with the schema and schemas and skip name
     THEN the an empty schema is returned.
     """
-    returned_schema = helpers.schema.prepare(
+    returned_schema = schema_helper.prepare(
         schema=schema, schemas=schemas, skip_name="RefSchema"
     )
 
@@ -240,6 +241,6 @@ def test_prepare_deep(schema, schemas, expected_schema):
     WHEN prepare_deep is called with the schema and schemas
     THEN the expected schema is returned.
     """
-    returned_schema = helpers.schema.prepare_deep(schema=schema, schemas=schemas)
+    returned_schema = schema_helper.prepare_deep(schema=schema, schemas=schemas)
 
     assert returned_schema == expected_schema

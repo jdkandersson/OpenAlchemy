@@ -1,8 +1,9 @@
 """Validation for readOnly properties."""
 
 from .... import exceptions
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
+from ....helpers import type_ as type_helper
 from ... import helpers
 from .. import helpers as validation_helpers
 from .. import types
@@ -27,11 +28,11 @@ def _check_object(
     # Get types of properties
     properties_items = helpers.iterate.properties_items(schema=schema, schemas=schemas)
     properties_items_type = map(
-        lambda args: (args[0], oa_helpers.peek.type_(schema=args[1], schemas=schemas)),
+        lambda args: (args[0], peek.type_(schema=args[1], schemas=schemas)),
         properties_items,
     )
     properties_items_type = filter(
-        lambda args: args[1] not in oa_helpers.type_.SIMPLE_TYPES, properties_items_type
+        lambda args: args[1] not in type_helper.SIMPLE_TYPES, properties_items_type
     )
     first_properties_items_type = next(properties_items_type, None)
     if first_properties_items_type is not None:
@@ -47,12 +48,12 @@ def _check_object(
 
 def _check_array(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> types.Result:
     """Check readOnly array."""
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     if items_schema is None:
         return types.Result(False, "readOnly array properties must define items")
 
     # Check items type
-    items_type = oa_helpers.peek.type_(schema=items_schema, schemas=schemas)
+    items_type = peek.type_(schema=items_schema, schemas=schemas)
     if items_type != "object":
         return types.Result(
             False, "items :: readOnly array items must have the object type"
@@ -79,11 +80,11 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
-        type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+        type_ = peek.type_(schema=schema, schemas=schemas)
 
-        assert type_ not in oa_helpers.type_.SIMPLE_TYPES
+        assert type_ not in type_helper.SIMPLE_TYPES
 
-        oa_helpers.peek.description(schema=schema, schemas=schemas)
+        peek.description(schema=schema, schemas=schemas)
 
         if type_ == "object":
             return _check_object(schema=schema, schemas=schemas)

@@ -2,8 +2,8 @@
 
 import typing
 
-from ... import helpers as oa_helpers
 from ... import types as oa_types
+from ...helpers import relationship
 from .. import helpers
 from . import types
 
@@ -48,7 +48,7 @@ def check(*, schemas: oa_types.Schemas) -> types.Result:
 
         for property_name, property_schema in properties:
             # Skip properties that are not many-to-many relationships
-            is_many_to_many = oa_helpers.relationship.is_relationship_type(
+            is_many_to_many = relationship.is_relationship_type(
                 type_=oa_types.RelationshipType.MANY_TO_MANY,
                 schema=property_schema,
                 schemas=schemas,

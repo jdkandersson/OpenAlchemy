@@ -1,9 +1,6 @@
 """Generate a model class based on artifacts."""
 
-import typing
-
 from open_alchemy import schemas
-from open_alchemy import types as oa_types
 
 from .. import artifacts as models_file_artifacts
 from . import source as _source

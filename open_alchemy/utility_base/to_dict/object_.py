@@ -3,8 +3,8 @@
 import typing
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import peek
 from .. import types
 
 
@@ -85,7 +85,7 @@ def convert(
         read_only (optional): Whether the schema is read only.
 
     """
-    schema_read_only = helpers.peek.read_only(schema=schema, schemas={})
+    schema_read_only = peek.read_only(schema=schema, schemas={})
     if read_only or schema_read_only:
         return _convert_read_only(schema=schema, value=value)
     return _convert_relationship(value=value)

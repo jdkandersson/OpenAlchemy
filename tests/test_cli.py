@@ -10,7 +10,7 @@ import pytest
 
 from open_alchemy import cli
 from open_alchemy import exceptions
-from open_alchemy import helpers
+from open_alchemy.helpers import command as command_helper
 
 
 @pytest.mark.parametrize(
@@ -173,6 +173,6 @@ def test_external_cli():
     WHEN we run the CLI as an external command
     THEN nothing fails
     """
-    out, _ = helpers.command.run(["openalchemy", "--help"], str(pathlib.Path.cwd()))
+    out, _ = command_helper.run(["openalchemy", "--help"], str(pathlib.Path.cwd()))
 
     assert "usage: openalchemy" in out

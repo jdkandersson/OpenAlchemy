@@ -4,11 +4,15 @@ import typing
 
 from . import column_factory
 from . import exceptions
-from . import helpers
 from . import mixins
 from . import table_args
 from . import types
 from . import utility_base
+from .helpers import ext_prop
+from .helpers import inheritance
+from .helpers import peek
+from .helpers import ref
+from .helpers import schema as schema_helper
 
 
 class GetBase(types.Protocol):
@@ -40,9 +44,7 @@ def model_factory(
 
     """
     schema = _get_schema(name, schemas)
-    artifacts_name, _ = helpers.ref.resolve(
-        name=name, schema=schemas[name], schemas=schemas
-    )
+    artifacts_name, _ = ref.resolve(name=name, schema=schemas[name], schemas=schemas)
     model_artifacts = artifacts.get(artifacts_name)
     assert model_artifacts is not None
 
@@ -57,10 +59,10 @@ def model_factory(
     }
     if required_exists:
         model_schema[types.OpenApiProperties.REQUIRED] = required_array
-    inherits = helpers.peek.inherits(schema=schema, schemas={})
+    inherits = peek.inherits(schema=schema, schemas={})
     if inherits is not None:
         model_schema[types.ExtensionProperties.INHERITS] = inherits
-    description = helpers.peek.description(schema=schema, schemas={})
+    description = peek.description(schema=schema, schemas={})
     if description is not None:
         model_schema[types.OpenApiProperties.DESCRIPTION.value] = description
 
@@ -81,7 +83,7 @@ def model_factory(
 
     # Retrieve mixins
     mixin_classes: typing.Tuple[typing.Type, ...] = tuple()
-    mixin_values = helpers.peek.mixins(schema=schema, schemas=schemas)
+    mixin_values = peek.mixins(schema=schema, schemas=schemas)
     if mixin_values is not None:
         mixin_classes = mixins.get(mixins=mixin_values)
 
@@ -127,25 +129,23 @@ def _get_schema(name: str, schemas: types.Schemas) -> types.Schema:
         raise exceptions.SchemaNotFoundError(f"{name} not found in schemas")
     schema: types.Schema = schemas.get(name, {})
     # Check for parent
-    inherits = helpers.schema.inherits(schema=schema, schemas=schemas)
+    inherits = schema_helper.inherits(schema=schema, schemas=schemas)
     if not inherits:
         # De-referencing schema
-        schema = helpers.schema.prepare(schema=schema, schemas=schemas)
+        schema = schema_helper.prepare(schema=schema, schemas=schemas)
         # Checking for tablename key
-        tablename = helpers.peek.tablename(schema=schema, schemas={})
+        tablename = peek.tablename(schema=schema, schemas={})
         if tablename is None:
             raise exceptions.MalformedSchemaError(
                 f'"{types.ExtensionProperties.TABLENAME}" is a required schema '
                 f"property for {name}."
             )
     else:
-        parent = helpers.inheritance.retrieve_parent(schema=schema, schemas=schemas)
+        parent = inheritance.retrieve_parent(schema=schema, schemas=schemas)
         # De-referencing schema excluding parent schema
-        schema = helpers.schema.prepare(
-            schema=schema, schemas=schemas, skip_name=parent
-        )
+        schema = schema_helper.prepare(schema=schema, schemas=schemas, skip_name=parent)
         # Checking for inherits key
-        inherits_schema_value = helpers.peek.inherits(schema=schema, schemas={})
+        inherits_schema_value = peek.inherits(schema=schema, schemas={})
         if inherits_schema_value is None:
             raise exceptions.MalformedSchemaError(
                 f'"{types.ExtensionProperties.INHERITS}" is a required schema property '
@@ -178,7 +178,7 @@ def _get_kwargs(*, schema: types.Schema) -> types.TKwargs:
         The kwargs for the model.
 
     """
-    kwargs = helpers.ext_prop.get_kwargs(
+    kwargs = ext_prop.get_kwargs(
         source=schema, reserved={"__tablename__", "__table_args__"}
     )
     if kwargs is None:
@@ -206,7 +206,7 @@ def _prepare_model_dict(schema: types.Schema) -> typing.Dict[str, typing.Any]:
         The dictionary for the schema.
 
     """
-    tablename = helpers.peek.tablename(schema=schema, schemas={})
+    tablename = peek.tablename(schema=schema, schemas={})
     if tablename is not None:
         return {"__tablename__": tablename}
     return {}

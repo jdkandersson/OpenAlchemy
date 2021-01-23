@@ -4,9 +4,9 @@ import itertools
 import json
 import typing
 
-from open_alchemy import helpers
 from open_alchemy import schemas
 from open_alchemy import types as oa_types
+from open_alchemy.helpers import oa_to_py_type
 
 from .. import types
 from . import type_
@@ -65,7 +65,7 @@ def _map_default(
         return f"b{default}"
 
     # Map type
-    mapped_default = helpers.oa_to_py_type.convert(
+    mapped_default = oa_to_py_type.convert(
         value=default, type_=artifacts.open_api.type, format_=artifacts.open_api.format
     )
 

@@ -3,8 +3,8 @@
 import datetime
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import peek
 from .. import types
 
 
@@ -24,7 +24,7 @@ def convert(
         The value converted for a column.
 
     """
-    type_ = helpers.peek.type_(schema=schema, schemas={})
+    type_ = peek.type_(schema=schema, schemas={})
     if value is None:
         return None
 
@@ -71,7 +71,7 @@ def _handle_string(
         raise exceptions.InvalidInstanceError(
             "String type columns must have str values."
         )
-    format_ = helpers.peek.format_(schema=schema, schemas={})
+    format_ = peek.format_(schema=schema, schemas={})
     if format_ == "date":
         return datetime.date.fromisoformat(value)
     if format_ == "date-time":

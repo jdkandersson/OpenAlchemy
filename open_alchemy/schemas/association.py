@@ -2,8 +2,9 @@
 
 import typing
 
-from .. import helpers as oa_helpers
 from .. import types
+from ..helpers import inheritance
+from ..helpers import peek
 from . import helpers
 
 
@@ -28,9 +29,7 @@ def _get_association_tablenames(
 
     """
     tablenames = map(
-        lambda association: oa_helpers.peek.tablename(
-            schema=association.schema, schemas={}
-        ),
+        lambda association: peek.tablename(schema=association.schema, schemas={}),
         association_schemas,
     )
     str_tablenames = map(_assert_is_string, tablenames)
@@ -73,17 +72,15 @@ def _get_tablename_schema_names(
     # Get mapping of tablename to parent schema name
     constructables = helpers.iterate.constructable(schemas=schemas)
     not_single_inheritance_constructables = filter(
-        lambda args: oa_helpers.inheritance.calculate_type(
-            schema=args[1], schemas=schemas
-        )
-        != oa_helpers.inheritance.Type.SINGLE_TABLE,
+        lambda args: inheritance.calculate_type(schema=args[1], schemas=schemas)
+        != inheritance.Type.SINGLE_TABLE,
         constructables,
     )
     tablename_parent_name_map = dict(
         map(
             lambda args: (
-                oa_helpers.peek.prefer_local(
-                    get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+                peek.prefer_local(
+                    get_value=peek.tablename, schema=args[1], schemas=schemas
                 ),
                 args[0],
             ),
@@ -96,8 +93,8 @@ def _get_tablename_schema_names(
     name_tablenames = map(
         lambda args: (
             args[0],
-            oa_helpers.peek.prefer_local(
-                get_value=oa_helpers.peek.tablename, schema=args[1], schemas=schemas
+            peek.prefer_local(
+                get_value=peek.tablename, schema=args[1], schemas=schemas
             ),
         ),
         constructables,
@@ -175,8 +172,8 @@ def _get_tablename_foreign_keys(
         lambda args: (
             args[0],
             map(
-                lambda property_: oa_helpers.peek.prefer_local(
-                    get_value=oa_helpers.peek.foreign_key,
+                lambda property_: peek.prefer_local(
+                    get_value=peek.foreign_key,
                     schema=property_[1],
                     schemas=schemas,
                 ),
@@ -242,7 +239,7 @@ def _combine_defined_expected_schema(
         for property_ in expected_schema_value[
             types.OpenApiProperties.PROPERTIES
         ].items()
-        if oa_helpers.peek.foreign_key(schema=property_[1], schemas={})
+        if peek.foreign_key(schema=property_[1], schemas={})
         not in parent_name_foreign_keys.foreign_keys
     }
     return types.TNameSchema(
@@ -281,7 +278,7 @@ def _combine_defined_expected_schemas(
     )
 
     for association_schema in association_schemas:
-        association_tablename = oa_helpers.peek.tablename(
+        association_tablename = peek.tablename(
             schema=association_schema.schema, schemas={}
         )
         if association_tablename not in tablename_foreign_keys:

@@ -1,8 +1,8 @@
 """Define validation rules for JSON properties."""
 
 from .... import exceptions
-from .... import helpers
 from .... import types as oa_types
+from ....helpers import peek
 from .. import types
 from . import simple
 
@@ -20,28 +20,14 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
 
     """
     try:
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.nullable, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.description, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.read_only, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.write_only, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.index, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.unique, schema=schema, schemas=schemas
-        )
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.primary_key, schema=schema, schemas=schemas
-        )
-        autoincrement = helpers.peek.peek_key(
+        peek.prefer_local(get_value=peek.nullable, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.description, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.read_only, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.write_only, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.index, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.unique, schema=schema, schemas=schemas)
+        peek.prefer_local(get_value=peek.primary_key, schema=schema, schemas=schemas)
+        autoincrement = peek.peek_key(
             schema=schema,
             schemas=schemas,
             key=oa_types.ExtensionProperties.AUTOINCREMENT,
@@ -52,7 +38,7 @@ def check(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Result:
                 "json properties do not support "
                 f'"{oa_types.ExtensionProperties.AUTOINCREMENT}"',
             )
-        server_default = helpers.peek.peek_key(
+        server_default = peek.peek_key(
             schema=schema,
             schemas=schemas,
             key=oa_types.ExtensionProperties.SERVER_DEFAULT,

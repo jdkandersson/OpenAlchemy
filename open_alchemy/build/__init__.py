@@ -11,10 +11,10 @@ import typing
 import jinja2
 
 from .. import exceptions
-from .. import helpers
 from .. import models_file as models_file_module
 from .. import schemas as schemas_module
 from .. import types
+from ..helpers import command
 
 # TODO(rgreinho)): Fix above nosec it in the future when  # pylint: disable=W0511
 # following issue is resolved:
@@ -369,7 +369,7 @@ def build_sdist(name: TName, path: TPath) -> None:
         path: The package directory.
     """
     pkg_dir = pathlib.Path(path) / name
-    helpers.command.run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
+    command.run([sys.executable, "setup.py", "sdist"], str(pkg_dir))
 
 
 def build_wheel(name: TName, path: TPath) -> None:
@@ -383,7 +383,7 @@ def build_wheel(name: TName, path: TPath) -> None:
     """
     pkg_dir = pathlib.Path(path) / name
     try:
-        helpers.command.run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
+        command.run([sys.executable, "setup.py", "bdist_wheel"], str(pkg_dir))
     except exceptions.BuildError as exc:
         raise RuntimeError(
             "Building a wheel package requires the wheel package. "

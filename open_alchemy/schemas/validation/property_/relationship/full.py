@@ -1,8 +1,10 @@
 """Validate the full schema (property, source and referenced)."""
 
 from ..... import exceptions
-from ..... import helpers as oa_helpers
 from ..... import types as oa_types
+from .....helpers import foreign_key as foreign_key_helper
+from .....helpers import peek
+from .....helpers import relationship
 from .... import helpers
 from ... import helpers as validation_helpers
 from ... import model
@@ -54,10 +56,10 @@ def _check_pre_defined_property_schema(
 
     # Check that key information matches
     checks = (
-        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-        (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.TYPE, peek.type_),
+        (oa_types.OpenApiProperties.FORMAT, peek.format_),
+        (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
+        (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
         match_result = validation_helpers.value.check_matches(
@@ -74,7 +76,7 @@ def _check_pre_defined_property_schema(
         )
 
     # Check the foreign key
-    actual_foreign_key = oa_helpers.peek.foreign_key(
+    actual_foreign_key = peek.foreign_key(
         schema=defined_property_schema, schemas=schemas
     )
     if actual_foreign_key is None:
@@ -143,7 +145,7 @@ def _check_target_schema(
         )
 
     # Check for pre-defined foreign key property
-    foreign_key = oa_helpers.foreign_key.calculate_foreign_key(
+    foreign_key = foreign_key_helper.calculate_foreign_key(
         column_name=column_name,
         target_schema=target_schema,
         schemas=schemas,
@@ -184,8 +186,7 @@ def _check_many_to_many_schema(
         schema=schema, schemas=schemas, stay_within_tablename=True
     )
     primary_key_properties = filter(
-        lambda args: oa_helpers.peek.primary_key(schema=args[1], schemas=schemas)
-        is True,
+        lambda args: peek.primary_key(schema=args[1], schemas=schemas) is True,
         properties,
     )
     primary_key_property = next(primary_key_properties, None)
@@ -239,7 +240,7 @@ def _check_many_to_many(
         )
 
     # Checking referenced schema
-    _, ref_schema = oa_helpers.relationship.get_ref_schema_many_to_x(
+    _, ref_schema = relationship.get_ref_schema_many_to_x(
         property_schema=property_schema, schemas=schemas
     )
     ref_result = _check_many_to_many_schema(schema=ref_schema, schemas=schemas)
@@ -266,7 +267,7 @@ def _check_backref_property_properties_basics(
         schemas: All defined schemas used to resolve any $ref.
     """
     # Check for object type
-    type_ = oa_helpers.peek.type_(schema=backref_schema, schemas=schemas)
+    type_ = peek.type_(schema=backref_schema, schemas=schemas)
     if type_ != "object":
         return types.Result(False, "the back reference schema must be an object")
 
@@ -339,10 +340,10 @@ def _check_backref_property_properties(
 
     # Check schema matches
     checks = (
-        (oa_types.OpenApiProperties.TYPE, oa_helpers.peek.type_),
-        (oa_types.OpenApiProperties.FORMAT, oa_helpers.peek.format_),
-        (oa_types.OpenApiProperties.MAX_LENGTH, oa_helpers.peek.max_length),
-        (oa_types.OpenApiProperties.DEFAULT, oa_helpers.peek.default),
+        (oa_types.OpenApiProperties.TYPE, peek.type_),
+        (oa_types.OpenApiProperties.FORMAT, peek.format_),
+        (oa_types.OpenApiProperties.MAX_LENGTH, peek.max_length),
+        (oa_types.OpenApiProperties.DEFAULT, peek.default),
     )
     for key, func in checks:
         properties_items = helpers.iterate.properties_items(
@@ -394,16 +395,12 @@ def _check_backref_property(
 ) -> types.OptResult:
     """Check the back reference property."""
     # Check the type of the property
-    read_only = oa_helpers.peek.read_only(
-        schema=backref_property_schema, schemas=schemas
-    )
+    read_only = peek.read_only(schema=backref_property_schema, schemas=schemas)
     if not read_only:
         return types.Result(False, "the property must be readOnly")
 
     # Check the type of the backref property
-    property_type = oa_helpers.peek.type_(
-        schema=backref_property_schema, schemas=schemas
-    )
+    property_type = peek.type_(schema=backref_property_schema, schemas=schemas)
     expected_property_type = _BACKREF_EXPECTED_TYPE[relationship_type]
     if expected_property_type != property_type:
         return types.Result(
@@ -417,9 +414,7 @@ def _check_backref_property(
         oa_types.RelationshipType.MANY_TO_ONE,
         oa_types.RelationshipType.MANY_TO_MANY,
     }:
-        items_schema = oa_helpers.peek.items(
-            schema=backref_property_schema, schemas=schemas
-        )
+        items_schema = peek.items(schema=backref_property_schema, schemas=schemas)
         if items_schema is None:
             return types.Result(False, "items must be defined")
         properties_result = _check_backref_property_properties(
@@ -487,7 +482,7 @@ def _check_backref(
         oa_types.RelationshipType.ONE_TO_MANY,
         oa_types.RelationshipType.MANY_TO_MANY,
     }:
-        items_schema = oa_helpers.peek.items(schema=property_schema, schemas=schemas)
+        items_schema = peek.items(schema=property_schema, schemas=schemas)
         assert items_schema is not None
         object_schema = items_schema
     else:
@@ -557,9 +552,7 @@ def check(
 
     """
     try:
-        type_ = oa_helpers.relationship.calculate_type(
-            schema=property_schema, schemas=schemas
-        )
+        type_ = relationship.calculate_type(schema=property_schema, schemas=schemas)
 
         if type_ in {
             oa_types.RelationshipType.MANY_TO_ONE,
@@ -568,12 +561,12 @@ def check(
         }:
             # Retrieve information required to check x-to-one and one-to-many
             # relationships
-            column_name = oa_helpers.foreign_key.calculate_column_name(
+            column_name = foreign_key_helper.calculate_column_name(
                 type_=type_,
                 property_schema=property_schema,
                 schemas=schemas,
             )
-            target_schema = oa_helpers.foreign_key.get_target_schema(
+            target_schema = foreign_key_helper.get_target_schema(
                 type_=type_,
                 parent_schema=parent_schema,
                 property_schema=property_schema,
@@ -587,13 +580,13 @@ def check(
                     False,
                     f"foreign key target schema :: {target_schema_model_result.reason}",
                 )
-            modify_schema = oa_helpers.foreign_key.get_modify_schema(
+            modify_schema = foreign_key_helper.get_modify_schema(
                 type_=type_,
                 parent_schema=parent_schema,
                 property_schema=property_schema,
                 schemas=schemas,
             )
-            foreign_key_property_name = oa_helpers.foreign_key.calculate_prop_name(
+            foreign_key_property_name = foreign_key_helper.calculate_prop_name(
                 type_=type_,
                 column_name=column_name,
                 property_name=property_name,

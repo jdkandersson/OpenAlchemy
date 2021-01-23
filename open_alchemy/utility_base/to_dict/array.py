@@ -4,8 +4,8 @@ import functools
 import typing
 
 from ... import exceptions
-from ... import helpers
 from ... import types as ao_types
+from ...helpers import peek
 from .. import types
 from . import object_
 
@@ -28,17 +28,17 @@ def convert(value: typing.Any, *, schema: ao_types.Schema) -> types.TOptArrayDic
     """
     if value is None:
         return None
-    item_schema = helpers.peek.items(schema=schema, schemas={})
+    item_schema = peek.items(schema=schema, schemas={})
     if item_schema is None:
         raise exceptions.MalformedSchemaError(
             "The array item schema must have an items property."
         )
-    item_type = helpers.peek.type_(schema=item_schema, schemas={})
+    item_type = peek.type_(schema=item_schema, schemas={})
     if item_type != "object":
         raise exceptions.FeatureNotImplementedError(
             "The array item schema must be of type object."
         )
-    read_only = helpers.peek.read_only(schema=schema, schemas={})
+    read_only = peek.read_only(schema=schema, schemas={})
     item_conversion = functools.partial(
         object_.convert, schema=item_schema, read_only=read_only
     )

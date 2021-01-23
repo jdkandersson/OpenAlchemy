@@ -3,8 +3,8 @@
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
 from open_alchemy import types
+from open_alchemy.helpers import peek
 
 
 @pytest.mark.parametrize(
@@ -75,7 +75,7 @@ def test_peek_key(key, schema, schemas, expected_value):
     WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
-    returned_type = helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)
+    returned_type = peek.peek_key(schema=schema, schemas=schemas, key=key)
 
     assert returned_type == expected_value
 
@@ -104,7 +104,7 @@ def test_peek_key_skip_ref(schema, schemas, expected_value):
     WHEN peek_key is called with the schema and schemas
     THEN the expected value is returned.
     """
-    returned_type = helpers.peek.peek_key(
+    returned_type = peek.peek_key(
         schema=schema, schemas=schemas, key="key", skip_ref="RefSchema"
     )
 
@@ -147,7 +147,7 @@ def test_peek_key_invalid(schema, schemas):
     THEN MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.peek_key(schema=schema, schemas=schemas, key="key")
+        peek.peek_key(schema=schema, schemas=schemas, key="key")
 
 
 @pytest.mark.parametrize(
@@ -265,8 +265,8 @@ def test_prefer_local(schema, schemas, expected_value):
     WHEN prefer_local is called with the backref peek helper and the schema and schemas
     THEN the expected value is returned.
     """
-    returned_value = helpers.peek.prefer_local(
-        get_value=helpers.peek.backref, schema=schema, schemas=schemas
+    returned_value = peek.prefer_local(
+        get_value=peek.backref, schema=schema, schemas=schemas
     )
 
     assert returned_value == expected_value
@@ -308,6 +308,4 @@ def test_prefer_local_invalid(schema, schemas):
     THEN MalformedSchemaError is raised.
     """
     with pytest.raises(exceptions.MalformedSchemaError):
-        helpers.peek.prefer_local(
-            get_value=helpers.peek.max_length, schema=schema, schemas=schemas
-        )
+        peek.prefer_local(get_value=peek.max_length, schema=schema, schemas=schemas)

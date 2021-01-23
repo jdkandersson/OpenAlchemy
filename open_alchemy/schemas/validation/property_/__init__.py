@@ -1,8 +1,10 @@
 """Validation for properties."""
 
 from .... import exceptions
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
+from ....helpers import property_
+from ....helpers import type_ as type_helper
 from .. import types
 from . import backref
 from . import json
@@ -31,12 +33,12 @@ def check_type(schemas: oa_types.Schemas, schema: oa_types.Schema) -> types.Resu
 
     """
     try:
-        type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
-        if type_ not in oa_helpers.type_.TYPES:
+        type_ = peek.type_(schema=schema, schemas=schemas)
+        if type_ not in type_helper.TYPES:
             return types.Result(False, f"{type_} is not a supported type")
-        oa_helpers.peek.json(schema=schema, schemas=schemas)
-        oa_helpers.peek.read_only(schema=schema, schemas=schemas)
-        oa_helpers.peek.write_only(schema=schema, schemas=schemas)
+        peek.json(schema=schema, schemas=schemas)
+        peek.read_only(schema=schema, schemas=schemas)
+        peek.write_only(schema=schema, schemas=schemas)
 
     except (exceptions.MalformedSchemaError, exceptions.TypeMissingError) as exc:
         return types.Result(False, f"malformed schema :: {exc}")
@@ -69,7 +71,7 @@ def check(
     if not type_result.valid:
         return type_result
 
-    type_ = oa_helpers.property_.calculate_type(schema=property_schema, schemas=schemas)
+    type_ = property_.calculate_type(schema=property_schema, schemas=schemas)
 
     if type_ == Type.BACKREF:
         return backref.check(schema=property_schema, schemas=schemas)

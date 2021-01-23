@@ -3,9 +3,11 @@
 import typing
 
 from ... import exceptions
-from ... import helpers as oa_helpers
 from ... import table_args
 from ... import types as oa_types
+from ...helpers import inheritance
+from ...helpers import peek
+from ...helpers import schema as schema_helper
 from .. import helpers
 from . import helpers as validation_helpers
 from . import types
@@ -97,15 +99,15 @@ def _check_mandatory(
 ) -> types.OptResult:
     """Check mandatory keys of the model schema."""
     # Check for inheritance
-    inherits = oa_helpers.schema.inherits(schema=schema, schemas=schemas)
+    inherits = schema_helper.inherits(schema=schema, schemas=schemas)
     if inherits:
-        oa_helpers.inheritance.get_parent(schema=schema, schemas=schemas)
+        inheritance.get_parent(schema=schema, schemas=schemas)
 
-    tablename = oa_helpers.peek.tablename(schema=schema, schemas=schemas)
+    tablename = peek.tablename(schema=schema, schemas=schemas)
     if tablename is None and not inherits:
         return types.Result(False, "every model must define x-tablename")
 
-    type_ = oa_helpers.peek.type_(schema=schema, schemas=schemas)
+    type_ = peek.type_(schema=schema, schemas=schemas)
     if type_ != "object":
         return types.Result(False, "models must have the object type")
 
@@ -122,7 +124,7 @@ def _check_kwargs(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> types.OptResult:
     """Check kwargs value of it exists."""
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
+    kwargs = peek.kwargs(schema=schema, schemas=schemas)
     if kwargs is None:
         return None
 
@@ -161,8 +163,7 @@ def _check_invalid_keys(
         oa_types.ExtensionProperties.FOREIGN_KEY_KWARGS,
     )
     seen_invalid_keys = filter(
-        lambda key: oa_helpers.peek.peek_key(schema=schema, schemas=schemas, key=key)
-        is not None,
+        lambda key: peek.peek_key(schema=schema, schemas=schemas, key=key) is not None,
         invalid_keys,
     )
     invalid_key = next(seen_invalid_keys, None)
@@ -191,9 +192,9 @@ def _check_modifiers(
         return required_result
 
     # Check description value
-    oa_helpers.peek.description(schema=schema, schemas=schemas)
+    peek.description(schema=schema, schemas=schemas)
     # Check mixins value
-    oa_helpers.peek.mixins(schema=schema, schemas=schemas)
+    peek.mixins(schema=schema, schemas=schemas)
 
     # Check kwargs
     kwargs_result = _check_kwargs(schema=schema, schemas=schemas)
@@ -206,7 +207,7 @@ def _check_modifiers(
         return invalid_keys_result
 
     # Check composite index
-    index_spec = oa_helpers.peek.composite_index(schema=schema, schemas=schemas)
+    index_spec = peek.composite_index(schema=schema, schemas=schemas)
     if index_spec is not None:
         index_expressions = set(
             table_args.factory.iter_index_expressions(spec=index_spec)
@@ -221,7 +222,7 @@ def _check_modifiers(
             )
 
     # Check composite unique
-    unique_spec = oa_helpers.peek.composite_unique(schema=schema, schemas=schemas)
+    unique_spec = peek.composite_unique(schema=schema, schemas=schemas)
     if unique_spec is not None:
         unique_columns = set(table_args.factory.iter_unique_columns(spec=unique_spec))
         property_names = set(_get_property_names_table(schema=schema, schemas=schemas))

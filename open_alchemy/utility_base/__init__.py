@@ -4,10 +4,11 @@ import json
 import typing
 
 from .. import exceptions
-from .. import helpers
 from .. import types as oa_types
 from ..facades import jsonschema
 from ..facades import models
+from ..helpers import peek
+from ..helpers import schema as schema_helper
 from . import from_dict
 from . import repr_
 from . import to_dict
@@ -72,7 +73,7 @@ class UtilityBase:
     @staticmethod
     def _get_parent(*, schema: oa_types.Schema) -> typing.Type[TUtilityBase]:
         """Get the parent model of a model."""
-        parent_name = helpers.peek.inherits(schema=schema, schemas={})
+        parent_name = peek.inherits(schema=schema, schemas={})
         if parent_name is None or not isinstance(parent_name, str):
             raise exceptions.MalformedSchemaError(
                 "To construct a model that inherits x-inherits must be present and a "
@@ -153,7 +154,7 @@ class UtilityBase:
         """
         schema = cls._get_schema()
         # Handle model that inherits
-        if helpers.schema.inherits(schema=schema, schemas={}):
+        if schema_helper.inherits(schema=schema, schemas={}):
             # Retrieve parent model
             parent: typing.Type[UtilityBase] = cls._get_parent(schema=schema)
 
@@ -222,7 +223,7 @@ class UtilityBase:
         return_dict: typing.Dict[str, typing.Any] = {}
         for name, property_schema in properties.items():
             # Handle for writeOnly
-            if helpers.peek.write_only(schema=property_schema, schemas={}):
+            if peek.write_only(schema=property_schema, schemas={}):
                 continue
 
             value = getattr(instance, name, None)
@@ -255,7 +256,7 @@ class UtilityBase:
 
         """
         schema = self._get_schema()
-        if helpers.schema.inherits(schema=schema, schemas={}):
+        if schema_helper.inherits(schema=schema, schemas={}):
             # Retrieve parent model and convert to dict
             parent: typing.Type[UtilityBase] = self._get_parent(schema=schema)
             parent_dict = parent.instance_to_dict(self)

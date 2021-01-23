@@ -3,8 +3,9 @@
 import typing
 
 from ... import exceptions
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import peek
+from ...helpers import type_ as type_helper
 from .. import types
 from . import array
 from . import object_
@@ -23,15 +24,15 @@ def convert(*, schema: oa_types.Schema, value: typing.Any) -> types.TAnyDict:
         The converted value.
 
     """
-    json = helpers.peek.json(schema=schema, schemas={})
+    json = peek.json(schema=schema, schemas={})
     if json:
         return value
-    type_ = helpers.peek.type_(schema=schema, schemas={})
+    type_ = peek.type_(schema=schema, schemas={})
     if type_ == "object":
         return object_.convert(value, schema=schema)
     if type_ == "array":
         return array.convert(value, schema=schema)
-    if type_ in helpers.type_.SIMPLE_TYPES:
+    if type_ in type_helper.SIMPLE_TYPES:
         return simple.convert(value, schema=schema)
     raise exceptions.FeatureNotImplementedError(f"Type {type_} is not supported.")
 
@@ -63,7 +64,7 @@ def return_none(*, schema: oa_types.Schema, property_name: str) -> bool:
     # Check for required and nullable
     if required_array is not None and property_name in set(required_array):
         return True
-    nullable_value = helpers.peek.nullable(schema=property_schema, schemas={})
+    nullable_value = peek.nullable(schema=property_schema, schemas={})
     if nullable_value is True:
         return True
     return False

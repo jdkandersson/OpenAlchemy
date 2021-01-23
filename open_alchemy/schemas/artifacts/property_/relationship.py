@@ -2,16 +2,19 @@
 
 import typing
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import foreign_key as foreign_key_helper
+from ....helpers import peek
+from ....helpers import ref as ref_helper
+from ....helpers import relationship as relationship_helper
 from .. import types
 
 
 def _get_parent(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str:
     """Retrieve the parent name from an object reference."""
-    ref = oa_helpers.peek.ref(schema=schema, schemas=schemas)
+    ref = peek.ref(schema=schema, schemas=schemas)
     assert ref is not None
-    parent, _ = oa_helpers.ref.get_ref(ref=ref, schemas=schemas)
+    parent, _ = ref_helper.get_ref(ref=ref, schemas=schemas)
     return parent
 
 
@@ -24,18 +27,18 @@ def _calculate_x_to_one_schema(
         oa_types.ExtensionProperties.DE_REF.value: parent,
     }
 
-    description = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.description, schema=schema, schemas=schemas
+    description = peek.prefer_local(
+        get_value=peek.description, schema=schema, schemas=schemas
     )
     if description is not None:
         return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
-    nullable = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
+    nullable = peek.prefer_local(
+        get_value=peek.nullable, schema=schema, schemas=schemas
     )
     if nullable is not None:
         return_schema[oa_types.OpenApiProperties.NULLABLE.value] = nullable
-    write_only = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.write_only, schema=schema, schemas=schemas
+    write_only = peek.prefer_local(
+        get_value=peek.write_only, schema=schema, schemas=schemas
     )
     if write_only is not None:
         return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
@@ -47,16 +50,14 @@ def _get_backref_property(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[str]:
     """Retrieve the backref from an object reference."""
-    return oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.backref, schema=schema, schemas=schemas
-    )
+    return peek.prefer_local(get_value=peek.backref, schema=schema, schemas=schemas)
 
 
 def _get_kwargs(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """Retrieve the kwargs name from an object reference."""
-    return oa_helpers.peek.peek_key(
+    return peek.peek_key(
         schema=schema,
         schemas=schemas,
         key=oa_types.ExtensionProperties.KWARGS,
@@ -68,7 +69,7 @@ def _get_write_only(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[bool]:
     """Retrieve the writeOnly value from a schema."""
-    return oa_helpers.peek.peek_key(
+    return peek.peek_key(
         schema=schema,
         schemas=schemas,
         key=oa_types.OpenApiProperties.WRITE_ONLY,
@@ -80,7 +81,7 @@ def _get_description(
     *, parent: str, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[str]:
     """Retrieve the description value from a schema."""
-    return oa_helpers.peek.peek_key(
+    return peek.peek_key(
         schema=schema,
         schemas=schemas,
         key=oa_types.OpenApiProperties.DESCRIPTION,
@@ -96,18 +97,18 @@ def _get_foreign_key(
     schemas: oa_types.Schemas
 ) -> str:
     """Calculate the foreign key."""
-    column_name = oa_helpers.foreign_key.calculate_column_name(
+    column_name = foreign_key_helper.calculate_column_name(
         type_=relationship_type,
         property_schema=schema,
         schemas=schemas,
     )
-    target_schema = oa_helpers.foreign_key.get_target_schema(
+    target_schema = foreign_key_helper.get_target_schema(
         type_=relationship_type,
         parent_schema=parent_schema,
         property_schema=schema,
         schemas=schemas,
     )
-    return oa_helpers.foreign_key.calculate_foreign_key(
+    return foreign_key_helper.calculate_foreign_key(
         column_name=column_name,
         target_schema=target_schema,
         schemas=schemas,
@@ -123,18 +124,18 @@ def _get_foreign_key_property(
     schemas: oa_types.Schemas
 ) -> str:
     """Calculate the foreign key property."""
-    column_name = oa_helpers.foreign_key.calculate_column_name(
+    column_name = foreign_key_helper.calculate_column_name(
         type_=relationship_type,
         property_schema=schema,
         schemas=schemas,
     )
-    target_schema = oa_helpers.foreign_key.get_target_schema(
+    target_schema = foreign_key_helper.get_target_schema(
         type_=relationship_type,
         parent_schema=parent_schema,
         property_schema=schema,
         schemas=schemas,
     )
-    return oa_helpers.foreign_key.calculate_prop_name(
+    return foreign_key_helper.calculate_prop_name(
         type_=relationship_type,
         column_name=column_name,
         property_name=property_name,
@@ -147,9 +148,7 @@ def _get_nullable(
     *, schema: oa_types.Schema, schemas: oa_types.Schemas
 ) -> typing.Optional[bool]:
     """Retrieve the nullable value from a schema."""
-    return oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.nullable, schema=schema, schemas=schemas
-    )
+    return peek.prefer_local(get_value=peek.nullable, schema=schema, schemas=schemas)
 
 
 def _get_many_to_one(
@@ -275,7 +274,7 @@ def _calculate_one_to_x_schema(
     description = _get_description(schema=schema, schemas=schemas, parent=parent)
     if description is not None:
         return_schema[oa_types.OpenApiProperties.DESCRIPTION.value] = description
-    write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
+    write_only = peek.write_only(schema=schema, schemas=schemas)
     if write_only is not None:
         return_schema[oa_types.OpenApiProperties.WRITE_ONLY.value] = write_only
 
@@ -305,7 +304,7 @@ def _get_one_to_many(
     sub_type: oa_types.Literal[
         oa_types.RelationshipType.ONE_TO_MANY
     ] = oa_types.RelationshipType.ONE_TO_MANY
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
     parent = _get_parent(schema=items_schema, schemas=schemas)
@@ -340,8 +339,8 @@ def _get_one_to_many(
 
 def _get_secondary(*, schema: oa_types.Schema, schemas: oa_types.Schemas) -> str:
     """Retrieve the secondary from an object reference."""
-    secondary = oa_helpers.peek.prefer_local(
-        get_value=oa_helpers.peek.secondary, schema=schema, schemas=schemas
+    secondary = peek.prefer_local(
+        get_value=peek.secondary, schema=schema, schemas=schemas
     )
     assert secondary is not None
 
@@ -362,7 +361,7 @@ def _get_many_to_many(*, schema: oa_types.Schema, schemas: oa_types.Schemas, **_
         The artifacts for the property.
 
     """
-    items_schema = oa_helpers.peek.items(schema=schema, schemas=schemas)
+    items_schema = peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 
     parent = _get_parent(schema=items_schema, schemas=schemas)
@@ -412,7 +411,7 @@ def get(
         The artifacts for the property.
 
     """
-    sub_type = oa_helpers.relationship.calculate_type(schema=schema, schemas=schemas)
+    sub_type = relationship_helper.calculate_type(schema=schema, schemas=schemas)
 
     artifacts = _GET_MAPPING[sub_type](
         property_name=property_name,

@@ -5,8 +5,8 @@ import functools
 import pytest
 
 from open_alchemy import exceptions
-from open_alchemy import helpers
 from open_alchemy import types
+from open_alchemy.helpers import ext_prop
 
 
 @pytest.mark.helper
@@ -16,7 +16,7 @@ def test_miss():
     WHEN get is called with the source
     THEN None is returned.
     """
-    assert helpers.ext_prop.get(source={}, name="missing") is None
+    assert ext_prop.get(source={}, name="missing") is None
 
 
 @pytest.mark.helper
@@ -28,7 +28,7 @@ def test_miss_default():
     """
     default = "value 1"
 
-    value = helpers.ext_prop.get(source={}, name="missing", default=default)
+    value = ext_prop.get(source={}, name="missing", default=default)
 
     assert value == default
 
@@ -66,7 +66,7 @@ def test_invalid(name, value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -172,7 +172,7 @@ def test_valid(prefix, name, value):
     """
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(
+    returned_value = ext_prop.get(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
     )
 
@@ -194,7 +194,7 @@ def test_pop(prefix):
     value = True
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(
+    returned_value = ext_prop.get(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}", pop=True
     )
 
@@ -226,7 +226,7 @@ def test_unique_constraint_invalid(value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -260,7 +260,7 @@ def test_unique_constraint_valid(prefix, value):
     name = "composite-unique"
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(
+    returned_value = ext_prop.get(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
     )
 
@@ -301,7 +301,7 @@ def test_composite_index_invalid(value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -337,7 +337,7 @@ def test_composite_index_valid(prefix, value):
     name = "composite-index"
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(
+    returned_value = ext_prop.get(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
     )
 
@@ -382,7 +382,7 @@ def test_relationship_backrefs_invalid(value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -417,9 +417,7 @@ def test_relationship_backrefs_valid(prefix, value):
     name = "backrefs"
     source = {f"{prefix}{name}": value}
 
-    return_value = helpers.ext_prop.get(
-        source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
-    )
+    return_value = ext_prop.get(source=source, name=f"{types.KeyPrefixes.SHORT}{name}")
 
     assert return_value == value
 
@@ -452,7 +450,7 @@ def test_kwargs_invalid(value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get_kwargs(source=source)
+        ext_prop.get_kwargs(source=source)
 
 
 @pytest.mark.parametrize(
@@ -486,7 +484,7 @@ def test_kwargs_valid(prefix, value):
     name = "kwargs"
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get_kwargs(source=source)
+    returned_value = ext_prop.get_kwargs(source=source)
 
     assert returned_value == value
 
@@ -506,7 +504,7 @@ def test_kwargs_valid_name(prefix):
     value = {"key": "value"}
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get_kwargs(
+    returned_value = ext_prop.get_kwargs(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
     )
 
@@ -522,7 +520,7 @@ def test_kwargs_valid_missing():
     """
     source = {}
 
-    returned_value = helpers.ext_prop.get_kwargs(source=source)
+    returned_value = ext_prop.get_kwargs(source=source)
 
     assert returned_value is None
 
@@ -568,9 +566,7 @@ def test_kwargs_reserved(reserved, value, raises):
     name = "x-kwargs"
     source = {name: value}
 
-    test_func = functools.partial(
-        helpers.ext_prop.get_kwargs, source=source, reserved=reserved
-    )
+    test_func = functools.partial(ext_prop.get_kwargs, source=source, reserved=reserved)
     if raises:
         with pytest.raises(exceptions.MalformedExtensionPropertyError):
             test_func()
@@ -601,7 +597,7 @@ def test_mixins_invalid(value):
     source = {name: value}
 
     with pytest.raises(exceptions.MalformedExtensionPropertyError):
-        helpers.ext_prop.get(source=source, name=name)
+        ext_prop.get(source=source, name=name)
 
 
 @pytest.mark.parametrize(
@@ -626,7 +622,7 @@ def test_mixins_valid(prefix, value):
     name = "mixins"
     source = {f"{prefix}{name}": value}
 
-    returned_value = helpers.ext_prop.get(
+    returned_value = ext_prop.get(
         source=source, name=f"{types.KeyPrefixes.SHORT}{name}"
     )
 

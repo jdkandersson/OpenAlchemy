@@ -2,8 +2,8 @@
 
 import typing
 
-from ... import helpers
 from ... import types as oa_types
+from ...helpers import calculate_nullable
 from . import types
 
 
@@ -29,7 +29,7 @@ def construct(*, artifacts: oa_types.JsonPropertyArtifacts) -> types.Column:
         )
 
     # Calculate nullable
-    nullable = helpers.calculate_nullable(
+    nullable = calculate_nullable.calculate_nullable(
         nullable=artifacts.open_api.nullable,
         generated=False,
         defaulted=False,

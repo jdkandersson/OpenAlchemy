@@ -4,8 +4,11 @@ import functools
 import typing
 
 from ... import exceptions
-from ... import helpers
 from ... import types
+from ...helpers import inheritance
+from ...helpers import peek
+from ...helpers import ref
+from ...helpers import schema as schema_helper
 
 
 def constructable(
@@ -26,7 +29,7 @@ def constructable(
     """
     for name, schema in schemas.items():
         try:
-            if not helpers.schema.constructable(schema=schema, schemas=schemas):
+            if not schema_helper.constructable(schema=schema, schemas=schemas):
                 continue
         except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
             continue
@@ -52,7 +55,7 @@ def not_constructable(
     """
     for name, schema in schemas.items():
         try:
-            if helpers.schema.constructable(schema=schema, schemas=schemas):
+            if schema_helper.constructable(schema=schema, schemas=schemas):
                 continue
         except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
             continue
@@ -86,13 +89,9 @@ def _calculate_skip_name(
     if not stay_within_tablename and not stay_within_model:
         return None
 
-    inheritance_type = helpers.inheritance.calculate_type(
-        schema=schema, schemas=schemas
-    )
-    if inheritance_type != helpers.inheritance.Type.NONE:
-        parent_name = helpers.inheritance.retrieve_parent(
-            schema=schema, schemas=schemas
-        )
+    inheritance_type = inheritance.calculate_type(schema=schema, schemas=schemas)
+    if inheritance_type != inheritance.Type.NONE:
+        parent_name = inheritance.retrieve_parent(schema=schema, schemas=schemas)
 
         # Check for single
         if stay_within_model:
@@ -101,7 +100,7 @@ def _calculate_skip_name(
         # Check for JOINED
         if (
             not stay_within_model
-            and inheritance_type == helpers.inheritance.Type.JOINED_TABLE
+            and inheritance_type == inheritance.Type.JOINED_TABLE
             and stay_within_tablename
         ):
             return parent_name
@@ -228,7 +227,7 @@ def _any_key(
     # Handle $ref
     if schema.get(types.OpenApiProperties.REF) is not None:
         try:
-            _, ref_schema = helpers.ref.resolve(
+            _, ref_schema = ref.resolve(
                 name="", schema=schema, schemas=schemas, skip_name=skip_name
             )
         except (exceptions.MalformedSchemaError, exceptions.SchemaNotFoundError):
@@ -249,7 +248,7 @@ def _any_key(
 
         # Process not $ref first
         all_of_no_ref = filter(
-            lambda sub_schema: not helpers.peek.peek_key(
+            lambda sub_schema: not peek.peek_key(
                 schema=sub_schema, schemas=schemas, key=types.OpenApiProperties.REF
             ),
             all_of_dicts,
@@ -261,7 +260,7 @@ def _any_key(
 
         # Process $ref
         all_of_ref = filter(
-            lambda sub_schema: helpers.peek.peek_key(
+            lambda sub_schema: peek.peek_key(
                 schema=sub_schema, schemas=schemas, key=types.OpenApiProperties.REF
             ),
             all_of_dicts,

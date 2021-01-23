@@ -2,8 +2,9 @@
 
 import copy
 
-from .... import helpers as oa_helpers
 from .... import types as oa_types
+from ....helpers import peek
+from ....helpers import schema as schema_helper
 from ... import helpers
 from .. import types
 
@@ -23,27 +24,23 @@ def get(
         The artifacts for the property.
 
     """
-    schema = copy.deepcopy(
-        oa_helpers.schema.prepare_deep(schema=schema, schemas=schemas)
-    )
+    schema = copy.deepcopy(schema_helper.prepare_deep(schema=schema, schemas=schemas))
 
-    nullable = oa_helpers.peek.nullable(schema=schema, schemas=schemas)
+    nullable = peek.nullable(schema=schema, schemas=schemas)
 
-    description = oa_helpers.peek.description(schema=schema, schemas=schemas)
+    description = peek.description(schema=schema, schemas=schemas)
 
-    read_only = oa_helpers.peek.read_only(schema=schema, schemas=schemas)
-    write_only = oa_helpers.peek.write_only(schema=schema, schemas=schemas)
+    read_only = peek.read_only(schema=schema, schemas=schemas)
+    write_only = peek.write_only(schema=schema, schemas=schemas)
 
-    primary_key = oa_helpers.peek.primary_key(schema=schema, schemas=schemas)
-    index = oa_helpers.peek.index(schema=schema, schemas=schemas)
-    unique = oa_helpers.peek.unique(schema=schema, schemas=schemas)
+    primary_key = peek.primary_key(schema=schema, schemas=schemas)
+    index = peek.index(schema=schema, schemas=schemas)
+    unique = peek.unique(schema=schema, schemas=schemas)
 
-    foreign_key = oa_helpers.peek.foreign_key(schema=schema, schemas=schemas)
+    foreign_key = peek.foreign_key(schema=schema, schemas=schemas)
 
-    kwargs = oa_helpers.peek.kwargs(schema=schema, schemas=schemas)
-    foreign_key_kwargs = oa_helpers.peek.foreign_key_kwargs(
-        schema=schema, schemas=schemas
-    )
+    kwargs = peek.kwargs(schema=schema, schemas=schemas)
+    foreign_key_kwargs = peek.foreign_key_kwargs(schema=schema, schemas=schemas)
 
     # Remove extension properties from schema
     helpers.clean.extension(schema=schema)

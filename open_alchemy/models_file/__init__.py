@@ -1,17 +1,10 @@
 """Generate the models file."""
-# pylint: disable=useless-import-alias
-
-import dataclasses
-import typing
 
 from open_alchemy import schemas
-from open_alchemy import types as oa_types
 from open_alchemy.facades import code_formatter
 
-from . import artifacts as _artifacts
 from . import model as _model
 from . import models as _models
-from . import types as types
 
 
 def generate(*, artifacts: schemas.artifacts.types.ModelsModelArtifacts) -> str:
