@@ -37,7 +37,7 @@ python = "^3.7"
 SQLAlchemy = "^1.0"
 jsonschema = "^3"
 Jinja2 = "^2"
-sqlalchemy-stubs = "^0.3"
+sqlalchemy-stubs = ">=0.3,<0.5"
 typing_extensions = { version = "^3.7.4", python = "<3.8" }
 
 [tool.poetry.extras]
