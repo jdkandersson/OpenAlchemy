@@ -1,5 +1,7 @@
 """Tests for validation rules."""
 
+import pathlib
+
 import pytest
 
 from open_alchemy import exceptions
@@ -257,6 +259,27 @@ def test_process(schemas, raises):
             validation.process(schemas=schemas)
     else:
         validation.process(schemas=schemas)
+
+
+def test_process_cache(tmpdir):
+    """
+    GIVEN spec filename
+    WHEN process is called with the schemas and filename twice
+    THEN the schemas are not checked on the second run.
+    """
+    tmpdir_path = pathlib.Path(tmpdir)
+    spec_file = tmpdir_path / "spec.json"
+    spec_file.write_text("spec 1", encoding="utf-8")
+    schemas = {
+        "Schema1": {
+            "type": "object",
+            "x-tablename": "schema_1",
+            "properties": {"prop_1": {"type": "integer"}},
+        }
+    }
+
+    validation.process(schemas=schemas, spec_filename=str(spec_file))
+    validation.process(schemas={}, spec_filename=str(spec_file))
 
 
 CHECK_TESTS = [

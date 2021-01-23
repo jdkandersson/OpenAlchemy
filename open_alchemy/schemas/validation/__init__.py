@@ -2,6 +2,7 @@
 
 import typing
 
+from ... import cache
 from ... import exceptions as _exceptions
 from ... import types as _oa_types
 from ..helpers import iterate
@@ -87,14 +88,21 @@ def _other_schemas_checks(*, schemas: _oa_types.Schemas) -> types.Result:
     return types.Result(valid=True, reason=None)
 
 
-def process(*, schemas: _oa_types.Schemas) -> None:
+def process(
+    *, schemas: _oa_types.Schemas, spec_filename: typing.Optional[str] = None
+) -> None:
     """
     Validate schemas.
 
     Args:
         schemas: The schemas to validate.
+        spec_filename: The filename of the spec, used to cache the result.
 
     """
+    if spec_filename is not None:
+        if cache.schemas_valid(spec_filename):
+            return
+
     schemas_result = schemas_validation.check(schemas=schemas)
     if not schemas_result.valid:
         raise _exceptions.MalformedSchemaError(schemas_result.reason)
@@ -120,6 +128,9 @@ def process(*, schemas: _oa_types.Schemas) -> None:
     other_results_result = _other_schemas_checks(schemas=schemas)
     if not other_results_result.valid:
         raise _exceptions.MalformedSchemaError(other_results_result.reason)
+
+    if spec_filename is not None:
+        cache.schemas_are_valid(spec_filename)
 
 
 def check_one_model(*, schemas: _oa_types.Schemas) -> types.Result:
