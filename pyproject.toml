@@ -55,7 +55,7 @@ Sphinx = "^3.4.3"
 doc8 = "^0.8.1"
 connexion = {version = "^2.7.0", extras = ["swagger-ui"]}
 Flask-SQLAlchemy = "^2.4.4"
-alembic = "^1.4.3"
+alembic = "^1.5.4"
 rstcheck = "^3.3.1"
 bandit = "^1.7.0"
 pytest = "^6.2.1"
