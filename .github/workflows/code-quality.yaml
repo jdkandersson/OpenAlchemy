@@ -175,7 +175,7 @@ jobs:
           name: wheel
           path: dist/
       - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.4.1
+        uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           password: ${{ secrets.test_pypi_password }}
           repository_url: https://test.pypi.org/legacy/
@@ -223,7 +223,7 @@ jobs:
           path: dist/
       - name: Publish distribution 📦 to PyPI
         if: startsWith(github.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@v1.4.1
+        uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
