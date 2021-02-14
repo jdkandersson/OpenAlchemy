@@ -36,4 +36,4 @@ jobs:
       - name: run tests
         working-directory: tests/production
         run: |
-          pipenv run test
+          pipenv run test || (pipenv install --dev && pipenv run test)
