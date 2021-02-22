@@ -301,7 +301,7 @@ SQLAlchemy = ">=0.8.0"
 
 [[package]]
 name = "furo"
-version = "2020.12.30b24"
+version = "2021.2.21b25"
 description = "A clean customisable Sphinx documentation theme."
 category = "dev"
 optional = false
@@ -1273,7 +1273,7 @@ yaml = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b4070c3987bf87eab05b216ba54da5bd7b4e41571d84971a155467892bf75c73"
+content-hash = "b0b1ff84edee2ce829ad89855c51684e3ddfd06e4cc1a27638fc8fe054fc9901"
 
 [metadata.files]
 alabaster = [
@@ -1423,8 +1423,8 @@ flask-sqlalchemy = [
     {file = "Flask_SQLAlchemy-2.4.4-py2.py3-none-any.whl", hash = "sha256:05b31d2034dd3f2a685cbbae4cfc4ed906b2a733cff7964ada450fd5e462b84e"},
 ]
 furo = [
-    {file = "furo-2020.12.30b24-py3-none-any.whl", hash = "sha256:251dadee4dee96dddf2dc9b5243b88212e16923f53397bf12bc98574918bda41"},
-    {file = "furo-2020.12.30b24.tar.gz", hash = "sha256:30171899c9c06d692a778e6daf6cb2e5cbb05efc6006e1692e5e776007dc8a8c"},
+    {file = "furo-2021.2.21b25-py3-none-any.whl", hash = "sha256:0d7524eb8ac71bb1b5ec15d882caa077002b65e8342cb6a362d1092c728f93a4"},
+    {file = "furo-2021.2.21b25.tar.gz", hash = "sha256:80bc9b8d163c03ec6371850068d3098a35b69f4650a37ce66572e3581e677682"},
 ]
 gitdb = [
     {file = "gitdb-4.0.5-py3-none-any.whl", hash = "sha256:91f36bfb1ab7949b3b40e23736db18231bf7593edada2ba5c3a174a7b23657ac"},
