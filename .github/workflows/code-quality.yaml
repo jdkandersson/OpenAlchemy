@@ -155,7 +155,7 @@ jobs:
       - name: Build the documentation
         run: |
           cd docs
-          poetry run make html
+          poetry run make html || (poetry install && poetry run make html)
       - name: Upload documentation for release
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2.2.2
