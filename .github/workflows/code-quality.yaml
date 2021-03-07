@@ -86,7 +86,7 @@ jobs:
           poetry install
       - name: Run static code analyser
         run: |
-          ${{ matrix.command }}
+          ${{ matrix.command }} || (poetry install && ${{ matrix.command }})
 
   staticNode:
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
       matrix:
         command:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
-          - find examples -name "*spec.yml" ! -path "*/remote/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
+          - find examples -name "*spec.yml" ! -path "*/remote/*" ! -path "*/openapi-3-1/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node
