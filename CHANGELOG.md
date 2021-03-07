@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for OpenAPI 3.1. [#276]
+
 ## [v2.2.0] - 2021-01-23
 
 ### Fixed
@@ -505,3 +509,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#236]: https://github.com/jdkandersson/OpenAlchemy/issues/236
 [#251]: https://github.com/jdkandersson/OpenAlchemy/issues/251
 [#255]: https://github.com/jdkandersson/OpenAlchemy/issues/255
+[#276]: https://github.com/jdkandersson/OpenAlchemy/issues/276
