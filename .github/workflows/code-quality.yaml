@@ -271,21 +271,19 @@ jobs:
         shell: bash
       - uses: actions/checkout@v2
       - name: Get latest Changelog Entry
-        id: changelog_entry
+        id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
           version: v${{ steps.tag_name.outputs.current_version }}
           path: ./CHANGELOG.md
-      - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: wheel
-          path: dist/
-      - name: Publish the release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body: ${{ steps.changelog_entry.outputs.log_entry }}
-          files: |
-            dist/*
+          tag_name: ${{ steps.changelog_reader.outputs.version }}
+          release_name: Release ${{ steps.changelog_reader.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
