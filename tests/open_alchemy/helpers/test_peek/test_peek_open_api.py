@@ -7,23 +7,46 @@ from open_alchemy.helpers import peek
 
 
 @pytest.mark.parametrize(
-    "schema, schemas",
-    [({}, {}), ({"type": True}, {})],
-    ids=["plain", "not string value"],
+    "schema",
+    [
+        {},
+        {"type": True},
+        {"type": ["type 1", "type 2"]},
+        {"type": ["type 1", "type 2", "null"]},
+    ],
+    ids=[
+        "plain",
+        "not string value",
+        "multiple types not null",
+        "multiples types with null",
+    ],
 )
 @pytest.mark.helper
-def test_type_no_type(schema, schemas):
+def test_type_invalid(schema):
     """
-    GIVEN schema without a type
+    GIVEN schema with an invalid type
     WHEN type_ is called with the schema
     THEN TypeMissingError is raised.
     """
     with pytest.raises(exceptions.TypeMissingError):
-        peek.type_(schema=schema, schemas=schemas)
+        peek.type_(schema=schema, schemas={})
 
 
 VALID_TESTS = [
     pytest.param([("type", "type 1")], peek.type_, "type 1", id="type"),
+    pytest.param([("type", ["type 1"])], peek.type_, "type 1", id="type openapi 3.1"),
+    pytest.param(
+        [("type", ["type 1", "null"])],
+        peek.type_,
+        "type 1",
+        id="type openapi 3.1 with null last",
+    ),
+    pytest.param(
+        [("type", ["null", "type 1"])],
+        peek.type_,
+        "type 1",
+        id="type openapi 3.1 with null first",
+    ),
     pytest.param([], peek.nullable, None, id="nullable missing"),
     pytest.param([("nullable", True)], peek.nullable, True, id="nullable defined"),
     pytest.param(
@@ -31,6 +54,54 @@ VALID_TESTS = [
         peek.nullable,
         False,
         id="nullable defined different",
+    ),
+    pytest.param(
+        [("type", [])],
+        peek.nullable,
+        False,
+        id="nullable openapi 3.1 not null",
+    ),
+    pytest.param(
+        [("type", ["null"])],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 null",
+    ),
+    pytest.param(
+        [("type", ["type 1", "null"])],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 null with type first",
+    ),
+    pytest.param(
+        [("type", ["null", "type 1"])],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 null with type last",
+    ),
+    pytest.param(
+        [("type", []), ("nullable", False)],
+        peek.nullable,
+        False,
+        id="nullable openapi 3.1 false and 3.0 false",
+    ),
+    pytest.param(
+        [("type", ["null"]), ("nullable", False)],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 true and 3.0 false",
+    ),
+    pytest.param(
+        [("type", []), ("nullable", True)],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 false and 3.0 true",
+    ),
+    pytest.param(
+        [("type", ["null"]), ("nullable", True)],
+        peek.nullable,
+        True,
+        id="nullable openapi 3.1 true and 3.0 true",
     ),
     pytest.param([], peek.format_, None, id="format missing"),
     pytest.param(
