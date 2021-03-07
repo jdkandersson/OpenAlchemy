@@ -13,6 +13,7 @@ from open_alchemy.helpers import peek
     [
         pytest.param({}, id="plain"),
         pytest.param({"type": True}, id="not string value"),
+        pytest.param({"type": []}, id="array empty"),
         pytest.param({"type": [True]}, id="array not string"),
         pytest.param({"type": ["null", True]}, id="array with null first not string"),
         pytest.param({"type": [True, "null"]}, id="array with null second not string"),
