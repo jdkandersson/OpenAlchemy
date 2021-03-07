@@ -26,7 +26,7 @@ TESTS = [
         (
             False,
             "items property :: malformed schema :: A type property "
-            "value must be of type string. ",
+            "value must be of type string or list of string. ",
         ),
         id="array items type not string",
     ),

@@ -1,5 +1,7 @@
 """Tests for peek helpers."""
 
+import copy
+
 import pytest
 
 from open_alchemy import exceptions
@@ -9,16 +11,15 @@ from open_alchemy.helpers import peek
 @pytest.mark.parametrize(
     "schema",
     [
-        {},
-        {"type": True},
-        {"type": ["type 1", "type 2"]},
-        {"type": ["type 1", "type 2", "null"]},
-    ],
-    ids=[
-        "plain",
-        "not string value",
-        "multiple types not null",
-        "multiples types with null",
+        pytest.param({}, id="plain"),
+        pytest.param({"type": True}, id="not string value"),
+        pytest.param({"type": [True]}, id="array not string"),
+        pytest.param({"type": ["null", True]}, id="array with null first not string"),
+        pytest.param({"type": [True, "null"]}, id="array with null second not string"),
+        pytest.param({"type": ["type 1", "type 2"]}, id="multiple types not null"),
+        pytest.param(
+            {"type": ["type 1", "type 2", "null"]}, id="multiples types with null"
+        ),
     ],
 )
 @pytest.mark.helper
@@ -191,10 +192,12 @@ def test_key_value(key_values, func, expected_value):
     THEN expected value is returned.
     """
     schema = dict(key_values)
+    original_schema = copy.deepcopy(schema)
 
     returned_type = func(schema=schema, schemas={})
 
     assert returned_type == expected_value
+    assert schema == original_schema
 
 
 INVALID_TESTS = [
