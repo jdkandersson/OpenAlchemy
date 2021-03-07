@@ -14,7 +14,7 @@ Base = models.Base  # type: ignore
 class _EmployeeDictBase(typing.TypedDict, total=True):
     """TypedDict for properties that are required."""
 
-    name: str
+    name: typing.Optional[str]
     division: str
 
 
@@ -46,13 +46,13 @@ class TEmployee(typing.Protocol):
 
     # Model properties
     id: "sqlalchemy.Column[int]"
-    name: "sqlalchemy.Column[str]"
+    name: "sqlalchemy.Column[typing.Optional[str]]"
     division: "sqlalchemy.Column[str]"
     salary: "sqlalchemy.Column[typing.Optional[float]]"
 
     def __init__(
         self,
-        name: str,
+        name: typing.Optional[str],
         division: str,
         id: typing.Optional[int] = None,
         salary: typing.Optional[float] = None,
@@ -72,7 +72,7 @@ class TEmployee(typing.Protocol):
     @classmethod
     def from_dict(
         cls,
-        name: str,
+        name: typing.Optional[str],
         division: str,
         id: typing.Optional[int] = None,
         salary: typing.Optional[float] = None,
