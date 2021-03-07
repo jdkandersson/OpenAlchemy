@@ -67,3 +67,6 @@ The duplication of the data schema has been reduced by defining the SQLAlchemy
 models based on the OpenAPI specification. This means that, to change the
 database schema, the OpenAPI specification has to be updated and vice-versa.
 This ensures that the two are always in synch and up to date.
+
+.. seealso::
+    :ref:`getting-started`

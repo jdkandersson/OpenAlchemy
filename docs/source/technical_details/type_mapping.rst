@@ -34,6 +34,9 @@ following mappings:
 | :samp:`boolean`      |                        | :samp:`Boolean`         | :samp:`bool`              |
 +----------------------+------------------------+-------------------------+---------------------------+
 
+:samp:`type` as an array is supported, however, exactly one type (other than
+:samp:`null`) is required.
+
 String
 ------
 

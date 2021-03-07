@@ -35,3 +35,6 @@ OpenAlchemy will generate the following typed models:
 .. literalinclude:: ../../../examples/mixins/models_auto.py
     :language: python
     :linenos:
+
+.. seealso::
+    :ref:`getting-started`

@@ -31,3 +31,6 @@ SQLAlchemy models:
 .. literalinclude:: ../../../examples/namespaced/models_auto.py
     :language: python
     :linenos:
+
+.. seealso::
+    :ref:`getting-started`

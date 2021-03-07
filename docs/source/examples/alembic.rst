@@ -12,3 +12,6 @@ models which means that they work with Alembic.
 
    `Alembic documentation <https://alembic.sqlalchemy.org/en/latest/>`_
       Documentation for Alembic.
+
+.. seealso::
+    :ref:`getting-started`
