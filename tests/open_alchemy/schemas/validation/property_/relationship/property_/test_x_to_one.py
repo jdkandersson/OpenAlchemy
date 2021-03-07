@@ -25,7 +25,8 @@ TESTS = [
         {},
         (
             False,
-            "malformed schema :: A type property value must be of type string. ",
+            "malformed schema :: A type property value must be of type string or list "
+            "of string. ",
         ),
         id="type not a string",
     ),

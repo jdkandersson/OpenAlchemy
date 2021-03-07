@@ -86,7 +86,7 @@ jobs:
           poetry install
       - name: Run static code analyser
         run: |
-          ${{ matrix.command }}
+          ${{ matrix.command }} || (poetry install && ${{ matrix.command }})
 
   staticNode:
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
       matrix:
         command:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
-          - find examples -name "*spec.yml" ! -path "*/remote/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
+          - find examples -name "*spec.yml" ! -path "*/remote/*" ! -path "*/openapi-3-1/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node
@@ -155,7 +155,7 @@ jobs:
       - name: Build the documentation
         run: |
           cd docs
-          poetry run make html
+          poetry run make html || (poetry install && poetry run make html)
       - name: Upload documentation for release
         if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2.2.2
@@ -271,21 +271,19 @@ jobs:
         shell: bash
       - uses: actions/checkout@v2
       - name: Get latest Changelog Entry
-        id: changelog_entry
+        id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
           version: v${{ steps.tag_name.outputs.current_version }}
           path: ./CHANGELOG.md
-      - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: wheel
-          path: dist/
-      - name: Publish the release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body: ${{ steps.changelog_entry.outputs.log_entry }}
-          files: |
-            dist/*
+          tag_name: ${{ steps.changelog_reader.outputs.version }}
+          release_name: Release ${{ steps.changelog_reader.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}

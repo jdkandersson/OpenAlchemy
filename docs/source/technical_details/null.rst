@@ -8,10 +8,11 @@ There are 3 methods used to determine the value of :samp:`nullable` for a
 :samp:`SQLAlchemy` column. The first is the :samp:`required` property of the
 schema, the second is whether the column value is generated (using, for
 example, :samp:`x-autoincrement`) and the third is the :samp:`nullable`
-property of an object property. :samp:`nullable` overrides :samp:`required`.
-If :samp:`required` would indicate that the column is nullable but the value
-is generated, then it is not nullable. The following truth table shows the
-logic:
+property of an object property or the presence of :samp:`null` if :samp:`type`
+is an array (consider these to be equivalent for this discussion).
+:samp:`nullable` overrides :samp:`required`. If :samp:`required` would indicate
+that the column is nullable but the value is generated, then it is not
+nullable. The following truth table shows the logic:
 
 +-------------+-----------+-------------------+-----------------+
 | required    | generated | property nullable | column nullable |

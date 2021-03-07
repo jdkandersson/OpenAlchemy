@@ -8,6 +8,14 @@ cd examples/simple
 python models.py
 python models_traditional.py
 cd -
+cd examples/nullable/openapi-3-0
+python models.py
+python models_traditional.py
+cd -
+cd examples/nullable/openapi-3-1
+python models.py
+python models_traditional.py
+cd -
 cd examples/namespaced
 python models.py
 python models_traditional.py

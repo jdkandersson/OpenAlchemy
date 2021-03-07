@@ -66,3 +66,6 @@ OpenAlchemy will generate the following typed models:
 .. literalinclude:: ../../../examples/all_of/model_models_auto.py
     :language: python
     :linenos:
+
+.. seealso::
+    :ref:`getting-started`

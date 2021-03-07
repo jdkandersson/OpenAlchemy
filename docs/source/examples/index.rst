@@ -8,6 +8,7 @@ Examples
    connexion
    alembic
    simple
+   nullable
    namespaced
    default
    server_default

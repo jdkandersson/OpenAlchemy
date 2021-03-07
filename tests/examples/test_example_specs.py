@@ -45,6 +45,20 @@ def cleanup_models():
             id="simple Employee all",
         ),
         pytest.param(
+            "nullable/openapi-3-0/example-spec.yml",
+            "Employee",
+            {"division": "division 1"},
+            {"name": None, "id": 1, "salary": None},
+            id="nullable openapi 3.0 Employee required only",
+        ),
+        pytest.param(
+            "nullable/openapi-3-1/example-spec.yml",
+            "Employee",
+            {"division": "division 1"},
+            {"name": None, "id": 1, "salary": None},
+            id="nullable openapi 3.1 Employee required only",
+        ),
+        pytest.param(
             "namespaced/example-spec.yml",
             "Employee",
             {"id": 11, "name": "employee 1", "division": "division 1", "salary": 12},
