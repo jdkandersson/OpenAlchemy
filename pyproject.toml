@@ -71,7 +71,7 @@ wheel = "^0"
 myst-parser = "^0"
 sphinx-copybutton = "^0"
 furo = "^2021.2.28b28"
-sphinx-autobuild = "^2020"
+sphinx-autobuild = "^2021"
 
 
 [build-system]
