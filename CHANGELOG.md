@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v2.4.1] - 2021-04-04
+## [v2.4.2] - 2021-04-04
 
 ### Added
 
@@ -493,23 +493,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.1.1
 [1.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.2.0
 [1.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.3.0
-[v1.4.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.0
-[v1.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.1
-[v1.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.2
-[v1.4.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.4.3
-[v1.5.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.0
-[v1.5.1]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.1
-[v1.5.2]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.2
-[v1.5.3]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.3
-[v1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/1.5.4
-[v1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/1.6.0
-[v2.0.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.0
-[v2.0.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.1
-[v2.0.2]: https://github.com/jdkandersson/OpenAlchemy/releases/2.0.2
-[v2.1.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.1.0
-[v2.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.2.0
-[v2.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.3.0
-[v2.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.4.1
+[v1.4.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.4.0
+[v1.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.4.1
+[v1.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.4.2
+[v1.4.3]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.4.3
+[v1.5.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.5.0
+[v1.5.1]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.5.1
+[v1.5.2]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.5.2
+[v1.5.3]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.5.3
+[v1.5.4]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.5.4
+[v1.6.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v1.6.0
+[v2.0.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.0.0
+[v2.0.1]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.0.1
+[v2.0.2]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.0.2
+[v2.1.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.1.0
+[v2.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.2.0
+[v2.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.3.0
+[v2.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.4.2
 [///]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
