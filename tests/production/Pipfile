@@ -9,7 +9,7 @@ verify_ssl = true
 name = "open-alchemy-pypi"
 
 [packages]
-openalchemy = {version="2.4.0", index="open-alchemy-pypi"}
+openalchemy = {version="2.4.1", index="open-alchemy-pypi"}
 connexion = {extras = ["swagger-ui"], version = "2.7.0", index="pypi"}
 Flask-SQLAlchemy = {version = "2.4.4", index="pypi"}
 

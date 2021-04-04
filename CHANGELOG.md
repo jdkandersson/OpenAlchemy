@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v2.4.0] - 2021-04-04
+## [v2.4.1] - 2021-04-04
 
 ### Added
 
@@ -509,7 +509,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v2.1.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.1.0
 [v2.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.2.0
 [v2.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.3.0
-[v2.4.0]: https://github.com/jdkandersson/OpenAlchemy/releases/2.4.0
+[v2.4.1]: https://github.com/jdkandersson/OpenAlchemy/releases/2.4.1
 [///]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190

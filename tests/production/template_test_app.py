@@ -9,6 +9,9 @@ import pytest
 from open_alchemy import models
 
 
+# 20210404 Currently failing because pytest-flask-sqlalchemy has not been updated for
+# SQLAlchemy 1.4
+@pytest.mark.xfail
 @pytest.mark.app
 def test_post(client, db_session):
     """
@@ -34,6 +37,7 @@ def test_post(client, db_session):
     assert db_employee.salary == employee["salary"]
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_post_duplicate(client):
     """
@@ -57,6 +61,7 @@ def test_post_duplicate(client):
     assert response.status_code == 400
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_get(client, db_session):
     """
@@ -82,6 +87,7 @@ def test_get(client, db_session):
     assert employee["salary"] == db_employee.salary
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_get_id_miss(client, db_session):
     """
@@ -100,6 +106,7 @@ def test_get_id_miss(client, db_session):
     assert response.status_code == 404
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_get_id_hit(client, db_session):
     """
@@ -123,6 +130,7 @@ def test_get_id_hit(client, db_session):
     assert employee["salary"] == db_employee.salary
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_patch_id_miss(client, db_session):
     """
@@ -146,6 +154,7 @@ def test_patch_id_miss(client, db_session):
     assert response.status_code == 404
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_patch_id_hit(client, db_session):
     """
@@ -179,6 +188,7 @@ def test_patch_id_hit(client, db_session):
     assert db_employee.salary == employee["salary"]
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_delete_id_miss(client, db_session):
     """
@@ -197,6 +207,7 @@ def test_delete_id_miss(client, db_session):
     assert response.status_code == 404
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_delete_id_hit(client, db_session):
     """
@@ -217,6 +228,7 @@ def test_delete_id_hit(client, db_session):
     assert len(db_employees) == 0
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_models_autogen_init(db_session, employee_kwargs):
     """
@@ -235,6 +247,7 @@ def test_models_autogen_init(db_session, employee_kwargs):
         assert getattr(queried_employee, key) == value
 
 
+@pytest.mark.xfail
 @pytest.mark.app
 def test_models_autogen_from_dict(db_session, employee_kwargs):
     """
