@@ -45,7 +45,9 @@ def construct(*, schema: types.Schema) -> TableArgs:
     if index_spec is not None:
         table_args.append(factory.index_factory(spec=index_spec))
     # Handle any kwargs
-    table_args.append([_calculate_kwargs(schema=schema)])
+    kwargs = _calculate_kwargs(schema=schema)
+    if kwargs:
+        table_args.append([kwargs])
 
     return tuple(itertools.chain.from_iterable(table_args))
 

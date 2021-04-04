@@ -10,15 +10,15 @@ from open_alchemy import types
 @pytest.mark.parametrize(
     "schema, expected_args",
     [
-        pytest.param({}, ({},), id="empty"),
+        pytest.param({}, tuple(), id="empty"),
         pytest.param(
             {"x-composite-unique": ["column 1"]},
-            (sa_schema.UniqueConstraint, {}),
+            (sa_schema.UniqueConstraint,),
             id="x-composite-unique",
         ),
         pytest.param(
             {"x-composite-index": ["column 1"]},
-            (sa_schema.Index, {}),
+            (sa_schema.Index,),
             id="x-composite-index",
         ),
         pytest.param(
@@ -49,7 +49,11 @@ def test_construct(schema, expected_args):
     assert len(returned_args) == len(expected_args)
     for returned_arg, expected_arg in zip(returned_args[:-1], expected_args[:-1]):
         assert isinstance(returned_arg, expected_arg)
-    assert returned_args[-1] == expected_args[-1]
+    assert (
+        not returned_args
+        or not isinstance(returned_args[-1], dict)
+        or returned_args[-1] == expected_args[-1]
+    )
 
 
 @pytest.mark.parametrize(
