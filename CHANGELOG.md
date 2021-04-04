@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for SQLAlchemy 1.4.4.
+
 ## [v2.3.0] - 2021-03-07
 
 ### Added
