@@ -109,6 +109,35 @@ def test_tablename():
 
 
 @pytest.mark.model
+def test_schema_name():
+    """
+    GIVEN schemas with schema that has a custom name
+    WHEN model_factory is called with the name of the schema
+    THEN a model with a custom schema name is returned.
+    """
+    schemas = {
+        "SchemaName": {
+            "x-tablename": "table 1",
+            "x-schema-name": "schema 1",
+            "type": "object",
+            "properties": {"property_1": {"type": "integer"}},
+        }
+    }
+    artifacts = schemas_artifacts.get_from_schemas(
+        schemas=schemas, stay_within_model=True
+    )
+
+    model = model_factory.model_factory(
+        name="SchemaName",
+        get_base=_mock_get_base,
+        schemas=schemas,
+        artifacts=artifacts,
+    )
+
+    assert model.__table_args__[0]["schema"] == "schema 1"
+
+
+@pytest.mark.model
 def test_single_property_column_factory_call(mocked_column_factory: mock.MagicMock):
     """
     GIVEN mocked column_factory and schemas with schema that has single item properties
