@@ -24,3 +24,18 @@ Note that the following restrictions apply:
 
 Also note that no verification, beyond the above, is done before adding the
 kwargs to the SQLAlchemy model.
+
+.. _schema-name:
+
+Define Custom Schema name
+-------------------------
+
+With some databases you can group tables into schemas. OpenAlchemy supports
+this with the model extension property :samp:`x-schema-name` that is optionally
+defined alongside :samp:`__tablename__`. It takes the name of the schema, for
+example, the string :samp:`company`.
+
+.. seealso::
+
+    `SQLAlchemy specifying the schema name <https://docs.sqlalchemy.org/en/14/core/metadata.html#specifying-the-schema-name>`_
+      Documentation for defining the schema name.

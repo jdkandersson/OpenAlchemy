@@ -175,9 +175,10 @@ An example API has been defined using connexion and Flask here:
   dictionaries,
 - exposing created models under `open_alchemy.models` removing the need for
   `models.py` files,
-- ability to mix in arbitrary classes into a model and
+- ability to mix in arbitrary classes into a model,
 - can use the short `x-` prefix or a namespaced `x-open-alchemy-` prefix for
-  extension properties.
+  extension properties and
+- grouping models into schemas.
 
 ## Contributing
 
