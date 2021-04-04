@@ -1,6 +1,8 @@
 [run]
 omit =
     examples/app/app.py
+    # 20210404 pytest-flask-sqlalchemy does not support sqlalchemy 1.4 yet
+    examples/app/api.py
     open_alchemy/types.py
 branch = True
 
