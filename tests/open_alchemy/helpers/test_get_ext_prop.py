@@ -50,6 +50,7 @@ def test_miss_default():
         pytest.param("x-server-default", True, id="x-server-default"),
         pytest.param("x-tablename", True, id="x-tablename"),
         pytest.param("x-tablename", None, id="x-tablename None"),
+        pytest.param("x-schema-name", True, id="x-schema-name"),
         pytest.param("x-de-$ref", True, id="x-de-$ref"),
         pytest.param("x-dict-ignore", "True", id="x-dict-ignore"),
         pytest.param("x-generated", "True", id="x-generated"),
@@ -135,6 +136,11 @@ def test_invalid(name, value):
             "tablename",
             "table 1",
             id="tablename",
+        ),
+        pytest.param(
+            "schema-name",
+            "schema 1",
+            id="schema-name",
         ),
         pytest.param(
             "de-$ref",

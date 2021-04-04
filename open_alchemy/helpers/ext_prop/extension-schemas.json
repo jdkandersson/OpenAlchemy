@@ -61,6 +61,10 @@
     "description": "Define the name of a table.",
     "type": "string"
   },
+  "x-schema-name": {
+    "description": "Define the name of a schema the table is on.",
+    "type": "string"
+  },
   "x-inherits": {
     "description": "Define that a schema inherits from another schema or specify which schema to inherit from.",
     "oneOf": [{ "type": "string" }, { "type": "boolean" }]
