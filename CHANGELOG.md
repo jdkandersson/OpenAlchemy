@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add support for SQLAlchemy 1.4.4.
+- Add support for SQLAlchemy 1.4.
 - Add support for grouping models into schemas. [#294]
 
 ## [v2.3.0] - 2021-03-07
