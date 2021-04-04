@@ -71,6 +71,7 @@ class ExtensionProperties(str, enum.Enum):
     DICT_IGNORE: Literal["x-dict-ignore"] = "x-dict-ignore"
     BACKREFS: Literal["x-backrefs"] = "x-backrefs"
     DE_REF: Literal["x-de-$ref"] = "x-de-$ref"
+    SCHEMA_NAME: Literal["x-schema-name"] = "x-schema-name"
 
 
 class ModelFactory(Protocol):

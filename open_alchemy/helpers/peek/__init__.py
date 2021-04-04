@@ -511,6 +511,34 @@ def items(*, schema: types.Schema, schemas: types.Schemas) -> typing.Optional[di
     return value
 
 
+def schema_name(
+    *, schema: types.Schema, schemas: types.Schemas
+) -> typing.Optional[str]:
+    """
+    Retrieve the name of the schema.
+
+    Raises MalformedSchemaError if the x-schema value is not a string.
+
+    Args:
+        schema: The schema to get x-schema from.
+        schemas: The schemas for $ref lookup.
+
+    Returns:
+        The x-schema or None.
+
+    """
+    value = peek_key(
+        schema=schema, schemas=schemas, key=types.ExtensionProperties.SCHEMA_NAME
+    )
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise exceptions.MalformedSchemaError(
+            "The x-schema property must be of type string."
+        )
+    return value
+
+
 def _check_kwargs(*, value: typing.Any, key: str) -> typing.Dict[str, typing.Any]:
     """Check the kwargs value."""
     # Check value

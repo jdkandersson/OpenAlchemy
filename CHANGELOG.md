@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for SQLAlchemy 1.4.
+- Add support for grouping models into schemas. [#294]
+
 ## [v2.3.0] - 2021-03-07
 
 ### Added
@@ -512,3 +517,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#251]: https://github.com/jdkandersson/OpenAlchemy/issues/251
 [#255]: https://github.com/jdkandersson/OpenAlchemy/issues/255
 [#276]: https://github.com/jdkandersson/OpenAlchemy/issues/276
+[#294]: https://github.com/jdkandersson/OpenAlchemy/issues/294

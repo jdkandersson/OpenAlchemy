@@ -100,6 +100,7 @@ def test_mixins(schema, schemas, expected_mixins):
                 ("server-default", "value 1", "value 1"),
                 ("dict-ignore", True, True),
                 ("dict-ignore", False, False),
+                ("schema-name", "schema 1", "schema 1"),
             ]
         ),
         *(
@@ -128,6 +129,7 @@ def test_mixins(schema, schemas, expected_mixins):
                 "composite-unique",
                 "server-default",
                 "dict-ignore",
+                "schema-name",
             ]
         ),
     ],
@@ -173,6 +175,7 @@ def test_peek_value_func(prefix, key_values, func, expected_value):
             ("foreign-key-column", True),
             ("server-default", True),
             ("dict-ignore", "True"),
+            ("schema-name", True),
             ("kwargs", True),
             ("kwargs", {1: True}),
             ("kwargs", {1: True, "key": "value"}),
