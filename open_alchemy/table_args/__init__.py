@@ -10,7 +10,8 @@ from open_alchemy.helpers import ext_prop
 
 from . import factory
 
-TableArg = typing.Union[sa_schema.UniqueConstraint, sa_schema.Index]
+Kwargs = typing.Dict[str, typing.Any]
+TableArg = typing.Union[sa_schema.UniqueConstraint, sa_schema.Index, Kwargs]
 TableArgs = typing.Tuple[TableArg, ...]
 
 
@@ -43,5 +44,29 @@ def construct(*, schema: types.Schema) -> TableArgs:
     )
     if index_spec is not None:
         table_args.append(factory.index_factory(spec=index_spec))
+    # Handle any kwargs
+    table_args.append([_calculate_kwargs(schema=schema)])
 
     return tuple(itertools.chain.from_iterable(table_args))
+
+
+def _calculate_kwargs(*, schema: types.Schema) -> Kwargs:
+    """
+    Calculate the kwargs for the table.
+
+    Args:
+        schema: The model schema.
+
+    Returns:
+        The kwargs for the table.
+
+    """
+    kwargs: Kwargs = {}
+
+    schema_name = ext_prop.get(
+        source=schema, name=types.ExtensionProperties.SCHEMA_NAME
+    )
+    if schema_name is not None:
+        kwargs["schema"] = schema_name
+
+    return kwargs
