@@ -70,7 +70,7 @@ sqlalchemy_mixins = "^1"
 wheel = "^0"
 myst-parser = "^0"
 sphinx-copybutton = "^0"
-furo = "^2021.2.28b28"
+furo = "^2021.4.11b34"
 sphinx-autobuild = "^2021"
 
 
