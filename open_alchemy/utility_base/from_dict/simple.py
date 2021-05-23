@@ -35,7 +35,7 @@ def convert(
             )
         return value
     if type_ == "number":
-        if not isinstance(value, float):
+        if not isinstance(value, (float, int)):
             raise exceptions.InvalidInstanceError(
                 "Number type columns must have float values."
             )
