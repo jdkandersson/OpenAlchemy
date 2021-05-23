@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v2.5.0] - 2021-05-23
+
 ### Added
 
 - Add support for `int` values for `number` types.
@@ -514,6 +516,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v2.2.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.2.0
 [v2.3.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.3.0
 [v2.4.2]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.4.2
+[v2.5.0]: https://github.com/jdkandersson/OpenAlchemy/releases/v2.5.0
 [///]: # "Issue/PR links"
 [#189]: https://github.com/jdkandersson/OpenAlchemy/issues/189
 [#190]: https://github.com/jdkandersson/OpenAlchemy/issues/190
