@@ -12,20 +12,37 @@ from open_alchemy.utility_base.from_dict import simple
 @pytest.mark.parametrize(
     "schema, value, exception",
     [
-        ({}, mock.MagicMock(), exceptions.TypeMissingError),
-        ({"type": "type 1"}, mock.MagicMock(), exceptions.FeatureNotImplementedError),
-        ({"type": "integer"}, 1.1, exceptions.InvalidInstanceError),
-        ({"type": "number"}, 1, exceptions.InvalidInstanceError),
-        ({"type": "string"}, 1, exceptions.InvalidInstanceError),
-        ({"type": "boolean"}, 1, exceptions.InvalidInstanceError),
-    ],
-    ids=[
-        "no type",
-        "unsupported type",
-        "integer different type",
-        "number different type",
-        "string different type",
-        "boolean different type",
+        pytest.param({}, mock.MagicMock(), exceptions.TypeMissingError, id="no type"),
+        pytest.param(
+            {"type": "type 1"},
+            mock.MagicMock(),
+            exceptions.FeatureNotImplementedError,
+            id="unsupported type",
+        ),
+        pytest.param(
+            {"type": "integer"},
+            1.1,
+            exceptions.InvalidInstanceError,
+            id="integer different type",
+        ),
+        pytest.param(
+            {"type": "number"},
+            "1",
+            exceptions.InvalidInstanceError,
+            id="number different type",
+        ),
+        pytest.param(
+            {"type": "string"},
+            1,
+            exceptions.InvalidInstanceError,
+            id="string different type",
+        ),
+        pytest.param(
+            {"type": "boolean"},
+            1,
+            exceptions.InvalidInstanceError,
+            id="boolean different type",
+        ),
     ],
 )
 @pytest.mark.utility_base
@@ -65,6 +82,12 @@ def test_convert_invalid(schema, value, exception):
             1.1,
             1.1,
             id="number",
+        ),
+        pytest.param(
+            {"type": "number"},
+            1,
+            1,
+            id="number integer value",
         ),
         pytest.param(
             {"type": "number", "format": "float"},
