@@ -50,7 +50,7 @@ PyYAML = "^5"
 Sphinx = "^3"
 alembic = "^1"
 bandit = "^1"
-black = "^21.5b1"
+black = "^21.7b0"
 connexion = {version = "^2", extras = ["swagger-ui"]}
 doc8 = "^0"
 furo = "^2021.4.11b34"
