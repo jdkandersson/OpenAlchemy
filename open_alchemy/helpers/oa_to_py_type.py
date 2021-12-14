@@ -5,7 +5,7 @@ import typing
 
 from open_alchemy import exceptions
 from open_alchemy import types
-
+from open_alchemy.helpers import custom_python_types
 
 def convert(
     *, value: types.TColumnDefault, type_: str, format_: typing.Optional[str]
@@ -37,6 +37,11 @@ def convert(
             return datetime.datetime.fromisoformat(value)
         except ValueError as exc:
             raise exceptions.MalformedSchemaError("Invalid date-time string.") from exc
+    if isinstance(value, str) and format_ == "duration":
+        try:
+            return custom_python_types.duration.fromisoformat(value)
+        except ValueError as exc:
+            raise exceptions.MalformedSchemaError("Invalid duration string.") from exc
     if isinstance(value, str) and format_ == "binary":
         return value.encode()
     if format_ == "double":

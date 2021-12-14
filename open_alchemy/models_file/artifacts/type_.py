@@ -9,6 +9,7 @@ _SIMPLE_TYPE_STRING_FORMAT_MAPPING = {
     "binary": "bytes",
     "date": "datetime.date",
     "date-time": "datetime.datetime",
+    "duration": "custom_python_types.duration"
 }
 
 
@@ -141,6 +142,8 @@ def typed_dict(*, artifacts: schemas_artifacts.types.TAnyPropertyArtifacts) -> s
             model_type = model_type.replace("datetime.date", "str")
         if artifacts.open_api.format == "date-time":
             model_type = model_type.replace("datetime.datetime", "str")
+        if artifacts.open_api.format == "duration":
+            model_type = model_type.replace("custom_python_types.duration", "str")
 
     return model_type
 

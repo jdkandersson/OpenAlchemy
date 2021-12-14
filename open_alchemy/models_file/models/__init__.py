@@ -31,6 +31,8 @@ def generate(*, models: typing.List[str]) -> str:
             break
         if "datetime." in model:
             imports.add("datetime")
+        if "custom_python_types." in model:
+             imports.add("open_alchemy.helpers.custom_python_types as custom_python_types")
 
     template = jinja2.Template(_TEMPLATE, trim_blocks=True)
     return template.render(

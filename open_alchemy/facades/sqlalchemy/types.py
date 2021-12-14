@@ -16,6 +16,7 @@ String = sqlalchemy.String
 Binary = sqlalchemy.LargeBinary
 Date = sqlalchemy.Date
 DateTime = sqlalchemy.DateTime
+Interval = sqlalchemy.Interval
 Boolean = sqlalchemy.Boolean
 JSON = sqlalchemy.JSON
 Relationship = orm.RelationshipProperty

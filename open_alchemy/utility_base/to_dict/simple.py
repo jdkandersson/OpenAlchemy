@@ -4,7 +4,7 @@ import datetime
 
 from ... import exceptions
 from ... import types as oa_types
-from ...helpers import peek
+from ...helpers import peek, custom_python_types
 from .. import types
 
 
@@ -76,6 +76,13 @@ def _handle_string(value: types.TSimpleCol, *, schema: oa_types.Schema) -> str:
         if not isinstance(value, datetime.datetime):
             raise exceptions.InvalidInstanceError(
                 "String type columns with date-time format must have datetime "
+                "values."
+            )
+        return value.isoformat()
+    if format_ == "duration":
+        if not isinstance(value, custom_python_types.duration):
+            raise exceptions.InvalidInstanceError(
+                "String type columns with duration format must have duration "
                 "values."
             )
         return value.isoformat()

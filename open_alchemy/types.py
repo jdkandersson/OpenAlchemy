@@ -3,8 +3,9 @@
 import dataclasses
 import datetime
 import enum
-import typing
+from open_alchemy.helpers import custom_python_types
 
+import typing
 try:  # pragma: no cover
     from typing import Literal  # pylint: disable=unused-import
     from typing import Protocol
@@ -13,6 +14,7 @@ except ImportError:  # pragma: no cover
     from typing_extensions import Literal  # type: ignore
     from typing_extensions import Protocol  # type: ignore
     from typing_extensions import TypedDict  # type: ignore
+
 
 Schema = typing.Dict[str, typing.Any]
 Schemas = typing.Dict[str, Schema]
@@ -119,7 +121,7 @@ IndexList = typing.List[Index]
 AnyIndex = typing.Union[ColumnList, ColumnListList, Index, IndexList]
 TColumnDefault = typing.Optional[typing.Union[str, int, float, bool]]
 TPyColumnDefault = typing.Optional[
-    typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime]
+    typing.Union[str, int, float, bool, bytes, datetime.date, datetime.datetime, custom_python_types.duration]
 ]
 
 

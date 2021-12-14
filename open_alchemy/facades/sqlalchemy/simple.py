@@ -152,7 +152,7 @@ def _handle_number(*, artifacts: oa_types.SimplePropertyArtifacts) -> types.Numb
 
 def _handle_string(
     *, artifacts: oa_types.SimplePropertyArtifacts
-) -> typing.Union[types.String, types.Binary, types.Date, types.DateTime]:
+) -> typing.Union[types.String, types.Binary, types.Date, types.DateTime, types.Interval]:
     """
     Handle artifacts for an string type.
 
@@ -173,6 +173,8 @@ def _handle_string(
         return types.Date()
     if artifacts.open_api.format == "date-time":
         return types.DateTime()
+    if artifacts.open_api.format == "duration":
+        return types.Interval()
     if artifacts.open_api.max_length is None:
         return types.String()
     return types.String(length=artifacts.open_api.max_length)
