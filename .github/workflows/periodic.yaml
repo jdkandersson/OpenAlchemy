@@ -14,7 +14,7 @@ jobs:
           - https://test.pypi.org/simple/
           - https://pypi.org/simple/
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
