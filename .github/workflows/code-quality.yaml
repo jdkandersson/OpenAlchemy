@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: 3.9
       - name: Install poetry
@@ -111,7 +111,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: 3.9
       - uses: pre-commit/action@v2.0.3
@@ -126,7 +126,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: 3.9
       - name: Install poetry
@@ -188,7 +188,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: 3.9
       - name: install pipenv
@@ -236,7 +236,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v4.2.0
         with:
           python-version: 3.9
       - name: install pipenv
