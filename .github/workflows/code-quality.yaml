@@ -29,7 +29,7 @@ jobs:
           - os: macos-latest
             python-version: 3.8
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2.2.2
         with:
@@ -64,7 +64,7 @@ jobs:
           - poetry run bandit -r open_alchemy -s B101,B303,B310
           - poetry run rstcheck -r docs
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
@@ -96,7 +96,7 @@ jobs:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
           - find examples -name "*spec.yml" ! -path "*/remote/*" ! -path "*/openapi-3-1/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Node
         uses: actions/setup-node@v2.4.0
         with:
@@ -109,7 +109,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
@@ -124,7 +124,7 @@ jobs:
       - staticNode
       - staticPython
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
@@ -186,7 +186,7 @@ jobs:
     needs:
       - release-test-pypi
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
@@ -234,7 +234,7 @@ jobs:
     needs:
       - release-pypi
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
@@ -269,7 +269,7 @@ jobs:
         run: |
           echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
         shell: bash
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.2.0
       - name: Get latest Changelog Entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
