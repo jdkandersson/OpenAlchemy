@@ -4,7 +4,7 @@ import datetime
 
 from ... import exceptions
 from ... import types as oa_types
-from ...helpers import peek
+from ...helpers import peek, custom_python_types
 from .. import types
 
 
@@ -76,6 +76,8 @@ def _handle_string(
         return datetime.date.fromisoformat(value)
     if format_ == "date-time":
         return datetime.datetime.fromisoformat(value)
+    if format_ == "duration":
+        return custom_python_types.duration.fromisoformat(value)
     if format_ == "binary":
         return value.encode()
     return value

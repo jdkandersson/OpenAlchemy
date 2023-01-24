@@ -4,6 +4,7 @@ import datetime
 import typing
 
 from .. import types as oa_types
+from open_alchemy.helpers import custom_python_types
 
 # Types for converting to dictionary
 TSimpleDict = typing.Union[int, float, str, bool]
@@ -15,7 +16,7 @@ TOptArrayDict = typing.Optional[TArrayDict]
 TComplexDict = typing.Union[TOptObjectDict, TOptArrayDict]
 TAnyDict = typing.Union[TComplexDict, TOptSimpleDict]
 # Types for converting from a dictionary
-TStringCol = typing.Union[str, bytes, datetime.date, datetime.datetime]
+TStringCol = typing.Union[str, bytes, datetime.date, datetime.datetime, custom_python_types.duration]
 TSimpleCol = typing.Union[int, float, TStringCol, bool]
 TOptSimpleCol = typing.Optional[TSimpleCol]
 TObjectCol = typing.Any  # pylint: disable=invalid-name
