@@ -1,6 +1,5 @@
 """Tests for all_of helpers."""
 
-
 import pytest
 
 from open_alchemy.helpers import all_of

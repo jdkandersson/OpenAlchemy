@@ -1,7 +1,7 @@
 """Integration tests against database for inheritance."""
 
 import pytest
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -62,7 +62,7 @@ def test_single(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     employee = model_factory(name="Employee")
     manager = model_factory(name="Manager")
@@ -173,7 +173,7 @@ def test_joined(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     employee = model_factory(name="Employee")
     manager = model_factory(name="Manager")

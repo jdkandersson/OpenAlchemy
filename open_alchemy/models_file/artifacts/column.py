@@ -48,9 +48,11 @@ def calculate(
     backrefs_columns = map(
         lambda args: types.ColumnArtifacts(
             name=args[0],
-            type=f'typing.Optional["T{args[1].child}"]'
-            if args[1].type == artifacts_types.BackrefSubType.OBJECT
-            else f'typing.Sequence["T{args[1].child}"]',
+            type=(
+                f'typing.Optional["T{args[1].child}"]'
+                if args[1].type == artifacts_types.BackrefSubType.OBJECT
+                else f'typing.Sequence["T{args[1].child}"]'
+            ),
             description=None,
         ),
         artifacts.backrefs,

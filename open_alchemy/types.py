@@ -20,8 +20,16 @@ TKwargs = typing.Dict[str, typing.Any]
 TOptKwargs = typing.Optional[TKwargs]
 
 
+class _StrEnum(str, enum.Enum):
+    """A str Enum whose str() is the value, stable across Python versions."""
+
+    def __str__(self) -> str:
+        """Return the value rather than the Python 3.11+ default ClassName.MEMBER."""
+        return str(self.value)
+
+
 @enum.unique
-class KeyPrefixes(str, enum.Enum):
+class KeyPrefixes(_StrEnum):
     """The allowed prefixes for extension properties."""
 
     SHORT = "x-"
@@ -29,49 +37,49 @@ class KeyPrefixes(str, enum.Enum):
 
 
 @enum.unique
-class OpenApiProperties(str, enum.Enum):
+class OpenApiProperties(_StrEnum):
     """All the OpenAPI properties that can be defined."""
 
-    TYPE: Literal["type"] = "type"
-    NULLABLE: Literal["nullable"] = "nullable"
-    FORMAT: Literal["format"] = "format"
-    MAX_LENGTH: Literal["maxLength"] = "maxLength"
-    READ_ONLY: Literal["readOnly"] = "readOnly"
-    WRITE_ONLY: Literal["writeOnly"] = "writeOnly"
-    DESCRIPTION: Literal["description"] = "description"
-    ITEMS: Literal["items"] = "items"
-    REF: Literal["$ref"] = "$ref"
-    DEFAULT: Literal["default"] = "default"
-    REQUIRED: Literal["required"] = "required"
-    PROPERTIES: Literal["properties"] = "properties"
+    TYPE = "type"
+    NULLABLE = "nullable"
+    FORMAT = "format"
+    MAX_LENGTH = "maxLength"
+    READ_ONLY = "readOnly"
+    WRITE_ONLY = "writeOnly"
+    DESCRIPTION = "description"
+    ITEMS = "items"
+    REF = "$ref"
+    DEFAULT = "default"
+    REQUIRED = "required"
+    PROPERTIES = "properties"
 
 
 @enum.unique
-class ExtensionProperties(str, enum.Enum):
+class ExtensionProperties(_StrEnum):
     """All the extension properties that can be defined."""
 
-    AUTOINCREMENT: Literal["x-autoincrement"] = "x-autoincrement"
-    INDEX: Literal["x-index"] = "x-index"
-    UNIQUE: Literal["x-unique"] = "x-unique"
-    PRIMARY_KEY: Literal["x-primary-key"] = "x-primary-key"
-    TABLENAME: Literal["x-tablename"] = "x-tablename"
-    INHERITS: Literal["x-inherits"] = "x-inherits"
-    JSON: Literal["x-json"] = "x-json"
-    BACKREF: Literal["x-backref"] = "x-backref"
-    SECONDARY: Literal["x-secondary"] = "x-secondary"
-    USELIST: Literal["x-uselist"] = "x-uselist"
-    KWARGS: Literal["x-kwargs"] = "x-kwargs"
-    FOREIGN_KEY_KWARGS: Literal["x-foreign-key-kwargs"] = "x-foreign-key-kwargs"
-    FOREIGN_KEY: Literal["x-foreign-key"] = "x-foreign-key"
-    FOREIGN_KEY_COLUMN: Literal["x-foreign-key-column"] = "x-foreign-key-column"
-    COMPOSITE_INDEX: Literal["x-composite-index"] = "x-composite-index"
-    COMPOSITE_UNIQUE: Literal["x-composite-unique"] = "x-composite-unique"
-    SERVER_DEFAULT: Literal["x-server-default"] = "x-server-default"
-    MIXINS: Literal["x-mixins"] = "x-mixins"
-    DICT_IGNORE: Literal["x-dict-ignore"] = "x-dict-ignore"
-    BACKREFS: Literal["x-backrefs"] = "x-backrefs"
-    DE_REF: Literal["x-de-$ref"] = "x-de-$ref"
-    SCHEMA_NAME: Literal["x-schema-name"] = "x-schema-name"
+    AUTOINCREMENT = "x-autoincrement"
+    INDEX = "x-index"
+    UNIQUE = "x-unique"
+    PRIMARY_KEY = "x-primary-key"
+    TABLENAME = "x-tablename"
+    INHERITS = "x-inherits"
+    JSON = "x-json"
+    BACKREF = "x-backref"
+    SECONDARY = "x-secondary"
+    USELIST = "x-uselist"
+    KWARGS = "x-kwargs"
+    FOREIGN_KEY_KWARGS = "x-foreign-key-kwargs"
+    FOREIGN_KEY = "x-foreign-key"
+    FOREIGN_KEY_COLUMN = "x-foreign-key-column"
+    COMPOSITE_INDEX = "x-composite-index"
+    COMPOSITE_UNIQUE = "x-composite-unique"
+    SERVER_DEFAULT = "x-server-default"
+    MIXINS = "x-mixins"
+    DICT_IGNORE = "x-dict-ignore"
+    BACKREFS = "x-backrefs"
+    DE_REF = "x-de-$ref"
+    SCHEMA_NAME = "x-schema-name"
 
 
 class ModelFactory(Protocol):
@@ -186,7 +194,7 @@ class TNameSchema(typing.NamedTuple):
 
 
 @enum.unique
-class PropertyType(str, enum.Enum):
+class PropertyType(_StrEnum):
     """The type of a property."""
 
     SIMPLE = "SIMPLE"
@@ -196,7 +204,7 @@ class PropertyType(str, enum.Enum):
 
 
 @enum.unique
-class RelationshipType(str, enum.Enum):
+class RelationshipType(_StrEnum):
     """The relationship type."""
 
     MANY_TO_ONE = "MANY_TO_ONE"
@@ -594,9 +602,7 @@ class OneToManyRelationshipPropertyArtifacts(
 ):
     """Information about a one-to-many relationship property."""
 
-    sub_type: Literal[
-        RelationshipType.ONE_TO_MANY,
-    ]
+    sub_type: Literal[RelationshipType.ONE_TO_MANY,]
     schema: ArrayRefSchema
 
     def to_dict(self) -> OneToManyRelationshipPropertyTypedDict:
@@ -708,9 +714,7 @@ ManyToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
 class ManyToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
     """Information about a many-to-one relationship property."""
 
-    sub_type: Literal[
-        RelationshipType.MANY_TO_ONE,
-    ]
+    sub_type: Literal[RelationshipType.MANY_TO_ONE,]
 
     def to_dict(  # pylint: disable=useless-super-delegation
         self,
@@ -726,9 +730,7 @@ OneToOneRelationshipPropertyTypedDict = XToOneRelationshipPropertyTypedDict
 class OneToOneRelationshipPropertyArtifacts(XToOneRelationshipPropertyArtifacts):
     """Information about a one-to-one relationship property."""
 
-    sub_type: Literal[
-        RelationshipType.ONE_TO_ONE,
-    ]
+    sub_type: Literal[RelationshipType.ONE_TO_ONE,]
 
     def to_dict(  # pylint: disable=useless-super-delegation
         self,
@@ -763,9 +765,7 @@ class ManyToManyRelationshipPropertyTypedDict(
 class ManyToManyRelationshipPropertyArtifacts(RelationshipPropertyArtifacts):
     """Information about a x-to-one relationship property."""
 
-    sub_type: Literal[
-        RelationshipType.MANY_TO_MANY,
-    ]
+    sub_type: Literal[RelationshipType.MANY_TO_MANY,]
     secondary: str
     schema: ArrayRefSchema
 
@@ -828,7 +828,7 @@ class BackrefPropertyTypedDict(_BackrefPropertyTypedDictBase, total=True):
 
 
 @enum.unique
-class BackrefSubType(str, enum.Enum):
+class BackrefSubType(_StrEnum):
     """The possible types of backreferences."""
 
     OBJECT = "OBJECT"

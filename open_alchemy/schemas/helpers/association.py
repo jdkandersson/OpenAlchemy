@@ -258,14 +258,17 @@ def calculate_schema(
     )
     ref_property = calculate_property_schema(schema=ref_schema, schemas=schemas)
 
-    schema = {
-        types.OpenApiProperties.TYPE: "object",
-        types.ExtensionProperties.TABLENAME: secondary,
-        types.OpenApiProperties.PROPERTIES: {
+    schema: types.Schema = {
+        types.OpenApiProperties.TYPE.value: "object",
+        types.ExtensionProperties.TABLENAME.value: secondary,
+        types.OpenApiProperties.PROPERTIES.value: {
             parent_property.name: parent_property.schema,
             ref_property.name: ref_property.schema,
         },
-        types.OpenApiProperties.REQUIRED: [parent_property.name, ref_property.name],
+        types.OpenApiProperties.REQUIRED.value: [
+            parent_property.name,
+            ref_property.name,
+        ],
     }
 
     name = secondary.title().replace("_", "")

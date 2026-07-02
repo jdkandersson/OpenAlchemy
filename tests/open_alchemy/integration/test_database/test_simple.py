@@ -5,7 +5,7 @@ import datetime
 
 import pytest
 import sqlalchemy
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -117,7 +117,7 @@ def test_types(engine, sessionmaker, type_, format_, value):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -180,7 +180,7 @@ def test_types_json(engine, sessionmaker, schema, value):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -258,7 +258,7 @@ def test_types_default(engine, sessionmaker, type_, format_, default, expected_v
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -304,7 +304,7 @@ def test_types_server_default(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -348,7 +348,7 @@ def test_indexes(engine, index: str):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model_factory(name="Table")
 
@@ -383,7 +383,7 @@ def test_autoincrement(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -428,7 +428,7 @@ def test_not_autoincrement(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -465,7 +465,7 @@ def test_default(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 

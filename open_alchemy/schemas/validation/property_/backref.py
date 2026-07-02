@@ -1,5 +1,7 @@
 """Validation for readOnly properties."""
 
+import typing
+
 from .... import exceptions
 from .... import types as oa_types
 from ....helpers import peek
@@ -27,7 +29,7 @@ def _check_object(
 
     # Get types of properties
     properties_items = iterate.properties_items(schema=schema, schemas=schemas)
-    properties_items_type = map(
+    properties_items_type: typing.Iterator[typing.Tuple[typing.Any, str]] = map(
         lambda args: (args[0], peek.type_(schema=args[1], schemas=schemas)),
         properties_items,
     )

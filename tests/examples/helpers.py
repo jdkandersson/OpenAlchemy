@@ -4,7 +4,7 @@ import os
 import typing
 
 import yaml
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -45,7 +45,7 @@ def create_model(*, filename: str, model_name: str, engine: typing.Any) -> typin
     """
     spec = read_spec(filename=filename)
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name=model_name)
     # Initialise database
@@ -99,7 +99,7 @@ def create_models(
     """
     spec = read_spec(filename=filename)
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     models = tuple(map(lambda name: model_factory(name=name), model_names))
     # Initialise database

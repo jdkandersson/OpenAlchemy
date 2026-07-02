@@ -18,25 +18,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
-        exclude:
-          - os: windows-latest
-            python-version: 3.7
-          - os: windows-latest
-            python-version: 3.8
-          - os: macos-latest
-            python-version: 3.7
-          - os: macos-latest
-            python-version: 3.8
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
         run: pip install poetry
-      - uses: actions/cache@v2.1.6
+      - uses: actions/cache@v4
         id: cache-poetry
         with:
           path: ~/.virtualenvs
@@ -48,10 +39,10 @@ jobs:
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install
+          poetry install --all-extras
       - name: Test with pytest
         run: |
-          poetry run pytest || (poetry install && poetry run pytest)
+          poetry run pytest || (poetry install --all-extras && poetry run pytest)
       - name: Test the examples
         run: |
           poetry run ./tests/test_examples
@@ -64,14 +55,14 @@ jobs:
           - poetry run bandit -r open_alchemy -s B101,B303,B310
           - poetry run rstcheck -r docs
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.12"
       - name: Install poetry
         run: pip install poetry
-      - uses: actions/cache@v2.1.6
+      - uses: actions/cache@v4
         id: cache-poetry
         with:
           path: ~/.virtualenvs
@@ -83,10 +74,10 @@ jobs:
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install
+          poetry install --all-extras
       - name: Run static code analyser
         run: |
-          ${{ matrix.command }} || (poetry install && ${{ matrix.command }})
+          ${{ matrix.command }} || (poetry install --all-extras && ${{ matrix.command }})
 
   staticNode:
     runs-on: ubuntu-latest
@@ -96,11 +87,11 @@ jobs:
           - npx cspell "open_alchemy/**/*.py" "open_alchemy/**/*.json" "open_alchemy/**/*.j2" "docs/**/*.rst" "docs/**/*/yml" "docs/**/*.yaml" "tests/**/*.py" "*.yaml" "*.json" "*.yml" "examples/**/*.py" "examples/**/*.yaml" "examples/**/*.yml"
           - find examples -name "*spec.yml" ! -path "*/remote/*" ! -path "*/openapi-3-1/*" | xargs -n 1 sh -c 'npx swagger-cli validate $0 || exit 255'
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Node
-        uses: actions/setup-node@v2.4.0
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
+          node-version: 20.x
       - name: Install dependencies
         run: npm install cspell @apidevtools/swagger-cli
       - name: Run static code analyser
@@ -109,12 +100,12 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
-      - uses: pre-commit/action@v2.0.3
+          python-version: "3.12"
+      - uses: pre-commit/action@v3.0.1
 
   build:
     runs-on: ubuntu-latest
@@ -124,14 +115,14 @@ jobs:
       - staticNode
       - staticPython
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.12"
       - name: Install poetry
         run: pip install poetry
-      - uses: actions/cache@v2.1.6
+      - uses: actions/cache@v4
         id: cache-poetry
         with:
           path: ~/.virtualenvs
@@ -143,22 +134,22 @@ jobs:
       - name: Install dependencies
         if: steps.cache-poetry.outputs.cache-hit != 'true'
         run: |
-          poetry install
+          poetry install --all-extras
       - name: Build packages
         run: poetry build
       - name: Upload artifacts for release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: wheel
           path: dist/
       - name: Build the documentation
         run: |
           cd docs
-          poetry run make html || (poetry install && poetry run make html)
+          poetry run make html || (poetry install --all-extras && poetry run make html)
       - name: Upload documentation for release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: docs/build/html/
@@ -170,12 +161,12 @@ jobs:
       - build
     steps:
       - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.10
+        uses: actions/download-artifact@v4
         with:
           name: wheel
           path: dist/
       - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@v1.4.2
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.test_pypi_password }}
           repository_url: https://test.pypi.org/legacy/
@@ -186,11 +177,11 @@ jobs:
     needs:
       - release-test-pypi
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.12"
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -217,13 +208,13 @@ jobs:
       - test-production-test-pypi
     steps:
       - name: Retrieve packages
-        uses: actions/download-artifact@v2.0.10
+        uses: actions/download-artifact@v4
         with:
           name: wheel
           path: dist/
       - name: Publish distribution 📦 to PyPI
         if: startsWith(github.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@v1.4.2
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.pypi_password }}
           repository_url: https://upload.pypi.org/legacy/
@@ -234,11 +225,11 @@ jobs:
     needs:
       - release-pypi
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.12"
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -269,7 +260,7 @@ jobs:
         run: |
           echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
         shell: bash
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v4
       - name: Get latest Changelog Entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2

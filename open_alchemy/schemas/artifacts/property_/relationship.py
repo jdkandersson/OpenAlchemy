@@ -171,9 +171,9 @@ def _get_many_to_one(
         The artifacts for the property.
 
     """
-    sub_type: oa_types.Literal[
+    sub_type: oa_types.Literal[oa_types.RelationshipType.MANY_TO_ONE] = (
         oa_types.RelationshipType.MANY_TO_ONE
-    ] = oa_types.RelationshipType.MANY_TO_ONE
+    )
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.ManyToOneRelationshipPropertyArtifacts(
@@ -225,9 +225,9 @@ def _get_one_to_one(
         The artifacts for the property.
 
     """
-    sub_type: oa_types.Literal[
+    sub_type: oa_types.Literal[oa_types.RelationshipType.ONE_TO_ONE] = (
         oa_types.RelationshipType.ONE_TO_ONE
-    ] = oa_types.RelationshipType.ONE_TO_ONE
+    )
     parent = _get_parent(schema=schema, schemas=schemas)
 
     return types.OneToOneRelationshipPropertyArtifacts(
@@ -301,9 +301,9 @@ def _get_one_to_many(
         The artifacts for the property.
 
     """
-    sub_type: oa_types.Literal[
+    sub_type: oa_types.Literal[oa_types.RelationshipType.ONE_TO_MANY] = (
         oa_types.RelationshipType.ONE_TO_MANY
-    ] = oa_types.RelationshipType.ONE_TO_MANY
+    )
     items_schema = peek.items(schema=schema, schemas=schemas)
     assert items_schema is not None
 

@@ -1,4 +1,5 @@
 """Tests for example app."""
+
 # pylint: disable=no-member
 
 import json

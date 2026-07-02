@@ -13,15 +13,20 @@ repos:
         entry: "print\\((?!.*allow-print)"
         language: pygrep
         types: [python]
-  - repo: https://github.com/ambv/black
-    rev: 20.8b1
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
     hooks:
       - id: black
-        language_version: python3.9
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.4.2
+        language_version: python3.12
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
       - id: isort
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        exclude: "^example|conf.py$"
   - repo: https://github.com/chewse/pre-commit-mirrors-pydocstyle
     rev: v2.1.1
     hooks:
@@ -29,14 +34,12 @@ repos:
         args: ["--add-select=D213,D404", "--ignore=D202,D212,D406,D407,D203"]
         exclude: "^test|^example"
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.790
+    rev: v1.11.2
     hooks:
       - id: mypy
         exclude: "^example|conf.py$"
-        additional_dependencies:
-          - "sqlalchemy-stubs"
   - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: "v2.6.0"
+    rev: "v3.0.0a5"
     hooks:
       - id: pylint
         exclude: "^example|conf.py$"

@@ -1,7 +1,7 @@
 """Integration tests for from_dict and to_dict."""
 
 import pytest
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -30,7 +30,7 @@ def test_basic_types(engine, sessionmaker, column_schema, value):
     THEN when to_dict is called the construction dictionary is returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -67,7 +67,7 @@ def test_to_from_dict_many_to_one(engine, sessionmaker):
     THEN when to_dict is called the construction dictionary is returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -117,7 +117,7 @@ def test_to_from_dict_many_to_one_read_only(engine, sessionmaker):
         property.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -174,7 +174,7 @@ def test_to_from_dict_one_to_many(engine, sessionmaker):
     THEN when to_dict is called the construction dictionary is returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -227,7 +227,7 @@ def test_to_from_dict_one_to_many_read_only(engine, sessionmaker):
         returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -285,7 +285,7 @@ def test_to_from_dict_one_to_many_fk_def(engine, sessionmaker):
     THEN when to_dict is called on the child the parent foreign key is returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -342,7 +342,7 @@ def test_to_from_dict_one_to_one_read_only(engine, sessionmaker):
         property.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -397,7 +397,7 @@ def test_to_from_dict_many_to_many(engine, sessionmaker):
     THEN when to_dict is called the construction dictionary is returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -451,7 +451,7 @@ def test_to_from_dict_many_to_many_read_only(engine, sessionmaker):
         returned.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(
         base=base,
         spec={
@@ -560,7 +560,7 @@ def test_inheritance(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     employee = model_factory(name="Employee")
     manager = model_factory(name="Manager")

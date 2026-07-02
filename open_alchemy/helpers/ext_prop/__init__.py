@@ -65,7 +65,8 @@ def get(
 
     schema = _SCHEMAS.get(name)
     try:
-        jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
+        if schema is not None:
+            jsonschema.validate(instance=value, schema=schema, resolver=_resolver)
     except jsonschema.ValidationError as exc:
         raise exceptions.MalformedExtensionPropertyError(
             f"The value of the {json.dumps(name)} extension property is not "

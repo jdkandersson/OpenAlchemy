@@ -2,9 +2,11 @@
 authors = ["David Andersson <anderssonpublic@gmail.com>"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
   "Development Status :: 5 - Production/Stable",
@@ -34,44 +36,45 @@ openalchemy = "open_alchemy.cli:main"
 
 [tool.poetry.dependencies]
 Jinja2 = "^3"
-SQLAlchemy = "^1.0"
-jsonschema = "^3"
-python = "^3.7"
-sqlalchemy-stubs = ">=0.3,<0.5"
-typing_extensions = {version = "^3.7.4", python = "<3.8"}
+SQLAlchemy = "^2.0"
+jsonschema = "^4"
+python = "^3.9"
+setuptools = {version = "^75", optional = true}
+wheel = {version = "^0.44", optional = true}
+PyYAML = {version = "^6", optional = true}
 
 [tool.poetry.extras]
-wheel = ["wheel"]
+wheel = ["setuptools", "wheel"]
 yaml = ["PyYAML"]
 
-[tool.poetry.dev-dependencies]
-Flask-SQLAlchemy = "^2"
-PyYAML = "^5"
-Sphinx = "^3"
+[tool.poetry.group.dev.dependencies]
+Flask-SQLAlchemy = "^3"
+Sphinx = "^7"
 alembic = "^1"
 bandit = "^1"
-black = "^21.7b0"
-connexion = {version = "^2", extras = ["swagger-ui"]}
-doc8 = "^0"
-furo = "^2021.4.11b34"
+black = "^24"
+connexion = {version = "^2.15", extras = ["swagger-ui"]}
+doc8 = "^1"
+flake8 = "^7"
+furo = "^2024"
 isort = "^5"
-mypy = "^0"
-myst-parser = "^0"
-pre-commit = "^2"
+mypy = "^1"
+myst-parser = "^2"
+pre-commit = "^3"
 pydocstyle = "^6"
-pylint = "^2"
-pytest = "^6"
-pytest-cov = "^2"
-pytest-flake8 = "^1"
+pylint = "^3"
+pytest = "^8"
+pytest-cov = "^5"
 pytest-flask = "^1"
 pytest-flask-sqlalchemy = "^1"
 pytest-randomly = "^3"
-rstcheck = "^3"
-sphinx-autobuild = "^2021"
-sphinx-copybutton = "^0"
-sqlalchemy_mixins = "^1"
-typeguard = "^2"
-wheel = "^0"
+rstcheck = "^6"
+sphinx-autobuild = "^2024"
+sphinx-copybutton = "^0.5"
+sqlalchemy_mixins = "^2"
+typeguard = "^4"
+types-jsonschema = "^4"
+types-PyYAML = "^6"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
