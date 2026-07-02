@@ -1,7 +1,7 @@
 """Integration tests against database for relationships."""
 
 import pytest
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -39,7 +39,7 @@ def test_many_to_one(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -101,7 +101,7 @@ def test_many_to_one_backref(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -169,7 +169,7 @@ def test_many_to_one_relationship_fk(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -224,7 +224,7 @@ def test_one_to_one(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -280,7 +280,7 @@ def test_one_to_many(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -356,7 +356,7 @@ def test_one_to_many_relationship_kwargs(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -420,7 +420,7 @@ def test_one_to_many_relationship_other_order(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     ref_model = model_factory(name="RefTable")
     model = model_factory(name="Table")
@@ -478,7 +478,7 @@ def test_many_to_many(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -557,7 +557,7 @@ def test_many_to_many_pre_defined(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")
@@ -656,7 +656,7 @@ def test_ref_all_of(engine, sessionmaker, spec):
     THEN the instance is returned when the session is queried for it.
     """
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
 
@@ -725,7 +725,7 @@ def test_multiple(engine, sessionmaker):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model = model_factory(name="Table")
     ref_model = model_factory(name="RefTable")

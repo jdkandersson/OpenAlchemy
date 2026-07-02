@@ -502,7 +502,7 @@ def test_generate_type_return(tmp_path, artifacts):
                 ]
             ),
             "reveal_type(Model.id)",
-            "'sqlalchemy.sql.schema.Column[Union[builtins.int, None]]'",
+            '"sqlalchemy.sql.schema.Column[int | None]"',
             id="nullable column",
         ),
         pytest.param(
@@ -517,7 +517,7 @@ def test_generate_type_return(tmp_path, artifacts):
                 ]
             ),
             "model = Model()\nreveal_type(model.id)",
-            "'Union[builtins.int, None]'",
+            '"sqlalchemy.sql.schema.Column[int | None]"',
             id="nullable column instance",
         ),
         pytest.param(
@@ -532,7 +532,7 @@ def test_generate_type_return(tmp_path, artifacts):
                 ]
             ),
             "reveal_type(Model.id)",
-            "'sqlalchemy.sql.schema.Column[builtins.int*]'",
+            '"sqlalchemy.sql.schema.Column[int]"',
             id="not nullable column",
         ),
     ],

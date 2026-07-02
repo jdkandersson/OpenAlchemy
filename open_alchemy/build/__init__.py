@@ -159,7 +159,7 @@ def calculate_version(*, spec: typing.Any, schemas: types.Schemas) -> TVersion:
         pass
 
     spec_str = json.dumps({"components": {"schemas": schemas}}, separators=(",", ":"))
-    return hashlib.sha1(spec_str.encode()).hexdigest()[:20]
+    return hashlib.sha1(spec_str.encode(), usedforsecurity=False).hexdigest()[:20]
 
 
 @dataclasses.dataclass

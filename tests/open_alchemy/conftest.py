@@ -1,11 +1,11 @@
 """Shared fixtures for tests."""
+
 # pylint: disable=redefined-outer-name
 
 from unittest import mock
 from urllib import request
 
 import pytest
-from sqlalchemy.ext import declarative
 
 import open_alchemy
 from open_alchemy import column_factory
@@ -91,9 +91,9 @@ def _mocked_init_model_factory(mocked_init_model_factory):
 
 @pytest.fixture
 def mocked_declarative_base(monkeypatch):
-    """Monkeypatch declarative.declarative_base."""
+    """Monkeypatch open_alchemy.declarative_base."""
     mock_declarative_base = mock.MagicMock()
-    monkeypatch.setattr(declarative, "declarative_base", mock_declarative_base)
+    monkeypatch.setattr(open_alchemy, "declarative_base", mock_declarative_base)
     return mock_declarative_base
 
 

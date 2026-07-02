@@ -1,7 +1,8 @@
 """Integration tests."""
 
 import pytest
-from sqlalchemy.ext import declarative
+from sqlalchemy import text
+from sqlalchemy.orm import declarative_base
 
 import open_alchemy
 
@@ -115,7 +116,7 @@ def test_table_args_unique(engine, schema_additions, sql, expected_contents):
         }
     }
     # Creating model factory
-    base = declarative.declarative_base()
+    base = declarative_base()
     model_factory = open_alchemy.init_model_factory(spec=spec, base=base)
     model_factory(name="Table")
 
@@ -123,7 +124,8 @@ def test_table_args_unique(engine, schema_additions, sql, expected_contents):
     base.metadata.create_all(engine)
 
     # Query schema
-    results_list = list(str(result) for result in engine.execute(sql))
+    with engine.connect() as connection:
+        results_list = list(str(result) for result in connection.execute(text(sql)))
     results = "\n".join(results_list)
     for expected_content in expected_contents:
         assert expected_content in results

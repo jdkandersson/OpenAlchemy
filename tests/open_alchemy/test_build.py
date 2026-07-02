@@ -651,7 +651,7 @@ def test_execute(tmp_path, package_format, extensions):
     dist.mkdir()
 
     name = "app_models"
-    version = "version 1"
+    version = "1.0.0"
     spec = {
         "info": {
             "version": version,
@@ -730,9 +730,9 @@ init_json(parent_path / "spec.json")"""
 
 
 @pytest.mark.integration
-def test_build_dist_wheel_import_error(tmp_path):
+def test_build_dist_wheel_import_error(tmp_path, monkeypatch):
     """
-    GIVEN wheel package is not available
+    GIVEN the wheel build command fails (e.g. wheel package is not available)
     WHEN build_dist is called
     THEN RuntimeError is raised.
     """
@@ -740,7 +740,7 @@ def test_build_dist_wheel_import_error(tmp_path):
     dist.mkdir()
 
     name = "app_models"
-    version = "version 1"
+    version = "1.0.0"
     spec = {
         "info": {
             "version": version,
@@ -756,14 +756,15 @@ def test_build_dist_wheel_import_error(tmp_path):
         },
     }
 
-    try:
-        command.run(["pip", "uninstall", "-y", "wheel"], ".")
-        with pytest.raises(RuntimeError):
-            build.execute(
-                spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
-            )
-    finally:
-        command.run(["pip", "install", "wheel"], ".")
+    def mock_run(*_args, **_kwargs):
+        raise exceptions.BuildError("wheel is not installed")
+
+    monkeypatch.setattr(command, "run", mock_run)
+
+    with pytest.raises(RuntimeError):
+        build.execute(
+            spec=spec, name=name, path=str(dist), format_=build.PackageFormat.WHEEL
+        )
 
 
 @pytest.mark.parametrize(

@@ -1,4 +1,5 @@
 """Fixtures for example app."""
+
 # pylint: disable=no-member
 
 import connexion

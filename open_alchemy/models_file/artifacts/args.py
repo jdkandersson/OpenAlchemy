@@ -123,9 +123,11 @@ def calculate(*, artifacts: artifacts_types.ModelArtifacts) -> ReturnValue:
     backrefs_columns = map(
         lambda args: ColumnArgArtifacts(
             name=args[0],
-            init_type=f'typing.Optional["T{args[1].child}"]'
-            if args[1].type == artifacts_types.BackrefSubType.OBJECT
-            else f'typing.Optional[typing.Sequence["T{args[1].child}"]]',
+            init_type=(
+                f'typing.Optional["T{args[1].child}"]'
+                if args[1].type == artifacts_types.BackrefSubType.OBJECT
+                else f'typing.Optional[typing.Sequence["T{args[1].child}"]]'
+            ),
             from_dict_type="",
             read_only=True,
         ),

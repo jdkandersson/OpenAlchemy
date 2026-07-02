@@ -1,4 +1,5 @@
 """Fixtures for all tests."""
+
 # pylint: disable=redefined-outer-name
 
 import os

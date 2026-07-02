@@ -13,9 +13,11 @@ _SIMPLE_TYPE_STRING_FORMAT_MAPPING = {
 
 
 _SIMPLE_TYPE_MAPPING = {
-    "string": lambda format_: _SIMPLE_TYPE_STRING_FORMAT_MAPPING[format_]
-    if format_ in _SIMPLE_TYPE_STRING_FORMAT_MAPPING
-    else "str",
+    "string": lambda format_: (
+        _SIMPLE_TYPE_STRING_FORMAT_MAPPING[format_]
+        if format_ in _SIMPLE_TYPE_STRING_FORMAT_MAPPING
+        else "str"
+    ),
     "integer": lambda _: "int",
     "number": lambda _: "float",
     "boolean": lambda _: "bool",

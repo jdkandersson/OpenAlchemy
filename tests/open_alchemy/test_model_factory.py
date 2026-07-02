@@ -1,4 +1,5 @@
 """Input validation tests."""
+
 # Disable protected access for testing.
 # pylint: disable=protected-access,no-member
 

@@ -51,11 +51,11 @@ def _get_properties(
 
     """
     properties_artifacts = _get_properties_artifacts(schemas, schema)
-    properties_t_artifacts: typing.Iterable[
-        typing.Tuple[str, types.PropertyValue]
-    ] = map(
-        lambda args: (args[0], {"artifacts": args[1].to_dict()}),
-        properties_artifacts,
+    properties_t_artifacts: typing.Iterable[typing.Tuple[str, types.PropertyValue]] = (
+        map(
+            lambda args: (args[0], {"artifacts": args[1].to_dict()}),
+            properties_artifacts,
+        )
     )
     return dict(properties_t_artifacts)
 

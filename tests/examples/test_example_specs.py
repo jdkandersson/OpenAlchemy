@@ -1,6 +1,7 @@
 """Test for examples."""
 
 import pytest
+from sqlalchemy import text
 
 from open_alchemy import models
 
@@ -291,7 +292,8 @@ def test_table_args(engine, filename, model_name, sql, expected_contents):
     helpers.create_model(filename=filename, model_name=model_name, engine=engine)
 
     # Query schema
-    results_list = list(str(result) for result in engine.execute(sql))
+    with engine.connect() as connection:
+        results_list = list(str(result) for result in connection.execute(text(sql)))
     results = "\n".join(results_list)
 
     for expected_content in expected_contents:

@@ -20,6 +20,20 @@ def test_miss():
 
 
 @pytest.mark.helper
+def test_no_schema():
+    """
+    GIVEN source with an extension property that has no defined schema
+    WHEN get is called with the source and the name of that property
+    THEN the value is returned without raising an error.
+    """
+    value = ext_prop.get(
+        source={"x-custom-property": "value 1"}, name="x-custom-property"
+    )
+
+    assert value == "value 1"
+
+
+@pytest.mark.helper
 def test_miss_default():
     """
     GIVEN empty source and default value

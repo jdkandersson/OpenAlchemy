@@ -5,7 +5,7 @@ import sys
 import types as py_types
 import typing
 
-from sqlalchemy.ext import declarative
+from sqlalchemy.orm import declarative_base
 
 from open_alchemy import types as oa_types
 
@@ -116,7 +116,7 @@ def _init_optional_base(
 ) -> BaseAndModelFactory:
     """Wrap init_model_factory with optional base."""
     if base is None:
-        base = declarative.declarative_base()
+        base = declarative_base()
     return (
         base,
         init_model_factory(

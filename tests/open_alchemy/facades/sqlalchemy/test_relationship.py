@@ -1,6 +1,5 @@
 """Tests for SQLAlchemy relationship property facade."""
 
-
 import pytest
 
 from open_alchemy import types
@@ -35,7 +34,7 @@ def test_construct_many_to_one():
 
     assert returned_relationship.argument == "Parent"
     assert returned_relationship.backref is None
-    assert returned_relationship.secondary is None
+    assert returned_relationship._init_args.secondary.argument is None
 
 
 @pytest.mark.facade
@@ -91,7 +90,7 @@ def test_construct_many_to_one_kwargs():
 
     returned_relationship = relationship.construct(artifacts=artifacts)
 
-    assert returned_relationship.order_by == "id"
+    assert returned_relationship._init_args.order_by.argument == "id"
 
 
 @pytest.mark.facade
@@ -145,4 +144,4 @@ def test_construct_many_to_many():
 
     returned_relationship = relationship.construct(artifacts=artifacts)
 
-    assert returned_relationship.secondary == "association"
+    assert returned_relationship._init_args.secondary.argument == "association"

@@ -320,7 +320,7 @@ def _retrieve_model_parents_schema(
 
 
 @enum.unique
-class Type(str, enum.Enum):
+class Type(types._StrEnum):
     """The type of inheritance."""
 
     NONE = "NONE"

@@ -203,15 +203,15 @@ def _calculate_foreign_key_property_artifacts(
     if format_ is not None:
         foreign_key_property_schema[types.OpenApiProperties.FORMAT.value] = format_
     if max_length is not None:
-        foreign_key_property_schema[
-            types.OpenApiProperties.MAX_LENGTH.value
-        ] = max_length
+        foreign_key_property_schema[types.OpenApiProperties.MAX_LENGTH.value] = (
+            max_length
+        )
     if default is not None:
         foreign_key_property_schema[types.OpenApiProperties.DEFAULT.value] = default
     if server_default is not None:
-        foreign_key_property_schema[
-            types.ExtensionProperties.SERVER_DEFAULT.value
-        ] = server_default
+        foreign_key_property_schema[types.ExtensionProperties.SERVER_DEFAULT.value] = (
+            server_default
+        )
 
     # Calculate other artifacts
     modify_name = foreign_key_helper.get_modify_name(

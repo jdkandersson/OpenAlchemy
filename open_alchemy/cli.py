@@ -1,4 +1,5 @@
 """Define the CLI module."""
+
 import argparse
 import logging
 import pathlib
